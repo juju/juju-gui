@@ -26,6 +26,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
   Y.Router._parseQuery = Y.QueryString.parse;
 
   function _trim(s, char, leading, trailing) {
+    if (Y.Lang.isArray(s) && s.length === 1) {
+      // Special case single item arrays, this is every combine with
+      // combineFlags off.
+      s = s[0];
+    }
     // remove leading, trailing char.
     while (leading && s && s.indexOf(char) === 0) {
       s = s.slice(1, s.length);
@@ -114,9 +119,14 @@ YUI.add('ns-routing-app-extension', function(Y) {
      *
      * @method parse
      * @param {String} url to parse.
+     * @param {Object} combineFlags undefined||true||{ns: true} control
+     *                 behavior around ns collisions. Default is last write
+     *                 wins. When true (for all or a given namespace) parse
+     *                 into ns qualified lists.
      * @return {Object} result is {ns: url fragment {String}}.
      **/
-    parse: function(url) {
+    parse: function(url, combineFlags) {
+      combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
       var result = Object.create(Routes, {
         defaultNamespacePresent: {
           enumerable: false,
@@ -151,12 +161,22 @@ YUI.add('ns-routing-app-extension', function(Y) {
         }
 
         if (result[ns] !== undefined) {
-          console.log('URL has more than one reference to same namespace');
+          if (combineFlags === true || (
+              combineFlags && combineFlags[ns] === true)) {
+            result[ns] = [result[ns]]; // Convert to Array.
+          } else {
+            console.log('URL has more than one reference to same namespace');
+          }
         }
         if (ns === this.defaultNamespace) {
           result.defaultNamespacePresent = true;
         }
-        result[ns] = rtrim(val, '/') + '/';
+        var cleanURL = rtrim(val, '/') + '/';
+        if (Y.Lang.isArray(result[ns])) {
+          result[ns].push(cleanURL);
+        } else {
+          result[ns] = cleanURL;
+        }
       }
       return result;
     },
@@ -191,9 +211,17 @@ YUI.add('ns-routing-app-extension', function(Y) {
       var keys = Y.Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
-        if (!(base[ns] === '/' && options.excludeRootPaths)) {
-          url += ':' + ns + ':' + base[ns];
+        var bases;
+        if (Y.Lang.isArray(base[ns])) {
+          bases = base[ns];
+        } else {
+          bases = [base[ns]];
         }
+        Y.Array.each(bases, function(frag) {
+          if (!(frag === '/' && options.excludeRootPaths)) {
+            url += ':' + ns + ':' + frag;
+          }
+        });
       });
 
       url = slash(url);
@@ -206,10 +234,16 @@ YUI.add('ns-routing-app-extension', function(Y) {
      * @method combine
      * @param {Object} orig url.
      * @param {Object} incoming new url.
+     * @param {Object} combineFlags undefined||true||{ns: true} control
+     *                 behavior around ns collisions. Default is last write
+     *                 wins. When true (for all or a given namespace) parse
+     *                 into ns qualified lists.
      * @return {String} a new namespaced url.
      **/
-    combine: function(orig, incoming) {
+    combine: function(orig, incoming, combineFlags) {
       var url;
+
+      combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
 
       if (Y.Lang.isString(orig)) {
         orig = this.parse(orig);
@@ -226,8 +260,37 @@ YUI.add('ns-routing-app-extension', function(Y) {
         // original value).
         delete incoming[this.defaultNamespace];
       }
-      url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)),
-          {excludeRootPaths: true});
+      var output = {};
+      Y.each(orig, function(v, k) {
+        if (v && !Y.Lang.isArray(v)) {
+          v = [v];
+        }
+        output[k] = v;
+      });
+
+      Y.Array.each(Y.Object.keys(incoming), function(ns) {
+        var current = output[ns];
+        var merge = (combineFlags === true || (
+            combineFlags && combineFlags[ns] === true));
+
+        if (!current) {
+          current = [];
+        }
+        var next = incoming[ns];
+        if (!Y.Lang.isArray(next)) {
+          next = [next];
+        }
+        // We know both are arrays. We can append elements.
+        Y.Array.each(next, function(u) {
+          if (merge) {
+            output[ns].push(u);
+          } else {
+            // Last write wins.
+            output[ns] = [u];
+          }
+        });
+      });
+      url = this.url(output, {excludeRootPaths: true});
       return url;
 
     }
@@ -343,81 +406,86 @@ YUI.add('ns-routing-app-extension', function(Y) {
       // namespaced route multiple times for each URL.
       this._routeSeen = {};
 
-      Y.each(namespaces, function(fragment, namespace) {
-        routes = self.match(fragment, namespace);
-        if (!routes || !routes.length) {
-          self._dispatching = false;
-          return self;
+      Y.each(namespaces, function(fragmentSet, namespace) {
+        if (!Y.Lang.isArray(fragmentSet)) {
+          fragmentSet = [fragmentSet];
         }
-
-        req = self._getRequest(fragment, url, src);
-        res = self._getResponse(req);
-
-        // This method is a recursive closure, which mutates a number of
-        // variables in the enclosing scope, most notably the callbacks and
-        // routes.  Read carefully!
-        req.next = function(err) {
-          var subApp, callback, route, callingContext;
-
-          if (err) {
-            // Special case "route" to skip to the next route handler
-            // avoiding any additional callbacks for the current route.
-            if (err === 'route') {
-              callbacks = [];
-              req.next();
-            } else {
-              Y.error(err);
-            }
-
-          } else if ((callback = callbacks.shift())) {
-
-            if (typeof callback === 'string') {
-              subApp = self.get('subApps')[namespace];
-
-              if (subApp && typeof subApp[callback] === 'function') {
-                callback = subApp[callback];
-                callingContext = subApp;
-                subApp.verifyRendered();
-              } else if (typeof self[callback] === 'function') {
-                callback = self[callback];
-                callingContext = self;
-              } else {
-                console.error('Callback function `', callback,
-                    '` does not exist under the namespace `', namespace,
-                    '` at the path `', path, '`.');
-              }
-            }
-
-            // Allow access to the num or remaining callbacks for the route.
-            req.pendingCallbacks = callbacks.length;
-            // Attach the callback id to the request.
-            req.callbackId = Y.stamp(callback, true);
-            callback.call(callingContext, req, res, req.next);
-
-          } else if ((route = routes.shift())) {
-            // Make a copy of this route's `callbacks` and find its matches.
-            callbacks = route.callbacks.concat();
-            matches = route.regex.exec(fragment);
-
-            // Use named keys for parameter names if the route path contains
-            // named keys. Otherwise, use numerical match indices.
-            if (matches.length === route.keys.length + 1) {
-              req.params = Y.Array.hash(route.keys, matches.slice(1));
-            } else {
-              req.params = matches.concat();
-            }
-
-            // Allow access tot he num of remaining routes for this request.
-            req.pendingRoutes = routes.length;
-
-            // Execute this route's `callbacks`.
-            req.next();
+        Y.each(fragmentSet, function(fragment) {
+          routes = self.match(fragment, namespace);
+          if (!routes || !routes.length) {
+            self._dispatching = false;
+            return self;
           }
-        };
 
-        req.next();
+          req = self._getRequest(fragment, url, src);
+          res = self._getResponse(req);
+
+          // This method is a recursive closure, which mutates a number of
+          // variables in the enclosing scope, most notably the callbacks and
+          // routes.  Read carefully!
+          req.next = function(err) {
+            var subApp, callback, route, callingContext;
+
+            if (err) {
+              // Special case "route" to skip to the next route handler
+              // avoiding any additional callbacks for the current route.
+              if (err === 'route') {
+                callbacks = [];
+                req.next();
+              } else {
+                Y.error(err);
+              }
+
+            } else if ((callback = callbacks.shift())) {
+
+              if (typeof callback === 'string') {
+                subApp = self.get('subApps')[namespace];
+
+                if (subApp && typeof subApp[callback] === 'function') {
+                  callback = subApp[callback];
+                  callingContext = subApp;
+                  subApp.verifyRendered();
+                } else if (typeof self[callback] === 'function') {
+                  callback = self[callback];
+                  callingContext = self;
+                } else {
+                  console.error('Callback function `', callback,
+                                '` does not exist under the namespace `',
+                                namespace,
+                                '` at the path `', path, '`.');
+                }
+              }
+
+              // Allow access to the num or remaining callbacks for the route.
+              req.pendingCallbacks = callbacks.length;
+              // Attach the callback id to the request.
+              req.callbackId = Y.stamp(callback, true);
+              callback.call(callingContext, req, res, req.next);
+
+            } else if ((route = routes.shift())) {
+              // Make a copy of this route's `callbacks` and find its matches.
+              callbacks = route.callbacks.concat();
+              matches = route.regex.exec(fragment);
+
+              // Use named keys for parameter names if the route path contains
+              // named keys. Otherwise, use numerical match indices.
+              if (matches.length === route.keys.length + 1) {
+                req.params = Y.Array.hash(route.keys, matches.slice(1));
+              } else {
+                req.params = matches.concat();
+              }
+
+              // Allow access tot he num of remaining routes for this request.
+              req.pendingRoutes = routes.length;
+
+              // Execute this route's `callbacks`.
+              req.next();
+            }
+          };
+
+          req.next();
+        });
       });
-
 
       self._dispatching = false;
       return self._dequeue();
@@ -507,9 +575,22 @@ YUI.add('ns-routing-app-extension', function(Y) {
     }
   };
 
-  Y.namespace('juju').Router = function(defaultNamespace) {
+  /**
+   * Router constructor
+   *
+   * @method Router
+   * @param {String} defaultNamespace unqualified routes will have this
+   *                 namespace.
+   * @param {Object} combineFlags undefined||true||{ns: true} control
+   *                 behavior around ns collisions. Default is last write
+   *                 wins. When true (for all or a given namespace) parse
+   *                 into ns qualified lists.
+   * @return {Object} Router.
+   */
+  Y.namespace('juju').Router = function(defaultNamespace, combineFlags) {
     var r = Object.create(_Router);
     r.defaultNamespace = defaultNamespace;
+    r.combineFlags = combineFlags;
     return r;
   };
 
