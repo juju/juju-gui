@@ -45,6 +45,37 @@ configuration::
   ``JUJU_GUI_TEST_BROWSERS="local-firefox local-chrome" bin/test-charm``.
   FAIL_FAST: 0 {Integer} Set to 1 to exit when first browser returns a failure
   rather than completing all of the tests.
+  NO_DESTROY: unset Set to 1 to prevent the juju environment to be destroyed
+  at the end of the test run.
+  APP_URL: unset Set to a Juju GUI URL to force the suite to use that location
+  rather than creating/destroying a juju environment where to deploy the Juju
+  GUI.  The value must be a valid location where the Juju GUI is deployed using
+  the charm in a "juju-gui-testing" environment, and properly set up using
+  the following charm options: serve-tests=true staging=true secure=false.
+
+Combining NO_DESTROY and APP_URL could help while debugging CI tests, and it
+allows for running the suite multiple times using the same juju environment.
+A typical workflow follows::
+
+  # Run tests without destroying the environment. The APP_URL will be
+  # displayed in the command output.
+  NO_DESTROY=1 bin/test-charm
+  # Grab the APP_URL to run the suite again, reusing the juju environment.
+  APP_URL="http://ec2-xxx-yyy.example.com" bin/test-charm
+  # When coding/debugging is done, destroy the juju environment.
+  juju destroy-environment -e juju-gui-testing
+
+APP_URL can also be used for running CI tests locally::
+
+  APP_URL="http://127.0.0.1:8888" JUJU_GUI_TEST_BROWSERS="local-firefox" \
+    bin/test-charm
+
+The above assumes the Juju GUI to be properly set up on localhost, i.e.:
+  - unit tests must be reachable at http://127.0.0.1:8888/test/
+    (this is the default if ``make devel`` is used to serve the GUI);
+  - staging mode must be enabled;
+  - secure mode must be turned off
+    (this is the default if ``make devel`` is used to serve the GUI).
 
   lib/deploy_charm_for_testing.py
   --origin: "lp:juju-gui" {String} Location of the GUI code
