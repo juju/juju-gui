@@ -25,9 +25,8 @@
 #  --origin
 #  --charm
 
-# If FAIL_FAST is set to 1 in the environment the testing loop
-# will exit when the first tested browser returns a failure
-# rather than trying them all.
+# If FAIL_FAST is set to 1 in the environment, the testing loop will exit when
+# the first tested browser returns a failure, rather than trying them all.
 
 # If NO_DESTROY is set, the juju environment will not be destroyed at the end
 # of the test run.
