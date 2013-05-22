@@ -59,7 +59,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
           @event rendered
         */
-        rendered: 'renderedHandler'
+        rendered: 'renderedHandler',
+        zoom_in: 'zoom_in',
+        zoom_out: 'zoom_out'
       }
     },
 
@@ -130,8 +132,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
      *
      * @method zoom_out
      */
-    zoom_out: function(data, context) {
-      var slider = context.slider,
+    zoom_out: function(data) {
+      var slider = this.slider,
           val = slider.get('value');
       slider.set('value', val - 25);
     },
@@ -141,8 +143,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
      *
      * @method zoom_in
      */
-    zoom_in: function(data, context) {
-      var slider = context.slider,
+    zoom_in: function(data) {
+      var slider = this.slider,
           val = slider.get('value');
       slider.set('value', val + 25);
     },

@@ -484,6 +484,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
       // Invoke on start as well.
       tick();
+      console.log('Simulator started');
       return this;
 
     },
@@ -497,6 +498,22 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       if (this._scheduler) {
         this._scheduler.cancel();
         this._scheduler = null;
+        console.log('Simulator stopped');
+      }
+      return this;
+    },
+
+    /**
+     Toggle the running state of the simulator.
+
+     @method toggle
+     @chainable
+     */
+    toggle: function() {
+      if (this._scheduler) {
+        this.stop();
+      } else {
+        this.start();
       }
       return this;
     }

@@ -154,6 +154,9 @@ YUI.add('juju-gui', function(Y) {
      * target: {String} CSS selector of one element
      * focus: {Boolean} Focus the element.
      * toggle: {Boolean} Toggle element visibility.
+     * fire: {String} Event to fire when triggered. (XXX: Target is topology)
+     * condition: {Function} returns Boolean, should method be added to
+     *            keybindings.
      * callback: {Function} Taking (event, target).
      * help: {String} Help text to display in popup.
      *
@@ -167,17 +170,10 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
-      'S-d': {
-        callback: function(evt) {
-          /* global saveAs: false */
-          this.env.exportEnvironment(function(r) {
-            var exportData = JSON.stringify(r.result, undefined, 2);
-            var exportBlob = new Blob([exportData],
-                                      {type: 'application/json;charset=utf-8'});
-            saveAs(exportBlob, 'export.json');
-          });
-        },
-        help: 'Export the environment'
+      '/': {
+        target: '#charm-search-field',
+        focus: true,
+        help: 'Select the charm Search'
       },
       'S-/': {
         target: '#shortcut-help',
@@ -187,10 +183,15 @@ YUI.add('juju-gui', function(Y) {
           if (target && !target.getHTML().length) {
             var bindings = [];
             Y.each(this.keybindings, function(v, k) {
-              if (v.help) {
+              if (v.help && (v.condition === undefined ||
+                             v.condition.call(this) === true)) {
+                // TODO: translate keybindings to
+                // human <Alt> m
+                // <Control> <Shift> N (note caps)
+                // also 'g then i' style
                 bindings.push({key: k, help: v.help});
               }
-            });
+            }, this);
             target.setHTML(
                 views.Templates.shortcuts({bindings: bindings}));
           }
@@ -203,13 +204,46 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Navigate to the Environment overview.'
       },
+      '+': {
+        fire: 'zoom_in',
+        help: 'Zoom In'
+      },
+      '-': {
+        fire: 'zoom_out',
+        help: 'Zoom Out'
+      },
       'esc': {
+        fire: 'clearState',
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
         },
         help: 'Cancel current action'
+      },
+
+      'C-s': {
+        'condition': function() {
+          return this._simulator !== undefined;
+        },
+        callback: function() {
+          this._simulator.toggle();
+        },
+        help: 'Toggle the simulator'
+      },
+
+      'S-d': {
+        callback: function(evt) {
+          /* global saveAs: false */
+          this.env.exportEnvironment(function(r) {
+            var exportData = JSON.stringify(r.result, undefined, 2);
+            var exportBlob = new Blob([exportData],
+                                      {type: 'application/json;charset=utf-8'});
+            saveAs(exportBlob, 'export.json');
+          });
+        },
+        help: 'Export the environment'
       }
+
     },
 
     /**
@@ -248,7 +282,7 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-        '/': 191, '?': 63,
+        '/': 191, '?': 63, '+': 187, '-': 189,
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
@@ -266,12 +300,21 @@ YUI.add('juju-gui', function(Y) {
         var trigger = symbolic.join('-');
         var spec = this.keybindings[trigger];
         if (spec) {
+          if (spec.condition && !spec.condition.call(this)) {
+            // Note that when a condition check fails
+            // the event still propagates.
+            return;
+          }
           var target = Y.one(spec.target);
           if (target) {
             if (spec.toggle) { target.toggleView(); }
             if (spec.focus) { target.focus(); }
           }
           if (spec.callback) { spec.callback.call(this, evt, target); }
+          // HACK w/o context/view restriction but right direction
+          if (spec.fire) {
+            this.views.environment.instance.topo.fire(spec.fire);
+          }
           // If we handled the event nothing else has to.
           evt.stopPropagation();
           evt.preventDefault();
