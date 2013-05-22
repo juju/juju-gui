@@ -151,6 +151,63 @@ describe('Namespaced Routing', function() {
     Y.getLocation = oldGetLocation;
   });
 
+  it('should allow combining routes using router level flagging', function() {
+    var router = juju.Router('charmstore', {gui: true});
+    var match = router.parse('/');
+    assert(match.charmstore === '/');
+    assert(match.inspector === undefined);
+
+    match = router.parse('/:gui:/services/mysql/:gui:/services/mediawiki/');
+    assert.deepEqual(match.gui, [
+      '/services/mysql/',
+      '/services/mediawiki/'
+    ]);
+
+    // We can use the match to produce a valid url.
+    var u = router.url(match);
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+
+    // Combine works as well (note the flag, like with parse this can be an
+    // object).
+    u = router.combine('/:gui:/services/mysql/', ':gui:/services/mediawiki/');
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+  });
+
+
+  it('should allow combining routes in a given namespace', function() {
+    var router = juju.Router('charmstore');
+    var match = router.parse('/');
+    assert(match.charmstore === '/');
+    assert(match.inspector === undefined);
+
+    // Multiple routes (no combine)
+    match = router.parse(
+        '/:gui:/services/mysql/:gui:/services/mediawiki/');
+    // A single match, last write wins.
+    assert.equal(match.gui, '/services/mediawiki/');
+
+    match = router.parse(
+        '/:gui:/services/mysql/:gui:/services/mediawiki/',
+        {gui: true});
+    assert.deepEqual(match.gui, [
+      '/services/mysql/',
+      '/services/mediawiki/'
+    ]);
+
+    // We can use the match to produce a valid url.
+    var u = router.url(match);
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+
+    // Combine works as well (note the flag, like with parse this can be an
+    // object).
+    u = router.combine('/:gui:/services/mysql/', ':gui:/services/mediawiki/',
+                       {gui: true});
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+  });
+
   it('should allow a feature flags namespace', function() {
     assert.deepEqual({}, flags);
     // Use the route callback directly.
