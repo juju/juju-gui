@@ -30,7 +30,10 @@ import urlparse
 
 import selenium
 import selenium.webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import (
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.support import ui
 import shelltoolbox
 
@@ -45,31 +48,6 @@ from retry import retry
 
 juju = shelltoolbox.command('juju')
 ssh = shelltoolbox.command('ssh')
-
-common = {
-    'command-timeout': 300,
-    'idle-timeout': 100,
-}
-
-ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
-ie['platform'] = 'Windows 2012'
-ie['version'] = '10'
-ie.update(common)
-
-chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
-chrome['platform'] = 'Linux'
-chrome.update(common)
-# The saucelabs.com folks recommend using the latest version of Chrome because
-# new versions come out so quickly, therefore there is no version specified
-# here.
-
-firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
-firefox['platform'] = 'Linux'
-# Removing this version causes the FireFox CI deployment tests to fail
-firefox['version'] = '20'
-firefox.update(common)
-
-browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 
 # Given the limited capabilities that the credentials impart (primarily the
 # ability to run a web browser via Sauce Labs) and that anyone can sign up for
@@ -131,6 +109,73 @@ def set_test_result(jobid, passed):
         raise RuntimeError('Unable to send test result to saucelabs.com')
 
 
+def get_capabilities(browser_name):
+    """Return the Selenium driver capabilities for the given browser_name."""
+    common = {
+        'command-timeout': 300,
+        'idle-timeout': 100,
+    }
+    desired = selenium.webdriver.DesiredCapabilities
+    choices = {
+        'chrome': (
+            desired.CHROME,
+            # The saucelabs.com folks recommend using the latest version of
+            # Chrome because new versions come out so quickly.
+            # Therefore, there is no version specified here.
+            {'platform': 'Linux'},
+        ),
+        'firefox': (
+            desired.FIREFOX,
+            # Juju GUI supports Firefox >= 16 (quantal base).  At the time of
+            # this comment the default version used in Saucelabs, if none is
+            # specified, is 11.
+            {'platform': 'Linux', 'version': '16'},
+        ),
+        'ie': (
+            desired.INTERNETEXPLORER,
+            # Internet Explorer version must be >= 10.
+            {'platform': 'Windows 2012', 'version': '10'},
+        ),
+    }
+    if browser_name in choices:
+        base, updates = choices[browser_name]
+        capabilities = dict(base)
+        capabilities.update(common)
+        capabilities.update(updates)
+        return capabilities
+    sys.exit('No such web driver: {}'.format(browser_name))
+
+
+def make_local_driver(browser_name, capabilities):
+    """Return a local Selenium driver instance.
+
+    The driver will be set up using the given capabilities.
+    """
+    choices = {
+        'chrome': (
+            selenium.webdriver.Chrome,
+            {'desired_capabilities': capabilities},
+        ),
+        'firefox': (
+            selenium.webdriver.Firefox,
+            {'capabilities': capabilities},
+        ),
+        'ie': (
+            selenium.webdriver.Ie,
+            {'capabilities': capabilities},
+        ),
+    }
+    driver_class, kwargs = choices[browser_name]
+    return driver_class(**kwargs)
+
+
+def get_platform(driver):
+    """Return info about the platform used by the given driver."""
+    name = driver.name.title()
+    caps = driver.capabilities
+    return '{} {} ({})'.format(name, caps['version'], caps['platform'].title())
+
+
 class TestCase(unittest.TestCase):
     """Helper base class that supports running browser tests."""
 
@@ -141,24 +186,27 @@ class TestCase(unittest.TestCase):
         # Firefox tests, in which cases the GUI WebSocket connection is often
         # problematic (i.e. connection errors) when switching from the sandbox
         # mode back to the staging backend.
-        if browser_name == 'local':
-            # If the browser name is 'local', start a local Firefox.
-            driver = selenium.webdriver.Firefox(capabilities=firefox)
+        local_prefix = 'local-'
+        if browser_name.startswith(local_prefix):
+            # If the browser name has the "local-" prefix, i.e. "local-chrome',
+            # "local-firefox" or "local-ie", start the associated local driver.
+            name = browser_name[len(local_prefix):]
+            capabilities = get_capabilities(name)
+            driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            print('Browser: local Firefox')
+            print('* Platform: local {}'.format(get_platform(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
-            capabilities = browser_capabilities[browser_name].copy()
-            capabilities['name'] = 'Juju GUI'
+            capabilities = get_capabilities(browser_name)
             user = getpass.getuser()
-            capabilities['tags'] = [user]
+            capabilities.update({'name': 'Juju GUI', 'tags': user})
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
             cls.remote_driver = True
             details = 'https://saucelabs.com/jobs/' + driver.session_id
             print(
-                '* Browser: {}'.format(browser_name),
+                '* Platform: {}'.format(get_platform(driver)),
                 '* Testcase: {}'.format(cls.__name__),
                 '* Details: {}'.format(details),
                 sep='\n'
@@ -210,6 +258,26 @@ class TestCase(unittest.TestCase):
             if els:
                 return els[0].text
         return self.wait_for(provider_type, error=error, timeout=timeout)
+
+    def login(self, password='admin'):
+        """Log in into the application.
+
+        Assume the currently displayed view is the login page.
+        """
+        # For some reason, the login form is considered not visible to the
+        # user by Selenium, which consequently denies clicking or sending
+        # keys to form fields. This behavior is overridden using JavaScript.
+        script = """
+            var loginForm = document.querySelector('#login-form form');
+            loginForm.querySelector('input[type=password]').value = '{}';
+            loginForm.querySelector('input[type=submit]').click();
+        """.format(password)
+        self.driver.execute_script(script)
+
+    def logout(self):
+        """Log out from the application, clicking the "logout" link."""
+        logout_link = self.driver.find_element_by_id('logout-trigger')
+        logout_link.click()
 
     def handle_login(self):
         """Log in."""
@@ -286,6 +354,21 @@ class TestCase(unittest.TestCase):
                 return False
             return contents in response.read()
         return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    def wait_for_path(cls, path, error=None, timeout=30):
+        """Wait for the given path to be the current one.
+
+        Fail printing the provided error if timeout is exceeded.
+        """
+        url = urlparse.urljoin(cls.app_url, path)
+        condition = lambda driver: driver.current_url == url
+        try:
+            cls.wait_for(condition, error=error, timeout=timeout)
+        except TimeoutException:
+            current = cls.driver.current_url
+            print('Expected: {}\nCurrent: {}'.format(url, current))
+            raise
 
     @classmethod
     @retry(subprocess.CalledProcessError, tries=2)

@@ -2,7 +2,7 @@
   <div class="service-header-partial">
     <div class="name crosshatch-background">
       <div>
-        <span>{{service.displayName}}</span>
+        <span id="service-display-name">{{service.displayName}}</span>
         {{landscapeBadge landscape serviceModel 'reboot' 'round'}}
         {{landscapeBadge landscape serviceModel 'security' 'round'}}
       </div>
@@ -50,4 +50,4 @@
       <div id="message-area" class="yui3-u-10-12"></div>
     </div>
   </div>
-</div>  
+</div>
