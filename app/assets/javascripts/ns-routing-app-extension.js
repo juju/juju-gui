@@ -27,7 +27,8 @@ YUI.add('ns-routing-app-extension', function(Y) {
 
   function _trim(s, char, leading, trailing) {
     if (Y.Lang.isArray(s) && s.length === 1) {
-      // Special case single item arrays, this is very combine with combine off.
+      // Special case single item arrays, this is every combine with
+      // combineFlags off.
       s = s[0];
     }
     // remove leading, trailing char.
