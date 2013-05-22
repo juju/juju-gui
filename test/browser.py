@@ -133,7 +133,7 @@ def get_capabilities(browser_name):
         ),
         'ie': (
             desired.INTERNETEXPLORER,
-            # Juju GUI supports Internet Explorer >= 10.
+            # Internet Explorer version must be >= 10.
             {'platform': 'Windows 2012', 'version': '10'},
         ),
     }
