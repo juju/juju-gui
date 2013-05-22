@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
+Copyright (C) 2013 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -19,7 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
-  Adds the Inspector panel widget to the juju app
+  Adds the Inspector panel widget to the juju app.
+
+  The Inspector panel widget is used to display a panel like interface with
+  nested detail views aligned to a service in the environment.
 
   @module juju-inspector-widget
 */
@@ -52,7 +55,8 @@ YUI.add('juju-inspector-widget', function(Y) {
           this.showView(initialView.name, (initialView.config || {}));
         }, this);
       }
-      // When one of the view instances wants to navigate to another view.
+      // When one of the child view instances wants to navigate the inspector
+      // to another view it needs to fire a showView event.
       // Navigation can also be handled by the widget UI if necessary by
       // attaching events in the bindUI method.
       this._events.push(this.on('*:showView', function(e) {
