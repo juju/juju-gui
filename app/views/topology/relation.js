@@ -389,6 +389,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var service = topo.serviceForBox(box);
       var origin = topo.get('active_context');
       var container = context.get('container');
+      var addRelationNode = container.one('.add-relation');
+
+      // If the link is disabled, which can happen if the charm is not yet
+      // loaded and we don't know the endpoints, then don't allow clicking on
+      // it.
+      if (addRelationNode.hasClass('disabled')) {
+        return;
+      }
 
       // Remove the service menu.
       topo.fire('hideServiceMenu');
