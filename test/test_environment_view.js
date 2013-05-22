@@ -738,18 +738,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            db: db,
            env: env
          }).render();
-         var service = container.one('.service'),
-             add_rel = container.one('.add-relation'),
-             after_evt;
+         var serviceNode = container.one('.service'),
+             add_rel = container.one('.add-relation');
 
          // Toggle the service menu for the Add Relation button.
-         var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.toggleServiceMenu(d3.select(service.getDOMNode()).datum());
-         // Mock an event object so that d3.mouse does not throw a NPE.
-         d3.event = {};
+         var service = d3.select(serviceNode.getDOMNode()).datum();
+         // Add a mock charm for the service.
+         var charm = {'id': service.charm,
+                       loaded: false};
+         db.charms.add(charm);
+         sm.toggleServiceMenu(service);
+
+         // Since the service's charm is not loaded the 'Build Relation' link
+         // is disabled.
          assert.isTrue(add_rel.hasClass('disabled'));
+         charm = db.charms.getById(service.charm);
+         charm.loaded = true;
+         // Toggle the service menu twice to cause re-rendering.
+         sm.toggleServiceMenu(service);
+         sm.toggleServiceMenu(service);
+         // Now that the charm is loaded and the menu is re-rendered, the
+         // Build Relation link is no longer disabled.
+         assert.isFalse(add_rel.hasClass('disabled'));
        });
 
 

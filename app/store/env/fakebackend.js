@@ -133,9 +133,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._resetAnnotations();
       // used for relation id's
       this._relationCount = 0;
-      // Delay to use before completing a charm load.  Used for interactive
-      // testing.
-      this.charmLoadDelay = 7000;
     },
 
     /**
@@ -199,7 +196,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Return all of the recently anotated objects.
+      Return all of the recently annotated objects.
 
       @method nextAnnotations
       @return {Object} A hash of the keys 'services', 'machines', 'units',
@@ -534,9 +531,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var formatCharm = function(charm) {
         // Simulate a delay in the charm loading for testing.
+        var charmLoadDelay = 0;
+        if (window.flags.charmLoadDelay) {
+          charmLoadDelay = parseInt(window.flags.charmLoadDelay, 10);
+        }
         setTimeout(function() {
           callback({result: charm.getAttrs()});
-        }, this.charmLoadDelay);
+        }, charmLoadDelay);
       };
       this._loadCharm(charmName, {
         success: formatCharm,
