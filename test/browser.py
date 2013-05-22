@@ -192,7 +192,7 @@ class TestCase(unittest.TestCase):
             # "local-firefox" or "local-ie", start the associated local driver.
             name = browser_name[len(local_prefix):]
             capabilities = get_capabilities(name)
-            driver, version = make_local_driver(name, capabilities)
+            driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
             print('* Platform: local {}'.format(get_platform(driver)))
         else:
