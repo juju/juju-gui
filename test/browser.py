@@ -126,12 +126,14 @@ def get_capabilities(browser_name):
         ),
         'firefox': (
             desired.FIREFOX,
-            # Removing the version below causes the FireFox CI deployment tests
-            # to fail.
+            # Juju GUI supports Firefox >= 16 (quantal base).  At the time of
+            # this comment the default version used in Saucelabs, if none is
+            # specified, is 11.
             {'platform': 'Linux', 'version': '16'},
         ),
         'ie': (
             desired.INTERNETEXPLORER,
+            # Juju GUI supports Internet Explorer >= 10.
             {'platform': 'Windows 2012', 'version': '10'},
         ),
     }
@@ -167,10 +169,11 @@ def make_local_driver(browser_name, capabilities):
     return driver_class(**kwargs)
 
 
-def get_browser_name(driver):
-    """Return the name and version of the browser used by the given driver."""
-    version = driver.capabilities.get('version', 'unknown version')
-    return '{} {}'.format(driver.name.title(), version)
+def get_platform(driver):
+    """Return info about the platform used by the given driver."""
+    name = driver.name.title()
+    caps = driver.capabilities
+    return '{} {} ({})'.format(name, caps['version'], caps['platform'].title())
 
 
 class TestCase(unittest.TestCase):
@@ -191,7 +194,7 @@ class TestCase(unittest.TestCase):
             capabilities = get_capabilities(name)
             driver, version = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            print('Browser: local {}'.format(get_browser_name(driver)))
+            print('* Platform: local {}'.format(get_platform(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
             capabilities = get_capabilities(browser_name)
@@ -203,7 +206,7 @@ class TestCase(unittest.TestCase):
             cls.remote_driver = True
             details = 'https://saucelabs.com/jobs/' + driver.session_id
             print(
-                '* Browser: {}'.format(get_browser_name(driver)),
+                '* Platform: {}'.format(get_platform(driver)),
                 '* Testcase: {}'.format(cls.__name__),
                 '* Details: {}'.format(details),
                 sep='\n'
