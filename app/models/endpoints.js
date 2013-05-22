@@ -86,7 +86,7 @@ YUI.add('juju-endpoints', function(Y) {
     // For required interfaces, we consider them valid for new relations
     // only if they are not already satisfied by an existing relation.
     Y.each(
-      ep_map[sid].requires,
+        ep_map[sid].requires,
         function(rdata) {
           var ep = convert(sid, rdata);
           // Subordinate relations are slightly different:
