@@ -87,6 +87,13 @@ var GlobalConfig = {
         }
       }
     },
+    spinner: {
+      modules: {
+        'spinner': {
+          fullpath: '/juju-ui/assets/javascripts/spinner.js'
+        }
+      }
+    },
     jsyaml: {
       modules: {
         'js-yaml': {

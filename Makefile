@@ -30,6 +30,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
+		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/prettify.js$$' \
@@ -37,7 +38,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
-LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js'
+LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js'
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/expect.js node_modules/express \
     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
