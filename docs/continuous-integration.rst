@@ -65,18 +65,6 @@ A typical workflow follows::
   # When coding/debugging is done, destroy the juju environment.
   juju destroy-environment -e juju-gui-testing
 
-APP_URL can also be used for running CI tests locally::
-
-  APP_URL="http://127.0.0.1:8888" JUJU_GUI_TEST_BROWSERS="local-firefox" \
-    bin/test-charm
-
-The above assumes the Juju GUI to be properly set up on localhost, i.e.:
-  - unit tests must be reachable at http://127.0.0.1:8888/test/
-    (this is the default if ``make devel`` is used to serve the GUI);
-  - staging mode must be enabled;
-  - secure mode must be turned off
-    (this is the default if ``make devel`` is used to serve the GUI).
-
   lib/deploy_charm_for_testing.py
   --origin: "lp:juju-gui" {String} Location of the GUI code
   --charm: "cs:~juju-gui/precise/juju-gui" {String} Location of the charm code
