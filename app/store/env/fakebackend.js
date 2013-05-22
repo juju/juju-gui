@@ -196,7 +196,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Return all of the recently anotated objects.
+      Return all of the recently annotated objects.
 
       @method nextAnnotations
       @return {Object} A hash of the keys 'services', 'machines', 'units',
@@ -530,7 +530,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATEDERROR);
       }
       var formatCharm = function(charm) {
-        callback({result: charm.getAttrs()});
+        // Simulate a delay in the charm loading for testing.
+        var charmLoadDelay = 0;
+        if (window.flags.charmLoadDelay) {
+          charmLoadDelay = parseInt(window.flags.charmLoadDelay, 10);
+        }
+        setTimeout(function() {
+          callback({result: charm.getAttrs()});
+        }, charmLoadDelay);
       };
       this._loadCharm(charmName, {
         success: formatCharm,

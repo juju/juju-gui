@@ -48,6 +48,11 @@ YUI.add('juju-endpoints', function(Y) {
         db = controller.get('db'),
         ep_map = controller.endpointsMap;
 
+    // Bail out if the map doesn't yet exist for this service.  The charm may
+    // not be loaded yet.
+    if (!ep_map[sid]) {
+      return targets;
+    }
     /**
      * Convert a service name and its relation endpoint info into a
      * valid relation target endpoint, ie. including service name.

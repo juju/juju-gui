@@ -1064,7 +1064,7 @@ YUI.add('juju-gui', function(Y) {
 
         if (flags['gui.featuredrag.enable']) { ... }
 
-      From the LaunchPad feature flags documentation:
+      From the Launchpad feature flags documentation:
 
       > As a general rule, each switch should be checked only once or only a
       > few time in the codebase. We don't want to disable the same thing in
