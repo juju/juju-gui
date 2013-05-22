@@ -1322,6 +1322,7 @@ YUI.add('juju-gui', function(Y) {
     'event-key',
     'event-touch',
     'model-controller',
-    'FileSaver'
+    'FileSaver',
+    'juju-inspector-widget'
   ]
 });
