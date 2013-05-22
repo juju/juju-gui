@@ -42,7 +42,7 @@ bootstrap_and_deploy() {
     python lib/deploy_charm_for_testing.py "$@"
     retcode=$?
     if [ $retcode -ne 0 ]; then
-        echo "Unable to deploy Charm"
+        echo "Unable to deploy Charm."
         exit $retcode
     fi
 }
