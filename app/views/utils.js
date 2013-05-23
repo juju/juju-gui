@@ -31,9 +31,10 @@ YUI.add('juju-view-utils', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
-  /** global utils functions
+  /**
+    global utils functions
 
-  @class utils
+    @class utils
   */
 
   /*jshint bitwise: false*/
@@ -92,12 +93,12 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-  Generate a human-readable presentation value for an integer, rounding
-  to the largest of ones, thousands (K), millions (M), or billions (B).
+    Generate a human-readable presentation value for an integer, rounding
+    to the largest of ones, thousands (K), millions (M), or billions (B).
 
-  @method humanizeNumber
-  @param {Integer} n The source number.
-  @return {String} The presentation value.
+    @method humanizeNumber
+    @param {Integer} n The source number.
+    @return {String} The presentation value.
   */
   var humanizeNumber = function(n) {
     var units = [[1000, 'K'],
@@ -121,12 +122,12 @@ YUI.add('juju-view-utils', function(Y) {
   utils.humanizeNumber = humanizeNumber;
 
   /**
-  Determine whether a SVG node has a given CSS class name.
+    Determine whether a SVG node has a given CSS class name.
 
-  @method hasSVGClass
-  @param {Object} selector A YUI-wrapped SVG node.
-  @param {String} class_name The class name to look for.
-  @return {Boolean} Whether the selector has the class name.
+    @method hasSVGClass
+    @param {Object} selector A YUI-wrapped SVG node.
+    @param {String} class_name The class name to look for.
+    @return {Boolean} Whether the selector has the class name.
   */
   var hasSVGClass = function(selector, class_name) {
     var classes = selector.getAttribute('class');
@@ -138,13 +139,14 @@ YUI.add('juju-view-utils', function(Y) {
   utils.hasSVGClass = hasSVGClass;
 
   /**
-  Add a CSS class name to a SVG node or to all the nodes matching the selector.
+    Add a CSS class name to a SVG node or to all the nodes matching the
+    selector.
 
-  @method addSVGClass
-  @param {Object} selector A YUI-wrapped SVG node or a selector string used
-    with Y.all that must return only SVG nodes.
-  @param {String} class_name The class name to add.
-  @return {Undefined} Mutates only.
+    @method addSVGClass
+    @param {Object} selector A YUI-wrapped SVG node or a selector string used
+      with Y.all that must return only SVG nodes.
+    @param {String} class_name The class name to add.
+    @return {Undefined} Mutates only.
   */
   var addSVGClass = function(selector, class_name) {
     var self = this;
@@ -169,14 +171,14 @@ YUI.add('juju-view-utils', function(Y) {
   utils.addSVGClass = addSVGClass;
 
   /**
-  Remove a CSS class name from a SVG node or from all the nodes matching the
-  selector.
+    Remove a CSS class name from a SVG node or from all the nodes matching the
+    selector.
 
-  @method removeSVGClass
-  @param {Object} selector A YUI-wrapped SVG node or a selector string used
-    with Y.all that must return only SVG nodes.
-  @param {String} class_name The class name to remove.
-  @return {Undefined} Mutates only.
+    @method removeSVGClass
+    @param {Object} selector A YUI-wrapped SVG node or a selector string used
+      with Y.all that must return only SVG nodes.
+    @param {String} class_name The class name to remove.
+    @return {Undefined} Mutates only.
   */
   var removeSVGClass = function(selector, class_name) {
     if (!selector) {
@@ -238,15 +240,15 @@ YUI.add('juju-view-utils', function(Y) {
   window.consoleManager = consoleManager();
 
   /**
-  Convert a UNIX timestamp to a human readable version of approximately how
-  long ago it was from now.
+    Convert a UNIX timestamp to a human readable version of approximately how
+    long ago it was from now.
 
-  Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
-  w/o the watch/refresh code
+    Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
+    w/o the watch/refresh code
 
-  @method humanizeTimestamp
-  @param {Number} t The timestamp.
-  @return {String} The presentation of the timestamp.
+    @method humanizeTimestamp
+    @param {Number} t The timestamp.
+    @return {String} The presentation of the timestamp.
   */
   var humanizeTimestamp = function(t) {
     var l = timestrings,
@@ -260,12 +262,12 @@ YUI.add('juju-view-utils', function(Y) {
         years = days / 365;
 
     /**
-    Given a number and a way to convert the number to a string that is a
-    template or a function producing a template string, return the template
-    substituted with the number.
+      Given a number and a way to convert the number to a string that is a
+      template or a function producing a template string, return the template
+      substituted with the number.
 
-    Internal helper function to humanizeTimestamp, intentionally not formatted
-    to be included in exported docs.
+      Internal helper function to humanizeTimestamp, intentionally not
+      formatted to be included in exported docs.
     */
     function substitute(stringOrFunction, number) {
       var string = Y.Lang.isFunction(stringOrFunction) ?
