@@ -3,16 +3,16 @@
 (function() {
 
   describe('window feature flag tests', function() {
+    var featureFlags = window.featureFlags;
 
     it('picks up there are flags in the url', function() {
-      debugger;
       var url = '/:flags:/foo/bar=10',
           flags = featureFlags(url);
       flags.foo.should.eql(true);
       flags.bar.should.eql('10');
     });
 
-    it('pulls flags from the config if available', function () {
+    it('pulls flags from the config if available', function() {
       var url = '/:flags:/foo/bar=10',
           config = {baz: 'three'},
           flags = featureFlags(url, config);
@@ -21,7 +21,7 @@
       flags.baz.should.eql('three');
     });
 
-    it('overwrites config flags with url flags', function () {
+    it('overwrites config flags with url flags', function() {
       var url = '/:flags:/foo/bar=10',
           config = {bar: 3},
           flags = featureFlags(url, config);
@@ -29,7 +29,7 @@
       flags.bar.should.eql('10');
     });
 
-    it('parses urls with and without flags', function () {
+    it('parses urls with and without flags', function() {
       var urls = {
         '/:flags:/': {
 
@@ -64,7 +64,9 @@
       };
 
       for (var url in urls) {
-        assert.deepEqual(featureFlags(url), urls[url]);
+        if (urls.hasOwnProperty(url)) {
+          assert.deepEqual(featureFlags(url), urls[url]);
+        }
       }
     });
 

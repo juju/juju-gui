@@ -266,10 +266,10 @@ if (/*@cc_on!@*/false) {
         - The (default) absence of the flag indicates the feature will be
         unavailable.
 
-        If those conditions are met then you may simply use the descriptive name
-        of the feature taking care it uniquely defines the feature. An example is
-        rather than specifying gui.dndexport.enable you can specify dndexport as a
-        flag.
+        If those conditions are met then you may simply use the descriptive
+        name of the feature taking care it uniquely defines the feature. An
+        example is rather than specifying gui.dndexport.enable you can specify
+        dndexport as a flag.
 
         @method featureFlags
         @param {object} url The url to parse for flags.
@@ -295,19 +295,19 @@ if (/*@cc_on!@*/false) {
           urlFlags = urlFlags.slice(1);
 
           urlFlags.forEach(function(flag) {
-              var key = flag;
-              var value = true;
+            var key = flag;
+            var value = true;
 
-              // Allow setting a specific value other than true.
-              var equals = flag.indexOf('=');
-              if (equals !== -1) {
-                key = flag.slice(0, equals);
-                // Add one to the index to make sure we drop the first equals from
-                // the string.
-                value = flag.slice((equals + 1));
-              }
+            // Allow setting a specific value other than true.
+            var equals = flag.indexOf('=');
+            if (equals !== -1) {
+              key = flag.slice(0, equals);
+              // Add one to the index to make sure we drop the first equals from
+              // the string.
+              value = flag.slice((equals + 1));
+            }
 
-              flags[key] = value;
+            flags[key] = value;
           });
         }
 
