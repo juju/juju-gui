@@ -2,8 +2,19 @@
 
 (function() {
 
+  /**
+    Note: you cannot .only this test suite. it required the
+    window.featureFlags method which is loaded from the test_startup.js file
+    that should be loaded before this file in the test suite.
+
+  */
   describe('window feature flag tests', function() {
-    var featureFlags = window.featureFlags;
+    var featureFlags;
+
+    before(function(done) {
+      featureFlags = window.featureFlags;
+      done();
+    });
 
     it('picks up there are flags in the url', function() {
       var url = '/:flags:/foo/bar=10',
