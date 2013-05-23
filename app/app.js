@@ -289,7 +289,7 @@ YUI.add('juju-gui', function(Y) {
       Y.each(key_map, function(v, k) {
         code_map[v] = k;
       });
-      Y.one(window).on('keydown', function(evt) {
+      this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
         var symbolic = [];
         if (evt.ctrlKey) { symbolic.push('C');}
@@ -564,6 +564,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this._keybindings) {
+        this._keybindings.detach();
+      }
       Y.each(
           [this.env, this.db, this.charm_store, this.notifications,
            this.landscape, this.endpointsController],
