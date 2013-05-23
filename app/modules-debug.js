@@ -142,6 +142,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
         },
 
+        'juju-inspector-widget': {
+          fullpath: '/juju-ui/widgets/inspector-widget.js'
+        },
+
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },

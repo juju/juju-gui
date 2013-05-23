@@ -48,7 +48,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         // env has the proper setup. This happens once.
         var db = context.state.db;
         var envAnno = db.environment.get('annotations');
-        envAnno['landscape-url'] = 'http://landscape.com';
+        envAnno['landscape-url'] = 'http://landscape.example.com';
         envAnno['landscape-computers'] = '/computers/criteria/environment:test';
         envAnno['landscape-reboot-alert-url'] =
             '+alert:computer-reboot/info#power';
