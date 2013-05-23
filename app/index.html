@@ -238,6 +238,10 @@ if (/*@cc_on!@*/false) {
       /**
         Feature flags support.
 
+        :WARNING: this is stuck on the window object to make sure it's
+        available everywhere. This means mocking this out in tests can be
+        dangerous and evil. Be careful.
+
         This allows us to use the :flags: NS to set either boolean or string
         feature flags to control various features in the app.  A simple /<flag>/
         will set that flag as true in the global flags variable.  A
@@ -271,7 +275,7 @@ if (/*@cc_on!@*/false) {
         @param {object} url The url to parse for flags.
         @param {object} configFlags An optional config object to merge with.
       */
-      var featureFlags = function(url, configFlags) {
+      window.featureFlags = function(url, configFlags) {
         var flags = configFlags || {},
             flagsRegex = new RegExp(/:flags:\/([^:])*/g);
 
