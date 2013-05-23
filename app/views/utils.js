@@ -31,6 +31,11 @@ YUI.add('juju-view-utils', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  /** global utils functions
+
+  @class utils
+  */
+
   /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -86,6 +91,14 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  /**
+  Generate a human-readable presentation value for an integer, rounding
+  to the largest of ones, thousands (K), millions (M), or billions (B).
+
+  @method humanizeNumber
+  @param {Integer} n The source number.
+  @return {String} The presentation value.
+  */
   var humanizeNumber = function(n) {
     var units = [[1000, 'K'],
           [1000000, 'M'],
@@ -107,9 +120,14 @@ YUI.add('juju-view-utils', function(Y) {
   };
   utils.humanizeNumber = humanizeNumber;
 
-  /*
-   * Utility methods for SVG regarding classes
-   */
+  /**
+  Determine whether a SVG node has a given CSS class name.
+
+  @method hasSVGClass
+  @param {Object} selector A YUI-wrapped SVG node.
+  @param {String} class_name The class name to look for.
+  @return {Boolean} Whether the selector has the class name.
+  */
   var hasSVGClass = function(selector, class_name) {
     var classes = selector.getAttribute('class');
     if (!classes) {
@@ -119,6 +137,15 @@ YUI.add('juju-view-utils', function(Y) {
   };
   utils.hasSVGClass = hasSVGClass;
 
+  /**
+  Add a CSS class name to a SVG node or to all the nodes matching the selector.
+
+  @method addSVGClass
+  @param {Object} selector A YUI-wrapped SVG node or a selector string used
+    with Y.all that must return only SVG nodes.
+  @param {String} class_name The class name to add.
+  @return {Undefined} Mutates only.
+  */
   var addSVGClass = function(selector, class_name) {
     var self = this;
     if (!selector) {
@@ -141,6 +168,16 @@ YUI.add('juju-view-utils', function(Y) {
   };
   utils.addSVGClass = addSVGClass;
 
+  /**
+  Remove a CSS class name from a SVG node or from all the nodes matching the
+  selector.
+
+  @method removeSVGClass
+  @param {Object} selector A YUI-wrapped SVG node or a selector string used
+    with Y.all that must return only SVG nodes.
+  @param {String} class_name The class name to remove.
+  @return {Undefined} Mutates only.
+  */
   var removeSVGClass = function(selector, class_name) {
     if (!selector) {
       return;
@@ -157,15 +194,6 @@ YUI.add('juju-view-utils', function(Y) {
     }
   };
   utils.removeSVGClass = removeSVGClass;
-
-  var toggleSVGClass = function(selector, class_name) {
-    if (this.hasSVGClass(selector, class_name)) {
-      this.removeSVGClass(selector, class_name);
-    } else {
-      this.addSVGClass(selector, class_name);
-    }
-  };
-  utils.toggleSVGClass = toggleSVGClass;
 
   var consoleManager = function() {
     var winConsole = window.console,
@@ -209,10 +237,17 @@ YUI.add('juju-view-utils', function(Y) {
   // Also assign globally to manage the actual console.
   window.consoleManager = consoleManager();
 
-  /*
- * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
- * w/o the watch/refresh code
- */
+  /**
+  Convert a UNIX timestamp to a human readable version of approximately how
+  long ago it was from now.
+
+  Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
+  w/o the watch/refresh code
+
+  @method humanizeTimestamp
+  @param {Number} t The timestamp.
+  @return {String} The presentation of the timestamp.
+  */
   var humanizeTimestamp = function(t) {
     var l = timestrings,
         prefix = l.prefixAgo,
@@ -224,6 +259,14 @@ YUI.add('juju-view-utils', function(Y) {
         days = hours / 24,
         years = days / 365;
 
+    /**
+    Given a number and a way to convert the number to a string that is a
+    template or a function producing a template string, return the template
+    substituted with the number.
+
+    Internal helper function to humanizeTimestamp, intentionally not formatted
+    to be included in exported docs.
+    */
     function substitute(stringOrFunction, number) {
       var string = Y.Lang.isFunction(stringOrFunction) ?
           stringOrFunction(number, distanceMillis) : stringOrFunction,
@@ -284,82 +327,6 @@ YUI.add('juju-view-utils', function(Y) {
         return result;
       }
       return null;
-    },
-
-    humanizeNumber: function(n) {
-      var units = [[1000, 'K'],
-            [1000000, 'M'],
-            [1000000000, 'B']],
-          result = n;
-
-      Y.each(units, function(sizer) {
-        var threshold = sizer[0],
-            unit = sizer[1];
-        if (n > threshold) {
-          result = (n / threshold);
-          if (n % threshold !== 0) {
-            result = result.toFixed(1);
-          }
-          result = result + unit;
-        }
-      });
-      return result;
-    },
-
-    /*
-     * Utility methods for SVG regarding classes
-     */
-    hasSVGClass: function(selector, class_name) {
-      var classes = selector.getAttribute('class');
-      if (!classes) {
-        return false;
-      }
-      return classes.indexOf(class_name) !== -1;
-    },
-
-    addSVGClass: function(selector, class_name) {
-      var self = this;
-      if (!selector) {
-        return;
-      }
-
-      if (typeof(selector) === 'string') {
-        Y.all(selector).each(function(n) {
-          var classes = this.getAttribute('class');
-          if (!self.hasSVGClass(this, class_name)) {
-            this.setAttribute('class', classes + ' ' + class_name);
-          }
-        });
-      } else {
-        var classes = selector.getAttribute('class');
-        if (!self.hasSVGClass(selector, class_name)) {
-          selector.setAttribute('class', classes + ' ' + class_name);
-        }
-      }
-    },
-
-    removeSVGClass: function(selector, class_name) {
-      if (!selector) {
-        return;
-      }
-
-      if (typeof(selector) === 'string') {
-        Y.all(selector).each(function() {
-          var classes = this.getAttribute('class');
-          this.setAttribute('class', classes.replace(class_name, ''));
-        });
-      } else {
-        var classes = selector.getAttribute('class');
-        selector.setAttribute('class', classes.replace(class_name, ''));
-      }
-    },
-
-    toggleSVGClass: function(selector, class_name) {
-      if (this.hasSVGClass(selector, class_name)) {
-        this.removeSVGClass(selector, class_name);
-      } else {
-        this.addSVGClass(selector, class_name);
-      }
     }
 
   });
