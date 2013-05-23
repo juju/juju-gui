@@ -162,10 +162,10 @@ help:
 	@echo "test-prod-server: run tests in the browser from the prod environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
-	@echo "check: run checks used by lbox""
+	@echo "check: run checks used by lbox"
 	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
-	@echo "Other targets are available, see the Makefile."
+	@echo "Other targets are available.  See the Makefile."
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build-shared/juju-ui/assets
