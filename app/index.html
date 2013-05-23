@@ -281,7 +281,7 @@ if (/*@cc_on!@*/false) {
 
         var found = url.match(flagsRegex);
 
-        // Sometimes it matches a trailing / as a second item.
+        // The matches come back as an array.
         if (found && found.length) {
           found = found[0];
         }
