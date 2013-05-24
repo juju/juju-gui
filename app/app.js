@@ -62,13 +62,11 @@ YUI.add('juju-gui', function(Y) {
       End extension properties
     */
 
-    /*
+    /**
      * Views
      *
      * The views encapsulate the functionality blocks that output
      * the GUI pages. The "parent" attribute defines the hierarchy.
-     *
-     * FIXME: not included in the generated doc output.
      *
      * @attribute views
      */
@@ -158,8 +156,6 @@ YUI.add('juju-gui', function(Y) {
      * help: {String} Help text to display in popup.
      *
      * All are optional.
-     *
-     *
      */
     keybindings: {
       'A-s': {
@@ -213,7 +209,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Data driven behaviors
+     * Data driven behaviors.
      *
      * Placeholder for real behaviors associated with DOM Node data-*
      * attributes.
@@ -284,11 +280,10 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      */
     initializer: function(cfg) {
-      // If no cfg is passed in use a default empty object so we don't blow up
+      // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
-      // If this flag is true, start the application
-      // with the console activated.
+      // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
       // Concession to testing, they need muck with console, we cannot as well.
@@ -320,13 +315,13 @@ YUI.add('juju-gui', function(Y) {
       this.landscape = new views.Landscape();
       this.landscape.set('db', this.db);
 
-      // Set up a new modelController instance
+      // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db
       });
 
-      // Update the on-screen environment name provided in the configuration or
-      // a default if none is configured.
+      // Update the on-screen environment name provided in the configuration,
+      // or a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
           environment_node = Y.one('#environment-name');
 
@@ -451,7 +446,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // If the database updates, redraw the view (distinct from model updates)
+      // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
 
@@ -480,7 +475,7 @@ YUI.add('juju-gui', function(Y) {
         this.charmPanel.setDefaultSeries(ev.newVal);
       }, this));
 
-      // Halts the default navigation on the juju logo to allow us to show
+      // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
       // Tests won't have this node.
@@ -493,8 +488,7 @@ YUI.add('juju-gui', function(Y) {
 
       Y.one('#logout-trigger').on('click', this.logout, this);
 
-      // Attach SubApplications
-      // The subapps should share the same db.
+      // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
@@ -583,7 +577,7 @@ YUI.add('juju-gui', function(Y) {
       // Update Landscape annotations.
       this.landscape.update();
 
-      // Regardless of which view we are rendering
+      // Regardless of which view we are rendering,
       // update the env view on db change.
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
@@ -645,8 +639,8 @@ YUI.add('juju-gui', function(Y) {
             }
           },
           // If there is no service available then there definitely is no unit
-          // available so we create a notification and redirect the user to the
-          // environment view.
+          // available, so we create a notification and redirect the user to
+          // the environment view.
           function() {
             clearTimeout(handle);
             self.db.notifications.add(
@@ -694,7 +688,7 @@ YUI.add('juju-gui', function(Y) {
             clearTimeout(handle);
             options.model = models.service;
             // Calling update allows showView to be called multiple times but
-            // only have its config updated not re-rendered.
+            // only have its config updated, not re-rendered.
             self.showView(
                 viewName, options, { update: true }, containerAttached);
           },
@@ -703,9 +697,9 @@ YUI.add('juju-gui', function(Y) {
             self.showView(viewName, options, { update: true },
                 function(view) {
                   // At this point the service view could be in loading state
-                  // or showing details but the service has become unavailable
-                  // or was never available. This calls a method on the view
-                  // to redirect to the environment and to create a notification
+                  // or showing details, but the service has become unavailable
+                  // or was never available. This calls a method on the view to
+                  // redirect to the environment and to create a notification.
                   if (typeof view.noServiceAvailable === 'function') {
                     view.noServiceAvailable();
                   }
@@ -1132,7 +1126,7 @@ YUI.add('juju-gui', function(Y) {
       charm_store_url: {},
       charmworldURL: {},
 
-      /*
+      /**
        * Routes
        *
        * Each request path is evaluated against all hereby defined routes,
@@ -1156,8 +1150,6 @@ YUI.add('juju-gui', function(Y) {
        * `intent`: (optional) A string named `intent` for which this route
        *   should be used. This can be used to select which subview is selected
        *   to resolve a model's route.
-       *
-       * FIXME: not included in the generated doc output.
        *
        * @attribute routes
        */

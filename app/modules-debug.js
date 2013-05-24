@@ -32,7 +32,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // minimizer will not parse it.
 var GlobalConfig = {
   filter: 'debug',
-  // Set "true" for verbose logging of YUI
+  // Set "true" for verbose logging of YUI.
   debug: false,
 
   base: '/juju-ui/assets/javascripts/yui/',
