@@ -432,11 +432,10 @@ YUI.add('juju-gui', function(Y) {
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
 
-      // The config is set as attrs on the app instance so there's a
-      // simulateEvents setting that propagates through to here.
-      if (window.flags.simulateEvents || this.get('simulateEvents')) {
-        this.simulateEvents();
-      }
+      // Create an event simulator where possible.
+      // Starting the simulator is handled by hotkeys
+      // and/or the config setting 'simulateEvents'.
+      this.simulateEvents();
 
       // Set the env in the model controller here so
       // that we know that it's been setup.
@@ -550,16 +549,26 @@ YUI.add('juju-gui', function(Y) {
     */
     simulateEvents: function() {
       if (!this._simulator && this.env) {
-        var conn = this.env.get('conn');
-        var juju = conn && conn.get('juju');
-        var state = juju && juju.get('state');
-        if (state) {
-          var Simulator = Y.namespace('juju.environments').Simulator;
-          this._simulator = new Simulator({state: state});
-          this._simulator.start();
+        // Try/Catch this to allow mocks in tests.
+        try {
+          var conn = this.env.get('conn');
+          var juju = conn && conn.get('juju');
+          var state = juju && juju.get('state');
+          if (state) {
+            var Simulator = Y.namespace('juju.environments').Simulator;
+            this._simulator = new Simulator({state: state});
+            if (this.get('simulateEvents')) {
+              this._simulator.start();
+            }
+          }
+        }
+        catch (err) {
+          // Unable to create simulator, usually due to mocks or an
+          // unsupported environment
+          console.log('Unable to create simulator: ', err);
         }
       }
-    },
+      },
 
     /**
     Release resources and inform subcomponents to do the same.
@@ -569,6 +578,9 @@ YUI.add('juju-gui', function(Y) {
     destructor: function() {
       if (this._keybindings) {
         this._keybindings.detach();
+      }
+      if (this._simulator) {
+        this._simulator.stop();
       }
       Y.each(
           [this.env, this.db, this.charm_store, this.notifications,
