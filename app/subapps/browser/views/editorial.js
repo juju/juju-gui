@@ -42,6 +42,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
       {
+        EV_CACHE_UPDATED: 'cache-updated',
         template: views.Templates.editorial,
 
         // How many of each charm container do we show by default.
@@ -69,6 +70,99 @@ YUI.add('subapp-browser-editorial', function(Y) {
         },
 
         /**
+           Renders the editorial, "interesting" data to the view.
+
+           @private
+           @method _renderInteresting
+           @param {Object} data The interesting data, cached or returned from
+           the API.
+         */
+        _renderInteresting: function(data) {
+          this._cached_interesting = data;
+          var tpl = this.template(this.getAttrs()),
+              tplNode = Y.Node.create(tpl),
+              cutoffs;
+          // Add featured charms
+          var featuredCharms = this.get('store').resultsToCharmlist(
+              data.result.featured);
+          var featuredContainer = tplNode.one('.featured');
+          if (this.get('isFullscreen')) {
+            cutoffs = this.cutoffs.fullscreen;
+          } else {
+            cutoffs = this.cutoffs.sidebar;
+          }
+
+          var containerCfg = {
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
+          };
+
+          var featuredCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Featured Charms',
+                cutoff: cutoffs.featured,
+                children: featuredCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          featuredCharmContainer.render(featuredContainer);
+
+          // Add popular charms
+          var popularCharms = this.get('store').resultsToCharmlist(
+              data.result.popular);
+          var popularContainer = tplNode.one('.popular');
+          var popularCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Popular Charms',
+                cutoff: cutoffs.popular,
+                children: popularCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          popularCharmContainer.render(popularContainer);
+
+          // Add in the charm tokens for the new as well.
+          var newContainer = tplNode.one('.new');
+          var newCharms = this.get('store').resultsToCharmlist(
+              data.result['new']);
+          var newCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'New Charms',
+                cutoff: cutoffs['new'],
+                children: newCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          newCharmContainer.render(newContainer);
+
+          var container = this.get('container');
+          container.append(tplNode);
+          this.get('renderTo').setHTML(container);
+          this.hideIndicator(this.get('renderTo'));
+
+          this.charmContainers = [
+            featuredCharmContainer,
+            newCharmContainer,
+            popularCharmContainer
+          ];
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                container.one('.charm-token[data-charmid="' + active + '"]')
+            );
+          }
+          // Add the charms to the cache for use in other views.
+          // Start with a reset to empty any current cached models.
+          this._cache.charms.reset(newCharms);
+          this._cache.charms.add(popularCharms);
+          this._cache.charms.add(featuredCharms);
+          this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
+        },
+
+        /**
          * Load the editorial content into the container specified.
          *
          * @method render
@@ -77,105 +171,25 @@ YUI.add('subapp-browser-editorial', function(Y) {
          *
          */
         render: function() {
-          var tpl = this.template(this.getAttrs()),
-              tplNode = Y.Node.create(tpl),
-              store = this.get('store');
-
+          var store = this.get('store');
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
           // display.
-          this.get('store').interesting({
-            'success': function(data) {
-              var cutoffs;
-              // Add featured charms
-              var featuredCharms = this.get('store').resultsToCharmlist(
-                  data.result.featured);
-              var featuredContainer = tplNode.one('.featured');
-              if (this.get('isFullscreen')) {
-                cutoffs = this.cutoffs.fullscreen;
-              } else {
-                cutoffs = this.cutoffs.sidebar;
-              }
-
-              var containerCfg = {
-                additionalChildConfig: {
-                  size: this.get('isFullscreen') ? 'large' : 'small'
-                }
-              };
-
-              var featuredCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'Featured Charms',
-                    cutoff: cutoffs.featured,
-                    children: featuredCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              featuredCharmContainer.render(featuredContainer);
-
-              // Add popular charms
-              var popularCharms = this.get('store').resultsToCharmlist(
-                  data.result.popular);
-              var popularContainer = tplNode.one('.popular');
-              var popularCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'Popular Charms',
-                    cutoff: cutoffs.popular,
-                    children: popularCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              popularCharmContainer.render(popularContainer);
-
-              // Add in the charm tokens for the new as well.
-              var newContainer = tplNode.one('.new');
-              var newCharms = this.get('store').resultsToCharmlist(
-                  data.result['new']);
-              var newCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'New Charms',
-                    cutoff: cutoffs['new'],
-                    children: newCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              newCharmContainer.render(newContainer);
-
-              var container = this.get('container');
-              container.append(tplNode);
-              this.get('renderTo').setHTML(container);
-              this.hideIndicator(this.get('renderTo'));
-
-              // Add the charms to the cache for use in other views.
-              // Start with a reset to empty any current cached models.
-              this._cacheCharms.reset(newCharms);
-              this._cacheCharms.add(popularCharms);
-              this._cacheCharms.add(featuredCharms);
-              this.charmContainers = [
-                featuredCharmContainer,
-                newCharmContainer,
-                popularCharmContainer
-              ];
-
-              // Set the active charm if available.
-              var active = this.get('activeID');
-              if (active) {
-                this._updateActive(
-                    container.one('.charm-token[data-charmid="' + active + '"]')
-                );
-              }
-            },
-
-            'failure': this.apiFailure
-          }, this);
+          if (this._cache.interesting) {
+            this._renderInteresting(this._cache.interesting);
+          } else {
+            this.get('store').interesting({
+              'success': this._renderInteresting,
+              'failure': this.apiFailure
+            }, this);
+          }
         },
 
         /**
-         * Destroy this view and clear from the dom world.
-         *
-         * @method destructor
-         *
+           Destroy this view and clear from the dom world.
+
+           @method destructor
          */
         destructor: function() {
           if (this.charmContainers) {
@@ -183,6 +197,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
               container.destroy();
             });
           }
+          this._cache.destroy();
+        },
+
+        initializer: function (cfg) {
+          this._cache = {
+            interesting: null,
+            charms: new models.BrowserCharmList()
+          };
         }
       }, {
         ATTRS: {}
