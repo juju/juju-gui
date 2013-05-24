@@ -568,7 +568,7 @@ YUI.add('juju-gui', function(Y) {
           console.log('Unable to create simulator: ', err);
         }
       }
-      },
+    },
 
     /**
     Release resources and inform subcomponents to do the same.
