@@ -149,9 +149,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
               // Add the charms to the cache for use in other views.
               // Start with a reset to empty any current cached models.
-              this._cacheCharms.reset(newCharms);
-              this._cacheCharms.add(popularCharms);
-              this._cacheCharms.add(featuredCharms);
+              this._cache.charms.reset(newCharms);
+              this._cache.charms.add(popularCharms);
+              this._cache.charms.add(featuredCharms);
               this.charmContainers = [
                 featuredCharmContainer,
                 newCharmContainer,

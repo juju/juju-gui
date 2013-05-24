@@ -277,7 +277,7 @@ YUI.add('subapp-browser', function(Y) {
        @method destructor
      */
     destructor: function() {
-      this._cacheCharms.destroy();
+      this._cache.charms.destroy();
       delete this._viewState;
     },
 
@@ -290,7 +290,9 @@ YUI.add('subapp-browser', function(Y) {
     initializer: function(cfg) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
+      this._cache = {
+        charms: new models.BrowserCharmList()
+      };
       this._initState();
       this._filter = new models.browser.Filter();
 
@@ -329,7 +331,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cacheCharms.getById(charmID);
+      var model = this._cache.charms.getById(charmID);
 
       if (model) {
         extraCfg.charm = model;
@@ -385,7 +387,7 @@ YUI.add('subapp-browser', function(Y) {
       this._editorial.addTarget(this);
 
       // Add any sidebar charms to the running cache.
-      this._cacheCharms.add(this._editorial._cacheCharms);
+      this._cache.charms.add(this._editorial._cache.charms);
     },
 
     /**
