@@ -23,6 +23,8 @@ import unittest
 from websocket_replay import (
     Frame,
     NORMAL,
+    WSHandler,
+    application,
     handle_message,
     infer_direction,
     print_with_color,
@@ -246,6 +248,17 @@ class TestHandlingMessages(unittest.TestCase):
         # The program will exit.
         result = handle_message(MESSAGE, frames, written.append, log=log)
         self.assertEqual(result, NEXT_EXPECTED)
+
+
+class TestWebsocketHandlerIsConnected(unittest.TestCase):
+
+    def test_handler_is_connected(self):
+        # The websocket handler is connected to the /ws route.
+        self.assertEqual(len(application.handlers), 1)
+        self.assertTrue(application.handlers[0][0].match('/ws'))
+        self.assertEqual(
+            application.handlers[0][1][0].handler_class,
+            WSHandler)
 
 
 if __name__ == '__main__':
