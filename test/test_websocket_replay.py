@@ -140,7 +140,47 @@ class FauxLogger(object):
 class TestHandlingMessages(unittest.TestCase):
     """When messages come in, we have to figure out a response."""
 
-    def test_expected_message_comes_in(self):
+    def test_received_messages_are_logged(self):
+        # Each message recieved is logged.
+        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        MESSAGE = json.dumps(EXPECTED.message)
+        written = []
+        log = FauxLogger()
+        handle_message(MESSAGE, iter([]), written.append, expected=EXPECTED,
+            log=log)
+        self.assertIn(('received', (MESSAGE,)), log.logged)
+
+    def test_sent_messages_are_logged(self):
+        # Each message recieved is logged.
+        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        MESSAGE = json.dumps(EXPECTED.message)
+        TO_CLIENT_1 = 'next 1'
+        TO_CLIENT_2 = 'next 2'
+        frames = iter([
+            Frame(TO_CLIENT_1, 'to client'),
+            Frame(TO_CLIENT_2, 'to client')])
+        written = []
+        log = FauxLogger()
+        handle_message(MESSAGE, frames, written.append, expected=EXPECTED,
+            log=log)
+        self.assertIn(('sent', (TO_CLIENT_1,)), log.logged)
+        self.assertIn(('sent', (TO_CLIENT_2,)), log.logged)
+
+    def test_out_of_frames_message_is_logged(self):
+        # When the end of the log is reached, a message is displayed saying
+        # so.
+        EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
+        MESSAGE = json.dumps(EXPECTED.message)
+        frames = iter([])
+        written = []
+        log = FauxLogger()
+        handle_message(MESSAGE, frames, written.append, expected=EXPECTED,
+            log=log)
+        self.assertIn(
+            ('message', ('reached end of log, ignoring incoming frames',)),
+            log.logged)
+
+    def test_expected_messages_are_handled(self):
         # When the message recieved from the client was expected, and there
         # are one or more messages that must then be sent to the client, then
         # we send them.
@@ -155,7 +195,7 @@ class TestHandlingMessages(unittest.TestCase):
         # The next messages to the client were sent.
         self.assertEqual(written, ['"next 1"', '"next 2"'])
 
-    def test_expected_message_comes_in_but_was_not_provided(self):
+    def test_expected_messages_read_from_log_ar_handled(self):
         # When no expected message is provided, then next message is read from
         # the frame log and used instead.
         EXPECTED = {'op': 'something', 'request_id': 42}
@@ -195,15 +235,17 @@ class TestHandlingMessages(unittest.TestCase):
         # messages from the server, the next expected message is returned.
         EXPECTED = {'op': 'something', 'request_id': 42}
         MESSAGE = json.dumps(EXPECTED)
+        NEXT_EXPECTED = Frame('next expected', 'to server')
         written = []
         log = FauxLogger()
         frames = iter([
             Frame(EXPECTED, 'to server'),
             Frame('next 1', 'to client'),
             Frame('next 2', 'to client'),
-            Frame('next expected', 'to server')])
+            NEXT_EXPECTED])
         # The program will exit.
-        handle_message(MESSAGE, frames, written.append, log=log)
+        result = handle_message(MESSAGE, frames, written.append, log=log)
+        self.assertEqual(result, NEXT_EXPECTED)
 
 
 if __name__ == '__main__':
