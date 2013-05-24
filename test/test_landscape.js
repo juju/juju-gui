@@ -38,7 +38,7 @@ describe('Landscape integration', function() {
 
       // Set defaults for testing.
       envAnno = db.environment.get('annotations');
-      envAnno['landscape-url'] = 'http://landscape.com';
+      envAnno['landscape-url'] = 'http://landscape.example.com';
       envAnno['landscape-computers'] = '/computers/criteria/environment:test';
       envAnno['landscape-reboot-alert-url'] =
           '+alert:computer-reboot/info#power';
@@ -64,25 +64,25 @@ describe('Landscape integration', function() {
     var url;
     url = landscape.getLandscapeURL(db.environment);
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test/');
+        'http://landscape.example.com/computers/criteria/environment:test/');
 
     url = landscape.getLandscapeURL(db.environment, 'security');
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test' +
+        'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:security-upgrades/packages/list?filter=security');
 
     url = landscape.getLandscapeURL(db.environment, 'reboot');
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test' +
+        'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:computer-reboot/info#power');
 
     url = landscape.getLandscapeURL(db.services.getById('mysql'));
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test+service:mysql/');
+        'http://landscape.example.com/computers/criteria/environment:test+service:mysql/');
 
     url = landscape.getLandscapeURL(db.units.item(0));
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+        'http://landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
   });
 
 
@@ -161,7 +161,7 @@ describe('Landscape integration', function() {
     node.one('.logo-tab i').hasClass('landscape_logo').should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should
-      .equal('http://landscape.com/computers/criteria/environment:test/');
+      .equal('http://landscape.example.com/computers/criteria/environment:test/');
     // We should have visible controls.
     node.one('.updates-control').getStyle('display').should.equal('block');
     node.one('.restart-control').getStyle('display').should.equal('block');
@@ -171,7 +171,7 @@ describe('Landscape integration', function() {
 
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-        'landscape.com/computers/criteria/environment:test+service:mysql/');
+        'landscape.example.com/computers/criteria/environment:test+service:mysql/');
     // We should have visible restart but not update controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('block');
@@ -192,7 +192,7 @@ describe('Landscape integration', function() {
 
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-        'landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+        'landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
     // We should have no visible controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('none');

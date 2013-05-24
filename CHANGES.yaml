@@ -37,15 +37,15 @@
     - No longer reports trivial errors caused by being in restricted
       (read-only) mode.  E.g., moving a service does not generate an error.
     - Much nicer default layout of the services.
-    - Remvoed HTML5 application cache as it was causing more problems than it
+    - Removed HTML5 application cache as it was causing more problems than it
       was solving.
     - Added licensing info to project (AGPL).
     - Fixed a memory leak in the code that reacts to changes coming from the
       Juju environment.
 - 0.4.0:
     - Support for Juju Core (Go Juju).
-    - New "sandbox" mode for in-browser-memory fake juju (set sandbox: true in
-      config.js).
+    - New "sandbox" mode for in-browser-memory fake juju (set "sandbox" to
+      "true" in config.js).
     - Support for Firefox.
     - Support for Landscape integration.
     - Many bug fixes.

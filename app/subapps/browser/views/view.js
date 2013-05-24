@@ -177,7 +177,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      this._cacheCharms.destroy();
+      this._cache.charms.destroy();
 
       // Clean up any details view we might have hanging around.
       if (this.details) {
@@ -199,7 +199,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
+      this._cache = {
+        charms: new models.BrowserCharmList()
+      };
     },
 
     /**

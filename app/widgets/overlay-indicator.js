@@ -31,6 +31,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     initializer: function(cfg) {
       this.hide();
+      this._spinner = Y.spinner.getSpinner();
     },
 
     /**
@@ -62,18 +63,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
       var local_parent = this.get('target').get('parentNode');
       this._renderBoxClassNames();
       this._renderBox(local_parent);
-    },
-
-    /**
-     * Build the indicator overlay itself.
-     *
-     * @method renderUI
-     */
-    renderUI: function() {
-      var node_html = '<img src="{src}">';
-      var img = Y.Node.create(
-          sub(node_html, {src: this.get('loading_image')}));
-      this.get('contentBox').append(img);
     },
 
     /**
@@ -109,6 +98,8 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * @method setBusy
      */
     setBusy: function() {
+      var target = this.get('target').getDOMNode();
+      this._spinner.spin(target);
       this.show();
     },
 
@@ -119,6 +110,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     success: function() {
       this.hide();
+      this._spinner.stop();
       var callback = this.get('success_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -132,6 +124,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     error: function() {
       this.hide();
+      this._spinner.stop();
       var callback = this.get('error_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -258,5 +251,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
 }, '0.1.0', { requires: [
   'base',
   'node-screen',
+  'spinner',
   'widget'
 ]});

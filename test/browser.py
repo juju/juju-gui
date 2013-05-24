@@ -126,12 +126,14 @@ def get_capabilities(browser_name):
         ),
         'firefox': (
             desired.FIREFOX,
-            # Removing the version below causes the FireFox CI deployment tests
-            # to fail.
-            {'platform': 'Linux', 'version': '20'},
+            # Juju GUI supports Firefox >= 16 (quantal base).  At the time of
+            # this comment the default version used in Saucelabs, if none is
+            # specified, is 11.
+            {'platform': 'Linux', 'version': '16'},
         ),
         'ie': (
             desired.INTERNETEXPLORER,
+            # Internet Explorer version must be >= 10.
             {'platform': 'Windows 2012', 'version': '10'},
         ),
     }
@@ -167,6 +169,13 @@ def make_local_driver(browser_name, capabilities):
     return driver_class(**kwargs)
 
 
+def get_platform(driver):
+    """Return info about the platform used by the given driver."""
+    name = driver.name.title()
+    caps = driver.capabilities
+    return '{} {} ({})'.format(name, caps['version'], caps['platform'].title())
+
+
 class TestCase(unittest.TestCase):
     """Helper base class that supports running browser tests."""
 
@@ -185,7 +194,7 @@ class TestCase(unittest.TestCase):
             capabilities = get_capabilities(name)
             driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            print('Browser: local {}'.format(name))
+            print('* Platform: local {}'.format(get_platform(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
             capabilities = get_capabilities(browser_name)
@@ -197,7 +206,7 @@ class TestCase(unittest.TestCase):
             cls.remote_driver = True
             details = 'https://saucelabs.com/jobs/' + driver.session_id
             print(
-                '* Browser: {}'.format(browser_name),
+                '* Platform: {}'.format(get_platform(driver)),
                 '* Testcase: {}'.format(cls.__name__),
                 '* Details: {}'.format(details),
                 sep='\n'
