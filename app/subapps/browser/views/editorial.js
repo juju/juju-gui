@@ -78,7 +78,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
            the API.
          */
         _renderInteresting: function(data) {
-          this._cached_interesting = data;
+          this._cache.interesting = data;
           var tpl = this.template(this.getAttrs()),
               tplNode = Y.Node.create(tpl),
               cutoffs;
@@ -159,6 +159,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           this._cache.charms.reset(newCharms);
           this._cache.charms.add(popularCharms);
           this._cache.charms.add(featuredCharms);
+          this._cache.interesting = data;
           this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
         },
 
@@ -205,6 +206,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
             interesting: null,
             charms: new models.BrowserCharmList()
           };
+          if (cfg && cfg.interesting) {
+            this._cache.interesting = cfg.interesting;
+          }
         }
       }, {
         ATTRS: {}

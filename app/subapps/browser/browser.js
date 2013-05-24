@@ -384,8 +384,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (this._cache.interesting) {
-        debugger;
-        extraCfg.interesting = this.cache.interesting;
+        extraCfg.interesting = this._cache.interesting;
       }
 
       this._editorial = new Y.juju.browser.views.EditorialView(
