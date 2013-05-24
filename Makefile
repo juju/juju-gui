@@ -419,6 +419,7 @@ test-prod-server: build-prod test-prep
 	./test-server.sh prod true
 
 test-misc:
+	PYTHONPATH=lib python test/test_websocket_replay.py
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
 
 test:
@@ -583,8 +584,7 @@ endif
 .PHONY: beautify build build-files build-devel clean clean-all clean-deps \
 	clean-docs code-doc debug devel docs dist gjslint help \
 	install-npm-packages jshint lint main-doc npm-cache npm-cache-file \
-	prep prod recess server spritegen test test-debug test-prep \
-	test-prod undocumented view-code-doc view-docs view-main-doc \
-	yuidoc-lint
+	prep prod recess server spritegen test test-debug test-misc test-prep \
+	test-prod undocumented view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
