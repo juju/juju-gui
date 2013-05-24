@@ -42,6 +42,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
       {
+        EV_CACHE_UPDATED: 'cache-updated',
         template: views.Templates.editorial,
 
         // How many of each charm container do we show by default.
@@ -149,9 +150,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
               // Add the charms to the cache for use in other views.
               // Start with a reset to empty any current cached models.
-              this._cache.charms.reset(newCharms);
-              this._cache.charms.add(popularCharms);
-              this._cache.charms.add(featuredCharms);
               this.charmContainers = [
                 featuredCharmContainer,
                 newCharmContainer,
@@ -165,8 +163,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
                     container.one('.charm-token[data-charmid="' + active + '"]')
                 );
               }
+              this._cache.charms.reset(newCharms);
+              this._cache.charms.add(popularCharms);
+              this._cache.charms.add(featuredCharms);
+              this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
             },
-
             'failure': this.apiFailure
           }, this);
         },

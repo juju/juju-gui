@@ -383,6 +383,10 @@ YUI.add('subapp-browser', function(Y) {
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
 
+      this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
+        this._cache.charms.add(ev.cache.charms);
+      }, this);
+
       this._editorial.render();
       this._editorial.addTarget(this);
 
