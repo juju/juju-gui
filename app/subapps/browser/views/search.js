@@ -42,6 +42,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
   ns.BrowserSearchView = Y.Base.create(
       'browser-view-searchview',
       ns.CharmResults, [], {
+        EV_CACHE_UPDATED: 'cache-updated',
         template: views.Templates.search,
 
         /**
@@ -105,8 +106,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method _renderSearchResults
 
          */
-        _renderSearchResults: function(results) {
-          var target = this.get('renderTo'),
+        _renderSearchResults: function(data) {
+          var results = this.get('store').resultsToCharmlist(data.result),
+              target = this.get('renderTo'),
               tpl = this.template({
                 count: results.size(),
                 isFullscreen: this.get('isFullscreen')
@@ -130,6 +132,19 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // doesn't. Se we scroll the heading into view to ensure the view
           // renders at the top of the content.
           target.one('.search-title').scrollIntoView();
+          this.hideIndicator(this.get('renderTo'));
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                this.get('container').one(
+                    '.charm-token[data-charmid="' + active + '"]')
+            );
+          }
+          this._cache.charms.reset(results);
+          this._cache.search = data;
+          this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
         },
 
         /**
@@ -174,23 +189,20 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // through the subapp so we don't have to keep the filters in sync
           // here.  If caching/reusing comes into play though an event to
           // track the change of the filters ATTR would make sense to re-draw.
-          this.get('store').search(this.get('filters'), {
-            'success': function(data) {
-              var results = this.get('store').resultsToCharmlist(data.result);
-              this._renderSearchResults(results);
-              this.hideIndicator(this.get('renderTo'));
+          if (this._cache.search) {
+            this._renderSearchResults(this._cache.search);
+          } else {
+            this.get('store').search(this.get('filters'), {
+              'success': this._renderSearchResults,
+              'failure': this.apiFailure
+            }, this);
+          }
+        },
 
-              // Set the active charm if available.
-              var active = this.get('activeID');
-              if (active) {
-                this._updateActive(
-                    this.get('container').one(
-                        '.charm-token[data-charmid="' + active + '"]')
-                );
-              }
-            },
-            'failure': this.apiFailure
-          }, this);
+        initializer: function(cfg) {
+          if (cfg && cfg.search) {
+            this._cache.search = cfg.search;
+          }
         }
       }, {
         ATTRS: {

@@ -198,7 +198,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
               container.destroy();
             });
           }
-          this._cache.destroy();
+          this._cache.charms.destroy();
         },
 
         initializer: function (cfg) {

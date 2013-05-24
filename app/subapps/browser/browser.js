@@ -188,6 +188,18 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    _searchChanged: function() {
+      if(
+        this._viewState.search && (
+           this._hasStateChanged('search') ||
+           this._hasStateChanged('querystring'))) {
+
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     /**
        Verify that a particular part of the state has changed.
 
@@ -425,11 +437,18 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
+      if (this._cache.search && !this._searchChanged()) {
+        extraCfg.search = this._cache.search;
+      }
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
       this._search.render();
       this._search.addTarget(this);
+      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
+        this._cache.charms.reset(ev.cache.charms);
+        this._cache.search = ev.cache.search;
+      }, this);
     },
 
     /**
