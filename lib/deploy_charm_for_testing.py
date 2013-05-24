@@ -21,7 +21,7 @@ import json
 from shelltoolbox import (
     command,
     run,
-    )
+)
 import sys
 import time
 import tempfile
@@ -115,6 +115,7 @@ def parse():
     p = make_parser()
     return p.parse_args()
 
+
 def parse_image_data(data):
     """Parse the image data from nova image-list."""
     img_regex = re.compile(
@@ -127,6 +128,7 @@ def parse_image_data(data):
         return matches[-1]
     return None, None
 
+
 def get_image_id():
     """Get the most recent image (ubuntu released, precise, amd64)."""
     image_data = run(*'nova --no-cache image-list'.split())
@@ -136,13 +138,15 @@ def get_image_id():
     print("Using image {} ({})".format(image_id, description))
     return image_id
 
+
 def make_environments_yaml():
     juju_dir = os.path.expanduser("~/.juju")
     template_fn = os.path.join(juju_dir, "environments.yaml.template")
     if not os.path.exists(template_fn):
         # The template file does not exist, so just use the existing
         # environments.yaml file.
-        print("Using existing environments.yaml file since no template was found.")
+        print('Using existing environments.yaml '
+              'file since no template was found.')
         return
     image_id = get_image_id()
     if image_id is None:
@@ -151,6 +155,7 @@ def make_environments_yaml():
         template = f.read()
     with open(os.path.join(juju_dir, "environments.yaml"), "w") as f:
         f.write(template.format(image_id=image_id))
+
 
 def main(options=parse, print=print, juju=juju,
         wait_for_service=wait_for_service, make_config_file=make_config_file,

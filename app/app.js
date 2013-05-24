@@ -431,7 +431,10 @@ YUI.add('juju-gui', function(Y) {
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
-      if (this.get('simulateEvents')) {
+
+      // The config is set as attrs on the app instance so there's a
+      // simulateEvents setting that propagates through to here.
+      if (window.flags.simulateEvents || this.get('simulateEvents')) {
         this.simulateEvents();
       }
 
@@ -1099,80 +1102,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Feature flags support in URL routing.
-
-      This allows us to use the :flags: NS to set either boolean or string
-      feature flags to control various features in the app.  A simple /<flag>/
-      will set that flag as true in the global flags variable.  A
-      /<flag>=<val>/ will set that flag to that value in the global flags
-      variable. An example usage would be to turn on the ability to drag-and-
-      drop a feature by wrapping that feature code in something like:
-
-        if (flags['gui.featuredrag.enable']) { ... }
-
-      From the LaunchPad feature flags documentation:
-
-      > As a general rule, each switch should be checked only once or only a
-      > few time in the codebase. We don't want to disable the same thing in
-      > the ui, the model, and the database.
-      >
-      > The name looks like dotted python identifiers, with the form
-      > APP.FEATURE.EFFECT. The value is a Unicode string.
-
-    A shortened version of key can be used if they follow this pattern:
-    - The feature flag applies to the gui.
-    - The presence of the flag indicates Boolean enablement
-    - The (default) absence of the flag indicates the feature will be
-    unavailable.
-
-   If those conditions are met then you may simply use the descriptive name of
-   the feature taking care it uniquely defines the feature. An example is
-   rather than specifying gui.dndexport.enable you can specify dndexport as a
-   flag.
-
-      @method featureFlags
-      @param {object} req The request object.
-      @param {object} res The response object.
-      @param {function} next The next callback.
-    */
-    featureFlags: function(req, res, next) {
-      var buildFlags = {};
-      Y.Array.each(req.path.split('/'), function(flag) {
-        if (flag.length > 0) {
-          var flagKey = flag;
-          var flagValue = true;
-          // Allow setting a specific value other than true.
-          if (flag.indexOf('=') !== -1) {
-            flagKey = flag.split('=', 1);
-            // Maintain possible '=' characters in the value.  This ensures
-            // that values are always either true or strings, rather than
-            // an array.
-            flagValue = flag.split('=').splice(1).join('=');
-          }
-          buildFlags[flagKey] = flagValue;
-        }
-      });
-      // Access the global variable through `window`.
-      window.flags = buildFlags;
-      next();
-    },
-
-    /**
-    Handle flags that start or initialize things.
-
-    @method reactToFlags
-    @param {object} req The request object.
-    @param {object} res The response object.
-    @param {function} next The next callback.
-    */
-    reactToFlags: function(req, res, next) {
-      if (window.flags.simulateEvents) {
-        this.simulateEvents();
-      }
-      next();
-    },
-
-    /**
      * Object routing support
      *
      * This utility helps map from model objects to routes
@@ -1323,9 +1252,6 @@ YUI.add('juju-gui', function(Y) {
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit',
             namespace: 'gui'},
-          // Feature flags.
-          { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
-          { path: '*', callbacks: 'reactToFlags', namespace: 'flags' },
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
@@ -1368,6 +1294,7 @@ YUI.add('juju-gui', function(Y) {
     'event-key',
     'event-touch',
     'model-controller',
-    'FileSaver'
+    'FileSaver',
+    'juju-inspector-widget'
   ]
 });

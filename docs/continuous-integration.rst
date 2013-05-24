@@ -34,7 +34,7 @@ browsers; finishing it up by destroying the juju test environment.
 
 Charm testing configuration and setup
 -------------------------------------
-The testing script relies on a few environment variables and flags for
+The bin/test-charm script relies on a few environment variables for
 configuration::
 
   bin/test-charm
@@ -45,15 +45,38 @@ configuration::
   ``JUJU_GUI_TEST_BROWSERS="local-firefox local-chrome" bin/test-charm``.
   FAIL_FAST: 0 {Integer} Set to 1 to exit when first browser returns a failure
   rather than completing all of the tests.
+  NO_DESTROY: unset Set to 1 to prevent the juju environment to be destroyed
+  at the end of the test run.
+  APP_URL: unset Set to a Juju GUI URL to force the suite to use that location
+  rather than creating/destroying a juju environment where to deploy the Juju
+  GUI.  The value must be a valid location where the Juju GUI is deployed using
+  the charm in a "juju-gui-testing" environment, and properly set up using
+  the following charm options: serve-tests=true staging=true secure=false.
 
-  lib/deploy_charm_for_testing.py
+Combining NO_DESTROY and APP_URL could help while debugging CI tests, and it
+allows for running the suite multiple times using the same juju environment.
+A typical workflow follows::
+
+  # Run tests without destroying the environment. The APP_URL will be
+  # displayed in the command output.
+  NO_DESTROY=1 bin/test-charm
+  # Grab the APP_URL to run the suite again, reusing the juju environment.
+  APP_URL="http://ec2-xxx-yyy.example.com" bin/test-charm
+  # When coding/debugging is done, destroy the juju environment.
+  juju destroy-environment -e juju-gui-testing
+
+The bin/test-charm script relies on lib/deploy_charm_for_testing.py to actually
+deploy the charm. You can use it in a variant of the above workflow to test
+specific GUI sources and charms. The deploy_charm_for_testing.py has the
+following flags::
+
   --origin: "lp:juju-gui" {String} Location of the GUI code
   --charm: "cs:~juju-gui/precise/juju-gui" {String} Location of the charm code
   JUJU_INSTANCE_IP: {String} Public IP address to assign to GUI test instance
   used only for Canonistack deployments.
 
-The Juju GUI charm has a few important configuration properties to enable its
-testing setup::
+The lib/deploy_charm_for_testing.py relies on some charm options to do its job.
+These are the configuration options it uses::
 
   serve-tests: False {Boolean} Exposes the tests for browser access at host/test
   staging: False {Boolean} Connects the GUI to the staging backend

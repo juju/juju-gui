@@ -87,6 +87,13 @@ var GlobalConfig = {
         }
       }
     },
+    spinner: {
+      modules: {
+        'spinner': {
+          fullpath: '/juju-ui/assets/javascripts/spinner.js'
+        }
+      }
+    },
     jsyaml: {
       modules: {
         'js-yaml': {
@@ -133,6 +140,10 @@ var GlobalConfig = {
 
         'browser-tabview': {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
+        },
+
+        'juju-inspector-widget': {
+          fullpath: '/juju-ui/widgets/inspector-widget.js'
         },
 
         'reconnecting-websocket': {
