@@ -44,13 +44,14 @@ YUI.add('subapp-browser-charmresults', function(Y) {
 
      @class CharmReults
      @extends {juju.browser.views.CharmResults}
-
+     @event EV_CACHE_UPDATED when the cache has been updated this is fired
    */
   ns.CharmResults = Y.Base.create('browser-view-charmresults', Y.View, [
     views.utils.apiFailingView,
     widgets.browser.IndicatorManager,
     Y.Event.EventTracker
   ], {
+    EV_CACHE_UPDATED: 'cache-updated',
     events: {
       '.charm-token': {
         click: '_handleCharmSelection'
