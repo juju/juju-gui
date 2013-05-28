@@ -28,6 +28,7 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 def noop(*args, **kws):
     pass
 
+
 def fake_do_GET(self):
     return self.path
 
@@ -35,6 +36,7 @@ def fake_do_GET(self):
 class FakeRequest:
     def __init__(self, path):
         self.path = path
+
 
 class TestRequestHandler(unittest.TestCase):
     """The RedirectingHTTPRequestHandler."""
@@ -72,7 +74,7 @@ class TestRequestHandler(unittest.TestCase):
             self.assertEqual('/somefile.html', resp)
 
     def test_invalid_file(self):
-        # If the file does not exist, index.html is returned.
+        # If the file does not exist, /index.html is returned.
         req = FakeRequest('/missingfile.html')
         handler = RedirectingHTTPRequestHandler(req, self.addr, None)
         handler.path = req.path
@@ -93,7 +95,7 @@ class TestRequestHandler(unittest.TestCase):
             self.assertEqual(path, resp)
 
     def test_invalid_path(self):
-        # Can serve up an existing path.
+        # If the path does not exist, /index.html is returned.
         subdir = tempfile.mkdtemp(dir=self.tempdir)
         dirname = os.path.split(subdir)[-1]
         fn = os.path.join(dirname, 'missingfile.html')
@@ -103,7 +105,6 @@ class TestRequestHandler(unittest.TestCase):
         handler.path = req.path
         resp = handler.do_GET()
         self.assertEqual('/index.html', resp)
-
 
 
 if __name__ == '__main__':

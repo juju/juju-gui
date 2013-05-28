@@ -26,7 +26,6 @@ from SocketServer import TCPServer
 import os.path
 
 
-# RedirectingHTTPRequestHandler
 class RedirectingHTTPRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         fpath = self.path[1:]
@@ -39,8 +38,8 @@ class RedirectingHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 # Main entry point.  It defers to the 'test' method of the base class as it is
 # the looping hander.
-def main(HandlerClass = RedirectingHTTPRequestHandler,
-         ServerClass = BaseHTTPServer.HTTPServer):
+def main(HandlerClass=RedirectingHTTPRequestHandler,
+         ServerClass=BaseHTTPServer.HTTPServer):
     BaseHTTPServer.test(HandlerClass, ServerClass)
 
 
