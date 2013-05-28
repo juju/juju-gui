@@ -233,6 +233,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       node.all('.yui3-charmtoken.active').size().should.equal(0);
     });
 
+    it('tells listeners to update their cache', function() {
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+      });
+      var results = {
+        featuredCharms: [],
+        newCharms: [],
+        popularCharms: []
+      };
+      view.on(view.EV_CACHE_UPDATED, function(ev) {
+        assert.isObject(ev.cache);
+      });
+      view.render(results);
+    });
+
   });
 
 })();

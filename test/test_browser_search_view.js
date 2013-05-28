@@ -134,4 +134,10 @@ describe('search view', function() {
     container.one('.charm-token').simulate('click');
   });
 
+  it('tells listeners the cache has updated', function() {
+      view.on(view.EV_CACHE_UPDATED, function(ev) {
+        assert.isObject(ev.cache);
+      });
+      view.render();
+  });
 });
