@@ -616,45 +616,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       browserNode.getComputedStyle('display').should.eql('none');
     });
 
-  });
-})();
-
-(function() {
-  describe('caching', function() {
-    var Y, browser, container, view;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'juju-browser',
-          'juju-views',
-          'juju-tests-utils',
-          'subapp-browser',
-          //'node-event-simulate',
-          //'subapp-browser-sidebar',
-          function(Y) {
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      browser = new Y.juju.subapps.Browser();
-      //container = Y.namespace('juju-tests.utils').makeContainer('container');
-      //addBrowserContainer(Y);
-    });
-
-    afterEach(function() {
-      browser.destroy();
-      //view.destroy();
-      //Y.one('#subapp-browser').remove(true);
-      //container.remove(true);
-    });
-
-    //var addBrowserContainer = function(Y) {
-      //Y.Node.create('<div id="subapp-browser">' +
-                    //'</div>').appendTo(container);
-    //};
-
-    it.only('knows when the search cache should be updated', function() {
+    it('knows when the search cache should be updated', function() {
       browser._getStateUrl({
         'search': true,
         'querystring': 'text=apache'
