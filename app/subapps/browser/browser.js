@@ -38,6 +38,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
     hidden: false,
+    viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
         Show or hide the details panel.
@@ -65,7 +66,7 @@ YUI.add('subapp-browser', function(Y) {
         @param {Object} change the values to change in the current state.
      */
     _getStateUrl: function(change) {
-      var urlParts = ['/bws'];
+      var urlParts = [];
       this._oldState = this._viewState;
 
       // If there are changes to the filters, we need to update our filter
@@ -189,6 +190,32 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+     * Strip the viewmode from the charmid when processing to check for proper
+     * routing.
+     *
+     * @method _stripViewMode
+     * @param {String} id the req.param.id found.
+     *
+     */
+    _stripViewMode: function(id) {
+      // Clear out any parts of /sidebar/search, /sidebar, or /search from the
+      // id. See if we still really have an id.
+      var match = /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
+
+      if (id && id.match(match)) {
+        // Strip it out.
+        id = id.replace(match, '');
+
+        // if the id is now empty, set it to null.
+        if (id === '') {
+          id = null;
+        }
+      }
+
+      return id;
+    },
+
+    /**
        Verify that a particular part of the state has changed.
 
        @method _hasStateChanged
@@ -231,9 +258,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
-        // Make sure we clear out any accidental matching of search/ in the
-        // url.
-        this._viewState.charmID = params.id.replace(/^search\//, '');
+        this._viewState.charmID = params.id;
       } else {
         this._viewState.charmID = null;
       }
@@ -559,6 +584,27 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      // If there is no viewmode, assume it's sidebar.
+      if (!req.params) {
+        req.params = {};
+      }
+
+      if (!req.params.viewmode) {
+        req.params.viewmode = 'sidebar';
+      }
+
+      // If the viewmode isn't found, it's not one of our urls. Carry on.
+      if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
+        next();
+        return;
+      }
+
+      // for the route /sidebar|minimized|fullscreen it picks up the *id route
+      // as well. Catch that here and make sure we set that to viewmode and no
+      // id in the params.
+      var id = this._stripViewMode(req.params.id);
+      req.params.id = id;
+
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -568,6 +614,9 @@ YUI.add('subapp-browser', function(Y) {
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[req.params.viewmode](req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
       }
     },
 
@@ -630,15 +679,17 @@ YUI.add('subapp-browser', function(Y) {
            method store.valueFn
         */
         valueFn: function() {
-          var url = '';
-          if (!window.juju_config || ! window.juju_config.charmworldURL) {
+          var cfg = {
+            noop: false,
+            apiHost: ''
+          };
+          if (!window.juju_config || !window.juju_config.charmworldURL) {
             console.error('No juju config to fetch charmworld store url');
+            cfg.noop = true;
           } else {
-            url = window.juju_config.charmworldURL;
+            cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld0({
-            'apiHost': url
-          });
+          return new Y.juju.Charmworld0(cfg);
         }
       },
 
@@ -649,11 +700,14 @@ YUI.add('subapp-browser', function(Y) {
        */
       routes: {
         value: [
-          // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/:viewmode/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/*id/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/*id/', callbacks: 'routeView' }
+          // Show the sidebar on all places if its not manually shut off or
+          // turned into a fullscreen route.
+          { path: '*', callbacks: 'routeView'},
+          { path: '/*id/', callbacks: 'routeView'},
+          { path: '/:viewmode/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
+          { path: '/:viewmode/*id/', callbacks: 'routeView' }
         ]
       },
 
