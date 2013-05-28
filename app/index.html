@@ -341,7 +341,7 @@ if (/*@cc_on!@*/false) {
 
         window.flags = featureFlags(
             window.location.href,
-            GlobalConfig.flags || {}
+            window.juju_config.flags || {}
         );
 
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
