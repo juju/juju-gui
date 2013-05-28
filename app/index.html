@@ -246,10 +246,10 @@ if (/*@cc_on!@*/false) {
         feature flags to control various features in the app.  A simple /<flag>/
         will set that flag as true in the global flags variable.  A
         /<flag>=<val>/ will set that flag to that value in the global flags
-        variable. An example usage would be to turn on the ability to drag-and-
+        variable. An example usage would be to turn on the ability to drag_and_
         drop a feature by wrapping that feature code in something like:
 
-          if (flags['gui.featuredrag.enable']) { ... }
+          if (flags.gui_featuredrag_enable) { ... }
 
         From the Launchpad feature flags documentation:
 
@@ -258,7 +258,7 @@ if (/*@cc_on!@*/false) {
         > the ui, the model, and the database.
         >
         > The name looks like dotted python identifiers, with the form
-        > APP.FEATURE.EFFECT. The value is a Unicode string.
+        > APP_FEATURE_EFFECT. The value is a Unicode string.
 
         A shortened version of key can be used if they follow this pattern:
 
@@ -269,7 +269,7 @@ if (/*@cc_on!@*/false) {
 
         If those conditions are met then you may simply use the descriptive
         name of the feature, taking care it uniquely defines the feature. An
-        example is, rather than specifying gui.dndexport.enable you can specify
+        example is, rather than specifying gui_dndexport_enable you can specify
         dndexport as a flag.
 
         @method featureFlags
@@ -341,7 +341,7 @@ if (/*@cc_on!@*/false) {
 
         window.flags = featureFlags(
             window.location.href,
-            GlobalConfig.flags || {}
+            window.juju_config.flags || {}
         );
 
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
