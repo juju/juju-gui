@@ -856,14 +856,14 @@ YUI.add('juju-topology-service', function(Y) {
         var curr_node = d3.select(this);
         var cur_href = curr_node.attr('xlink:href');
         var new_href = d.subordinate ?
-          '/juju-ui/assets/svgs/sub_module.svg' :
-          '/juju-ui/assets/svgs/service_module.svg';
+            '/juju-ui/assets/svgs/sub_module.svg' :
+            '/juju-ui/assets/svgs/service_module.svg';
 
         // Only set 'xlink:href' if not already set to the new value,
         // thus avoiding redundant requests to the server. #1182135
         if (cur_href !== new_href) {
           curr_node.attr({'xlink:href': new_href});
-        };
+        }
         curr_node.attr({
           'width': d.w,
           'height': d.h
@@ -938,7 +938,7 @@ YUI.add('juju-topology-service', function(Y) {
             cur_href = existing.attr('xlink:href');
             if (cur_href !== landscapeAsset) {
               existing.attr({'xlink:href': landscapeAsset});
-            };
+            }
           }
         });
       }
