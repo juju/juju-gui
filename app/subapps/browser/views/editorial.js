@@ -201,7 +201,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           this._cache.charms.destroy();
         },
 
-        initializer: function (cfg) {
+        initializer: function(cfg) {
           this._cache = {
             interesting: null,
             charms: new models.BrowserCharmList()
