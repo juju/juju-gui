@@ -26,7 +26,7 @@ from SocketServer import TCPServer
 import os.path
 
 
-class RedirectingHTTPRequestHandler(SimpleHTTPRequestHandler):
+class RewritingHTTPRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         fpath = self.path[1:]
         # Should the directly entered URL path not map directly to a file on
@@ -38,7 +38,7 @@ class RedirectingHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 # Main entry point.  It defers to the 'test' method of the base class as it is
 # the looping hander.
-def main(HandlerClass=RedirectingHTTPRequestHandler,
+def main(HandlerClass=RewritingHTTPRequestHandler,
          ServerClass=BaseHTTPServer.HTTPServer):
     BaseHTTPServer.test(HandlerClass, ServerClass)
 

@@ -21,7 +21,7 @@ import unittest
 import shutil
 import tempfile
 
-from http_server import RedirectingHTTPRequestHandler
+from http_server import RewritingHTTPRequestHandler
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 
 
@@ -39,28 +39,28 @@ class FakeRequest:
 
 
 class TestRequestHandler(unittest.TestCase):
-    """The RedirectingHTTPRequestHandler."""
+    """The RewritingHTTPRequestHandler."""
 
     def setUp(self):
         self.addr = ('0.0.0.0', 9999)
         # Monkey-patch SimpleHTTPRequestHandler.do_GET.
         self.real_do_GET = SimpleHTTPRequestHandler.do_GET
-        self.real_setup = RedirectingHTTPRequestHandler.setup
-        self.real_handle = RedirectingHTTPRequestHandler.handle
-        self.real_finish = RedirectingHTTPRequestHandler.finish
+        self.real_setup = RewritingHTTPRequestHandler.setup
+        self.real_handle = RewritingHTTPRequestHandler.handle
+        self.real_finish = RewritingHTTPRequestHandler.finish
         SimpleHTTPRequestHandler.do_GET = fake_do_GET
-        RedirectingHTTPRequestHandler.setup = noop
-        RedirectingHTTPRequestHandler.handle = noop
-        RedirectingHTTPRequestHandler.finish = noop
+        RewritingHTTPRequestHandler.setup = noop
+        RewritingHTTPRequestHandler.handle = noop
+        RewritingHTTPRequestHandler.finish = noop
         self.dir = os.getcwd()
         self.tempdir = tempfile.mkdtemp()
         os.chdir(self.tempdir)
 
     def tearDown(self):
         SimpleHTTPRequestHandler.do_GET = self.real_do_GET
-        RedirectingHTTPRequestHandler.setup = self.real_setup
-        RedirectingHTTPRequestHandler.handle = self.real_handle
-        RedirectingHTTPRequestHandler.finish = self.real_finish
+        RewritingHTTPRequestHandler.setup = self.real_setup
+        RewritingHTTPRequestHandler.handle = self.real_handle
+        RewritingHTTPRequestHandler.finish = self.real_finish
         os.chdir(self.dir)
         shutil.rmtree(self.tempdir)
 
@@ -68,7 +68,7 @@ class TestRequestHandler(unittest.TestCase):
         # Can serve up an existing file.
         with open('somefile.html', 'w'):
             req = FakeRequest('/somefile.html')
-            handler = RedirectingHTTPRequestHandler(req, self.addr, None)
+            handler = RewritingHTTPRequestHandler(req, self.addr, None)
             handler.path = req.path
             resp = handler.do_GET()
             self.assertEqual('/somefile.html', resp)
@@ -76,7 +76,7 @@ class TestRequestHandler(unittest.TestCase):
     def test_invalid_file(self):
         # If the file does not exist, /index.html is returned.
         req = FakeRequest('/missingfile.html')
-        handler = RedirectingHTTPRequestHandler(req, self.addr, None)
+        handler = RewritingHTTPRequestHandler(req, self.addr, None)
         handler.path = req.path
         resp = handler.do_GET()
         self.assertEqual('/index.html', resp)
@@ -89,7 +89,7 @@ class TestRequestHandler(unittest.TestCase):
         with open(fn, 'w'):
             path = '/' + fn
             req = FakeRequest(path)
-            handler = RedirectingHTTPRequestHandler(req, self.addr, None)
+            handler = RewritingHTTPRequestHandler(req, self.addr, None)
             handler.path = req.path
             resp = handler.do_GET()
             self.assertEqual(path, resp)
@@ -101,7 +101,7 @@ class TestRequestHandler(unittest.TestCase):
         fn = os.path.join(dirname, 'missingfile.html')
         path = '/' + fn
         req = FakeRequest(path)
-        handler = RedirectingHTTPRequestHandler(req, self.addr, None)
+        handler = RewritingHTTPRequestHandler(req, self.addr, None)
         handler.path = req.path
         resp = handler.do_GET()
         self.assertEqual('/index.html', resp)
