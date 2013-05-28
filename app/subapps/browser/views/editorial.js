@@ -35,10 +35,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
   /**
    * Editorial view for landing pages.
-   *
-   * @class Editorial
-   * @extends {juju.browser.views.CharmResults}
-   *
+    
+     @class Editorial
+     @extends {juju.browser.views.CharmResults}
+     @event EV_CACHE_UPDATED when the cache has been updated this is fired
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
       {
