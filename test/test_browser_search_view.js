@@ -135,13 +135,13 @@ describe('search view', function() {
   });
 
   it('tells listeners the cache has updated', function() {
-      view.on(view.EV_CACHE_UPDATED, function(ev) {
-        assert.isObject(ev.cache);
-      });
-      view.render();
+    view.on(view.EV_CACHE_UPDATED, function(ev) {
+      assert.isObject(ev.cache);
+    });
+    view.render();
   });
 
-  it.only('uses passed in cache data if available', function() {
+  it('uses passed in cache data if available', function() {
     var search_called = false,
         results = new Y.juju.models.BrowserCharmList();
 
