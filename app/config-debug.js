@@ -45,7 +45,8 @@ var juju_config = {
   sandbox: true,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
-  simulateEvents: false,
+  // There is also a hotkey to toggle the simulator.
+  simulateEvents: true,
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

@@ -57,13 +57,13 @@ python-virtualenv to build the Google Closure linter tools locally::
   sudo apt-get install nodejs imagemagick lbox python-sphinx python-yaml \
     python-tz python-virtualenv python-shelltoolbox python-selenium
 
-See docs/browser-testing.rst if you are curious about the reason for
-python-shelltoolbox and python-selenium
+See :ref:`Browser Testing <browser-testing>` if you are curious about the
+reason for ``python-shelltoolbox`` and ``python-selenium``.
 
 The jshint linter will be installed locally per branch, but if you want editor
 integration, you may want to install ``jshint`` globally in your system.  More
-importantly, to support testing from the command line, phantomjs and mocha-
-phantomjs should be installed globally.
+importantly, to support testing from the command line, ``phantomjs`` and
+``mocha-phantomjs`` should be installed globally.
 
 ::
 
@@ -73,7 +73,7 @@ Note: Make sure to get the latest phantomjs from npm and not rely on an older
 .deb packaged version. mocha-phantomjs will fail silently when running.
 
 If you receive an error installing phantomjs, you can manually download and
-unpack the archive and then arrange for the "phantomjs" executable to be
+unpack the archive and then arrange for the ``phantomjs`` executable to be
 located on your path (e.g., by linking it into ``~/bin``).
 
 The Juju GUI can now be installed and run with::
@@ -110,12 +110,12 @@ Then::
   sudo sysctl -p
   cat /proc/sys/fs/inotify/max_user_watches
 
-If it does not echo 16284 then you will need to restart.
+If it does not echo ``16384`` then you will need to restart.
 
 Note that the Makefile supports ``make help`` to try to introduce some of the
 more important targets.  Also note that if you use the "make prod" target
-while using the PyJuju rapi-rollup improv script, the password you should use
-is "admin," despite the help text you see.
+while using the PyJuju ``rapi-rollup`` improv script, the password you should
+use is "admin," despite the help text you see.
 
 Typical Bzr workflow
 =====================
@@ -151,7 +151,7 @@ Working with a Real Juju
 ========================
 
 The easiest way to work with a real Juju installation, as opposed to the
-"improv" script described above, is to use the Juju charm.  See
+``improv`` script described above, is to use the Juju charm.  See
 <http://jujucharms.com/~juju-gui/precise/juju-gui> or
 <http://jujucharms.com/charms/precise/juju-gui> for details.
 
@@ -179,7 +179,7 @@ is the ``api-port``. An appropriate sample configuration::
 Note that ``juju-origin`` is set to the PPA, the API server runs outside of
 the container, and it is launched using whichever branch you are using.
 
-Also note that the ``api-port`` should be set at 8081, which the GUI's
+Also note that the ``api-port`` should be set at ``8081``, which the GUI's
 initial environment connection currently defaults to.
 
 You will need to bootstrap the local environment, and deploy one service.
@@ -268,9 +268,9 @@ Proposing Branches
 ==================
 
 We use ``lbox`` to propose branches for review and submit them to the trunk.
-Gustavo Niemeyer has `a helpful blogpost`_ about this tool.  See the process
-document :ref:`(docs/process.rst) <preparing-reviews>` for a step-by-step
-checklist on how to prepare branches for review.
+Gustavo Niemeyer has `a helpful blogpost`_ about this tool.  See the
+:ref:`Process document <preparing-reviews>` for a step-by-step checklist on how
+to prepare branches for review.
 
 .. _`a helpful blogpost`:
     http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
@@ -296,9 +296,9 @@ releases by hand or in the charm.
 Making Releases
 ===============
 
-See the Process document :ref:`(docs/process.rst) <make-releases>` for step-
-by-step checklists to make developer and stable releases.  The following is
-additional detail and an overview.
+See the :ref:`Process document <make-releases>` for step-by-step checklists to
+make developer and stable releases.  The following is additional detail and an
+overview.
 
 To make a release, you must either be in a checkout of ``lp:juju-gui``
 without uncommitted changes, or you must override one of the

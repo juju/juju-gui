@@ -188,6 +188,13 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    /**
+       Determine if search changed, so we know how to handle the cache.
+      
+       @method _searchChanged
+       @param {} 
+       @return {Boolean} true If search changed.
+     */
     _searchChanged: function() {
       if(
         this._viewState.search && (
