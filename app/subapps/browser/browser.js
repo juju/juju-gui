@@ -409,7 +409,6 @@ YUI.add('subapp-browser', function(Y) {
       }, this);
 
       if (this._cache.interesting) {
-        debugger;
         this._editorial.render(this._cache.interesting);
       } else {
         this._editorial.render();
