@@ -135,8 +135,8 @@ def handle_message(message, frames, write_message, expected=None, log=Logger):
 
     # First we ensure that the message we were sent matches what happens next
     # in the log.
-    ops_match = message['op'] != expected.message['op']
-    ids_match = message['request_id'] != expected.message['request_id']
+    ops_match = message['op'] == expected.message['op']
+    ids_match = message['request_id'] == expected.message['request_id']
     if not (ops_match and ids_match):
         log.error('mismatched messages:')
         log.error('\tgot', message)
