@@ -196,11 +196,9 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true If search changed.
      */
     _searchChanged: function() {
-      if(
-        this._viewState.search && (
+      if(this._viewState.search && (
            this._hasStateChanged('search') ||
            this._hasStateChanged('querystring'))) {
-
         return true;
       } else {
         return false;
