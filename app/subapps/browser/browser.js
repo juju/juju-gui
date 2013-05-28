@@ -409,7 +409,7 @@ YUI.add('subapp-browser', function(Y) {
       this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
         // Add any sidebar charms to the running cache.
         this._cache.interesting = ev.cache.interesting;
-        this._cache.charms.add(ev.cache.charms);
+        this._cache.charms.reset(ev.cache.charms);
       }, this);
 
       this._editorial.render();
@@ -450,8 +450,8 @@ YUI.add('subapp-browser', function(Y) {
       this._search.render();
       this._search.addTarget(this);
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
-        this._cache.charms.reset(ev.cache.charms);
         this._cache.search = ev.cache.search;
+        this._cache.charms.reset(ev.cache.charms);
       }, this);
     },
 
