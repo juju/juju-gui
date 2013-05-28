@@ -495,7 +495,7 @@ upload_release.py:
 	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py \
 	    > upload_release.py
 
-$(RELEASE_FILE): build
+$(RELEASE_FILE): build test-prep
 	@echo "$(BRANCH_IS_CLEAN)"
 ifdef BRANCH_IS_GOOD
 	mkdir -p releases

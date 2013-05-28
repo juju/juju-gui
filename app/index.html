@@ -31,7 +31,7 @@ if (/*@cc_on!@*/false) {
     <title>Juju Admin</title>
     <!-- Disable backwards compatible mode for IE on an intranet.
          For an explanation see http://bit.ly/14VytlD
-         Also note it this must be the first <meta> to appear. -->
+         Also note this must be the first <meta> to appear. -->
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
@@ -169,7 +169,7 @@ if (/*@cc_on!@*/false) {
         var document = getDocument();
         var target = document.getElementById('loading-spinner');
         // If we are in a testing environment, then actually starting the
-        // spinner is unneccesary and counter productive.
+        // spinner is unnecessary and counterproductive.
         if (target.style !== undefined) {
           spinner = new Spinner(opts).spin(target);
         }
@@ -181,7 +181,7 @@ if (/*@cc_on!@*/false) {
       };
 
       isBrowserSupported = function(agent) {
-        // At the moment only Chrome is supported.
+        // At the moment Chrome and Firefox are supported.
         return (/Chrome|Firefox/.test(agent));
       };
 
@@ -251,7 +251,7 @@ if (/*@cc_on!@*/false) {
 
           if (flags['gui.featuredrag.enable']) { ... }
 
-        From the LaunchPad feature flags documentation:
+        From the Launchpad feature flags documentation:
 
         > As a general rule, each switch should be checked only once or only a
         > few time in the codebase. We don't want to disable the same thing in
@@ -261,14 +261,15 @@ if (/*@cc_on!@*/false) {
         > APP.FEATURE.EFFECT. The value is a Unicode string.
 
         A shortened version of key can be used if they follow this pattern:
+
         - The feature flag applies to the gui.
         - The presence of the flag indicates Boolean enablement
-        - The (default) absence of the flag indicates the feature will be
-        unavailable.
+        - The (default) absence of the flag indicates the feature will not be
+          available.
 
         If those conditions are met then you may simply use the descriptive
-        name of the feature taking care it uniquely defines the feature. An
-        example is rather than specifying gui.dndexport.enable you can specify
+        name of the feature, taking care it uniquely defines the feature. An
+        example is, rather than specifying gui.dndexport.enable you can specify
         dndexport as a flag.
 
         @method featureFlags
@@ -288,10 +289,10 @@ if (/*@cc_on!@*/false) {
 
         // Check if the :flags: namespace is in the url.
         if (found) {
-          // Make sure we trim a trailing / to prevent extra data in the split
+          // Make sure we trim a trailing / to prevent extra data in the split.
           var urlFlags = found.replace(/\/+$/, '').split('/');
 
-          // remove the first :flags: match from the split results.
+          // Remove the first :flags: match from the split results.
           urlFlags = urlFlags.slice(1);
 
           urlFlags.forEach(function(flag) {
@@ -302,8 +303,8 @@ if (/*@cc_on!@*/false) {
             var equals = flag.indexOf('=');
             if (equals !== -1) {
               key = flag.slice(0, equals);
-              // Add one to the index to make sure we drop the first equals from
-              // the string.
+              // Add one to the index to make sure we drop the first "equals"
+              // from the string.
               value = flag.slice((equals + 1));
             }
 
@@ -333,7 +334,7 @@ if (/*@cc_on!@*/false) {
     <script src="/juju-ui/assets/config.js"></script>
     <script>
       // Now that all of the above JS is loaded we can define the real start
-      // function which will be picked up by the setTimeout and the app will
+      // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
         setLoadingMessageText('Connecting to the Juju environment');
