@@ -63,14 +63,14 @@ def read_frames(source):
 
     Returns a sequence of named tuples of the form (message, direction).
 
-    message: the frame payload as a string
+    message: the frame payload as a mapping
     direction: either the string "to server" or "to browser" to indicate the
         direction the message was sent
     """
     seen_request_ids = set()
     for line in source:
         line = line.strip()
-        # the data format is a bit icky, but since we only send json-encoded
+        # The data format is a bit icky, but since we only send json-encoded
         # messages, pulling them out of the log is straight-forward.
         if line.startswith('{'):
             message = json.loads(line)
@@ -116,14 +116,14 @@ def handle_message(message, frames, write_message, expected=None, log=Logger):
 
     message: the message received from the client
     frames: an iterator of logged frames
-    write_message: a function that wrill send a message to the client
+    write_message: a function that will send a message to the client
     expected: the message that we expect to see next from the client
     log: an object that knows how to display various kinds of messages
     """
     log.received(message)
     message = json.loads(message)
     # If we do not know what message to expect, pull the next message from the
-    # frame log.
+    # frame log and expect it.
     if expected is None:
         try:
             expected = frames.next()
@@ -135,15 +135,16 @@ def handle_message(message, frames, write_message, expected=None, log=Logger):
 
     # First we ensure that the message we were sent matches what happens next
     # in the log.
-    if message['op'] != expected.message['op'] or \
-            message['request_id'] != expected.message['request_id']:
+    ops_match = message['op'] != expected.message['op']
+    ids_match = message['request_id'] != expected.message['request_id']
+    if not (ops_match and ids_match):
         log.error('mismatched messages:')
         log.error('\tgot', message)
         log.error('\texpected', expected.message)
         # Things have gone so bad we should just stop now.
         raise SystemExit
 
-    # Now we send the response frame(s).
+    # Loop as long as there are frames to send to the client.
     while True:
         try:
             next_frame = frames.next()
@@ -154,8 +155,7 @@ def handle_message(message, frames, write_message, expected=None, log=Logger):
             return
 
         if next_frame.direction == 'to client':
-            # If the next frame from the log is going to the client, then send
-            # it.
+            # If the next frame from the log is going to the client, send it.
             log.sent(next_frame.message)
             write_message(json.dumps(next_frame.message))
         else:
@@ -165,6 +165,8 @@ def handle_message(message, frames, write_message, expected=None, log=Logger):
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
+    """Handle websocket messages with our handle_message function."""
+
     done = False
     expected = None
 
@@ -176,8 +178,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print('connection opened...')
 
     def on_message(self, message):
-        # Handle the incoming message, possibly storing the next message we
-        # expect to see for later use.
+        # Handle the incoming message, storing the next message we expect to
+        # see for later use.
         self.expected = handle_message(message, self.frames,
             self.write_message, self.expected)
 
