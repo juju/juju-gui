@@ -106,9 +106,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method _renderSearchResults
 
          */
-        _renderSearchResults: function(data) {
-          var results = this.get('store').resultsToCharmlist(data.result),
-              target = this.get('renderTo'),
+        _renderSearchResults: function(results) {
+          var target = this.get('renderTo'),
               tpl = this.template({
                 count: results.size(),
                 isFullscreen: this.get('isFullscreen')
@@ -143,7 +142,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
             );
           }
           this._cache.charms.reset(results);
-          this._cache.search = data;
+          this._cache.search = results;
           this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
         },
 
@@ -182,18 +181,22 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
            @method render
          */
-        render: function() {
+        render: function(cachedResults) {
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go
           // through the subapp so we don't have to keep the filters in sync
           // here.  If caching/reusing comes into play though an event to
           // track the change of the filters ATTR would make sense to re-draw.
-          if (this._cache.search) {
-            this._renderSearchResults(this._cache.search);
+          if (cachedResults) {
+            this._renderSearchResults(cachedResults);
           } else {
             this.get('store').search(this.get('filters'), {
-              'success': this._renderSearchResults,
+              'success': function(data) {
+                var results = this.get('store').resultsToCharmlist(
+                    data.result);
+                this._renderSearchResults(results);
+              },
               'failure': this.apiFailure
             }, this);
           }

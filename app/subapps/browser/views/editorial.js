@@ -77,14 +77,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
            @param {Object} data The interesting data, cached or returned from
            the API.
          */
-        _renderInteresting: function(data) {
-          this._cache.interesting = data;
+        _renderInteresting: function(results) {
           var tpl = this.template(this.getAttrs()),
               tplNode = Y.Node.create(tpl),
               cutoffs;
           // Add featured charms
-          var featuredCharms = this.get('store').resultsToCharmlist(
-              data.result.featured);
+          var featuredCharms = results.featuredCharms;
           var featuredContainer = tplNode.one('.featured');
           if (this.get('isFullscreen')) {
             cutoffs = this.cutoffs.fullscreen;
@@ -109,8 +107,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           featuredCharmContainer.render(featuredContainer);
 
           // Add popular charms
-          var popularCharms = this.get('store').resultsToCharmlist(
-              data.result.popular);
+          var popularCharms = results.popularCharms;
           var popularContainer = tplNode.one('.popular');
           var popularCharmContainer = new widgets.browser.CharmContainer(
               Y.merge({
@@ -123,9 +120,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           popularCharmContainer.render(popularContainer);
 
           // Add in the charm tokens for the new as well.
+          var newCharms = results.newCharms;
           var newContainer = tplNode.one('.new');
-          var newCharms = this.get('store').resultsToCharmlist(
-              data.result['new']);
           var newCharmContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'New Charms',
@@ -159,7 +155,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           this._cache.charms.reset(newCharms);
           this._cache.charms.add(popularCharms);
           this._cache.charms.add(featuredCharms);
-          this._cache.interesting = data;
+          this._cache.interesting = results;
           this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
         },
 
@@ -171,17 +167,27 @@ YUI.add('subapp-browser-editorial', function(Y) {
          * going.
          *
          */
-        render: function() {
+        render: function(cachedResults) {
           var store = this.get('store');
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
           // display.
-          if (this._cache.interesting) {
-            this._renderInteresting(this._cache.interesting);
+          if (cachedResults) {
+            this._renderInteresting(cachedResults);
           } else {
             this.get('store').interesting({
-              'success': this._renderInteresting,
+              'success': function(data) {
+                var results = {
+                  featuredCharms: this.get('store').resultsToCharmlist(
+                      data.result.featured),
+                  newCharms: this.get('store').resultsToCharmlist(
+                      data.result['new']),
+                  popularCharms: this.get('store').resultsToCharmlist(
+                      data.result.popular)
+                };
+                this._renderInteresting(results);
+              },
               'failure': this.apiFailure
             }, this);
           }

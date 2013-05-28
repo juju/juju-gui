@@ -399,20 +399,21 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      if (this._cache.interesting) {
-        extraCfg.interesting = this._cache.interesting;
-      }
 
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
 
       this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
         // Add any sidebar charms to the running cache.
-        this._cache.interesting = ev.cache.interesting;
-        this._cache.charms.reset(ev.cache.charms);
+        this._cache = Y.merge(this._cache, ev.cache);
       }, this);
 
-      this._editorial.render();
+      if (this._cache.interesting) {
+        debugger;
+        this._editorial.render(this._cache.interesting);
+      } else {
+        this._editorial.render();
+      }
       this._editorial.addTarget(this);
     },
 
@@ -441,18 +442,20 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      if (this._cache.search && !this._searchChanged()) {
-        extraCfg.search = this._cache.search;
-      }
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
-      this._search.render();
-      this._search.addTarget(this);
+      // Prepare to handle cache
       this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
-        this._cache.search = ev.cache.search;
-        this._cache.charms.reset(ev.cache.charms);
+        this._cache = Y.merge(this._cache, ev.cache);
       }, this);
+
+      if (this._cache.search && !this._searchChanged()) {
+        this._search.render(this._cache.search);
+      } else {
+        this._search.render();
+      }
+      this._search.addTarget(this);
     },
 
     /**
