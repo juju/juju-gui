@@ -854,14 +854,14 @@ YUI.add('juju-topology-service', function(Y) {
       });
       node.select('.service-block-image').each(function(d) {
         var curr_node = d3.select(this);
-        var cur_href = curr_node.attr('xlink:href');
+        var curr_href = curr_node.attr('xlink:href');
         var new_href = d.subordinate ?
             '/juju-ui/assets/svgs/sub_module.svg' :
             '/juju-ui/assets/svgs/service_module.svg';
 
         // Only set 'xlink:href' if not already set to the new value,
         // thus avoiding redundant requests to the server. #1182135
-        if (cur_href !== new_href) {
+        if (curr_href !== new_href) {
           curr_node.attr({'xlink:href': new_href});
         }
         curr_node.attr({
@@ -917,7 +917,7 @@ YUI.add('juju-topology-service', function(Y) {
             d3.select(this).select('.landscape-badge').remove();
           } else {
             var existing = Y.one(this).one('.landscape-badge'),
-                cur_href, target;
+                curr_href, target;
 
             if (!existing) {
               existing = d3.select(this).append('image');
@@ -935,8 +935,8 @@ YUI.add('juju-topology-service', function(Y) {
 
             // Only set 'xlink:href' if not already set to the new value,
             // thus avoiding redundant requests to the server. #1182135
-            cur_href = existing.attr('xlink:href');
-            if (cur_href !== landscapeAsset) {
+            curr_href = existing.attr('xlink:href');
+            if (curr_href !== landscapeAsset) {
               existing.attr({'xlink:href': landscapeAsset});
             }
           }
