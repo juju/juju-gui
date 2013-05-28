@@ -32,7 +32,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // minimizer will not parse it.
 var GlobalConfig = {
   filter: 'debug',
-  // Set "true" for verbose logging of YUI
+  // Set "true" for verbose logging of YUI.
   debug: false,
 
   base: '/juju-ui/assets/javascripts/yui/',
@@ -140,6 +140,10 @@ var GlobalConfig = {
 
         'browser-tabview': {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
+        },
+
+        'juju-inspector-widget': {
+          fullpath: '/juju-ui/widgets/inspector-widget.js'
         },
 
         'reconnecting-websocket': {

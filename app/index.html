@@ -31,7 +31,7 @@ if (/*@cc_on!@*/false) {
     <title>Juju Admin</title>
     <!-- Disable backwards compatible mode for IE on an intranet.
          For an explanation see http://bit.ly/14VytlD
-         Also note it this must be the first <meta> to appear. -->
+         Also note this must be the first <meta> to appear. -->
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
@@ -169,7 +169,7 @@ if (/*@cc_on!@*/false) {
         var document = getDocument();
         var target = document.getElementById('loading-spinner');
         // If we are in a testing environment, then actually starting the
-        // spinner is unneccesary and counter productive.
+        // spinner is unnecessary and counterproductive.
         if (target.style !== undefined) {
           spinner = new Spinner(opts).spin(target);
         }
@@ -181,7 +181,7 @@ if (/*@cc_on!@*/false) {
       };
 
       isBrowserSupported = function(agent) {
-        // At the moment only Chrome is supported.
+        // At the moment Chrome and Firefox are supported.
         return (/Chrome|Firefox/.test(agent));
       };
 
@@ -234,6 +234,88 @@ if (/*@cc_on!@*/false) {
           displayBrowserWarning();
         }
       };
+
+      /**
+        Feature flags support.
+
+        :WARNING: this is stuck on the window object to make sure it's
+        available everywhere. This means mocking this out in tests can be
+        dangerous and evil. Be careful.
+
+        This allows us to use the :flags: NS to set either boolean or string
+        feature flags to control various features in the app.  A simple /<flag>/
+        will set that flag as true in the global flags variable.  A
+        /<flag>=<val>/ will set that flag to that value in the global flags
+        variable. An example usage would be to turn on the ability to drag-and-
+        drop a feature by wrapping that feature code in something like:
+
+          if (flags['gui.featuredrag.enable']) { ... }
+
+        From the Launchpad feature flags documentation:
+
+        > As a general rule, each switch should be checked only once or only a
+        > few time in the codebase. We don't want to disable the same thing in
+        > the ui, the model, and the database.
+        >
+        > The name looks like dotted python identifiers, with the form
+        > APP.FEATURE.EFFECT. The value is a Unicode string.
+
+        A shortened version of key can be used if they follow this pattern:
+
+        - The feature flag applies to the gui.
+        - The presence of the flag indicates Boolean enablement
+        - The (default) absence of the flag indicates the feature will not be
+          available.
+
+        If those conditions are met then you may simply use the descriptive
+        name of the feature, taking care it uniquely defines the feature. An
+        example is, rather than specifying gui.dndexport.enable you can specify
+        dndexport as a flag.
+
+        @method featureFlags
+        @param {object} url The url to parse for flags.
+        @param {object} configFlags An optional config object to merge with.
+      */
+      window.featureFlags = function(url, configFlags) {
+        var flags = configFlags || {},
+            flagsRegex = new RegExp(/:flags:\/([^:])*/g);
+
+        var found = url.match(flagsRegex);
+
+        // The matches come back as an array.
+        if (found && found.length) {
+          found = found[0];
+        }
+
+        // Check if the :flags: namespace is in the url.
+        if (found) {
+          // Make sure we trim a trailing / to prevent extra data in the split.
+          var urlFlags = found.replace(/\/+$/, '').split('/');
+
+          // Remove the first :flags: match from the split results.
+          urlFlags = urlFlags.slice(1);
+
+          urlFlags.forEach(function(flag) {
+            var key = flag;
+            var value = true;
+
+            // Allow setting a specific value other than true.
+            var equals = flag.indexOf('=');
+            if (equals !== -1) {
+              key = flag.slice(0, equals);
+              // Add one to the index to make sure we drop the first "equals"
+              // from the string.
+              value = flag.slice((equals + 1));
+            }
+
+            flags[key] = value;
+          });
+        }
+
+        return flags;
+      };
+
+
     </script>
     <script>
       // This code is here instead of in the "app-startup" script tag above
@@ -252,10 +334,15 @@ if (/*@cc_on!@*/false) {
     <script src="/juju-ui/assets/config.js"></script>
     <script>
       // Now that all of the above JS is loaded we can define the real start
-      // function which will be picked up by the setTimeout and the app will
+      // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
         setLoadingMessageText('Connecting to the Juju environment');
+
+        window.flags = featureFlags(
+            window.location.href,
+            GlobalConfig.flags || {}
+        );
 
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);

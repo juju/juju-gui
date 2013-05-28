@@ -208,17 +208,6 @@ describe('Namespaced Routing', function() {
 
   });
 
-  it('should allow a feature flags namespace', function() {
-    assert.deepEqual({}, flags);
-    // Use the route callback directly.
-    app.featureFlags({path: '/foo/bar=baz/'}, undefined, function() {});
-    assert.deepEqual({foo: true, bar: 'baz'}, flags);
-    app.featureFlags({path: '/foo/bar=baz=bar/'}, undefined, function() {});
-    assert.deepEqual({foo: true, bar: 'baz=bar'}, flags);
-    app.featureFlags({path: '/foo/'}, undefined, function() {});
-    assert.deepEqual({foo: true}, flags);
-  });
-
 });
 
 describe('Juju Gui Routing', function() {
