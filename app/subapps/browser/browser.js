@@ -200,7 +200,6 @@ YUI.add('subapp-browser', function(Y) {
     _stripViewMode: function(id) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
-      /*jslint bitwise: true*/
       var match = /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
 
       if (id && id.match(match)) {
@@ -684,7 +683,7 @@ YUI.add('subapp-browser', function(Y) {
             noop: false,
             apiHost: ''
           };
-          if (!window.juju_config || ! window.juju_config.charmworldURL) {
+          if (!window.juju_config || !window.juju_config.charmworldURL) {
             console.error('No juju config to fetch charmworld store url');
             cfg.noop = true;
           } else {

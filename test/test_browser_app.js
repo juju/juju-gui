@@ -316,7 +316,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('viewmodes we not a valid charm id', function() {
+    it('viewmodes are not a valid charm id', function() {
       var req = {
         path: '/sidebar/',
         params: {
