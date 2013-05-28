@@ -667,8 +667,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld0
-         @type {Charmworld0}
+         @default Charmworld1
+         @type {Charmworld1}
        */
       store: {
         /**
@@ -690,7 +690,7 @@ YUI.add('subapp-browser', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld0(cfg);
+          return new Y.juju.Charmworld1(cfg);
         }
       },
 

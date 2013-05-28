@@ -155,14 +155,14 @@ YUI.add('juju-charm-store', function(Y) {
 
 
   /**
-   * Api helper for the updated charmworld api v0.
+   * Api helper for the updated charmworld api v1.
    *
-   * @class Charmworld0
+   * @class Charmworld1
    * @extends {Base}
    *
    */
-  ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: 'api/0/',
+  ns.Charmworld1 = Y.Base.create('charmworld0', Y.Base, [], {
+    _apiRoot: 'api/1/',
 
     /**
      * Send the actual request and handle response from the api.
@@ -303,7 +303,7 @@ YUI.add('juju-charm-store', function(Y) {
 
     /**
      * Given a result list, turn that into a BrowserCharmList object for the
-     * application to use.
+     * application to use. Metadata is appended to the charm as data.
      *
      * @method _resultsToCharmlist
      * @param {Object} JSON decoded data from response.
@@ -311,8 +311,15 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     resultsToCharmlist: function(data) {
+      // Append the metadata to the actual charm object.
+      var preppedData = Y.Array.map(data, function(charmData) {
+        if (charmData.metadata) {
+          charmData.charm.metadata = charmData.metadata;
+        }
+        return charmData.charm;
+      });
       return new Y.juju.models.BrowserCharmList({
-        items: data
+        items: preppedData
       });
     },
 

@@ -48,12 +48,14 @@ describe('search view', function() {
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
-    var fakeStore = new Y.juju.Charmworld0({});
+    var fakeStore = new Y.juju.Charmworld1({});
     var sampleData = {
       result: [{
-        id: 'foo/bar-2',
-        name: 'bar',
-        description: 'some charm named bar'
+        charm: {
+          id: 'foo/bar-2',
+          name: 'bar',
+          description: 'some charm named bar'
+        }
       }]
     };
     fakeStore.set('datasource', {

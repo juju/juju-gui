@@ -323,7 +323,7 @@ YUI.add('juju-charm-models', function(Y) {
 
 
   /**
-   * Model to represent the Charms from the Charmworld0 Api.
+   * Model to represent the Charms from the Charmworld1 Api.
    *
    * @class BrowserCharm
    * @extends {Charm}
@@ -479,6 +479,13 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       maintainer: {},
+      /**
+        API related metdata information for this charm object.
+
+        This includes information such as related charms calculated by the
+        back end, but are not directly part of the charms representation.
+
+      */
       metadata: {},
       name: {},
       icon: {},
@@ -500,7 +507,7 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
-       * This can be removed when Charmworld0 is the one true model used in
+       * This can be removed when Charmworld1 is the one true model used in
        * all Juju Gui code.
        *
        * @attribute provides
@@ -590,7 +597,7 @@ YUI.add('juju-charm-models', function(Y) {
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
        *
-       * This can be removed when Charmworld0 is the one true model used in
+       * This can be removed when Charmworld1 is the one true model used in
        * all Juju Gui code.
        *
        * @attribute requires

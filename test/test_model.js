@@ -612,12 +612,13 @@ describe('BrowserCharm test', function() {
   });
 
   it('maps api downloads in 30 days to recent downloads', function() {
-    instance = new models.BrowserCharm(data);
+    data.charm.downloads_in_past_30_days = 10;
+    instance = new models.BrowserCharm(data.charm);
     instance.get('recent_download_count').should.eql(10);
   });
 
   it('maps relations to keep with the original charm model', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var requires = instance.get('requires');
     // Interface is quoted for lint purposes.
     requires.balancer['interface'].should.eql('http');
@@ -627,7 +628,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('maps revisions nicely for us with converted dates', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var commits = instance.get('recent_commits');
     commits.length.should.equal(10);
 
@@ -648,7 +649,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('tracks recent commits in the last 30 days', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var commits = instance.get('recent_commits'),
         today = new Date();
 
@@ -664,7 +665,12 @@ describe('BrowserCharm test', function() {
   it('provides a failingProviders attr', function() {
     // The charm details needs the failing providers generated from the list
     // of tested_providers.
-    instance = new models.BrowserCharm(data);
+    data.charm.tested_providers = {
+      'ec2': 'FAILURE',
+      'local': 'FAILURE',
+      'openstack': 'FAILURE'
+    };
+    instance = new models.BrowserCharm(data.charm);
     // Note that the hp one is added by our code. There is no hp test, it's
     // openstack on HP. If the openstack test fails, both are failing.
     instance.get('failingProviders').should.eql(

@@ -562,7 +562,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this.get('store').charm(this.get('charmID'), {
           'success': function(data) {
-            var charm = new models.BrowserCharm(data);
+            var charm = new models.BrowserCharm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
             this.set('charm', charm);
             this._renderCharmView(this.get('charm'), isFullscreen);
             this.hideIndicator(this.get('renderTo'));
@@ -623,7 +626,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld0}
+       * @type {Charmworld1}
        *
        */
       store: {},
