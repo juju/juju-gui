@@ -201,6 +201,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
           this._cache.charms.destroy();
         },
 
+        /**
+           Initializer
+
+           @method initializer
+           @param {cfg} Basic initializer object.
+         */
         initializer: function(cfg) {
           this._cache = {
             interesting: null,

@@ -199,6 +199,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
           }
         },
 
+        /**
+           Initializer
+
+           @method initializer
+           @param {cfg} Basic initializer object.
+         */
         initializer: function(cfg) {
           if (cfg && cfg.search) {
             this._cache.search = cfg.search;
