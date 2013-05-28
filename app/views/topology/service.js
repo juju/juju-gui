@@ -852,15 +852,23 @@ YUI.add('juju-topology-service', function(Y) {
         return h;
       }
       });
-      node.select('.service-block-image')
-        .attr({'xlink:href': function(d) {
-            return d.subordinate ?
-                '/juju-ui/assets/svgs/sub_module.svg' :
-                '/juju-ui/assets/svgs/service_module.svg';
-          },
-          'width': function(d) { return d.w; },
-          'height': function(d) { return d.h; }
-          });
+      node.select('.service-block-image').each(function(d) {
+        var curr_node = d3.select(this);
+        var cur_href = curr_node.attr('xlink:href');
+        var new_href = d.subordinate ?
+          '/juju-ui/assets/svgs/sub_module.svg' :
+          '/juju-ui/assets/svgs/service_module.svg';
+
+        // Only set 'xlink:href' if not already set to the new value,
+        // thus avoiding redundant requests to the server. #1182135
+        if (cur_href !== new_href) {
+          curr_node.attr({'xlink:href': new_href});
+        };
+        curr_node.attr({
+          'width': d.w,
+          'height': d.h
+        });
+      });
 
       // Draw a subordinate relation indicator.
       var subRelationIndicator = node.filter(function(d) {
@@ -904,11 +912,12 @@ YUI.add('juju-topology-service', function(Y) {
             landscapeAsset =
                 '/juju-ui/assets/images/landscape_restart_round.png';
           }
-          if (landscapeAsset !== undefined) {
-            // If we would draw something that is already
-            // present, continue
+          if (landscapeAsset === undefined) {
+            // Remove any existing badge.
+            d3.select(this).select('.landscape-badge').remove();
+          } else {
             var existing = Y.one(this).one('.landscape-badge'),
-                target;
+                cur_href, target;
 
             if (!existing) {
               existing = d3.select(this).append('image');
@@ -920,13 +929,16 @@ YUI.add('juju-topology-service', function(Y) {
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
-              'xlink:href': landscapeAsset,
               'x': function(box) {return box.w * 0.13;},
               'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
             });
-          } else {
-            // Remove any existing badge.
-            d3.select(this).select('.landscape-badge').remove();
+
+            // Only set 'xlink:href' if not already set to the new value,
+            // thus avoiding redundant requests to the server. #1182135
+            cur_href = existing.attr('xlink:href');
+            if (cur_href !== landscapeAsset) {
+              existing.attr({'xlink:href': landscapeAsset});
+            };
           }
         });
       }
