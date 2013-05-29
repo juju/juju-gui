@@ -18,15 +18,18 @@ from __future__ import print_function
 
 import StringIO
 import json
+import sys
 import unittest
 
-from websocket_replay import (
+from websocketreplay import (
     Frame,
+    HELP,
     NORMAL,
     WSHandler,
     application,
     handle_message,
     infer_direction,
+    main,
     print_with_color,
     read_frames,
     )
@@ -90,7 +93,7 @@ class TestReadingFrames(unittest.TestCase):
         frames = read_frames('')
         # We test this by asserting that the frames object is its own
         # iterator.
-        self.assertTrue(frames, iter(frames))
+        self.assertEqual(frames, iter(frames))
 
 
 class TestColorizedPrinting(unittest.TestCase):
@@ -245,7 +248,6 @@ class TestHandlingMessages(unittest.TestCase):
             Frame('next 1', 'to client'),
             Frame('next 2', 'to client'),
             NEXT_EXPECTED])
-        # The program will exit.
         result = handle_message(MESSAGE, frames, written.append, log=log)
         self.assertEqual(result, NEXT_EXPECTED)
 
@@ -259,6 +261,44 @@ class TestWebsocketHandlerIsConnected(unittest.TestCase):
         self.assertEqual(
             application.handlers[0][1][0].handler_class,
             WSHandler)
+
+
+class TemporaryStdout(object):
+    """A context manager that temporarily swaps out stdout."""
+
+    def __enter__(self):
+        self.original_stdout = sys.stdout
+        sys.stdout = StringIO.StringIO()
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        self.output = sys.stdout.getvalue()
+        sys.stdout = self.original_stdout
+
+
+class TestMain(unittest.TestCase):
+    """The main function handles interfacing with the user as a CLI app."""
+
+    def test_help_is_printed_when_requested(self):
+        # If the user passes --help anywhere in the arguments, the help is
+        # printed.
+        with TemporaryStdout() as stdout:
+            main(['websocketreplay', '--help'])
+        self.assertEqual(stdout.output.strip(), HELP)
+
+    def test_help_is_printed_when_requested_more_succinctly(self):
+        # If the user passes -h anywhere in the arguments, the help is
+        # printed.
+        with TemporaryStdout() as stdout:
+            main(['websocketreplay', '-h'])
+        self.assertEqual(stdout.output.strip(), HELP)
+
+    def test_help_is_printed_when_no_arguments_are_provided(self):
+        # If the user does not provide the path to a log file to replay, the
+        # help is printed.
+        with TemporaryStdout() as stdout:
+            main(['websocketreplay'])
+        self.assertEqual(stdout.output.strip(), HELP)
 
 
 if __name__ == '__main__':

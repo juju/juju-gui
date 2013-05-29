@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # This file is part of the Juju GUI, which lets users view and manage Juju
 # environments within a graphical interface (https://launchpad.net/juju-gui).
 # Copyright (C) 2012-2013 Canonical Ltd.
@@ -25,6 +26,15 @@ import time
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+
+
+HELP = """\
+Usage: bin/websocketreplay FILE
+
+Replay a log of websocket traffic (FILE) between the GUI and a backend
+(py-juju-only for the moment).
+
+See docs/recording-and-playing-back-websocket-traffic.rst for details."""
 
 
 RED = '\x1b[31m'
@@ -104,7 +114,7 @@ class Logger(object):
 
     @staticmethod
     def sent(*args):
-        print_with_color(GREEN,  'sent:', *args)
+        print_with_color(GREEN, 'sent:', *args)
 
     @staticmethod
     def received(*args):
@@ -190,6 +200,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 application = tornado.web.Application([(r'/ws', WSHandler)])
 
 
-if __name__ == "__main__":
+def main(argv):
+    if len(argv) == 1 or '--help' in argv[1:] or '-h' in argv[1:]:
+        print(HELP)
+        return 0
+
     application.listen(8081)
     tornado.ioloop.IOLoop.instance().start()
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
