@@ -30,6 +30,7 @@ describe('search view', function() {
         'json',
         'juju-charm-store',
         'juju-tests-utils',
+        'juju-models',
         'node',
         'node-event-simulate',
         'subapp-browser-searchview',
@@ -105,7 +106,6 @@ describe('search view', function() {
     view.render();
   });
 
-
   it('handles empty text for search', function() {
     view.set('filters', {text: ''});
     view.render();
@@ -134,4 +134,25 @@ describe('search view', function() {
     container.one('.charm-token').simulate('click');
   });
 
+  it('tells listeners the cache has updated', function() {
+    view.on(view.EV_CACHE_UPDATED, function(ev) {
+      assert.isObject(ev.cache);
+    });
+    view.render();
+  });
+
+  it('uses passed in cache data if available', function() {
+    var search_called = false,
+        results = new Y.juju.models.BrowserCharmList();
+
+    view.get('store').search = function() {
+      search_called = true;
+      return results;
+    };
+    view.render(results);
+    assert.isFalse(search_called);
+
+    view.render();
+    assert.isTrue(search_called);
+  });
 });

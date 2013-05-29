@@ -717,6 +717,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       minNode.getComputedStyle('display').should.eql('none');
       browserNode.getComputedStyle('display').should.eql('none');
     });
+
+    it('knows when the search cache should be updated', function() {
+      browser._getStateUrl({
+        'search': true,
+        'querystring': 'text=apache'
+      });
+      assert.isTrue(browser._searchChanged());
+      browser._getStateUrl({
+        'search': true,
+        'querystring': 'text=apache'
+      });
+      assert.isFalse(browser._searchChanged());
+      browser._getStateUrl({
+        'search': true,
+        'querystring': 'text=ceph'
+      });
+      assert.isTrue(browser._searchChanged());
+    });
   });
 })();
-

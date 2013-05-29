@@ -190,12 +190,27 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Strip the viewmode from the charmid when processing to check for proper
-     * routing.
-     *
-     * @method _stripViewMode
-     * @param {String} id the req.param.id found.
-     *
+       Determine if search changed, so we know how to handle the cache.
+
+       @method _searchChanged
+       @return {Boolean} true If search changed.
+     */
+    _searchChanged: function() {
+      if (this._viewState.search && (
+          this._hasStateChanged('search') ||
+          this._hasStateChanged('querystring'))) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+       Strip the viewmode from the charmid when processing to check for proper
+       routing.
+
+       @method _stripViewMode
+       @param {String} id the req.param.id found.
      */
     _stripViewMode: function(id) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
@@ -212,7 +227,6 @@ YUI.add('subapp-browser', function(Y) {
           id = null;
         }
       }
-
       return id;
     },
 
@@ -303,7 +317,15 @@ YUI.add('subapp-browser', function(Y) {
        @method destructor
      */
     destructor: function() {
-      this._cacheCharms.destroy();
+      this._cache.charms.destroy();
+      if (this._cache.search) {
+        this._cache.search.destroy();
+      }
+      if (this._cache.interesting) {
+        this._cache.interesting.newCharms.destroy();
+        this._cache.interesting.popularCharms.destroy();
+        this._cache.interesting.featuredCharms.destroy();
+      }
       delete this._viewState;
     },
 
@@ -316,7 +338,11 @@ YUI.add('subapp-browser', function(Y) {
     initializer: function(cfg) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
+      this._cache = {
+        charms: new models.BrowserCharmList(),
+        search: null,
+        interesting: null
+      };
       this._initState();
       this._filter = new models.browser.Filter();
 
@@ -330,6 +356,7 @@ YUI.add('subapp-browser', function(Y) {
         }
         this.navigate(url);
       });
+
     },
 
     /**
@@ -355,7 +382,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cacheCharms.getById(charmID);
+      var model = this._cache.charms.getById(charmID);
 
       if (model) {
         extraCfg.charm = model;
@@ -404,14 +431,17 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
+
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
 
-      this._editorial.render();
-      this._editorial.addTarget(this);
+      this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
+        // Add any sidebar charms to the running cache.
+        this._cache = Y.merge(this._cache, ev.cache);
+      }, this);
 
-      // Add any sidebar charms to the running cache.
-      this._cacheCharms.add(this._editorial._cacheCharms);
+      this._editorial.render(this._cache.interesting);
+      this._editorial.addTarget(this);
     },
 
     /**
@@ -442,7 +472,16 @@ YUI.add('subapp-browser', function(Y) {
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
-      this._search.render();
+      // Prepare to handle cache
+      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
+        this._cache = Y.merge(this._cache, ev.cache);
+      }, this);
+
+      if (!this._searchChanged()) {
+        this._search.render(this._cache.search);
+      } else {
+        this._search.render();
+      }
       this._search.addTarget(this);
     },
 

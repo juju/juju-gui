@@ -177,25 +177,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      this._cacheCharms.destroy();
-
       // Clean up any details view we might have hanging around.
       if (this.details) {
         this.details.destroy(true);
       }
-    },
-
-    /**
-     * General YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      // Hold onto charm data so we can pass model instances to other views when
-      // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
     },
 
     /**

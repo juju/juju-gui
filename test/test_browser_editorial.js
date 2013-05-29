@@ -233,6 +233,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       node.all('.yui3-charmtoken.active').size().should.equal(0);
     });
 
+    it('tells listeners the cache has updated', function() {
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content')
+      });
+      var results = {
+        featuredCharms: [],
+        newCharms: [],
+        popularCharms: []
+      };
+      view.on(view.EV_CACHE_UPDATED, function(ev) {
+        assert.isObject(ev.cache);
+      });
+      view.render(results);
+    });
+
+    it('uses passed in cache data if available', function() {
+      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [sampleData]
+            }
+          });
+        }
+      });
+      var interesting_called = false,
+          results = {
+            featuredCharms: [],
+            newCharms: [],
+            popularCharms: []
+          };
+
+      fakeStore.interesting = function() {
+        interesting_called = true;
+        return results;
+      };
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore,
+        activeID: 'precise/ceph-7'
+      });
+      view.render(results);
+      assert.isFalse(interesting_called);
+
+      view.render();
+      assert.isTrue(interesting_called);
+    });
+
   });
 
 })();

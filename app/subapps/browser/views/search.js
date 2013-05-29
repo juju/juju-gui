@@ -37,7 +37,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
      @class BrowserSearchView
      @extends {juju.browser.views.CharmResults}
-
    */
   ns.BrowserSearchView = Y.Base.create(
       'browser-view-searchview',
@@ -130,6 +129,22 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // doesn't. Se we scroll the heading into view to ensure the view
           // renders at the top of the content.
           target.one('.search-title').scrollIntoView();
+          this.hideIndicator(this.get('renderTo'));
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                this.get('container').one(
+                    '.charm-token[data-charmid="' + active + '"]')
+            );
+          }
+          var cache = {
+            search: results,
+            charms: new models.BrowserCharmList()
+          };
+          cache.charms.add(results);
+          this.fire(this.EV_CACHE_UPDATED, {cache: cache});
         },
 
         /**
@@ -167,30 +182,25 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
            @method render
          */
-        render: function() {
+        render: function(cachedResults) {
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go
           // through the subapp so we don't have to keep the filters in sync
           // here.  If caching/reusing comes into play though an event to
           // track the change of the filters ATTR would make sense to re-draw.
-          this.get('store').search(this.get('filters'), {
-            'success': function(data) {
-              var results = this.get('store').resultsToCharmlist(data.result);
-              this._renderSearchResults(results);
-              this.hideIndicator(this.get('renderTo'));
-
-              // Set the active charm if available.
-              var active = this.get('activeID');
-              if (active) {
-                this._updateActive(
-                    this.get('container').one(
-                        '.charm-token[data-charmid="' + active + '"]')
-                );
-              }
-            },
-            'failure': this.apiFailure
-          }, this);
+          if (cachedResults) {
+            this._renderSearchResults(cachedResults);
+          } else {
+            this.get('store').search(this.get('filters'), {
+              'success': function(data) {
+                var results = this.get('store').resultsToCharmlist(
+                    data.result);
+                this._renderSearchResults(results);
+              },
+              'failure': this.apiFailure
+            }, this);
+          }
         }
       }, {
         ATTRS: {
