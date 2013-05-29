@@ -1,4 +1,22 @@
 'use strict';
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 
 /**
  Textarea resizing plugin.  Taken from Launchpad.  Original copyright follows.
@@ -237,6 +255,8 @@ YUI.add('resizing-textarea', function(Y) {
       var that = this;
       this.t_area = this.get('host');
 
+      this.hasFocus = false;
+
       // We need to clean the px of any defaults passed in.
       this.set('min_height', this._clean_size(this.get('min_height')));
       this.set('max_height', this._clean_size(this.get('max_height')));
@@ -251,6 +271,21 @@ YUI.add('resizing-textarea', function(Y) {
       // pasting and such.
       this.t_area.on('valueChange', function(e) {
         this._run_change(e.newVal);
+      }, this);
+
+      // On focus ensure the area is big enough to accomodate the addition of
+      // another line so that it won't bounce around.
+      this.t_area.on('focus', function(e) {
+        var value = this.t_area.get('value');
+        this.hasFocus = true;
+        this.resize();
+      }, this);
+
+      this.t_area.on('blur', function(e) {
+        // Change _prev_scroll_height to force a resize.
+        this._prev_scroll_height = 0;
+        this.hasFocus = false;
+        this.resize();
       }, this);
 
       // We also want to handle adjusting if the user resizes their browser.
@@ -279,6 +314,10 @@ YUI.add('resizing-textarea', function(Y) {
       // changed.
       this._update_clone_width();
       var scroll_height = this.clone.get('scrollHeight');
+
+      if (this.hasFocus) {
+        scroll_height += this._single_line_height;
+      }
 
       if (this.get('single_line') &&
           this._single_line_height >= scroll_height &&

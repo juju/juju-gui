@@ -17,6 +17,7 @@
 # a developer may not be working in a bzr repository.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
+	-o -wholename './.bzr*' -prune \
 	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
@@ -29,13 +30,15 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
+		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/prettify.js$$' \
+		-e '^app/assets/javascripts/FileSaver.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
-LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js'
+LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js'
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/expect.js node_modules/express \
     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
@@ -131,7 +134,6 @@ BUILD_FILES=build-shared/juju-ui/assets/modules.js \
 JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
 	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/yui
 DATE=$(shell date -u)
-APPCACHE=build-shared/juju-ui/assets/manifest.appcache
 
 # Some environments, notably sudo, do not populate the default PWD environment
 # variable, which is used to set $(PWD).  Worse, in some situations, such as
@@ -160,10 +162,10 @@ help:
 	@echo "test-prod-server: run tests in the browser from the prod environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
-	@echo "check: run checks used by lbox""
+	@echo "check: run checks used by lbox"
 	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
-	@echo "Other targets are available, see the Makefile."
+	@echo "Other targets are available.  See the Makefile."
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build-shared/juju-ui/assets
@@ -173,7 +175,7 @@ yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 main-doc:
-	make -C docs html
+	make -C docs SPHINXOPTS=-W html
 
 view-main-doc: main-doc
 	xdg-open docs/_build/html/index.html
@@ -306,7 +308,6 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/images \
 	build-$(1)/juju-ui/assets/svgs \
 	build-$(1)/juju-ui/version.js \
-	build-$(1)/juju-ui/assets/manifest.appcache \
 	build-$(1)/juju-ui/assets/combined-css/all-static.css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
 	build-$(1)/juju-ui/assets/sprite.css \
@@ -336,8 +337,6 @@ define link-files
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/manifest.appcache" \
-		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
 		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
@@ -386,7 +385,7 @@ $(LINK_PROD_FILES):
 
 prep: beautify lint
 
-check: lint test-prod test-debug test-misc
+check: lint test-prod test-debug test-misc docs
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
@@ -421,7 +420,9 @@ test-prod-server: build-prod test-prep
 	./test-server.sh prod true
 
 test-misc:
+	PYTHONPATH=lib python test/test_websocketreplay.py
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
+	PYTHONPATH=bin python test/test_http_server.py
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
@@ -445,12 +446,12 @@ debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
-	cd build-debug && python -m SimpleHTTPServer 8888
+	(cd build-debug && python ../bin/http_server.py 8888)
 
 # prod is for deployment of aggregated and minimized code.
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
-	cd build-prod && python -m SimpleHTTPServer 8888
+	(cd build-prod && python ../bin/http_server.py 8888)
 
 clean:
 	rm -rf build-shared build-debug build-prod
@@ -467,7 +468,7 @@ clean-all: clean clean-deps clean-docs
 
 build: build-prod build-debug build-devel
 
-build-shared: $(APPCACHE) $(NODE_TARGETS) spritegen \
+build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
 	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
@@ -477,19 +478,17 @@ build-debug: build-shared | $(LINK_DEBUG_FILES)
 
 build-prod: build-shared | $(LINK_PROD_FILES)
 
-$(APPCACHE): manifest.appcache.in
+build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
-	cp manifest.appcache.in $(APPCACHE)
-	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
 # This really depends on CHANGES.yaml, the bzr revno changing, and the build
 # /juju-ui directory existing.  We are vaguely trying to approximate the second
-# one by connecting it to our pertinent versioned files.  The appcache target
-# creates the third, and directories are a bit tricky with Makefiles so we are
-# OK with that.  The ULTIMATE_VERSION is used here because we always want the
-# version.js file to reflect the top-most entry in the CHANGES.yaml file,
+# one by connecting it to our pertinent versioned files.  The first target
+# creates the directory, and directories are a bit tricky with Makefiles so we
+# are OK with that.  The ULTIMATE_VERSION is used here because we always want
+# the version.js file to reflect the top-most entry in the CHANGES.yaml file,
 # regardless of whether we are doing a "Stable" or "Development" release.
-build-shared/juju-ui/version.js: $(APPCACHE) CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
+build-shared/juju-ui/version.js: build-shared/juju-ui/assets CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
 	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(BZR_REVNO)'];" \
 	    > build-shared/juju-ui/version.js
@@ -498,7 +497,7 @@ upload_release.py:
 	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py \
 	    > upload_release.py
 
-$(RELEASE_FILE): build
+$(RELEASE_FILE): build test-prep
 	@echo "$(BRANCH_IS_CLEAN)"
 ifdef BRANCH_IS_GOOD
 	mkdir -p releases
@@ -583,23 +582,11 @@ else
 	@false
 endif
 
-appcache: $(APPCACHE)
-
-# A target used only for forcibly updating the appcache.
-appcache-touch:
-	touch app/index.html
-	touch manifest.appcache.in
-
-# This is the real target.  appcache-touch needs to be executed before
-# appcache, and this provides the correct order.
-appcache-force: appcache-touch $(APPCACHE)
-
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: appcache-force appcache-touch beautify build build-files \
-	build-devel clean clean-all clean-deps clean-docs code-doc debug \
-	devel docs dist gjslint help install-npm-packages jshint lint \
-	main-doc npm-cache npm-cache-file prep prod recess server spritegen \
-	test test-debug test-prep test-prod undocumented view-code-doc \
-	view-docs view-main-doc yuidoc-lint
+.PHONY: beautify build build-files build-devel clean clean-all clean-deps \
+	clean-docs code-doc debug devel docs dist gjslint help \
+	install-npm-packages jshint lint main-doc npm-cache npm-cache-file \
+	prep prod recess server spritegen test test-debug test-misc test-prep \
+	test-prod undocumented view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all

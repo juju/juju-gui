@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -13,6 +31,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     initializer: function(cfg) {
       this.hide();
+      this._spinner = Y.spinner.getSpinner();
     },
 
     /**
@@ -44,18 +63,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
       var local_parent = this.get('target').get('parentNode');
       this._renderBoxClassNames();
       this._renderBox(local_parent);
-    },
-
-    /**
-     * Build the indicator overlay itself.
-     *
-     * @method renderUI
-     */
-    renderUI: function() {
-      var node_html = '<img src="{src}">';
-      var img = Y.Node.create(
-          sub(node_html, {src: this.get('loading_image')}));
-      this.get('contentBox').append(img);
     },
 
     /**
@@ -91,6 +98,8 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * @method setBusy
      */
     setBusy: function() {
+      var target = this.get('target').getDOMNode();
+      this._spinner.spin(target);
       this.show();
     },
 
@@ -101,6 +110,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     success: function() {
       this.hide();
+      this._spinner.stop();
       var callback = this.get('success_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -114,6 +124,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     error: function() {
       this.hide();
+      this._spinner.stop();
       var callback = this.get('error_action');
       if (typeof callback === 'function') {
         callback.call(this);
@@ -240,5 +251,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
 }, '0.1.0', { requires: [
   'base',
   'node-screen',
+  'spinner',
   'widget'
 ]});

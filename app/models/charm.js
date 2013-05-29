@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -305,7 +323,7 @@ YUI.add('juju-charm-models', function(Y) {
 
 
   /**
-   * Model to represent the Charms from the Charmworld0 Api.
+   * Model to represent the Charms from the Charmworld1 Api.
    *
    * @class BrowserCharm
    * @extends {Charm}
@@ -424,7 +442,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       files: {
-        value: {}
+        value: []
       },
       full_name: {
         /**
@@ -441,6 +459,21 @@ YUI.add('juju-charm-models', function(Y) {
             tmp.unshift('~' + owner);
           }
           return tmp.join('/');
+        }
+      },
+      /**
+        Does this charm have an icon file. Helper used for template rendering
+        decisions.
+
+      */
+      hasIcon: {
+        /**
+          @method hasIcon.valueFn
+          @return {Boolean} Does the Charm have an icon file.
+
+         */
+        valueFn: function() {
+          return this.get('files').indexOf('icon.svg') !== -1 ? true : false;
         }
       },
       is_approved: {},
@@ -461,9 +494,15 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       maintainer: {},
+      /**
+        API related metdata information for this charm object.
+
+        This includes information such as related charms calculated by the
+        back end, but are not directly part of the charms representation.
+
+      */
       metadata: {},
       name: {},
-      icon: {},
       /**
        * options is the parsed YAML object from config.yaml in a charm. Do not
        * set a value if there are no options to be had.
@@ -482,7 +521,7 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
-       * This can be removed when Charmworld0 is the one true model used in
+       * This can be removed when Charmworld1 is the one true model used in
        * all Juju Gui code.
        *
        * @attribute provides
@@ -572,7 +611,7 @@ YUI.add('juju-charm-models', function(Y) {
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
        *
-       * This can be removed when Charmworld0 is the one true model used in
+       * This can be removed when Charmworld1 is the one true model used in
        * all Juju Gui code.
        *
        * @attribute requires

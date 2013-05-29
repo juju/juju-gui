@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -131,7 +149,7 @@
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -211,7 +229,7 @@
 
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -251,7 +269,7 @@
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -375,9 +393,9 @@
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -392,13 +410,13 @@
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -610,13 +628,20 @@
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
+      // Add a failing test to the charm data.
+      data.charm.tested_providers = {
+        'ec2': 'FAILURE',
+        'local': 'FAILURE',
+        'openstack': 'FAILURE'
+      };
+
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -629,13 +654,13 @@
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 

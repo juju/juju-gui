@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 var spinner;
@@ -34,23 +52,18 @@ YUI.add('juju-gui', function(Y) {
     /*
       Extension properties
     */
-    subApplications: [{
-      type: Y.juju.subapps.Browser,
-      config: {}
-    }],
+    subApplications: [],
 
     defaultNamespace: 'charmstore',
     /*
       End extension properties
     */
 
-    /*
+    /**
      * Views
      *
      * The views encapsulate the functionality blocks that output
      * the GUI pages. The "parent" attribute defines the hierarchy.
-     *
-     * FIXME: not included in the generated doc output.
      *
      * @attribute views
      */
@@ -136,12 +149,13 @@ YUI.add('juju-gui', function(Y) {
      * target: {String} CSS selector of one element
      * focus: {Boolean} Focus the element.
      * toggle: {Boolean} Toggle element visibility.
+     * fire: {String} Event to fire when triggered. (XXX: Target is topology)
+     * condition: {Function} returns Boolean, should method be added to
+     *            keybindings.
      * callback: {Function} Taking (event, target).
      * help: {String} Help text to display in popup.
      *
      * All are optional.
-     *
-     *
      */
     keybindings: {
       'A-s': {
@@ -149,17 +163,10 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
-      'S-d': {
-        callback: function(evt) {
-          /* global saveAs: false */
-          this.env.exportEnvironment(function(r) {
-            var exportData = JSON.stringify(r.result, undefined, 2);
-            var exportBlob = new Blob([exportData],
-                                      {type: 'application/json;charset=utf-8'});
-            saveAs(exportBlob, 'export.json');
-          });
-        },
-        help: 'Export the environment'
+      '/': {
+        target: '#charm-search-field',
+        focus: true,
+        help: 'Select the charm Search'
       },
       'S-/': {
         target: '#shortcut-help',
@@ -169,10 +176,15 @@ YUI.add('juju-gui', function(Y) {
           if (target && !target.getHTML().length) {
             var bindings = [];
             Y.each(this.keybindings, function(v, k) {
-              if (v.help) {
+              if (v.help && (v.condition === undefined ||
+                             v.condition.call(this) === true)) {
+                // TODO: translate keybindings to
+                // human <Alt> m
+                // <Control> <Shift> N (note caps)
+                // also 'g then i' style
                 bindings.push({key: k, help: v.help});
               }
-            });
+            }, this);
             target.setHTML(
                 views.Templates.shortcuts({bindings: bindings}));
           }
@@ -185,17 +197,50 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Navigate to the Environment overview.'
       },
+      '+': {
+        fire: 'zoom_in',
+        help: 'Zoom In'
+      },
+      '-': {
+        fire: 'zoom_out',
+        help: 'Zoom Out'
+      },
       'esc': {
+        fire: 'clearState',
         callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
         },
         help: 'Cancel current action'
+      },
+
+      'C-s': {
+        'condition': function() {
+          return this._simulator !== undefined;
+        },
+        callback: function() {
+          this._simulator.toggle();
+        },
+        help: 'Toggle the simulator'
+      },
+
+      'S-d': {
+        callback: function(evt) {
+          /* global saveAs: false */
+          this.env.exportEnvironment(function(r) {
+            var exportData = JSON.stringify(r.result, undefined, 2);
+            var exportBlob = new Blob([exportData],
+                                      {type: 'application/json;charset=utf-8'});
+            saveAs(exportBlob, 'export.json');
+          });
+        },
+        help: 'Export the environment'
       }
+
     },
 
     /**
-     * Data driven behaviors
+     * Data driven behaviors.
      *
      * Placeholder for real behaviors associated with DOM Node data-*
      * attributes.
@@ -230,14 +275,14 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-        '/': 191, '?': 63,
+        '/': 191, '?': 63, '+': 187, '-': 189,
         enter: 13, esc: 27, backspace: 8,
         tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
       Y.each(key_map, function(v, k) {
         code_map[v] = k;
       });
-      Y.one(window).on('keydown', function(evt) {
+      this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
         var symbolic = [];
         if (evt.ctrlKey) { symbolic.push('C');}
@@ -248,12 +293,21 @@ YUI.add('juju-gui', function(Y) {
         var trigger = symbolic.join('-');
         var spec = this.keybindings[trigger];
         if (spec) {
+          if (spec.condition && !spec.condition.call(this)) {
+            // Note that when a condition check fails,
+            // the event still propagates.
+            return;
+          }
           var target = Y.one(spec.target);
           if (target) {
             if (spec.toggle) { target.toggleView(); }
             if (spec.focus) { target.focus(); }
           }
           if (spec.callback) { spec.callback.call(this, evt, target); }
+          // HACK w/o context/view restriction but right direction
+          if (spec.fire) {
+            this.views.environment.instance.topo.fire(spec.fire);
+          }
           // If we handled the event nothing else has to.
           evt.stopPropagation();
           evt.preventDefault();
@@ -266,11 +320,10 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      */
     initializer: function(cfg) {
-      // If no cfg is passed in use a default empty object so we don't blow up
+      // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
-      // If this flag is true, start the application
-      // with the console activated.
+      // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
       // Concession to testing, they need muck with console, we cannot as well.
@@ -280,6 +333,15 @@ YUI.add('juju-gui', function(Y) {
         } else {
           consoleManager.noop();
         }
+      }
+
+      // XXX: #1185002 the charm browser subapp feature flag needs to be
+      // removed
+      if (window.flags.browser_enabled) {
+        this.subApplications.push({
+          type: Y.juju.subapps.Browser,
+          config: {}
+        });
       }
 
       this.renderEnvironment = true;
@@ -302,13 +364,13 @@ YUI.add('juju-gui', function(Y) {
       this.landscape = new views.Landscape();
       this.landscape.set('db', this.db);
 
-      // Set up a new modelController instance
+      // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db
       });
 
-      // Update the on-screen environment name provided in the configuration or
-      // a default if none is configured.
+      // Update the on-screen environment name provided in the configuration,
+      // or a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
           environment_node = Y.one('#environment-name');
 
@@ -367,14 +429,14 @@ YUI.add('juju-gui', function(Y) {
           }
           envOptions.conn = new sandboxModule.ClientConnection(
               {juju: new sandboxModule.PyJujuAPI({state: state})});
-          if (this.get('simulateEvents')) {
-            var Simulator = Y.namespace('juju.environments').Simulator;
-            this._simulator = new Simulator({state: state});
-            this._simulator.start();
-          }
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
+
+      // Create an event simulator where possible.
+      // Starting the simulator is handled by hotkeys
+      // and/or the config setting 'simulateEvents'.
+      this.simulateEvents();
 
       // Set the env in the model controller here so
       // that we know that it's been setup.
@@ -432,7 +494,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // If the database updates, redraw the view (distinct from model updates)
+      // If the database updates, redraw the view (distinct from model updates).
       // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
 
@@ -461,7 +523,7 @@ YUI.add('juju-gui', function(Y) {
         this.charmPanel.setDefaultSeries(ev.newVal);
       }, this));
 
-      // Halts the default navigation on the juju logo to allow us to show
+      // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
       // Tests won't have this node.
@@ -474,11 +536,38 @@ YUI.add('juju-gui', function(Y) {
 
       Y.one('#logout-trigger').on('click', this.logout, this);
 
-      // Attach SubApplications
-      // The subapps should share the same db.
+      // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
+    },
+
+    /**
+    Start the simulator if it can start and it has not already been started.
+
+    @method simulateEvents
+    */
+    simulateEvents: function() {
+      if (!this._simulator && this.env) {
+        // Try/Catch this to allow mocks in tests.
+        try {
+          var conn = this.env.get('conn');
+          var juju = conn && conn.get('juju');
+          var state = juju && juju.get('state');
+          if (state) {
+            var Simulator = Y.namespace('juju.environments').Simulator;
+            this._simulator = new Simulator({state: state});
+            if (this.get('simulateEvents')) {
+              this._simulator.start();
+            }
+          }
+        }
+        catch (err) {
+          // Unable to create simulator, usually due to mocks or an
+          // unsupported environment
+          console.log('Unable to create simulator: ', err);
+        }
+      }
     },
 
     /**
@@ -487,6 +576,12 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this._keybindings) {
+        this._keybindings.detach();
+      }
+      if (this._simulator) {
+        this._simulator.stop();
+      }
       Y.each(
           [this.env, this.db, this.charm_store, this.notifications,
            this.landscape, this.endpointsController],
@@ -546,7 +641,7 @@ YUI.add('juju-gui', function(Y) {
       // Update Landscape annotations.
       this.landscape.update();
 
-      // Regardless of which view we are rendering
+      // Regardless of which view we are rendering,
       // update the env view on db change.
       if (this.views.environment.instance) {
         this.views.environment.instance.topo.update();
@@ -608,8 +703,8 @@ YUI.add('juju-gui', function(Y) {
             }
           },
           // If there is no service available then there definitely is no unit
-          // available so we create a notification and redirect the user to the
-          // environment view.
+          // available, so we create a notification and redirect the user to
+          // the environment view.
           function() {
             clearTimeout(handle);
             self.db.notifications.add(
@@ -637,17 +732,18 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             querystring: req.query
           };
-      var attachPlugins = function(view) {
-        // attachPlugins handles attaching things like the textarea autosizer
-        // after the views have rendered.
-        if (view.attachPlugins) {
-          view.attachPlugins();
+      var containerAttached = function(view) {
+        // containerAttached handles attaching things like the textarea
+        // autosizer after the views have rendered and the view's container
+        // has attached to the DOM.
+        if (view.containerAttached) {
+          view.containerAttached();
         }
       };
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
       var handle = setTimeout(function() {
-        self.showView(viewName, options, attachPlugins);
+        self.showView(viewName, options, containerAttached);
       }, 100);
 
       var promise = this.modelController.getServiceWithCharm(req.params.id);
@@ -656,17 +752,18 @@ YUI.add('juju-gui', function(Y) {
             clearTimeout(handle);
             options.model = models.service;
             // Calling update allows showView to be called multiple times but
-            // only have its config updated not re-rendered.
-            self.showView(viewName, options, { update: true }, attachPlugins);
+            // only have its config updated, not re-rendered.
+            self.showView(
+                viewName, options, { update: true }, containerAttached);
           },
           function() {
             clearTimeout(handle);
             self.showView(viewName, options, { update: true },
                 function(view) {
                   // At this point the service view could be in loading state
-                  // or showing details but the service has become unavailable
-                  // or was never available. This calls a method on the view
-                  // to redirect to the environment and to create a notification
+                  // or showing details, but the service has become unavailable
+                  // or was never available. This calls a method on the view to
+                  // redirect to the environment and to create a notification.
                   if (typeof view.noServiceAvailable === 'function') {
                     view.noServiceAvailable();
                   }
@@ -761,12 +858,15 @@ YUI.add('juju-gui', function(Y) {
      * @return {undefined} Nothing.
      */
     logout: function(req) {
-      // Clears out the topology local database on log out
-      // because we clear out the environment database as well.
-      // The order of these is important because we need to tell
-      // the env to log out after it's navigated to make sure that
-      // it always shows the login screen
-      this.views.environment.instance.topo.update();
+      // If the environment view is instantiated, clear out the topology local
+      // database on log out, because we clear out the environment database as
+      // well. The order of these is important because we need to tell
+      // the env to log out after it has navigated to make sure that
+      // it always shows the login screen.
+      var environmentInstance = this.views.environment.instance;
+      if (environmentInstance) {
+        environmentInstance.topo.update();
+      }
       this.env.logout();
       return;
     },
@@ -1014,65 +1114,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-      Feature flags support in URL routing.
-
-      This allows us to use the :flags: NS to set either boolean or string
-      feature flags to control various features in the app.  A simple /<flag>/
-      will set that flag as true in the global flags variable.  A
-      /<flag>=<val>/ will set that flag to that value in the global flags
-      variable. An example usage would be to turn on the ability to drag-and-
-      drop a feature by wrapping that feature code in something like:
-
-        if (flags['gui.featuredrag.enable']) { ... }
-
-      From the LaunchPad feature flags documentation:
-
-      > As a general rule, each switch should be checked only once or only a
-      > few time in the codebase. We don't want to disable the same thing in
-      > the ui, the model, and the database.
-      >
-      > The name looks like dotted python identifiers, with the form
-      > APP.FEATURE.EFFECT. The value is a Unicode string.
-
-    A shortened version of key can be used if they follow this pattern:
-    - The feature flag applies to the gui.
-    - The presence of the flag indicates Boolean enablement
-    - The (default) absence of the flag indicates the feature will be
-    unavailable.
-
-   If those conditions are met then you may simply use the descriptive name of
-   the feature taking care it uniquely defines the feature. An example is
-   rather than specifying gui.dndexport.enable you can specify dndexport as a
-   flag.
-
-      @method featureFlags
-      @param {object} req The request object.
-      @param {object} res The response object.
-      @param {function} next The next callback.
-    */
-    featureFlags: function(req, res, next) {
-      var buildFlags = {};
-      Y.Array.each(req.path.split('/'), function(flag) {
-        if (flag.length > 0) {
-          var flagKey = flag;
-          var flagValue = true;
-          // Allow setting a specific value other than true.
-          if (flag.indexOf('=') !== -1) {
-            flagKey = flag.split('=', 1);
-            // Maintain possible '=' characters in the value.  This ensures
-            // that values are always either true or strings, rather than
-            // an array.
-            flagValue = flag.split('=').splice(1).join('=');
-          }
-          buildFlags[flagKey] = flagValue;
-        }
-      });
-      // Access the global variable through `window`.
-      window.flags = buildFlags;
-      next();
-    },
-
-    /**
      * Object routing support
      *
      * This utility helps map from model objects to routes
@@ -1149,7 +1190,7 @@ YUI.add('juju-gui', function(Y) {
       charm_store_url: {},
       charmworldURL: {},
 
-      /*
+      /**
        * Routes
        *
        * Each request path is evaluated against all hereby defined routes,
@@ -1173,8 +1214,6 @@ YUI.add('juju-gui', function(Y) {
        * `intent`: (optional) A string named `intent` for which this route
        *   should be used. This can be used to select which subview is selected
        *   to resolve a model's route.
-       *
-       * FIXME: not included in the generated doc output.
        *
        * @attribute routes
        */
@@ -1223,8 +1262,6 @@ YUI.add('juju-gui', function(Y) {
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit',
             namespace: 'gui'},
-          // Feature flags.
-          { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
@@ -1267,6 +1304,7 @@ YUI.add('juju-gui', function(Y) {
     'event-key',
     'event-touch',
     'model-controller',
-    'FileSaver'
+    'FileSaver',
+    'juju-inspector-widget'
   ]
 });

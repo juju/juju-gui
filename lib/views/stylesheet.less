@@ -424,6 +424,9 @@ table tr.highlighted td {
             }
             &.add-relation {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                .disabled {
+                    color: red;
+                }
             }
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
@@ -978,7 +981,21 @@ g.unit {
         float: right;
     }
 }
-#juju-search-charm-panel {
+
+.customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 1px 0 3px #989A9C;
+    }
+    ::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 4px 0 3px #D74613;
+    }
+}
+
+#juju-search-charm-panel,
+.yui3-juju-inspector {
     .create-box-shadow(inset 0 -1px 0 lightgray);
     .customize-scrollbar;
     display: block;
@@ -993,6 +1010,7 @@ g.unit {
     border-left: darkgray solid 1px;
     border-bottom: darkgray solid 1px;
 
+    .charm-panel-configure,
     .charm-panel-configure .btn {
         float: right;
     }
@@ -1665,6 +1683,19 @@ g.unit {
         font-size: 8pt;
     }
 }
+.alert {
+    letter-spacing: normal;
+}
+.yui3-slider-thumb {
+  &:focus {
+    outline: none;
+  }
+}
+
+/** Browser Setup **/
+@import "browser/reset.less";
+@import "browser/vars.less";
+@import "browser/mixins.less";
 
 /** SubApps **/
 @import "browser/main.less";
@@ -1680,3 +1711,4 @@ g.unit {
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
 @import "browser/tabview.less";
+@import "juju-inspector.less";

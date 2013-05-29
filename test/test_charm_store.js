@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -229,7 +247,7 @@
     });
   });
 
-  describe('juju charmworld0 api', function() {
+  describe('juju charmworld1 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
@@ -248,17 +266,17 @@
 
     it('constructs the api url correctly based on apiHost', function() {
       var hostname = 'http://localhost/',
-          api = new Y.juju.Charmworld0({
+          api = new Y.juju.Charmworld1({
             apiHost: hostname
           }),
           ds = api.get('datasource');
 
-      ds.get('source').should.eql('http://localhost/api/0/');
+      ds.get('source').should.eql('http://localhost/api/1/');
     });
 
     it('handles loading interesting content correctly', function(done) {
       var hostname = 'http://localhost',
-          api = new Y.juju.Charmworld0({
+          api = new Y.juju.Charmworld1({
             apiHost: hostname
           }),
           data = [];
@@ -285,7 +303,7 @@
       var hostname = 'http://localhost',
           data = [],
           url;
-      var api = new Y.juju.Charmworld0({
+      var api = new Y.juju.Charmworld1({
         apiHost: hostname
       });
       data.push({
@@ -314,6 +332,18 @@
       }, this);
       api.destroy();
     });
+
+    it('constructs filepaths correct', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld1({
+        apiHost: hostname
+      });
+
+      var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
+      iconPath.should.eql(
+          'http://localhostapi/1/charm/precise/mysql-1/file/icon.svg');
+    });
+
   });
 
 })();

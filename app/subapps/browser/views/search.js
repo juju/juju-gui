@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -19,7 +37,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
      @class BrowserSearchView
      @extends {juju.browser.views.CharmResults}
-
    */
   ns.BrowserSearchView = Y.Base.create(
       'browser-view-searchview',
@@ -112,6 +129,22 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // doesn't. Se we scroll the heading into view to ensure the view
           // renders at the top of the content.
           target.one('.search-title').scrollIntoView();
+          this.hideIndicator(this.get('renderTo'));
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                this.get('container').one(
+                    '.charm-token[data-charmid="' + active + '"]')
+            );
+          }
+          var cache = {
+            search: results,
+            charms: new models.BrowserCharmList()
+          };
+          cache.charms.add(results);
+          this.fire(this.EV_CACHE_UPDATED, {cache: cache});
         },
 
         /**
@@ -149,30 +182,25 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
            @method render
          */
-        render: function() {
+        render: function(cachedResults) {
           this.showIndicator(this.get('renderTo'));
           // This is only rendered once from the subapp and so the filters is
           // the initial set from the application. All subsequent renders go
           // through the subapp so we don't have to keep the filters in sync
           // here.  If caching/reusing comes into play though an event to
           // track the change of the filters ATTR would make sense to re-draw.
-          this.get('store').search(this.get('filters'), {
-            'success': function(data) {
-              var results = this.get('store').resultsToCharmlist(data.result);
-              this._renderSearchResults(results);
-              this.hideIndicator(this.get('renderTo'));
-
-              // Set the active charm if available.
-              var active = this.get('activeID');
-              if (active) {
-                this._updateActive(
-                    this.get('container').one(
-                        '.charm-token[data-charmid="' + active + '"]')
-                );
-              }
-            },
-            'failure': this.apiFailure
-          }, this);
+          if (cachedResults) {
+            this._renderSearchResults(cachedResults);
+          } else {
+            this.get('store').search(this.get('filters'), {
+              'success': function(data) {
+                var results = this.get('store').resultsToCharmlist(
+                    data.result);
+                this._renderSearchResults(results);
+              },
+              'failure': this.apiFailure
+            }, this);
+          }
         }
       }, {
         ATTRS: {

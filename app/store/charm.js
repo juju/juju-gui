@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -137,14 +155,14 @@ YUI.add('juju-charm-store', function(Y) {
 
 
   /**
-   * Api helper for the updated charmworld api v0.
+   * Api helper for the updated charmworld api v1.
    *
-   * @class Charmworld0
+   * @class Charmworld1
    * @extends {Base}
    *
    */
-  ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: 'api/0/',
+  ns.Charmworld1 = Y.Base.create('charmworld1', Y.Base, [], {
+    _apiRoot: 'api/1',
 
     /**
      * Send the actual request and handle response from the api.
@@ -155,6 +173,12 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     _makeRequest: function(apiEndpoint, callbacks, args) {
+      // If we're in the noop state, just call the error callback.
+      if (this.get('noop')) {
+        callbacks.failure('noop failure');
+        return;
+      }
+
       // Any query string args need to be put onto the endpoint for calling.
       if (args) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
@@ -229,6 +253,12 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     file: function(charmID, filename, callbacks, bindScope) {
+      // If we're in the noop state, just call the error callback.
+      if (this.get('noop')) {
+        callbacks.failure('noop failure');
+        return;
+      }
+
       var endpoint = 'charm/' + charmID + '/file/' + filename;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
@@ -254,6 +284,25 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+      Generate the API path to a file.
+      This is useful when generating links and references in HTML to a file
+      but not actually fetching the file itself.
+
+      @method filepath
+      @param {String} charmID The id of the charm to grab the file from.
+      @param {String} filename The name of the file to generate a path to.
+
+     */
+    filepath: function(charmID, filename) {
+      return this.get('apiHost') + [
+        this._apiRoot,
+        'charm',
+        charmID,
+        'file',
+        filename].join('/');
+    },
+
+    /**
      * Load the QA data for a specific charm.
      *
      * @method qa
@@ -273,7 +322,7 @@ YUI.add('juju-charm-store', function(Y) {
 
     /**
      * Given a result list, turn that into a BrowserCharmList object for the
-     * application to use.
+     * application to use. Metadata is appended to the charm as data.
      *
      * @method _resultsToCharmlist
      * @param {Object} JSON decoded data from response.
@@ -281,8 +330,15 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     resultsToCharmlist: function(data) {
+      // Append the metadata to the actual charm object.
+      var preppedData = Y.Array.map(data, function(charmData) {
+        if (charmData.metadata) {
+          charmData.charm.metadata = charmData.metadata;
+        }
+        return charmData.charm;
+      });
       return new Y.juju.models.BrowserCharmList({
-        items: data
+        items: preppedData
       });
     },
 
@@ -329,7 +385,7 @@ YUI.add('juju-charm-store', function(Y) {
         required: true,
         setter: function(val) {
           // Make sure we update the datasource if our apiHost changes.
-          var source = val + this._apiRoot;
+          var source = val + this._apiRoot + '/';
           this.set('datasource', new Y.DataSource.IO({ source: source }));
           return val;
         }
@@ -341,7 +397,23 @@ YUI.add('juju-charm-store', function(Y) {
        * @type {Datasource}
        *
        */
-      datasource: {}
+      datasource: {},
+
+      /**
+        If there's no config we end up setting noop on the store so that tests
+        that don't need to worry about the browser can safely ignore it.
+
+        We do log a console error, so those will occur on these tests to help
+        make it easy to catch an issue when you don't mean to noop the store.
+
+        @attribute noop
+        @default false
+        @type {Boolean}
+
+       */
+      noop: {
+        value: false
+      }
     }
   });
 

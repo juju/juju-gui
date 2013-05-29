@@ -1,43 +1,101 @@
 #!/bin/sh
+
+# This file is part of the Juju GUI, which lets users view and manage Juju
+# environments within a graphical interface (https://launchpad.net/juju-gui).
+# Copyright (C) 2012-2013 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License version 3, as published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+# SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # This script expects that the system has python-shelltoolbox, python-
 # selenium, python-yaml, and juju installed:
 # sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
+
 # Deploy the charm, using an alternate origin if given.
 # Takes all arguments that are valid for lib/deploy_charm_for_testing.py
 #  --origin
 #  --charm
-# If FAIL_FAST is set to 1 in the environment the testing loop
-# will exit when the first tested browser returns a failure
-# rather than trying them all.
-python lib/deploy_charm_for_testing.py "$@"
-if [ $? -ne 0 ]; then
-    echo "Unable to deploy Charm"
-    exit 1
-fi
 
-# Figure out the URL of the APP.
-export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
-echo "APP_URL=" ${APP_URL}
-# EXIT_CODE is used to keep track of test failures. If a test fails, this
-# script will exit with an error code.
-EXIT_CODE=0
-# Run the browser tests against the app.
-for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-ie firefox chrome}
-do
-    export JUJU_GUI_TEST_BROWSER
-    echo Launching ${JUJU_GUI_TEST_BROWSER} tests.
-    python test/test_charm_running.py -v || EXIT_CODE=1
-    if [ ${FAIL_FAST:-0} -eq 1 -a ${EXIT_CODE} -eq 1 ]; then
-        exit 1;
+# If FAIL_FAST is set to 1 in the environment, the testing loop will exit when
+# the first tested browser returns a failure, rather than trying them all.
+
+# If NO_DESTROY is set, the juju environment will not be destroyed at the end
+# of the test run.
+
+# If APP_URL is set, rather than creating/destroying a juju environment for
+# testing, the suite will use the given URL.
+
+ENV='juju-gui-testing'
+
+bootstrap_and_deploy() {
+    # Bootstrap a juju enviroment and deploy the Juju GUI charm.
+    python lib/deploy_charm_for_testing.py "$@"
+    retcode=$?
+    if [ $retcode -ne 0 ]; then
+        echo "Unable to deploy Charm."
+        exit $retcode
     fi
-done
-# Destroy the environment, releasing the resources.
-yes | juju destroy-environment -e juju-gui-testing
+}
 
-# Cleanup old internal IP address file if
-# one was created (in deploy for testing).
-if [ -e juju-internal-ip ]; then
-    rm -f juju-internal-ip
+get_app_url() {
+    # Return the URL of the deployed Juju GUI application.
+    addr=`juju status -e $ENV | grep public-address: | cut -d: -f2 | cut -c2-`
+    echo "http://$addr"
+}
+
+run_tests() {
+    # Run the CI tests.
+    # retcode is used to keep track of test failures. If a test fails, this
+    # function will exit with an error code.
+    retcode=0
+    # Run the browser tests against the app.
+    for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-ie firefox chrome}
+    do
+        export JUJU_GUI_TEST_BROWSER
+        echo "Launching $JUJU_GUI_TEST_BROWSER tests."
+        python test/test_charm_running.py -v || retcode=1
+        if [ ${FAIL_FAST:-0} -eq 1 -a $retcode -eq 1 ]; then
+            exit 1;
+        fi
+    done
+    exit $retcode
+}
+
+on_exit() {
+    # Destroy the environment, releasing the resources.
+    echo "Quitting..."
+    if [ $NO_DESTROY ]; then
+        echo "The environment is still alive."
+        echo "To run CI tests in this environment:\n  APP_URL=\"$APP_URL\" $0"
+        echo "To destroy this environment:\n  juju destroy-environment -e $ENV"
+    else
+        yes | juju destroy-environment -e $ENV
+    fi
+    # Cleanup old internal IP address file if
+    # one was created (in deploy for testing).
+    if [ -e juju-internal-ip ]; then
+        rm -f juju-internal-ip
+    fi
+}
+
+# Ensure we clean up things even if this script exits with an error.
+trap on_exit EXIT
+
+# Launch the script.
+if [ $APP_URL ]; then
+    export NO_DESTROY=1
+else
+    bootstrap_and_deploy $@
+    export APP_URL=`get_app_url`
 fi
-
-exit $EXIT_CODE
+echo "Env: $ENV\nAPP_URL: $APP_URL"
+run_tests

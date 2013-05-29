@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 describe('charm normalization', function() {
@@ -594,12 +612,13 @@ describe('BrowserCharm test', function() {
   });
 
   it('maps api downloads in 30 days to recent downloads', function() {
-    instance = new models.BrowserCharm(data);
+    data.charm.downloads_in_past_30_days = 10;
+    instance = new models.BrowserCharm(data.charm);
     instance.get('recent_download_count').should.eql(10);
   });
 
   it('maps relations to keep with the original charm model', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var requires = instance.get('requires');
     // Interface is quoted for lint purposes.
     requires.balancer['interface'].should.eql('http');
@@ -609,7 +628,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('maps revisions nicely for us with converted dates', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var commits = instance.get('recent_commits');
     commits.length.should.equal(10);
 
@@ -630,7 +649,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('tracks recent commits in the last 30 days', function() {
-    instance = new models.BrowserCharm(data);
+    instance = new models.BrowserCharm(data.charm);
     var commits = instance.get('recent_commits'),
         today = new Date();
 
@@ -646,7 +665,12 @@ describe('BrowserCharm test', function() {
   it('provides a failingProviders attr', function() {
     // The charm details needs the failing providers generated from the list
     // of tested_providers.
-    instance = new models.BrowserCharm(data);
+    data.charm.tested_providers = {
+      'ec2': 'FAILURE',
+      'local': 'FAILURE',
+      'openstack': 'FAILURE'
+    };
+    instance = new models.BrowserCharm(data.charm);
     // Note that the hp one is added by our code. There is no hp test, it's
     // openstack on HP. If the openstack test fails, both are failing.
     instance.get('failingProviders').should.eql(

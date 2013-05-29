@@ -1,4 +1,4 @@
-<a href="/bws/sidebar/{{id}}"
+<a href="/{{id}}"
     class="charm-token yui3-g {{size}}"
     data-charmid="{{id}}">
     <span class="yui3-u">
@@ -6,14 +6,14 @@
             <span class="badge-approved"
                 title="This charm has been reviewed."></span>
         {{/if}}
-        {{#if icon}}
-            <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon" class="icon">
+        {{#if hasIcon}}
+            <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
         {{else}}
             <div class="charm-icon">
             </div>
         {{/if}}
     </span>
-    <span class="yui3-u-5-7">
+    <span class="yui3-u-3-5">
         <span class="title">
             {{ name }}
         </span>

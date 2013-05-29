@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -371,6 +389,14 @@ YUI.add('juju-topology-relation', function(Y) {
       var service = topo.serviceForBox(box);
       var origin = topo.get('active_context');
       var container = context.get('container');
+      var addRelationNode = container.one('.add-relation');
+
+      // If the link is disabled, which can happen if the charm is not yet
+      // loaded and we don't know the endpoints, then don't allow clicking on
+      // it.
+      if (addRelationNode.hasClass('disabled')) {
+        return;
+      }
 
       // Remove the service menu.
       topo.fire('hideServiceMenu');
@@ -686,9 +712,9 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Fired when clicking the first service in the add relation
-         * flow.
-         */
+     * Fired when clicking the first service in the add relation
+     * flow.
+     */
     addRelationStart: function(m, view, context) {
       var topo = view.get('component');
       var service = topo.serviceForBox(m);
@@ -698,9 +724,9 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Test if the pending relation is ambiguous.  Display a menu if so,
-         * create the relation if not.
-         */
+     * Test if the pending relation is ambiguous.  Display a menu if so,
+     * create the relation if not.
+     */
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
           'addRelationStart_possibleEndpoints')[m.id];

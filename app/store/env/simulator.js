@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -30,7 +48,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         // env has the proper setup. This happens once.
         var db = context.state.db;
         var envAnno = db.environment.get('annotations');
-        envAnno['landscape-url'] = 'http://landscape.com';
+        envAnno['landscape-url'] = 'http://landscape.example.com';
         envAnno['landscape-computers'] = '/computers/criteria/environment:test';
         envAnno['landscape-reboot-alert-url'] =
             '+alert:computer-reboot/info#power';
@@ -466,6 +484,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
       // Invoke on start as well.
       tick();
+      console.log('Simulator started');
       return this;
 
     },
@@ -479,6 +498,22 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       if (this._scheduler) {
         this._scheduler.cancel();
         this._scheduler = null;
+        console.log('Simulator stopped');
+      }
+      return this;
+    },
+
+    /**
+     Toggle the running state of the simulator.
+
+     @method toggle
+     @chainable
+     */
+    toggle: function() {
+      if (this._scheduler) {
+        this.stop();
+      } else {
+        this.start();
       }
       return this;
     }

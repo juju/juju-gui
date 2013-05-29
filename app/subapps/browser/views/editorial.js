@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -16,11 +34,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
 
   /**
-   * Editorial view for landing pages.
-   *
-   * @class Editorial
-   * @extends {juju.browser.views.CharmResults}
-   *
+     Editorial view for landing pages.
+
+     @class Editorial
+     @extends {juju.browser.views.CharmResults}
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
       {
@@ -51,6 +68,99 @@ YUI.add('subapp-browser-editorial', function(Y) {
         },
 
         /**
+           Renders the editorial, "interesting" data to the view.
+
+           @private
+           @method _renderInteresting
+           @param {Object} data The interesting data, cached or returned from
+           the API.
+         */
+        _renderInteresting: function(results) {
+          var tpl = this.template(this.getAttrs()),
+              tplNode = Y.Node.create(tpl),
+              cutoffs;
+          // Add featured charms
+          var featuredCharms = results.featuredCharms;
+          var featuredContainer = tplNode.one('.featured');
+          if (this.get('isFullscreen')) {
+            cutoffs = this.cutoffs.fullscreen;
+          } else {
+            cutoffs = this.cutoffs.sidebar;
+          }
+
+          var containerCfg = {
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
+          };
+
+          var featuredCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Featured Charms',
+                cutoff: cutoffs.featured,
+                children: featuredCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          featuredCharmContainer.render(featuredContainer);
+
+          // Add popular charms
+          var popularCharms = results.popularCharms;
+          var popularContainer = tplNode.one('.popular');
+          var popularCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Popular Charms',
+                cutoff: cutoffs.popular,
+                children: popularCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          popularCharmContainer.render(popularContainer);
+
+          // Add in the charm tokens for the new as well.
+          var newCharms = results.newCharms;
+          var newContainer = tplNode.one('.new');
+          var newCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'New Charms',
+                cutoff: cutoffs['new'],
+                children: newCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
+          newCharmContainer.render(newContainer);
+
+          var container = this.get('container');
+          container.append(tplNode);
+          this.get('renderTo').setHTML(container);
+          this.hideIndicator(this.get('renderTo'));
+
+          this.charmContainers = [
+            featuredCharmContainer,
+            newCharmContainer,
+            popularCharmContainer
+          ];
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                container.one('.charm-token[data-charmid="' + active + '"]')
+            );
+          }
+
+          // Send updated cache data to the app
+          var cache = {
+            interesting: results,
+            charms: new models.BrowserCharmList()
+          };
+          cache.charms.add(newCharms);
+          cache.charms.add(popularCharms);
+          cache.charms.add(featuredCharms);
+          this.fire(this.EV_CACHE_UPDATED, {cache: cache});
+        },
+
+        /**
          * Load the editorial content into the container specified.
          *
          * @method render
@@ -58,106 +168,36 @@ YUI.add('subapp-browser-editorial', function(Y) {
          * going.
          *
          */
-        render: function() {
-          var tpl = this.template(this.getAttrs()),
-              tplNode = Y.Node.create(tpl),
-              store = this.get('store');
-
+        render: function(cachedResults) {
+          var store = this.get('store');
           this.showIndicator(this.get('renderTo'));
 
           // By default we grab the editorial content from the api to use for
           // display.
-          this.get('store').interesting({
-            'success': function(data) {
-              var cutoffs;
-              // Add featured charms
-              var featuredCharms = this.get('store').resultsToCharmlist(
-                  data.result.featured);
-              var featuredContainer = tplNode.one('.featured');
-              if (this.get('isFullscreen')) {
-                cutoffs = this.cutoffs.fullscreen;
-              } else {
-                cutoffs = this.cutoffs.sidebar;
-              }
-
-              var containerCfg = {
-                additionalChildConfig: {
-                  size: this.get('isFullscreen') ? 'large' : 'small'
-                }
-              };
-
-              var featuredCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'Featured Charms',
-                    cutoff: cutoffs.featured,
-                    children: featuredCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              featuredCharmContainer.render(featuredContainer);
-
-              // Add popular charms
-              var popularCharms = this.get('store').resultsToCharmlist(
-                  data.result.popular);
-              var popularContainer = tplNode.one('.popular');
-              var popularCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'Popular Charms',
-                    cutoff: cutoffs.popular,
-                    children: popularCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              popularCharmContainer.render(popularContainer);
-
-              // Add in the charm tokens for the new as well.
-              var newContainer = tplNode.one('.new');
-              var newCharms = this.get('store').resultsToCharmlist(
-                  data.result['new']);
-              var newCharmContainer = new widgets.browser.CharmContainer(
-                  Y.merge({
-                    name: 'New Charms',
-                    cutoff: cutoffs['new'],
-                    children: newCharms.map(function(charm) {
-                      return charm.getAttrs();
-                    })},
-                  containerCfg));
-              newCharmContainer.render(newContainer);
-
-              var container = this.get('container');
-              container.append(tplNode);
-              this.get('renderTo').setHTML(container);
-              this.hideIndicator(this.get('renderTo'));
-
-              // Add the charms to the cache for use in other views.
-              // Start with a reset to empty any current cached models.
-              this._cacheCharms.reset(newCharms);
-              this._cacheCharms.add(popularCharms);
-              this._cacheCharms.add(featuredCharms);
-              this.charmContainers = [
-                featuredCharmContainer,
-                newCharmContainer,
-                popularCharmContainer
-              ];
-
-              // Set the active charm if available.
-              var active = this.get('activeID');
-              if (active) {
-                this._updateActive(
-                    container.one('.charm-token[data-charmid="' + active + '"]')
-                );
-              }
-            },
-
-            'failure': this.apiFailure
-          }, this);
+          if (cachedResults) {
+            this._renderInteresting(cachedResults);
+          } else {
+            this.get('store').interesting({
+              'success': function(data) {
+                var results = {
+                  featuredCharms: this.get('store').resultsToCharmlist(
+                      data.result.featured),
+                  newCharms: this.get('store').resultsToCharmlist(
+                      data.result['new']),
+                  popularCharms: this.get('store').resultsToCharmlist(
+                      data.result.popular)
+                };
+                this._renderInteresting(results);
+              },
+              'failure': this.apiFailure
+            }, this);
+          }
         },
 
         /**
-         * Destroy this view and clear from the dom world.
-         *
-         * @method destructor
-         *
+           Destroy this view and clear from the dom world.
+
+           @method destructor
          */
         destructor: function() {
           if (this.charmContainers) {

@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -12,12 +30,24 @@ describe('search view', function() {
         'json',
         'juju-charm-store',
         'juju-tests-utils',
+        'juju-models',
         'node',
         'node-event-simulate',
         'subapp-browser-searchview',
         function(Y) {
+          // Need the handlebars helper for the charm-token to render.
+          Y.Handlebars.registerHelper(
+              'charmFilePath',
+              function(charmID, file) {
+                return '/path/to/charm/' + file;
+              });
           done();
         });
+  });
+
+  after(function(done) {
+    Y.Handlebars.helpers.charmFilePath = undefined;
+    done();
   });
 
   beforeEach(function() {
@@ -30,12 +60,15 @@ describe('search view', function() {
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
-    var fakeStore = new Y.juju.Charmworld0({});
+    var fakeStore = new Y.juju.Charmworld1({});
     var sampleData = {
       result: [{
-        id: 'foo/bar-2',
-        name: 'bar',
-        description: 'some charm named bar'
+        charm: {
+          id: 'foo/bar-2',
+          name: 'bar',
+          description: 'some charm named bar',
+          files: []
+        }
       }]
     };
     fakeStore.set('datasource', {
@@ -87,7 +120,6 @@ describe('search view', function() {
     view.render();
   });
 
-
   it('handles empty text for search', function() {
     view.set('filters', {text: ''});
     view.render();
@@ -116,4 +148,25 @@ describe('search view', function() {
     container.one('.charm-token').simulate('click');
   });
 
+  it('tells listeners the cache has updated', function() {
+    view.on(view.EV_CACHE_UPDATED, function(ev) {
+      assert.isObject(ev.cache);
+    });
+    view.render();
+  });
+
+  it('uses passed in cache data if available', function() {
+    var search_called = false,
+        results = new Y.juju.models.BrowserCharmList();
+
+    view.get('store').search = function() {
+      search_called = true;
+      return results;
+    };
+    view.render(results);
+    assert.isFalse(search_called);
+
+    view.render();
+    assert.isTrue(search_called);
+  });
 });
