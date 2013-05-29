@@ -155,14 +155,14 @@ YUI.add('juju-charm-store', function(Y) {
 
 
   /**
-   * Api helper for the updated charmworld api v0.
+   * Api helper for the updated charmworld api v1.
    *
-   * @class Charmworld0
+   * @class Charmworld1
    * @extends {Base}
    *
    */
-  ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: 'api/0/',
+  ns.Charmworld1 = Y.Base.create('charmworld1', Y.Base, [], {
+    _apiRoot: 'api/1',
 
     /**
      * Send the actual request and handle response from the api.
@@ -284,6 +284,25 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+      Generate the API path to a file.
+      This is useful when generating links and references in HTML to a file
+      but not actually fetching the file itself.
+
+      @method filepath
+      @param {String} charmID The id of the charm to grab the file from.
+      @param {String} filename The name of the file to generate a path to.
+
+     */
+    filepath: function(charmID, filename) {
+      return this.get('apiHost') + [
+        this._apiRoot,
+        'charm',
+        charmID,
+        'file',
+        filename].join('/');
+    },
+
+    /**
      * Load the QA data for a specific charm.
      *
      * @method qa
@@ -303,7 +322,7 @@ YUI.add('juju-charm-store', function(Y) {
 
     /**
      * Given a result list, turn that into a BrowserCharmList object for the
-     * application to use.
+     * application to use. Metadata is appended to the charm as data.
      *
      * @method _resultsToCharmlist
      * @param {Object} JSON decoded data from response.
@@ -311,8 +330,15 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     resultsToCharmlist: function(data) {
+      // Append the metadata to the actual charm object.
+      var preppedData = Y.Array.map(data, function(charmData) {
+        if (charmData.metadata) {
+          charmData.charm.metadata = charmData.metadata;
+        }
+        return charmData.charm;
+      });
       return new Y.juju.models.BrowserCharmList({
-        items: data
+        items: preppedData
       });
     },
 
@@ -359,7 +385,7 @@ YUI.add('juju-charm-store', function(Y) {
         required: true,
         setter: function(val) {
           // Make sure we update the datasource if our apiHost changes.
-          var source = val + this._apiRoot;
+          var source = val + this._apiRoot + '/';
           this.set('datasource', new Y.DataSource.IO({ source: source }));
           return val;
         }

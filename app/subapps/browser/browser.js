@@ -131,6 +131,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Registers Handlebars helpers that need access to subapp data like the
+      store instance.
+
+      @method _registerSubappHelpers
+
+     */
+    _registerSubappHelpers: function() {
+      var store = this.get('store');
+      // Register a file path generating helper.
+      Y.Handlebars.registerHelper('charmFilePath', function(charmID, file) {
+        return store.filepath(charmID, file);
+      });
+    },
+
+    /**
        Determine if we should render the charm details based on the current
        state.
 
@@ -345,6 +360,8 @@ YUI.add('subapp-browser', function(Y) {
       };
       this._initState();
       this._filter = new models.browser.Filter();
+
+      this._registerSubappHelpers();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -706,8 +723,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld0
-         @type {Charmworld0}
+         @default Charmworld1
+         @type {Charmworld1}
        */
       store: {
         /**
@@ -729,7 +746,7 @@ YUI.add('subapp-browser', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld0(cfg);
+          return new Y.juju.Charmworld1(cfg);
         }
       },
 
@@ -791,6 +808,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'handlebars',
     'juju-browser-models',
     'juju-charm-store',
     'juju-models',

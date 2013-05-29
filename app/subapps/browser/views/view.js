@@ -235,7 +235,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld0}
+       * @type {Charmworld1}
        *
        */
       store: {},
