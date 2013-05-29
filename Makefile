@@ -175,7 +175,7 @@ yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 main-doc:
-	SPHINXOPTS=-W make -C docs html
+	make -C docs SPHINXOPTS=-W html
 
 view-main-doc: main-doc
 	xdg-open docs/_build/html/index.html

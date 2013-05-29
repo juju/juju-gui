@@ -21,7 +21,7 @@ Contents:
    unit-testing
    continuous-integration
    datasources
-   recording-and-playing-back-websocket-traffc
+   recording-and-playing-back-websocket-traffic
 
 See also the `code documentation <../../../yuidoc/index.html>`_
 (:ref:`generated separately <embedded-docs>`).
