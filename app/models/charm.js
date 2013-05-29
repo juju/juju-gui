@@ -442,7 +442,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       files: {
-        value: {}
+        value: []
       },
       full_name: {
         /**
@@ -467,6 +467,11 @@ YUI.add('juju-charm-models', function(Y) {
 
       */
       hasIcon: {
+        /**
+          @method hasIcon.valueFn
+          @return {Boolean}
+
+         */
         valueFn: function () {
           return this.get('files').indexOf('icon.svg') !== -1 ? true : false;
         }
