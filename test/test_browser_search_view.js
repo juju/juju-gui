@@ -35,10 +35,11 @@ describe('search view', function() {
         'subapp-browser-searchview',
         function(Y) {
           // Need the handlebars helper for the charm-token to render.
-          Y.Handlebars.registerHelper('charmFilePath',
-                                      function(charmID, file) {
-            return '/path/to/charm/' + file;
-          });
+          Y.Handlebars.registerHelper(
+              'charmFilePath',
+              function(charmID, file) {
+                return '/path/to/charm/' + file;
+              });
           done();
         });
   });
