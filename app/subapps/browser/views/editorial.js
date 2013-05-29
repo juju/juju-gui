@@ -34,7 +34,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
 
   /**
-   * Editorial view for landing pages.
+     Editorial view for landing pages.
 
      @class Editorial
      @extends {juju.browser.views.CharmResults}
