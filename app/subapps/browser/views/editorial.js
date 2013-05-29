@@ -148,13 +148,16 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 container.one('.charm-token[data-charmid="' + active + '"]')
             );
           }
-          // Add the charms to the cache for use in other views.
-          // Start with a reset to empty any current cached models.
-          this._cache.charms.reset(newCharms);
-          this._cache.charms.add(popularCharms);
-          this._cache.charms.add(featuredCharms);
-          this._cache.interesting = results;
-          this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
+
+          // Send updated cache data to the app
+          var cache = {
+            interesting: results,
+            charms: new models.BrowserCharmList()
+          };
+          cache.charms.add(newCharms);
+          cache.charms.add(popularCharms);
+          cache.charms.add(featuredCharms);
+          this.fire(this.EV_CACHE_UPDATED, {cache: cache});
         },
 
         /**
@@ -201,23 +204,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
             Y.Array.each(this.charmContainers, function(container) {
               container.destroy();
             });
-          }
-          this._cache.charms.destroy();
-        },
-
-        /**
-           Initializer
-
-           @method initializer
-           @param {cfg} Basic initializer object.
-         */
-        initializer: function(cfg) {
-          this._cache = {
-            interesting: null,
-            charms: new models.BrowserCharmList()
-          };
-          if (cfg && cfg.interesting) {
-            this._cache.interesting = cfg.interesting;
           }
         }
       }, {

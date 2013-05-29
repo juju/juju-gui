@@ -184,19 +184,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
-     * General YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      this.set('store', new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldURL
-      }));
-    },
-
-    /**
      * Check if this view is the fullscreen version to help aid us in
      * template work.
      *

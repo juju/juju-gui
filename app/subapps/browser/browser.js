@@ -318,6 +318,14 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {
       this._cache.charms.destroy();
+      if (this._cache.search) {
+        this._cache.search.destroy();
+      }
+      if (this._cache.interesting) {
+        this._cache.interesting.newCharms.destroy();
+        this._cache.interesting.popularCharms.destroy();
+        this._cache.interesting.featuredCharms.destroy();
+      }
       delete this._viewState;
     },
 
@@ -332,8 +340,8 @@ YUI.add('subapp-browser', function(Y) {
       // charms are selected.
       this._cache = {
         charms: new models.BrowserCharmList(),
-        interesting: null,
-        search: null
+        search: null,
+        interesting: null
       };
       this._initState();
       this._filter = new models.browser.Filter();
@@ -432,11 +440,7 @@ YUI.add('subapp-browser', function(Y) {
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
 
-      if (this._cache.interesting) {
-        this._editorial.render(this._cache.interesting);
-      } else {
-        this._editorial.render();
-      }
+      this._editorial.render(this._cache.interesting);
       this._editorial.addTarget(this);
     },
 
@@ -473,7 +477,7 @@ YUI.add('subapp-browser', function(Y) {
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
 
-      if (this._cache.search && !this._searchChanged()) {
+      if (!this._searchChanged()) {
         this._search.render(this._cache.search);
       } else {
         this._search.render();

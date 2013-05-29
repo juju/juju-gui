@@ -139,9 +139,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
                     '.charm-token[data-charmid="' + active + '"]')
             );
           }
-          this._cache.charms.reset(results);
-          this._cache.search = results;
-          this.fire(this.EV_CACHE_UPDATED, {cache: this._cache});
+          var cache = {
+            search: results,
+            charms: new models.BrowserCharmList()
+          };
+          cache.charms.add(results);
+          this.fire(this.EV_CACHE_UPDATED, {cache: cache});
         },
 
         /**
@@ -197,18 +200,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
               },
               'failure': this.apiFailure
             }, this);
-          }
-        },
-
-        /**
-           Initializer
-
-           @method initializer
-           @param {cfg} Basic initializer object.
-         */
-        initializer: function(cfg) {
-          if (cfg && cfg.search) {
-            this._cache.search = cfg.search;
           }
         }
       }, {
