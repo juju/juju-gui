@@ -137,7 +137,6 @@ YUI.add('subapp-browser', function(Y) {
       @method _registerSubappHelpers
 
      */
-
     _registerSubappHelpers: function() {
       var store = this.get('store');
       // Register a file path generating helper.
