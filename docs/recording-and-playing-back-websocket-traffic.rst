@@ -1,9 +1,19 @@
+===================
+bin/websocketreplay
+===================
+
+Capturing and replaying the websocket communication between the GUI and
+Juju is a useful debugging tool.  The bin/websocketreplay utility acts
+as a Juju API websocket server and plays back recorded logs of websocket
+traffic.  It listens on the default Juju API port of 8081 and does not
+require running any other Juju backend.
+
+
 Capturing Websocket Traffic
 ===========================
 
-Capturing and replaying the websocket communication between the GUI and
-Juju is a useful debugging tool.  Short sequences can be captured from
-the Chrome (or Chromium) developer tools.
+Short sequences can be captured from the Chrome (or Chromium) developer
+tools.
 
 Follow these instructions *exactly* as written.
 

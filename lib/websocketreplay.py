@@ -15,6 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""This module implements a websocket server that replays logs.
+
+It runs on the same port as the default for Juju and is used in place of ether
+the Python or Go versions of Juju.  User docs are in
+docs/recording-and-playing-back-websocket-traffic.rst.
+"""
+
 from __future__ import print_function
 
 import collections

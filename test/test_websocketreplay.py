@@ -146,7 +146,7 @@ class TestHandlingMessages(unittest.TestCase):
     """When messages come in, we have to figure out a response."""
 
     def test_received_messages_are_logged(self):
-        # Each message recieved is logged.
+        # Each message received is logged.
         EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
         MESSAGE = json.dumps(EXPECTED.message)
         written = []
@@ -156,7 +156,7 @@ class TestHandlingMessages(unittest.TestCase):
         self.assertIn(('received', (MESSAGE,)), log.logged)
 
     def test_sent_messages_are_logged(self):
-        # Each message recieved is logged.
+        # Each message received is logged.
         EXPECTED = Frame({'op': 'something', 'request_id': 42} , 'to client')
         MESSAGE = json.dumps(EXPECTED.message)
         TO_CLIENT_1 = 'next 1'
@@ -186,7 +186,7 @@ class TestHandlingMessages(unittest.TestCase):
             log.logged)
 
     def test_expected_messages_are_handled(self):
-        # When the message recieved from the client was expected, and there
+        # When the message received from the client was expected, and there
         # are one or more messages that must then be sent to the client, then
         # we send them.
         MESSAGE = {'op': 'something', 'request_id': 42}
@@ -200,7 +200,7 @@ class TestHandlingMessages(unittest.TestCase):
         # The next messages to the client were sent.
         self.assertEqual(written, ['"next 1"', '"next 2"'])
 
-    def test_expected_messages_read_from_log_ar_handled(self):
+    def test_expected_messages_read_from_log_are_handled(self):
         # When no expected message is provided, then next message is read from
         # the frame log and used instead.
         EXPECTED = {'op': 'something', 'request_id': 42}
