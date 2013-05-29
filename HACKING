@@ -55,7 +55,8 @@ python-virtualenv to build the Google Closure linter tools locally::
   sudo add-apt-repository ppa:gophers/go
   sudo apt-get update
   sudo apt-get install nodejs imagemagick lbox python-sphinx python-yaml \
-    python-tz python-virtualenv python-shelltoolbox python-selenium
+    python-tz python-virtualenv python-shelltoolbox python-selenium \
+    python-tornado python-gflags
 
 See :ref:`Browser Testing <browser-testing>` if you are curious about the
 reason for ``python-shelltoolbox`` and ``python-selenium``.
