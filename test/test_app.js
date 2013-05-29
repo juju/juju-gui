@@ -222,6 +222,11 @@ function injectData(app, data) {
     });
 
     it('hides the browser subapp on some urls', function() {
+      // Requires the browser subapp to be enabled.
+      var oldFlags = window.flags;
+      window.flags = {
+        browser_enabled: true
+      };
       constructAppInstance({
         env: juju.newEnvironment({
           conn: {
@@ -257,6 +262,9 @@ function injectData(app, data) {
         app.toggleStaticViews(req, undefined, next);
         app.get('subApps').charmstore.hidden.should.eql(check.hidden);
       });
+
+      // Clean up after our feature flag adjustments.
+      window.flags = oldFlags;
     });
 
   });

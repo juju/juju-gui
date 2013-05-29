@@ -421,6 +421,7 @@ test-prod-server: build-prod test-prep
 
 test-misc:
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
+	PYTHONPATH=bin python test/test_http_server.py
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
@@ -444,12 +445,12 @@ debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
-	cd build-debug && python -m SimpleHTTPServer 8888
+	(cd build-debug && python ../bin/http_server.py 8888)
 
 # prod is for deployment of aggregated and minimized code.
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
-	cd build-prod && python -m SimpleHTTPServer 8888
+	(cd build-prod && python ../bin/http_server.py 8888)
 
 clean:
 	rm -rf build-shared build-debug build-prod

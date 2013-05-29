@@ -257,7 +257,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * If this were a route that had a subpath component it's passed into
        * the view to aid in rendering.
        *
-       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       * e.g. /fullscreen/*charmid/hooks to load the hooks tab correctly.
        *
        * @attribute subpath
        * @default undefined
