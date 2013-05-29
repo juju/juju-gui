@@ -469,10 +469,10 @@ YUI.add('juju-charm-models', function(Y) {
       hasIcon: {
         /**
           @method hasIcon.valueFn
-          @return {Boolean}
+          @return {Boolean} Does the Charm have an icon file.
 
          */
-        valueFn: function () {
+        valueFn: function() {
           return this.get('files').indexOf('icon.svg') !== -1 ? true : false;
         }
       },

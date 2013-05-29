@@ -341,7 +341,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       iconPath.should.eql(
-        'http://localhostapi/1/charm/precise/mysql-1/file/icon.svg');
+          'http://localhostapi/1/charm/precise/mysql-1/file/icon.svg');
     });
 
   });
