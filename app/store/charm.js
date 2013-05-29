@@ -283,6 +283,16 @@ YUI.add('juju-charm-store', function(Y) {
       });
     },
 
+    /**
+      Generate the API path to a file.
+      This is useful when generating links and references in HTML to a file
+      but not actually fetching the file itself.
+
+      @method filepath
+      @param {String} charmID The id of the charm to grab the file from.
+      @param {String} filename The name of the file to generate a path to.
+
+     */
     filepath: function(charmID, filename) {
       return this.get('apiHost') + [
         this._apiRoot,
