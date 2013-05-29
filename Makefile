@@ -175,7 +175,7 @@ yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 main-doc:
-	make -C docs html
+	make -C docs SPHINXOPTS=-W html
 
 view-main-doc: main-doc
 	xdg-open docs/_build/html/index.html
@@ -385,7 +385,7 @@ $(LINK_PROD_FILES):
 
 prep: beautify lint
 
-check: lint test-prod test-debug test-misc
+check: lint test-prod test-debug test-misc docs
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
