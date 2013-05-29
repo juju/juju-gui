@@ -442,7 +442,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       files: {
-        value: {}
+        value: []
       },
       full_name: {
         /**
@@ -459,6 +459,21 @@ YUI.add('juju-charm-models', function(Y) {
             tmp.unshift('~' + owner);
           }
           return tmp.join('/');
+        }
+      },
+      /**
+        Does this charm have an icon file. Helper used for template rendering
+        decisions.
+
+      */
+      hasIcon: {
+        /**
+          @method hasIcon.valueFn
+          @return {Boolean}
+
+         */
+        valueFn: function () {
+          return this.get('files').indexOf('icon.svg') !== -1 ? true : false;
         }
       },
       is_approved: {},
@@ -488,7 +503,6 @@ YUI.add('juju-charm-models', function(Y) {
       */
       metadata: {},
       name: {},
-      icon: {},
       /**
        * options is the parsed YAML object from config.yaml in a charm. Do not
        * set a value if there are no options to be had.

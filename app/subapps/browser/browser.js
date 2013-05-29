@@ -131,6 +131,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Registers Handlebars helpers that need access to subapp data like the
+      store instance.
+
+      @method _registerSubappHelpers
+
+     */
+    _registerSubappHelpers: function() {
+      var store = this.get('store');
+      // Register a file path generating helper.
+      Y.Handlebars.registerHelper('charmFilePath', function(charmID, file) {
+        return store.filepath(charmID, file);
+      });
+    },
+
+    /**
        Determine if we should render the charm details based on the current
        state.
 
@@ -319,6 +334,8 @@ YUI.add('subapp-browser', function(Y) {
       this._cacheCharms = new models.BrowserCharmList();
       this._initState();
       this._filter = new models.browser.Filter();
+
+      this._registerSubappHelpers();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -752,6 +769,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'handlebars',
     'juju-browser-models',
     'juju-charm-store',
     'juju-models',

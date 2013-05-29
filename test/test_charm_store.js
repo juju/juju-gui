@@ -247,7 +247,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
-  describe('juju charmworld1 api', function() {
+  describe.only('juju charmworld1 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
@@ -332,6 +332,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, this);
       api.destroy();
     });
+
+    it('constructs filepaths correct', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld1({
+        apiHost: hostname
+      });
+
+      var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
+      iconPath.should.eql(
+        'http://localhostapi/1/charm/precise/mysql-1/file/icon.svg');
+    });
+
   });
 
 })();

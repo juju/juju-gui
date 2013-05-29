@@ -162,7 +162,7 @@ YUI.add('juju-charm-store', function(Y) {
    *
    */
   ns.Charmworld1 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: 'api/1/',
+    _apiRoot: 'api/1',
 
     /**
      * Send the actual request and handle response from the api.
@@ -283,6 +283,15 @@ YUI.add('juju-charm-store', function(Y) {
       });
     },
 
+    filepath: function(charmID, filename) {
+      return this.get('apiHost') + [
+        this._apiRoot,
+        'charm',
+        charmID,
+        'file',
+        filename].join('/');
+    },
+
     /**
      * Load the QA data for a specific charm.
      *
@@ -366,7 +375,7 @@ YUI.add('juju-charm-store', function(Y) {
         required: true,
         setter: function(val) {
           // Make sure we update the datasource if our apiHost changes.
-          var source = val + this._apiRoot;
+          var source = val + this._apiRoot + '/';
           this.set('datasource', new Y.DataSource.IO({ source: source }));
           return val;
         }
