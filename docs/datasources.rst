@@ -12,7 +12,7 @@ currently.
 The first is an unversioned basic API used to get started.
 
 The second API is represented in the Juju GUI by the store class
-``Charmworld0``. It's the version 0 of the Charmworld API. It provides end
+``Charmworld1``. It's the version 0 of the Charmworld API. It provides end
 points for fetching information about charms, searches for charms, content for
 files in charms, as well as QA data. This data feeds the updated Juju GUI
 Browser UX.
