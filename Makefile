@@ -419,7 +419,7 @@ test-prod-server: build-prod test-prep
 	./test-server.sh prod true
 
 test-misc:
-	PYTHONPATH=bin python test/test_websocketreplay.py
+	PYTHONPATH=lib python test/test_websocketreplay.py
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
 
 test:
