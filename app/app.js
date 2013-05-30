@@ -344,6 +344,14 @@ YUI.add('juju-gui', function(Y) {
         });
       }
 
+      if (window.flags.websocket_capture) {
+        debugger;
+        this.subApplications.push({
+          type: Y.juju.subapps.WebsocketLogging,
+          config: {}
+        });
+      }
+
       this.renderEnvironment = true;
       // If this property has a value other than '/' then
       // navigate to it after logging in.
@@ -1301,6 +1309,7 @@ YUI.add('juju-gui', function(Y) {
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
+    'subapp-websocket-logging',
     'event-key',
     'event-touch',
     'model-controller',

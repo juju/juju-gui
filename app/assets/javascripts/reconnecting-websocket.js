@@ -38,7 +38,7 @@
  *  onopen  // sometime later...
  *  onmessage
  *  onmessage
- *  etc... 
+ *  etc...
  *
  * It is API compatible with the standard WebSocket API.
  *
@@ -46,7 +46,7 @@
  */
 
 YUI.add("reconnecting-websocket", function(Y) {
-            
+
 function ReconnectingWebSocket(url, protocols) {
 
     // These can be altered by calling code.
@@ -58,7 +58,7 @@ function ReconnectingWebSocket(url, protocols) {
     var ws;
     var forcedClose = false;
     var timedOut = false;
-    
+
     this.url = url;
     this.protocols = protocols;
     this.readyState = WebSocket.CONNECTING;
@@ -81,7 +81,7 @@ function ReconnectingWebSocket(url, protocols) {
         if (self.debug || ReconnectingWebSocket.debugAll) {
             console.debug('ReconnectingWebSocket', 'attempt-connect', url);
         }
-        
+
         var localWs = ws;
         var timeout = setTimeout(function() {
             if (self.debug || ReconnectingWebSocket.debugAll) {
@@ -91,7 +91,7 @@ function ReconnectingWebSocket(url, protocols) {
             localWs.close();
             timedOut = false;
         }, self.timeoutInterval);
-        
+
         ws.onopen = function(event) {
             clearTimeout(timeout);
             if (self.debug || ReconnectingWebSocket.debugAll) {
@@ -101,7 +101,7 @@ function ReconnectingWebSocket(url, protocols) {
             reconnectAttempt = false;
             self.onopen(event);
         };
-        
+
         ws.onclose = function(event) {
             clearTimeout(timeout);
             ws = null;
@@ -125,7 +125,8 @@ function ReconnectingWebSocket(url, protocols) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
                 console.debug('ReconnectingWebSocket', 'onmessage', url, event.data);
             }
-        	self.onmessage(event);
+            Y.fire('websocketReceived', event.data);
+            self.onmessage(event);
         };
         ws.onerror = function(event) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
@@ -141,6 +142,7 @@ function ReconnectingWebSocket(url, protocols) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
                 console.debug('ReconnectingWebSocket', 'send', url, data);
             }
+            Y.fire('websocketSend', data);
             return ws.send(data);
         } else {
             throw 'INVALID_STATE_ERR : Pausing to reconnect websocket';

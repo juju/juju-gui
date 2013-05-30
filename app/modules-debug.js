@@ -346,6 +346,11 @@ var GlobalConfig = {
           requires: ['subapp-browser-fullscreen', 'subapp-browser-charmview']
         },
 
+        // Websocket Logging
+        'subapp-websocket-logging': {
+          fullpath: '/juju-ui/subapps/websocketLogging/websocketLogging.js'
+        },
+
         // Browser Views
         'subapp-browser-charmview': {
           fullpath: '/juju-ui/subapps/browser/views/charm.js'
