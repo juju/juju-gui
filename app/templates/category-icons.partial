@@ -6,7 +6,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-database.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-database.svg"
                     alt="Databases" />
                 <span>Databases</span>
             </a>
@@ -14,7 +14,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-file-server.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-file-server.svg"
                     alt="File Servers" />
                 <span>File Servers</span>
             </a>
@@ -22,7 +22,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-application.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-application.svg"
                     alt="Applications" />
                 <span>Applications</span>
             </a>
@@ -30,7 +30,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-cache-proxy.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-cache-proxy.svg"
                     alt="Cache/Proxy" />
                 <span>Cache/Proxy</span>
             </a>
@@ -38,7 +38,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-app-server.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-app-server.svg"
                     alt="App Servers" />
                 <span>App Servers</span>
             </a>
@@ -46,7 +46,7 @@
         <li>
             <a href="">
                 <img
-                    src="/juju-ui/assets/images/category_icons/category-misc.svg"
+                    src="/juju-ui/assets/images/non-sprites/category_icons/category-misc.svg"
                     alt="Miscellaneous" />
                 <span>Miscellaneous</span>
             </a>
