@@ -1,4 +1,21 @@
 <html>
+<!--
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 
 <head>
   <meta charset="utf-8">
@@ -56,6 +73,7 @@
   <script src="test_event_tracker.js"></script>
   <script src="test_fakebackend.js"></script>
   <script src="test_filter_widget.js"></script>
+  <script src="test_inspector_widget.js"></script>
   <script src="test_landscape.js"></script>
   <script src="test_login.js"></script>
   <script src="test_model_handlers.js"></script>
@@ -74,6 +92,9 @@
   <script src="test_service_module.js"></script>
   <script src="test_service_view.js"></script>
   <script src="test_startup.js"></script>
+  <!-- Feature flags require the startup to be available to provide the
+       featureFlags method to the test suite. -->
+  <script src="test_feature_flags.js"></script>
   <script src="test_simulator.js"></script>
   <script src="test_subapp_app_extension.js"></script>
   <script src="test_sub_app.js"></script>
@@ -81,6 +102,7 @@
   <script src="test_templates.js"></script>
   <script src="test_topology.js"></script>
   <script src="test_topology_relation.js"></script>
+  <script src="test_topology_utils.js"></script>
   <script src="test_unit_view.js"></script>
   <script src="test_utils.js"></script>
   <script src="test_viewport_module.js"></script>
@@ -89,7 +111,8 @@
       async: false,
       delayUntil: 'domready',
       debug: false,
-      combine: false
+      combine: false,
+      fetchCSS: false
   };
 
   // tabview needs to be here since it doesn't auto load it for some reason.
@@ -108,6 +131,7 @@
 
 <body>
   <div id="shortcut-help" style="display: none"></div>
+  <div id="logout-trigger" style="display: none"></div>
   <div id="main" class="container"></div>
   <div id="mocha"></div>
 </body>

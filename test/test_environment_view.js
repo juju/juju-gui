@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -713,6 +731,76 @@
       done();
     });
 
+    it('must show Build Relation as disabled if charm is not loaded',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         }).render();
+         var serviceNode = container.one('.service'),
+             add_rel = container.one('.add-relation');
+
+         // Toggle the service menu for the Add Relation button.
+         var sm = view.topo.modules.ServiceModule;
+
+         var service = d3.select(serviceNode.getDOMNode()).datum();
+         // Add a mock charm for the service.
+         var charm = {'id': service.charm,
+                       loaded: false};
+         db.charms.add(charm);
+         sm.toggleServiceMenu(service);
+
+         // Since the service's charm is not loaded the 'Build Relation' link
+         // is disabled.
+         assert.isTrue(add_rel.hasClass('disabled'));
+         charm = db.charms.getById(service.charm);
+         charm.loaded = true;
+         // Toggle the service menu twice to cause re-rendering.
+         sm.toggleServiceMenu(service);
+         sm.toggleServiceMenu(service);
+         // Now that the charm is loaded and the menu is re-rendered, the
+         // Build Relation link is no longer disabled.
+         assert.isFalse(add_rel.hasClass('disabled'));
+       });
+
+
+    it('must not respond to clicks on disabled Build Relation link',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         }).render();
+         var serviceNode = container.one('.service'),
+             add_rel = container.one('.add-relation'),
+             after_evt;
+
+         var service = d3.select(serviceNode.getDOMNode()).datum();
+         // Add a mock charm for the service.
+         var charm = {id: service.charm,
+           loaded: false};
+         db.charms.add(charm);
+
+         // Toggle the service menu for the Add Relation button.
+         var module = view.topo.modules.RelationModule;
+         var sm = view.topo.modules.ServiceModule;
+
+         sm.toggleServiceMenu(service);
+         // Mock an event object so that d3.mouse does not throw a NPE.
+         d3.event = {};
+         add_rel.simulate('click');
+         // And nothing happens.
+         container.all('.selectable-service')
+               .size()
+               .should.equal(0);
+         container.all('.dragline')
+               .size()
+               .should.equal(0);
+
+         view.destroy();
+       });
+
     it('must be able to add a relation from the service menu',
        function() {
          var view = new views.environment({
@@ -720,17 +808,24 @@
            db: db,
            env: env
          }).render();
-         var service = container.one('.service'),
+         var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
              after_evt;
 
+         var service = d3.select(serviceNode.getDOMNode()).datum();
+         // Add a mock charm for the service.
+         var charm = {id: service.charm,
+           loaded: false};
+         db.charms.add(charm);
+         charm = db.charms.getById(service.charm);
+         charm.loaded = true;
          // Mock endpoints
          var existing = models.getEndpoints;
          models.getEndpoints = function() {
            var endpoints = {},
-               serviceName = service.one('.name')
+               serviceName = serviceNode.one('.name')
                  .getDOMNode().firstChild.nodeValue,
-               nextServiceName = service.next().one('.name')
+               nextServiceName = serviceNode.next().one('.name')
                  .getDOMNode().firstChild.nodeValue;
            endpoints[nextServiceName] = [
              [
@@ -753,7 +848,7 @@
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.toggleServiceMenu(d3.select(service.getDOMNode()).datum());
+         sm.toggleServiceMenu(service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');
@@ -774,9 +869,9 @@
 
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(
-             d3.select(service.next().getDOMNode()).datum(),
+             d3.select(serviceNode.next().getDOMNode()).datum(),
              module,
-             service.next());
+             serviceNode.next());
          container.all('.selectable-service').size()
             .should.equal(0);
          // The database is initialized with three relations in beforeEach.

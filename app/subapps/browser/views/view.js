@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -159,29 +177,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      this._cacheCharms.destroy();
-
       // Clean up any details view we might have hanging around.
       if (this.details) {
         this.details.destroy(true);
       }
-    },
-
-    /**
-     * General YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      this.set('store', new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldURL
-      }));
-
-      // Hold onto charm data so we can pass model instances to other views when
-      // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
     },
 
     /**
@@ -236,7 +235,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld0}
+       * @type {Charmworld1}
        *
        */
       store: {},
@@ -245,7 +244,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * If this were a route that had a subpath component it's passed into
        * the view to aid in rendering.
        *
-       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       * e.g. /fullscreen/*charmid/hooks to load the hooks tab correctly.
        *
        * @attribute subpath
        * @default undefined

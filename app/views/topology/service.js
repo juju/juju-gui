@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -393,6 +411,26 @@ YUI.add('juju-topology-service', function(Y) {
       context.destroyServiceConfirm(box);
     },
 
+    /**
+     Is building relations allowed at this time?
+
+     @method allowBuildRelation
+     @param {Object} topo The topology.
+     @param {Object} service The service to be tested.
+     @return {Boolean} True if building of relation is allowed.
+     */
+    allowBuildRelation: function(topo, service) {
+      var charm = topo.get('db').charms.getById(service.get('charm'));
+      return charm && charm.loaded;
+    },
+
+    /**
+     Service add relation mouse down handler.
+
+     @method serviceAddRelMouseDown
+     @param {Object} box The service box that's been clicked.
+     @param {Object} context The current context.
+     */
     serviceAddRelMouseDown: function(box, context) {
       if (box.pending) {
         return;
@@ -406,6 +444,10 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
 
+        if (!context.allowBuildRelation(topo, box.model)) {
+          return;
+        }
+
         // Sometimes mouseover is fired after the mousedown, so ensure
         // we have the correct event in d3.event for d3.mouse().
         d3.event = e;
@@ -415,6 +457,13 @@ YUI.add('juju-topology-service', function(Y) {
       }, [box, evt], false);
     },
 
+    /**
+     Service add relation mouse up handler.
+
+     @method serviceAddRelMouseUp
+     @param {Object} box The service box that's been clicked.
+     @param {Object} context The current context.
+     */
     serviceAddRelMouseUp: function(box, context) {
       // Cancel the long-click timer if it exists.
       if (context.longClickTimer) {
@@ -432,7 +481,10 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      views.toBoundingBoxes(this, db.services.visible(), topo.service_boxes);
+      var visibleServices = db.services.visible();
+      views.toBoundingBoxes(this, visibleServices, topo.service_boxes);
+      // Break a reference cycle that results in uncollectable objects leaking.
+      visibleServices.reset();
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
@@ -613,7 +665,25 @@ YUI.add('juju-topology-service', function(Y) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
       if (new_services.length > 0) {
-        this.tree.nodes({children: new_services});
+        // If the there is only one new service and it's pending (as in, it was
+        // added via the charm panel as a ghost), position it intelligently and
+        // set its position coordinates such that they'll be saved when the
+        // service is actually created.  Otherwise, rely on our pack layout (as
+        // in the case of opening an unannotated environment for the first
+        // time).
+        if (new_services.length === 1 && new_services[0].model.get('pending')) {
+          // Get a coordinate outside the cluster of existing services.
+          var coords = topo.servicePointOutside();
+          // Set the coordinates on both the box model and the service model.
+          new_services[0].x = coords[0];
+          new_services[0].y = coords[1];
+          new_services[0].model.set('x', coords[0]);
+          new_services[0].model.set('y', coords[1]);
+          // This ensures that the x/y coordinates will be saved as annotations.
+          new_services[0].model.set('dragged', true);
+        } else {
+          this.tree.nodes({children: new_services});
+        }
         // Update annotations settings position on backend
         // (but only do this if there is no existing annotations).
         Y.each(new_services, function(box) {
@@ -782,15 +852,23 @@ YUI.add('juju-topology-service', function(Y) {
         return h;
       }
       });
-      node.select('.service-block-image')
-        .attr({'xlink:href': function(d) {
-            return d.subordinate ?
-                '/juju-ui/assets/svgs/sub_module.svg' :
-                '/juju-ui/assets/svgs/service_module.svg';
-          },
-          'width': function(d) { return d.w; },
-          'height': function(d) { return d.h; }
-          });
+      node.select('.service-block-image').each(function(d) {
+        var curr_node = d3.select(this);
+        var curr_href = curr_node.attr('xlink:href');
+        var new_href = d.subordinate ?
+            '/juju-ui/assets/svgs/sub_module.svg' :
+            '/juju-ui/assets/svgs/service_module.svg';
+
+        // Only set 'xlink:href' if not already set to the new value,
+        // thus avoiding redundant requests to the server. #1182135
+        if (curr_href !== new_href) {
+          curr_node.attr({'xlink:href': new_href});
+        }
+        curr_node.attr({
+          'width': d.w,
+          'height': d.h
+        });
+      });
 
       // Draw a subordinate relation indicator.
       var subRelationIndicator = node.filter(function(d) {
@@ -834,11 +912,12 @@ YUI.add('juju-topology-service', function(Y) {
             landscapeAsset =
                 '/juju-ui/assets/images/landscape_restart_round.png';
           }
-          if (landscapeAsset !== undefined) {
-            // If we would draw something that is already
-            // present, continue
+          if (landscapeAsset === undefined) {
+            // Remove any existing badge.
+            d3.select(this).select('.landscape-badge').remove();
+          } else {
             var existing = Y.one(this).one('.landscape-badge'),
-                target;
+                curr_href, target;
 
             if (!existing) {
               existing = d3.select(this).append('image');
@@ -850,13 +929,16 @@ YUI.add('juju-topology-service', function(Y) {
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
-              'xlink:href': landscapeAsset,
               'x': function(box) {return box.w * 0.13;},
               'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
             });
-          } else {
-            // Remove any existing badge.
-            d3.select(this).select('.landscape-badge').remove();
+
+            // Only set 'xlink:href' if not already set to the new value,
+            // thus avoiding redundant requests to the server. #1182135
+            curr_href = existing.attr('xlink:href');
+            if (curr_href !== landscapeAsset) {
+              existing.attr({'xlink:href': landscapeAsset});
+            }
           }
         });
       }
@@ -1131,6 +1213,15 @@ YUI.add('juju-topology-service', function(Y) {
         topo.set('active_service', box);
         topo.set('active_context', box.node);
         serviceMenu.addClass('active');
+
+        // Disable the 'Build Relation' link if the charm has not yet loaded.
+        var addRelation = serviceMenu.one('.add-relation');
+        if (this.allowBuildRelation(topo, service)) {
+          addRelation.removeClass('disabled');
+        } else {
+          addRelation.addClass('disabled');
+        }
+
         // We do not want the user destroying the Juju GUI service.
         if (utils.isGuiService(service)) {
           serviceMenu.one('.destroy-service').addClass('disabled');

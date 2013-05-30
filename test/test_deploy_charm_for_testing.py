@@ -1,3 +1,19 @@
+# This file is part of the Juju GUI, which lets users view and manage Juju
+# environments within a graphical interface (https://launchpad.net/juju-gui).
+# Copyright (C) 2012-2013 Canonical Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License version 3, as published by
+# the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+# SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import print_function
 
 import unittest
@@ -5,6 +21,7 @@ import unittest
 from deploy_charm_for_testing import (
     get_state,
     main,
+    parse_image_data,
     wait_for_service,
     )
 
@@ -120,7 +137,8 @@ class TestScript(unittest.TestCase):
             juju_commands.append(s)
 
         main(options=_options(origin='lp:foo'), print=noop, juju=juju, wait_for_service=noop,
-             make_config_file=MakeConfigFile, wait_for_machine=noop)
+             make_config_file=MakeConfigFile, wait_for_machine=noop,
+             make_environments_yaml=noop)
         options = MakeConfigFile.options
         deploy_command = juju_commands[1]
         self.assertIn('--config my-config-file.yaml', deploy_command)
@@ -134,7 +152,7 @@ class TestScript(unittest.TestCase):
 
         main(options=_options(origin='lp:foo'), print=printed.append, juju=noop,
              wait_for_service=noop, make_config_file=MakeConfigFile,
-             wait_for_machine=noop)
+             wait_for_machine=noop, make_environments_yaml=noop)
         options = MakeConfigFile.options
         self.assertSequenceEqual(
             printed,
@@ -145,6 +163,59 @@ class TestScript(unittest.TestCase):
              'Exposing the service...'])
         self.assertIn('juju-gui-source', options)
         self.assertEqual('lp:foo', options['juju-gui-source'])
+
+class TestParseImageData(unittest.TestCase):
+    """Test the nova machine image data parsing."""
+
+    valid_prefix = "ubuntu-released/ubuntu-precise-12.04-amd64"
+
+    def test_found_image(self):
+        data = "| abc-123 | {}-20130526.img | ACTIVE | |".format(
+            self.valid_prefix)
+        img_id, desc = parse_image_data(data)
+        self.assertEqual('abc-123', img_id)
+        self.assertEqual(
+            'ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img',
+            desc)
+
+    def test_no_id(self):
+        data = "| | {}-20130526.img | ACTIVE | |".format(
+            self.valid_prefix)
+        img_id, desc = parse_image_data(data)
+        self.assertEqual(None, img_id)
+        self.assertEqual(None, desc)
+
+    def test_invalid_id(self):
+        data = "| not-hex | {}-20130526.img | ACTIVE | |".format(
+            self.valid_prefix)
+        img_id, desc = parse_image_data(data)
+        self.assertEqual(None, img_id)
+        self.assertEqual(None, desc)
+
+    def test_inactive(self):
+        data = "| abc-123 | {}-20130526.img | INACTIVE | |".format(
+            self.valid_prefix)
+        img_id, desc = parse_image_data(data)
+        self.assertEqual(None, img_id)
+        self.assertEqual(None, desc)
+
+    def test_not_released(self):
+        data = (
+            "| abc-123 | smoser/ubuntu-precise-12.04-amd64-20130501.img |" +
+            "ACTIVE | |")
+        img_id, desc = parse_image_data(data)
+        self.assertEqual(None, img_id)
+        self.assertEqual(None, desc)
+
+    def test_picks_last(self):
+        data = '\n'.join([
+            "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-1.img | ACTIVE | |",
+            "| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-2.img | ACTIVE | |",
+            "| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-3.img | ACTIVE | |"])
+        img_id, desc = parse_image_data(data)
+        self.assertEqual('fad-123', img_id)
+        self.assertEqual(
+            'ubuntu-released/ubuntu-precise-12.04-amd64-3.img', desc)
 
 
 if __name__ == '__main__':

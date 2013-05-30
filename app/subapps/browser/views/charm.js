@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -41,6 +59,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.nav .back': {
         click: '_handleBack'
+      },
+      '.tabs .yui3-tab-label': {
+        'click': function(ev) {
+          // Stop the app from trying to route these links.
+          ev.halt();
+        }
       }
     },
 
@@ -149,6 +173,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+       Creates the bazaar url for the charm.
+
+       @method _getSourceLink
+       @private
+     */
+    _getSourceLink: function() {
+      var url = this.get('charm').get('code_source').location;
+      url = url.replace('lp:', 'http://bazaar.launchpad.net/');
+      return url + '/files';
+    },
+
+    /**
+       Creates the url for a given revision of the charm.
+
+       @method _getRevnoLink
+       @private
+       @param {String} sourceLink The charm's source_link.
+       @param {String} revno The charm commit's revision number.
+     */
+    _getRevnoLink: function(sourceLink, revno) {
+      return sourceLink.replace('files', 'revision/') + revno;
+    },
+
+    /**
      * Commits need to be formatted, dates made pretty for the output to the
      * template. We have to break up the first one from the rest since it's
      * displayed differently.
@@ -157,7 +205,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Array} commits a list of commit objects.
      *
      */
-    _formatCommitsForHtml: function(commits) {
+    _formatCommitsForHtml: function(commits, sourceLink) {
       var firstTmp;
       var prettyCommits = {
         remaining: []
@@ -175,6 +223,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
             prettyCommits.first.date, {
               format: DATE_FORMAT
             });
+        prettyCommits.first.revnoLink = this._getRevnoLink(
+            sourceLink, prettyCommits.first.revno);
       }
 
       Y.Array.each(commits, function(commit) {
@@ -182,8 +232,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
             commit.date, {
               format: DATE_FORMAT
             });
+        commit.revnoLink = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
-      });
+      }, this);
 
       // Put our first item back on the commit list.
       if (firstTmp) {
@@ -443,10 +494,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container');
+          container = this.get('container'),
+          sourceLink = this._getSourceLink();
+
       tplData.isFullscreen = isFullscreen;
+      tplData.sourceLink = sourceLink;
       tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits);
+          tplData.recent_commits, sourceLink);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 
@@ -508,7 +562,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this.get('store').charm(this.get('charmID'), {
           'success': function(data) {
-            var charm = new models.BrowserCharm(data);
+            var charm = new models.BrowserCharm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
             this.set('charm', charm);
             this._renderCharmView(this.get('charm'), isFullscreen);
             this.hideIndicator(this.get('renderTo'));
@@ -569,7 +626,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld0}
+       * @type {Charmworld1}
        *
        */
       store: {},

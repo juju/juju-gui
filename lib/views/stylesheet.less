@@ -24,32 +24,18 @@
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 
-
-body {
-    margin-top: 87px;
-    background-color: #302b28;
-    font-family: @font-family;
-    height: 100%;
-}
-
-input, button, select, textarea {
-    font-family: @font-family;
-}
-
+/* Mixins */
 .create-border-radius(@radius) {
     -moz-border-radius: @radius;
     -webkit-border-radius: @radius;
     border-radius: @radius;
 }
-
 .create-box-shadow(@arguments) {
     -moz-box-shadow: @arguments;
     -webkit-box-shadow: @arguments;
     box-shadow: @arguments;
 }
-
-.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
-    @blur: 2px;
+.create-linear-gradient(@gradient-start, @gradient-end) {
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
     background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
@@ -57,28 +43,77 @@ input, button, select, textarea {
     background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: linear-gradient(top, @gradient-start, @gradient-end);
     background-repeat: repeat-x;
+}
+.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+    @blur: 2px;
     // Using a variable here because LESS strips commas in mixin args.
     @box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
                  2px 0 3px -2px @shadow-color inset,
                  -2px 0 3px -2px @shadow-color inset;
     .create-box-shadow(@box-shadow);
     .create-border-radius(~"6px / 7px");
+    .create-linear-gradient(@gradient-start, @gradient-end);
     border: none;
 }
 
+/* Common classes and setup */
+body {
+    margin-top: 87px;
+    background-color: #302b28;
+    font-family: @font-family;
+    height: 100%;
+}
+input, button, select, textarea {
+    font-family: @font-family;
+}
+svg {
+    stroke-width: 0;
+    overflow: hidden;
+}
 .align-right {
     text-align: right;
 }
-
 i.sprite {
     display: inline-block;
     vertical-align: middle;
 }
+ul.menu li,
+div.inline {
+  float: left;
+}
+ul.menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.alert {
+    letter-spacing: normal;
+}
+.hidden {
+    visibility: hidden;
+}
+.divider {
+    padding: 5px;
+}
+table tr.highlighted td {
+   background-color: pink !important;
+}
+.customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 1px 0 3px #989A9C;
+    }
+    ::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 4px 0 3px #D74613;
+    }
+}
 
+/* Layout, widgets etc. */
 #viewport-wrapper {
     position: relative;
 }
-
 #vp-left-border {
     position: absolute;
     top: 0;
@@ -87,7 +122,6 @@ i.sprite {
     margin-left: -12px;
     width: 12px;
 }
-
 #vp-right-border {
     position: absolute;
     top: 0;
@@ -96,7 +130,6 @@ i.sprite {
     margin-right: -12px;
     width: 12px;
 }
-
 .view-container {
     overflow: auto;
     padding: 10px;
@@ -108,7 +141,6 @@ i.sprite {
         }
     }
 }
-
 .navbar {
     margin-top: -87px;
     margin-bottom: 0;
@@ -118,37 +150,43 @@ i.sprite {
     padding: 0;
     position: relative;
     color: @navbar-color;
+
     .brand {
         margin: 12px 26px 6px 10px;
         padding: 0;
     }
     > div {
         padding: 0;
+
         .nav-container {
             display: inline-block;
             height: 44px;
             margin: 2px 0 0 0;
             padding: 20px 0 4px;
+
             &#charm-search-trigger-container {
                 width: @charm-panel-width;
                 white-space: nowrap;
                 border-left: 1px solid transparent;
+
                 &.active-border {
-                    border-left-color: darkgray;
                     .create-box-shadow(inset 1px 0 0 lightgray);
+                    border-left-color: darkgray;
                 }
             }
             .nav-section {
                 border-left: 1px solid transparent;
+                display: inline-block;
+                padding: 4px 10px;
+
                 &.active-border {
                     border-left-color: lightgray;
                 }
-                display: inline-block;
-                padding: 4px 10px;
                 #charm-search-trigger {
                     cursor: pointer;
                 }
                 #logout-trigger {
+                    cursor: pointer;
                     display: inline-block;
                     padding: 5px 0 8px 5px;
                 }
@@ -164,6 +202,7 @@ i.sprite {
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
                     font-size: 0.9em;
+
                     &:valid {
                         background: white;
                         padding: 3px;
@@ -192,19 +231,20 @@ i.sprite {
         }
         &#nav-alerts-charms {
             float: right;
+
             .nav-container:first-child .nav-section {
                 position: relative;
             }
         }
         &#nav-brand-env .nav-container {
             float: left;
+
             .provider-type {
                 font-size: 0.7em;
             }
         }
     }
 }
-
 .bottom-navbar {
     min-width: 800px;
     height: 50px;
@@ -225,7 +265,6 @@ i.sprite {
             .landscape-icon {
                 margin: 10px 0 0 16px;
             }
-
             .icon-divider {
                 margin-top: 8px;
             }
@@ -241,123 +280,98 @@ i.sprite {
         }
     }
 }
-
 #content {
     position: relative;
     background-color: #fff;
     width: 100%;
 }
-
 #main {
     overflow: hidden;
 }
-
-#overview {
-
-}
-
-.divider {
-    padding: 5px;
-}
-
-svg {
-    stroke-width: 0;
-    overflow: hidden;
-}
-
 .crosshatch-background {
     background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
 }
-
 #canvas {
     position: relative;
 }
-
 .zoom-plane {
-  fill-opacity: 0;
-  cursor: move;
+    fill-opacity: 0;
+    cursor: move;
 }
-
 #shortcut-help {
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 8%;
-  bottom: 10%;
-  opacity: 0.85;
-  z-index: 10;
-  padding: 1em;
-  .create-border-radius('black');
-  .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
- 
-  background-color: black;
-  color: white;
+    .create-border-radius('black');
+    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 8%;
+    bottom: 10%;
+    opacity: 0.85;
+    z-index: 10;
+    padding: 1em;
+    background-color: black;
+    color: white;
 
-  .binding {
-    color: green;
-    text-align: center;
-  }
-
-  table {
-    padding: 2em;
-    margin: 2em;
-
-    th {
-      text-align: left;
+    .binding {
+        color: green;
+        text-align: center;
     }
-  }
+    table {
+        padding: 2em;
+        margin: 2em;
 
+        th {
+            text-align: left;
+        }
+    }
 }
-
 #environment-help {
-  color: #757575;
-  text-align: center;
-  /* This is absolute so that it does not push the svg down when it is
-     visible.  That's important for animations hiding and showing this help,
-     and if we want the help to appear when a service is present (such as the
-     GUI itself). */
-  position: absolute;
-  overflow: hidden;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  /* pointer-events does not work in IE 10 except in SVG, so this is just a
-     way to slightly improve the experience during transitions. */
-  pointer-events: none;
-  div.vertical-center-floater {
-    height: 50%;
-    margin-bottom: -250px;
-    margin-top: 0;
-    min-height: 225px;
-  }
-  div.content {
-    height: 450px;
-  }
-  h1 {
-    line-height: normal;
-    margin-bottom: 1ex;
-    font-weight: normal;
-    font-size: 26px;
-  }
-  p {
-    line-height: normal;
-    font-size: 18px;
-    width: 301px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 2ex;
-  }
+    color: #757575;
+    text-align: center;
+    /* This is absolute so that it does not push the svg down when it is
+       visible.  That's important for animations hiding and showing this help,
+       and if we want the help to appear when a service is present (such as the
+       GUI itself). */
+    position: absolute;
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    /* pointer-events does not work in IE 10 except in SVG, so this is just a
+       way to slightly improve the experience during transitions. */
+    pointer-events: none;
+    div.vertical-center-floater {
+        height: 50%;
+        margin-bottom: -250px;
+        margin-top: 0;
+        min-height: 225px;
+    }
+    div.content {
+        height: 450px;
+    }
+    h1 {
+        line-height: normal;
+        margin-bottom: 1ex;
+        font-weight: normal;
+        font-size: 26px;
+    }
+    p {
+        line-height: normal;
+        font-size: 18px;
+        width: 301px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2ex;
+    }
 }
-
 .environment-menu {
     @border_radius: 20px;
     @background_color: #282421;
-
+    .create-border-radius(@border_radius);
+    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     display: none;
     background-color: @background_color;
     color: #fdf6e3;
-    .create-border-radius(@border_radius);
-    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     top: 0;
     left: 0;
     position: absolute;
@@ -365,7 +379,6 @@ svg {
     &.active {
         display: block;
     }
-
     .triangle {
         position: absolute;
         top: 62px;
@@ -381,53 +394,49 @@ svg {
         left: -12px;
         background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
     }
-
     .menu-title {
         margin: 10px;
     }
-
     .cancel {
         margin: 10px;
         float: right;
     }
-
     ul {
         margin: 10px;
         list-style-type: none;
+
         li {
+            .create-border-radius(@border_radius);
             background-position: 5px center;
             background-repeat: no-repeat;
             border-bottom: 1px #5f594f solid;
             cursor: pointer;
             line-height: 32px;
             padding: 5px 5px 5px 5px;
-            .create-border-radius(@border_radius);
 
             a {
               text-decoration: none;
               font-size: 75%;
               color: #fdf6e3;
             }
-
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
             }
             &.add-relation {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                .disabled {
+                    color: red;
+                }
             }
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
             }
-
             &.landscape-reboot {
                 background-image: url(/juju-ui/assets/images/landscape_restart_menu.png);
             }
-
             &.landscape-security {
                 background-image: url(/juju-ui/assets/images/landscape_security_menu.png);
             }
-
-
             &:last-child {
                 border-bottom: none;
             }
@@ -437,23 +446,24 @@ svg {
             &.disabled {
                 color: gray;
                 cursor: default;
+
                 &:hover {
                     background-color: inherit;
                 }
             }
         }
-
     }
-
     &#service-menu ul li {
         padding-left: 42px;
     }
 
 }
-
-charms.thumbnails.li { height:4em; }
+charms.thumbnails.li {
+    height:4em;
+}
 .subordinate-rel-group {
     display: none;
+
     &.active {
         display: inline;
     }
@@ -461,10 +471,10 @@ charms.thumbnails.li { height:4em; }
 .relation {
     stroke: #333333;
     stroke-width: 3px;
+
     &.error {
         stroke: #cc3333;
     }
-
     &.pending-relation {
         stroke: #faaf40;
 
@@ -472,11 +482,9 @@ charms.thumbnails.li { height:4em; }
             stroke: #fa6a40
         }
     }
-
     &.unused {
         visibility: hidden;
     }
-
     &.subordinate-relation {
         stroke: #3333cc;
     }
@@ -487,19 +495,25 @@ charms.thumbnails.li { height:4em; }
         stroke: #2c2c2c;
         fill: #eee;
     }
-
     tspan {
         text-anchor: middle;
         dominant-baseline: middle;
     }
 }
-.state-error { stroke: #FF0000; }
-.state-started { stroke: #000000;}
-.state-pending { stroke: #6597E8;}
+.state-error {
+    stroke: #FF0000;
+}
+.state-started {
+    stroke: #000000;
+}
+.state-pending {
+    stroke: #6597E8;
+}
 div.state-error {
     @error-color: #c01c20;
     background-color: @error-color;
     color: #FFFFFF;
+
     &:hover {
         background-color: lighten(@error-color, 10%);
     }
@@ -507,6 +521,7 @@ div.state-error {
 div.state-started {
     @started-color: #d8d8d8;
     background-color: @started-color;
+
     &:hover {
         background-color: lighten(@started-color, 10%);
     }
@@ -514,35 +529,35 @@ div.state-started {
 div.state-pending {
     @pending-color: #fcd305;
     background-color: @pending-color;
+
     &:hover {
         background-color: lighten(@pending-color, 20%);
     }
 }
-
 .unit (@min_height: 20px, @border_radius:3px) {
-    padding: 5px;
     .create-border-radius(@border_radius);
+    padding: 5px;
     margin-bottom: 0px;
     min-height: @min_height;
     cursor: pointer;
+
     .agent-state {
         display: none;
     }
 }
-
 ul#unit-large div.unit {
     .unit(40px);
 }
-
 ul#unit-medium div.unit {
     .unit;
 }
-
 ul#unit-small {
     margin-left: 0px;
+
     > li {
         margin-bottom: 5px;
         margin-left: 5px;
+
         > div.unit {
             .unit;
             width: 1.7em;
@@ -550,24 +565,23 @@ ul#unit-small {
         }
     }
 }
-
 ul#unit-tiny {
     margin-left: 0px;
+
     > li {
         margin-bottom: 3px;
         margin-left: 3px;
+
         > div.unit {
             .unit(0px, 1px);
         }
     }
 }
-
 circle.mouse-down-indicator {
     stroke: #040404;
     stroke-width: 2px;
     fill: none;
 }
-
 g.service {
     fill: none;
     stroke: none;
@@ -575,11 +589,9 @@ g.service {
     &.pending {
         opacity: 0.8;
     }
-
     text {
         text-anchor: middle;
     }
-
     .charm-label {
         font-style: italic;
         fill: #4c4c4c;
@@ -587,7 +599,6 @@ g.service {
     .name {
         fill: #4c4c4c;
     }
-
    .unit-count {
         stroke-width: 0;
         text-anchor: middle;
@@ -595,9 +606,11 @@ g.service {
         fill: rgba(0,0,0,0);
 
         &.show-count {
-            fill: rgba(0,0,0,1);}
+            fill: rgba(0,0,0,1);
+        }
         &.hide-count {
-            fill: rgba(0,0,0,0);}
+            fill: rgba(0,0,0,0);
+        }
     }
 
     .sub-rel-count {
@@ -630,7 +643,6 @@ g.service {
         &.active {
             visibility: visible;
         }
-
         image {
             cursor: pointer;
         }
@@ -642,28 +654,33 @@ g.service-status {
         fill: #fff;
 
         &.status-pending {
-            fill: #fcd305;}
+            fill: #fcd305;
+        }
         &.status-good {
-            fill: #b7b7b7;}
+            fill: #b7b7b7;
+        }
         &.status-error {
-            fill: #c01c20;}
+            fill: #c01c20;
+        }
     }
 }
-
 g.unit {
     stroke-width: 0; font-weight: bold;
     font-size: 1.2em;
     fill: #1626cf;
+
     .address {
-    fill: #ffffff; font-size: 0.8em;}
+        fill: #ffffff; font-size: 0.8em;
+    }
     .unit-border {
-    stroke-width: 2px; fill: #a0a0a0;}
+        stroke-width: 2px; fill: #a0a0a0;
+    }
 }
 
 /*
  * Notification system
  */
- #notify-list {
+#notify-list {
     white-space: nowrap;
     max-height: 500px;
     overflow-y: scroll;
@@ -671,8 +688,7 @@ g.unit {
     .header {
         padding: 1em 0;
     }
- }
-
+}
 .notice {
     border-top: 1px solid #D0D0D0;
     padding: 1em;
@@ -681,36 +697,31 @@ g.unit {
     &:hover {
         background-color: #eee;
     }
-
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
     }
-
     &:first-child {
         border: none;
         padding-top: 0;
     }
-
     small {
         margin-left: 1em;
         font-size: 0.7em;
         color: #d0d0d0;
     }
-
     .header {
         background-color: #c0c0c0;
         font-size: 0.9em;
         margin: 0;
         padding: 0;
     }
-
     .error {
         background-color: rgba(255, 0, 0, 0.1);
     }
 }
-
 #service-footer {
     text-align: center;
+
     .footer-right {
         float: right;
     }
@@ -731,21 +742,23 @@ g.unit {
     right: 0px;
     top: 0px;
     z-index: 9999;
+
     .yui3-notifier-content {
         @background-color: black;
         @margin-left: 41px;
         @margin-top: 13px;
         @opacity: 0.8;
-        .create-border-radius(8px);
         // Using a variable here because LESS strips commas in mixin args.
         @box-shadow: 0 2px 4px lighten(@background-color, 10%),
             0 1px 2px lighten(@background-color, 20%) inset;
+        .create-border-radius(8px);
         .create-box-shadow(@box-shadow);
         background-color: @background-color;
         margin: 6px;
         opacity: @opacity;
         overflow: hidden;
         width: 277px;
+
         &:hover {
             cursor: pointer;
             opacity: @opacity - 0.1;
@@ -792,15 +805,16 @@ g.unit {
         left: 11px;
     }
 }
-
 .create-picker(@width, @top, @listtop, @listbottom) {
     width: @width;
+
     .picker-body {
         width: @width - 15px;
     }
     .picker-expanded {
         display: none;
         top: @top;
+
         &.active {
             z-index: 100;
             display: block;
@@ -839,11 +853,11 @@ g.unit {
 
                 li {
                     padding-left: 7px;
+
                     &.activetick {
                         background:
                             url(/juju-ui/assets/images/selected_tick.png)
-                            no-repeat;
-                        background-position: 240px 3px;
+                            no-repeat 240px 3px;
                     }
                 }
             }
@@ -868,17 +882,12 @@ g.unit {
         right: 0;
     }
     &.inactive {
-        .picker-edge {
-            display: none;
-        }
-        .picker-body {
-            display: none;
-        }
+        .picker-edge,
+        .picker-body,
         .picker-button {
             display: none;
         }
     }
-
 }
 .picker {
     position: relative;
@@ -886,18 +895,20 @@ g.unit {
     margin: 0;
     padding: 0;
     height: 24px;
+
     &.charm-filter-picker {
+        .create-picker(270px, @top, @top, initial);
         left: 11px;
         padding-bottom: 5px;
         @top: 0px;
         top: @top;
-        .create-picker(270px, @top, @top, initial);
+
         .picker-expanded .picker-list {
             .create-border-radius(4px);
+            .create-box-shadow(0 0 4px rgba(0,0,0,.51));
             -moz-background-clip: padding;
             -webkit-background-clip: padding-box;
             background-clip: padding-box;
-            .create-box-shadow(0 0 4px rgba(0,0,0,.51));
             background-color: #fff;
             background: white;
             height: auto;
@@ -905,13 +916,12 @@ g.unit {
     }
     &.zoom-picker {
         width: 56px;
+
         .picker-body {
             width: 36px;
         }
     }
-
 }
-
 #unit-status {
     .running {
         color: green;
@@ -923,56 +933,49 @@ g.unit {
         color: red;
     }
 }
-
 #relations {
     #unit-status;
+
     form {
         margin: 0;
     }
 }
-
 .yui3-panel {
+    .create-border-radius(6px);
+    .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     background: white;
     padding: 1.6em;
     border: solid black 2px;
-    .create-border-radius(6px);
-    .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
     outline: none;
     font-weight: normal;
     letter-spacing: normal;
+
     .yui3-widget-bd {
         margin-bottom: 1em;
     }
     .yui3-widget-buttons {
         float: right;
+
         .btn-danger {
             margin-right: 1em;
         }
     }
 }
-
 .yui3-widget-mask {
     background: black;
     opacity: 0.4;
 }
-
 .controls {
     .read-only {
         padding-top: 5px;
     }
 }
-
 .unit-button-palette {
     float: right;
 }
-
-.hidden {
-    visibility: hidden;
-}
-
 #service-relations {
     .btn {
         float: right;
@@ -991,7 +994,9 @@ g.unit {
     }
 }
 
-#juju-search-charm-panel {
+#juju-search-charm-panel,
+.yui3-juju-inspector {
+    .create-box-shadow(inset 0 -1px 0 lightgray);
     .customize-scrollbar;
     display: block;
     z-index: 999;
@@ -1003,33 +1008,33 @@ g.unit {
     width: @charm-panel-width;
     background-color: white;
     border-left: darkgray solid 1px;
-    .create-box-shadow(inset 1px 0 0 lightgray);
     border-bottom: darkgray solid 1px;
-    .create-box-shadow(inset 0 -1px 0 lightgray);
 
+    .charm-panel-configure,
     .charm-panel-configure .btn {
         float: right;
     }
-
     .btn.deploy {
+        .create-button(@charm-panel-deploy-button-color,
+                       @charm-panel-deploy-button-bottom-gradient,
+                       @charm-panel-deploy-button-shadow, 0px);
         margin-top: 5px;
         margin-left: 5px;
         text-shadow: none;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .create-button(@charm-panel-deploy-button-color,
-                       @charm-panel-deploy-button-bottom-gradient,
-                       @charm-panel-deploy-button-shadow, 0px);
+
         &:active {
             .create-button(@charm-panel-deploy-button-color,
                            @charm-panel-deploy-button-color,
                            @charm-panel-deploy-button-shadow, 1px);
         }
     }
-
     .charm-description btn.deploy {
        float: right;
     }
     .btn.cancel {
+        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+                       @charm-panel-cancel-button-shadow, 0px);
         color: white;
         text-shadow: none;
         margin-top: 5px;
@@ -1038,8 +1043,7 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
-                       @charm-panel-cancel-button-shadow, 0px);
+
         &:active {
             .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
                            @charm-panel-cancel-button-shadow, 1px);
@@ -1052,6 +1056,7 @@ g.unit {
       width: @charm-panel-width - @charm-panel-padding-left - 1px;
       float: right;
       padding-left: @charm-panel-padding-left;
+
       .btn {
           margin-top: 12px;
           width: 67px;
@@ -1076,6 +1081,7 @@ g.unit {
         float: right;
         overflow-y: auto;
         overflow-x: hidden;
+
         h3 {
             color: @label-color;
             font-size: 22px;
@@ -1090,6 +1096,7 @@ g.unit {
             font-family: @font-family-medium;
             font-weight: normal;
             padding: 8px @charm-panel-padding-left;
+
             i {
                 float: right;
                 margin-top: 8px;
@@ -1114,6 +1121,8 @@ g.unit {
             line-height: 16px;
             overflow: hidden;
             padding: 0px @charm-panel-padding-left;
+
+            //XXX was this intended to be "&:last-child"?
             :last-child {
                 margin-bottom: 11px;
             }
@@ -1121,6 +1130,7 @@ g.unit {
         &.charm-description {
             color: #58595B;
             font-size: 12px;
+
             .btn.deploy {
                 margin-left: 0;
             }
@@ -1140,8 +1150,10 @@ g.unit {
         &.config-variant {
             font-size: 14px;
             border-top: 1px solid @charm-panel-border-top-color;
+
             .charm-entry {
                 padding: 5px @charm-panel-padding-left;
+
                 &:nth-of-type(2) {
                     margin-bottom: 15px;
                 }
@@ -1165,21 +1177,24 @@ g.unit {
             .controls {
                 margin-left: auto;
                 margin-right: 0;
-                input[type=text], textarea {
+
+                input[type=text],
+                textarea {
+                    // Using a variable here because LESS strips commas in
+                    // mixin args.
+                    @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
+                    .create-border-radius(6px);
+                    .create-box-shadow(@box-shadow);
                     color: @text-entry-color;
                     font-style: italic;
                     font-size: 12px;
                     width: 250px;
                     margin: 0;
-                    .create-border-radius(6px);
-                    // Using a variable here because LESS strips commas in
-                    // mixin args.
-                    @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
-                    .create-box-shadow(@box-shadow);
-		    input[type=text] {
-			height: 15px;
-		    }
 
+                    // XXX: This doesn't seem to make sense here:
+                    input[type=text] {
+                        height: 15px;
+                    }
                 }
                 input[type=checkbox] {
                     margin-left: 1ex;
@@ -1217,6 +1232,7 @@ g.unit {
                 width: 149px;
                 z-index: 2;
                 cursor: pointer;
+
                 &:active {
                   background: url(/juju-ui/assets/images/getfile_button-pressed.png) no-repeat;
                 }
@@ -1240,6 +1256,7 @@ g.unit {
         width: @charm-panel-width;
         float: right;
         border-top: 1px solid #989898;
+
         .series-charms {
             h3 {
                 font-weight: normal;
@@ -1252,17 +1269,18 @@ g.unit {
                 height: 20px;
                 line-height: 16px;
             }
-
             ul {
                 margin-bottom: 0;
                 border-left: 1px solid lightgrey;
             }
             .charm-entry {
+                @charm-panel-text-width: 190px;
                 padding-top: 0px;
                 padding-left: @charm-panel-padding-left;
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
                 height: 70px;
+
                 /* Hack to prevent the block from spilling downward in IE10. */
                 .ie10 & {
                     padding-left: 4px;
@@ -1282,7 +1300,6 @@ g.unit {
                 &:hover {
                     background-color: white;
                 }
-                @charm-panel-text-width: 190px;
                 a.charm-detail {
                     display: block;
                     width: @charm-panel-text-width;
@@ -1310,17 +1327,11 @@ g.unit {
         }
     }
 }
-
-table tr.highlighted td {
-   background-color: pink !important;
-}
-
 #destroy-service {
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
 }
-
 .service-view {
     .juju-service-info-container-bottom-menu {
         height: 50px;
@@ -1353,6 +1364,7 @@ table tr.highlighted td {
 
             .state-buttons {
                 margin-left: 50px;
+
                 img {
                     padding-top: 0px;
                     height: 30px;
@@ -1365,16 +1377,16 @@ table tr.highlighted td {
                     background:url(/juju-ui/assets/images/toggles.png) -70px 0;
 
                     &.active {
-                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
                         .white;
+                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
                     }
 
                     &:first-child {
                         background:url(/juju-ui/assets/images/toggles.png) 0 0px;
 
                         &.active {
-                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
                             .white;
+                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
                         }
                     }
 
@@ -1382,31 +1394,30 @@ table tr.highlighted td {
                         background:url(/juju-ui/assets/images/toggles.png) -210px 0;
 
                         &.active {
-                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
                             .white;
+                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
                         }
                     }
                 }
-
                 span:first-child {
                     padding-right: 5px;
                 }
-
                 .white {
-                    a {color: white !important;}
+                    a {
+                        color: white !important;
+                    }
                 }
 
                 a {
                     color: @navbar-color;
+
                     &:link, &:visited, &:active, &:hover {
                        text-decoration: none
                     }
                 }
             }
         }
-
     }
-
     .service-header-partial {
       .name {
           padding-top: 38px;
@@ -1426,7 +1437,6 @@ table tr.highlighted td {
               color: #6a737b;
           }
         }
-
         .menu-items {
             padding: 6px 0 6px 38px;
             background: #dedede url(/juju-ui/assets/images/tab_div.png) repeat-x left bottom;
@@ -1454,7 +1464,6 @@ table tr.highlighted td {
                 }
             }
         }
-
         .controls {
             .control {
                 float: right;
@@ -1467,16 +1476,15 @@ table tr.highlighted td {
             }
             .destroy-control {
                 margin-top: -1px;
+
                 a, a:hover, a:active, a:visited {
                     text-decoration: none;
                     color: @navbar-color;
                 }
-
                 img {
                     margin: -4px 5px 0 0;
                 }
             }
-
             .control-expose {
                 position: relative;
                 margin: -2px 5px 0 0;
@@ -1484,14 +1492,12 @@ table tr.highlighted td {
                 div {
                     padding-right: 5px;
                 }
-
                 .on {
                     font-size: 11px; fill: #ffffff;
                     position: absolute;
                     right: 18px;
                     top: 0;
                 }
-
                 .off {
                     font-size: 12px; fill: #292929;
                     position: absolute;
@@ -1501,7 +1507,6 @@ table tr.highlighted td {
             }
         }
     }
-
     .service-common-controls {
         position: absolute;
         left: 355px;
@@ -1516,67 +1521,51 @@ table tr.highlighted td {
             img {
                 padding-top: 0px;
             }
-
             div {
                 padding-left: 5px;
             }
-
             div:first-child {
                 padding-top: 4px;
             }
-
             input {
                 text-align: right;
                 width: 5em;
             }
         }
-
     }
 }
-
-ul.menu li,
-div.inline {
-  float: left;
-}
-ul.menu {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 #tooltip {
+    .create-border-radius(3px);
     text-align: left;
     background-color: white;
     border: solid 1px black;
     padding: 0.2em 0.5em 0.3em;
-    .create-border-radius(3px);
     min-width: 20px;
     max-width: 400px;
 }
-
 .charm-panel-configure {
-  background-image: url(/juju-ui/assets/images/configure-cog.png);
-  background-repeat: no-repeat;
-  background-position: 230px 38px;
-  border-top: 2px solid #dd4814;
-  border-left: 1px solid @charm-panel-configure-color - #333;
-  background-color: @charm-panel-configure-color;
-  height: 90px;
-  width: @charm-panel-width - @charm-panel-padding-left - 1px;
-  padding-left: @charm-panel-padding-left;
-  .title {
-    font-weight: lighter;
-    font-size: 22px;
-    color: @charm-panel-configure-title-color;
-    margin-top: 35px;
-  }
-  .name {
-    font-size: 12px;
-    color: @charm-panel-configure-name-color;
-    margin-top: 5px;
-  }
-}
+    background-image: url(/juju-ui/assets/images/configure-cog.png);
+    background-repeat: no-repeat;
+    background-position: 230px 38px;
+    border-top: 2px solid #dd4814;
+    border-left: 1px solid @charm-panel-configure-color - #333;
+    background-color: @charm-panel-configure-color;
+    height: 90px;
+    width: @charm-panel-width - @charm-panel-padding-left - 1px;
+    padding-left: @charm-panel-padding-left;
 
+    .title {
+        font-weight: lighter;
+        font-size: 22px;
+        color: @charm-panel-configure-title-color;
+        margin-top: 35px;
+    }
+    .name {
+        font-size: 12px;
+        color: @charm-panel-configure-name-color;
+        margin-top: 5px;
+    }
+}
 #full-screen-mask {
     display: block;
     position: absolute;
@@ -1587,6 +1576,10 @@ ul.menu {
     z-index: 10000;
 }
 .centered-column {
+    @panel-color: #f5f5f5;
+    @panel-gradient: (@panel-color - #111);
+    @panel-shadow: (@panel-color - #444);
+    @curve-radius: ~"24px 28px";
     display: block;
     z-index: 10001;
     position: absolute;
@@ -1601,7 +1594,6 @@ ul.menu {
     &.in-main {
         top: 0;
     }
-
     div {
         width: 280px;
         text-align: left;
@@ -1614,42 +1606,38 @@ ul.menu {
             text-decoration: none
         }
     }
-
-    @panel-color: #f5f5f5;
-    @panel-gradient: (@panel-color - #111);
-    @panel-shadow: (@panel-color - #444);
-    @curve-radius: ~"24px 28px";
-
     .panel {
+        .create-button(@panel-color, @panel-gradient, @panel-shadow, -6px);
+        .create-border-radius(@curve-radius);
+        padding: 5px 25px 5px;
+        margin-top: 3ex;
+        margin-bottom: 4ex;
+
         input {
             width: 270px;
             margin-top: 8px;
             margin-bottom: 8px;
         }
         input[type=submit] {
+            .create-button(@charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-bottom-gradient,
+                           @charm-panel-deploy-button-shadow, 0px);
             width: 280px;
             height: 26px;
             text-transform: uppercase;
             text-shadow: none;
             /* Needed to defeat bootstrap btn:hover 0 -15px */
             background-position: 0 0;
-            .create-button(@charm-panel-deploy-button-color,
-                           @charm-panel-deploy-button-bottom-gradient,
-                           @charm-panel-deploy-button-shadow, 0px);
+            color: white;
+
             &:active {
                 .create-button(@charm-panel-deploy-button-color,
                                @charm-panel-deploy-button-color,
                                @charm-panel-deploy-button-shadow, 1px);
             }
-            color: white;
         }
-        padding: 5px 25px 5px;
-        margin-top: 3ex;
-        margin-bottom: 4ex;
-        .create-button(@panel-color, @panel-gradient, @panel-shadow, -6px);
-        .create-border-radius(@curve-radius);
-
         .header {
+            .create-linear-gradient(@panel-gradient, @panel-shadow);
             padding: 15px 25px 10px 25px;
             margin-left: -25px;
             margin-top: -5px;
@@ -1659,46 +1647,28 @@ ul.menu {
             -moz-border-radius-topright: @curve-radius;
             border-top-left-radius: @curve-radius;
             border-top-right-radius: @curve-radius;
-            @gradient-start: @panel-gradient;
-            @gradient-end: @panel-shadow;
-            background-image: -ms-linear-gradient(
-                top, @gradient-start, @gradient-end);
-            background-image: -webkit-gradient(
-                linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
-            background-image: -webkit-linear-gradient(
-                top, @gradient-start, @gradient-end);
-            background-image: -o-linear-gradient(
-                top, @gradient-start, @gradient-end);
-            background-image: -moz-linear-gradient(
-                top, @gradient-start, @gradient-end);
-            background-image: linear-gradient(
-                top, @gradient-start, @gradient-end);
-            background-repeat: repeat-x;
         }
     }
     .error {
         color: red;
         font-weight: bold;
     }
-
     #loading-spinner {
         height: 100px;
     }
-
     #loading-message-text {
         font-family: @font-family-medium;
         font-size: 10pt;
     }
-
     #login-form {
         .header {
             font-size: 10pt;
             font-family: @font-family-medium;
         }
     }
-
     .header .error span {
         color: #DD4814;
+
         i {
             margin-right: 5px;
             float: left;
@@ -1709,15 +1679,23 @@ ul.menu {
             line-height: 10pt;
         }
     }
-
-   p {
+    p {
         font-size: 8pt;
     }
 }
-
 .alert {
     letter-spacing: normal;
 }
+.yui3-slider-thumb {
+  &:focus {
+    outline: none;
+  }
+}
+
+/** Browser Setup **/
+@import "browser/reset.less";
+@import "browser/vars.less";
+@import "browser/mixins.less";
 
 /** SubApps **/
 @import "browser/main.less";
@@ -1733,3 +1711,4 @@ ul.menu {
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
 @import "browser/tabview.less";
+@import "juju-inspector.less";

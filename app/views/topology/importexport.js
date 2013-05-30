@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -55,36 +73,61 @@ YUI.add('juju-topology-importexport', function(Y) {
               notifications = topo.get('db').notifications,
               env = topo.get('env'),
               fileSources = evt._event.dataTransfer.files;
-
-          Y.Array.each(fileSources, function(file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-              // Import each into the environment
-              console.log('Importing ' + file.name);
-              env.importEnvironment(e.target.result, function(result) {
-                if (!result.error) {
-                  notifications.add({
-                    title: 'Imported Environment',
-                    message: 'Import from "' + file.name + '" successful',
-                    level: 'important'
-                  });
-                } else {
-                  notifications.add({
-                    title: 'Import Environment Failed',
-                    message: 'Import from "' + file.name +
-                        '" failed.<br/>' + result.error,
-                    level: 'error'
-                  });
-                }
-              });
-            };
-            reader.onerror = function(err) {
-              console.warn(err);
-            };
-            reader.readAsText(file);
-          });
+          if (fileSources.length) {
+            Y.Array.each(fileSources, function(file) {
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                // Import each into the environment
+                env.importEnvironment(e.target.result, function(result) {
+                  if (!result.error) {
+                    notifications.add({
+                      title: 'Imported Environment',
+                      message: 'Import from "' + file.name + '" successful',
+                      level: 'important'
+                    });
+                  } else {
+                    notifications.add({
+                      title: 'Import Environment Failed',
+                      message: 'Import from "' + file.name +
+                          '" failed.<br/>' + result.error,
+                      level: 'error'
+                    });
+                  }
+                });
+              };
+              reader.readAsText(file);
+            });
+          } else {
+            env.importEnvironment(evt._event.dataTransfer.getData('Text'));
+          }
           evt.preventDefault();
           evt.stopPropagation();
+        },
+
+        /**
+         * Update lifecycle phase
+         * @method update
+         */
+        update: function() {
+          // Check the feature flag
+          if (!this._dragHandle && window.flags.dndexport) {
+            var env = this.get('component').get('env');
+            this._dragHandle = Y.one('#environment-name')
+                                .on('dragstart', function(evt) {
+                  env.exportEnvironment(function(r) {
+                    var ev = evt._event;
+                    ev.dataTransfer.dragEffect = 'copy';
+                    var json = JSON.stringify(r.result);
+                    ev.dataTransfer.setData('Text', json);
+                  });
+                  evt.stopPropagation();
+                }, this);
+
+            this.get('component')
+                .recordSubscription(this, this._dragHandle);
+
+          }
+          ImportExportModule.superclass.update.call(this);
         }
       }, {
         ATTRS: {}

@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 describe('Landscape integration', function() {
@@ -20,7 +38,7 @@ describe('Landscape integration', function() {
 
       // Set defaults for testing.
       envAnno = db.environment.get('annotations');
-      envAnno['landscape-url'] = 'http://landscape.com';
+      envAnno['landscape-url'] = 'http://landscape.example.com';
       envAnno['landscape-computers'] = '/computers/criteria/environment:test';
       envAnno['landscape-reboot-alert-url'] =
           '+alert:computer-reboot/info#power';
@@ -46,25 +64,25 @@ describe('Landscape integration', function() {
     var url;
     url = landscape.getLandscapeURL(db.environment);
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test/');
+        'http://landscape.example.com/computers/criteria/environment:test/');
 
     url = landscape.getLandscapeURL(db.environment, 'security');
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test' +
+        'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:security-upgrades/packages/list?filter=security');
 
     url = landscape.getLandscapeURL(db.environment, 'reboot');
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test' +
+        'http://landscape.example.com/computers/criteria/environment:test' +
         '+alert:computer-reboot/info#power');
 
     url = landscape.getLandscapeURL(db.services.getById('mysql'));
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test+service:mysql/');
+        'http://landscape.example.com/computers/criteria/environment:test+service:mysql/');
 
     url = landscape.getLandscapeURL(db.units.item(0));
     url.should.equal(
-        'http://landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+        'http://landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
   });
 
 
@@ -143,7 +161,7 @@ describe('Landscape integration', function() {
     node.one('.logo-tab i').hasClass('landscape_logo').should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should
-      .equal('http://landscape.com/computers/criteria/environment:test/');
+      .equal('http://landscape.example.com/computers/criteria/environment:test/');
     // We should have visible controls.
     node.one('.updates-control').getStyle('display').should.equal('block');
     node.one('.restart-control').getStyle('display').should.equal('block');
@@ -153,7 +171,7 @@ describe('Landscape integration', function() {
 
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-        'landscape.com/computers/criteria/environment:test+service:mysql/');
+        'landscape.example.com/computers/criteria/environment:test+service:mysql/');
     // We should have visible restart but not update controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('block');
@@ -174,7 +192,7 @@ describe('Landscape integration', function() {
 
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-        'landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+        'landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
     // We should have no visible controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('none');

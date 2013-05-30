@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // A global variable required for testing feature flags.
@@ -7,9 +25,7 @@ describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-routing',
-                               'juju-gui'],
-    function(Y) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
       done();
     });
@@ -135,15 +151,80 @@ describe('Namespaced Routing', function() {
     Y.getLocation = oldGetLocation;
   });
 
-  it('should allow a feature flags namespace', function() {
-    assert.deepEqual({}, flags);
-    // Use the route callback directly.
-    app.featureFlags({path: '/foo/bar=baz/'}, undefined, function() {});
-    assert.deepEqual({foo: true, bar: 'baz'}, flags);
-    app.featureFlags({path: '/foo/bar=baz=bar/'}, undefined, function() {});
-    assert.deepEqual({foo: true, bar: 'baz=bar'}, flags);
-    app.featureFlags({path: '/foo/'}, undefined, function() {});
-    assert.deepEqual({foo: true}, flags);
+  it('should allow combining routes using router level flagging', function() {
+    var router = juju.Router('charmstore', {gui: true});
+    var match = router.parse('/');
+    assert(match.charmstore === '/');
+    assert(match.inspector === undefined);
+
+    match = router.parse('/:gui:/services/mysql/:gui:/services/mediawiki/');
+    assert.deepEqual(match.gui, [
+      '/services/mysql/',
+      '/services/mediawiki/'
+    ]);
+
+    // We can use the match to produce a valid url.
+    var u = router.url(match);
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+
+    // Combine works as well (note the flag, like with parse this can be an
+    // object).
+    u = router.combine('/:gui:/services/mysql/', ':gui:/services/mediawiki/');
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+  });
+
+
+  it('should allow combining routes in a given namespace', function() {
+    var router = juju.Router('charmstore');
+    var match = router.parse('/');
+    assert(match.charmstore === '/');
+    assert(match.inspector === undefined);
+
+    // Multiple routes (no combine)
+    match = router.parse(
+        '/:gui:/services/mysql/:gui:/services/mediawiki/');
+    // A single match, last write wins.
+    assert.equal(match.gui, '/services/mediawiki/');
+
+    match = router.parse(
+        '/:gui:/services/mysql/:gui:/services/mediawiki/',
+        {gui: true});
+    assert.deepEqual(match.gui, [
+      '/services/mysql/',
+      '/services/mediawiki/'
+    ]);
+
+    // We can use the match to produce a valid url.
+    var u = router.url(match);
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+
+    // Combine works as well (note the flag, like with parse this can be an
+    // object).
+    u = router.combine('/:gui:/services/mysql/', ':gui:/services/mediawiki/',
+                       {gui: true});
+    assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
+
+  });
+
+});
+
+describe('Juju Gui Routing', function() {
+  var Y, juju, app;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      juju = Y.namespace('juju');
+      done();
+    });
+
+  });
+
+  it('should monkey patch Y.Router with querystring parser', function() {
+    var testString = 'category=databases&category=file_servers';
+    Y.Router._parseQuery(testString).should.eql(
+        {category: ['databases', 'file_servers']});
   });
 
 });

@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 
@@ -20,6 +38,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
     hidden: false,
+    viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
         Show or hide the details panel.
@@ -47,7 +66,7 @@ YUI.add('subapp-browser', function(Y) {
         @param {Object} change the values to change in the current state.
      */
     _getStateUrl: function(change) {
-      var urlParts = ['/bws'];
+      var urlParts = [];
       this._oldState = this._viewState;
 
       // If there are changes to the filters, we need to update our filter
@@ -112,6 +131,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Registers Handlebars helpers that need access to subapp data like the
+      store instance.
+
+      @method _registerSubappHelpers
+
+     */
+    _registerSubappHelpers: function() {
+      var store = this.get('store');
+      // Register a file path generating helper.
+      Y.Handlebars.registerHelper('charmFilePath', function(charmID, file) {
+        return store.filepath(charmID, file);
+      });
+    },
+
+    /**
        Determine if we should render the charm details based on the current
        state.
 
@@ -171,6 +205,47 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+       Determine if search changed, so we know how to handle the cache.
+
+       @method _searchChanged
+       @return {Boolean} true If search changed.
+     */
+    _searchChanged: function() {
+      if (this._viewState.search && (
+          this._hasStateChanged('search') ||
+          this._hasStateChanged('querystring'))) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+       Strip the viewmode from the charmid when processing to check for proper
+       routing.
+
+       @method _stripViewMode
+       @param {String} id the req.param.id found.
+     */
+    _stripViewMode: function(id) {
+      // Clear out any parts of /sidebar/search, /sidebar, or /search from the
+      // id. See if we still really have an id.
+      var match =
+          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
+
+      if (id && id.match(match)) {
+        // Strip it out.
+        id = id.replace(match, '');
+
+        // if the id is now empty, set it to null.
+        if (id === '') {
+          id = null;
+        }
+      }
+      return id;
+    },
+
+    /**
        Verify that a particular part of the state has changed.
 
        @method _hasStateChanged
@@ -213,9 +288,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
-        // Make sure we clear out any accidental matching of search/ in the
-        // url.
-        this._viewState.charmID = params.id.replace(/^search\//, '');
+        this._viewState.charmID = params.id;
       } else {
         this._viewState.charmID = null;
       }
@@ -259,7 +332,15 @@ YUI.add('subapp-browser', function(Y) {
        @method destructor
      */
     destructor: function() {
-      this._cacheCharms.destroy();
+      this._cache.charms.destroy();
+      if (this._cache.search) {
+        this._cache.search.destroy();
+      }
+      if (this._cache.interesting) {
+        this._cache.interesting.newCharms.destroy();
+        this._cache.interesting.popularCharms.destroy();
+        this._cache.interesting.featuredCharms.destroy();
+      }
       delete this._viewState;
     },
 
@@ -272,9 +353,15 @@ YUI.add('subapp-browser', function(Y) {
     initializer: function(cfg) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
+      this._cache = {
+        charms: new models.BrowserCharmList(),
+        search: null,
+        interesting: null
+      };
       this._initState();
       this._filter = new models.browser.Filter();
+
+      this._registerSubappHelpers();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -286,6 +373,7 @@ YUI.add('subapp-browser', function(Y) {
         }
         this.navigate(url);
       });
+
     },
 
     /**
@@ -311,7 +399,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cacheCharms.getById(charmID);
+      var model = this._cache.charms.getById(charmID);
 
       if (model) {
         extraCfg.charm = model;
@@ -360,14 +448,17 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
+
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
 
-      this._editorial.render();
-      this._editorial.addTarget(this);
+      this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
+        // Add any sidebar charms to the running cache.
+        this._cache = Y.merge(this._cache, ev.cache);
+      }, this);
 
-      // Add any sidebar charms to the running cache.
-      this._cacheCharms.add(this._editorial._cacheCharms);
+      this._editorial.render(this._cache.interesting);
+      this._editorial.addTarget(this);
     },
 
     /**
@@ -389,10 +480,25 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.renderTo = container.one('.bws-content');
       }
 
+      // If there's a selected charm we need to pass that info onto the View
+      // to render it selected.
+      if (this._viewState.charmID) {
+        extraCfg.activeID = this._viewState.charmID;
+      }
+
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
-      this._search.render();
+      // Prepare to handle cache
+      this._search.on(this._search.EV_CACHE_UPDATED, function(ev) {
+        this._cache = Y.merge(this._cache, ev.cache);
+      }, this);
+
+      if (!this._searchChanged()) {
+        this._search.render(this._cache.search);
+      } else {
+        this._search.render();
+      }
       this._search.addTarget(this);
     },
 
@@ -535,6 +641,27 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      // If there is no viewmode, assume it's sidebar.
+      if (!req.params) {
+        req.params = {};
+      }
+
+      if (!req.params.viewmode) {
+        req.params.viewmode = 'sidebar';
+      }
+
+      // If the viewmode isn't found, it's not one of our urls. Carry on.
+      if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
+        next();
+        return;
+      }
+
+      // for the route /sidebar|minimized|fullscreen it picks up the *id route
+      // as well. Catch that here and make sure we set that to viewmode and no
+      // id in the params.
+      var id = this._stripViewMode(req.params.id);
+      req.params.id = id;
+
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -544,6 +671,9 @@ YUI.add('subapp-browser', function(Y) {
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[req.params.viewmode](req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
       }
     },
 
@@ -593,8 +723,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld0
-         @type {Charmworld0}
+         @default Charmworld1
+         @type {Charmworld1}
        */
       store: {
         /**
@@ -606,15 +736,17 @@ YUI.add('subapp-browser', function(Y) {
            method store.valueFn
         */
         valueFn: function() {
-          var url = '';
-          if (!window.juju_config || ! window.juju_config.charmworldURL) {
+          var cfg = {
+            noop: false,
+            apiHost: ''
+          };
+          if (!window.juju_config || !window.juju_config.charmworldURL) {
             console.error('No juju config to fetch charmworld store url');
+            cfg.noop = true;
           } else {
-            url = window.juju_config.charmworldURL;
+            cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld0({
-            'apiHost': url
-          });
+          return new Y.juju.Charmworld1(cfg);
         }
       },
 
@@ -625,11 +757,14 @@ YUI.add('subapp-browser', function(Y) {
        */
       routes: {
         value: [
-          // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/:viewmode/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/*id/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/*id/', callbacks: 'routeView' }
+          // Show the sidebar on all places if its not manually shut off or
+          // turned into a fullscreen route.
+          { path: '*', callbacks: 'routeView'},
+          { path: '/*id/', callbacks: 'routeView'},
+          { path: '/:viewmode/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
+          { path: '/:viewmode/*id/', callbacks: 'routeView' }
         ]
       },
 
@@ -673,6 +808,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'handlebars',
     'juju-browser-models',
     'juju-charm-store',
     'juju-models',

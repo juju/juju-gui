@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -55,7 +73,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       view._locateReadme().should.eql('readme.rst');
@@ -68,9 +87,69 @@
       view._locateReadme().should.eql('README.md');
     });
 
+    it('can generate source and revno links from its charm', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        })
+      });
+      var url = view._getSourceLink();
+      assert.equal('http://bazaar.launchpad.net/~foo/files', url);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          view._getRevnoLink(url, 1));
+    });
+
+    it('can generate useful display data for commits', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: {
+            location: 'lp:~foo'
+          }
+        })
+      });
+      var revisions = [
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:32Z',
+          message: 'The fnord had too much fleem.',
+          revno: 1
+        },
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:45Z',
+          message: 'Fnord needed more fleem.',
+          revno: 2
+        }
+      ];
+      var commits = view._formatCommitsForHtml(
+          revisions, view._getSourceLink());
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          commits.first.revnoLink);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/2',
+          commits.remaining[0].revnoLink);
+    });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -90,7 +169,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -107,7 +187,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -130,7 +211,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -147,7 +229,7 @@
 
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -167,7 +249,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -186,7 +269,7 @@
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -208,7 +291,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -220,10 +304,11 @@
     });
 
     it('should display the config data in the config tab', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' },
           options: {
             'client-port': {
               'default': 9160,
@@ -243,12 +328,13 @@
     });
 
     it('_buildQAData properly summerizes the scores', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -263,10 +349,11 @@
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -284,12 +371,13 @@
     });
 
     it('does not blow up when the scores from the api is null', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -305,9 +393,9 @@
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
-      var view = new CharmView({
-        charm: new models.BrowserCharm(data),
+      data.charm.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -322,13 +410,13 @@
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -353,7 +441,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -374,7 +462,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -396,7 +484,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -417,7 +505,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -439,7 +527,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -462,7 +550,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -484,7 +572,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -507,7 +595,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -531,7 +619,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -540,13 +628,20 @@
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
+      // Add a failing test to the charm data.
+      data.charm.tested_providers = {
+        'ec2': 'FAILURE',
+        'local': 'FAILURE',
+        'openstack': 'FAILURE'
+      };
+
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 
@@ -559,13 +654,13 @@
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld0({});
+      var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
-      data.files = [];
+      data.charm.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data),
+        charm: new models.BrowserCharm(data.charm),
         container: Y.Node.create('<div class="charmview"/>')
       });
 

@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -15,8 +33,19 @@
             views = Y.namespace('juju.browser.views');
             EditorialView = views.EditorialView;
             sampleData = Y.io('data/interesting.json', {sync: true});
+            // Need the handlebars helper for the charm-token to render.
+            Y.Handlebars.registerHelper(
+                'charmFilePath',
+                function(charmID, file) {
+                  return '/path/to/charm/' + file;
+                });
             done();
           });
+    });
+
+    after(function(done) {
+      Y.Handlebars.helpers.charmFilePath = undefined;
+      done();
     });
 
     beforeEach(function() {
@@ -48,7 +77,7 @@
     });
 
     it('renders sidebar with hidden charms', function() {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -69,7 +98,7 @@
 
     it('shows and hides an indicator', function(done) {
       var hit = 0;
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -96,7 +125,7 @@
     });
 
     it('renders fullscreen 14/22 charms hidden', function() {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -117,7 +146,7 @@
     });
 
     it('clicking a charm navigates for fullscreen', function(done) {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -137,7 +166,7 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.change.charmID === 'precise/ceph-7');
+        ev.change.charmID.should.eql('precise/ceph-9');
         done();
       });
 
@@ -145,7 +174,7 @@
     });
 
     it('clicking a charm navigates for sidebar', function(done) {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -164,7 +193,7 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.change.charmID === 'precise/ceph-7');
+        ev.change.charmID.should.eql('precise/ceph-9');
         done();
       });
 
@@ -172,7 +201,7 @@
     });
 
     it('setting the activeID marks the div active', function() {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -186,14 +215,14 @@
       view = new EditorialView({
         renderTo: Y.one('.bws-content'),
         store: fakeStore,
-        activeID: 'precise/ceph-7'
+        activeID: 'precise/ceph-9'
       });
       view.render();
       node.all('.yui3-charmtoken.active').size().should.equal(1);
     });
 
     it('unsetting the activeID will remove the active markings', function() {
-      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -213,6 +242,56 @@
 
       view.set('activeID', null);
       node.all('.yui3-charmtoken.active').size().should.equal(0);
+    });
+
+    it('tells listeners the cache has updated', function() {
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content')
+      });
+      var results = {
+        featuredCharms: [],
+        newCharms: [],
+        popularCharms: []
+      };
+      view.on(view.EV_CACHE_UPDATED, function(ev) {
+        assert.isObject(ev.cache);
+      });
+      view.render(results);
+    });
+
+    it('uses passed in cache data if available', function() {
+      fakeStore = new Y.juju.Charmworld1({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [sampleData]
+            }
+          });
+        }
+      });
+      var interesting_called = false,
+          results = {
+            featuredCharms: [],
+            newCharms: [],
+            popularCharms: []
+          };
+
+      fakeStore.interesting = function() {
+        interesting_called = true;
+        return results;
+      };
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore,
+        activeID: 'precise/ceph-7'
+      });
+      view.render(results);
+      assert.isFalse(interesting_called);
+
+      view.render();
+      assert.isTrue(interesting_called);
     });
 
   });
