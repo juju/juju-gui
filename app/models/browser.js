@@ -86,6 +86,29 @@ YUI.add('juju-browser-models', function(Y) {
     },
 
     /**
+       Clears all filter data
+      
+       @method _clear
+       @private
+     */
+    _clear: function() {
+        this.set('categories', []);
+        this.set('provider', []);
+        this.set('series', []);
+        this.set('text', '');
+        this.set('type', []);
+    },
+
+    /**
+       Resets the filter
+      
+       @method reset
+     */
+    reset: function() {
+      this._clear();
+      this._setDefaults();
+    },
+    /**
        Given the current filters, generate a query string to use for api
        calls.
 
