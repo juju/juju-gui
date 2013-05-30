@@ -235,7 +235,15 @@ YUI.add('juju-gui', function(Y) {
           });
         },
         help: 'Export the environment'
+      },
+
+      'C-S-d': {
+        callback: function(evt) {
+          Y.fire('saveWebsocketLog');
+        },
+        help: 'Save the websocket log to a file'
       }
+
 
     },
 
@@ -345,7 +353,6 @@ YUI.add('juju-gui', function(Y) {
       }
 
       if (window.flags.websocket_capture) {
-        debugger;
         this.subApplications.push({
           type: Y.juju.subapps.WebsocketLogging,
           config: {}

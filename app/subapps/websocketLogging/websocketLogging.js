@@ -26,7 +26,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   @submodule subapps
 */
 YUI.add('subapp-websocket-logging', function(Y) {
-  debugger;
   var ns = Y.namespace('juju.subapps');
 
   /**
@@ -37,19 +36,32 @@ YUI.add('subapp-websocket-logging', function(Y) {
   */
   ns.WebsocketLogging = Y.Base.create('subapp-websocket-logging', Y.juju.SubApp, [], {
 
+    // The stored messages, their direction, and time.
+    log: [],
+
     /**
-      General app initializer
+      Websocket logger initialization.
 
       @method initializer
       @param {Object} cfg general init config object.
     */
     initializer: function(cfg) {
       console.log('subapp-websocket-logging started');
-      this.on('websocketSend', function(ev) {
-        console.log('websocketSend', ev);
+      var self = this;
+      var timestamp = function() {
+        return new Date().toISOString()
+      };
+      Y.on('websocketSend', function(data) {
+        self.log.push([timestamp(), 'to server', data].join('\n'));
       });
-      this.on('websocketReceived', function(ev) {
-        console.log('websocketReceived', ev);
+      Y.on('websocketReceived', function(data) {
+        self.log.push([timestamp(), 'to client', data].join('\n'));
+      });
+      Y.on('saveWebsocketLog', function () {
+        var blob = new Blob([self.log.join('\n')],
+          {type: 'text/plain;charset=utf-8'});
+        /* global saveAs: false */
+        saveAs(blob, 'websocket-log.txt');
       });
     }
 
