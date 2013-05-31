@@ -353,10 +353,7 @@ YUI.add('juju-gui', function(Y) {
       }
 
       if (window.flags.websocket_capture) {
-        this.subApplications.push({
-          type: Y.juju.subapps.WebsocketLogging,
-          config: {}
-        });
+        this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
       this.renderEnvironment = true;
