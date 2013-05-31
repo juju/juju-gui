@@ -18,26 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-
-/**
-  SubApp that logs websocket traffic for debugging purposes.
-
-  @module juju
-  @submodule subapps
-*/
-YUI.add('subapp-websocket-logging', function(Y) {
-  var ns = Y.namespace('juju.subapps');
+YUI.add('juju-websocket-logging', function(Y) {
+  var juju = Y.namespace('juju');
 
   /**
-    SubApp that logs websocket traffic for debugging purposes.
+    A logger of websocket traffic for debugging purposes.
 
     @class Browser
     @extends {juju.SubApp}
   */
-  // If the line that defines the subapp wraps, the whitespace linter goes
-  // crazy, so instead of a super-short module name, we have this.
-  var SUBAPP_NAME = 'subapp-websocket-logging';
-  ns.WebsocketLogging = Y.Base.create(SUBAPP_NAME, Y.juju.SubApp, [], {
+  juju.WebsocketLogging = Y.Base.create('WebsocketLogging', Y.Base, [], {
 
     // The stored messages, their direction, and time.
     log: undefined,

@@ -323,6 +323,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/charm.js'
         },
 
+        'juju-websocket-logging': {
+          fullpath: '/juju-ui/websocketLogging.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',
@@ -344,11 +348,6 @@ var GlobalConfig = {
         'subapp-browser': {
           fullpath: '/juju-ui/subapps/browser/browser.js',
           requires: ['subapp-browser-fullscreen', 'subapp-browser-charmview']
-        },
-
-        // Websocket Logging
-        'subapp-websocket-logging': {
-          fullpath: '/juju-ui/subapps/websocketLogging/websocketLogging.js'
         },
 
         // Browser Views

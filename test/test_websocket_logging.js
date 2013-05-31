@@ -22,21 +22,18 @@ var saveAs;
 
 (function() {
   describe('websocket recording', function() {
-    var Y, subapps, websocketLogging;
+    var Y, WebsocketLogging, websocketLogging;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          'app-subapp-extension',
-          'juju-views',
-          'juju-browser',
-          'subapp-websocket-logging', function(Y) {
-            subapps = Y.namespace('juju.subapps');
+          'juju-websocket-logging', function(Y) {
+            WebsocketLogging = Y.namespace('juju').WebsocketLogging;
             done();
           });
     });
 
     beforeEach(function() {
-      websocketLogging = new subapps.WebsocketLogging();
+      websocketLogging = new WebsocketLogging();
       // Provide a noop saveAs global which is normally provided by the app.
       saveAs = function() {};
     });
