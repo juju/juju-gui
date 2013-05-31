@@ -94,8 +94,9 @@ YUI.add('juju-websocket-logging', function(Y) {
     saveLog: function(log) {
       var data = log.join('\n');
       var mimeType = 'text/plain;charset=utf-8';
+      var blob;
       try {
-        var blob = new Blob([data],
+        blob = new Blob([data],
             {type: mimeType});
       } catch (e) {
         // BlobBuilder has been deprecated in favour of Blob, but some browsers
@@ -104,7 +105,7 @@ YUI.add('juju-websocket-logging', function(Y) {
         var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
         var builder = new BlobBuilder();
         builder.append(data);
-        return builder.getBlob(mimeType);
+        blob = builder.getBlob(mimeType);
       }
       /* global saveAs: false */
       saveAs(blob, 'websocket-log.txt');
