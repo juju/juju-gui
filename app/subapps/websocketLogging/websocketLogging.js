@@ -34,35 +34,90 @@ YUI.add('subapp-websocket-logging', function(Y) {
     @class Browser
     @extends {juju.SubApp}
   */
-  ns.WebsocketLogging = Y.Base.create('subapp-websocket-logging', Y.juju.SubApp, [], {
+  // If the line that defines the subapp wraps, the whitespace linter goes
+  // crazy, so instead of a super-short module name, we have this.
+  var SUBAPP_NAME = 'subapp-websocket-logging';
+  ns.WebsocketLogging = Y.Base.create(SUBAPP_NAME, Y.juju.SubApp, [], {
 
     // The stored messages, their direction, and time.
-    log: [],
+    log: undefined,
 
     /**
       Websocket logger initialization.
 
       @method initializer
       @param {Object} cfg general init config object.
+      @return {undefined} Side-effects only.
     */
     initializer: function(cfg) {
-      console.log('subapp-websocket-logging started');
+      this.log = [];
+      this.setUpEventListeners();
+    },
+
+    /**
+      Bind the event listeners.
+
+      @method setUpEventListeners
+      @return {undefined} Side-effects only.
+    */
+    setUpEventListeners: function() {
       var self = this;
-      var timestamp = function() {
-        return new Date().toISOString()
-      };
       Y.on('websocketSend', function(data) {
-        self.log.push([timestamp(), 'to server', data].join('\n'));
+        self.logMessage('to server', data);
       });
-      Y.on('websocketReceived', function(data) {
-        self.log.push([timestamp(), 'to client', data].join('\n'));
+      Y.on('websocketReceive', function(data) {
+        self.logMessage('to client', data);
       });
-      Y.on('saveWebsocketLog', function () {
-        var blob = new Blob([self.log.join('\n')],
-          {type: 'text/plain;charset=utf-8'});
-        /* global saveAs: false */
-        saveAs(blob, 'websocket-log.txt');
-      });
+      Y.on('saveWebsocketLog', Y.bind(this.saveLog, this, this.log));
+    },
+
+    /**
+      Generate a date/time string representing the current time.
+
+      @method timestamp
+      @return {String} The current time in ISO 8601 format.
+    */
+    timestamp: function() {
+      return new Date().toISOString();
+    },
+
+    /**
+      Record a websocket message, its direction, and the current time.
+
+      @method logMessage
+      @param {String} direction The direction the message was sent.  Either 'to
+        server' or 'to client'.
+      @param {String} message The message that was sent over the websocket.
+      @return {undefined} Side-effects only.
+    */
+    logMessage: function(direction, message) {
+      this.log.push([this.timestamp(), direction, message].join('\n'));
+    },
+
+    /**
+      Save a log of websocket traffic
+
+      @method saveLog
+      @param {Object} cfg general init config object.
+      @return {undefined} Side-effects only.
+    */
+    saveLog: function(log) {
+      var data = log.join('\n');
+      var mimeType = 'text/plain;charset=utf-8';
+      try {
+        var blob = new Blob([data],
+            {type: mimeType});
+      } catch (e) {
+        // BlobBuilder has been deprecated in favour of Blob, but some browsers
+        // (including phantomjs) have not added the replacement Blob
+        // constructor API, so we have this fall-back code.
+        var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+        var builder = new BlobBuilder();
+        builder.append(data);
+        return builder.getBlob(mimeType);
+      }
+      /* global saveAs: false */
+      saveAs(blob, 'websocket-log.txt');
     }
 
   });

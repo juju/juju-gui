@@ -125,7 +125,7 @@ function ReconnectingWebSocket(url, protocols) {
             if (self.debug || ReconnectingWebSocket.debugAll) {
                 console.debug('ReconnectingWebSocket', 'onmessage', url, event.data);
             }
-            Y.fire('websocketReceived', event.data);
+            Y.fire('websocketReceive', event.data);
             self.onmessage(event);
         };
         ws.onerror = function(event) {
