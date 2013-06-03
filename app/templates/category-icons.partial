@@ -1,10 +1,10 @@
-<div class="categories">
+<div id="category-links" class="categories">
     <h3 class="{{#unless isFullscreen}}section-title{{/unless}}">
         Browse by category
     </h3>
     <ul>
         <li>
-            <a href="">
+            <a id="databases-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-database.svg"
                     alt="Databases" />
@@ -12,7 +12,7 @@
             </a>
         </li>
         <li>
-            <a href="">
+            <a id="file-servers-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-file-server.svg"
                     alt="File Servers" />
@@ -20,7 +20,7 @@
             </a>
         </li>
         <li>
-            <a href="">
+            <a id="applications-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-application.svg"
                     alt="Applications" />
@@ -28,7 +28,7 @@
             </a>
         </li>
         <li>
-            <a href="">
+            <a id="cache-proxy-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-cache-proxy.svg"
                     alt="Cache/Proxy" />
@@ -36,7 +36,7 @@
             </a>
         </li>
         <li>
-            <a href="">
+            <a id="app-servers-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-app-server.svg"
                     alt="App Servers" />
@@ -44,7 +44,7 @@
             </a>
         </li>
         <li>
-            <a href="">
+            <a id="misc-link" href="">
                 <img
                     src="/juju-ui/assets/images/non-sprites/category_icons/category-misc.svg"
                     alt="Miscellaneous" />

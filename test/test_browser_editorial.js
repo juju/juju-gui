@@ -145,6 +145,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert(node.all('.yui3-charmtoken-hidden').size() === 14);
     });
 
+    it('does a search when a category link is clicked', function(done) {
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content')
+      });
+      var results = {
+        featuredCharms: [],
+        newCharms: [],
+        popularCharms: []
+      };
+      view.on(view.EV_CATEGORY_LINK_CLICKED, function(ev) {
+        assert.equal('databases', ev.category);
+        done();
+      });
+      view.render(results);
+      Y.one('#databases-link').simulate('click');
+    });
+
     it('clicking a charm navigates for fullscreen', function(done) {
       fakeStore = new Y.juju.Charmworld1({});
       fakeStore.set('datasource', {

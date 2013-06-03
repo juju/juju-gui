@@ -41,6 +41,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
       {
+        EV_CATEGORY_LINK_CLICKED: 'category-link-clicked',
         template: views.Templates.editorial,
 
         // How many of each charm container do we show by default.
@@ -65,6 +66,35 @@ YUI.add('subapp-browser-editorial', function(Y) {
          */
         apiFailure: function(data, request) {
           this._apiFailure(data, request, 'Failed to load editorial content.');
+        },
+
+        /**
+           Binds clicks on the category links in the editorial view and fires
+           that information to any listeners.
+          
+           @private
+           @method _bindCategoryLinks
+         */
+        _bindCategoryLinks: function() {
+          var categories = Y.one('#category-links');
+          if (categories) {
+            categories.delegate('click', function(ev) {
+              // A link has been clicked, we need to kill the navigation
+              // event.
+              ev.preventDefault();
+              var actual_target;
+              // We need to do a little monkeying so we can easily get the
+              // category id if the img or span inside the anchor was the
+              // actual click target.
+              if (ev.target.get('tagName') !== 'A') {
+                actual_target = ev.target.get('parentNode');
+              } else {
+                actual_target = ev.target;
+              }
+              var cat = actual_target.get('id').replace('-link', '');
+              this.fire(this.EV_CATEGORY_LINK_CLICKED, {category: cat});
+            }, 'a', this);
+          }
         },
 
         /**
@@ -158,6 +188,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
           cache.charms.add(popularCharms);
           cache.charms.add(featuredCharms);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
+
+          // Bind the category links, which now exist
+          this._bindCategoryLinks();
         },
 
         /**
