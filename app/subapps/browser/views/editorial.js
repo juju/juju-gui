@@ -71,7 +71,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
         /**
            Binds clicks on the category links in the editorial view and fires
            that information to any listeners.
-          
+
            @private
            @method _bindCategoryLinks
          */
