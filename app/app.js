@@ -197,11 +197,11 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Navigate to the Environment overview.'
       },
-      '+': {
+      'S-+': {
         fire: 'zoom_in',
         help: 'Zoom In'
       },
-      '-': {
+      'S--': {
         fire: 'zoom_out',
         help: 'Zoom Out'
       },
@@ -284,12 +284,22 @@ YUI.add('juju-gui', function(Y) {
       });
       this._keybindings = Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
+        var source = evt.target.getDOMNode();
+        // Target filtering, we want to listen on window
+        // but not honor hotkeys when focused on
+        // text oriented input fields
+        if (['INPUT', 'TEXTAREA'].indexOf(source.tagName) !== -1) {
+          return;
+        }
         var symbolic = [];
         if (evt.ctrlKey) { symbolic.push('C');}
         if (evt.altKey) { symbolic.push('A');}
         if (evt.shiftKey) { symbolic.push('S');}
-        symbolic.push(code_map[evt.keyCode] ||
-                      String.fromCharCode(evt.keyCode).toLowerCase());
+        if (code_map[evt.keyCode]) {
+          symbolic.push(code_map[evt.which]);
+        } else {
+          symbolic.push(String.fromCharCode(evt.which).toLowerCase());
+        }
         var trigger = symbolic.join('-');
         var spec = this.keybindings[trigger];
         if (spec) {
