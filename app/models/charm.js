@@ -493,6 +493,14 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
+      mainCategory: {
+        var categories = this.get('categories');
+        if (categories.length > 0) {
+          return categories[0];
+        } else {
+          return null;
+        }
+      },
       maintainer: {},
       /**
         API related metdata information for this charm object.
