@@ -82,18 +82,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
               // A link has been clicked, we need to kill the navigation
               // event.
               ev.halt();
-              var actual_target;
-              // We need to do a little monkeying so we can easily get the
-              // category id if the img or span inside the anchor was the
-              // actual click target.
-              if (ev.target.get('tagName') !== 'A') {
-                actual_target = ev.target.get('parentNode');
-              } else {
-                actual_target = ev.target;
-              }
-              var cat = actual_target.get('id').replace('-link', '');
-              this.fire(this.EV_CATEGORY_LINK_CLICKED, {category: cat});
-            }, 'a', this);
+              var category = ev.currentTarget.getData('link');
+              var change = {
+                search: true,
+                filter: {categories: [category]}
+              };
+              this.fire('viewNavigate', {change: change});
+            }, 'A', this);
           }
         },
 
