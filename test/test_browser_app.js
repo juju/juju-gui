@@ -316,7 +316,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it.only('resets filters when navigating away from search', function() {
+    it('resets filters when navigating away from search', function() {
       browser._viewState.search = true;
       browser._filter.set('text', 'foo');
       browser._getStateUrl({search: false});
