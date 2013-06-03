@@ -81,7 +81,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
             categories.delegate('click', function(ev) {
               // A link has been clicked, we need to kill the navigation
               // event.
-              ev.preventDefault();
+              ev.halt();
               var actual_target;
               // We need to do a little monkeying so we can easily get the
               // category id if the img or span inside the anchor was the
