@@ -1,7 +1,7 @@
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
+Copyright (C) 2013 Canonical Ltd.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3, as published by
@@ -58,7 +58,7 @@ YUI.add('juju-websocket-logging', function(Y) {
       Y.on('websocketReceive', function(data) {
         self.logMessage('to client', data);
       });
-      Y.on('saveWebsocketLog', Y.bind(this.saveLog, this, this.log));
+      Y.on('saveWebsocketLog', function() {self.saveLog(self.log);});
     },
 
     /**
@@ -88,7 +88,7 @@ YUI.add('juju-websocket-logging', function(Y) {
       Save a log of websocket traffic
 
       @method saveLog
-      @param {Object} cfg general init config object.
+      @param {Array} log An array of log lines.
       @return {undefined} Side-effects only.
     */
     saveLog: function(log) {
@@ -107,7 +107,8 @@ YUI.add('juju-websocket-logging', function(Y) {
         builder.append(data);
         blob = builder.getBlob(mimeType);
       }
-      /* global saveAs: false */
+      // The saveAs() function is a global implemented in
+      // app/assets/javascripts/FileSaver.js.
       saveAs(blob, 'websocket-log.txt');
     }
 

@@ -324,7 +324,7 @@ var GlobalConfig = {
         },
 
         'juju-websocket-logging': {
-          fullpath: '/juju-ui/websocketLogging.js'
+          fullpath: '/juju-ui/websocket-logging.js'
         },
 
         'juju-controllers': {

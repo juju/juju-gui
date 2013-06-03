@@ -317,7 +317,7 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
 	build-debug/juju-ui/app.js \
-	build-debug/juju-ui/websocketLogging.js \
+	build-debug/juju-ui/websocket-logging.js \
 	build-debug/juju-ui/models \
 	build-debug/juju-ui/store \
 	build-debug/juju-ui/subapps \
@@ -364,7 +364,7 @@ endef
 $(LINK_DEBUG_FILES):
 	$(call link-files,debug)
 	ln -sf "$(PWD)/app/app.js" build-debug/juju-ui/
-	ln -sf "$(PWD)/app/websocketLogging.js" build-debug/juju-ui/
+	ln -sf "$(PWD)/app/websocket-logging.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/models" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/store" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/subapps" build-debug/juju-ui/
