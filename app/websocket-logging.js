@@ -65,6 +65,7 @@ YUI.add('juju-websocket-logging', function(Y) {
       Generate a date/time string representing the current time.
 
       @method timestamp
+      @static
       @return {String} The current time in ISO 8601 format.
     */
     timestamp: function() {
@@ -88,6 +89,7 @@ YUI.add('juju-websocket-logging', function(Y) {
       Save a log of websocket traffic
 
       @method saveLog
+      @static
       @param {Array} log An array of log lines.
       @return {undefined} Side-effects only.
     */
