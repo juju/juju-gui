@@ -83,5 +83,39 @@ describe('charm token', function() {
     charm_container.one('.charm-token').hasClass('large').should.equal(true);
   });
 
+  it('sets an icon per the category if available', function () {
+    var cfg = {
+      id: 'test',
+      name: 'some-charm',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      recent_commit_count: 1,
+      recent_download_count: 3,
+      tested_providers: ['ec2']
+    };
+
+    var charm = new CharmToken(cfg);
+    charm.render(charm_container);
+    var iconNode = Y.one('.category-icon');
+    iconNode.hasClass('charm-app-servers-64').should.eql(true);
+  });
+
+  it('sets an icon per the category respecting size', function () {
+    var cfg = {
+      id: 'test',
+      name: 'some-charm',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      recent_commit_count: 1,
+      recent_download_count: 3,
+      size: 'large',
+      tested_providers: ['ec2']
+    };
+
+    var charm = new CharmToken(cfg);
+    charm.render(charm_container);
+    var iconNode = Y.one('.category-icon');
+    iconNode.hasClass('charm-app-servers-96').should.eql(true);
+  });
 
 });

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('browser_charm_view', function() {
+  describe.only('browser_charm_view', function() {
     var container, CharmView, models, node, view, views, Y;
 
     before(function(done) {
@@ -674,6 +674,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       view.render();
     });
+
+    it('sets a category icon if available', function(done) {
+      var fakeStore = new Y.juju.Charmworld1({});
+      var data = Y.JSON.parse(
+          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      // Add a category manually to get a category icon to display.
+      data.charm.categories = ['app-servers'];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: Y.Node.create('<div class="charmview"/>')
+      });
+
+      view.render();
+      var iconNode = view.get('container').one('.category-icon');
+      iconNode.hasClass('charm-app-servers-160').should.eql(true);
+    });
+
   });
 
 })();
