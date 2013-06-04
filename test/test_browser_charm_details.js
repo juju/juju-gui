@@ -675,7 +675,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
     });
 
-    it('sets a category icon if available', function(done) {
+    it('sets a category icon if available', function() {
       var fakeStore = new Y.juju.Charmworld1({});
       var data = Y.JSON.parse(
           Y.io('data/browsercharm.json', {sync: true}).responseText);
