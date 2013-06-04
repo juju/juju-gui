@@ -161,7 +161,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
       view.render(results);
-      Y.one('#category-links').one('A').simulate('click');
+      Y.one('#category-links').one('a').simulate('click');
     });
 
     it('clicking a charm navigates for fullscreen', function(done) {

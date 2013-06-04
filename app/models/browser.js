@@ -92,11 +92,13 @@ YUI.add('juju-browser-models', function(Y) {
        @private
      */
     _clear: function() {
-      this.set('categories', []);
-      this.set('provider', []);
-      this.set('series', []);
-      this.set('text', '');
-      this.set('type', []);
+      this.setAttrs({
+        categories: [],
+        provider: [],
+        series: [],
+        text: '',
+        type: []
+      });
     },
 
     /**

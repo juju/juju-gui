@@ -88,7 +88,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 filter: {categories: [category]}
               };
               this.fire('viewNavigate', {change: change});
-            }, 'A', this);
+            }, 'a', this);
           }
         },
 
