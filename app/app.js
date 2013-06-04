@@ -205,6 +205,10 @@ YUI.add('juju-gui', function(Y) {
         fire: 'zoom_out',
         help: 'Zoom Out'
       },
+      'S-0': {
+        fire: 'panToCenter',
+        help: 'Center the Environment overview'
+      },
       'esc': {
         fire: 'clearState',
         callback: function() {

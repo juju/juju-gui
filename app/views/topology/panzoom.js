@@ -61,7 +61,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
         */
         rendered: 'renderedHandler',
         zoom_in: 'zoom_in',
-        zoom_out: 'zoom_out'
+        zoom_out: 'zoom_out',
+        panToPoint: 'panToPoint'
       }
     },
 
@@ -230,6 +231,28 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (changed) {
         this.rescale({scale: currentScale, translate: currentTranslate});
       }
+    },
+
+    /**
+      Pans the environment so that the given point is in the center of the
+      viewport.
+
+      @method panToPoint
+      @param {object} evt The event handler with a 'point' attribute.
+      @return {undefined}
+    */
+    panToPoint: function(evt) {
+      var topo = this.get('component'),
+          size = topo.get('size'),
+          scale = topo.get('scale'),
+          point = evt.point;
+      this.rescale({
+        scale: scale,
+        translate: [
+          (size[0] * scale / 2) - point[0],
+          (size[1] * scale / 2) - point[1]
+        ]
+      });
     }
   }, {
     ATTRS: {}
