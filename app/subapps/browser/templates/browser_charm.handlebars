@@ -36,8 +36,13 @@
                 {{#if hasIcon}}
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
                 {{else}}
-                    <div class="charm-icon">
-                    </div>
+                    {{#if mainCategory}}
+                      <div class="category-icon sprite charm-{{mainCategory}}-160">
+                      </div>
+                    {{else}}
+                      <div class="charm-icon">
+                      </div>
+                    {{/if}}
                 {{/if}}
             </div>
             <div class="charm-details yui3-u-1-2">
