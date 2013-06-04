@@ -239,7 +239,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       @method panToPoint
       @param {object} evt The event handler with a 'point' attribute.
-      @return {undefined}
+      @return {undefined} Side effects only.
     */
     panToPoint: function(evt) {
       var topo = this.get('component'),

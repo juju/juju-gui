@@ -159,7 +159,7 @@ YUI.add('juju-topology-service', function(Y) {
         rescaled: 'updateServiceMenuLocation',
         /**
           Pans the environment view to the center.
-          
+
           @event panToCenter
         */
         panToCenter: 'panToCenter'
@@ -720,7 +720,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (!topo.centroid || vertices) {
         // Find the centroid of our hull of services and inform the topology.
         if (!vertices) {
-          var vertices = Y.Object.values(topo.service_boxes).map(function(box) {
+          vertices = Y.Object.values(topo.service_boxes).map(function(box) {
             return [box.x, box.y];
           });
         }
@@ -755,7 +755,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       @method panToCenter
       @param {object} evt The event fired.
-      @return {undefined}
+      @return {undefined} Side effects only.
     */
     panToCenter: function(evt) {
       var topo = this.get('component');
@@ -770,32 +770,32 @@ YUI.add('juju-topology-service', function(Y) {
 
       @method panToCenter
       @param {array} vertices A list of vertices in the form [x, y].
-      @return {undefined}
+      @return {undefined} Side effects only.
     */
     findAndSetCentroid: function(vertices) {
-        var topo = this.get('component'),
-            centroid = [];
-        switch (vertices.length) {
-          case 0:
-            centroid = [0, 0];
-            break;
-          case 1:
-            centroid = vertices[0];
-            break;
-          case 2:
-            centroid = [
-              vertices[0][0] + (vertices[0][0] - vertices[1][0]),
-              vertices[1][0] + (vertices[1][0] - vertices[1][1])
-                ];
-            break;
-          default:
-            centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
-        }
-        // The centroid is set on the topology object due to the fact that it is
-        // used as a sigil to tell whether or not to pan to the point after the
-        // first delta.
-        topo.centroid = centroid;
-        topo.fire('panToPoint', {point: topo.centroid});
+      var topo = this.get('component'),
+          centroid = [];
+      switch (vertices.length) {
+        case 0:
+          centroid = [0, 0];
+          break;
+        case 1:
+          centroid = vertices[0];
+          break;
+        case 2:
+          centroid = [
+            vertices[0][0] + (vertices[0][0] - vertices[1][0]),
+            vertices[1][0] + (vertices[1][0] - vertices[1][1])
+          ];
+          break;
+        default:
+          centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
+      }
+      // The centroid is set on the topology object due to the fact that it is
+      // used as a sigil to tell whether or not to pan to the point after the
+      // first delta.
+      topo.centroid = centroid;
+      topo.fire('panToPoint', {point: topo.centroid});
     },
 
     /**
