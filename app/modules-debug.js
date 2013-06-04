@@ -323,6 +323,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/charm.js'
         },
 
+        'juju-websocket-logging': {
+          fullpath: '/juju-ui/websocket-logging.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',
