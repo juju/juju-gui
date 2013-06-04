@@ -203,7 +203,7 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 
 $(NON_SPRITE_IMAGES):
 	mkdir -p build-shared/juju-ui/assets/images
-	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
+	cp -r app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
 
 install-npm-packages: $(NODE_TARGETS)
 
