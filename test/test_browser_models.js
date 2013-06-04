@@ -40,6 +40,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       filter.get('type').should.eql(['approved']);
     });
 
+    it('can reset to its initial defaults', function() {
+      var filter = new Filter();
+      filter.set('text', 'foo');
+      filter.set('provider', ['ec2']);
+      filter.reset();
+      assert.equal(0, filter.get('provider').length);
+      assert.equal('', filter.get('text'));
+    });
+
     it('constructs a valid query string based on settings.', function() {
       var filter = new Filter();
       filter.genQueryString().should.equal(

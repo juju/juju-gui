@@ -82,6 +82,9 @@ YUI.add('subapp-browser', function(Y) {
       urlParts.push(this._viewState.viewmode);
       if (this._viewState.search) {
         urlParts.push('search');
+      } else if (this._oldState.search) {
+        // We had a search, but are moving away; clear the old search.
+        this._filter.reset();
       }
       if (this._viewState.charmID) {
         urlParts.push(this._viewState.charmID);
@@ -456,6 +459,16 @@ YUI.add('subapp-browser', function(Y) {
         // Add any sidebar charms to the running cache.
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
+      this._editorial.on(this._editorial.EV_CATEGORY_LINK_CLICKED,
+          function(ev) {
+            var change = {
+              search: true,
+              filter: {
+                categories: [ev.category]
+              }
+            };
+            this.fire('viewNavigate', {change: change});
+          });
 
       this._editorial.render(this._cache.interesting);
       this._editorial.addTarget(this);
