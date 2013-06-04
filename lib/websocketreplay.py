@@ -85,16 +85,22 @@ def read_frames(source):
         direction the message was sent
     """
     seen_request_ids = set()
+    direction = None
     for line in source:
         line = line.strip()
         # The data format is a bit icky, but since we only send json-encoded
         # messages, pulling them out of the log is straight-forward.
-        if line.startswith('{'):
+        if line.startswith('to '):
+            direction = line
+        elif line.startswith('{'):
             message = json.loads(line)
-            direction = infer_direction(message, seen_request_ids)
+            # If the log does not contain direction info we have to guess.
+            if direction is None:
+                direction = infer_direction(message, seen_request_ids)
             if 'request_id' in message:
                 seen_request_ids.add(message['request_id'])
             yield Frame(message, direction)
+            message = direction = None
 
 
 def print_with_color(color, *args, **kws):

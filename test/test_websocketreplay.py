@@ -86,6 +86,45 @@ class TestReadingFrames(unittest.TestCase):
                 direction='to client')],
             list(read_frames(log)))
 
+    def test_included_direction_is_used(self):
+        # If the log contains direction info (whether or not the message was
+        # sent from the client and to the server or vice versa) that info will
+        # be used.
+        log = """\
+            junk
+            to mars
+            {"foo": 1}
+            junk
+            to venus
+            {"foo": 2}
+            junk""".split('\n')
+        self.assertEqual(
+            [Frame(
+                message={u'foo': 1},
+                direction='to mars'),
+             Frame(
+                message={u'foo': 2},
+                direction='to venus')],
+            list(read_frames(log)))
+
+    def test_missing_direction_is_infered(self):
+        # If the log does not contain direction info, the directionality of
+        # each message will deduced from the message's contents.
+        log = """\
+            junk
+            {"foo": 1, "request_id": 1}
+            junk
+            {"foo": 2}
+            junk""".split('\n')
+        self.assertEqual(
+            [Frame(
+                message={u'foo': 1, u'request_id': 1},
+                direction='to server'),
+             Frame(
+                message={u'foo': 2},
+                direction='to client')],
+            list(read_frames(log)))
+
     def test_result_is_iterator(self):
         # The object returned from read_frames() is an iterator.  This is so
         # we can consume it incrementally without having to keep up with how
