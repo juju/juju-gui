@@ -506,7 +506,7 @@ YUI.add('juju-charm-models', function(Y) {
       mainCategory: {
         /**
           @method mainCategory.valueFn
-          @return {String|Null} If a category is found, it's value else null.
+          @return {String|Null} If a category is found its value else null.
 
          */
         valueFn: function() {

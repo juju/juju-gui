@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_charm_view', function() {
-    var container, CharmView, models, node, view, views, Y;
+    var container, CharmView, models, node, utils, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -36,6 +36,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           function(Y) {
             views = Y.namespace('juju.browser.views');
             models = Y.namespace('juju.models');
+            utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
             done();
           });
@@ -172,7 +173,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -190,7 +191,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       // Hook up to the callback for the click event.
@@ -214,7 +215,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.set('deploy', function(charm) {
         // The charm passed in is not a BrowserCharm but a charm-panel charm.
@@ -252,7 +253,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -294,7 +295,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -317,7 +318,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.render();
 
@@ -337,8 +338,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo' }
         })
       });
-      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
-
+      var data = utils.loadFixture('data/qa.json', true);
       var processed = view._buildQAData(data);
 
       // We store a number of summary bits to help the template render the
@@ -355,7 +355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.render();
 
@@ -380,7 +380,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo' }
         })
       });
-      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/qa.json', true);
       // munge the data so that scores is null.
       data.scores = null;
 
@@ -390,13 +390,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should catch when the open log is clicked', function(done) {
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       // Hook up to the callback for the click event.
@@ -411,13 +410,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('changelog is reformatted and displayed', function() {
       var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.render();
@@ -629,8 +627,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('displays a provider warning due to failed tests', function() {
       var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       // Add a failing test to the charm data.
@@ -642,7 +639,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.render();
@@ -655,13 +652,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var hit = 0;
 
       var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.showIndicator = function() {
@@ -677,20 +673,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('sets a category icon if available', function() {
       var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       // Add a category manually to get a category icon to display.
       data.charm.categories = ['app-servers'];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.render();
       var iconNode = view.get('container').one('.category-icon');
-      iconNode.hasClass('charm-app-servers-160').should.eql(true);
+      assert.equal(iconNode.hasClass('charm-app-servers-160'), true);
     });
 
   });

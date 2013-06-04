@@ -37,7 +37,8 @@
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
                 {{else}}
                     {{#if mainCategory}}
-                      <div class="category-icon sprite charm-{{mainCategory}}-160">
+                      <div title="category {{mainCategory}}"
+                          class="category-icon sprite charm-{{mainCategory}}-160">
                       </div>
                     {{else}}
                       <div class="charm-icon">
