@@ -1,0 +1,9 @@
+<div class="view-container-wrapper">
+  <div class="view-container-navigation"></div>
+  {{#each viewletTemplates}}
+    <div class="viewlet-container" data-viewlet="{{name}}" style="display: none">
+      {{{template}}}
+    </div>
+  {{/each}}
+  <div class="view-container-footer"></div>
+</div>
