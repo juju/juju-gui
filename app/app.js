@@ -226,7 +226,6 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          /* global saveAs: false */
           this.env.exportEnvironment(function(r) {
             var exportData = JSON.stringify(r.result, undefined, 2);
             var exportBlob = new Blob([exportData],
@@ -235,7 +234,15 @@ YUI.add('juju-gui', function(Y) {
           });
         },
         help: 'Export the environment'
+      },
+
+      'C-S-d': {
+        callback: function(evt) {
+          Y.fire('saveWebsocketLog');
+        },
+        help: 'Save the websocket log to a file'
       }
+
 
     },
 
@@ -352,6 +359,10 @@ YUI.add('juju-gui', function(Y) {
           type: Y.juju.subapps.Browser,
           config: {}
         });
+      }
+
+      if (window.flags.websocket_capture) {
+        this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
       this.renderEnvironment = true;
@@ -1301,6 +1312,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-views',
     'juju-view-login',
     'juju-landscape',
+    'juju-websocket-logging',
     'io',
     'json-parse',
     'app-base',
