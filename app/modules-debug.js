@@ -31,13 +31,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // The "requires" property should not be used here because the javascript
 // minimizer will not parse it.
 var GlobalConfig = {
-  filter: 'debug',
+  //filter: 'debug',
   // Set "true" for verbose logging of YUI.
   debug: false,
 
   base: '/juju-ui/assets/javascripts/yui/',
   // Use Rollups
-  combine: false,
+  combine: true,
 
   // Don't load YUI CSS from YUI servers.
   fetchCSS: false,
@@ -101,7 +101,6 @@ var GlobalConfig = {
         }
       }
     },
-
     filesaver: {
       modules: {
         'FileSaver': {
@@ -145,7 +144,9 @@ var GlobalConfig = {
         'juju-inspector-widget': {
           fullpath: '/juju-ui/widgets/inspector-widget.js'
         },
-
+        'juju-databinding': {
+          fullpath: '/juju-ui/views/databinding.js'
+        },
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
