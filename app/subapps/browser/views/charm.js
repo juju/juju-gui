@@ -141,6 +141,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
 
       return {
+        charm: this.get('charm').getAttrs(),
         questions: questions,
         totalAvailable: totalAvailable,
         totalScore: totalScore
@@ -343,19 +344,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var node = Y.one('#bws-qa');
       this.showIndicator(node);
       // Only load the QA data once.
-      if (!this._qaLoaded) {
-        this.get('store').qa(
-            this.get('charm').get('id'), {
-              'success': function(data) {
-                data = this._buildQAData(data);
-                node.setHTML(this.qatemplate(data));
-                this.hideIndicator(node);
-              },
-              'failure': function(data, request) {
+      this.get('store').qa(
+          this.get('charm').get('id'), {
+            'success': function(data) {
+              data = this._buildQAData(data);
+              node.setHTML(this.qatemplate(data));
+              this.hideIndicator(node);
+            },
+            'failure': function(data, request) {
 
-              }
-            }, this);
-      }
+            }
+          }, this);
     },
 
     /**
