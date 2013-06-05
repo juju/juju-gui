@@ -714,7 +714,7 @@ YUI.add('juju-topology-service', function(Y) {
           } else {
             if (vertices) {
               vertices.push([
-                existing['gui-x'] || (box.x || 0), 
+                existing['gui-x'] || (box.x || 0),
                 existing['gui-y'] || (box.y || 0)
               ]);
             }
