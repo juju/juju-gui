@@ -150,7 +150,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     /**
      * Watch the tab control for change events and dispatch accordingly.
      *
-     * @method _bindTabEvents
+     * @method _dispatchTabEvents
      * @param {TabView} tab the tab control to monitor.
      *
      */
