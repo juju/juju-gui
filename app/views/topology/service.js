@@ -710,10 +710,13 @@ YUI.add('juju-topology-service', function(Y) {
                 function() {
                   box.inDrag = false;
                 });
-            vertices.push([box.x, box.y]);
+            vertices.push([box.x || 0, box.y || 0]);
           } else {
             if (vertices) {
-              vertices.push([existing['gui-x'], existing['gui-y']]);
+              vertices.push([
+                existing['gui-x'] || (box.x || 0), 
+                existing['gui-y'] || (box.y || 0)
+              ]);
             }
           }
         });
@@ -721,9 +724,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (!topo.centroid || vertices) {
         // Find the centroid of our hull of services and inform the topology.
         if (!vertices) {
-          vertices = Y.Object.values(topo.service_boxes).map(function(box) {
-            return [box.x, box.y];
-          });
+          vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
         }
         this.findAndSetCentroid(vertices);
       }

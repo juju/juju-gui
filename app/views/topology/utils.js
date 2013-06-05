@@ -93,7 +93,8 @@ YUI.add('juju-topology-utils', function(Y) {
   */
   utils.serviceBoxesToVertices = function(serviceBoxes) {
     return Y.Array.map(Y.Object.values(serviceBoxes), function(box) {
-      return [box.x, box.y];
+      // Default undefined x/y attributes to 0.
+      return [box.x || 0, box.y || 0];
     });
   };
 
@@ -115,8 +116,8 @@ YUI.add('juju-topology-utils', function(Y) {
         break;
       case 2:
         centroid = [
-          vertices[0][0] + (vertices[0][0] - vertices[1][0]),
-          vertices[1][0] + (vertices[1][0] - vertices[1][1])
+          vertices[0][0] - ((vertices[0][0] - vertices[1][0]) / 2),
+          vertices[0][1] - ((vertices[0][1] - vertices[1][1]) / 2)
         ];
         break;
       default:
