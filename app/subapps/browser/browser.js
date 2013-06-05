@@ -234,7 +234,7 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
+          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
