@@ -148,6 +148,10 @@ YUI.add('juju-models', function(Y) {
         /**
           Dynamically calculate a display name that accounts for Juju Core name
           prefixes.
+
+          @attribute displayName
+          @readOnly
+          @type String
          */
         getter: function() {
           return this.get('id').replace('service-', '');

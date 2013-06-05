@@ -89,6 +89,7 @@ YUI.add('browser-charm-token', function(Y) {
 
       /**
         The id of the charm to render
+        @attribute id
         @default undefined
         @type {String}
       */

@@ -263,7 +263,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Log out.  If already logged out, no error is raised.
+      Log out.  If already logged out, no error is raised.
+      @method logout
+      @return {undefined} Nothing.
     */
     logout: function() {
       this.set('authenticated', false);
@@ -300,9 +302,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._loadCharm(
           charmId,
           {
-            /**
-              Deploy the successfully-obtained charm.
-            */
+            // On success deploy the successfully-obtained charm.
             success: function(charm) {
               self._deployFromCharm(charm, callback, options);
             },
@@ -343,18 +343,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
         this.get('charmStore').loadByPath(
             charmIdParts.charm_store_path,
             {
-              /**
-                Convert the charm data to a charm and use the success callback.
-              */
+              // Convert the charm data to a charm and use the success
+              // callback.
               success: function(data) {
                 var charm = self._getCharmFromData(data);
                 if (callbacks.success) {
                   callbacks.success(charm);
                 }
               },
-              /**
-                Inform the caller of an error using the charm store.
-              */
+              // Inform the caller of an error using the charm store.
               failure: function(e) {
                 // This is most likely an IOError stemming from an
                 // invalid charm pointing to a bad URL and a read of a
@@ -399,6 +396,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     /**
     Deploy a charm, given the charm, a callback, and options.
 
+    @method _deployFromCharm
     @param {Object} charm The charm to be deployed, from the db.
     @param {Function} callback A call that will receive an object either
       with an "error" attribute containing a string describing the problem,

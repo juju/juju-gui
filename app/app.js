@@ -132,7 +132,7 @@ YUI.add('juju-gui', function(Y) {
 
     },
 
-    /**
+    /*
      * Declarative keybindings on the window object.
      *
      * Prefix supported are:
