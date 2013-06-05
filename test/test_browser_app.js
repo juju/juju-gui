@@ -226,8 +226,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ];
       paths.map(function(id) {
         assert.equal(
-          'foo/bar-66', app._stripViewMode(id),
-          id + ' was not stripped correctly.'
+            'foo/bar-66', app._stripViewMode(id),
+            id + ' was not stripped correctly.'
         );
       });
     });
