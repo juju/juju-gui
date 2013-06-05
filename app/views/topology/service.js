@@ -29,6 +29,7 @@ YUI.add('juju-topology-service', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -759,38 +760,20 @@ YUI.add('juju-topology-service', function(Y) {
     */
     panToCenter: function(evt) {
       var topo = this.get('component');
-      var vertices = Y.Object.values(topo.service_boxes).map(function(box) {
-        return [box.x, box.y];
-      });
+      var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
       this.findAndSetCentroid(vertices);
     },
 
     /**
       Given a set of vertices, find the centroid and pan to that location.
 
-      @method panToCenter
+      @method findAndSetCentroid
       @param {array} vertices A list of vertices in the form [x, y].
       @return {undefined} Side effects only.
     */
     findAndSetCentroid: function(vertices) {
       var topo = this.get('component'),
-          centroid = [];
-      switch (vertices.length) {
-        case 0:
-          centroid = [0, 0];
-          break;
-        case 1:
-          centroid = vertices[0];
-          break;
-        case 2:
-          centroid = [
-            vertices[0][0] + (vertices[0][0] - vertices[1][0]),
-            vertices[1][0] + (vertices[1][0] - vertices[1][1])
-          ];
-          break;
-        default:
-          centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
-      }
+          centroid = topoUtils.centroid(vertices);
       // The centroid is set on the topology object due to the fact that it is
       // used as a sigil to tell whether or not to pan to the point after the
       // first delta.

@@ -97,6 +97,34 @@ YUI.add('juju-topology-utils', function(Y) {
     });
   };
 
+  /**
+    Given a set of vertices, find the centroid and pan to that location.
+
+    @method centroid
+    @param {array} vertices A list of vertices in the form [x, y].
+    @return {array} an x/y coordinate pair for the centroid.
+  */
+  utils.centroid = function(vertices) {
+    var centroid = [];
+    switch (vertices.length) {
+      case 0:
+        centroid = [0, 0];
+        break;
+      case 1:
+        centroid = vertices[0];
+        break;
+      case 2:
+        centroid = [
+          vertices[0][0] + (vertices[0][0] - vertices[1][0]),
+          vertices[1][0] + (vertices[1][0] - vertices[1][1])
+        ];
+        break;
+      default:
+        centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
+    }
+    return centroid;
+  };
+
 }, '0.1.0', {
   requires: [
     'd3'
