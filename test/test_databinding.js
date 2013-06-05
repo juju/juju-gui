@@ -17,13 +17,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('data binding library', function() {
+describe('data binding library', function() {
   var Y, BindingEngine, utils, container;
 
 
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
-                    'model', 'model-list'];
+                    'handlebars', 'model', 'model-list'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       BindingEngine = Y.namespace('juju.views').BindingEngine;
@@ -53,13 +53,15 @@ describe.only('data binding library', function() {
       it('bind should fail on invalid DOM', function() {
         engine = new BindingEngine();
         assert.throws(function() {engine.bind({}, null);},
-                      'Unable to bind, invalid DOM');
+                      'Unable to bind, invalid Viewlet');
       });
 
       it('maintain proper binding references', function() {
           engine = new BindingEngine();
           container = utils.makeContainer();
-          engine.bind(new Y.Model({a: 'b'}), container);
+          engine.bind(new Y.Model({a: 'b'}),
+                      {container: container,
+                       bindings: []});
           // The default model object should be in place.
           assert.equal(Y.Object.keys(engine._events).length, 1);
           // Assign a new default model, the old event handler
@@ -84,8 +86,9 @@ describe.only('data binding library', function() {
             }
             dom.set('name', 'test');
             form = makeForm(dom);
-            engine.bind(model, form,
+            engine.bind(model,
               {
+                container: form,
                 bindings: [{name: 'test', target: ['[name=test]']}]
               });
               assert.equal(dom.get('value'), v1);
@@ -106,7 +109,7 @@ describe.only('data binding library', function() {
     });
   });
 
-  describe.skip('modellist tests', function() {
+  describe.only('modellist tests', function() {
     var engine;
     beforeEach(function(done) {
       engine = new BindingEngine();
@@ -115,24 +118,30 @@ describe.only('data binding library', function() {
 
     it('should be able to observe modellists', function() {
       var list = new Y.ModelList();
+      var template = Y.Handlebars.compile(
+        '{{#modellist}}' +
+        '   <input id="{{id}}" name="test" value="{{test}}"/>' +
+        '{{/modellist}}'
+      );
       list.add({test: 'alpha', id: 'a'});
       container = utils.makeContainer();
-      engine.bind(list, container, {
-        add: function(model, container) {
-            container.append(
-              Y.Node.create('<input type="text"/>')
-               .setAttribute(id, model.id));
+      engine.bind(list, {
+        name: 'testViewlet',
+        container: container,
+        update: function(modellist) {
+          var data = modellist.map(function(m) {return m.getAttrs();});
+          this.container.setHTML(template({modellist: data}));
         },
-        remove: function(model, container) {
-          container.one('#' + model.id).remove(true);
-        },
-        bindings: [
-          {name: 'test', target: ['input']}
-        ]
       });
-      console.log('container', container, list.toArray());
+      assert.equal(container.all('input').size(), 1);
       list.add({id: 'b', test: 'beta'});
-      console.log('after add', container, list.toArray());
+      assert.equal(container.all('input').size(), 2);
+
+      var output = [];
+      container.all('input').each(function(n) {
+        output.push(n.get('value'))
+      });
+      assert.deepEqual(output, ['alpha', 'beta']);
     });
 
   });
