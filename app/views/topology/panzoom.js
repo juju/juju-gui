@@ -255,7 +255,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
       });
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
 
   });
   views.PanZoomModule = PanZoomModule;

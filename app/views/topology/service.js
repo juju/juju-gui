@@ -1387,7 +1387,12 @@ YUI.add('juju-topology-service', function(Y) {
       btn.set('disabled', false);
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
   });
 
   views.ServiceModule = ServiceModule;
