@@ -493,6 +493,31 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
+      /**
+        The mainCategory is a helper since we can only show one icon per
+        charm, but we permit multiple categories. An initial pass just grabs
+        the first category to use as an icon if required.
+
+        @attribute mainCategory
+        @default null
+        @type {String}
+
+       */
+      mainCategory: {
+        /**
+          @method mainCategory.valueFn
+          @return {String|Null} If a category is found its value else null.
+
+         */
+        valueFn: function() {
+          var categories = this.get('categories');
+          if (categories.length > 0) {
+            return categories[0];
+          } else {
+            return null;
+          }
+        }
+      },
       maintainer: {},
       /**
         API related metdata information for this charm object.

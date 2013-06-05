@@ -904,5 +904,32 @@ describe('utilities', function() {
 
     });
 
+    describe('if_eq tests', function() {
+
+      it('outputs success when equal', function() {
+        var tpl = '{{#if_eq x y}}success{{/if_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 3});
+
+        assert.strictEqual('success', html);
+      });
+
+      it('output fails when not equal', function() {
+        var tpl = 'fails{{#if_eq x y}}success{{/if_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 4});
+
+        assert.strictEqual('fails', html);
+      });
+
+      it('outputs the else clause when not equal', function() {
+        var tpl = '{{#if_eq x y}}success{{else}}fails{{/if_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 4});
+
+        assert.strictEqual('fails', html);
+      });
+    });
+
   });
 })();

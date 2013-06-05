@@ -1253,6 +1253,20 @@ YUI.add('juju-view-utils', function(Y) {
     return res;
   });
 
+
+  /**
+    If built around checking if x == y.
+    Supports an inverse so that we can use an else clause.
+
+   */
+  Y.Handlebars.registerHelper('if_eq', function(x, y, options) {
+    if (x === y) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
   /**
     * pluralize
     *
