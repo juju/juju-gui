@@ -26,14 +26,14 @@
 {{else}}
     <h3>Quality Rating:</h3>
 
-    <p><strong>This charm does not currently have a Quality Rating</strong></p>
+    <p><strong>This charm does not have a Quality Rating</strong></p>
 
     {{#if charm.is_approved}}
-        <p>
-            Quality reviews are in progress and have not yet been submitted for this charm.
+        <p class="no-qa-reviewed">
+            This charm is queued for review. It will be rated soon.
         </p>
     {{else}}
-        <p>
+        <p class="no-qa-unreviewed">
             Only reviewed charms will have a Quality Rating. This charm is not reviewed and does not have a score.
         </p>
 

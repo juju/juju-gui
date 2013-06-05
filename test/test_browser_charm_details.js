@@ -430,24 +430,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Because we have no score, we get the alternate content. This charm is
       // not approved/reviewed so we get the content explaining it will not
       // have quality data.
-      var foundNodes = view.get('container').all('#bws-qa p');
-      assert.equal(foundNodes.size(), 2);
-      assert.notEqual(foundNodes.pop().get('text').search('will have'), -1);
-      assert.notEqual(
-          foundNodes.pop().get('text').search('does not currently'),
-          -1);
+      var foundNode = view.get('container').one('.no-qa-unreviewed');
+      assert.ok(foundNode);
 
       // Change the charm to be reviewed/approved and verify we hit the other
       // message while not showing quality scores.
       view.get('charm').set('is_approved', true);
       // Force the loading of the qa div.
       view._loadQAContent();
-      foundNodes = view.get('container').all('#bws-qa p');
-      assert.equal(foundNodes.size(), 2);
-      assert.notEqual(foundNodes.pop().get('text').search('in progress'), -1);
-      assert.notEqual(
-          foundNodes.pop().get('text').search('does not currently'),
-          -1);
+      foundNode = view.get('container').one('.no-qa-reviewed');
+      assert.ok(foundNode);
 
     });
 
