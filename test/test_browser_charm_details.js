@@ -417,7 +417,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
-          code_source: { location: 'lp:~foo' },
+          code_source: { location: 'lp:~foo' }
         }),
         renderTo: utils.makeContainer(),
         store: fakeStore
@@ -442,7 +442,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.get('charm').set('is_approved', true);
       // Force the loading of the qa div.
       view._loadQAContent();
-      var foundNodes = view.get('container').all('#bws-qa p');
+      foundNodes = view.get('container').all('#bws-qa p');
       assert.equal(foundNodes.size(), 2);
       assert.notEqual(foundNodes.pop().get('text').search('in progress'), -1);
       assert.notEqual(
