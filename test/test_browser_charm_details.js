@@ -434,8 +434,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(foundNodes.size(), 2);
       assert.notEqual(foundNodes.pop().get('text').search('will have'), -1);
       assert.notEqual(
-        foundNodes.pop().get('text').search('does not currently'),
-        -1);
+          foundNodes.pop().get('text').search('does not currently'),
+          -1);
 
       // Change the charm to be reviewed/approved and verify we hit the other
       // message while not showing quality scores.
@@ -446,8 +446,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(foundNodes.size(), 2);
       assert.notEqual(foundNodes.pop().get('text').search('in progress'), -1);
       assert.notEqual(
-        foundNodes.pop().get('text').search('does not currently'),
-        -1);
+          foundNodes.pop().get('text').search('does not currently'),
+          -1);
 
     });
 
