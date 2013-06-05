@@ -147,11 +147,9 @@ YUI.add('juju-view-container', function(Y) {
       // possibly introduce some kind of animation here
       container.all('.viewlet-container').setStyle('display', 'none');
 
-
-      var tmp = container.one('[data-viewlet=' + viewletName + ']');
-      debugger;
-      // XXX this fails for some reason
-      tmp.setSyle('display', 'block');
+      var viewlet = container.one('[data-viewlet=' + viewletName + ']');
+      // setStyle() fails with a typeerror during testing on the following line
+      viewlet._node.style.display = 'block';
     },
 
     /**
