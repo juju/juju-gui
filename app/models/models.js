@@ -150,7 +150,6 @@ YUI.add('juju-models', function(Y) {
           prefixes.
 
           @attribute displayName
-          @readOnly
           @type {String}
          */
         getter: function() {
