@@ -151,7 +151,7 @@ YUI.add('juju-models', function(Y) {
 
           @attribute displayName
           @readOnly
-          @type String
+          @type {String}
          */
         getter: function() {
           return this.get('id').replace('service-', '');
