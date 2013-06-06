@@ -76,16 +76,15 @@ YUI.add('juju-view-container', function(Y) {
 
     /**
       User defined update method which re-renders the contents of the viewlet.
-      Called by the binding engine if a modellist is updated.
+      Called by the binding engine if a modellist is updated. This is
+      accomplished by grabbing the viewlets container and setHTML() with the
+      new contents.
 
       @property update
       @type {function}
       @default {noop function}
     */
-    update: function(modellist) {
-      // rerender the ui from a modellist
-      //this.container.setHTML();
-    },
+    update: function(modellist) {},
 
     /**
       Render method to generate the container and insert the compiled viewlet
@@ -113,7 +112,7 @@ YUI.add('juju-view-container', function(Y) {
     @class ViewContainer
     @constructor
   */
-  var ViewContainer = new Y.Base.create('view-container', Y.View, [], {
+  Y.namespace('juju').ViewContainer = new Y.Base.create('view-container', Y.View, [], {
 
     /**
       DOM bound events for any view container related events
@@ -286,8 +285,6 @@ YUI.add('juju-view-container', function(Y) {
     }
 
   });
-
-  Y.namespace('juju').ViewContainer = ViewContainer;
 
 }, '', {
   requires: [

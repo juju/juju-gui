@@ -92,7 +92,7 @@ describe('View Container', function() {
             viewContainer.controller instanceof fakeController, true);
       });
 
-  it('should generate viewlet instances based on the config', function() {
+  it('generates viewlet instances based on the config', function() {
     generateViewContainer();
     var vl = viewContainer.viewlets,
         vlKeys = ['serviceConfig', 'constraints'];
@@ -101,13 +101,13 @@ describe('View Container', function() {
     });
   });
 
-  it('should render its container into the DOM', function() {
+  it('renders its container into the DOM', function() {
     generateViewContainer();
     viewContainer.render();
     assert.notEqual(container.one('.view-container-wrapper'), null);
   });
 
-  it('should render all viewlets into the DOM', function() {
+  it('renders all viewlets into the DOM', function() {
     generateViewContainer();
     viewContainer.render();
     assert.notEqual(container.one('.view-container-wrapper'), null);
@@ -137,7 +137,7 @@ describe('View Container', function() {
     });
   });
 
-  it('should switch the visible viewlet on request', function() {
+  it('switches the visible viewlet on request', function() {
     generateViewContainer();
     var vlKeys = ['serviceConfig', 'constraints'];
     viewContainer.render();
