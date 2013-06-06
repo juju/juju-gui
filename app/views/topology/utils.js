@@ -36,6 +36,7 @@ YUI.add('juju-topology-utils', function(Y) {
       Helper function to return a point outside of the convex hull
       of collected vertices.
 
+      @method _exteriorToHull
       @param {array} vertices A list of all vertices.
       @param {number} padding The padding around existing vertices in pixels.
       @return {array} An x/y coordinate pair.

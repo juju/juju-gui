@@ -185,7 +185,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     initializer: function(cfg) {
-      /**
+      /*
        * Fires when the "Charm Browser" link is checked. Needs to communicate
        * with the parent view so that it can handle filters and the like. This
        * widget only needs to clear the search input box.

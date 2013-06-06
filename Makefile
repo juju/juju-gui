@@ -172,7 +172,7 @@ build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
-	node_modules/.bin/yuidoc -o yuidoc -x assets app
+	node_modules/.bin/yuidoc --lint -o yuidoc -x assets app
 
 main-doc:
 	make -C docs SPHINXOPTS=-W html
@@ -262,7 +262,8 @@ jshint: node_modules/jshint
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented
 
-yuidoc-lint: $(JSFILES)
+lint-yuidoc: $(JSFILES)
+	node_modules/.bin/yuidoc --lint -x assets app
 	bin/lint-yuidoc
 
 recess: node_modules/recess
@@ -273,7 +274,7 @@ recess: node_modules/recess
 	    --config recess.json | grep -q Perfect
 
 lint: test-prep jshint gjslint recess lint-license-headers test-filtering \
-		yuidoc-lint
+		lint-yuidoc
 
 lint-license-headers:
 	@# Take the list of JS files in one long line and break them into
@@ -599,8 +600,9 @@ endif
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: beautify build build-files build-devel clean clean-all clean-deps \
 	clean-docs code-doc debug devel docs dist gjslint help \
-	install-npm-packages jshint lint main-doc npm-cache npm-cache-file \
-	prep prod recess server spritegen test test-debug test-misc test-prep \
-	test-prod undocumented view-code-doc view-docs view-main-doc yuidoc-lint
+	install-npm-packages jshint lint lint-yuidoc main-doc npm-cache \
+	npm-cache-file prep prod recess server spritegen test test-debug \
+	test-misc test-prep test-prod undocumented view-code-doc view-docs \
+	view-main-doc
 
 .DEFAULT_GOAL := all
