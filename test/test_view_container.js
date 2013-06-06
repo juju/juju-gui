@@ -21,7 +21,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('View Container', function() {
   var Y, juju, viewContainer, utils, container;
 
-  var fakeController = function() { /* noop */ };
+  var fakeController = function() {};
+  fakeController.prototype.bind = function() { /* noop */};
+
+  var generateViewContainer = function(render, update) {
+    container = utils.makeContainer();
+
+    var viewletConfig = {
+      template: '<div class="viewlet">{{name}}</div>'
+    };
+
+    if (render) { viewletConfig.render = render; }
+    if (update) { viewletConfig.update = update; }
+
+    viewContainer = new Y.juju.ViewContainer({
+      viewlets: {
+        serviceConfig: Y.merge(viewletConfig),
+        constraints: Y.merge(viewletConfig)
+      },
+      template: juju.views.Templates['view-container'],
+      templateConfig: {},
+      controller: fakeController,
+      container: container,
+      model: new Y.Model({name: 'foo'})
+    });
+  };
 
   before(function(done) {
     YUI(GlobalConfig).use([
@@ -36,42 +60,6 @@ describe('View Container', function() {
     });
   });
 
-  beforeEach(function() {
-    var generateDOM = function(model, key) {
-      return {
-        name: key,
-        template: Y.Lang.sub(this.template, {
-          name: key
-        })
-      };
-    };
-    container = utils.makeContainer();
-
-    viewContainer = new Y.juju.ViewContainer({
-      viewlets: {
-        serviceConfig: {
-          template: {
-            value: '<div class="viewlet">{name}</div>'
-          },
-          generateDOM: {
-            value: generateDOM
-          }
-        },
-        constraints: {
-          template: {
-            value: '<div class="viewlet">{name}</div>'
-          },
-          generateDOM: {
-            value: generateDOM
-          }
-        }
-      },
-      template: juju.views.Templates['view-container'],
-      controller: fakeController,
-      container: container
-    });
-  });
-
   afterEach(function(done) {
     // destroy is async
     viewContainer.after('destroy', function() {
@@ -81,21 +69,31 @@ describe('View Container', function() {
     container.remove().destroy(true);
   });
 
-  it('should set up a viewlet instance property', function() {
+  it('sets up a viewlet instance property', function() {
+    generateViewContainer();
     assert.equal(typeof viewContainer.viewlets, 'object');
   });
 
-  it('should set up a view template instance property', function() {
+  it('properly nests config properties', function() {
+    generateViewContainer();
+    var cfg = viewContainer.viewletConfig;
+    assert.notEqual(cfg.serviceConfig.template.value, undefined);
+  });
+
+  it('sets up a view template instance property', function() {
+    generateViewContainer();
     assert.equal(typeof viewContainer.template, 'function');
   });
 
-  it('should instantiate and set up a new controller instance property',
+  it('instantiates and sets up a new controller instance property',
     function() {
+      generateViewContainer();
       assert.equal(
           viewContainer.controller instanceof fakeController, true);
     });
 
   it('should generate viewlet instances based on the config', function() {
+    generateViewContainer();
     var vl = viewContainer.viewlets,
         vlKeys = ['serviceConfig', 'constraints'];
     vlKeys.forEach(function(key) {
@@ -103,35 +101,49 @@ describe('View Container', function() {
     });
   });
 
-  it('allows you to define your own DOM generation method', function() {
-    var vl = viewContainer.viewlets,
-        vlKeys = ['serviceConfig', 'constraints'];
-    vlKeys.forEach(function(key) {
-      assert.deepEqual(vl[key].generateDOM(null, key), {
-        name: key,
-        template: '<div class="viewlet">' + key + '</div>'
-      });
-    });
-  });
-
   it('should render its container into the DOM', function() {
+    generateViewContainer();
     viewContainer.render();
     assert.notEqual(container.one('.view-container-wrapper'), null);
   });
 
   it('should render all viewlets into the DOM', function() {
+    generateViewContainer();
     viewContainer.render();
     assert.notEqual(container.one('.view-container-wrapper'), null);
-    assert.equal(container.all('.viewlet-container').size(), 2);
+    assert.equal(container.all('.viewlet-container').size(), 1);
     assert.equal(container.all('.viewlet').size(), 2);
   });
 
+  it('allows you to define your own render method', function() {
+    generateViewContainer(function() {
+      return 'foo';
+    });
+    var vlKeys = ['serviceConfig', 'constraints'];
+    viewContainer.render();
+    vlKeys.forEach(function(key) {
+      assert.equal(viewContainer.viewlets[key].render(), 'foo');
+    });
+  });
+
+  it('allows you to define your own update method', function() {
+    generateViewContainer(null, function() {
+      return 'foo';
+    });
+    var vlKeys = ['serviceConfig', 'constraints'];
+    viewContainer.render();
+    vlKeys.forEach(function(key) {
+      assert.equal(viewContainer.viewlets[key].update(), 'foo');
+    });
+  });
+
   it('should switch the visible viewlet on request', function() {
+    generateViewContainer();
     var vlKeys = ['serviceConfig', 'constraints'];
     viewContainer.render();
     vlKeys.forEach(function(key) {
       viewContainer.showViewlet(key);
-        assert.equal(container.one('[data-viewlet=' + key + ']').getStyle('display'), 'block');
+      assert.equal(viewContainer.viewlets[key].container.getStyle('display'), 'block');
     });
   });
 

@@ -35,10 +35,72 @@ YUI.add('juju-view-container', function(Y) {
     @constructor
   */
   var ViewletBase = {
-    template: '{{viewlet}}',
-    bind: {},
-    generateDOM: function(model) {
-      return this.template(model.getAttrs());
+    /**
+      String template of the viewlet wrapper
+
+      @property templateWrapper
+      @type {string | compiled Handlebars template}
+      @default '<div class="viewlet-wrapper" style="display: none"></div>'
+    */
+    templateWrapper: '<div class="viewlet-wrapper" style="display:none"></div>',
+
+    /**
+      Template of the viewlet, provided during configuration
+
+      @property template
+      @type {string | compiled Handlebars template}
+      @default '{{viewlet}}'
+    */
+    template: '{{viewlet}}', // compiled handlebars template
+
+    /**
+      Bindings config for the binding engine
+      ex) [ { name: 'modelFieldName', target: 'querySelectorString' } ]
+      ex) [ { name: 'modelFieldName', target: [ 'querySelectorString' ] } ]
+
+      @property bindings
+      @type {array}
+      @default []
+    */
+    bindings: [],
+
+    /**
+      The rendered viewlet element
+
+      @property container
+      @type {Y.Node}
+      @default ''
+    */
+    container: '',
+
+    /**
+      User defined update method which re-renders the contents of the viewlet.
+      Called by the binding engine if a modellist is updated.
+
+      @property update
+      @type {function}
+      @default {noop function}
+    */
+    update: function(modellist) {
+      // rerender the ui from a modellist
+      //this.container.setHTML();
+    },
+
+    /**
+      Render method to generate the container and insert the compiled viewlet
+      template into it.
+
+      @property render
+      @type {function}
+      @default {render function}
+    */
+    render: function(model) {
+      this.container = Y.Node.create(this.templateWrapper);
+
+      if (typeof this.template === 'string') {
+        this.template = Y.Handlebars.compile(this.template);
+      }
+      this.container.setHTML(this.template(model.getAttrs()));
     }
   };
 
@@ -62,14 +124,7 @@ YUI.add('juju-view-container', function(Y) {
     /**
       Viewlet configuration object. Set by passing `viewlets` in during
       instantiation.
-      ex)
-      viewlets: {
-        'serviceConfiguration' : {
-          // boundings go here from Ben's code
-          template: Y.juju.Templates['service-config']
-          generateDOM: function() {}
-        }
-      }
+      ex) (see ViewletBase)
 
       @property viewletConfig
       @default undefined
@@ -86,6 +141,15 @@ YUI.add('juju-view-container', function(Y) {
     */
 
     /**
+      Handlebars config options for the view-container template. Set by passing
+      in during instantiation ex) { templateConfig: {} }
+
+      @property templateConfig
+      @type {Object}
+      @type undefined
+    */
+
+    /**
       Instance of the view container controller. Set by passing in during
       instantiation ex) { Controller: Y.viewContainer.Controller }
 
@@ -94,25 +158,23 @@ YUI.add('juju-view-container', function(Y) {
     */
 
     /**
-      An array of the viewlet instances
+      A hash of the viewlet instances
 
-      ex) []
+      ex) {}
 
       @property viewlets
-      @type {Array}
-      @default []
+      @type {Object}
+      @default undefined
     */
 
     initializer: function(options) {
       // Passed in on instantiation
       this.viewletConfig = options.viewlets;
-      this.template = options.template ||
-        '<div class="view-container-wrapper">{{viewlets}}</div>';
+      this.template = options.template;
+      this.templateConfig = options.templateConfig;
+      // create new instance of passed in controller
       this.controller = new options.controller();
-
-      this.viewlets = [];
-
-      this._generateViewlets();
+      this.viewlets = this._generateViewlets();
     },
 
     /**
@@ -122,18 +184,27 @@ YUI.add('juju-view-container', function(Y) {
     */
     render: function() {
       var container = this.get('container'),
-          template, viewletTemplate;
+          model = this.get('model'),
+          viewletTemplate;
 
       // To allow you to pass in a string instead of a precompiled template
       if (typeof this.template === 'String') {
-        template = Y.Handlebars.compile(this.template);
-      } else {
-        template = this.template;
+        this.template = Y.Handlebars.compile(this.template);
       }
 
-      var viewletTemplates = this._renderViewlets();
+      container.setHTML(this.template(this.templateConfig));
 
-      container.setHTML(template({viewletTemplates: viewletTemplates}));
+      // We may want to make this selector user defined at some point
+      var viewletContainer = container.one('.viewlet-container');
+
+      // render the viewlets into their containers
+      Y.Object.each(this.viewlets, function(viewlet) {
+        viewlet.render(model);
+        viewletContainer.append(viewlet.container);
+      });
+
+      // chainable
+      return container;
     },
 
     /**
@@ -144,25 +215,9 @@ YUI.add('juju-view-container', function(Y) {
     */
     showViewlet: function(viewletName) {
       var container = this.get('container');
-      // possibly introduce some kind of animation here
+      // possibly introduce some kind of switching animation here
       container.all('.viewlet-container').setStyle('display', 'none');
-
-      var viewlet = container.one('[data-viewlet=' + viewletName + ']');
-      // setStyle() fails with a typeerror during testing on the following line
-      viewlet._node.style.display = 'block';
-    },
-
-    /**
-      Takes the supplied model and renders out the viewlet templates
-
-      @method _renderViewlets
-    */
-    _renderViewlets: function() {
-      var templates = [];
-      Y.Object.each(this.viewlets, function(viewlet, key) {
-        templates.push(viewlet.generateDOM(this.get('service'), key));
-      }, this);
-      return templates;
+      this.viewlets[viewletName].container.setStyle('display', 'block');
     },
 
     /**
@@ -171,9 +226,37 @@ YUI.add('juju-view-container', function(Y) {
       @method _generateViewlets
     */
     _generateViewlets: function() {
+      var viewlets = {},
+          model = this.get('model');
+
+      // expand out the config to defineProperty syntax
+      this.expandViewletConfig();
+
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
-        this.viewlets[key] = Object.create(ViewletBase, viewlet);
+        // create viewlet instances using the base and supplied config
+        viewlets[key] = Object.create(ViewletBase, viewlet);
+        // bind the UI to the model
+        this.controller.bind(model, viewlets[key]);
       }, this);
+
+      return viewlets;
+    },
+
+    /**
+      Expands the basic objects provided in the viewlet config into the
+      defineProperty format for Object.create()
+
+      @method expandViewletConfig
+    */
+    expandViewletConfig: function() {
+      for (var viewlet in this.viewletConfig) {
+        for (var cfg in this.viewletConfig[viewlet]) {
+          this.viewletConfig[viewlet][cfg] = {
+            value: this.viewletConfig[viewlet][cfg],
+            writable: true
+          }
+        }
+      }
     },
 
     /**
@@ -186,20 +269,12 @@ YUI.add('juju-view-container', function(Y) {
   }, {
     ATTRS: {
       /**
-        Reference to the current environment backend
+        Reference to the model
 
-        @attribute env
+        @attribute model
         @default undefined
       */
-      env: {},
-
-      /**
-        Reference to the service model
-
-        @attribute service
-        @default undefined
-      */
-      service: {}
+      model: {}
     }
 
   });
@@ -210,5 +285,6 @@ YUI.add('juju-view-container', function(Y) {
   requires: [
     'view',
     'node',
-    'base-build'
+    'base-build',
+    'handlebars'
   ]});
