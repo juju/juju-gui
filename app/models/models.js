@@ -326,7 +326,7 @@ YUI.add('juju-models', function(Y) {
       service.set('aggregated_status', aggregate);
 
       // Set Google Analytics tracking event.
-      if (previous_unit_count != sum) {
+      if (previous_unit_count !== sum) {
         _gaq.push(['_trackEvent', 'Service Stats', 'Update', service.get('id'), sum]);
       }
     },
