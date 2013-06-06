@@ -70,9 +70,9 @@ YUI.add('juju-view-container', function(Y) {
 
       @property container
       @type {Y.Node}
-      @default ''
+      @default null
     */
-    container: '',
+    container: null,
 
     /**
       User defined update method which re-renders the contents of the viewlet.
@@ -178,9 +178,10 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Renders the viewlets into the view container
+      Renders the viewlets into the view container.
 
       @method render
+      @chainable
     */
     render: function() {
       var container = this.get('container'),
@@ -204,7 +205,7 @@ YUI.add('juju-view-container', function(Y) {
       });
 
       // chainable
-      return container;
+      return this;
     },
 
     /**
@@ -216,21 +217,22 @@ YUI.add('juju-view-container', function(Y) {
     showViewlet: function(viewletName) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
-      container.all('.viewlet-container').setStyle('display', 'none');
-      this.viewlets[viewletName].container.setStyle('display', 'block');
+      container.all('.viewlet-container').hide();
+      this.viewlets[viewletName].container.show();
     },
 
     /**
       Generates the viewlet instances based on the passed in configuration
 
       @method _generateViewlets
+      @private
     */
     _generateViewlets: function() {
       var viewlets = {},
           model = this.get('model');
 
       // expand out the config to defineProperty syntax
-      this.expandViewletConfig();
+      this._expandViewletConfig();
 
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
         // create viewlet instances using the base and supplied config
@@ -246,15 +248,18 @@ YUI.add('juju-view-container', function(Y) {
       Expands the basic objects provided in the viewlet config into the
       defineProperty format for Object.create()
 
-      @method expandViewletConfig
+      @method _expandViewletConfig
+      @private
     */
-    expandViewletConfig: function() {
+    _expandViewletConfig: function() {
       // uncomment below when we upgrade jshint
       // /*jshint -W089 */
       for (var viewlet in this.viewletConfig) {
-        if (true) { // remove when we upgrade jshint
+        // remove ifcheck when we upgrade jshint
+        if (this.viewletConfig.hasOwnProperty(viewlet)) {
           for (var cfg in this.viewletConfig[viewlet]) {
-            if (true) { // remove when we upgrade jshint
+            // remove ifcheck when we upgrade jshint
+            if (this.viewletConfig[viewlet].hasOwnProperty(cfg)) {
               this.viewletConfig[viewlet][cfg] = {
                 value: this.viewletConfig[viewlet][cfg],
                 writable: true
@@ -265,14 +270,7 @@ YUI.add('juju-view-container', function(Y) {
       }
       // uncomment below when we upgrade jshint
       // /*jshint +W089 */
-    },
-
-    /**
-      Handles cleanup on destroy
-
-      @method destructor
-    */
-    destructor: function() {}
+    }
 
   }, {
     ATTRS: {
