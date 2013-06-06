@@ -65,6 +65,18 @@ YUI.add('juju-databinding', function(Y) {
       });
     }
 
+    function checkClassImplements(obj, target) {
+      if (typeof obj !== "object") {
+        return false;
+      }
+
+      if (obj._getClasses) {
+        var classNames = obj._getClasses().map(function(c) { return c.NAME;});
+        return classNames.indexOf(target) > -1;
+      }
+      return false;
+    }
+
     /**
      * Class which manages the relationship between
      * a model and its viewlet(s).
@@ -89,7 +101,7 @@ YUI.add('juju-databinding', function(Y) {
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
       // Ensure 'target' is an Array.
-      if (typeof binding === 'string') {
+      if (typeof binding.target === 'string') {
         binding.target = [binding.target];
       }
       this._bindings.push(binding);
@@ -122,7 +134,7 @@ YUI.add('juju-databinding', function(Y) {
         - update {Function}: Optional function used by ModelLists
             to update its container on add/remove/change. If no
             update method is passed in as configuration then
-            the original generateDOM method is called and its result
+            the original render method is called and its result
             is set into container. Either way 'this' is the viewlet
             and its called with the modellist as its argument.
 
@@ -155,7 +167,7 @@ YUI.add('juju-databinding', function(Y) {
       this._viewlets[viewlet.name] = viewlet;
 
       // Check model or modellist?
-      if (!Y.Lang.isFunction(model.size)) {
+      if (checkClassImplements(model, 'model')) {
         // Bind and listen for model changes.
         if (viewlet.bindings) {
           Y.each(viewlet.bindings, function(b) {this.addBinding(b);}, this);
@@ -197,7 +209,7 @@ YUI.add('juju-databinding', function(Y) {
         if (viewlet.update) {
           viewlet.update.call(viewlet, list);
         } else {
-          viewlet.container.setHTML(viewlet.generateDOM(list));
+          viewlet.container.setHTML(viewlet.render(list));
         }
       }, this);
     };
