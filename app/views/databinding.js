@@ -65,6 +65,14 @@ YUI.add('juju-databinding', function(Y) {
       });
     }
 
+    /**
+     * CHeck if a target name is in classes bases
+     *
+     * @method checkClassImplements
+     * @param {Object} obj to check
+     * @param {String} target class name, (ex. modelList)
+     * @return {Boolean} target in bases.
+     */
     function checkClassImplements(obj, target) {
       if (typeof obj !== 'object') {
         return false;
