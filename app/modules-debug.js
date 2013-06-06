@@ -31,13 +31,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // The "requires" property should not be used here because the javascript
 // minimizer will not parse it.
 var GlobalConfig = {
-  //filter: 'debug',
+  filter: 'debug',
   // Set "true" for verbose logging of YUI.
   debug: false,
 
   base: '/juju-ui/assets/javascripts/yui/',
   // Use Rollups
-  combine: true,
+  combine: false,
 
   // Don't load YUI CSS from YUI servers.
   fetchCSS: false,

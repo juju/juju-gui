@@ -19,10 +19,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
- * Provide the DataBinding library.
- *
- * @module views
- * @submodule views.databinding
+   Provide the DataBinding library.
+
+   @module views
+   @submodule views.databinding
  */
 
 YUI.add('juju-databinding', function(Y) {
@@ -30,10 +30,9 @@ YUI.add('juju-databinding', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
-      Templates = views.Templates,
-      BindingEngine;
+      Templates = views.Templates;
 
-  BindingEngine = (function() {
+  views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
       input: {
         get: function(node) { return node.get('value');},
@@ -52,6 +51,8 @@ YUI.add('juju-databinding', function(Y) {
       are specified all  bindings are updated.
 
       @method deltaFromChange
+      @param {Array} modelChangeKeys array of {String} keys that have changed.
+      @return {Array} bindings array filtered by keys when present.
     */
     function deltaFromChange(modelChangeKeys) {
       /*jshint validthis:true */
@@ -59,10 +60,8 @@ YUI.add('juju-databinding', function(Y) {
       if (modelChangeKeys === undefined) {
         return this._bindings;
       }
-      return Y.Array.filter(this._bindings, function(binding) {
-        if (modelChangeKeys.indexOf(binding.name) > -1) {
-          return binding;
-        }
+      return this._bindings.filter(function(binding) {
+        return (modelChangeKeys.indexOf(binding.name) > -1);
       });
     }
 
@@ -74,34 +73,64 @@ YUI.add('juju-databinding', function(Y) {
      */
     function BindingEngine() {
       this.model = null;
-      this._viewlets = {};   // {viewlet.name, viewlet}
+      this._viewlets = {};  // {viewlet.name: viewlet}
       this._events = [];    // [event handle]
       this._bindings = [];  // [binding, ...]
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
-      this.deltaFromChange = deltaFromChange;
     }
 
     /**
      * @method addBinding
-     * @param {Object} config A bindings Object, see description.
+     * @param {Object} config A bindings Object, see description in `bind`.
      * @chainable
      */
     BindingEngine.prototype.addBinding = function(config) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
+      // Ensure 'target' is an Array.
+      if (typeof binding === "string") {
+        binding.target = [binding.target];
+      }
       this._bindings.push(binding);
       return this;
     };
 
     /**
-     * Bind a model or modellist to one or more viewlets.
-     *
+      Bind a model or modellist to one or more viewlets.  This is a one-way
+      binding from the model to the DOM. Model changes are automatically made
+      in the DOM. Special handling is provided to detect conflicts and indicate
+      when form values differ from the model.
+
+
+      Viewlets can provide a number of configuration options
+      for use here:
+
+        - name {String}: A unique (within this engine) key to
+            index a viewlet by. (required)
+
+        - container {Y.Node} The container into which the viewlet renders.
+
+        - bindings {Array}: An array of binding descriptors. These
+            take the following form:
+              {name: {String} Name of Attribute on model,
+              target: {String || Array of String} CSS selectors to
+                      elements bound to this model attribute.
+            Bindings is optional in the case of ModelLists as the
+            pattern is to re-render children.
+
+        - update {Function}: Optional function used by ModelLists
+            to update its container on add/remove/change. If no
+            update method is passed in as configuration then
+            the original generateDOM method is called and its result
+            is set into container. Either way 'this' is the viewlet
+            and its called with the modellist as its argument.
+
       @method bind
       @param {Object} model || model list.
       @param {Object||Array} viewlet or array of viewlets.
       @chainable
-     */
+    */
     BindingEngine.prototype.bind = function(model, viewlet) {
       if (!Y.Lang.isArray(viewlet)) { viewlet = [viewlet]; }
       Y.each(viewlet, function(v) { this._bind(model, v);}, this);
@@ -109,29 +138,17 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-     * Bind a model to a DOM tree. This is a one-way
-     * binding from the model to the DOM. Model changes
-     * are automatically made in the DOM. Special
-     * handling is provided to detect conflicts and
-     * indicate when form values differ from the model.
-     *
-     * Options can include:
-     *    - key: {String} name to index the model under. This
-     *    allows the engine to associate multiple models with
-     *    a single DOM tree. This can be done by passing a new
-     *    key name on subsequent bind calls.
-     *    - bindings: {Object} Bindings array, see addBinding
-     *
-     * @method _bind
-     * @param {Object} model to bind.
-     * @param {Object} viewlet to prepare for updates.
-     * @chainable
-     */
+      Bind a model to a viewlet.
+
+      @method _bind
+      @param {Object} model to bind.
+      @param {Object} viewlet to prepare for updates.
+      @chainable
+    */
     BindingEngine.prototype._bind = function(model, viewlet) {
       if (!viewlet) {
         throw new Error('Unable to bind, invalid Viewlet');
       }
-      var key = model.id || model.get('id');
       // If we have a model, unbind it.
       if (this.model) {this.unbind();}
       this.model = model;
@@ -144,7 +161,7 @@ YUI.add('juju-databinding', function(Y) {
           Y.each(viewlet.bindings, function(b) {this.addBinding(b);}, this);
         }
         this._events.push(model.on('change', this._modelChangeHandler, this));
-        this._updateDOM(this.deltaFromChange());
+        this._updateDOM();
       } else {
         // Model list
         // TODO: If this is a lazy model list then the models contained are
@@ -166,14 +183,13 @@ YUI.add('juju-databinding', function(Y) {
      @method unbind
     */
     BindingEngine.prototype.unbind = function() {
-      Y.Array.each(this._events, function(handle) {
+      this._events.forEach(function(handle) {
         handle.detach();
       });
       this._events = [];
     };
 
     BindingEngine.prototype._modelListChange = function(evt) {
-      var self = this;
       var list = this.model;
       // Force an update to each viewlet registered to the
       // ModelList.
@@ -187,32 +203,32 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-     * Handle for Y.Model change event. Here we can choose
-     * which bindings to change based on the change event.
-     * This is called automatically by the framework.
-     *
-     * @method _modelChangeHandler
-     * @param {Event} evt Y.Model change event.
+      Handle for Y.Model change event. Here we can choose
+      which bindings to change based on the change event.
+      This is called automatically by the framework.
+
+      @method _modelChangeHandler
+      @param {Event} evt Y.Model change event.
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
       var keys = Y.Object.keys(evt.changed);
-      this._updateDOM(this.deltaFromChange(keys));
+      this._updateDOM(deltaFromChange.call(this, keys));
     };
 
     /**
-     * Mutate the DOM according to model changes. Designed to
-     * be called from both model and modellist contexts so
-     * we need to be able to track change/new/removed elements.
-     *
-     * @method _updateDOM
-     * @param {Array} delta Those bindings which should be updated.
-     *                When omitted defaults to all bindings.
+      Mutate the DOM according to model changes. Designed to
+      be called from both model and modellist contexts so
+      we need to be able to track change/new/removed elements.
+
+      @method _updateDOM
+      @param {Array} delta Those bindings which should be updated.
+                     When omitted defaults to all bindings.
      */
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var model = this.model;
       if (delta === undefined) {
-        delta = this.deltaFromChange();
+        delta = deltaFromChange.call(this);
       }
 
       Y.each(delta, function(binding) {
@@ -235,7 +251,6 @@ YUI.add('juju-databinding', function(Y) {
 
     return BindingEngine;
   })();
-  views.BindingEngine = BindingEngine;
 
 }, '0.1.0', {
   requires: ['juju-view-utils',

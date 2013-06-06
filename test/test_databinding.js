@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('data binding library', function() {
+describe.only('data binding library', function() {
   var Y, BindingEngine, utils, container;
 
 
@@ -56,17 +56,19 @@ describe('data binding library', function() {
                       'Unable to bind, invalid Viewlet');
       });
 
-      it('maintain proper binding references', function() {
+      it('maintains proper binding references', function() {
+        var viewlet = {
+          container: container,
+          bindings: []
+        };
         engine = new BindingEngine();
         container = utils.makeContainer();
-        engine.bind(new Y.Model({a: 'b'}),
-            {container: container,
-              bindings: []});
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
         // The default model object should be in place.
         assert.equal(Y.Object.keys(engine._events).length, 1);
         // Assign a new default model, the old event handler
         // will be unbound leaving the length consistent.
-        engine.bind(new Y.Model({foo: 'bar'}), container);
+        engine.bind(new Y.Model({foo: 'bar'}), viewlet);
         assert.equal(Y.Object.keys(engine._events).length, 1);
       });
     });
@@ -98,13 +100,13 @@ describe('data binding library', function() {
         });
       }
 
-      fieldShould('should be able to bind string to inputs',
+      fieldShould('bind string to inputs',
           '<input type="text"/>',
           'Wintermute', 'Neuromancer');
-      fieldShould('should be able to bind strings to textareas',
+      fieldShould('bind strings to textareas',
           '<textarea/>', 'Hello\nWorld', 'Goodbye');
 
-      fieldShould('should be able to bind numbers to inputs',
+      fieldShould('bind numbers to inputs',
           '<input type="number"/>', 1, 10);
     });
   });
