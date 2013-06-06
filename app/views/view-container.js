@@ -112,7 +112,8 @@ YUI.add('juju-view-container', function(Y) {
     @class ViewContainer
     @constructor
   */
-  Y.namespace('juju').ViewContainer = new Y.Base.create('view-container', Y.View, [], {
+  var juju = Y.namespace('juju');
+  juju.ViewContainer = new Y.Base.create('view-container', Y.View, [], {
 
     /**
       DOM bound events for any view container related events
