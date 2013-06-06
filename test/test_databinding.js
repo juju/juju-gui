@@ -57,59 +57,59 @@ describe('data binding library', function() {
       });
 
       it('maintain proper binding references', function() {
-          engine = new BindingEngine();
-          container = utils.makeContainer();
-          engine.bind(new Y.Model({a: 'b'}),
-                      {container: container,
-                       bindings: []});
-          // The default model object should be in place.
-          assert.equal(Y.Object.keys(engine._events).length, 1);
-          // Assign a new default model, the old event handler
-          // will be unbound leaving the length consistent.
-          engine.bind(new Y.Model({foo: 'bar'}), container);
-          assert.equal(Y.Object.keys(engine._events).length, 1);
-        });
+        engine = new BindingEngine();
+        container = utils.makeContainer();
+        engine.bind(new Y.Model({a: 'b'}),
+            {container: container,
+              bindings: []});
+        // The default model object should be in place.
+        assert.equal(Y.Object.keys(engine._events).length, 1);
+        // Assign a new default model, the old event handler
+        // will be unbound leaving the length consistent.
+        engine.bind(new Y.Model({foo: 'bar'}), container);
+        assert.equal(Y.Object.keys(engine._events).length, 1);
+      });
     });
 
     describe('field types', function() {
-        beforeEach(function(done) {
-          engine = new BindingEngine();
-          done();
-        });
+      beforeEach(function(done) {
+        engine = new BindingEngine();
+        done();
+      });
 
-        function fieldShould(spec, dom, v1, v2) {
-         return it(spec, function(done) {
-            // Prep the DOM with a known selector
-            var model = new Y.Model({test: v1});
-            if (Y.Lang.isString(dom)) {
-              dom = Y.Node.create(dom);
-            }
-            dom.set('name', 'test');
-            form = makeForm(dom);
-            engine.bind(model,
+      function fieldShould(spec, dom, v1, v2) {
+        return it(spec, function(done) {
+          // Prep the DOM with a known selector
+          var model = new Y.Model({test: v1});
+          if (Y.Lang.isString(dom)) {
+            dom = Y.Node.create(dom);
+          }
+          dom.set('name', 'test');
+          form = makeForm(dom);
+          engine.bind(model,
               {
                 container: form,
                 bindings: [{name: 'test', target: ['[name=test]']}]
               });
-              assert.equal(dom.get('value'), v1);
-              model.set('test', v2);
-              assert.equal(dom.get('value'), v2);
-              done();
-          });
-        }
+          assert.equal(dom.get('value'), v1);
+          model.set('test', v2);
+          assert.equal(dom.get('value'), v2);
+          done();
+        });
+      }
 
-        fieldShould('should be able to bind string to inputs',
-                   '<input type="text"/>',
-                   'Wintermute', 'Neuromancer');
-        fieldShould('should be able to bind strings to textareas',
-                   '<textarea/>', 'Hello\nWorld', 'Goodbye');
+      fieldShould('should be able to bind string to inputs',
+          '<input type="text"/>',
+          'Wintermute', 'Neuromancer');
+      fieldShould('should be able to bind strings to textareas',
+          '<textarea/>', 'Hello\nWorld', 'Goodbye');
 
-        fieldShould('should be able to bind numbers to inputs',
-                   '<input type="number"/>', 1, 10);
+      fieldShould('should be able to bind numbers to inputs',
+          '<input type="number"/>', 1, 10);
     });
   });
 
-  describe.only('modellist tests', function() {
+  describe('modellist tests', function() {
     var engine;
     beforeEach(function(done) {
       engine = new BindingEngine();
@@ -119,10 +119,10 @@ describe('data binding library', function() {
     it('should be able to observe modellists', function() {
       var list = new Y.ModelList();
       var template = Y.Handlebars.compile(
-        '{{#modellist}}' +
-        '   <input id="{{id}}" name="test" value="{{test}}"/>' +
-        '{{/modellist}}'
-      );
+          '{{#modellist}}' +
+          '   <input id="{{id}}" name="test" value="{{test}}"/>' +
+          '{{/modellist}}'
+          );
       list.add({test: 'alpha', id: 'a'});
       container = utils.makeContainer();
       engine.bind(list, {
@@ -131,7 +131,7 @@ describe('data binding library', function() {
         update: function(modellist) {
           var data = modellist.map(function(m) {return m.getAttrs();});
           this.container.setHTML(template({modellist: data}));
-        },
+        }
       });
       assert.equal(container.all('input').size(), 1);
       list.add({id: 'b', test: 'beta'});
@@ -139,7 +139,7 @@ describe('data binding library', function() {
 
       var output = [];
       container.all('input').each(function(n) {
-        output.push(n.get('value'))
+        output.push(n.get('value'));
       });
       assert.deepEqual(output, ['alpha', 'beta']);
     });

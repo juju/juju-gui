@@ -35,15 +35,15 @@ YUI.add('juju-databinding', function(Y) {
 
   BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
-        input: {
-          get: function(node) { return node.get('value');},
-          set: function(node, value) { node.set('value', value);}
-        },
-        textarea: {
-          get: function(node) { return node.get('text');},
-          set: function(node, value) { node.set('text', value);}
-        }
-      };
+      input: {
+        get: function(node) { return node.get('value');},
+        set: function(node, value) { node.set('value', value);}
+      },
+      textarea: {
+        get: function(node) { return node.get('text');},
+        set: function(node, value) { node.set('text', value);}
+      }
+    };
 
     /**
       Utility method to filter down our list of bindings
@@ -60,12 +60,18 @@ YUI.add('juju-databinding', function(Y) {
         return this._bindings;
       }
       return Y.Array.filter(this._bindings, function(binding) {
-          if (modelChangeKeys.indexOf(binding.name) > -1) {
-            return binding;
-          }
+        if (modelChangeKeys.indexOf(binding.name) > -1) {
+          return binding;
+        }
       });
     }
 
+    /**
+     * Class which manages the relationship between
+     * a model and its viewlet(s).
+     *
+     * @class BindingEngine
+     */
     function BindingEngine() {
       this.model = null;
       this._viewlets = {};   // {viewlet.name, viewlet}
@@ -92,7 +98,7 @@ YUI.add('juju-databinding', function(Y) {
      * Bind a model or modellist to one or more viewlets.
      *
       @method bind
-      @param {Object} model || model list
+      @param {Object} model || model list.
       @param {Object||Array} viewlet or array of viewlets.
       @chainable
      */
@@ -117,11 +123,11 @@ YUI.add('juju-databinding', function(Y) {
      *    - bindings: {Object} Bindings array, see addBinding
      *
      * @method _bind
-     * @param {Object} model
-     * @param {Object} viewlet
+     * @param {Object} model to bind.
+     * @param {Object} viewlet to prepare for updates.
      * @chainable
      */
-   BindingEngine.prototype._bind = function (model, viewlet) {
+    BindingEngine.prototype._bind = function(model, viewlet) {
       if (!viewlet) {
         throw new Error('Unable to bind, invalid Viewlet');
       }
@@ -148,10 +154,10 @@ YUI.add('juju-databinding', function(Y) {
         // triggered to re-render its contents. All our collection views
         // are currently read-only so this work ok.
         this._events.push(model.after(['add', 'remove', '*:change'],
-                                   this._modelListChange, this));
+                                      this._modelListChange, this));
         this._modelListChange();
       }
-     return this;
+      return this;
     };
 
     /**
@@ -190,7 +196,7 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
       var keys = Y.Object.keys(evt.changed);
-     this._updateDOM(this.deltaFromChange(keys));
+      this._updateDOM(this.deltaFromChange(keys));
     };
 
     /**
@@ -212,17 +218,17 @@ YUI.add('juju-databinding', function(Y) {
       Y.each(delta, function(binding) {
         Y.each(binding.target, function(target) {
           var selection = Y.all(target);
-           Y.each(selection, function(node) {
-             // This could be done ahead of time, but by doing this at runtime
-             // we allow very flexible DOM mutation out of band. Revisit if
-             // this shows up on a profile.
-             var elementKind = node.getDOMNode().tagName.toLowerCase();
-             var field = self._fieldHandlers[elementKind];
+          Y.each(selection, function(node) {
+            // This could be done ahead of time, but by doing this at runtime
+            // we allow very flexible DOM mutation out of band. Revisit if
+            // this shows up on a profile.
+            var elementKind = node.getDOMNode().tagName.toLowerCase();
+            var field = self._fieldHandlers[elementKind];
 
-             // Do conflict detection
-             // Do data-field
-             field.set.call(binding, node, binding.get(model));
-           });
+            // Do conflict detection
+            // Do data-field
+            field.set.call(binding, node, binding.get(model));
+          });
         });
       });
     };
@@ -234,5 +240,6 @@ YUI.add('juju-databinding', function(Y) {
 }, '0.1.0', {
   requires: ['juju-view-utils',
              'juju-models',
+             'observe',
              'node']
 });

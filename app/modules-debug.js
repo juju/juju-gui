@@ -106,6 +106,13 @@ var GlobalConfig = {
         'FileSaver': {
           fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
         }
+      },
+      observe: {
+        modules: {
+          'observe': {
+            fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
+          }
+        }
       }
     },
 
