@@ -172,7 +172,7 @@ build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
-	node_modules/.bin/yuidoc -o yuidoc -x assets app
+	node_modules/.bin/yuidoc --lint -o yuidoc -x assets app
 
 main-doc:
 	make -C docs SPHINXOPTS=-W html
@@ -203,7 +203,7 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 
 $(NON_SPRITE_IMAGES):
 	mkdir -p build-shared/juju-ui/assets/images
-	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
+	cp -r app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
 
 install-npm-packages: $(NODE_TARGETS)
 
@@ -262,7 +262,8 @@ jshint: node_modules/jshint
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented
 
-yuidoc-lint: $(JSFILES)
+lint-yuidoc: $(JSFILES)
+	node_modules/.bin/yuidoc --lint -x assets app
 	bin/lint-yuidoc
 
 recess: node_modules/recess
@@ -272,7 +273,19 @@ recess: node_modules/recess
 	node_modules/recess/bin/recess lib/views/stylesheet.less \
 	    --config recess.json | grep -q Perfect
 
-lint: test-prep jshint gjslint recess yuidoc-lint test-filtering
+lint: test-prep jshint gjslint recess lint-license-headers test-filtering \
+		lint-yuidoc
+
+lint-license-headers:
+	@# Take the list of JS files in one long line and break them into
+	@# multiple lines (this assumes there are no spaces in the paths).
+	@# Remove non-JS files, remove third-party files, and remove files in
+	@# the root of the project.  Finally, search for copyright notices in
+	@# the files and report files that do not have one.
+	echo $(JSFILES) | sed 's/ /\n/g' \
+	| grep '\.js$$' | grep -v /assets/ | grep / \
+	| xargs -I {} sh -c "grep -L '^Copyright (C) 2[^ ]* Canonical Ltd.' {}" \
+	|| (echo "The above files are missing copyright headers."; false)
 
 virtualenv/bin/python:
 	virtualenv virtualenv
@@ -587,8 +600,9 @@ endif
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: beautify build build-files build-devel clean clean-all clean-deps \
 	clean-docs code-doc debug devel docs dist gjslint help \
-	install-npm-packages jshint lint main-doc npm-cache npm-cache-file \
-	prep prod recess server spritegen test test-debug test-misc test-prep \
-	test-prod undocumented view-code-doc view-docs view-main-doc yuidoc-lint
+	install-npm-packages jshint lint lint-yuidoc main-doc npm-cache \
+	npm-cache-file prep prod recess server spritegen test test-debug \
+	test-misc test-prep test-prod undocumented view-code-doc view-docs \
+	view-main-doc
 
 .DEFAULT_GOAL := all

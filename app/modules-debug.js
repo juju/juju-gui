@@ -251,6 +251,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/templates.js'
         },
 
+        'juju-view-container': {
+          fullpath: '/juju-ui/views/view-container.js'
+        },
+
         'juju-views': {
           use: [
             'handlebars',

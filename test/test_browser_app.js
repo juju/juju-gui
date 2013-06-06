@@ -212,6 +212,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('correctly strips viewmode from the charmID', function() {
+      app = new browser.Browser();
+      var paths = [
+        'foo/bar-66',
+        'search/foo/bar-66',
+        'sidebar/foo/bar-66',
+        'minimized/foo/bar-66',
+        'fullscreen/foo/bar-66',
+        'sidebar/search/foo/bar-66',
+        'minimized/search/foo/bar-66',
+        'fullscreen/search/foo/bar-66'
+      ];
+      paths.map(function(id) {
+        assert.equal(
+            'foo/bar-66', app._stripViewMode(id),
+            id + ' was not stripped correctly.'
+        );
+      });
+    });
+
   });
 
   describe('browser subapp display tree', function() {
@@ -314,6 +334,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
+    });
+
+    it('resets filters when navigating away from search', function() {
+      browser._viewState.search = true;
+      browser._filter.set('text', 'foo');
+      browser._getStateUrl({search: false});
+      assert.equal('', browser._filter.get('text'));
     });
 
     it('viewmodes are not a valid charm id', function() {

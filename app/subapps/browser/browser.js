@@ -82,6 +82,9 @@ YUI.add('subapp-browser', function(Y) {
       urlParts.push(this._viewState.viewmode);
       if (this._viewState.search) {
         urlParts.push('search');
+      } else if (this._oldState.search) {
+        // We had a search, but are moving away; clear the old search.
+        this._filter.reset();
       }
       if (this._viewState.charmID) {
         urlParts.push(this._viewState.charmID);
@@ -149,6 +152,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the charm details based on the current
        state.
 
+       @method _shouldShowCharm
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
@@ -169,6 +173,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the editorial content based on the current
        state.
 
+       @method _shouldShowEditorial
        @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
@@ -186,6 +191,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the search results based on the current
        state.
 
+       @method _shouldShowSearch
        @return {Boolean} true if should show.
      */
     _shouldShowSearch: function() {
@@ -231,7 +237,7 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
+          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
@@ -456,6 +462,16 @@ YUI.add('subapp-browser', function(Y) {
         // Add any sidebar charms to the running cache.
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
+      this._editorial.on(this._editorial.EV_CATEGORY_LINK_CLICKED,
+          function(ev) {
+            var change = {
+              search: true,
+              filter: {
+                categories: [ev.category]
+              }
+            };
+            this.fire('viewNavigate', {change: change});
+          });
 
       this._editorial.render(this._cache.interesting);
       this._editorial.addTarget(this);
@@ -681,6 +697,8 @@ YUI.add('subapp-browser', function(Y) {
       Based on the viewmode and the hidden check what divs we should be
       showing or hiding.
 
+      @method updateVisible
+      @return {undefined} Nothing.
     */
     updateVisible: function() {
       var minview = this.get('minNode'),
@@ -733,7 +751,7 @@ YUI.add('subapp-browser', function(Y) {
            tests there's no config for talking to the api so we have to watch
            out in test runs and allow the store to be broken.
 
-           method store.valueFn
+           @method store.valueFn
         */
         valueFn: function() {
           var cfg = {
@@ -797,6 +815,8 @@ YUI.add('subapp-browser', function(Y) {
         /**
           Find the minNode and cache it for later use.
 
+          @attribute minNode
+          @readOnly
         */
         valueFn: function() {
           return Y.one('#subapp-browser-min');

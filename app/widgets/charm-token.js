@@ -89,6 +89,7 @@ YUI.add('browser-charm-token', function(Y) {
 
       /**
         The id of the charm to render
+        @attribute id
         @default undefined
         @type {String}
       */
@@ -101,6 +102,16 @@ YUI.add('browser-charm-token', function(Y) {
 
        */
       is_approved: {},
+
+      /**
+       * @attribute mainCategory
+       * @default null
+       * @type {String}
+       *
+       */
+      mainCategory: {
+        value: null
+      },
 
       /**
        * @attribute name
