@@ -272,7 +272,19 @@ recess: node_modules/recess
 	node_modules/recess/bin/recess lib/views/stylesheet.less \
 	    --config recess.json | grep -q Perfect
 
-lint: test-prep jshint gjslint recess yuidoc-lint test-filtering
+lint: test-prep jshint gjslint recess lint-license-headers test-filtering \
+		yuidoc-lint
+
+lint-license-headers:
+	@# Take the list of JS files in one long line and break them into
+	@# multiple lines (this assumes there are no spaces in the paths).
+	@# Remove non-JS files, remove third-party files, and remove files in
+	@# the root of the project.  Finally, search for copyright notices in
+	@# the files and report files that do not have one.
+	echo $(JSFILES) | sed 's/ /\n/g' \
+	| grep '\.js$$' | grep -v /assets/ | grep / \
+	| xargs -I {} sh -c "grep -L '^Copyright (C) 2[^ ]* Canonical Ltd.' {}" \
+	|| (echo "The above files are missing copyright headers."; false)
 
 virtualenv/bin/python:
 	virtualenv virtualenv
