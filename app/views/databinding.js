@@ -66,7 +66,7 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     function checkClassImplements(obj, target) {
-      if (typeof obj !== "object") {
+      if (typeof obj !== 'object') {
         return false;
       }
 
