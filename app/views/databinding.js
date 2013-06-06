@@ -89,7 +89,7 @@ YUI.add('juju-databinding', function(Y) {
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
       // Ensure 'target' is an Array.
-      if (typeof binding === "string") {
+      if (typeof binding === 'string') {
         binding.target = [binding.target];
       }
       this._bindings.push(binding);
