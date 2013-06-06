@@ -35,12 +35,12 @@ YUI.add('juju-databinding', function(Y) {
   views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
       input: {
-        get: function(node) { return node.get('value');},
-        set: function(node, value) { node.set('value', value);}
+        'get': function(node) { return node.get('value');},
+        'set': function(node, value) { node.set('value', value);}
       },
       textarea: {
-        get: function(node) { return node.get('text');},
-        set: function(node, value) { node.set('text', value);}
+        'get': function(node) { return node.get('text');},
+        'set': function(node, value) { node.set('text', value);}
       }
     };
 
@@ -48,7 +48,7 @@ YUI.add('juju-databinding', function(Y) {
       Utility method to filter down our list of bindings
       based on optional list of bound model attributes
       that we have change indications on. If no keys
-      are specified all  bindings are updated.
+      are specified, all bindings are updated.
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
@@ -66,7 +66,7 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     /**
-     * CHeck if a target name is in classes bases
+     * Check if a target name is in classes bases
      *
      * @method checkClassImplements
      * @param {Object} obj to check.
@@ -133,9 +133,12 @@ YUI.add('juju-databinding', function(Y) {
 
         - bindings {Array}: An array of binding descriptors. These
             take the following form:
-              {name: {String} Name of Attribute on model,
+              name: {String} Name of Attribute on model,
               target: {String || Array of String} CSS selectors to
                       elements bound to this model attribute.
+              get: {Function} (optional) method to override
+                  default attr access pattern. get(model) -> value.
+
             Bindings is optional in the case of ModelLists as the
             pattern is to re-render children.
 
