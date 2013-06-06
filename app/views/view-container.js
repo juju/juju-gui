@@ -18,6 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+
 /**
   Adds the ViewContainer constructor class and viewlet instantiable object
 
@@ -31,7 +32,7 @@ YUI.add('juju-view-container', function(Y) {
 
     Instantiate with Object.create()
 
-    @Class ViewletBase
+    @class ViewletBase
     @constructor
   */
   var ViewletBase = {
@@ -146,7 +147,6 @@ YUI.add('juju-view-container', function(Y) {
 
       @property templateConfig
       @type {Object}
-      @type undefined
     */
 
     /**
@@ -211,7 +211,7 @@ YUI.add('juju-view-container', function(Y) {
       Switches the visible viewlet to the requested.
 
       @method showViewlet
-      @param {String} viewletName is a string representing the viewlet name
+      @param {String} viewletName is a string representing the viewlet name.
     */
     showViewlet: function(viewletName) {
       var container = this.get('container');
@@ -249,14 +249,22 @@ YUI.add('juju-view-container', function(Y) {
       @method expandViewletConfig
     */
     expandViewletConfig: function() {
+      // uncomment below when we upgrade jshint
+      // /*jshint -W089 */
       for (var viewlet in this.viewletConfig) {
-        for (var cfg in this.viewletConfig[viewlet]) {
-          this.viewletConfig[viewlet][cfg] = {
-            value: this.viewletConfig[viewlet][cfg],
-            writable: true
+        if (true) { // remove when we upgrade jshint
+          for (var cfg in this.viewletConfig[viewlet]) {
+            if (true) { // remove when we upgrade jshint
+              this.viewletConfig[viewlet][cfg] = {
+                value: this.viewletConfig[viewlet][cfg],
+                writable: true
+              };
+            }
           }
         }
       }
+      // uncomment below when we upgrade jshint
+      // /*jshint +W089 */
     },
 
     /**

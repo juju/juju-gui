@@ -86,11 +86,11 @@ describe('View Container', function() {
   });
 
   it('instantiates and sets up a new controller instance property',
-    function() {
-      generateViewContainer();
-      assert.equal(
-          viewContainer.controller instanceof fakeController, true);
-    });
+      function() {
+        generateViewContainer();
+        assert.equal(
+            viewContainer.controller instanceof fakeController, true);
+      });
 
   it('should generate viewlet instances based on the config', function() {
     generateViewContainer();
@@ -143,7 +143,8 @@ describe('View Container', function() {
     viewContainer.render();
     vlKeys.forEach(function(key) {
       viewContainer.showViewlet(key);
-      assert.equal(viewContainer.viewlets[key].container.getStyle('display'), 'block');
+      assert.equal(
+          viewContainer.viewlets[key].container.getStyle('display'), 'block');
     });
   });
 
