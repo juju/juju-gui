@@ -34,6 +34,7 @@ YUI.add('subapp-browser', function(Y) {
 
      @class Browser
      @extends {juju.SubApp}
+
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
@@ -41,10 +42,11 @@ YUI.add('subapp-browser', function(Y) {
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
-        Show or hide the details panel.
+      Show or hide the details panel.
 
-        @method _detailsVisible
-        @param {Boolean} visible set the panel to hide or show.
+      @method _detailsVisible
+      @param {Boolean} visible set the panel to hide or show.
+
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data');
@@ -59,11 +61,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Given the current subapp state, generate a url to pass up to the
-        routing code to route to.
+      Given the current subapp state, generate a url to pass up to the
+      routing code to route to.
 
-        @method _getStateUrl
-        @param {Object} change the values to change in the current state.
+      @method _getStateUrl
+      @param {Object} change the values to change in the current state.
+
      */
     _getStateUrl: function(change) {
       var urlParts = [];
@@ -100,11 +103,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Generate a standard shared set of cfg all Views can expect to see.
+     Generate a standard shared set of cfg all Views can expect to see.
 
-       @method _getViewCfg
-       @param {Object} cfg additional config to merge into the default view
-       config.
+     @method _getViewCfg
+     @param {Object} cfg additional config to merge into the default view
+     config.
+
      */
     _getViewCfg: function(cfg) {
       // We always add the _filter data to every request because most of them
@@ -156,6 +160,8 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
+      console.log('should show charm');
+      console.log(this._viewState);
       if (
           this._viewState.charmID &&
           (
@@ -237,11 +243,13 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
+          /^\/?(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
+        // Strip out any trailing / in the id
+        id = id.replace(/\/$/, '');
 
         // if the id is now empty, set it to null.
         if (id === '') {
@@ -411,6 +419,9 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.charm = model;
       }
 
+      console.log('rendering charm details');
+      console.log(extraCfg);
+
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
@@ -453,7 +464,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._viewState.charmID) {
         extraCfg.activeID = this._viewState.charmID;
       }
-
 
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
@@ -638,9 +648,6 @@ YUI.add('subapp-browser', function(Y) {
         if (this._search) {
           this._search.set('activeID', null);
         }
-
-
-
       }
 
       // Sync that the state has changed.
@@ -672,11 +679,23 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
+      console.log('Checking');
+      console.log(req.params.id);
+
       // for the route /sidebar|minimized|fullscreen it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
       var id = this._stripViewMode(req.params.id);
       req.params.id = id;
+
+      // If this path contains multiple parts it almost certainly has an id
+      // hidden in it. Try to parse it out and set it.
+      var hasIdMatch = '\/([^/]+\/){2,4}';
+      if (!req.params.id && req.path.match(hasIdMatch)) {
+        console.log('matched');
+        req.params.id = this._stripViewMode(req.path);
+        console.log(req.params.id);
+      }
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
