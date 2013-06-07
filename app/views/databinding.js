@@ -108,7 +108,7 @@ YUI.add('juju-databinding', function(Y) {
      * @param {Object} config A bindings Object, see description in `bind`.
      * @chainable
      */
-    BindingEngine.prototype.addBinding = function(config) {
+    BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
@@ -116,6 +116,7 @@ YUI.add('juju-databinding', function(Y) {
       if (typeof binding.target === 'string') {
         binding.target = [binding.target];
       }
+      binding.container = viewlet.container;
       this._bindings.push(binding);
       return this;
     };
@@ -185,7 +186,7 @@ YUI.add('juju-databinding', function(Y) {
       if (checkClassImplements(model, 'model')) {
         // Bind and listen for model changes.
         if (viewlet.bindings) {
-          Y.each(viewlet.bindings, function(b) {this.addBinding(b);}, this);
+          Y.each(viewlet.bindings, function(b) {this.addBinding(b, viewlet);}, this);
         }
         this._events.push(model.on('change', this._modelChangeHandler, this));
         this._updateDOM();
@@ -260,7 +261,7 @@ YUI.add('juju-databinding', function(Y) {
 
       Y.each(delta, function(binding) {
         Y.each(binding.target, function(target) {
-          var selection = Y.all(target);
+          var selection = binding.container.all(target);
           Y.each(selection, function(node) {
             // This could be done ahead of time, but by doing this at runtime
             // we allow very flexible DOM mutation out of band. Revisit if
@@ -273,7 +274,6 @@ YUI.add('juju-databinding', function(Y) {
 
             // Do conflict detection
             // Do data-field
-            console.log("updating binding", binding.get(model), node.getDOMNode(), field, binding);
             field.set.call(binding, node, binding.get(model));
           });
         });
