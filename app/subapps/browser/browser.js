@@ -159,6 +159,8 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
+      console.log('should show charm');
+      console.log(this._viewState);
       if (
           this._viewState.charmID &&
           (
@@ -413,6 +415,9 @@ YUI.add('subapp-browser', function(Y) {
       if (model) {
         extraCfg.charm = model;
       }
+
+      console.log('rendering charm details');
+      console.log(extraCfg);
 
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
@@ -671,6 +676,9 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
+      console.log('Checking');
+      console.log(req.params.id);
+
       // for the route /sidebar|minimized|fullscreen it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
@@ -681,7 +689,9 @@ YUI.add('subapp-browser', function(Y) {
       // hidden in it. Try to parse it out and set it.
       var hasIdMatch = '\/([^/]+\/){2,4}';
       if (!req.params.id && req.path.match(hasIdMatch)) {
+        console.log('matched');
         req.params.id = this._stripViewMode(req.path);
+        console.log(req.params.id);
       }
 
       // Update the state for the rest of things to figure out what to do.
