@@ -172,8 +172,6 @@ YUI.add('juju-view-container', function(Y) {
       this.viewletConfig = options.viewlets;
       this.template = options.template;
       this.templateConfig = options.templateConfig;
-      // create new instance of passed in controller
-      this.controller = options.controller;
       this.viewlets = this._generateViewlets();
     },
 
