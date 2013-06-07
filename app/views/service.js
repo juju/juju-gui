@@ -1050,10 +1050,10 @@ YUI.add('juju-view-service', function(Y) {
         name: 'units',
         template: Templates['show_units_large'],
         rebind: function(model) {
-          return window.app.db.units.get_units_for_service(model, true);
+          return model.get('units');
         },
         update: function(modellist) {
-          var data = {units: modellist.toArray().map(function(m) { m.getAttrs();})};
+          var data = {units: modellist.toArray()};
           this.container.setHTML(this.template(data));
         }
       },
