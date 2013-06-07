@@ -1257,13 +1257,21 @@ YUI.add('juju-topology-service', function(Y) {
      */
     show_service: function(service) {
       var topo = this.get('component');
+      var setInspector = topo.get('setInspector');
+      var getInspector = topo.get('getInspector');
       var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
 
       topo.detachContainer();
-      topo.fire('navigateTo', {
-        url: getModelURL(service)
-      });
+      if (flags.serviceInspector) {
+        var serviceInspector = new views.ServiceInspector(service);
+        setInspector(serviceInspector);
+        serviceInspector.render();
+      } else {
+        topo.fire('navigateTo', {
+          url: getModelURL(service)
+        });
+      }
     },
 
     /*
@@ -1336,6 +1344,7 @@ YUI.add('juju-topology-service', function(Y) {
   requires: [
     'd3',
     'd3-components',
+    'juju-view-service',
     'juju-templates',
     'juju-models',
     'juju-env',

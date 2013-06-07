@@ -173,8 +173,19 @@ YUI.add('juju-view-container', function(Y) {
       this.template = options.template;
       this.templateConfig = options.templateConfig;
       // create new instance of passed in controller
-      this.controller = new options.controller();
+      this.controller = options.controller;
       this.viewlets = this._generateViewlets();
+    },
+
+    /**
+      Return the name of the model as a key to index its
+      inspector panel.
+
+      @method getName
+      @return {String} id of the model
+    */
+    getName: function() {
+      return this.get('model').get('id');
     },
 
     /**

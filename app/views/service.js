@@ -1029,8 +1029,66 @@ YUI.add('juju-view-service', function(Y) {
 
   views.service = ServiceView;
 
+
+  /**
+    @class ServiceInspector
+   */
+  var ServiceInspector = (function() {
+    var juju = Y.namespace('juju');
+    var DEFAULT_VIEWLETS = {
+      overview: {
+        template: Templates.serviceOverview,
+        bindings: [
+          {name: 'displayName', target: '[data-bind=displayName]'},
+          {name: 'charm', target: '[data-bind=charm]'},
+          {name: 'aggregate_map.running', target: '[data-bind=running]'},
+          {name: 'aggregate_map.error', target: '[data-bind=error]'}
+        ]
+      },
+      units: {},
+      config: {},
+      constraints: {},
+      relations: {}
+    };
+    function ServiceInspector(model, options) {
+      this.model = model;
+      options = options || {};
+      options.viewlets = options.viewlets || {};
+      options.template = Templates['view-container'],
+      options.controller = this;
+      options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
+                               true, undefined, 0,  true);
+      options.model = model;
+      this.bindEngine = new views.BindingEngine();
+      this.inspector = new juju.ViewContainer(options);
+    }
+
+    ServiceInspector.prototype = {
+      getName: function() {
+        return this.inspector.getName();
+      },
+      bind: function(model, viewlet) {
+          this.bindEngine.bind(model, viewlet);
+          return this;
+      },
+      render: function() {
+        this.inspector.render();
+        return this;
+      },
+
+
+    }
+
+    return ServiceInspector;
+
+  })();
+  views.ServiceInspector = ServiceInspector;
+
+
 }, '0.1.0', {
   requires: ['panel',
+    'juju-databinding',
+    'juju-view-container',
     'juju-view-utils',
     'juju-models',
     'base-build',
