@@ -668,7 +668,7 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
-      // For the * request there will be no req.params. Update it forced
+      // For the * request there will be no req.params. Update it forcing
       // sidebar default viewmode.
       req.params = {
         viewmode: 'sidebar'

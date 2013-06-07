@@ -185,7 +185,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 (function() {
-  describe.only('browser app', function() {
+  describe('browser app', function() {
     var Y, app, browser;
 
     before(function(done) {
