@@ -1264,8 +1264,11 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
-        var serviceInspector = new views.ServiceInspector(service);
-        setInspector(serviceInspector);
+        var serviceInspector = getInspector(service.get('id'));
+        if (!serviceInspector) {
+          serviceInspector = new views.ServiceInspector(service);
+          setInspector(serviceInspector);
+        }
       } else {
         topo.fire('navigateTo', {
           url: getModelURL(service)

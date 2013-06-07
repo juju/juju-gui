@@ -271,10 +271,12 @@ YUI.add('juju-view-container', function(Y) {
           for (var cfg in this.viewletConfig[viewlet]) {
             // remove ifcheck when we upgrade jshint
             if (this.viewletConfig[viewlet].hasOwnProperty(cfg)) {
-              this.viewletConfig[viewlet][cfg] = {
-                value: this.viewletConfig[viewlet][cfg],
-                writable: true
-              };
+              if (this.viewletConfig[viewlet][cfg].value === undefined) {
+                this.viewletConfig[viewlet][cfg] = {
+                  value: this.viewletConfig[viewlet][cfg],
+                  writable: true
+                };
+              }
             }
           }
         }
