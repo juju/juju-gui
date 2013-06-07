@@ -106,11 +106,17 @@ var GlobalConfig = {
         }
       }
     },
-
     filesaver: {
       modules: {
         'FileSaver': {
           fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
+        }
+      },
+      observe: {
+        modules: {
+          'observe': {
+            fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
+          }
         }
       }
     },
@@ -150,7 +156,9 @@ var GlobalConfig = {
         'juju-inspector-widget': {
           fullpath: '/juju-ui/widgets/inspector-widget.js'
         },
-
+        'juju-databinding': {
+          fullpath: '/juju-ui/views/databinding.js'
+        },
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
@@ -246,6 +254,10 @@ var GlobalConfig = {
 
         'juju-templates': {
           fullpath: '/juju-ui/templates.js'
+        },
+
+        'juju-view-container': {
+          fullpath: '/juju-ui/views/view-container.js'
         },
 
         'juju-views': {

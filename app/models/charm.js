@@ -461,13 +461,11 @@ YUI.add('juju-charm-models', function(Y) {
           return tmp.join('/');
         }
       },
-      /**
-        Does this charm have an icon file. Helper used for template rendering
-        decisions.
-
-      */
       hasIcon: {
         /**
+          Does this charm have an icon file. Helper used for template rendering
+          decisions.
+
           @method hasIcon.valueFn
           @return {Boolean} Does the Charm have an icon file.
 
@@ -519,7 +517,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       maintainer: {},
-      /**
+      /*
         API related metdata information for this charm object.
 
         This includes information such as related charms calculated by the
