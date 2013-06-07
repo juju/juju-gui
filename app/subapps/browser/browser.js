@@ -322,6 +322,9 @@ YUI.add('subapp-browser', function(Y) {
         this._viewState.querystring = null;
       }
 
+      console.log('view state');
+      console.log(this._viewState);
+
       this._filter.update(query);
     },
 
@@ -656,6 +659,108 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      When there's no charm or viewmode default to a sidebar view for all
+      pages.
+
+      @method routeSidebarDefault
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeSidebarDefault: function(req, res, next) {
+      console.log('sidebar default');
+      console.log(req.path);
+
+      // Check if there's any path. If there is, someone else will handle
+      // routing it. Just carry on.
+      if (req.path.replace(/\//, '') !== '') {
+        console.log('I am outta here');
+        next();
+        return;
+      }
+
+      // For the * request there will be no req.params. Update it forced
+      // sidebar default viewmode.
+      req.params = {
+        viewmode: 'sidebar'
+      };
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        console.log('Render the sidebar');
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
+    },
+
+    /**
+      A url direct to a charm id works, however it needs to default the
+      viewmode to sidebar in that case.
+
+      Almost any url with a component to it matches this route. We need to
+      check if there are exactly *two* parts and if so, check if they're a
+      valid id-able segment. (Not /sidebar/search for instance)
+
+      @method routeDirectCharmId
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeDirectCharmId: function(req, res, next) {
+      console.log('charm id direct');
+      // Check if we have exactly two url parts in our path.
+      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+          id = null;
+
+      console.log(req.path);
+      console.log(req.path.match(hasIdMatch));
+      if (req.path.match(hasIdMatch)) {
+        id = this._stripViewMode(req.path);
+        id = id.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
+      }
+
+      console.log('id');
+      console.log(id);
+
+      if (!id) {
+        next();
+        return;
+      } else {
+        // We've got a valid id. Setup the params for our view state.
+        req.params = {
+          id: id,
+          viewmode: 'sidebar'
+        };
+      }
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        console.log('render sidebar 2');
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
+    },
+
+    /**
        Dispatch to the correct viewmode based on the route that was hit.
 
        @method routeView
@@ -664,6 +769,10 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      console.log('route view man');
+      console.log('orig req');
+      console.log(req);
+
       // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
@@ -679,23 +788,15 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
-      console.log('Checking');
-      console.log(req.params.id);
-
       // for the route /sidebar|minimized|fullscreen it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
       var id = this._stripViewMode(req.params.id);
       req.params.id = id;
 
-      // If this path contains multiple parts it almost certainly has an id
-      // hidden in it. Try to parse it out and set it.
-      var hasIdMatch = '\/([^/]+\/){2,4}';
-      if (!req.params.id && req.path.match(hasIdMatch)) {
-        console.log('matched');
-        req.params.id = this._stripViewMode(req.path);
-        console.log(req.params.id);
-      }
+
+      console.log('post-req');
+      console.log(req);
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
@@ -796,8 +897,8 @@ YUI.add('subapp-browser', function(Y) {
         value: [
           // Show the sidebar on all places if its not manually shut off or
           // turned into a fullscreen route.
-          { path: '*', callbacks: 'routeView'},
-          { path: '/*id/', callbacks: 'routeView'},
+          { path: '*', callbacks: 'routeSidebarDefault'},
+          { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/:viewmode/', callbacks: 'routeView' },
           { path: '/:viewmode/search/', callbacks: 'routeView' },
           { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
