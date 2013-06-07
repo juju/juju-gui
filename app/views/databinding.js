@@ -226,6 +226,9 @@ YUI.add('juju-databinding', function(Y) {
       // Force an update to each viewlet registered to the
       // ModelList.
       Y.each(this._viewlets, function(viewlet) {
+        if (viewlet.rebind) {
+          list = viewlet.rebind(list);
+        }
         if (viewlet.update) {
           viewlet.update.call(viewlet, list);
         } else {

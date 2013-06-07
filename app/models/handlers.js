@@ -133,7 +133,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       } else {
         data = change;
       }
-      modelList.process_delta(action, data);
+      modelList.process_delta(action, data, db);
     },
 
     /**
@@ -164,7 +164,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         public_address: change.PublicAddress
       };
       db.units.process_delta(action, unitData);
-      db.machines.process_delta(action, machineData);
+      db.machines.process_delta(action, machineData, db);
     },
 
     /**
