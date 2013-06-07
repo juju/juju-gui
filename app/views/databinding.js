@@ -41,6 +41,12 @@ YUI.add('juju-databinding', function(Y) {
       textarea: {
         'get': function(node) { return node.get('text');},
         'set': function(node, value) { node.set('text', value);}
+      },
+      default: {
+        'get': function(node) { return node.get('text');},
+        'set': function(node, value) {
+          node.set('html', value);
+          console.log("set node.html to ", value, node);}
       }
     };
 
@@ -263,9 +269,13 @@ YUI.add('juju-databinding', function(Y) {
             // this shows up on a profile.
             var elementKind = node.getDOMNode().tagName.toLowerCase();
             var field = self._fieldHandlers[elementKind];
+            if (!field) {
+              field = self._fieldHandlers.default;
+            }
 
             // Do conflict detection
             // Do data-field
+            console.log("updating binding", binding.get(model), node.getDOMNode(), field, binding);
             field.set.call(binding, node, binding.get(model));
           });
         });

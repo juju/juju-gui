@@ -1037,18 +1037,19 @@ YUI.add('juju-view-service', function(Y) {
     var juju = Y.namespace('juju');
     var DEFAULT_VIEWLETS = {
       overview: {
+        name: 'overview',
         template: Templates.serviceOverview,
         bindings: [
           {name: 'displayName', target: '[data-bind=displayName]'},
           {name: 'charm', target: '[data-bind=charm]'},
-          {name: 'aggregate_map.running', target: '[data-bind=running]'},
-          {name: 'aggregate_map.error', target: '[data-bind=error]'}
+          {name: 'aggregated_status.running', target: '[data-bind=running]'},
+          {name: 'aggregated_status.error', target: '[data-bind=error]'}
         ]
-      },
-      units: {},
-      config: {},
-      constraints: {},
-      relations: {}
+      }
+      //units: {},
+      //config: {},
+      //constraints: {},
+      //relations: {}
     };
     function ServiceInspector(model, options) {
       this.model = model;
@@ -1056,11 +1057,23 @@ YUI.add('juju-view-service', function(Y) {
       options.viewlets = options.viewlets || {};
       options.template = Templates['view-container'],
       options.controller = this;
+      var container = Y.Node.create('<div>')
+          .addClass('panel')
+          .addClass('yui3-juju-inspector')
+          .appendTo(Y.one('#content'));
+      options.container = container;
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0,  true);
       options.model = model;
-      this.bindEngine = new views.BindingEngine();
+      this.bindingEngine = new views.BindingEngine();
       this.inspector = new juju.ViewContainer(options);
+      this.inspector.render();
+      // XXX: order of operations is wrong so force an
+      // update with the protected method for now.
+      this.bindingEngine._updateDOM()
+      this.inspector.showViewlet('overview');
+      // XXX: to debug
+      window.SI = this;
     }
 
     ServiceInspector.prototype = {
@@ -1068,7 +1081,7 @@ YUI.add('juju-view-service', function(Y) {
         return this.inspector.getName();
       },
       bind: function(model, viewlet) {
-          this.bindEngine.bind(model, viewlet);
+          this.bindingEngine.bind(model, viewlet);
           return this;
       },
       render: function() {
