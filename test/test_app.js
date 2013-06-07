@@ -65,6 +65,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function() {
+      window._gaq = [];
       container = Y.one('#main')
         .appendChild(Y.Node.create('<div/>'))
           .set('id', 'test-container')
@@ -637,4 +638,3 @@ function injectData(app, data) {
 
   });
 })();
-
