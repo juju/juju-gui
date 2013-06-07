@@ -710,14 +710,16 @@ YUI.add('subapp-browser', function(Y) {
 
       if (req.path.match(hasIdMatch)) {
         id = this._stripViewMode(req.path);
-        id = id.replace(/^\//, '');
-        id = id.replace(/\/$/, '');
       }
 
       if (!id) {
         next();
         return;
       } else {
+        // Strip any extra slashes off the start/end of the id.
+        id = id.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
+
         // We've got a valid id. Setup the params for our view state.
         req.params = {
           id: id,
