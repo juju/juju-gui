@@ -120,7 +120,9 @@ YUI.add('juju-view-container', function(Y) {
 
       @property events
     */
-    events: {},
+    events: {
+      '.tab': {'click': 'showViewlet'}
+    },
 
     /**
       Viewlet configuration object. Set by passing `viewlets` in during
@@ -147,14 +149,6 @@ YUI.add('juju-view-container', function(Y) {
 
       @property templateConfig
       @type {Object}
-    */
-
-    /**
-      Instance of the view container controller. Set by passing in during
-      instantiation ex) { Controller: Y.viewContainer.Controller }
-
-      @property controller
-      @default undefined
     */
 
     /**
@@ -227,6 +221,11 @@ YUI.add('juju-view-container', function(Y) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
       container.all('.viewlet-wrapper').hide();
+      // This method can be called directly but it is also an event handler
+      // for clicking on the view container tab handles
+      if (typeof viewletName !== 'string') {
+        viewletName = viewletName.currentTarget.getData('viewlet');
+      }
       this.viewlets[viewletName].container.show();
     },
 

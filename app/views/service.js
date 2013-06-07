@@ -1045,8 +1045,12 @@ YUI.add('juju-view-service', function(Y) {
           {name: 'aggregated_status.running', target: '[data-bind=running]'},
           {name: 'aggregated_status.error', target: '[data-bind=error]'}
         ]
-      }
-      //units: {},
+      },
+      units: {
+        name: 'units',
+        template: Templates['show_units_large'],
+        bindings: []
+      },
       //config: {},
       //constraints: {},
       //relations: {}
