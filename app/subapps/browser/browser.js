@@ -160,8 +160,6 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
-      console.log('should show charm');
-      console.log(this._viewState);
       if (
           this._viewState.charmID &&
           (
@@ -322,9 +320,6 @@ YUI.add('subapp-browser', function(Y) {
         this._viewState.querystring = null;
       }
 
-      console.log('view state');
-      console.log(this._viewState);
-
       this._filter.update(query);
     },
 
@@ -421,9 +416,6 @@ YUI.add('subapp-browser', function(Y) {
       if (model) {
         extraCfg.charm = model;
       }
-
-      console.log('rendering charm details');
-      console.log(extraCfg);
 
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
@@ -669,13 +661,9 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeSidebarDefault: function(req, res, next) {
-      console.log('sidebar default');
-      console.log(req.path);
-
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
       if (req.path.replace(/\//, '') !== '') {
-        console.log('I am outta here');
         next();
         return;
       }
@@ -694,7 +682,6 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        console.log('Render the sidebar');
         this.sidebar(req, res, next);
       } else {
         // Let the next route go on.
@@ -717,21 +704,15 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      console.log('charm id direct');
       // Check if we have exactly two url parts in our path.
       var hasIdMatch = '^\/?([^/]+\/?){2}$',
           id = null;
 
-      console.log(req.path);
-      console.log(req.path.match(hasIdMatch));
       if (req.path.match(hasIdMatch)) {
         id = this._stripViewMode(req.path);
         id = id.replace(/^\//, '');
         id = id.replace(/\/$/, '');
       }
-
-      console.log('id');
-      console.log(id);
 
       if (!id) {
         next();
@@ -752,7 +733,6 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        console.log('render sidebar 2');
         this.sidebar(req, res, next);
       } else {
         // Let the next route go on.
@@ -769,10 +749,6 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
-      console.log('route view man');
-      console.log('orig req');
-      console.log(req);
-
       // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
@@ -793,10 +769,6 @@ YUI.add('subapp-browser', function(Y) {
       // id in the params.
       var id = this._stripViewMode(req.params.id);
       req.params.id = id;
-
-
-      console.log('post-req');
-      console.log(req);
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
