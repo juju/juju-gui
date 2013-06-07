@@ -228,7 +228,7 @@ YUI.add('juju-view-container', function(Y) {
     showViewlet: function(viewletName) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
-      container.all('.viewlet-container').hide();
+      container.all('.viewlet-wrapper').hide();
       this.viewlets[viewletName].container.show();
     },
 

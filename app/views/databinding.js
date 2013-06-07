@@ -44,10 +44,7 @@ YUI.add('juju-databinding', function(Y) {
       },
       default: {
         'get': function(node) { return node.get('text');},
-        'set': function(node, value) {
-          node.set('html', value);
-          console.log("set node.html to ", value, node);}
-      }
+        'set': function(node, value) { node.setHTML(value); }
     };
 
     /**
