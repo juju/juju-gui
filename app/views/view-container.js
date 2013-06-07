@@ -278,6 +278,10 @@ YUI.add('juju-view-container', function(Y) {
       }
       // uncomment below when we upgrade jshint
       // /*jshint +W089 */
+    },
+
+    destructor: function() {
+      this.get('container').remove().destroy(true);
     }
 
   }, {

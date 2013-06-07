@@ -1074,7 +1074,8 @@ YUI.add('juju-view-service', function(Y) {
       options.container = container;
       options.viewletContainer = '.viewlet-container';
       options.events = {
-        '.tab': {'click': 'showViewlet'}
+        '.tab': {'click': 'showViewlet'},
+        '.close': {'click': 'destroy'}
       };
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0,  true);

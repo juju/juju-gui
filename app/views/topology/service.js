@@ -1267,6 +1267,9 @@ YUI.add('juju-topology-service', function(Y) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service);
+          serviceInspector.inspector.after('destroy', function(e) {
+            setInspector(e.currentTarget, true);
+          });
           setInspector(serviceInspector);
         }
       } else {
