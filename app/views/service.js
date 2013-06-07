@@ -1055,8 +1055,7 @@ YUI.add('juju-view-service', function(Y) {
       this.model = model;
       options = options || {};
       options.viewlets = options.viewlets || {};
-      options.template = Templates['view-container'],
-      options.controller = this;
+      options.template = Templates['view-container'];
       var container = Y.Node.create('<div>')
           .addClass('panel')
           .addClass('yui3-juju-inspector')
@@ -1065,12 +1064,10 @@ YUI.add('juju-view-service', function(Y) {
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0,  true);
       options.model = model;
-      this.bindingEngine = new views.BindingEngine();
       this.inspector = new juju.ViewContainer(options);
       this.inspector.render();
-      // XXX: order of operations is wrong so force an
-      // update with the protected method for now.
-      this.bindingEngine._updateDOM()
+      this.bindingEngine = new views.BindingEngine();
+      this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
       this.inspector.showViewlet('overview');
       // XXX: to debug
       window.SI = this;

@@ -248,8 +248,6 @@ YUI.add('juju-view-container', function(Y) {
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        // bind the UI to the model
-        this.controller.bind(model, viewlets[key]);
       }, this);
 
       return viewlets;
