@@ -83,7 +83,6 @@ YUI.add('juju-view-environment', function(Y) {
           if (this._inspectors[name] !== undefined) {
             // Close the old inspector and remove it.
             var existing = this._inspectors[name];
-            console.log("removing old inspector", name, existing);
             existing.bindingEngine.unbind();
             existing.container.remove(true);
           }
