@@ -679,8 +679,9 @@ YUI.add('subapp-browser', function(Y) {
 
       // If this path contains multiple parts it almost certainly has an id
       // hidden in it. Try to parse it out and set it.
-      if (!req.params.id && req.path.match(/\/([^/]+\/){2,4}/)) {
-        req.params.id =  this._stripViewMode(req.path);
+      var hasIdMatch = '\/([^/]+\/){2,4}';
+      if (!req.params.id && req.path.match(hasIdMatch)) {
+        req.params.id = this._stripViewMode(req.path);
       }
 
       // Update the state for the rest of things to figure out what to do.
