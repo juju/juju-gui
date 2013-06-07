@@ -14,7 +14,7 @@ it granted.
 
 Once you've accessed the analytics site you should see on the left:
 
-	Juju GUI / Deployments / All Web Site Data
+Juju GUI / Deployments / All Web Site Data
 
 Select "All Web Site Data" and the "Reporting" tab.  The data under "Real
 Time" are updated continuously and are appropriate for seeing if your tracking
@@ -61,6 +61,8 @@ Activation code
 The slug mentioned earlier is shown below.  It must appear on every page that
 is to track data.  Luckily for us, we have a single page app so the following
 has been installed in app/index.html.
+
+::
 
     <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -116,6 +118,8 @@ via custom events.
 
 The first event we tracked was the number of units deployed for a service and
 the code (in app/models/models.js update_service_unit_aggregates) looks like:
+
+::
 
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum) {
