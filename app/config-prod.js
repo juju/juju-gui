@@ -47,6 +47,7 @@ var juju_config = {
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
   readOnly: false,
+  useAnalytics: true,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
       'often be found by looking in ~/.juju/environments.yaml.')
