@@ -186,7 +186,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('browser app', function() {
-    var Y, app, browser;
+    var Y, app, browser, next;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -195,6 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-browser',
           'subapp-browser', function(Y) {
             browser = Y.namespace('juju.subapps');
+            next = function() {};
             done();
           });
     });
@@ -240,7 +241,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         path: '/'
       };
 
-      var next = function() {};
 
       app.routeSidebarDefault(req, null, next);
       // The viewmode should be populated now to the default.
@@ -253,7 +253,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var req = {
         path: '/sidebar'
       };
-      var next = function() {};
 
       app.routeSidebarDefault(req, null, next);
       // The viewmode is ignored. This path isn't meant for this route
@@ -269,8 +268,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         path: '/precise/mysql-10/'
       };
 
-      var next = function() {};
-
       app.routeDirectCharmId(req, null, next);
       // The viewmode should be populated now to the default.
       assert.equal(req.params.viewmode, 'sidebar');
@@ -285,7 +282,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var req = {
         path: 'fullscreen/search'
       };
-      var next = function() {};
 
       app.routeDirectCharmId(req, null, next);
       // The viewmode should be populated now to the default.

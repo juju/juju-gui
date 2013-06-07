@@ -246,14 +246,18 @@ YUI.add('subapp-browser', function(Y) {
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
-        // Strip out any trailing / in the id
-        id = id.replace(/\/$/, '');
-
         // if the id is now empty, set it to null.
         if (id === '') {
           id = null;
         }
       }
+
+      if (id) {
+        // Strip any extra slashes off the start/end of the id.
+        id = id.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
+      }
+
       return id;
     },
 
@@ -716,10 +720,6 @@ YUI.add('subapp-browser', function(Y) {
         next();
         return;
       } else {
-        // Strip any extra slashes off the start/end of the id.
-        id = id.replace(/^\//, '');
-        id = id.replace(/\/$/, '');
-
         // We've got a valid id. Setup the params for our view state.
         req.params = {
           id: id,
