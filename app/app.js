@@ -1214,8 +1214,11 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_cookies: function(req, res, next) {
-      this.cookieChecker = new Y.juju.Cookies();
-      this.cookieChecker.check();
+      var analyticsEnabled = this.get('useAnalytics');
+      if (analyticsEnabled) {
+        this.cookieChecker = this.cookieChecker || new Y.juju.Cookies();
+        this.cookieChecker.check();
+      }
       next();
     },
 

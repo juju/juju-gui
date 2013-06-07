@@ -49,5 +49,7 @@ var juju_config = {
   readOnly: false,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
-      'often be found by looking in ~/.juju/environments.yaml.')
+      'often be found by looking in ~/.juju/environments.yaml.'),
+  // Enable Google Analytics usage and calls. Also implies using cookies.
+  useAnalytics: true
 };

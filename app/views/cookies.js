@@ -29,12 +29,12 @@ YUI.add('juju-cookies', function(Y) {
   	warning: (
 	    '<div class="cookie-policy">' +
 	        '<div class="wrapper">' +
-	            '<a href="?cp=close" class="link-cta">Close</a>' +
+	            '<a href="javascript:void(0)" class="link-cta">Close</a>' +
 	            '<p>' +
 	                'We use cookies to improve your experience. By your ' +
 	                'continued use of this site you accept such use. ' +
 	                'To change your settings please ' +
-	                '<a href="/privacy-policy#cookies">' +
+	                '<a href="http://www.ubuntu.com/privacy-policy#cookies">' +
 	                    'see our policy' +
 	                '</a>.' +
 	            '</p>' +
@@ -50,16 +50,17 @@ YUI.add('juju-cookies', function(Y) {
       @return {undefined} Side-effects only.
     */
     check: function() {
-        if (Y.Cookie.get('_cookies_accepted') != 'true'){
+        var self = this;
+        if (Y.Cookie.get('_cookies_accepted') !== 'true' &&
+                !Y.one('.cookie-policy')) {
             Y.one('body').prepend(this.warning);
             Y.one('.cookie-policy .link-cta').on('click', function(e){
                 e.preventDefault();
-                this.close();
+                self.close();
             });
         }
     },
     
-
     /**
       Close the cookie usage warning and set a cookie to denote user agreement.
 
@@ -69,7 +70,6 @@ YUI.add('juju-cookies', function(Y) {
     */
     close: function() {
         Y.one('.cookie-policy').setStyle('display','none');
-        this.setCookie();
         Y.Cookie.set('_cookies_accepted', 'true',
         	{expires: new Date('January 12, 2025')});
     }
