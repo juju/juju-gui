@@ -1049,7 +1049,13 @@ YUI.add('juju-view-service', function(Y) {
       units: {
         name: 'units',
         template: Templates['show_units_large'],
-        bindings: []
+        rebind: function(model) {
+          return window.app.db.units.get_units_for_service(model, true);
+        },
+        update: function(modellist) {
+          var data = {units: modellist.toArray().map(function(m) { m.getAttrs();})};
+          this.container.setHTML(this.template(data));
+        }
       },
       //config: {},
       //constraints: {},
