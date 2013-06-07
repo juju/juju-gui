@@ -339,6 +339,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/websocket-logging.js'
         },
 
+        'juju-cookies': {
+          fullpath: '/juju-ui/views/cookies.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',

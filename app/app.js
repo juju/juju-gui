@@ -1202,7 +1202,22 @@ YUI.add('juju-gui', function(Y) {
         finalPath = this.nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
-    }
+    },
+
+    /**
+     * Make sure that the user accepted cookie usage.
+     *
+     * @method check_cookies
+     * @param {Object} req The request.
+     * @param {Object} res ???
+     * @param {Object} next The next route handler.
+     *
+     */
+    check_cookies: function(req, res, next) {
+      this.cookieChecker = new Y.juju.Cookies();
+      this.cookieChecker.check();
+      next();
+    },
 
   }, {
     ATTRS: {
@@ -1224,7 +1239,7 @@ YUI.add('juju-gui', function(Y) {
        * `namespace`: (optional) when namespace is specified this route should
        *   only match when the URL fragment occurs in that namespace. The
        *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace  attribute is specified.
+       *   namespace attribute is specified.
        *
        * `model`: `model.name` (required)
        *
@@ -1245,6 +1260,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'check_cookies'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
@@ -1292,7 +1308,7 @@ YUI.add('juju-gui', function(Y) {
 
   Y.namespace('juju').App = JujuGUI;
 
-}, '0.5.2', {
+}, '0.5.3', {
   requires: [
     'juju-charm-models',
     'juju-charm-panel',
@@ -1327,6 +1343,7 @@ YUI.add('juju-gui', function(Y) {
     'event-touch',
     'model-controller',
     'FileSaver',
-    'juju-inspector-widget'
+    'juju-inspector-widget',
+    'juju-cookies'
   ]
 });
