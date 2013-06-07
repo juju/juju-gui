@@ -97,7 +97,7 @@ YUI.add('juju-delta-handlers', function(Y) {
   };
   models.utils = utils; // Exported for testing purposes.
 
-  /**
+  /*
      Each handler is called passing the db instance, the action to be
      performed ("add", "change" or "remove"), the change coming from
      the environment, and a (optional) kind identifying what will be

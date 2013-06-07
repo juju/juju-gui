@@ -30,7 +30,7 @@ YUI.add('juju-browser-models', function(Y) {
   var models = Y.namespace('juju.models'),
       ns = Y.namespace('juju.models.browser');
 
-  /**
+  /*
    * The filters are hard coded for now but will need to be updated. The
    * *right* place for them to live isn't obvious at the moment so they may
    * move. There are notes for an API call to provide a list, but we don't

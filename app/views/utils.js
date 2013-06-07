@@ -261,7 +261,7 @@ YUI.add('juju-view-utils', function(Y) {
         days = hours / 24,
         years = days / 365;
 
-    /**
+    /*
       Given a number and a way to convert the number to a string that is a
       template or a function producing a template string, return the template
       substituted with the number.
@@ -1210,7 +1210,7 @@ YUI.add('juju-view-utils', function(Y) {
         Y.Markdown.toHTML(text));
   });
 
-  /**
+  /*
    * Generate a landscape badge using a partial internally.
    */
   Y.Handlebars.registerHelper('landscapeBadge', function(
@@ -1254,10 +1254,9 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
 
-  /**
+  /*
     If built around checking if x == y.
     Supports an inverse so that we can use an else clause.
-
    */
   Y.Handlebars.registerHelper('if_eq', function(x, y, options) {
     if (x === y) {
@@ -1267,18 +1266,16 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
-  /**
-    * pluralize
-    *
-    * pluralize is a handlebar helper that handles pluralization of strings.
-    * The requirement for pluralization is based on the passed in object,
-    * which can be number, array, or object. If a number, it is directly
-    * checked to see if pluralization is needed. Arrays and objects are
-    * checked for length or size attributes, which are then used.
-    *
-    * By default, if pluralization is needed, an 's' is appended to the
-    * string. This handles the regular case (e.g. cat => cats). Irregular
-    * cases are handled by passing in a plural form (e.g. octopus => ocotopi).
+  /*
+    pluralize is a handlebar helper that handles pluralization of strings.
+    The requirement for pluralization is based on the passed in object,
+    which can be number, array, or object. If a number, it is directly
+    checked to see if pluralization is needed. Arrays and objects are
+    checked for length or size attributes, which are then used.
+
+    By default, if pluralization is needed, an 's' is appended to the
+    string. This handles the regular case (e.g. cat => cats). Irregular
+    cases are handled by passing in a plural form (e.g. octopus => ocotopi).
     */
   Y.Handlebars.registerHelper('pluralize',
       function(word, object, plural_word, options) {
@@ -1304,7 +1301,7 @@ YUI.add('juju-view-utils', function(Y) {
         }
       });
 
-  /**
+  /*
    * Truncate helper to keep text sizes to a specified limit.
    *
    * {{truncate field 100}}
@@ -1319,7 +1316,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
-  /**
+  /*
    * Extension for views to provide an apiFailure method.
    *
    * @class apiFailure
