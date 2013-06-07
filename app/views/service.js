@@ -1048,7 +1048,7 @@ YUI.add('juju-view-service', function(Y) {
       },
       units: {
         name: 'units',
-        template: Templates['show_units_large'],
+        template: Templates['show_units_small'],
         rebind: function(model) {
           return model.get('units');
         },
@@ -1072,6 +1072,10 @@ YUI.add('juju-view-service', function(Y) {
           .appendTo(Y.one('#content'));
       var dd = new Y.DD.Drag({ node: container });
       options.container = container;
+      options.viewletContainer = '.viewlet-container';
+      options.events = {
+        '.tab': {'click': 'showViewlet'}
+      };
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0,  true);
       options.model = model;

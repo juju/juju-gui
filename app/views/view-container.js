@@ -120,9 +120,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @property events
     */
-    events: {
-      '.tab': {'click': 'showViewlet'}
-    },
+    events: {},
 
     /**
       Viewlet configuration object. Set by passing `viewlets` in during
@@ -166,7 +164,9 @@ YUI.add('juju-view-container', function(Y) {
       this.viewletConfig = options.viewlets;
       this.template = options.template;
       this.templateConfig = options.templateConfig;
+      this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets();
+      this.events = options.events;
     },
 
     /**
@@ -199,7 +199,7 @@ YUI.add('juju-view-container', function(Y) {
       container.setHTML(this.template(this.templateConfig));
 
       // We may want to make this selector user defined at some point
-      var viewletContainer = container.one('.viewlet-container');
+      var viewletContainer = container.one(this.viewletContainer);
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet) {
