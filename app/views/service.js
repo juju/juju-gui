@@ -1060,6 +1060,7 @@ YUI.add('juju-view-service', function(Y) {
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
+      var dd = new Y.DD.Drag({ node: container });
       options.container = container;
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0,  true);
@@ -1097,6 +1098,7 @@ YUI.add('juju-view-service', function(Y) {
 
 }, '0.1.0', {
   requires: ['panel',
+    'dd',
     'juju-databinding',
     'juju-view-container',
     'juju-view-utils',
