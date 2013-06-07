@@ -149,4 +149,12 @@ describe.only('View Container', function() {
     });
   });
 
+  it('removes all elements from the DOM on destroy', function() {
+    generateViewContainer();
+    viewContainer.render();
+    assert.equal(container.all('.viewlet-container').size(), 1);
+    viewContainer.destroy();
+    assert.equal(container.all('.viewlet-container').size(), 0);
+  })
+
 });

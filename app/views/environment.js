@@ -76,18 +76,24 @@ YUI.add('juju-view-environment', function(Y) {
 
         /**
           @method setInspector
+          @param {ViewContainer} inspector instance.
+          @param {Boolean} remove flag to remove the instance
           @chainable
         */
-        setInspector: function(inspector) {
+        setInspector: function(inspector, remove) {
           var name = inspector.getName();
-          if (this._inspectors[name] !== undefined) {
+          if (this._inspectors[name] !== undefined && !remove) {
             // Close the old inspector and remove it.
             var existing = this._inspectors[name];
             console.log("removing old inspector", name, existing);
             existing.bindingEngine.unbind();
             existing.container.remove(true);
           }
-          this._inspectors[name] = inspector;
+          if (remove) {
+            delete this._inspectors[name];
+          } else {
+            this._inspectors[name] = inspector;
+          }
           return this;
         },
 
