@@ -94,7 +94,7 @@ YUI.add('juju-topology-utils', function(Y) {
   utils.serviceBoxesToVertices = function(serviceBoxes) {
     return Y.Array.map(Y.Object.values(serviceBoxes), function(box) {
       // Default undefined x/y attributes to 0.
-      return [box.x || 0, box.y || 0];
+      return box.center || [box.x || 0, box.y || 0];
     });
   };
 
