@@ -34,6 +34,7 @@ YUI.add('subapp-browser', function(Y) {
 
      @class Browser
      @extends {juju.SubApp}
+
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
@@ -41,10 +42,11 @@ YUI.add('subapp-browser', function(Y) {
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
-        Show or hide the details panel.
+      Show or hide the details panel.
 
-        @method _detailsVisible
-        @param {Boolean} visible set the panel to hide or show.
+      @method _detailsVisible
+      @param {Boolean} visible set the panel to hide or show.
+
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data');
@@ -59,11 +61,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Given the current subapp state, generate a url to pass up to the
-        routing code to route to.
+      Given the current subapp state, generate a url to pass up to the
+      routing code to route to.
 
-        @method _getStateUrl
-        @param {Object} change the values to change in the current state.
+      @method _getStateUrl
+      @param {Object} change the values to change in the current state.
+
      */
     _getStateUrl: function(change) {
       var urlParts = [];
@@ -100,11 +103,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Generate a standard shared set of cfg all Views can expect to see.
+     Generate a standard shared set of cfg all Views can expect to see.
 
-       @method _getViewCfg
-       @param {Object} cfg additional config to merge into the default view
-       config.
+     @method _getViewCfg
+     @param {Object} cfg additional config to merge into the default view
+     config.
+
      */
     _getViewCfg: function(cfg) {
       // We always add the _filter data to every request because most of them
@@ -237,17 +241,23 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
+          /^\/?(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
-
         // if the id is now empty, set it to null.
         if (id === '') {
           id = null;
         }
       }
+
+      if (id) {
+        // Strip any extra slashes off the start/end of the id.
+        id = id.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
+      }
+
       return id;
     },
 
@@ -454,7 +464,6 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
 
@@ -638,14 +647,99 @@ YUI.add('subapp-browser', function(Y) {
         if (this._search) {
           this._search.set('activeID', null);
         }
-
-
-
       }
 
       // Sync that the state has changed.
       this._saveState();
       next();
+    },
+
+    /**
+      When there's no charm or viewmode default to a sidebar view for all
+      pages.
+
+      @method routeSidebarDefault
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeSidebarDefault: function(req, res, next) {
+      // Check if there's any path. If there is, someone else will handle
+      // routing it. Just carry on.
+      if (req.path.replace(/\//, '') !== '') {
+        next();
+        return;
+      }
+
+      // For the * request there will be no req.params. Update it forcing
+      // sidebar default viewmode.
+      req.params = {
+        viewmode: 'sidebar'
+      };
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
+    },
+
+    /**
+      A url direct to a charm id works, however it needs to default the
+      viewmode to sidebar in that case.
+
+      Almost any url with a component to it matches this route. We need to
+      check if there are exactly *two* parts and if so, check if they're a
+      valid id-able segment. (Not /sidebar/search for instance)
+
+      @method routeDirectCharmId
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeDirectCharmId: function(req, res, next) {
+      // Check if we have exactly two url parts in our path.
+      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+          id = null;
+
+      if (req.path.match(hasIdMatch)) {
+        id = this._stripViewMode(req.path);
+      }
+
+      if (!id) {
+        next();
+        return;
+      } else {
+        // We've got a valid id. Setup the params for our view state.
+        req.params = {
+          id: id,
+          viewmode: 'sidebar'
+        };
+      }
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
     },
 
     /**
@@ -777,8 +871,8 @@ YUI.add('subapp-browser', function(Y) {
         value: [
           // Show the sidebar on all places if its not manually shut off or
           // turned into a fullscreen route.
-          { path: '*', callbacks: 'routeView'},
-          { path: '/*id/', callbacks: 'routeView'},
+          { path: '*', callbacks: 'routeSidebarDefault'},
+          { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/:viewmode/', callbacks: 'routeView' },
           { path: '/:viewmode/search/', callbacks: 'routeView' },
           { path: '/:viewmode/search/*id/', callbacks: 'routeView' },

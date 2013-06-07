@@ -59,12 +59,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.nav .back': {
         click: '_handleBack'
-      },
-      '.tabs .yui3-tab-label': {
-        'click': function(ev) {
-          // Stop the app from trying to route these links.
-          ev.halt();
-        }
       }
     },
 
@@ -534,6 +528,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+
       // XXX: Ideally we shouldn't have to do this; resetting the container
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
@@ -575,6 +570,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+        @attribute activeTab
+        @default undefined
+        @type {String}
+
+       */
+      activeTab: {},
+
       /**
          @attribute charmID
          @default undefined

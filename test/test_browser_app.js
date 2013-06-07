@@ -186,7 +186,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('browser app', function() {
-    var Y, app, browser;
+    var Y, app, browser, next;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -195,6 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-browser',
           'subapp-browser', function(Y) {
             browser = Y.namespace('juju.subapps');
+            next = function() {};
             done();
           });
     });
@@ -230,6 +231,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             id + ' was not stripped correctly.'
         );
       });
+    });
+
+    it('* route set sidebar by default', function() {
+      app = new browser.Browser();
+      // Stub out the sidebar so we don't render anything.
+      app.sidebar = function() {};
+      var req = {
+        path: '/'
+      };
+
+
+      app.routeSidebarDefault(req, null, next);
+      // The viewmode should be populated now to the default.
+      assert.equal(req.params.viewmode, 'sidebar');
+
+    });
+
+    it('prevents * route from doing more than sidebar by default', function() {
+      app = new browser.Browser();
+      var req = {
+        path: '/sidebar'
+      };
+
+      app.routeSidebarDefault(req, null, next);
+      // The viewmode is ignored. This path isn't meant for this route
+      // callable to deal with at all.
+      assert.equal(req.params, undefined);
+    });
+
+    it('/charm/id routes to a sidebar view correcetly', function() {
+      app = new browser.Browser();
+      // Stub out the sidebar so we don't render anything.
+      app.sidebar = function() {};
+      var req = {
+        path: '/precise/mysql-10/'
+      };
+
+      app.routeDirectCharmId(req, null, next);
+      // The viewmode should be populated now to the default.
+      assert.equal(req.params.viewmode, 'sidebar');
+      assert.equal(req.params.id, 'precise/mysql-10');
+    });
+
+
+    it('/charm/id router ignores other urls', function() {
+      app = new browser.Browser();
+      // Stub out the sidebar so we don't render anything.
+      app.sidebar = function() {};
+      var req = {
+        path: 'fullscreen/search'
+      };
+
+      app.routeDirectCharmId(req, null, next);
+      // The viewmode should be populated now to the default.
+      assert.equal(req.params, undefined);
     });
 
   });
