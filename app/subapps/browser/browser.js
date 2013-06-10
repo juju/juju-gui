@@ -276,6 +276,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Does our app instance have a valid store? If not, then we should ignore
+      a lot of work since we can't do it anyway. Sanity check our
+      information. During test running, for instance, we don't have a valid
+      store to work with and that's ok.
+
+      @method _hasValidStore
+      @return {Boolean} do we have a valid store or not.
+
+     */
+    _hasValidStore: function() {
+      var store = this.get('store');
+      return !store.get('noop');
+    },
+
+    /**
        Update the oldState with the viewState now that we're done processing
        the request.
 
@@ -708,6 +723,11 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
+      // If we don't have a valid store we can't do any work here.
+      if (!this._hasValidStore()) {
+        return;
+      }
+
       // Check if we have exactly two url parts in our path.
       var hasIdMatch = '^\/?([^/]+\/?){2}$',
           id = null;
