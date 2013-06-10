@@ -363,6 +363,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.render();
 
+      // By default the first tab is selected.
+      assert.equal(view.tabview.get('selected'), 1);
+
       view._loadQAContent = function() {
         // This test is just verifying that we don't timeout. The event fired,
         // was caught here, and we completed the test run. No assertion to be
