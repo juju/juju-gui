@@ -1220,7 +1220,7 @@ YUI.add('juju-gui', function(Y) {
         this.cookieChecker.check();
       }
       next();
-    },
+    }
 
   }, {
     ATTRS: {

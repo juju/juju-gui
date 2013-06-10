@@ -47,7 +47,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('check creates node', function() {
       assert.isNull(Y.one('.cookie-policy'));
       checker.check();
-      Y.one('.cookie-policy').setStyle('visibility','hidden');
+      Y.one('.cookie-policy').setStyle('visibility', 'hidden');
       assert.isObject(Y.one('.cookie-policy'));
     });
 
@@ -55,7 +55,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(Y.one('.cookie-policy'));
       checker.check();
       cp_node = Y.one('.cookie-policy .link-cta');
-      cp_node.setStyle('visibility','hidden');
+      cp_node.setStyle('visibility', 'hidden');
       cp_node.simulate('click');
       cookie = Y.Cookie.get('_cookies_accepted');
       assert.equal(cookie, 'true');
