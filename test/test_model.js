@@ -48,7 +48,7 @@ describe('charm normalization', function() {
 
 });
 
-describe('juju models', function() {
+describe.only('juju models', function() {
   var models;
 
   before(function(done) {
@@ -56,6 +56,10 @@ describe('juju models', function() {
       models = Y.namespace('juju.models');
       done();
     });
+  });
+
+  beforeEach(function() {
+    window._gaq = [];
   });
 
   it('must be able to create charm', function() {
@@ -183,6 +187,33 @@ describe('juju models', function() {
             {'pending': 2});
         sul.get_informative_states_for_service(wordpress).should.eql(
             {'pending': 1, 'error': 1});
+      });
+
+  it('service unit list should update analytics when units are added',
+      function() {
+        var sl = new models.ServiceList();
+        var sul = new models.ServiceUnitList();
+        var mysql = new models.Service({id: 'mysql'});
+        sl.add([mysql]);
+        var my0 = new models.ServiceUnit({
+          id: 'mysql/0',
+          agent_state: 'pending'});
+        var my1 = new models.ServiceUnit({
+          id: 'mysql/1',
+          agent_state: 'pending'});
+
+        window._gaq.should.eql([]);
+        sul.add([my0]);
+        sul.update_service_unit_aggregates(mysql);
+        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
+          'mysql', 1]);
+        sul.add([my1]);
+        sul.update_service_unit_aggregates(mysql);
+        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
+          'mysql', 2]);
+        // Calling update with no additions does not create a new trackEvent.
+        sul.update_service_unit_aggregates(mysql);
+        window._gaq.should.eql([]);
       });
 
   it('service unit objects should parse the service name from unit id',
@@ -690,6 +721,7 @@ describe('service models', function() {
   });
 
   beforeEach(function() {
+    window._gaq = [];
     django = new models.Service({id: 'django'});
     rails = new models.Service({
       id: 'rails',
