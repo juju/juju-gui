@@ -341,8 +341,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           }
         });
       });
-      // TODO: Need combine support for hash/search. Output can be a Routes
-      // object to make this work as hash/search wouldn't be in the enum set.
+
       output.hash = incoming.hash;
       output.search = incoming.search;
       url = this.url(output, {excludeRootPaths: true});
