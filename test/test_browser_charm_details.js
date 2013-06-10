@@ -742,6 +742,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(iconNode.hasClass('charm-app-servers-160'), true);
     });
 
+    it('selects the proper tab when given one', function() {
+      var fakeStore = new Y.juju.Charmworld1({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
+
+      view.render();
+
+      // We've selected index 2 of the tab set.
+      assert.equal(view.tabview.get('selected'), 2);
+    });
+
   });
 
 })();
