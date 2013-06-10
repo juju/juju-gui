@@ -529,6 +529,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this._noReadme(tplNode.one('#bws-readme'));
       }
 
+      if (this.get('activeTab')) {
+        debugger;
+        this.get('container').one('.tabs #' + this.get('activeTab')).click();
+      }
+
       // XXX: Ideally we shouldn't have to do this; resetting the container
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
