@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 // A global variable required for testing feature flags.
 var flags = {};
 
-describe.only('Namespaced Routing', function() {
+describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
