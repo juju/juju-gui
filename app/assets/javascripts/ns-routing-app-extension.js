@@ -108,7 +108,10 @@ YUI.add('ns-routing-app-extension', function(Y) {
       @return {String} hash || null.
     */
     getHash: function(url) {
-      var match = url.match(/(#)(.[^?/]*)?/);
+      // This will return an array with three values  the whole matched hash,
+      // the hash symbol, and then the hash without the hash.
+      // It is quoted to shush the linter about the .
+      var match = url.match('(#)(.[^?\/]*)?');
       if (!match) {
         return undefined;
       }
