@@ -27,11 +27,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'datatype-date',
           'datatype-date-format',
-          'node-event-simulate',
+          'json-stringify',
           'juju-charm-models',
           'juju-charm-store',
           'juju-tests-utils',
           'node',
+          'node-event-simulate',
           'subapp-browser-charmview',
           function(Y) {
             views = Y.namespace('juju.browser.views');
@@ -335,6 +336,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'readme.md'
           ],
           id: 'precise/ceph-9',
+          is_approved: true,
           code_source: { location: 'lp:~foo' }
         })
       });
@@ -346,6 +348,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       processed.totalAvailable.should.eql(38);
       processed.totalScore.should.eql(13);
       processed.questions[0].score.should.eql(3);
+      assert.ok(processed.charm.is_approved);
+
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
@@ -387,6 +391,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var processed = view._buildQAData(data);
       processed.totalAvailable.should.eql(38);
       processed.totalScore.should.eql(0);
+    });
+
+    it('does not display qa data when there is none.', function() {
+      var data = utils.loadFixture('data/qa.json', true);
+      // munge the data so that scores is null.
+      data.scores = null;
+      var fakedata = Y.JSON.stringify(data);
+
+      var fakeStore = new Y.juju.Charmworld1({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: fakedata
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
+        }),
+        renderTo: utils.makeContainer(),
+        store: fakeStore
+      });
+
+      view.render();
+      // Force the loading of the qa div.
+      view._loadQAContent();
+
+      // Because we have no score, we get the alternate content. This charm is
+      // not approved/reviewed so we get the content explaining it will not
+      // have quality data.
+      var foundNode = view.get('container').one('.no-qa-unreviewed');
+      assert.ok(foundNode);
+
+      // Change the charm to be reviewed/approved and verify we hit the other
+      // message while not showing quality scores.
+      view.get('charm').set('is_approved', true);
+      // Force the loading of the qa div.
+      view._loadQAContent();
+      foundNode = view.get('container').one('.no-qa-reviewed');
+      assert.ok(foundNode);
+
     });
 
     it('should catch when the open log is clicked', function(done) {
