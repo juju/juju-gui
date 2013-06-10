@@ -60,7 +60,7 @@ describe('search view', function() {
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
-    var fakeStore = new Y.juju.Charmworld1({});
+    var fakeStore = new Y.juju.Charmworld2({});
     var sampleData = {
       result: [{
         charm: {

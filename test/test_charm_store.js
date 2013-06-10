@@ -247,7 +247,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
-  describe('juju charmworld1 api', function() {
+  describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
@@ -266,7 +266,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('constructs the api url correctly based on apiHost', function() {
       var hostname = 'http://localhost/',
-          api = new Y.juju.Charmworld1({
+          api = new Y.juju.Charmworld2({
             apiHost: hostname
           }),
           ds = api.get('datasource');
@@ -276,7 +276,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles loading interesting content correctly', function(done) {
       var hostname = 'http://localhost',
-          api = new Y.juju.Charmworld1({
+          api = new Y.juju.Charmworld2({
             apiHost: hostname
           }),
           data = [];
@@ -303,7 +303,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var hostname = 'http://localhost',
           data = [],
           url;
-      var api = new Y.juju.Charmworld1({
+      var api = new Y.juju.Charmworld2({
         apiHost: hostname
       });
       data.push({
@@ -335,7 +335,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('constructs filepaths correct', function() {
       var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld1({
+      var api = new Y.juju.Charmworld2({
         apiHost: hostname
       });
 
