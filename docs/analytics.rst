@@ -20,9 +20,11 @@ Select "All Web Site Data" and the "Reporting" tab.  The data under "Real
 Time" are updated continuously and are appropriate for seeing if your tracking
 events are being reported.
 
-The actual reporting seems to happen on a daily basis, so if you create a new
-event you won't be able to see what the data will look like until 12-24 hours
-later.  It will eventually show up under "Contents / Events / Overview".
+The actual reporting seems to happen on a daily basis, so if you change the
+code to create a new event you won't be able to see what the data will look
+like until 12-24 hours later.  It will eventually show up under "Contents /
+Events / Overview".  The lag makes instrumenting the code slow and a bit
+frustrating.
 
 
 Unified reporting
@@ -132,7 +134,7 @@ unless the data actually changed.  Our goal should be to minimize the amount
 of new processing we do to support the instrumentation so as to not affect the
 performance of the actual app.
 
-The call to _trackEvent[2] look like:
+The calls to _trackEvent[2] look like:
 
 _trackEvent(category, action, opt_label, opt_value, opt_noninteraction)
 
