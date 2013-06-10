@@ -48,7 +48,7 @@ describe('charm normalization', function() {
 
 });
 
-describe.only('juju models', function() {
+describe('juju models', function() {
   var models;
 
   before(function(done) {
