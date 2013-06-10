@@ -108,11 +108,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
       @return {String} hash || null.
     */
     getHash: function(url) {
-      var match = url.match(/#(\w+)([?$])?/);
+      var match = url.match(/(#)(.[^?/]*)?/);
       if (!match) {
         return undefined;
       }
-      return match[1];
+      return match[2];
     },
 
     /**
