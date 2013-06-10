@@ -18,12 +18,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+/**
+  A cookies warning handler, enabled when using analytics.
+ 
+   @module views
+   @submodule views.cookies
+ */
+
 YUI.add('juju-cookies', function(Y) {
   var juju = Y.namespace('juju');
 
-  /**
-    A cookies warning handler, enabled when using analytics.
-  */
   juju.Cookies = Y.Base.create('Cookies', Y.Base, [], {
 
     warning: (
