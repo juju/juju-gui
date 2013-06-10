@@ -46,7 +46,6 @@ YUI.add('juju-cookies', function(Y) {
       usage warning.
 
       @method check
-      @param {undefined} None
       @return {undefined} Side-effects only.
     */
     check: function() {
@@ -65,7 +64,6 @@ YUI.add('juju-cookies', function(Y) {
       Close the cookie usage warning and set a cookie to denote user agreement.
 
       @method close
-      @param {undefined} None
       @return {undefined} Side-effects only.
     */
     close: function() {
