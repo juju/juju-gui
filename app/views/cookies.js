@@ -54,8 +54,8 @@ YUI.add('juju-cookies', function(Y) {
         if (Y.Cookie.get('_cookies_accepted') !== 'true' &&
                 !Y.one('.cookie-policy')) {
             Y.one('body').prepend(this.warning);
-            Y.one('.cookie-policy .link-cta').on('click', function(e){
-                e.preventDefault();
+            Y.one('.cookie-policy .link-cta').on('click', function(evt){
+                evt.preventDefault();
                 self.close();
             });
         }
@@ -78,6 +78,7 @@ YUI.add('juju-cookies', function(Y) {
 
 }, '0.1.0', {
   requires: [
-  	'cookie'
+    'base',
+    'cookie'
   ]
 });
