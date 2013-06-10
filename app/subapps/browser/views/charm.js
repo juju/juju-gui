@@ -513,9 +513,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       renderTo.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
+        render: true,
         srcNode: tplNode.one('.tabs')
       });
-      this.tabview.render();
       this._dispatchTabEvents(this.tabview);
 
       // Start loading the readme so it's ready to go.
@@ -530,8 +530,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (this.get('activeTab')) {
-        debugger;
-        this.get('container').one('.tabs #' + this.get('activeTab')).click();
+        this.get('container').one('.tabs a[href="' + this.get('activeTab') + '"]').get('parentNode').simulate('click');
       }
 
       // XXX: Ideally we shouldn't have to do this; resetting the container
@@ -659,6 +658,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'datatype-date',
     'datatype-date-format',
     'event-tracker',
+    'event-simulate',
     'gallery-markdown',
     'juju-charm-store',
     'juju-models',
