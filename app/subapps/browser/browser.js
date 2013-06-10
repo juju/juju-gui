@@ -241,7 +241,7 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^\/?(sidebar|fullscreen|minimized|search|test|test\/index\.html)\/?(search)?\/?/;
+          /^\/?(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
@@ -273,6 +273,21 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         return true;
       }
+    },
+
+    /**
+      Does our app instance have a valid store? If not, then we should ignore
+      a lot of work since we can't do it anyway. Sanity check our
+      information. During test running, for instance, we don't have a valid
+      store to work with and that's ok.
+
+      @method _hasValidStore
+      @return {Boolean} do we have a valid store or not.
+
+     */
+    _hasValidStore: function() {
+      var store = this.get('store');
+      return !store.get('noop');
     },
 
     /**
@@ -708,6 +723,11 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
+      // If we don't have a valid store we can't do any work here.
+      if (!this._hasValidStore()) {
+        return;
+      }
+
       // Check if we have exactly two url parts in our path.
       var hasIdMatch = '^\/?([^/]+\/?){2}$',
           id = null;
@@ -715,7 +735,6 @@ YUI.add('subapp-browser', function(Y) {
       if (req.path.match(hasIdMatch)) {
         id = this._stripViewMode(req.path);
       }
-
 
       if (!id) {
         next();
