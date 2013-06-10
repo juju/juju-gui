@@ -90,6 +90,15 @@ describe('Namespaced Routing', function() {
     assert(u === '/:a:alpha/:b:beta/:gamma:g/');
   });
 
+  it('should support hashes and query strings', function() {
+    var router = juju.Router('test');
+    var url, parts;
+    parts = router.parse('/foo/#bar?baz=something+else&battery=acid');
+    assert.equal(parts.hash, 'bar');
+    assert.equal(parts.search, 'baz=something+else&battery=acid');
+    assert.equal(parts.test, '/foo/');
+  });
+
   it('should support a default namespace', function() {
     var router = juju.Router('charmstore');
     var url, parts;
@@ -115,6 +124,15 @@ describe('Namespaced Routing', function() {
        url.should.equal('/foo/bar/');
        url = router.combine('/foo/bar', '/:inspector:/foo/');
        url.should.equal('/foo/bar/:inspector:/foo/');
+
+       // Hash and querystrings come from the second (incoming)
+       // argument to combine, values from the original url
+       // are discarded.
+       url = router.combine('/foo/bar?world=gone+away',
+                            '/:inspector:/foo/#hello?world=beater');
+       url.should.equal('/foo/bar/:inspector:/foo/#hello?world=beater');
+
+
      });
 
   it('should be able to split qualified urls', function() {
