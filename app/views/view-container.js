@@ -36,6 +36,16 @@ YUI.add('juju-view-container', function(Y) {
     @constructor
   */
   var ViewletBase = {
+
+    /**
+      The user defined name for the viewlet.
+
+      @property name
+      @type {String}
+      @default ''
+    */
+    name: '',
+
     /**
       String template of the viewlet wrapper
 
@@ -73,6 +83,16 @@ YUI.add('juju-view-container', function(Y) {
       @default null
     */
     container: null,
+
+    /**
+      When defined it allows the developer to specify another model to bind the
+      Viewlet to, usually one nested in the model passed to the View Container.
+
+      @property rebind
+      @type {Function}
+      @default null
+    */
+    rebind: null,
 
     /**
       User defined update method which re-renders the contents of the viewlet.
