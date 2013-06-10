@@ -997,7 +997,6 @@ YUI.add('juju-gui', function(Y) {
           return;
         } else {
           var nsRouter = this.nsRouter;
-          // THIS IS BAD!!!!!!!!
           this.navigate(
               nsRouter.url(nsRouter.parse(this.redirectPath)),
               {overrideAllNamespaces: true});

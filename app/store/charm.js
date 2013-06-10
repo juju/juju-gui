@@ -161,7 +161,7 @@ YUI.add('juju-charm-store', function(Y) {
    * @extends {Base}
    *
    */
-  ns.Charmworld2 = Y.Base.create('charmworldj', Y.Base, [], {
+  ns.Charmworld2 = Y.Base.create('charmworld2', Y.Base, [], {
     _apiRoot: 'api/2',
 
     /**
