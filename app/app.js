@@ -52,7 +52,10 @@ YUI.add('juju-gui', function(Y) {
     /*
       Extension properties
     */
-    subApplications: [],
+    subApplications: [{
+      type: Y.juju.subapps.Browser,
+      config: {}
+    }],
 
     defaultNamespace: 'charmstore',
     /*
@@ -352,10 +355,6 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      this.subApplications.push({
-        type: Y.juju.subapps.Browser,
-        config: {}
-      });
 
       if (window.flags.websocket_capture) {
         this.websocketLogging = new Y.juju.WebsocketLogging();

@@ -735,7 +735,6 @@ YUI.add('subapp-browser', function(Y) {
       if (req.path.match(hasIdMatch)) {
         id = this._stripViewMode(req.path);
       }
-
       if (!id) {
         next();
         return;
