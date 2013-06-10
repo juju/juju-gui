@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
   A cookies warning handler, enabled when using analytics.
- 
+
    @module views
    @submodule views.cookies
  */
