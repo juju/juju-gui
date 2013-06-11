@@ -1,6 +1,6 @@
 /*
 To help gradually move away from bootstrap when so much of the application
-relies on it's styles, when you find a bootstrap specific class style copy the
+relies on its styles, when you find a bootstrap specific class style copy the
 __not overridden__ styles into this file.
 */
 .btn {
