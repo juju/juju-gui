@@ -150,12 +150,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _dispatchTabEvents: function(tab) {
-      console.log('adding change event');
-      console.log(tab);
-
       this.addEvent(
           tab.after('selectionChange', function(ev) {
-            var tab = ev.newVal.get('content');;
+            var tab = ev.newVal.get('content');
             switch (tab) {
               case 'Interfaces':
                 console.log('not implemented interfaces handler');
