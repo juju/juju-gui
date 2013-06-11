@@ -83,7 +83,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
               // event.
               ev.halt();
               var category = ev.currentTarget.getData('link');
-              debugger;
               var change = {
                 search: true,
                 filter: {categories: [category]}

@@ -312,7 +312,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     _updateState: function(req) {
       // Update the viewmode. Every request has a viewmode.
-      debugger;
       var path = req.path,
           params = req.params,
           query = req.query,
