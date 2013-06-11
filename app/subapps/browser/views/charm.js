@@ -634,7 +634,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld1}
+       * @type {Charmworld2}
        *
        */
       store: {},

@@ -151,7 +151,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -231,7 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -271,7 +271,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -403,7 +403,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
 
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -467,7 +467,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -684,7 +684,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -709,7 +709,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -730,7 +730,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets a category icon if available', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
