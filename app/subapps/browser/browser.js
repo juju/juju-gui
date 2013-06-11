@@ -417,9 +417,9 @@ YUI.add('subapp-browser', function(Y) {
 
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
-      var hasChanged = this._hasStateChanged;
-      if (this._details && this._hasChanged('hash') &&
-          !(this._hasChanged('charmID') || this._hasChanged('viewmode'))) {
+      if (this._details && this._hasStateChanged('hash') &&
+          !(this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode'))) {
         return;
       }
 
