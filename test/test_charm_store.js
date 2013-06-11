@@ -272,6 +272,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ds = api.get('datasource');
 
       ds.get('source').should.eql('http://localhost/api/2/');
+
+      // And it should work without a trailing / as well.
+      hostname = 'http://localhost';
+      api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      }),
+      ds = api.get('datasource');
+      ds.get('source').should.eql('http://localhost/api/2/');
+
     });
 
     it('handles loading interesting content correctly', function(done) {
@@ -340,8 +349,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
-      iconPath.should.eql(
-          'http://localhostapi/2/charm/precise/mysql-1/file/icon.svg');
+      assert.equal(
+          iconPath,
+          'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
     });
 
   });
