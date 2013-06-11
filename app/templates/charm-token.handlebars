@@ -9,8 +9,14 @@
         {{#if hasIcon}}
             <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
         {{else}}
+          {{#if mainCategory}}
+            <div title="category {{mainCategory}}"
+                class="category-icon sprite charm-{{mainCategory}}-{{#if_eq size 'small'}}64{{else}}96{{/if_eq}}">
+            </div>
+          {{else}}
             <div class="charm-icon">
             </div>
+          {{/if}}
         {{/if}}
     </span>
     <span class="yui3-u-3-5">

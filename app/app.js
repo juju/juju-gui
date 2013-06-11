@@ -52,7 +52,10 @@ YUI.add('juju-gui', function(Y) {
     /*
       Extension properties
     */
-    subApplications: [],
+    subApplications: [{
+      type: Y.juju.subapps.Browser,
+      config: {}
+    }],
 
     defaultNamespace: 'charmstore',
     /*
@@ -132,7 +135,7 @@ YUI.add('juju-gui', function(Y) {
 
     },
 
-    /**
+    /*
      * Declarative keybindings on the window object.
      *
      * Prefix supported are:
@@ -356,14 +359,6 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // XXX: #1185002 the charm browser subapp feature flag needs to be
-      // removed
-      if (window.flags.browser_enabled) {
-        this.subApplications.push({
-          type: Y.juju.subapps.Browser,
-          config: {}
-        });
-      }
 
       if (window.flags.websocket_capture) {
         this.websocketLogging = new Y.juju.WebsocketLogging();

@@ -42,6 +42,11 @@ var GlobalConfig = {
   // Don't load YUI CSS from YUI servers.
   fetchCSS: false,
 
+  // Do not attempt to dispatch a new route when an anchor tag appears in the
+  // url. This is intended to keep charm details from reloading on tab
+  // selection in the browser.
+  navigateOnHash: false,
+
   groups: {
     gallery: {
       modules: {
@@ -101,11 +106,17 @@ var GlobalConfig = {
         }
       }
     },
-
     filesaver: {
       modules: {
         'FileSaver': {
           fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
+        }
+      },
+      observe: {
+        modules: {
+          'observe': {
+            fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
+          }
         }
       }
     },
@@ -145,7 +156,9 @@ var GlobalConfig = {
         'juju-inspector-widget': {
           fullpath: '/juju-ui/widgets/inspector-widget.js'
         },
-
+        'juju-databinding': {
+          fullpath: '/juju-ui/views/databinding.js'
+        },
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
@@ -241,6 +254,10 @@ var GlobalConfig = {
 
         'juju-templates': {
           fullpath: '/juju-ui/templates.js'
+        },
+
+        'juju-view-container': {
+          fullpath: '/juju-ui/views/view-container.js'
         },
 
         'juju-views': {

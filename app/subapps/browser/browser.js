@@ -34,6 +34,7 @@ YUI.add('subapp-browser', function(Y) {
 
      @class Browser
      @extends {juju.SubApp}
+
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
@@ -41,10 +42,11 @@ YUI.add('subapp-browser', function(Y) {
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
-        Show or hide the details panel.
+      Show or hide the details panel.
 
-        @method _detailsVisible
-        @param {Boolean} visible set the panel to hide or show.
+      @method _detailsVisible
+      @param {Boolean} visible set the panel to hide or show.
+
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data');
@@ -59,11 +61,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Given the current subapp state, generate a url to pass up to the
-        routing code to route to.
+      Given the current subapp state, generate a url to pass up to the
+      routing code to route to.
 
-        @method _getStateUrl
-        @param {Object} change the values to change in the current state.
+      @method _getStateUrl
+      @param {Object} change the values to change in the current state.
+
      */
     _getStateUrl: function(change) {
       var urlParts = [];
@@ -100,11 +103,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Generate a standard shared set of cfg all Views can expect to see.
+     Generate a standard shared set of cfg all Views can expect to see.
 
-       @method _getViewCfg
-       @param {Object} cfg additional config to merge into the default view
-       config.
+     @method _getViewCfg
+     @param {Object} cfg additional config to merge into the default view
+     config.
+
      */
     _getViewCfg: function(cfg) {
       // We always add the _filter data to every request because most of them
@@ -126,6 +130,7 @@ YUI.add('subapp-browser', function(Y) {
     _initState: function() {
       this._oldState = {
         charmID: null,
+        hash: null,
         querystring: null,
         search: null,
         viewmode: null
@@ -152,6 +157,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the charm details based on the current
        state.
 
+       @method _shouldShowCharm
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
@@ -172,6 +178,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the editorial content based on the current
        state.
 
+       @method _shouldShowEditorial
        @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
@@ -189,6 +196,7 @@ YUI.add('subapp-browser', function(Y) {
        Determine if we should render the search results based on the current
        state.
 
+       @method _shouldShowSearch
        @return {Boolean} true if should show.
      */
     _shouldShowSearch: function() {
@@ -234,17 +242,23 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?/;
+          /^\/?(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
-
         // if the id is now empty, set it to null.
         if (id === '') {
           id = null;
         }
       }
+
+      if (id) {
+        // Strip any extra slashes off the start/end of the id.
+        id = id.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
+      }
+
       return id;
     },
 
@@ -260,6 +274,21 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         return true;
       }
+    },
+
+    /**
+      Does our app instance have a valid store? If not, then we should ignore
+      a lot of work since we can't do it anyway. Sanity check our
+      information. During test running, for instance, we don't have a valid
+      store to work with and that's ok.
+
+      @method _hasValidStore
+      @return {Boolean} do we have a valid store or not.
+
+     */
+    _hasValidStore: function() {
+      var store = this.get('store');
+      return !store.get('noop');
     },
 
     /**
@@ -285,9 +314,14 @@ YUI.add('subapp-browser', function(Y) {
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
-          query = req.query;
+          query = req.query,
+          hash = window.location.hash;
 
       this._viewState.viewmode = params.viewmode;
+
+      if (hash) {
+        this._viewState.hash = hash.replace('/', '');
+      }
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
@@ -390,10 +424,19 @@ YUI.add('subapp-browser', function(Y) {
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
       var extraCfg = {
+        activeTab: this._viewState.hash,
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
+
+      // If the only thing that changed was the hash, then don't redraw. It's
+      // just someone clicking a tab in the UI.
+      if (this._details && this._hasStateChanged('hash') &&
+          !(this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode'))) {
+        return;
+      }
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
@@ -450,7 +493,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._viewState.charmID) {
         extraCfg.activeID = this._viewState.charmID;
       }
-
 
       this._editorial = new Y.juju.browser.views.EditorialView(
           this._getViewCfg(extraCfg));
@@ -635,14 +677,103 @@ YUI.add('subapp-browser', function(Y) {
         if (this._search) {
           this._search.set('activeID', null);
         }
-
-
-
       }
 
       // Sync that the state has changed.
       this._saveState();
       next();
+    },
+
+    /**
+      When there's no charm or viewmode default to a sidebar view for all
+      pages.
+
+      @method routeSidebarDefault
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeSidebarDefault: function(req, res, next) {
+      // Check if there's any path. If there is, someone else will handle
+      // routing it. Just carry on.
+      if (req.path.replace(/\//, '') !== '') {
+        next();
+        return;
+      }
+
+      // For the * request there will be no req.params. Update it forcing
+      // sidebar default viewmode.
+      req.params = {
+        viewmode: 'sidebar'
+      };
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
+    },
+
+    /**
+      A url direct to a charm id works, however it needs to default the
+      viewmode to sidebar in that case.
+
+      Almost any url with a component to it matches this route. We need to
+      check if there are exactly *two* parts and if so, check if they're a
+      valid id-able segment. (Not /sidebar/search for instance)
+
+      @method routeDirectCharmId
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    routeDirectCharmId: function(req, res, next) {
+      // If we don't have a valid store we can't do any work here.
+      if (!this._hasValidStore()) {
+        return;
+      }
+
+      // Check if we have exactly two url parts in our path.
+      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+          id = null;
+
+      if (req.path.match(hasIdMatch)) {
+        id = this._stripViewMode(req.path);
+      }
+      if (!id) {
+        next();
+        return;
+      } else {
+        // We've got a valid id. Setup the params for our view state.
+        req.params = {
+          id: id,
+          viewmode: 'sidebar'
+        };
+      }
+
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req);
+
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        this.sidebar(req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
+      }
     },
 
     /**
@@ -694,6 +825,8 @@ YUI.add('subapp-browser', function(Y) {
       Based on the viewmode and the hidden check what divs we should be
       showing or hiding.
 
+      @method updateVisible
+      @return {undefined} Nothing.
     */
     updateVisible: function() {
       var minview = this.get('minNode'),
@@ -736,8 +869,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld1
-         @type {Charmworld1}
+         @default Charmworld2
+         @type {Charmworld2}
        */
       store: {
         /**
@@ -746,7 +879,7 @@ YUI.add('subapp-browser', function(Y) {
            tests there's no config for talking to the api so we have to watch
            out in test runs and allow the store to be broken.
 
-           method store.valueFn
+           @method store.valueFn
         */
         valueFn: function() {
           var cfg = {
@@ -759,7 +892,7 @@ YUI.add('subapp-browser', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld1(cfg);
+          return new Y.juju.Charmworld2(cfg);
         }
       },
 
@@ -772,8 +905,8 @@ YUI.add('subapp-browser', function(Y) {
         value: [
           // Show the sidebar on all places if its not manually shut off or
           // turned into a fullscreen route.
-          { path: '*', callbacks: 'routeView'},
-          { path: '/*id/', callbacks: 'routeView'},
+          { path: '*', callbacks: 'routeSidebarDefault'},
+          { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/:viewmode/', callbacks: 'routeView' },
           { path: '/:viewmode/search/', callbacks: 'routeView' },
           { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
@@ -810,6 +943,8 @@ YUI.add('subapp-browser', function(Y) {
         /**
           Find the minNode and cache it for later use.
 
+          @attribute minNode
+          @readOnly
         */
         valueFn: function() {
           return Y.one('#subapp-browser-min');

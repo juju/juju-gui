@@ -21,21 +21,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_charm_view', function() {
-    var container, CharmView, models, node, view, views, Y;
+    var container, CharmView, models, node, utils, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'datatype-date',
           'datatype-date-format',
-          'node-event-simulate',
+          'json-stringify',
           'juju-charm-models',
           'juju-charm-store',
           'juju-tests-utils',
           'node',
+          'node-event-simulate',
           'subapp-browser-charmview',
           function(Y) {
             views = Y.namespace('juju.browser.views');
             models = Y.namespace('juju.models');
+            utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
             done();
           });
@@ -149,7 +151,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -172,7 +174,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -190,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       // Hook up to the callback for the click event.
@@ -214,7 +216,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.set('deploy', function(charm) {
         // The charm passed in is not a BrowserCharm but a charm-panel charm.
@@ -229,7 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -252,7 +254,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -269,7 +271,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -294,7 +296,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: utils.makeContainer(),
         store: fakeStore
       });
 
@@ -317,7 +319,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.render();
 
@@ -334,11 +336,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'readme.md'
           ],
           id: 'precise/ceph-9',
+          is_approved: true,
           code_source: { location: 'lp:~foo' }
         })
       });
-      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
-
+      var data = utils.loadFixture('data/qa.json', true);
       var processed = view._buildQAData(data);
 
       // We store a number of summary bits to help the template render the
@@ -346,6 +348,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       processed.totalAvailable.should.eql(38);
       processed.totalScore.should.eql(13);
       processed.questions[0].score.should.eql(3);
+      assert.ok(processed.charm.is_approved);
+
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
@@ -355,9 +359,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
       view.render();
+
+      // By default the first tab is selected.
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-readme');
 
       view._loadQAContent = function() {
         // This test is just verifying that we don't timeout. The event fired,
@@ -380,7 +388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo' }
         })
       });
-      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/qa.json', true);
       // munge the data so that scores is null.
       data.scores = null;
 
@@ -389,14 +397,63 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       processed.totalScore.should.eql(0);
     });
 
+    it('does not display qa data when there is none.', function() {
+      var data = utils.loadFixture('data/qa.json', true);
+      // munge the data so that scores is null.
+      data.scores = null;
+      var fakedata = Y.JSON.stringify(data);
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: fakedata
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
+        }),
+        renderTo: utils.makeContainer(),
+        store: fakeStore
+      });
+
+      view.render();
+      // Force the loading of the qa div.
+      view._loadQAContent();
+
+      // Because we have no score, we get the alternate content. This charm is
+      // not approved/reviewed so we get the content explaining it will not
+      // have quality data.
+      var foundNode = view.get('container').one('.no-qa-unreviewed');
+      assert.ok(foundNode);
+
+      // Change the charm to be reviewed/approved and verify we hit the other
+      // message while not showing quality scores.
+      view.get('charm').set('is_approved', true);
+      // Force the loading of the qa div.
+      view._loadQAContent();
+      foundNode = view.get('container').one('.no-qa-reviewed');
+      assert.ok(foundNode);
+
+    });
+
     it('should catch when the open log is clicked', function(done) {
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       // Hook up to the callback for the click event.
@@ -410,14 +467,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.render();
@@ -628,9 +684,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       // Add a failing test to the charm data.
@@ -642,7 +697,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.render();
@@ -654,14 +709,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld1({});
-      var data = Y.JSON.parse(
-          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
         charm: new models.BrowserCharm(data.charm),
-        container: Y.Node.create('<div class="charmview"/>')
+        container: utils.makeContainer()
       });
 
       view.showIndicator = function() {
@@ -674,6 +728,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       view.render();
     });
+
+    it('sets a category icon if available', function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      // Add a category manually to get a category icon to display.
+      data.charm.categories = ['app-servers'];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
+
+      view.render();
+      var iconNode = view.get('container').one('.category-icon');
+      assert.equal(iconNode.hasClass('charm-app-servers-160'), true);
+    });
+
+    it('selects the proper tab when given one', function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
+
+      view.render();
+
+      // We've selected the activeTab specified.
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-interfaces');
+    });
+
   });
 
 })();

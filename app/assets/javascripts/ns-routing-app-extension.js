@@ -61,9 +61,29 @@ YUI.add('ns-routing-app-extension', function(Y) {
     return result;
   }
 
-  var Routes = {
-    pairs: function() {return pairs(this);}
-  };
+  var Routes = (function() {
+    function Routes() {
+      return Object.create(this, {
+        defaultNamespacePresent: {
+          enumerable: false,
+          writable: true
+        },
+        hash: {
+          enumerable: false,
+          writable: true
+        },
+        search: {
+          enumerable: false,
+          writable: true
+        },
+        pairs: {
+          enumable: false,
+          value: function() {return pairs(this);}
+        }
+      });
+    }
+    return Routes;
+  })();
 
   // Multi dimensional router (TARDIS).
   var _Router = {
@@ -81,6 +101,24 @@ YUI.add('ns-routing-app-extension', function(Y) {
     },
 
     /**
+      Return the #hash portion of the URL if present.
+
+      @method getHash
+      @param {String} url to parse hash from.
+      @return {String} hash || null.
+    */
+    getHash: function(url) {
+      // This will return an array with three values  the whole matched hash,
+      // the hash symbol, and then the hash without the hash.
+      // It is quoted to shush the linter about the .
+      var match = url.match('(#)(.[^?\/]*)?');
+      if (!match) {
+        return undefined;
+      }
+      return match[2];
+    },
+
+    /**
      * Split a URL into components, a subset of the
      * Location Object.
      *
@@ -94,6 +132,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
       };
       var origin = this._regexUrlOrigin.exec(url);
       result.search = this.getQS(url);
+      result.hash = this.getHash(url);
 
       if (origin) {
         // Take the match.
@@ -127,20 +166,23 @@ YUI.add('ns-routing-app-extension', function(Y) {
      **/
     parse: function(url, combineFlags) {
       combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
-      var result = Object.create(Routes, {
-        defaultNamespacePresent: {
-          enumerable: false,
-          writable: true
-        }
-      });
+      var result = new Routes();
       var parts = this.split(url);
       url = parts.pathname;
+      result.hash = parts.hash;
+      result.search = parts.search;
 
+      // If there was a hash we need to split it off url
+      if (result.hash) {
+        url = url.slice(0, url.indexOf('#'));
+      }
       parts = url.split(this._fragment);
-      //  > '/foo/bar'.split(this._fragment)
-      //    ["/foo/bar"]
-      //  > :baz:/foo/bar'.split(this._fragment)
-      //    ["", ":baz:", "/foo/bar"]
+      // Example output
+      // '/foo/bar'.split(this._fragment)
+      // ["/foo/bar"]
+      //
+      // ':baz:/foo/bar'.split(this._fragment)
+      // ["", ":baz:", "/foo/bar"]
       if (parts[0]) {
         // This is a URL fragment without a namespace.
         parts[0] = rtrim(parts[0], '/') + '/';
@@ -225,11 +267,20 @@ YUI.add('ns-routing-app-extension', function(Y) {
       });
 
       url = slash(url);
+
+      if (components.hash) {
+        url += '#' + components.hash;
+      }
+
+      if (components.search) {
+        url += '?' + components.search;
+      }
       return url;
     },
 
     /**
-     * Smartly combine new namespaced url components with old.
+     * Smartly combine new namespaced url components with old. Hash and
+     * query string parameters from the incoming URL are preserved.
      *
      * @method combine
      * @param {Object} orig url.
@@ -260,7 +311,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         // original value).
         delete incoming[this.defaultNamespace];
       }
-      var output = {};
+      var output = new Routes();
       Y.each(orig, function(v, k) {
         if (v && !Y.Lang.isArray(v)) {
           v = [v];
@@ -290,9 +341,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
           }
         });
       });
+
+      output.hash = incoming.hash;
+      output.search = incoming.search;
       url = this.url(output, {excludeRootPaths: true});
       return url;
-
     }
   };
 
