@@ -247,7 +247,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
-  describe('juju charmworld1 api', function() {
+  describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
@@ -266,17 +266,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('constructs the api url correctly based on apiHost', function() {
       var hostname = 'http://localhost/',
-          api = new Y.juju.Charmworld1({
+          api = new Y.juju.Charmworld2({
             apiHost: hostname
           }),
           ds = api.get('datasource');
 
-      ds.get('source').should.eql('http://localhost/api/1/');
+      ds.get('source').should.eql('http://localhost/api/2/');
     });
 
     it('handles loading interesting content correctly', function(done) {
       var hostname = 'http://localhost',
-          api = new Y.juju.Charmworld1({
+          api = new Y.juju.Charmworld2({
             apiHost: hostname
           }),
           data = [];
@@ -303,7 +303,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var hostname = 'http://localhost',
           data = [],
           url;
-      var api = new Y.juju.Charmworld1({
+      var api = new Y.juju.Charmworld2({
         apiHost: hostname
       });
       data.push({
@@ -335,13 +335,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('constructs filepaths correct', function() {
       var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld1({
+      var api = new Y.juju.Charmworld2({
         apiHost: hostname
       });
 
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       iconPath.should.eql(
-          'http://localhostapi/1/charm/precise/mysql-1/file/icon.svg');
+          'http://localhostapi/2/charm/precise/mysql-1/file/icon.svg');
     });
 
   });

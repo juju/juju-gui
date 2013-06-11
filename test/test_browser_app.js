@@ -152,7 +152,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
-        store: new Y.juju.Charmworld1({
+        store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
       });
