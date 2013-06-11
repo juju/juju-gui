@@ -1048,7 +1048,7 @@ YUI.add('juju-view-service', function(Y) {
       },
       units: {
         name: 'units',
-        template: Templates['show_units_small'],
+        template: Templates.show_units_small,
         rebind: function(model) {
           return model.get('units');
         },
@@ -1056,7 +1056,7 @@ YUI.add('juju-view-service', function(Y) {
           var data = {units: modellist.toArray()};
           this.container.setHTML(this.template(data));
         }
-      },
+      }
       //config: {},
       //constraints: {},
       //relations: {}
@@ -1078,7 +1078,7 @@ YUI.add('juju-view-service', function(Y) {
         '.close': {'click': 'destroy'}
       };
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
-                               true, undefined, 0,  true);
+                               true, undefined, 0, true);
       options.model = model;
       this.inspector = new juju.ViewContainer(options);
       this.inspector.render();
@@ -1094,16 +1094,14 @@ YUI.add('juju-view-service', function(Y) {
         return this.inspector.getName();
       },
       bind: function(model, viewlet) {
-          this.bindingEngine.bind(model, viewlet);
-          return this;
+        this.bindingEngine.bind(model, viewlet);
+        return this;
       },
       render: function() {
         this.inspector.render();
         return this;
-      },
-
-
-    }
+      }
+    };
 
     return ServiceInspector;
 

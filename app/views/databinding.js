@@ -190,9 +190,12 @@ YUI.add('juju-databinding', function(Y) {
       if (checkClassImplements(viewletModel, 'model')) {
         // Bind and listen for model changes.
         if (viewlet.bindings) {
-          Y.each(viewlet.bindings, function(b) {this.addBinding(b, viewlet);}, this);
+          Y.each(viewlet.bindings, function(b) {
+            this.addBinding(b, viewlet);
+          }, this);
         }
-        this._events.push(viewletModel.on('change', this._modelChangeHandler, this));
+        this._events.push(viewletModel.on(
+            'change', this._modelChangeHandler, this));
         this._updateDOM();
       } else {
         // Model list
@@ -278,7 +281,7 @@ YUI.add('juju-databinding', function(Y) {
             var elementKind = node.getDOMNode().tagName.toLowerCase();
             var field = self._fieldHandlers[elementKind];
             if (!field) {
-              field = self._fieldHandlers.default;
+              field = self._fieldHandlers['default'];
             }
 
             // Do conflict detection

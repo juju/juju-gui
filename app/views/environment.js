@@ -77,7 +77,7 @@ YUI.add('juju-view-environment', function(Y) {
         /**
           @method setInspector
           @param {ViewContainer} inspector instance.
-          @param {Boolean} remove flag to remove the instance
+          @param {Boolean} remove flag to remove the instance.
           @chainable
         */
         setInspector: function(inspector, remove) {

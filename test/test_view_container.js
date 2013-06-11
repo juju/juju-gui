@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('View Container', function() {
+describe('View Container', function() {
   var Y, juju, viewContainer, utils, container;
 
   var fakeController = function() {};
@@ -155,6 +155,6 @@ describe.only('View Container', function() {
     assert.equal(container.all('.viewlet-container').size(), 1);
     viewContainer.destroy();
     assert.equal(container.all('.viewlet-container').size(), 0);
-  })
+  });
 
 });

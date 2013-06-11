@@ -1261,6 +1261,8 @@ YUI.add('juju-topology-service', function(Y) {
       var getInspector = topo.get('getInspector');
       var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
+      // to satisfy linter;
+      var flags = window.flags;
 
       topo.detachContainer();
       if (flags.serviceInspector) {

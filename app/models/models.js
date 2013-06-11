@@ -258,20 +258,20 @@ YUI.add('juju-models', function(Y) {
     },
 
     process_delta: function(action, data, db) {
-    var instance = _process_delta(this, action, data, {relation_errors: {}});
-    if (!instance || !db) {return;}
+      var instance = _process_delta(this, action, data, {relation_errors: {}});
+      if (!instance || !db) {return;}
 
-    // Apply this action for this instance to alll service models as well.
-    // In the future we can transition from using db.units to always
-    // looking at db.serviices[serviceId].units
-    var service = db.services.getById(instance.service);
-    if (!service) return;
-    // Get the unit list for this service. (lazy)
-    var unitList = service.get('units');
-    if (!unitList) {
-      unitList = new models.ServiceUnitList();
-      service.set('units', unitList);
-    }
+      // Apply this action for this instance to alll service models as well.
+      // In the future we can transition from using db.units to always
+      // looking at db.serviices[serviceId].units
+      var service = db.services.getById(instance.service);
+      if (!service) { return; }
+      // Get the unit list for this service. (lazy)
+      var unitList = service.get('units');
+      if (!unitList) {
+        unitList = new models.ServiceUnitList();
+        service.set('units', unitList);
+      }
       _process_delta(unitList, action, data, {relation_errors: {}});
     },
 

@@ -194,7 +194,7 @@ YUI.add('juju-view-container', function(Y) {
       inspector panel.
 
       @method getName
-      @return {String} id of the model
+      @return {String} id of the model.
     */
     getName: function() {
       return this.get('model').get('id');
@@ -300,6 +300,11 @@ YUI.add('juju-view-container', function(Y) {
       // /*jshint +W089 */
     },
 
+    /**
+      Removes and destroys the container
+
+      @method destructor
+    */
     destructor: function() {
       this.get('container').remove().destroy(true);
     }
