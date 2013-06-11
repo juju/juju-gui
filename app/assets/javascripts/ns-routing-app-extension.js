@@ -144,7 +144,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
       }
 
       if (result.search) {
-        result.pathname = result.pathname.substr(0, (result.pathname.length - result.search.length) - 1);
+        result.pathname = result.pathname.substr(
+            0,
+            (result.pathname.length - result.search.length) - 1);
       }
 
       return result;
