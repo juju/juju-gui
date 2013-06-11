@@ -135,7 +135,7 @@ Databinding Engine
 ==================
 
 The Databinding Engine is the class which handles the binding between the model
-passed to the `View Controller`_ and the `Viewlets`_ using the viewlet
+passed to the `View Container`_ and the `Viewlets`_ using the viewlet
 configuration property `bindings`.
 
 
@@ -143,4 +143,4 @@ Controller
 ==========
 
 The Controller is a 100% user created class whos responsibility is to connect
-the `View Controller`_ and the `Databinding Engine`_ together.
+the `View Container`_ and the `Databinding Engine`_ together.
