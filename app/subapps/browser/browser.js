@@ -312,6 +312,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     _updateState: function(req) {
       // Update the viewmode. Every request has a viewmode.
+      debugger;
       var path = req.path,
           params = req.params,
           query = req.query,
@@ -402,14 +403,11 @@ YUI.add('subapp-browser', function(Y) {
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
-        debugger;
         var url;
         if (ev.url) {
           url = ev.url;
         } else if (ev.change) {
-          debugger;
           url = this._getStateUrl(ev.change);
-          debugger;
         }
         this.navigate(url);
       });

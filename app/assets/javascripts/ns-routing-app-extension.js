@@ -144,8 +144,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
       }
 
       if (result.search) {
-        result.pathname = result.pathname.substr(0,
-                          (result.pathname.length - result.search.length) - 1);
+        result.pathname = result.pathname.substr(0, (result.pathname.length - result.search.length) - 1);
       }
 
       return result;
@@ -165,6 +164,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
      * @return {Object} result is {ns: url fragment {String}}.
      **/
     parse: function(url, combineFlags) {
+      debugger;
       combineFlags = Y.mix(this.combineFlags || {}, combineFlags, true);
       var result = new Routes();
       var parts = this.split(url);
@@ -342,6 +342,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         });
       });
 
+      debugger;
       output.hash = incoming.hash;
       output.search = incoming.search;
       url = this.url(output, {excludeRootPaths: true});
@@ -415,12 +416,10 @@ YUI.add('ns-routing-app-extension', function(Y) {
         result = url;
         delete options.overrideAllNamespaces;
       } else {
+        debugger;
         var loc = Y.getLocation();
         var qs = this.nsRouter.getQS(url);
         result = this.nsRouter.combine(loc.pathname, url);
-        if (qs) {
-          result += '?' + qs;
-        }
       }
       if (Y.App.prototype._navigate.call(this, result, options)) {
         return true;
