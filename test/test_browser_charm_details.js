@@ -747,7 +747,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('selects the proper tab when given one', function() {
-      var fakeStore = new Y.juju.Charmworld1({});
+      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
