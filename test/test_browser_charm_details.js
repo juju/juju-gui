@@ -364,7 +364,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       // By default the first tab is selected.
-      assert.equal(view.tabview.get('selected'), 1);
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-readme');
 
       view._loadQAContent = function() {
         // This test is just verifying that we don't timeout. The event fired,
@@ -759,8 +760,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.render();
 
-      // We've selected index 2 of the tab set.
-      assert.equal(view.tabview.get('selected'), 2);
+      // We've selected the activeTab specified.
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-interfaces');
     });
 
   });
