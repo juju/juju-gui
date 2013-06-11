@@ -229,7 +229,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._addCharmEnvironment({halt: function() {}});
     });
 
-
     it('should load a file when a hook is selected', function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
@@ -350,34 +349,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       processed.questions[0].score.should.eql(3);
       assert.ok(processed.charm.is_approved);
 
-    });
-
-    it('qa content is loaded when the tab is clicked on', function(done) {
-      view = new CharmView({
-        charm: new models.BrowserCharm({
-          files: [],
-          id: 'precise/ceph-9',
-          code_source: { location: 'lp:~foo' }
-        }),
-        container: utils.makeContainer()
-      });
-      view.render();
-
-      // By default the first tab is selected.
-      var selected = view.get('container').one('.yui3-tab-selected a');
-      assert.equal(selected.getAttribute('href'), '#bws-readme');
-
-      view._loadQAContent = function() {
-        // This test is just verifying that we don't timeout. The event fired,
-        // was caught here, and we completed the test run. No assertion to be
-        // found here.
-        done();
-
-      };
-
-      view.tabview.fire('selectionChange', new Y.EventFacade({
-        newVal: Y.Node.create('<div>Quality</div>')
-      }));
     });
 
     it('does not blow up when the scores from the api is null', function() {
