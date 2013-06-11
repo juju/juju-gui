@@ -22,6 +22,7 @@ Contents:
    continuous-integration
    datasources
    recording-and-playing-back-websocket-traffic
+   viewlet-data-binding
 
 See also the `code documentation <../../../yuidoc/index.html>`_
 (:ref:`generated separately <embedded-docs>`).
