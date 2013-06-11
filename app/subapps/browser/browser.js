@@ -420,7 +420,7 @@ YUI.add('subapp-browser', function(Y) {
       var hasChanged = this._hasStateChanged;
       if (this._details && this._hasChanged('hash') &&
           !(this._hasChanged('charmID') || this._hasChanged('viewmode'))) {
-          return;
+        return;
       }
 
       // The details view needs to know if we're using a fullscreen template

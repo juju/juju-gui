@@ -530,7 +530,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (this.get('activeTab')) {
-        this.get('container').one('.tabs a[href="' + this.get('activeTab') + '"]').get('parentNode').simulate('click');
+        this.get('container').one(
+            '.tabs a[href="' + this.get('activeTab') + '"]').get(
+            'parentNode').simulate('click');
       }
 
       // XXX: Ideally we shouldn't have to do this; resetting the container
