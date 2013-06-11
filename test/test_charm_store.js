@@ -247,7 +247,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
-  describe.only('juju Charmworld2 api', function() {
+  describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
