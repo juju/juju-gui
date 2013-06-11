@@ -324,8 +324,15 @@ YUI.add('juju-models', function(Y) {
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
           Y.Object.values(aggregate), 0, function(a, b) {return a + b;});
+      var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate);
+
+      // Set Google Analytics tracking event.
+      if (previous_unit_count !== sum) {
+        window._gaq.push(['_trackEvent', 'Service Stats', 'Update',
+          service.get('id'), sum]);
+      }
     },
     ATTRS: {}
   });
