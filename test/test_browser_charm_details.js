@@ -372,10 +372,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // was caught here, and we completed the test run. No assertion to be
         // found here.
         done();
+
       };
 
-      var qa_tab = Y.one('.tabs li a.bws-qa');
-      qa_tab.simulate('click');
+      view.tabview.fire('selectionChange', {
+        newVal: Y.Node.create('<div>Quality</div>')
+      });
     });
 
     it('does not blow up when the scores from the api is null', function() {
@@ -444,7 +446,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._loadQAContent();
       foundNode = view.get('container').one('.no-qa-reviewed');
       assert.ok(foundNode);
-
     });
 
     it('should catch when the open log is clicked', function(done) {

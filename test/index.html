@@ -115,7 +115,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       delayUntil: 'domready',
       debug: false,
       combine: false,
-      fetchCSS: false
+      fetchCSS: false,
+      // Do not attempt to dispatch a new route when an anchor tag appears in
+      // the url. This is intended to keep charm details from reloading on tab
+      // selection in the browser.
+      navigateOnHash: false,
   };
 
   // tabview needs to be here since it doesn't auto load it for some reason.
