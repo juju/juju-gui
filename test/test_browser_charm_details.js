@@ -363,6 +363,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.render();
 
+      // By default the first tab is selected.
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-readme');
+
       view._loadQAContent = function() {
         // This test is just verifying that we don't timeout. The event fired,
         // was caught here, and we completed the test run. No assertion to be
@@ -740,6 +744,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
       var iconNode = view.get('container').one('.category-icon');
       assert.equal(iconNode.hasClass('charm-app-servers-160'), true);
+    });
+
+    it('selects the proper tab when given one', function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
+
+      view.render();
+
+      // We've selected the activeTab specified.
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-interfaces');
     });
 
   });

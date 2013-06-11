@@ -130,6 +130,7 @@ YUI.add('subapp-browser', function(Y) {
     _initState: function() {
       this._oldState = {
         charmID: null,
+        hash: null,
         querystring: null,
         search: null,
         viewmode: null
@@ -313,9 +314,14 @@ YUI.add('subapp-browser', function(Y) {
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
-          query = req.query;
+          query = req.query,
+          hash = window.location.hash;
 
       this._viewState.viewmode = params.viewmode;
+
+      if (hash) {
+        this._viewState.hash = hash.replace('/', '');
+      }
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
@@ -418,10 +424,19 @@ YUI.add('subapp-browser', function(Y) {
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
       var extraCfg = {
+        activeTab: this._viewState.hash,
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
+
+      // If the only thing that changed was the hash, then don't redraw. It's
+      // just someone clicking a tab in the UI.
+      if (this._details && this._hasStateChanged('hash') &&
+          !(this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode'))) {
+        return;
+      }
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
