@@ -417,7 +417,6 @@ YUI.add('ns-routing-app-extension', function(Y) {
         delete options.overrideAllNamespaces;
       } else {
         var loc = Y.getLocation();
-        var qs = this.nsRouter.getQS(url);
         result = this.nsRouter.combine(loc.pathname, url);
       }
       if (Y.App.prototype._navigate.call(this, result, options)) {
