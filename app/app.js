@@ -365,6 +365,15 @@ YUI.add('juju-gui', function(Y) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
+      /**
+        Reference to the juju.Cookies instance.
+
+        @property cookieHandler
+        @type {juju.Cookies}
+        @default null
+      */
+      this.cookieHandler = null;
+
       this.renderEnvironment = true;
       // If this property has a value other than '/' then
       // navigate to it after logging in.
@@ -1205,19 +1214,19 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Make sure that the user accepted cookie usage.
+     * Make sure that the user agrees to cookie usage.
      *
-     * @method check_cookies
+     * @method handleCookies
      * @param {Object} req The request.
-     * @param {Object} res ???
+     * @param {Object} res The response.
      * @param {Object} next The next route handler.
      *
      */
-    check_cookies: function(req, res, next) {
+    handleCookies: function(req, res, next) {
       var analyticsEnabled = this.get('useAnalytics');
       if (analyticsEnabled) {
-        this.cookieChecker = this.cookieChecker || new Y.juju.Cookies();
-        this.cookieChecker.check();
+        this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
+        this.cookieHandler.check();
       }
       next();
     }
@@ -1263,7 +1272,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'check_cookies'},
+          { path: '*', callbacks: 'handleCookies'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',

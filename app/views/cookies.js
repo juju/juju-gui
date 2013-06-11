@@ -33,7 +33,7 @@ YUI.add('juju-cookies', function(Y) {
     warning: (
         '<div class="cookie-policy">' +
         '<div class="wrapper">' +
-              '<a href="javascript:void(0)" class="link-cta">Close</a>' +
+              '<a href="#" class="link-cta">Close</a>' +
               '<p>' +
                   'We use cookies to improve your experience. By your ' +
                   'continued use of this site you accept such use. ' +
@@ -71,7 +71,7 @@ YUI.add('juju-cookies', function(Y) {
       @return {undefined} Side-effects only.
     */
     close: function() {
-      Y.one('.cookie-policy').setStyle('display', 'none');
+      Y.one('.cookie-policy').remove();
       Y.Cookie.set('_cookies_accepted', 'true',
           {expires: new Date('January 12, 2025')});
     }

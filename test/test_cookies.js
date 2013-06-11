@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('cookies', function() {
-    var checker, cookie, cp_node, juju, Y;
+    var cookie, cookieHandler, cp_node, juju, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      checker = new juju.Cookies();
+      cookieHandler = new juju.Cookies();
     });
 
     afterEach(function() {
@@ -46,14 +46,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('check creates node', function() {
       assert.isNull(Y.one('.cookie-policy'));
-      checker.check();
+      cookieHandler.check();
       Y.one('.cookie-policy').setStyle('visibility', 'hidden');
       assert.isObject(Y.one('.cookie-policy'));
     });
 
     it('closing banner sets cookie', function() {
       assert.isNull(Y.one('.cookie-policy'));
-      checker.check();
+      cookieHandler.check();
       cp_node = Y.one('.cookie-policy .link-cta');
       cp_node.setStyle('visibility', 'hidden');
       cp_node.simulate('click');
@@ -64,7 +64,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('cookie prevents node creation', function() {
       Y.Cookie.set('_cookies_accepted', 'true');
       assert.isNull(Y.one('.cookie-policy'));
-      checker.check();
+      cookieHandler.check();
       assert.isNull(Y.one('.cookie-policy'));
     });
 
