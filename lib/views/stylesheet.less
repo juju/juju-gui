@@ -1,3 +1,10 @@
+/*
+In order to gradually move away from bootstrap when so much of the application
+relies on it's styles when you find a bootstrap specific class style copy the
+__not overridden__ styles into the juju-bootstrap.less file.
+*/
+@import "juju-bootstrap.less";
+
 /* Processed with LESS from lib/views/stylesheet.less */
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 @font-family-medium: 'Ubuntu Medium', 'Ubuntu-Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -62,13 +69,36 @@ body {
     background-color: #302b28;
     font-family: @font-family;
     height: 100%;
+    font-size: 13px;
+    line-height: 18px;
 }
 input, button, select, textarea {
     font-family: @font-family;
+    font-weight: normal;
+}
+button {
+    cursor: pointer;
+    -webkit-appearance: button;
 }
 svg {
     stroke-width: 0;
     overflow: hidden;
+}
+li {
+    line-height: 18px;
+}
+h4 {
+    font-size: 14px;
+}
+h4, h5, h6 {
+    line-height: 18px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: inherit;
+    font-weight: bold;
+    color: inherit;
+    text-rendering: optimizelegibility;
 }
 .align-right {
     text-align: right;
