@@ -93,8 +93,9 @@ describe('Namespaced Routing', function() {
   it('should support hashes and query strings', function() {
     var router = juju.Router('test');
     var url, parts;
-    parts = router.parse('/foo/#bar?baz=something+else&battery=acid');
-    assert.equal(parts.hash, 'bar');
+    parts = router.parse(
+        '/foo/#bar=foo$baz-bax$foo-bar=baz?baz=something+else&battery=acid');
+    assert.equal(parts.hash, 'bar=foo$baz-bax$foo-bar=baz');
     assert.equal(parts.search, 'baz=something+else&battery=acid');
     assert.equal(parts.test, '/foo/');
   });

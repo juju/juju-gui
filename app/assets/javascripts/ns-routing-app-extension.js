@@ -108,7 +108,14 @@ YUI.add('ns-routing-app-extension', function(Y) {
       @return {String} hash || null.
     */
     getHash: function(url) {
-      return window.location.hash;
+      // This will return an array with three values  the whole matched hash,
+      // the hash symbol, and then the hash without the hash.
+      // It is quoted to shush the linter about the .
+      var match = url.match('(#)(.[^?\/]*)?');
+      if (!match) {
+        return undefined;
+      }
+      return match[2];
     },
 
     /**
@@ -334,8 +341,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           }
         });
       });
-      // TODO: Need combine support for hash/search. Output can be a Routes
-      // object to make this work as hash/search wouldn't be in the enum set.
+
       output.hash = incoming.hash;
       output.search = incoming.search;
       url = this.url(output, {excludeRootPaths: true});
