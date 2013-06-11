@@ -375,9 +375,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       };
 
-      view.tabview.fire('selectionChange', {
+      view.tabview.fire('selectionChange', new Y.EventFacade({
         newVal: Y.Node.create('<div>Quality</div>')
-      });
+      }));
     });
 
     it('does not blow up when the scores from the api is null', function() {
