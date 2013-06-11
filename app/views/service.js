@@ -1031,6 +1031,8 @@ YUI.add('juju-view-service', function(Y) {
 
 
   /**
+    Service Inspector View Container Controller
+
     @class ServiceInspector
    */
   var ServiceInspector = (function() {
@@ -1049,10 +1051,10 @@ YUI.add('juju-view-service', function(Y) {
       units: {
         name: 'units',
         template: Templates.show_units_small,
-        rebind: function(model) {
+        'rebind': function(model) {
           return model.get('units');
         },
-        update: function(modellist) {
+        'update': function(modellist) {
           var data = {units: modellist.toArray()};
           this.container.setHTML(this.template(data));
         }
@@ -1061,6 +1063,12 @@ YUI.add('juju-view-service', function(Y) {
       //constraints: {},
       //relations: {}
     };
+    /**
+      Constructor for View Container Constroller
+
+      @method ServiceInspector
+      @constructor
+    */
     function ServiceInspector(model, options) {
       this.model = model;
       options = options || {};
@@ -1090,14 +1098,14 @@ YUI.add('juju-view-service', function(Y) {
     }
 
     ServiceInspector.prototype = {
-      getName: function() {
+      'getName': function() {
         return this.inspector.getName();
       },
-      bind: function(model, viewlet) {
+      'bind': function(model, viewlet) {
         this.bindingEngine.bind(model, viewlet);
         return this;
       },
-      render: function() {
+      'render': function() {
         this.inspector.render();
         return this;
       }
