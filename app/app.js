@@ -439,7 +439,7 @@ YUI.add('juju-gui', function(Y) {
         };
         var apiBackend = this.get('apiBackend');
         // The sandbox mode does not support the Go API (yet?).
-        if (this.get('sandbox') && apiBackend === 'python') {
+        if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
           var state = new State({charmStore: this.charm_store});
@@ -448,8 +448,16 @@ YUI.add('juju-gui', function(Y) {
             credentials[envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }
-          envOptions.conn = new sandboxModule.ClientConnection(
-              {juju: new sandboxModule.PyJujuAPI({state: state})});
+          if (apiBackend === 'python') {
+            envOptions.conn = new sandboxModule.ClientConnection(
+                {juju: new sandboxModule.PyJujuAPI({state: state})});
+          } else if (apiBackend === 'go') {
+            envOptions.conn = new sandboxModule.ClientConnection(
+                {juju: new sandboxModule.GoJujuAPI({state: state})});
+          } else {
+            throw 'unrecognized backend type: ' + apiBackend;
+          }
+
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }

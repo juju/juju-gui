@@ -182,8 +182,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models', 'promise'];
-    var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
-        state, juju, client, env, utils, cleanups;
+    var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
+        client, env, utils, cleanups;
 
     this.timeout(2000); // Long timeouts make async failures hard to detect.
 
@@ -1471,6 +1471,203 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                              envData: fixture}));
       };
       client.open();
+    });
+
+  });
+
+
+  describe('sandbox.GoJujuAPI', function() {
+    var requires = [
+      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
+      'juju-models', 'promise'];
+    var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
+        client, env, utils, cleanups;
+
+    this.timeout(2000); // Long timeouts make async failures hard to detect.
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        sandboxModule = Y.namespace('juju.environments.sandbox');
+        environmentsModule = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      state = utils.makeFakeBackendWithCharmStore();
+      juju = new sandboxModule.GoJujuAPI({state: state});
+      client = new sandboxModule.ClientConnection({juju: juju});
+      env = new environmentsModule.GoEnvironment({conn: client});
+      cleanups = [];
+    });
+
+    afterEach(function() {
+      Y.each(cleanups, function(f) {f();});
+      env.destroy();
+      client.destroy();
+      juju.destroy();
+      state.destroy();
+    });
+
+    it('opens successfully.', function() {
+      assert.isFalse(juju.connected);
+      assert.isUndefined(juju.get('client'));
+      client.open();
+      assert.isTrue(juju.connected);
+      assert.strictEqual(juju.get('client'), client);
+    });
+
+    it('ignores "open" when already open to same client.', function() {
+      client.receive = function() {
+        assert.ok(false, 'The receive method should not be called.');
+      };
+      // Whitebox test: duplicate "open" state.
+      juju.connected = true;
+      juju.set('client', client);
+      // This is effectively a re-open.
+      client.open();
+      // The assert.ok above is the verification.
+    });
+
+    it('refuses to open if already open to another client.', function() {
+      // This is a simple way to make sure that we don't leave multiple
+      // setInterval calls running.  If for some reason we want more
+      // simultaneous clients, that's fine, though that will require
+      // reworking the delta code generally.
+      juju.connected = true;
+      juju.set('client', {receive: function() {
+        assert.ok(false, 'The receive method should not have been called.');
+      }});
+      assert.throws(
+          client.open.bind(client),
+          'INVALID_STATE_ERR : Connection is open to another client.');
+    });
+
+    it('closes successfully.', function() {
+      client.open();
+      assert.isTrue(juju.connected);
+      assert.notEqual(juju.get('client'), undefined);
+      client.close();
+      assert.isFalse(juju.connected);
+      assert.isUndefined(juju.get('client'));
+    });
+
+    it('ignores "close" when already closed.', function() {
+      // This simply shows that we do not raise an error.
+      juju.close();
+    });
+
+    it('can dispatch on received information.', function(done) {
+      var data = {Type: 'TheType', Request: 'TheRequest'};
+      juju.handle_TheType_TheRequest = function(received) {
+        assert.notStrictEqual(received, data);
+        assert.deepEqual(received, data);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('refuses to dispatch when closed.', function() {
+      assert.throws(
+          juju.receive.bind(juju, {}),
+          'INVALID_STATE_ERR : Connection is closed.'
+      );
+    });
+
+    it('can log in.', function(done) {
+      // See FakeBackend's authorizedUsers for these default authentication
+      // values.
+      var data = {
+        Type: 'Admin',
+        Request: 'Login',
+        Params: {
+          AuthTag: 'admin',
+          Password: 'password'
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        // Add in the error indicator so the deepEqual is comparing apples to
+        // apples.
+        data.Error = false;
+        assert.deepEqual(Y.JSON.parse(received.data), data);
+        assert.isTrue(state.get('authenticated'));
+        done();
+      };
+      state.logout();
+      assert.isFalse(state.get('authenticated'));
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can log in (environment integration).', function(done) {
+      state.logout();
+      env.after('login', function() {
+        assert.isTrue(env.userIsAuthenticated);
+        done();
+      });
+      env.connect();
+      env.setCredentials({user: 'admin', password: 'password'});
+      env.login();
+    });
+
+    it('can deploy.', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var data = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          CharmUrl: 'cs:wordpress',
+          ServiceName: 'kumquat',
+          ConfigYAML: 'funny: business',
+          NumUnits: 2
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.equal(receivedData.RequestId, data.RequestId);
+        assert.isUndefined(receivedData.Error);
+        assert.isObject(
+            state.db.charms.getById('cs:precise/wordpress-10'));
+        var service = state.db.services.getById('kumquat');
+        assert.isObject(service);
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+        assert.deepEqual(service.get('config'), {funny: 'business'});
+        var units = state.db.units.get_units_for_service(service);
+        assert.lengthOf(units, 2);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can deploy (environment integration).', function() {
+      env.connect();
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var callback = function(result) {
+        assert.isUndefined(result.err);
+        assert.equal(result.charm_url, 'cs:wordpress');
+        var service = state.db.services.getById('kumquat');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+        assert.deepEqual(service.get('config'), {llama: 'pajama'});
+      };
+      env.deploy(
+          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+    });
+
+    it('can communicate errors after attempting to deploy', function(done) {
+      env.connect();
+      state.deploy('cs:wordpress', function() {});
+      var callback = function(result) {
+        assert.equal(
+            result.err, 'A service with this name already exists.');
+        done();
+      };
+      env.deploy('cs:wordpress', undefined, undefined, undefined, 1,
+          callback);
     });
 
   });

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-Sandbox APIs mimicking communications with the Go and Juju backends.
+Sandbox APIs mimicking communications with the Go and Python backends.
 
 @module env
 @submodule env.sandbox
@@ -682,6 +682,210 @@ YUI.add('juju-env-sandbox', function(Y) {
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;
+
+  /**
+  A sandbox Juju environment using the Go API.
+
+  @class GoJujuAPI
+  */
+  function GoJujuAPI(config) {
+    GoJujuAPI.superclass.constructor.apply(this, arguments);
+  }
+
+  GoJujuAPI.NAME = 'sandbox-py-juju-api';
+  GoJujuAPI.ATTRS = {
+    state: {},
+    client: {}
+  };
+
+  Y.extend(GoJujuAPI, Y.Base, {
+
+    /**
+    Initializes.
+
+    @method initializer
+    @return {undefined} Nothing.
+    */
+    initializer: function() {
+      this.connected = false;
+    },
+
+    /**
+    Opens the connection to the sandbox Juju environment.
+    Called by ClientConnection, which sends itself.
+
+    @method open
+    @param {Object} client A ClientConnection.
+    @return {undefined} Nothing.
+    */
+    open: function(client) {
+      if (!this.connected) {
+        this.connected = true;
+        this.set('client', client);
+      } else if (this.get('client') !== client) {
+        throw 'INVALID_STATE_ERR : Connection is open to another client.';
+      }
+    },
+
+    /**
+    Closes the connection to the sandbox Juju environment.
+    Called by ClientConnection.
+
+    @method close
+    @return {undefined} Nothing.
+    */
+    close: function() {
+      if (this.connected) {
+        this.connected = false;
+        this.set('client', undefined);
+      }
+    },
+
+    /**
+    Do any extra work to destroy the object.
+
+    @method destructor
+    @return {undefined} Nothing.
+    */
+    destructor: function() {
+      this.close();
+    },
+
+    /**
+    Receives messages from the client and dispatches them.
+
+    @method receive
+    @param {Object} data A hash of data sent from the client.
+    @return {undefined} Nothing.
+    */
+    receive: function(data) {
+      console.log('client message', data);
+      // Make a shallow copy of the received data because handlers will mutate
+      // it.
+      if (this.connected) {
+        this['handle_' + data.Type + '_' + data.Request](Y.merge(data),
+            this.get('client'), this.get('state'));
+      } else {
+        throw CLOSEDERROR;
+      }
+    },
+
+    /**
+    Handle Login messages to the state object.
+
+    @method handle_Admin_Login
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Admin_Login: function(data, client, state) {
+      data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
+      client.receive(data);
+    },
+
+    /**
+    Handle EnvironmentView messages.
+
+    @method handle_Client_ServiceGet
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Client_EnvironmentInfo: function(data, client, state) {
+      client.receive({
+        ProviderType: state.get('providerType'),
+        DefaultSeries: state.get('defaultSeries'),
+        Name: 'Sandbox'
+      });
+    },
+
+    /**
+    Handle WatchAll messages.
+
+    @method handle_Client_WatchAll
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Client_WatchAll: function(data, client, state) {
+      // TODO wire up delta stream to "Next" responses here.
+      client.receive({Response: {AllWatcherId: '42'}});
+    },
+
+    /**
+    Handle AllWatcher Next messages.
+
+    @method handle_AllWatcher_Next
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_AllWatcher_Next: function(data, client, state) {
+      // This is a noop for the moment because it must exist but the current
+      // functionality does not depend on it having any effect.
+      // TODO See if there are any changes and if so, send them.
+    },
+
+    /**
+    Handle ServiceDeploy messages
+
+    @method handle_Client_ServiceDeploy
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Client_ServiceDeploy: function(data, client, state) {
+      var callback = function(result) {
+        var response = {RequestId: data.RequestId};
+        if (result.error) {
+          response.Error = result.error;
+        }
+        client.receive(response);
+      };
+      state.deploy(data.Params.CharmUrl, callback, {
+        name: data.Params.ServiceName,
+        config: data.Params.Config,
+        configYAML: data.Params.ConfigYAML,
+        unitCount: data.Params.NumUnits
+      });
+    },
+
+    /**
+    Handle SetAnnotations messages
+
+    @method handle_Client_SetAnnotations
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Client_SetAnnotations: function(data, client, state) {
+      var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
+      var reply = state.updateAnnotations(serviceId, data.Params.Pairs);
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error});
+    },
+
+    /**
+    Handle ServiceGet messages
+
+    @method handle_Client_ServiceGet
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handle_Client_ServiceGet: function(data, client, state) {
+      var reply = state.getService(data.Params.ServiceName);
+      // We do not provide the optional Config or Constraints in the response.
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {Service: data.Params.ServiceName}});
+    }
+
+  });
+
+  sandboxModule.GoJujuAPI = GoJujuAPI;
 }, '0.1.0', {
   requires: [
     'base',
