@@ -182,14 +182,23 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
-      if (
-          !this._viewState.search &&
+      var should = false;
+      // If the viewmode has changed, and seach is not enabled then yes
+      if (!this._viewState.search &&
           this._hasStateChanged('viewmode')
       ) {
-        return true;
-      } else {
-        return false;
+        should = true;
       }
+
+      // Even if viewmode hasn't changed, but search has changed and is false
+      // then yes
+      if (!this._viewState.search &&
+          this._hasStateChanged('search')
+      ) {
+        should = true;
+      }
+
+      return should;
     },
 
     /**
