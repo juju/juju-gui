@@ -236,6 +236,20 @@ class TestCase(unittest.TestCase):
         url = urlparse.urljoin(self.app_url, path)
         self.driver.get(url)
 
+    def click(self, element):
+        """Click on the given element in a cross-browser compatible way.
+
+        The element argument is the element object returned by driver.find*
+        methods.
+        """
+        if browser_name in ('ie', 'local-ie'):
+            # For some reason, the Internet Explorer web driver disconnects if
+            # the usual element.click() is used here.
+            # As a workaround, use native JavaScript instead.
+            self.driver.execute_script('arguments[0].click()', element)
+        else:
+            element.click()
+
     def handle_browser_warning(self):
         """Overstep the browser warning dialog if required."""
         self.wait_for_script(
@@ -277,7 +291,7 @@ class TestCase(unittest.TestCase):
     def logout(self):
         """Log out from the application, clicking the "logout" link."""
         logout_link = self.driver.find_element_by_id('logout-trigger')
-        logout_link.click()
+        self.click(logout_link)
 
     def handle_login(self):
         """Log in."""

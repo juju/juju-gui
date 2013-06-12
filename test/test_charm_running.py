@@ -113,9 +113,9 @@ class DeployTestMixin(object):
             charm_search = driver.find_element_by_id('charm-search-trigger')
             # Click to open the charm panel.
             # Implicit wait should let this resolve.
-            charm_search.click()
+            self.click(charm_search)
             panel = driver.find_element_by_id('juju-search-charm-panel')
-            if charm_panel.is_displayed():
+            if panel.is_displayed():
                 return panel
 
         charm_panel = self.wait_for(
@@ -125,9 +125,10 @@ class DeployTestMixin(object):
         deploy_button = charm_panel.find_element_by_css_selector(
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
             'button.deploy[data-url*={}]'.format(charm_name))
-        deploy_button.click()
+        self.click(deploy_button)
         # Click to confirm deployment.
-        charm_panel.find_element_by_id('charm-deploy').click()
+        confirm_button = charm_panel.find_element_by_id('charm-deploy')
+        self.click(confirm_button)
 
         # Zoom out so that it is possible to see the deployed service in
         # Saucelabs.  This also seems to fix a Firefox bug preventing the name
@@ -135,7 +136,7 @@ class DeployTestMixin(object):
         # displayed.
         zoom_out = self.driver.find_element_by_id('zoom-out-btn')
         for _ in range(2):
-            zoom_out.click()
+            self.click(zoom_out)
 
         def service_deployed(driver):
             return charm_name in self.get_service_names()
