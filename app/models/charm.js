@@ -461,17 +461,22 @@ YUI.add('juju-charm-models', function(Y) {
           return tmp.join('/');
         }
       },
-      hasIcon: {
+      showIcon: {
         /**
-          Does this charm have an icon file. Helper used for template rendering
-          decisions.
+          Should this charm display its icon. Helper used for template
+          rendering decisions.
 
-          @method hasIcon.valueFn
-          @return {Boolean} Does the Charm have an icon file.
+          @method showIcon.valueFn
+          @return {Boolean} Does the charm have an icon that should be shown?
 
          */
         valueFn: function() {
-          return this.get('files').indexOf('icon.svg') !== -1 ? true : false;
+          if (this.get('files').indexOf('icon.svg') !== -1 &&
+              this.get('is_approved')) {
+            return true;
+          } else {
+            return false;
+          }
         }
       },
       is_approved: {},

@@ -79,11 +79,11 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-       * @attribute hasIcon
+       * @attribute showIcon
        * @default false
        * @type {Boolean}
        */
-      hasIcon: {
+      showIcon: {
         value: false
       },
 
