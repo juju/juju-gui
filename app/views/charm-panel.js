@@ -717,6 +717,16 @@ YUI.add('juju-charm-panel', function(Y) {
     container.hide();
 
     /**
+      Setter method for public access.
+
+      @method setActivePanelName
+      @param {String} name of the panel
+    */
+    function setActivePanelName(name) {
+      activePanelName = name;
+    }
+
+    /**
      * Setup the panel data.
      *
      * @method setPanel
@@ -755,7 +765,15 @@ YUI.add('juju-charm-panel', function(Y) {
     }
 
     Y.Object.each(panels, function(panel) {
-      subscriptions.push(panel.on('close', hide));
+      subscriptions.push(panel.on('close', function() {
+        app.db.services.each(function(service) {
+          if (service.get('pending')) {
+            service.destroy();
+          }
+        });
+        hide();
+        app.db.fire('update');
+      }, this));
     });
 
     /**
@@ -891,6 +909,7 @@ YUI.add('juju-charm-panel', function(Y) {
       show: show,
       node: container,
       deploy: deploy,
+      setActivePanelName: setActivePanelName
     };
   }
 
