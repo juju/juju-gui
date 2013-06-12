@@ -61,7 +61,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
         */
         rendered: 'renderedHandler',
         zoom_in: 'zoom_in',
-        zoom_out: 'zoom_out'
+        zoom_out: 'zoom_out',
+        panToPoint: 'panToPoint'
       }
     },
 
@@ -158,7 +159,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       var topo = this.get('component'),
           vis = topo.vis,
           zoom = topo.zoom,
-          rect = topo.zoomPlane,
+          size = topo.get('size'),
           delta,
           evt = {};
 
@@ -172,11 +173,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // Update the translate so that we scale from the center
       // instead of the origin.
       evt.translate = zoom.translate();
-      evt.translate[0] -= (parseInt(rect.attr('width'), 10) / 2) * delta;
-      evt.translate[1] -= (parseInt(rect.attr('height'), 10) / 2) * delta;
-      zoom.translate(evt.translate);
+      evt.translate[0] -= (size[0] / 2) * delta;
+      evt.translate[1] -= (size[1] / 2) * delta;
 
       this.rescale(evt);
+      // TODO Makyo - pan to center of canvas, card on board.
+      topo.fire('panToCenter');
     },
 
     /**
@@ -230,9 +232,35 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (changed) {
         this.rescale({scale: currentScale, translate: currentTranslate});
       }
+    },
+
+    /**
+      Pans the environment so that the given point is in the center of the
+      viewport.
+
+      @method panToPoint
+      @param {object} evt The event handler with a 'point' attribute.
+      @return {undefined} Side effects only.
+    */
+    panToPoint: function(evt) {
+      var point = evt.point,
+          topo = this.get('component'),
+          scale = topo.get('scale'),
+          size = topo.get('size');
+      this.rescale({
+        scale: scale,
+        translate: point.map(function(d, i) {
+          return ((0 - d) * scale) + (size[i] / 2);
+        })
+      });
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
 
   });
   views.PanZoomModule = PanZoomModule;

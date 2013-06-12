@@ -125,7 +125,12 @@ YUI.add('juju-topology-viewport', function(Y) {
     }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
   });
 }, '0.1.0', {
   requires: [
