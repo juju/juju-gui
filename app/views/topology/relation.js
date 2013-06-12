@@ -989,7 +989,12 @@ YUI.add('juju-topology-relation', function(Y) {
     }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
 
   });
   views.RelationModule = RelationModule;

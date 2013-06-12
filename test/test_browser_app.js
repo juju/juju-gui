@@ -152,7 +152,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
-        store: new Y.juju.Charmworld1({
+        store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
       });
@@ -200,10 +200,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
     });
 
+    beforeEach(function() {
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+    });
+
     afterEach(function() {
       if (app) {
         app.destroy();
       }
+
+      window.juju_config = undefined;
     });
 
     it('verify that route callables exist', function() {
@@ -241,11 +250,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         path: '/'
       };
 
-
       app.routeSidebarDefault(req, null, next);
       // The viewmode should be populated now to the default.
       assert.equal(req.params.viewmode, 'sidebar');
-
     });
 
     it('prevents * route from doing more than sidebar by default', function() {
@@ -273,7 +280,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(req.params.viewmode, 'sidebar');
       assert.equal(req.params.id, 'precise/mysql-10');
     });
-
 
     it('/charm/id router ignores other urls', function() {
       app = new browser.Browser();
