@@ -130,7 +130,12 @@ YUI.add('juju-topology-importexport', function(Y) {
           ImportExportModule.superclass.update.call(this);
         }
       }, {
-        ATTRS: {}
+        ATTRS: {
+          /**
+            @property {d3ns.Component} component
+           */
+          component: {}
+        }
 
       });
   views.ImportExportModule = ImportExportModule;

@@ -42,9 +42,26 @@ if (/*@cc_on!@*/false) {
     <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
     <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
     <link rel="stylesheet" href="/juju-ui/assets/sprite.css">
+
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <!-- Set up Google analytics async tracking.
+         If the domain is set to 'jujucharms.com' as you'd expect, the tracker
+         does not work for deployments outside of our demo site.
+    -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      window._gaq = _gaq;
+      window.ga_id = 'UA-41463568-2';
+      _gaq.push(['_setAccount', window.ga_id]);
+      _gaq.push (['_gat._anonymizeIp']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+    </script>
+
   </head>
 
   <body>
@@ -349,8 +366,26 @@ if (/*@cc_on!@*/false) {
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
+
+          if (!juju_config.useAnalytics) {
+            window['ga-disable-' + window.ga_id] = true;
+          }
         });
+
       };
     </script>
+
+    <script type="text/javascript">
+      (function() {
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ?
+                'https://ssl' : 'http://www') +
+                '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
   </body>
 </html>

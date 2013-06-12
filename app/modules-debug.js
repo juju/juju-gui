@@ -42,6 +42,11 @@ var GlobalConfig = {
   // Don't load YUI CSS from YUI servers.
   fetchCSS: false,
 
+  // Do not attempt to dispatch a new route when an anchor tag appears in the
+  // url. This is intended to keep charm details from reloading on tab
+  // selection in the browser.
+  navigateOnHash: false,
+
   groups: {
     gallery: {
       modules: {
