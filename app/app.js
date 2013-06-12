@@ -538,10 +538,6 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         app: this
       });
-      this.charmPanel.setDefaultSeries(this.env.get('defaultSeries'));
-      this.env.after('defaultSeriesChange', Y.bind(function(ev) {
-        this.charmPanel.setDefaultSeries(ev.newVal);
-      }, this));
 
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
