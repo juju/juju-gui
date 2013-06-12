@@ -55,4 +55,21 @@ describe('topology utils', function() {
     existing.push([200, 200]);
     assert.deepEqual(utils.pointOutside(existing, 100), [300, 200]);
   });
+
+  it('should generate a centroid for one or more points', function() {
+    // Empty array returns [0, 0].
+    var existing = [];
+    assert.deepEqual(utils.centroid(existing), [0, 0]);
+    // One vertex returns that vertex.
+    existing.push([100, 100]);
+    assert.deepEqual(utils.centroid(existing), [100, 100]);
+    // Two vertices returns the midpoint of that line.
+    existing.push([200, 200]);
+    assert.deepEqual(utils.centroid(existing), [150, 150]);
+    // Three or more vertices returns the centroid of the convex hull of the
+    // vertices.
+    existing.push([100, 200]);
+    existing.push([200, 100]);
+    assert.deepEqual(utils.centroid(existing), [150, 150]);
+  });
 });

@@ -130,6 +130,7 @@ YUI.add('subapp-browser', function(Y) {
     _initState: function() {
       this._oldState = {
         charmID: null,
+        hash: null,
         querystring: null,
         search: null,
         viewmode: null
@@ -276,6 +277,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Does our app instance have a valid store? If not, then we should ignore
+      a lot of work since we can't do it anyway. Sanity check our
+      information. During test running, for instance, we don't have a valid
+      store to work with and that's ok.
+
+      @method _hasValidStore
+      @return {Boolean} do we have a valid store or not.
+
+     */
+    _hasValidStore: function() {
+      var store = this.get('store');
+      return !store.get('noop');
+    },
+
+    /**
        Update the oldState with the viewState now that we're done processing
        the request.
 
@@ -298,9 +314,14 @@ YUI.add('subapp-browser', function(Y) {
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
-          query = req.query;
+          query = req.query,
+          hash = window.location.hash;
 
       this._viewState.viewmode = params.viewmode;
+
+      if (hash) {
+        this._viewState.hash = hash.replace('/', '');
+      }
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
@@ -403,10 +424,19 @@ YUI.add('subapp-browser', function(Y) {
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
       var extraCfg = {
+        activeTab: this._viewState.hash,
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
+
+      // If the only thing that changed was the hash, then don't redraw. It's
+      // just someone clicking a tab in the UI.
+      if (this._details && this._hasStateChanged('hash') &&
+          !(this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode'))) {
+        return;
+      }
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
@@ -708,6 +738,11 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
+      // If we don't have a valid store we can't do any work here.
+      if (!this._hasValidStore()) {
+        return;
+      }
+
       // Check if we have exactly two url parts in our path.
       var hasIdMatch = '^\/?([^/]+\/?){2}$',
           id = null;
@@ -715,7 +750,6 @@ YUI.add('subapp-browser', function(Y) {
       if (req.path.match(hasIdMatch)) {
         id = this._stripViewMode(req.path);
       }
-
       if (!id) {
         next();
         return;
@@ -835,8 +869,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld1
-         @type {Charmworld1}
+         @default Charmworld2
+         @type {Charmworld2}
        */
       store: {
         /**
@@ -858,7 +892,7 @@ YUI.add('subapp-browser', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld1(cfg);
+          return new Y.juju.Charmworld2(cfg);
         }
       },
 

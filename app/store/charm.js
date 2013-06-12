@@ -157,12 +157,12 @@ YUI.add('juju-charm-store', function(Y) {
   /**
    * Api helper for the updated charmworld api v1.
    *
-   * @class Charmworld1
+   * @class Charmworld2
    * @extends {Base}
    *
    */
-  ns.Charmworld1 = Y.Base.create('charmworld1', Y.Base, [], {
-    _apiRoot: 'api/1',
+  ns.Charmworld2 = Y.Base.create('charmworld2', Y.Base, [], {
+    _apiRoot: 'api/2',
 
     /**
      * Send the actual request and handle response from the api.
@@ -384,6 +384,9 @@ YUI.add('juju-charm-store', function(Y) {
       apiHost: {
         required: true,
         setter: function(val) {
+          if (val && !val.match(/\/$/)) {
+            val = val + '/';
+          }
           // Make sure we update the datasource if our apiHost changes.
           var source = val + this._apiRoot + '/';
           this.set('datasource', new Y.DataSource.IO({ source: source }));
