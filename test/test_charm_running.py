@@ -14,10 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import browser
+from __future__ import print_function
 import unittest
 
 from selenium.common import exceptions
+
+import browser
 
 
 class TestBasics(browser.TestCase):
@@ -71,7 +73,8 @@ class TestBasics(browser.TestCase):
                     tests_completed, 'Unable to complete test run.',
                     timeout=180)
             except exceptions.TimeoutException:
-                print(self.driver.execute_script('return testRunner.stats;'))
+                browser.printerr(
+                    self.driver.execute_script('return testRunner.stats;'))
                 raise
             return total, failures
         self.load('/test/')
@@ -81,9 +84,9 @@ class TestBasics(browser.TestCase):
                 # XXX bug 1161937 gary 2013-03-29
                 # We sometimes see initial failures and we don't know why :-(.
                 # Reload and retry.
-                print(
-                    '{} failure(s) running {} tests.  Retrying.'.format(
-                        failures, total))
+                msg = '{} failure(s) running {} tests.  Retrying.'.format(
+                    failures, total)
+                browser.printerr(msg)
                 self.driver.refresh()
             else:
                 break
