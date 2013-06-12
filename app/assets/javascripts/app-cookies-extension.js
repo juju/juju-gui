@@ -26,11 +26,9 @@ YUI.add('app-cookies-extension', function(Y) {
      @class Cookies
      @extension App
    */
-  function Cookies() {
-    // Put anything required for construction in here 
+  function Cookies(test_node) {
+    this.node = test_node || Y.one('.cookie-policy');
   };
-  
-  Cookies.ATTRS = {};
   
   Cookies.prototype = {
   
@@ -44,7 +42,7 @@ YUI.add('app-cookies-extension', function(Y) {
     check: function() {
       var self = this;
       if (Y.Cookie.get('_cookies_accepted') !== 'true') {
-        Y.one('.cookie-policy').setStyle('display', 'block');
+        this.node.setStyle('display', 'block');
         Y.one('.cookie-policy .link-cta').once('click', function(evt) {
           evt.preventDefault();
           self.close();
@@ -59,7 +57,7 @@ YUI.add('app-cookies-extension', function(Y) {
       @return {undefined} Side-effects only.
     */
     close: function() {
-      Y.one('.cookie-policy').setStyle('display', 'none')
+      this.node.setStyle('display', 'none')
       Y.Cookie.set('_cookies_accepted', 'true',
           {expires: new Date('January 12, 2025')});
     }

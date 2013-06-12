@@ -1214,7 +1214,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Make sure that the user agrees to cookie usage.
+     * Make sure the user agrees to cookie usage.
      *
      * @method handleCookies
      * @param {Object} req The request.

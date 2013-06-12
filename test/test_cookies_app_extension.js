@@ -20,52 +20,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('cookies', function() {
-    var cookie, cookieHandler, cp_node, juju, Y;
+  describe('app-cookies-extension', function() {
+    var container, cookie, cookieHandler, display, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'cookie', 'juju-cookies', 'node', 'node-event-simulate'
+        'app-cookies-extension', 'cookie', 'juju-tests-utils',
+        'node-event-simulate'
       ], function(Y) {
-        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      cookieHandler = new juju.Cookies();
+      container = utils.makeContainer('container');
+      cookieHandler = new Cookies(container);
     });
 
     afterEach(function() {
       Y.Cookie.remove('_cookies_accepted');
-      cp_node = Y.one('.cookie-policy');
-      if (cp_node) {
-        cp_node.remove();
-      }
+      container.remove(true);
     });
 
-    it('check creates node', function() {
-      assert.isNull(Y.one('.cookie-policy'));
+    it('calling check makes the node visible', function() {
+      // The node is set to 'display: none' at first.
       cookieHandler.check();
-      Y.one('.cookie-policy').setStyle('visibility', 'hidden');
-      assert.isObject(Y.one('.cookie-policy'));
+      display = Y.one('.cookie-policy').getStyle('display');
+      assert.equal(display, 'block');
     });
 
-    it('closing banner sets cookie', function() {
-      assert.isNull(Y.one('.cookie-policy'));
+    it('closing the banner sets the cookie', function() {
       cookieHandler.check();
-      cp_node = Y.one('.cookie-policy .link-cta');
-      cp_node.setStyle('visibility', 'hidden');
-      cp_node.simulate('click');
+      Y.one('.cookie-policy .link-cta').simulate('click');
       cookie = Y.Cookie.get('_cookies_accepted');
       assert.equal(cookie, 'true');
     });
 
-    it('cookie prevents node creation', function() {
+    it('the cookie prevents the node from getting visible', function() {
+      // The node is set to 'display: none' at first.
       Y.Cookie.set('_cookies_accepted', 'true');
-      assert.isNull(Y.one('.cookie-policy'));
       cookieHandler.check();
-      assert.isNull(Y.one('.cookie-policy'));
+      display = Y.one('.cookie-policy').getStyle('display');
+      assert.equal(display, 'none');
     });
 
   });
