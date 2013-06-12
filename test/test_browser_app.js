@@ -782,7 +782,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       resetHits();
 
       // Now update the request to be back to /sidebar.
-      var req = {
+      req = {
         path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
@@ -791,7 +791,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       browser.routeView(req, undefined, function() {});
 
       // The viewmode did not change so we don't hit sidebar again.
-      var expected = Y.merge(hits, {
+      expected = Y.merge(hits, {
         sidebar: false,
         renderSearchResults: false,
         renderEditorial: true
