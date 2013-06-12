@@ -171,6 +171,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-subapp-extension.js'
         },
 
+        'app-cookies-extension': {
+          fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
@@ -342,10 +346,6 @@ var GlobalConfig = {
 
         'juju-websocket-logging': {
           fullpath: '/juju-ui/websocket-logging.js'
-        },
-
-        'juju-cookies': {
-          fullpath: '/juju-ui/views/cookies.js'
         },
 
         'juju-controllers': {

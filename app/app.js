@@ -47,7 +47,8 @@ YUI.add('juju-gui', function(Y) {
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
-                                                  Y.juju.NSRouter], {
+                                                  Y.juju.NSRouter,
+                                                  Y.juju.Cookies], {
 
     /*
       Extension properties
@@ -1348,13 +1349,13 @@ YUI.add('juju-gui', function(Y) {
     'node',
     'model',
     'app-subapp-extension',
+    'app-cookies-extension',
     'sub-app',
     'subapp-browser',
     'event-key',
     'event-touch',
     'model-controller',
     'FileSaver',
-    'juju-inspector-widget',
-    'juju-cookies'
+    'juju-inspector-widget'
   ]
 });

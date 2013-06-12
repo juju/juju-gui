@@ -35,7 +35,6 @@ var GlobalConfig = {
             'd3-components',
             'juju-templates',
             'juju-notifications',
-            'juju-cookies',
             'juju-topology',
             'juju-view-utils',
             'juju-view-environment',
