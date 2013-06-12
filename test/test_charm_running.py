@@ -114,7 +114,9 @@ class DeployTestMixin(object):
             # Click to open the charm panel.
             # Implicit wait should let this resolve.
             charm_search.click()
-            return driver.find_element_by_id('juju-search-charm-panel')
+            panel = driver.find_element_by_id('juju-search-charm-panel')
+            if charm_panel.is_displayed():
+                return panel
 
         charm_panel = self.wait_for(
             charm_panel_loaded, error='Unable to load charm panel.')
