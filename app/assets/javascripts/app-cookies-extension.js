@@ -28,10 +28,10 @@ YUI.add('app-cookies-extension', function(Y) {
    */
   function Cookies(test_node) {
     this.node = test_node || Y.one('.cookie-policy');
-  };
-  
+  }
+
   Cookies.prototype = {
-  
+
     /**
       Check that the user accepted cookie usage, and if not display a cookie
       usage warning.
@@ -57,13 +57,13 @@ YUI.add('app-cookies-extension', function(Y) {
       @return {undefined} Side-effects only.
     */
     close: function() {
-      this.node.setStyle('display', 'none')
+      this.node.setStyle('display', 'none');
       Y.Cookie.set('_cookies_accepted', 'true',
           {expires: new Date('January 12, 2025')});
     }
-  
+
   };
-  
+
   Y.namespace('juju').Cookies = Cookies;
 
 }, '0.1.0', {

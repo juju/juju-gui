@@ -36,7 +36,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       container = utils.makeContainer('container');
       container.setHTML('<div class="cookie-policy" style="display:none;">' +
-        '<a class="link-cta"></a></div>');
+          '<a class="link-cta"></a></div>');
       node = container.one('.cookie-policy');
       cookieHandler = new Y.juju.Cookies(node);
     });
