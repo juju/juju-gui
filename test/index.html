@@ -89,9 +89,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_resizing_textarea.js"></script>
   <script src="test_routing.js"></script>
   <script src="test_sandbox.js"></script>
-  <script src="test_service_config_view.js"></script>
   <script src="test_service_module.js"></script>
-  <script src="test_service_view.js"></script>
   <script src="test_startup.js"></script>
   <!-- Feature flags require the startup to be available to provide the
        featureFlags method to the test suite. -->
@@ -109,13 +107,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_view_container.js"></script>
   <script src="test_viewport_module.js"></script>
   <script src="test_websocket_logging.js"></script>
+  <script src="test_service_config_view.js"></script>
+  <script src="test_service_view.js"></script>
   <script>
   YUI_config = {
       async: false,
       delayUntil: 'domready',
       debug: false,
       combine: false,
-      fetchCSS: false
+      fetchCSS: false,
+      // Do not attempt to dispatch a new route when an anchor tag appears in
+      // the url. This is intended to keep charm details from reloading on tab
+      // selection in the browser.
+      navigateOnHash: false,
   };
 
   // tabview needs to be here since it doesn't auto load it for some reason.

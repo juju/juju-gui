@@ -17,6 +17,141 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
+(function() {
+  describe('Service config view (views.service_config)', function() {
+    var models, Y, container, service, db, conn, env, charm, views, view;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-views', 'juju-models', 'base', 'node', 'json-parse',
+          'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
+          'resizing-textarea',
+          function(Y) {
+            models = Y.namespace('juju.models');
+            views = Y.namespace('juju.views');
+            done();
+          });
+    });
+
+    beforeEach(function(done) {
+      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+      env = Y.namespace('juju').newEnvironment({conn: conn});
+      env.connect();
+      conn.open();
+      container = Y.Node.create('<div/>').hide();
+      Y.one('#main').append(container);
+      db = new models.Database();
+      var charmConfig = {
+        options: {
+          a_bool: {name: 'bob', type: 'boolean', 'default': true},
+          an_int: {type: 'int', 'default': 10},
+          a_float: {type: 'float', 'default': 1.0},
+          a_string: {type: 'string', 'default': 'howdy'},
+          some_text: {type: 'string', 'default': 'hidey\nho'}
+        }
+      };
+      charm = new models.Charm({
+        id: 'cs:precise/mysql-7',
+        description: 'A DB',
+        config: charmConfig
+      });
+      db.charms.add([charm]);
+      var serviceConfig = {};
+      Y.Object.each(charmConfig.options, function(v, k) {
+        serviceConfig[k] = v['default'];
+      });
+      service = new models.Service(
+          { id: 'mysql',
+            charm: 'cs:precise/mysql-7',
+            unit_count: db.units.size(),
+            loaded: true,
+            config: serviceConfig,
+            exposed: false});
+
+      db.services.add([service]);
+      view = new views.service_config({
+        db: db,
+        env: env,
+        getModelURL: function(model, intent) {
+          return model.get('name');
+        },
+        model: service,
+        container: container
+      });
+      done();
+    });
+
+    afterEach(function(done) {
+      container.remove(true);
+      service.destroy();
+      db.destroy();
+      env.destroy();
+      done();
+    });
+
+    it('displays a loading message if the service is not loaded', function() {
+      view.set('model', undefined);
+      view.render();
+      var html = container.getHTML();
+      assert.match(html, /Loading/);
+    });
+
+    it('displays no loading message if the service is loaded', function() {
+      view.get('model').set('loaded', true);
+      view.render();
+      var html = container.getHTML();
+      assert.notMatch(html, /Loading\.\.\./);
+    });
+
+    it('informs the template if the service is the GUI', function() {
+      var renderData = view.gatherRenderData();
+      assert.equal(renderData.serviceIsJujuGUI, false);
+    });
+
+    it('shows the correct widget types using charm defaults', function() {
+      var renderData = view.gatherRenderData();
+      var settings = renderData.settings;
+
+      assert.equal('a_bool', settings[0].name);
+      assert.isTrue(settings[0].isBool);
+      assert.equal('checked', settings[0].value);
+
+      assert.equal('an_int', settings[1].name);
+      assert.isUndefined(settings[1].isBool);
+      assert.isTrue(settings[1].isNumeric);
+      assert.equal(10, settings[1].value);
+
+      assert.equal('a_float', settings[2].name);
+      assert.isUndefined(settings[2].isBool);
+      assert.isTrue(settings[2].isNumeric);
+      assert.equal(1.0, settings[2].value);
+
+      assert.equal('a_string', settings[3].name);
+      assert.isUndefined(settings[3].isBool);
+      assert.equal('howdy', settings[3].value);
+
+      assert.equal('some_text', settings[4].name);
+      assert.isUndefined(settings[4].isBool);
+      assert.equal('hidey\nho', settings[4].value);
+    });
+
+    it('attaches the resizing plugin to the textareas', function() {
+      view.render();
+      var textareas = container.all('textarea.config-field');
+      assert.equal(textareas.size(), 2);
+      assert.isUndefined(textareas.item(0).resizingTextarea);
+      assert.isUndefined(textareas.item(1).resizingTextarea);
+      view.containerAttached();
+      textareas = container.all('textarea.config-field');
+      // Clones will have been created after each real
+      // textarea, so the actual ones are the even numbered.
+      assert.equal(textareas.size(), 4);
+      assert.isDefined(textareas.item(0).resizingTextarea);
+      assert.isDefined(textareas.item(2).resizingTextarea);
+    });
+
+  });
+})();
 
 (function() {
   // XXX This "describe" is a lie.  There are tests here for both the service
@@ -339,52 +474,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          pressKey('a');
          pressKey('2w');
          pressKey('w2');
-       });
-
-    // Test for destroying services.
-    it('should destroy the service when "Destroy Service" is clicked',
-       function() {
-         var view = makeServiceView();
-         var control = container.one('#destroy-service');
-         control.simulate('click');
-         var destroy = container.one('#destroy-modal-panel .btn-danger');
-         destroy.simulate('click');
-         var message = conn.last_message();
-         message.op.should.equal('destroy_service');
-         destroy.get('disabled').should.equal(true);
-       });
-
-    it('should remove the service from the db after server ack',
-       function() {
-         var view = makeServiceView();
-         db.relations.add(
-         [new models.Relation({id: 'relation-0000000000',
-            endpoints: [['mysql', {}], ['wordpress', {}]]}),
-          new models.Relation({id: 'relation-0000000001',
-            endpoints: [['squid', {}], ['apache', {}]]})]);
-         var control = container.one('#destroy-service');
-         control.simulate('click');
-         var destroy = container.one('#destroy-modal-panel .btn-danger');
-         destroy.simulate('click');
-         var called = false;
-         view.on('navigateTo', function(ev) {
-           assert.equal('/:gui:/', ev.url);
-           called = true;
-         });
-         var callbacks = Y.Object.values(env._txn_callbacks);
-         callbacks.length.should.equal(1);
-         var dbUpdated = false;
-         db.on('update', function() {
-           dbUpdated = true;
-         });
-         callbacks[0]({result: true});
-         var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
-         db.relations.map(function(u) {return u.get('id');})
-        .should.eql(['relation-0000000001']);
-         // Catch show environment event.
-         called.should.equal(true);
-         // The db should be updated.
-         dbUpdated.should.equal(true);
        });
 
     it('should send an expose RPC call when exposeService is invoked',
@@ -764,141 +853,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.match(html, /Loading/);
     });
 
+    // Test for destroying services.
+    it('should destroy the service when "Destroy Service" is clicked',
+       function() {
+         var view = makeServiceView();
+         var control = container.one('#destroy-service');
+         control.simulate('click');
+         var destroy = container.one('#destroy-modal-panel .btn-danger');
+         destroy.simulate('click');
+         var message = conn.last_message();
+         message.op.should.equal('destroy_service');
+         destroy.get('disabled').should.equal(true);
+       });
+
+    it('should remove the service from the db after server ack',
+       function() {
+         var view = makeServiceView();
+         db.relations.add(
+         [new models.Relation({id: 'relation-0000000000',
+            endpoints: [['mysql', {}], ['wordpress', {}]]}),
+          new models.Relation({id: 'relation-0000000001',
+            endpoints: [['squid', {}], ['apache', {}]]})]);
+         var control = container.one('#destroy-service');
+         control.simulate('click');
+         var destroy = container.one('#destroy-modal-panel .btn-danger');
+         destroy.simulate('click');
+         var called = false;
+         view.on('navigateTo', function(ev) {
+           assert.equal('/:gui:/', ev.url);
+           called = true;
+         });
+         var callbacks = Y.Object.values(env._txn_callbacks);
+         callbacks.length.should.equal(1);
+         var dbUpdated = false;
+         db.on('update', function() {
+           dbUpdated = true;
+         });
+         callbacks[0]({result: true});
+         var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
+         db.relations.map(function(u) {return u.get('id');})
+        .should.eql(['relation-0000000001']);
+         // Catch show environment event.
+         called.should.equal(true);
+         // The db should be updated.
+         dbUpdated.should.equal(true);
+       });
   });
 })();
 
-(function() {
-  describe('Service config view (views.service_config)', function() {
-    var models, Y, container, service, db, conn, env, charm, views, view;
 
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'juju-views', 'juju-models', 'base', 'node', 'json-parse',
-          'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
-          'resizing-textarea',
-          function(Y) {
-            models = Y.namespace('juju.models');
-            views = Y.namespace('juju.views');
-            done();
-          });
-    });
 
-    beforeEach(function(done) {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = Y.namespace('juju').newEnvironment({conn: conn});
-      env.connect();
-      conn.open();
-      container = Y.Node.create('<div/>').hide();
-      Y.one('#main').append(container);
-      db = new models.Database();
-      var charmConfig = {
-        options: {
-          a_bool: {name: 'bob', type: 'boolean', 'default': true},
-          an_int: {type: 'int', 'default': 10},
-          a_float: {type: 'float', 'default': 1.0},
-          a_string: {type: 'string', 'default': 'howdy'},
-          some_text: {type: 'string', 'default': 'hidey\nho'}
-        }
-      };
-      charm = new models.Charm({
-        id: 'cs:precise/mysql-7',
-        description: 'A DB',
-        config: charmConfig
-      });
-      db.charms.add([charm]);
-      var serviceConfig = {};
-      Y.Object.each(charmConfig.options, function(v, k) {
-        serviceConfig[k] = v['default'];
-      });
-      service = new models.Service(
-          { id: 'mysql',
-            charm: 'cs:precise/mysql-7',
-            unit_count: db.units.size(),
-            loaded: true,
-            config: serviceConfig,
-            exposed: false});
-
-      db.services.add([service]);
-      view = new views.service_config({
-        db: db,
-        env: env,
-        getModelURL: function(model, intent) {
-          return model.get('name');
-        },
-        model: service,
-        container: container
-      });
-      done();
-    });
-
-    afterEach(function(done) {
-      container.remove(true);
-      service.destroy();
-      db.destroy();
-      env.destroy();
-      done();
-    });
-
-    it('displays a loading message if the service is not loaded', function() {
-      view.set('model', undefined);
-      view.render();
-      var html = container.getHTML();
-      assert.match(html, /Loading/);
-    });
-
-    it('displays no loading message if the service is loaded', function() {
-      view.get('model').set('loaded', true);
-      view.render();
-      var html = container.getHTML();
-      assert.notMatch(html, /Loading\.\.\./);
-    });
-
-    it('informs the template if the service is the GUI', function() {
-      var renderData = view.gatherRenderData();
-      assert.equal(renderData.serviceIsJujuGUI, false);
-    });
-
-    it('shows the correct widget types using charm defaults', function() {
-      var renderData = view.gatherRenderData();
-      var settings = renderData.settings;
-
-      assert.equal('a_bool', settings[0].name);
-      assert.isTrue(settings[0].isBool);
-      assert.equal('checked', settings[0].value);
-
-      assert.equal('an_int', settings[1].name);
-      assert.isUndefined(settings[1].isBool);
-      assert.isTrue(settings[1].isNumeric);
-      assert.equal(10, settings[1].value);
-
-      assert.equal('a_float', settings[2].name);
-      assert.isUndefined(settings[2].isBool);
-      assert.isTrue(settings[2].isNumeric);
-      assert.equal(1.0, settings[2].value);
-
-      assert.equal('a_string', settings[3].name);
-      assert.isUndefined(settings[3].isBool);
-      assert.equal('howdy', settings[3].value);
-
-      assert.equal('some_text', settings[4].name);
-      assert.isUndefined(settings[4].isBool);
-      assert.equal('hidey\nho', settings[4].value);
-    });
-
-    it('attaches the resizing plugin to the textareas', function() {
-      view.render();
-      var textareas = container.all('textarea.config-field');
-      assert.equal(textareas.size(), 2);
-      assert.isUndefined(textareas.item(0).resizingTextarea);
-      assert.isUndefined(textareas.item(1).resizingTextarea);
-      view.containerAttached();
-      textareas = container.all('textarea.config-field');
-      // Clones will have been created after each real
-      // textarea, so the actual ones are the even numbered.
-      assert.equal(textareas.size(), 4);
-      assert.isDefined(textareas.item(0).resizingTextarea);
-      assert.isDefined(textareas.item(2).resizingTextarea);
-    });
-
-  });
-})();

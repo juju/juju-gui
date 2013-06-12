@@ -52,7 +52,12 @@ YUI.add('juju-topology-landscape', function(Y) {
           container);
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
 
   });
   views.LandscapeModule = LandscapeModule;

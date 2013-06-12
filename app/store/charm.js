@@ -384,6 +384,9 @@ YUI.add('juju-charm-store', function(Y) {
       apiHost: {
         required: true,
         setter: function(val) {
+          if (val && !val.match(/\/$/)) {
+            val = val + '/';
+          }
           // Make sure we update the datasource if our apiHost changes.
           var source = val + this._apiRoot + '/';
           this.set('datasource', new Y.DataSource.IO({ source: source }));

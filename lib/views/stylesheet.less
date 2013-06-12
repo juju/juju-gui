@@ -62,13 +62,36 @@ body {
     background-color: #302b28;
     font-family: @font-family;
     height: 100%;
+    font-size: 13px;
+    line-height: 18px;
 }
 input, button, select, textarea {
     font-family: @font-family;
+    font-weight: normal;
+}
+button {
+    cursor: pointer;
+    -webkit-appearance: button;
 }
 svg {
     stroke-width: 0;
     overflow: hidden;
+}
+li {
+    line-height: 18px;
+}
+h4 {
+    font-size: 14px;
+}
+h4, h5, h6 {
+    line-height: 18px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: inherit;
+    font-weight: bold;
+    color: inherit;
+    text-rendering: optimizelegibility;
 }
 .align-right {
     text-align: right;
@@ -90,6 +113,7 @@ ul.menu {
     letter-spacing: normal;
 }
 .hidden {
+    display: none;
     visibility: hidden;
 }
 .divider {

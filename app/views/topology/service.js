@@ -29,6 +29,7 @@ YUI.add('juju-topology-service', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -156,7 +157,13 @@ YUI.add('juju-topology-service', function(Y) {
 
           @event rescaled
         */
-        rescaled: 'updateServiceMenuLocation'
+        rescaled: 'updateServiceMenuLocation',
+        /**
+          Pans the environment view to the center.
+
+          @event panToCenter
+        */
+        panToCenter: 'panToCenter'
       }
     },
 
@@ -660,6 +667,7 @@ YUI.add('juju-topology-service', function(Y) {
       // around we layout only new nodes. This has the side
       // effect that service blocks can overlap and will
       // be fixed later.
+      var vertices;
       var new_services = Y.Object.values(topo.service_boxes)
                           .filter(function(boundingBox) {
                             return !Y.Lang.isNumber(boundingBox.x);
@@ -671,7 +679,9 @@ YUI.add('juju-topology-service', function(Y) {
         // service is actually created.  Otherwise, rely on our pack layout (as
         // in the case of opening an unannotated environment for the first
         // time).
+        var pendingServicePlaced = false;
         if (new_services.length === 1 && new_services[0].model.get('pending')) {
+          pendingServicePlaced = true;
           // Get a coordinate outside the cluster of existing services.
           var coords = topo.servicePointOutside();
           // Set the coordinates on both the box model and the service model.
@@ -681,11 +691,17 @@ YUI.add('juju-topology-service', function(Y) {
           new_services[0].model.set('y', coords[1]);
           // This ensures that the x/y coordinates will be saved as annotations.
           new_services[0].model.set('dragged', true);
+          // Set the centroid to the new service's position
+          topo.centroid = coords;
+          topo.fire('panToPoint', {point: topo.centroid});
         } else {
           this.tree.nodes({children: new_services});
         }
         // Update annotations settings position on backend
         // (but only do this if there is no existing annotations).
+        if (!pendingServicePlaced) {
+          vertices = [];
+        }
         Y.each(new_services, function(box) {
           var existing = box.model.get('annotations') || {};
           if (!existing && !existing['gui-x']) {
@@ -694,9 +710,23 @@ YUI.add('juju-topology-service', function(Y) {
                 function() {
                   box.inDrag = false;
                 });
+            vertices.push([box.x || 0, box.y || 0]);
+          } else {
+            if (vertices) {
+              vertices.push([
+                existing['gui-x'] || (box.x || 0),
+                existing['gui-y'] || (box.y || 0)
+              ]);
+            }
           }
         });
-
+      }
+      if (!topo.centroid || vertices) {
+        // Find the centroid of our hull of services and inform the topology.
+        if (!vertices) {
+          vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+        }
+        this.findAndSetCentroid(vertices);
       }
       // enter
       node
@@ -720,6 +750,36 @@ YUI.add('juju-topology-service', function(Y) {
             delete topo.service_boxes[d.id];
           })
           .remove();
+    },
+
+    /**
+      Pans the environment view to the center all the services on the canvas.
+
+      @method panToCenter
+      @param {object} evt The event fired.
+      @return {undefined} Side effects only.
+    */
+    panToCenter: function(evt) {
+      var topo = this.get('component');
+      var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+      this.findAndSetCentroid(vertices);
+    },
+
+    /**
+      Given a set of vertices, find the centroid and pan to that location.
+
+      @method findAndSetCentroid
+      @param {array} vertices A list of vertices in the form [x, y].
+      @return {undefined} Side effects only.
+    */
+    findAndSetCentroid: function(vertices) {
+      var topo = this.get('component'),
+          centroid = topoUtils.centroid(vertices);
+      // The centroid is set on the topology object due to the fact that it is
+      // used as a sigil to tell whether or not to pan to the point after the
+      // first delta.
+      topo.centroid = centroid;
+      topo.fire('panToPoint', {point: topo.centroid});
     },
 
     /**
@@ -1327,7 +1387,12 @@ YUI.add('juju-topology-service', function(Y) {
       btn.set('disabled', false);
     }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        @property {d3ns.Component} component
+      */
+      component: {}
+    }
   });
 
   views.ServiceModule = ServiceModule;
