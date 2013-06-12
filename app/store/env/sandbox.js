@@ -760,10 +760,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     receive: function(data) {
       console.log('client message', data);
-      // Make a shallow copy of the received data because handlers will mutate
-      // it.
       if (this.connected) {
-        this['handle_' + data.Type + '_' + data.Request](Y.merge(data),
+        this['handle_' + data.Type + '_' + data.Request](data,
             this.get('client'), this.get('state'));
       } else {
         throw CLOSEDERROR;
@@ -876,7 +874,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handle_Client_ServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
-      // We do not provide the optional Config or Constraints in the response.
+      // TODO Include the optional Config or Constraints in the response.
       client.receive({
         RequestId: data.RequestId,
         Error: reply.error,
