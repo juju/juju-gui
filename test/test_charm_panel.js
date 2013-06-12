@@ -130,7 +130,7 @@ describe('charm panel', function() {
 
     // Start deploying a charm, without confirming.
     var startDeployment = function() {
-      panel.deploy(new models.Charm({id:'cs:precise/membase-6'}));
+      panel.deploy(new models.Charm({id: 'cs:precise/membase-6'}));
     };
 
     // Cancel an unconfirmed deployment.

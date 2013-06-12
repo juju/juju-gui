@@ -720,7 +720,7 @@ YUI.add('juju-charm-panel', function(Y) {
       Setter method for public access.
 
       @method setActivePanelName
-      @param {String} name of the panel
+      @param {String} name of the panel.
     */
     function setActivePanelName(name) {
       activePanelName = name;
