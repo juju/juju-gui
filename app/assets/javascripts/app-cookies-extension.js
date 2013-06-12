@@ -25,6 +25,7 @@ YUI.add('app-cookies-extension', function(Y) {
 
      @class Cookies
      @extension App
+     @param {Object} test_node DOM node only passed in in tests.
    */
   function Cookies(test_node) {
     this.node = test_node || Y.one('.cookie-policy');
@@ -43,7 +44,7 @@ YUI.add('app-cookies-extension', function(Y) {
       var self = this;
       if (Y.Cookie.get('_cookies_accepted') !== 'true') {
         this.node.setStyle('display', 'block');
-        Y.one('.cookie-policy .link-cta').once('click', function(evt) {
+        Y.one('.link-cta').once('click', function(evt) {
           evt.preventDefault();
           self.close();
         });

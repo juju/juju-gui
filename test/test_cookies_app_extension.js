@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('app-cookies-extension', function() {
-    var container, cookie, cookieHandler, display, node, utils, Y;
+    var container, cookieHandler, node, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -47,23 +47,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calling check makes the node visible', function() {
+      assert.equal(node.getStyle('display'), 'none');
       cookieHandler.check();
-      display = node.getStyle('display');
-      assert.equal(display, 'block');
+      assert.equal(node.getStyle('display'), 'block');
     });
 
     it('closing the banner sets the cookie', function() {
+      assert.isNull(Y.Cookie.get('_cookies_accepted'));
       cookieHandler.check();
       node.one('.link-cta').simulate('click');
-      cookie = Y.Cookie.get('_cookies_accepted');
-      assert.equal(cookie, 'true');
+      assert.equal(Y.Cookie.get('_cookies_accepted'), 'true');
     });
 
     it('the cookie prevents the node from getting visible', function() {
       Y.Cookie.set('_cookies_accepted', 'true');
       cookieHandler.check();
-      display = node.getStyle('display');
-      assert.equal(display, 'none');
+      assert.equal(node.getStyle('display'), 'none');
     });
 
   });

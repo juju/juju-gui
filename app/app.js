@@ -1216,13 +1216,13 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Make sure the user agrees to cookie usage.
      *
-     * @method handleCookies
+     * @method authorizeCookieUse
      * @param {Object} req The request.
      * @param {Object} res The response.
      * @param {Object} next The next route handler.
      *
      */
-    handleCookies: function(req, res, next) {
+    authorizeCookieUse: function(req, res, next) {
       var analyticsEnabled = this.get('useAnalytics');
       if (analyticsEnabled) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
@@ -1272,7 +1272,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'handleCookies'},
+          { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
