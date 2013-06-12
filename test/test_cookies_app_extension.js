@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('app-cookies-extension', function() {
-    var container, cookie, cookieHandler, display, utils, Y;
+    var container, cookie, cookieHandler, display, node, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -35,7 +35,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer('container');
-      cookieHandler = new Cookies(container);
+      container.setHTML('<div class="cookie-policy" style="display:none;">' +
+        '<a class="link-cta"></a></div>');
+      node = container.one('.cookie-policy');
+      cookieHandler = new Y.juju.Cookies(node);
     });
 
     afterEach(function() {
@@ -44,24 +47,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calling check makes the node visible', function() {
-      // The node is set to 'display: none' at first.
       cookieHandler.check();
-      display = Y.one('.cookie-policy').getStyle('display');
+      display = node.getStyle('display');
       assert.equal(display, 'block');
     });
 
     it('closing the banner sets the cookie', function() {
       cookieHandler.check();
-      Y.one('.cookie-policy .link-cta').simulate('click');
+      node.one('.link-cta').simulate('click');
       cookie = Y.Cookie.get('_cookies_accepted');
       assert.equal(cookie, 'true');
     });
 
     it('the cookie prevents the node from getting visible', function() {
-      // The node is set to 'display: none' at first.
       Y.Cookie.set('_cookies_accepted', 'true');
       cookieHandler.check();
-      display = Y.one('.cookie-policy').getStyle('display');
+      display = node.getStyle('display');
       assert.equal(display, 'none');
     });
 
