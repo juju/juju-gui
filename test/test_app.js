@@ -496,7 +496,7 @@ function injectData(app, data) {
 })();
 
 (function() {
-  describe('Application sandbox', function() {
+  describe('Application sandbox mode', function() {
     var Y, app, container, utils;
 
     before(function(done) {
@@ -516,7 +516,7 @@ function injectData(app, data) {
       }
     });
 
-    it('app instantiates correctly in sandbox mode.', function() {
+    it('instantiates correctly', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
