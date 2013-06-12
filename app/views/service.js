@@ -1029,8 +1029,99 @@ YUI.add('juju-view-service', function(Y) {
 
   views.service = ServiceView;
 
+
+  /**
+    Service Inspector View Container Controller
+
+    @class ServiceInspector
+   */
+  var ServiceInspector = (function() {
+    var juju = Y.namespace('juju');
+    var DEFAULT_VIEWLETS = {
+      overview: {
+        name: 'overview',
+        template: Templates.serviceOverview,
+        bindings: [
+          {name: 'displayName', target: '[data-bind=displayName]'},
+          {name: 'charm', target: '[data-bind=charm]'},
+          {name: 'aggregated_status.running', target: '[data-bind=running]'},
+          {name: 'aggregated_status.error', target: '[data-bind=error]'}
+        ]
+      },
+      units: {
+        name: 'units',
+        template: Templates.show_units_small,
+        'rebind': function(model) {
+          return model.get('units');
+        },
+        'update': function(modellist) {
+          var data = {units: modellist.toArray()};
+          this.container.setHTML(this.template(data));
+        }
+      }
+      //config: {},
+      //constraints: {},
+      //relations: {}
+    };
+    /**
+      Constructor for View Container Controller
+
+      @method ServiceInspector
+      @constructor
+    */
+    function ServiceInspector(model, options) {
+      this.model = model;
+      options = options || {};
+      options.viewlets = options.viewlets || {};
+      options.template = Templates['view-container'];
+      var container = Y.Node.create('<div>')
+          .addClass('panel')
+          .addClass('yui3-juju-inspector')
+          .appendTo(Y.one('#content'));
+      var dd = new Y.DD.Drag({ node: container });
+      options.container = container;
+      options.viewletContainer = '.viewlet-container';
+      options.events = {
+        '.tab': {'click': 'showViewlet'},
+        '.close': {'click': 'destroy'}
+      };
+      options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
+                               true, undefined, 0, true);
+      options.model = model;
+      this.inspector = new juju.ViewContainer(options);
+      this.inspector.render();
+      this.bindingEngine = new views.BindingEngine();
+      this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
+      this.inspector.showViewlet('overview');
+      // XXX: to debug
+      window.SI = this;
+    }
+
+    ServiceInspector.prototype = {
+      'getName': function() {
+        return this.inspector.getName();
+      },
+      'bind': function(model, viewlet) {
+        this.bindingEngine.bind(model, viewlet);
+        return this;
+      },
+      'render': function() {
+        this.inspector.render();
+        return this;
+      }
+    };
+
+    return ServiceInspector;
+
+  })();
+  views.ServiceInspector = ServiceInspector;
+
+
 }, '0.1.0', {
   requires: ['panel',
+    'dd',
+    'juju-databinding',
+    'juju-view-container',
     'juju-view-utils',
     'juju-models',
     'base-build',
