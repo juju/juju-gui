@@ -41,8 +41,11 @@ describe('View Container', function() {
       },
       template: juju.views.Templates['view-container'],
       templateConfig: {},
-      controller: fakeController,
       container: container,
+      events: {
+        '.tab': {'click': function() {}}
+      },
+      viewletContainer: '.viewlet-container',
       model: new Y.Model({name: 'foo'})
     });
   };
@@ -74,6 +77,11 @@ describe('View Container', function() {
     assert.equal(typeof viewContainer.viewlets, 'object');
   });
 
+  it('allows an user configurable event object', function() {
+    generateViewContainer();
+    assert.equal(typeof viewContainer.events['.tab'].click, 'function');
+  });
+
   it('properly nests config properties', function() {
     generateViewContainer();
     var cfg = viewContainer.viewletConfig;
@@ -84,13 +92,6 @@ describe('View Container', function() {
     generateViewContainer();
     assert.equal(typeof viewContainer.template, 'function');
   });
-
-  it('instantiates and sets up a new controller instance property',
-      function() {
-        generateViewContainer();
-        assert.equal(
-            viewContainer.controller instanceof fakeController, true);
-      });
 
   it('generates viewlet instances based on the config', function() {
     generateViewContainer();
@@ -146,6 +147,14 @@ describe('View Container', function() {
       assert.equal(
           viewContainer.viewlets[key].container.getStyle('display'), 'block');
     });
+  });
+
+  it('removes all elements from the DOM on destroy', function() {
+    generateViewContainer();
+    viewContainer.render();
+    assert.equal(container.all('.viewlet-container').size(), 1);
+    viewContainer.destroy();
+    assert.equal(container.all('.viewlet-container').size(), 0);
   });
 
 });

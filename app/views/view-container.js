@@ -36,6 +36,16 @@ YUI.add('juju-view-container', function(Y) {
     @constructor
   */
   var ViewletBase = {
+
+    /**
+      The user defined name for the viewlet.
+
+      @property name
+      @type {String}
+      @default ''
+    */
+    name: '',
+
     /**
       String template of the viewlet wrapper
 
@@ -73,6 +83,16 @@ YUI.add('juju-view-container', function(Y) {
       @default null
     */
     container: null,
+
+    /**
+      When defined it allows the developer to specify another model to bind the
+      Viewlet to, usually one nested in the model passed to the View Container.
+
+      @property rebind
+      @type {Function}
+      @default null
+    */
+    rebind: null,
 
     /**
       User defined update method which re-renders the contents of the viewlet.
@@ -150,14 +170,6 @@ YUI.add('juju-view-container', function(Y) {
     */
 
     /**
-      Instance of the view container controller. Set by passing in during
-      instantiation ex) { Controller: Y.viewContainer.Controller }
-
-      @property controller
-      @default undefined
-    */
-
-    /**
       A hash of the viewlet instances
 
       ex) {}
@@ -172,9 +184,20 @@ YUI.add('juju-view-container', function(Y) {
       this.viewletConfig = options.viewlets;
       this.template = options.template;
       this.templateConfig = options.templateConfig;
-      // create new instance of passed in controller
-      this.controller = new options.controller();
+      this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets();
+      this.events = options.events;
+    },
+
+    /**
+      Return the name of the model as a key to index its
+      inspector panel.
+
+      @method getName
+      @return {String} id of the model.
+    */
+    getName: function() {
+      return this.get('model').get('id');
     },
 
     /**
@@ -196,7 +219,7 @@ YUI.add('juju-view-container', function(Y) {
       container.setHTML(this.template(this.templateConfig));
 
       // We may want to make this selector user defined at some point
-      var viewletContainer = container.one('.viewlet-container');
+      var viewletContainer = container.one(this.viewletContainer);
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet) {
@@ -217,7 +240,12 @@ YUI.add('juju-view-container', function(Y) {
     showViewlet: function(viewletName) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
-      container.all('.viewlet-container').hide();
+      container.all('.viewlet-wrapper').hide();
+      // This method can be called directly but it is also an event handler
+      // for clicking on the view container tab handles
+      if (typeof viewletName !== 'string') {
+        viewletName = viewletName.currentTarget.getData('viewlet');
+      }
       this.viewlets[viewletName].container.show();
     },
 
@@ -237,8 +265,6 @@ YUI.add('juju-view-container', function(Y) {
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        // bind the UI to the model
-        this.controller.bind(model, viewlets[key]);
       }, this);
 
       return viewlets;
@@ -260,16 +286,27 @@ YUI.add('juju-view-container', function(Y) {
           for (var cfg in this.viewletConfig[viewlet]) {
             // remove ifcheck when we upgrade jshint
             if (this.viewletConfig[viewlet].hasOwnProperty(cfg)) {
-              this.viewletConfig[viewlet][cfg] = {
-                value: this.viewletConfig[viewlet][cfg],
-                writable: true
-              };
+              if (this.viewletConfig[viewlet][cfg].value === undefined) {
+                this.viewletConfig[viewlet][cfg] = {
+                  value: this.viewletConfig[viewlet][cfg],
+                  writable: true
+                };
+              }
             }
           }
         }
       }
       // uncomment below when we upgrade jshint
       // /*jshint +W089 */
+    },
+
+    /**
+      Removes and destroys the container
+
+      @method destructor
+    */
+    destructor: function() {
+      this.get('container').remove().destroy(true);
     }
 
   }, {

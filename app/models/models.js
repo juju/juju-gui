@@ -80,6 +80,7 @@ YUI.add('juju-models', function(Y) {
     } else {
       console.warn('Unknown change kind in _process_delta:', action);
     }
+    return instance;
   };
 
   /**
@@ -256,8 +257,22 @@ YUI.add('juju-models', function(Y) {
       return name.replace('unit-', '').replace(/^(.+)-(\d+)$/, '$1/$2');
     },
 
-    process_delta: function(action, data) {
-      _process_delta(this, action, data, {relation_errors: {}});
+    process_delta: function(action, data, db) {
+      var instance = _process_delta(this, action, data, {relation_errors: {}});
+      if (!instance || !db) {return;}
+
+      // Apply this action for this instance to all service models as well.
+      // In the future we can transition from using db.units to always
+      // looking at db.services[serviceId].units
+      var service = db.services.getById(instance.service);
+      if (!service) { return; }
+      // Get the unit list for this service. (lazy)
+      var unitList = service.get('units');
+      if (!unitList) {
+        unitList = new models.ServiceUnitList();
+        service.set('units', unitList);
+      }
+      _process_delta(unitList, action, data, {relation_errors: {}});
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
