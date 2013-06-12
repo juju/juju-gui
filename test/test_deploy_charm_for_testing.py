@@ -102,7 +102,7 @@ class MakeConfigFile(object):
         self.__class__.options = options
 
 
-# Mock argparse
+# Fake argparse output.
 def _options(**kwargs):
     def _wrapper():
         class _o(dict):
@@ -113,14 +113,15 @@ def _options(**kwargs):
         return result
     return _wrapper
 
+
 class TestScript(unittest.TestCase):
     """The main() function is the entry point when run as a script."""
 
     def test_status_messages_are_displayed(self):
         # While running, the script tells the user what is happening.
         printed = []
-        main(options=_options(), print=printed.append, juju=noop, wait_for_service=noop,
-             wait_for_machine=noop)
+        main(options=_options(), print=printed.append, juju=noop,
+            wait_for_service=noop, wait_for_machine=noop)
         self.assertSequenceEqual(
             printed,
             ['Bootstrapping...',
@@ -136,22 +137,26 @@ class TestScript(unittest.TestCase):
         def juju(s):
             juju_commands.append(s)
 
-        main(options=_options(origin='lp:foo'), print=noop, juju=juju, wait_for_service=noop,
-             make_config_file=MakeConfigFile, wait_for_machine=noop,
-             make_environments_yaml=noop)
+        main(options=_options(origin='lp:foo'), print=noop, juju=juju,
+            wait_for_service=noop, make_config_file=MakeConfigFile,
+            wait_for_machine=noop, make_environments_yaml=noop)
         options = MakeConfigFile.options
         deploy_command = juju_commands[1]
         self.assertIn('--config my-config-file.yaml', deploy_command)
-        self.assertDictEqual({'serve-tests': True, 'staging': True,
-                              'juju-gui-source': 'lp:foo', 'secure': False}, options)
+        self.assertDictEqual(
+            {'serve-tests': True,
+             'staging': True,
+             'juju-gui-source': 'lp:foo',
+             'secure': False},
+            options)
 
     def test_providing_a_branch(self):
         # If the user provides a branch name on the command line, it will be
         # passed to the charm.
         printed = []
 
-        main(options=_options(origin='lp:foo'), print=printed.append, juju=noop,
-             wait_for_service=noop, make_config_file=MakeConfigFile,
+        main(options=_options(origin='lp:foo'), print=printed.append,
+            juju=noop, wait_for_service=noop, make_config_file=MakeConfigFile,
              wait_for_machine=noop, make_environments_yaml=noop)
         options = MakeConfigFile.options
         self.assertSequenceEqual(
@@ -163,6 +168,7 @@ class TestScript(unittest.TestCase):
              'Exposing the service...'])
         self.assertIn('juju-gui-source', options)
         self.assertEqual('lp:foo', options['juju-gui-source'])
+
 
 class TestParseImageData(unittest.TestCase):
     """Test the nova machine image data parsing."""
@@ -209,13 +215,17 @@ class TestParseImageData(unittest.TestCase):
 
     def test_picks_last(self):
         data = '\n'.join([
-            "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-1.img | ACTIVE | |",
-            "| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-2.img | ACTIVE | |",
-            "| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-3.img | ACTIVE | |"])
+            '| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-1.img ' +
+                '| ACTIVE | |',
+            '| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-2.img ' +
+                '| ACTIVE | |',
+            '| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-3.img ' +
+                '| ACTIVE | |'])
         img_id, desc = parse_image_data(data)
         self.assertEqual('fad-123', img_id)
         self.assertEqual(
-            'ubuntu-released/ubuntu-precise-12.04-amd64-3.img', desc)
+            'ubuntu-released/ubuntu-precise-12.04-amd64-3.img',
+            desc)
 
 
 if __name__ == '__main__':
