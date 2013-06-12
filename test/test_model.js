@@ -679,7 +679,7 @@ describe('BrowserCharm test', function() {
     });
   });
 
-  it.only('must be able to determine if an icon should be shown', function() {
+  it('must be able to determine if an icon should be shown', function() {
     var approved_with_icon = new models.BrowserCharm({
       id: 'cs:precise/mysql-2',
       is_approved: true,
