@@ -791,7 +791,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       browser.routeView(req, undefined, function() {});
 
       // The viewmode did not change so we don't hit sidebar again.
-      expected = Y.merge(hits, {
+      var expected = Y.merge(hits, {
         sidebar: false,
         renderSearchResults: false,
         renderEditorial: true
