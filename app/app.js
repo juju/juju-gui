@@ -359,8 +359,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-
-      if (window.flags.websocket_capture) {
+      if (window.flags && window.flags.websocket_capture) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
 
@@ -936,7 +935,7 @@ YUI.add('juju-gui', function(Y) {
       // If the Juju environment is not connected, exit without letting the
       // route dispatch proceed. On env connection change, the app will
       // re-dispatch and this route callback will be executed again.
-      if (!this.env.get('connected')) {
+      if (!this.env || !this.env.get('connected')) {
         return;
       }
       var credentials = this.env.getCredentials();
