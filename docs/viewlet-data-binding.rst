@@ -2,7 +2,7 @@
 Viewlets & Data Binding
 =======================
 
-The Juju GUI inspector panels are build using a light-weight custom viewlet
+The Juju GUI inspector panels are built using a light-weight custom viewlet
 data-binding micro framework with four discreet components `View Container`_,
 `Viewlets`_, `Databinding Engine`_, and `Controller`_.
 
@@ -15,7 +15,7 @@ manager.
 How it works
 ------------
 
-Uppon instantiation the View Container creates new classes for all of the
+Upon instantiation, the View Container creates new classes for all of the
 viewlets that were passed in on configuration then waits to be explicitly
 rendered to the dom by calling::
 
@@ -30,13 +30,13 @@ How to instantiate
 ------------------
 
 The generic View Container extends Y.View_ and as such has a similar core api
-with the exception that it takes an event object as a configuration value on
+with the exception that it takes an "events" object as a configuration value on
 instantiation to set up the event handlers for the View Container template and
 any non-data bound events in the viewlets.
 
 The View Container takes the following configuration values on instantiation:
 
-- viewletConfig: Configuration for the `Viewlets`_.
+- viewlets: Configuration for the `Viewlets`_.
 - template: String or compiled Handlebars template for the View Container. This
   must contain an element to render the viewlets into.
 - templateConfig: Handlebars config object for the View Container template.
@@ -91,16 +91,18 @@ in the `viewlets` object property and have a few configuration properties:
 - template: String or compiled Handlebars template for the viewlet.
 - bindings: An array of modelAttributeKey-querySelector bindings which are
   passed through to the binding engine.
-- rebind: A function that returns a model or model list in which to bind this
-  Viewlet to. This was designed to return a  model or modellist that was nested
-  in the model passed to the `View Container`_ for binding.
+- rebind: A function that returns a model or model list to which this viewlet
+  should be bound. This was designed to return a  model or modellist that was
+  nested in the model passed to the `View Container`_ for binding.
 - update: A function which is responsible for re-rendering the whole viewlet if
   the binding engine binds a modellist to the viewlet. This was designed as a
   performant technique for representing a large number of units while
   maintaining databinding to keep the UI updated.
 - render: A function which receives the bound model from the
   `Databinding Engine`_ and compiles the viewlet templates. It then sets a local
-  `container` property with the compiled output.
+  `container` property with the compiled output. This is generally only called
+  once to set up the template however this could also be called by the update
+  method.
 
 While a viewlet doesn't explicitly require the `View Container`_ it was designed
 to be managed by a parent handler.
