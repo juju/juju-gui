@@ -1064,7 +1064,7 @@ YUI.add('juju-view-service', function(Y) {
       //relations: {}
     };
     /**
-      Constructor for View Container Constroller
+      Constructor for View Container Controller
 
       @method ServiceInspector
       @constructor

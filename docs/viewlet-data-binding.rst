@@ -3,7 +3,7 @@ Viewlets & Data Binding
 =======================
 
 The Juju GUI inspector panels are built using a light-weight custom viewlet
-data-binding micro framework with four discreet components `View Container`_,
+data-binding micro framework with four discrete components `View Container`_,
 `Viewlets`_, `Databinding Engine`_, and `Controller`_.
 
 View Container

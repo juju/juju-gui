@@ -261,9 +261,9 @@ YUI.add('juju-models', function(Y) {
       var instance = _process_delta(this, action, data, {relation_errors: {}});
       if (!instance || !db) {return;}
 
-      // Apply this action for this instance to alll service models as well.
+      // Apply this action for this instance to all service models as well.
       // In the future we can transition from using db.units to always
-      // looking at db.serviices[serviceId].units
+      // looking at db.services[serviceId].units
       var service = db.services.getById(instance.service);
       if (!service) { return; }
       // Get the unit list for this service. (lazy)

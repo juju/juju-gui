@@ -106,7 +106,7 @@ YUI.add('juju-databinding', function(Y) {
     /**
      * @method addBinding
      * @param {Object} config A bindings Object, see description in `bind`.
-     * #param {Object} viewlet A reference to the viewlet being bound.
+     * @param {Object} viewlet A reference to the viewlet being bound.
      * @chainable
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
