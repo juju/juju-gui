@@ -47,7 +47,8 @@ YUI.add('juju-gui', function(Y) {
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
-                                                  Y.juju.NSRouter], {
+                                                  Y.juju.NSRouter,
+                                                  Y.juju.Cookies], {
 
     /*
       Extension properties
@@ -363,6 +364,15 @@ YUI.add('juju-gui', function(Y) {
       if (window.flags.websocket_capture) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
+
+      /**
+        Reference to the juju.Cookies instance.
+
+        @property cookieHandler
+        @type {juju.Cookies}
+        @default null
+      */
+      this.cookieHandler = null;
 
       this.renderEnvironment = true;
       // If this property has a value other than '/' then
@@ -1201,6 +1211,24 @@ YUI.add('juju-gui', function(Y) {
         finalPath = this.nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
+    },
+
+    /**
+     * Make sure the user agrees to cookie usage.
+     *
+     * @method authorizeCookieUse
+     * @param {Object} req The request.
+     * @param {Object} res The response.
+     * @param {Object} next The next route handler.
+     *
+     */
+    authorizeCookieUse: function(req, res, next) {
+      var analyticsEnabled = this.get('useAnalytics');
+      if (analyticsEnabled) {
+        this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
+        this.cookieHandler.check();
+      }
+      next();
     }
 
   }, {
@@ -1223,7 +1251,7 @@ YUI.add('juju-gui', function(Y) {
        * `namespace`: (optional) when namespace is specified this route should
        *   only match when the URL fragment occurs in that namespace. The
        *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace  attribute is specified.
+       *   namespace attribute is specified.
        *
        * `model`: `model.name` (required)
        *
@@ -1244,6 +1272,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
@@ -1291,7 +1320,7 @@ YUI.add('juju-gui', function(Y) {
 
   Y.namespace('juju').App = JujuGUI;
 
-}, '0.5.2', {
+}, '0.5.3', {
   requires: [
     'juju-charm-models',
     'juju-charm-panel',
@@ -1319,6 +1348,8 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
+    'app-cookies-extension',
+    'cookie',
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
