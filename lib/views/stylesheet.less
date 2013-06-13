@@ -259,6 +259,9 @@ table tr.highlighted td {
             .nav-container:first-child .nav-section {
                 position: relative;
             }
+            .nav-container:last-child {
+                margin-right: 100px; /* To make room for the alert dropdown */
+            }
         }
         &#nav-brand-env .nav-container {
             float: left;
@@ -1058,7 +1061,7 @@ g.unit {
     .btn.cancel {
         .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
                        @charm-panel-cancel-button-shadow, 0px);
-        color: white;
+        color: #515050;
         text-shadow: none;
         margin-top: 5px;
         background-repeat: no-repeat;
