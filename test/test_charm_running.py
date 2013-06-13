@@ -109,23 +109,34 @@ class DeployTestMixin(object):
     def deploy(self, charm_name):
         """Deploy a charm."""
         def charm_panel_loaded(driver):
-            """Wait for the charm panel to be ready and displayed."""
-            charm_search = driver.find_element_by_id('charm-search-trigger')
-            # Click to open the charm panel.
-            # Implicit wait should let this resolve.
-            charm_search.click()
-            return driver.find_element_by_id('juju-search-charm-panel')
+            """Wait for the charm panel to be visibie."""
+            # The charm browser sidebar should be open by default
+            return driver.find_element_by_css_selector(
+                '.yui3-charmtoken-content .charm-token')
 
-        charm_panel = self.wait_for(
-            charm_panel_loaded, error='Unable to load charm panel.')
+        def charm_details_loaded(driver):
+            """Wait for the charm details panel to be visible."""
+            return driver.find_element_by_css_selector('.bws-view-data .add')
+
+        def charm_config_loaded(driver):
+            """Wait for the charm configuration panel to be visible."""
+            return driver.find_element_by_id('charm-deploy')
+
+
+        # Open details page
+        charm_token = self.wait_for(
+            charm_panel_loaded, error='Charm sidebar is not visible.')
+        charm_token.click()
+
+        # Create Ghost
+        add_button = self.wait_for(
+            charm_details_loaded, error='Charm details page is not visible.')
+        add_button.click()
 
         # Deploy a charm.
-        deploy_button = charm_panel.find_element_by_css_selector(
-            # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
-            'button.deploy[data-url*={}]'.format(charm_name))
+        deploy_button = self.wait_for(
+            charm_config_loaded, error='Charm config panel is not visible.')
         deploy_button.click()
-        # Click to confirm deployment.
-        charm_panel.find_element_by_id('charm-deploy').click()
 
         # Zoom out so that it is possible to see the deployed service in
         # Saucelabs.  This also seems to fix a Firefox bug preventing the name
