@@ -601,7 +601,7 @@ YUI.add('juju-gui', function(Y) {
         catch (err) {
           // Unable to create simulator, usually due to mocks or an
           // unsupported environment
-          console.log('Unable to create simulator: ', err);
+          console.log('Unable to create simulator:');
         }
       }
     },

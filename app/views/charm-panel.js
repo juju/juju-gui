@@ -83,7 +83,6 @@ YUI.add('juju-charm-panel', function(Y) {
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {
-          console.log(container);
           var diff = scrollContainer.getY() - container.getY(),
               clientDiff = (
               scrollContainer.get('clientHeight') -
