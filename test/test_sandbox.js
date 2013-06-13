@@ -1551,7 +1551,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can dispatch on received information.', function(done) {
       var data = {Type: 'TheType', Request: 'TheRequest'};
-      juju.handle_TheType_TheRequest = function(received) {
+      juju.handleTheTypeTheRequest = function(received) {
         assert.notStrictEqual(received, data);
         assert.deepEqual(received, data);
         done();
