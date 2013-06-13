@@ -96,7 +96,9 @@ describe('charm panel', function() {
           callback({err: false});
         },
         update_annotations: function(service, type, annotations, callback) {
-          callback({err: false});
+          if (typeof callback === 'function') {
+            callback({err: false});
+          }
         }
       };
       // Mock the charm store.
@@ -198,9 +200,6 @@ describe('charm panel', function() {
       confirmDeployment();
       assert.isFalse(service.get('pending'));
       assert.include(service.get('id'), serviceName);
-      // Test that data used in dragging the ghost is removed.
-      assert.equal(undefined, service.get('x'));
-      assert.equal(undefined, service.get('y'));
     });
 
   });

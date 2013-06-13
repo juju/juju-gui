@@ -42,7 +42,12 @@ YUI.add('juju-topology-utils', function(Y) {
       @return {array} An x/y coordinate pair.
     */
     function _exteriorToHull(vertices, padding) {
-      var hull = d3.geom.hull(vertices);
+      var hull;
+      try {
+        hull = d3.geom.hull(vertices);
+      } catch (e) {
+        hull = vertices;
+      }
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
