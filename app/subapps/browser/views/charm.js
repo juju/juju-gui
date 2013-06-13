@@ -77,7 +77,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var browserCharm = this.get('charm');
       var charm = new models.Charm(browserCharm.getAttrs());
       charm.set('config', {
-          options: browserCharm.get('options')
+        options: browserCharm.get('options')
       });
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',

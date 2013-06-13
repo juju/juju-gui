@@ -230,8 +230,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Verify that the charm config from the BrowserCharm is now part of
         // config.options in the new Charm instance.
         assert.equal(
-          browserCharm.get('options').configName,
-          charm.get('config').options.configName)
+            browserCharm.get('options').configName,
+            charm.get('config').options.configName);
         done();
       });
       view._addCharmEnvironment({halt: function() {}});
