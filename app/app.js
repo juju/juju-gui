@@ -567,7 +567,10 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('#logout-trigger').on('click', this.logout, this);
+      Y.one('#logout-trigger').on('click', function(e) {
+        e.halt();
+        this.logout();
+      }, this);
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
@@ -598,7 +601,7 @@ YUI.add('juju-gui', function(Y) {
         catch (err) {
           // Unable to create simulator, usually due to mocks or an
           // unsupported environment
-          console.log('Unable to create simulator: ', err);
+          console.log('Unable to create simulator: ');
         }
       }
     },

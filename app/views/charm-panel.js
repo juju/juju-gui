@@ -87,7 +87,7 @@ YUI.add('juju-charm-panel', function(Y) {
               clientDiff = (
               scrollContainer.get('clientHeight') -
               parseInt(scrollContainer.getComputedStyle('height'), 10)),
-              scrollHeight = height - diff - clientDiff - 1;
+              scrollHeight = height - diff - clientDiff - 576;
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
       },
@@ -895,7 +895,7 @@ YUI.add('juju-charm-panel', function(Y) {
       var headerBox = Y.one('#charm-search-trigger-container'),
           dimensions = utils.getEffectiveViewportSize();
       return { x: headerBox && Math.round(headerBox.getX()),
-               height: dimensions.height + 18 };
+               height: dimensions.height };
     }
 
     // The public methods.
