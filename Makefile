@@ -208,7 +208,7 @@ $(NON_SPRITE_IMAGES):
 install-npm-packages: $(NODE_TARGETS)
 
 $(NODE_TARGETS): package.json
-	npm install
+	npm install --cache-min=999999999
 	# Keep all targets up to date, not just new/changed ones.
 	for dirname in $(NODE_TARGETS); do touch $$dirname ; done
 	@# Check to see if we made what we expected to make, and warn if we did
