@@ -753,6 +753,8 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Check if we have exactly two url parts in our path.
+      // The best way to count the parts is to strip the start/end slash and
+      // then split on the rest. We only care if there are exactly two parts.
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
