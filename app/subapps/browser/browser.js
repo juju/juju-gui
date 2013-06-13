@@ -753,10 +753,10 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Check if we have exactly two url parts in our path.
-      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+      var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (req.path.match(hasIdMatch)) {
+      if (idBits.length === 2) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
