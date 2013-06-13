@@ -83,11 +83,13 @@ YUI.add('juju-charm-panel', function(Y) {
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {
+          console.log(container);
           var diff = scrollContainer.getY() - container.getY(),
               clientDiff = (
               scrollContainer.get('clientHeight') -
               parseInt(scrollContainer.getComputedStyle('height'), 10)),
-              scrollHeight = height - diff - clientDiff - 1;
+              scrollHeight = height - diff - clientDiff - 576;
+              console.log(height, diff, clientDiff);
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
       },
@@ -895,7 +897,7 @@ YUI.add('juju-charm-panel', function(Y) {
       var headerBox = Y.one('#charm-search-trigger-container'),
           dimensions = utils.getEffectiveViewportSize();
       return { x: headerBox && Math.round(headerBox.getX()),
-               height: dimensions.height + 18 };
+               height: dimensions.height };
     }
 
     // The public methods.

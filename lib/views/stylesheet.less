@@ -7,8 +7,8 @@
 @label-color: #292929;
 @text-entry-color: #6d6e70;
 @charm-panel-orange: #dd4814;
-@charm-panel-configure-title-color: #eee7d5;
-@charm-panel-configure-name-color: #8f8f88;
+@charm-panel-configure-title-color: #FFFFFF;
+@charm-panel-configure-name-color: #FFFFFF;
 @charm-panel-deploy-button-color: @charm-panel-orange;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
@@ -19,7 +19,7 @@
 @charm-panel-border-color: #BEBEBE;
 @charm-panel-border-top-color: #E0DEDE;
 @charm-panel-series-color: #CBCBCB;
-@charm-panel-configure-color: #2F2A27;
+@charm-panel-configure-color: #505050;
 @charm-panel-padding-left: 10px;
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
@@ -1038,6 +1038,9 @@ g.unit {
     width: @charm-panel-width;
     background-color: white;
     border: darkgray solid 1px;
+    border-top: 1px solid #606060;
+    border-right: none;
+    margin-top: 19px;
 
     .charm-panel-configure,
     .charm-panel-configure .btn {
@@ -1576,7 +1579,6 @@ g.unit {
     background-image: url(/juju-ui/assets/images/configure-cog.png);
     background-repeat: no-repeat;
     background-position: 230px 38px;
-    border-top: 2px solid #dd4814;
     border-left: 1px solid @charm-panel-configure-color - #333;
     background-color: @charm-panel-configure-color;
     height: 90px;
