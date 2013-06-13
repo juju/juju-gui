@@ -23,6 +23,8 @@
 @charm-panel-padding-left: 10px;
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
+@navbar-height: 89px;
+@navbar-divider-colour: #333;
 
 /* Mixins */
 .create-border-radius(@radius) {
@@ -55,10 +57,37 @@
     .create-linear-gradient(@gradient-start, @gradient-end);
     border: none;
 }
+.three-image-button-background(@left-image, @right-image, @centre-image) {
+    background: url("/juju-ui/assets/images/@{left-image}")
+            no-repeat left top,
+            url("/juju-ui/assets/images/@{right-image}")
+            no-repeat right top,
+            url("/juju-ui/assets/images/@{centre-image}")
+            repeat-x left top;
+
+    &:hover {
+      background-position: left center, right center, left center;
+    }
+    &:active {
+      background-position: left bottom, right bottom, left bottom;
+    }
+}
+.two-image-button-background(@left-image, @right-image, @background-color) {
+    background: url("/juju-ui/assets/images/@{left-image}")
+            no-repeat left top,
+            url("/juju-ui/assets/images/@{right-image}")
+            no-repeat right top;
+    background-color: @background-color;
+}
+.border-box {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 /* Common classes and setup */
 body {
-    margin-top: 87px;
+    margin-top: @navbar-height;
     background-color: #302b28;
     font-family: @font-family;
     height: 100%;
@@ -166,108 +195,82 @@ table tr.highlighted td {
     }
 }
 .navbar {
-    margin-top: -87px;
-    margin-bottom: 0;
-    height: 87px;
     min-width: 800px;
-    background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
-    padding: 0;
-    position: relative;
-    color: @navbar-color;
+    // Need to subtract 18 for the bottom border
+    height: @navbar-height - 18;
+    margin: -@navbar-height 0 0 0;
+    background-color: #505050;
+    border-bottom: 18px solid #404040;
 
-    .brand {
-        margin: 12px 26px 6px 10px;
+    .navbar-inner {
+        height: 70px;
+        border-bottom: 1px solid #000;
+        // The following are resets to override Bootstrap styles
+        margin: 0;
         padding: 0;
-    }
-    > div {
-        padding: 0;
+        background: transparent;
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
 
-        .nav-container {
-            display: inline-block;
-            height: 44px;
-            margin: 2px 0 0 0;
-            padding: 20px 0 4px;
-
-            &#charm-search-trigger-container {
-                width: @charm-panel-width;
-                white-space: nowrap;
-                border-left: 1px solid transparent;
-
-                &.active-border {
-                    .create-box-shadow(inset 1px 0 0 lightgray);
-                    border-left-color: darkgray;
-                }
-            }
-            .nav-section {
-                border-left: 1px solid transparent;
-                display: inline-block;
-                padding: 4px 10px;
-
-                &.active-border {
-                    border-left-color: lightgray;
-                }
-                #charm-search-trigger {
-                    cursor: pointer;
-                }
-                #logout-trigger {
-                    cursor: pointer;
-                    display: inline-block;
-                    padding: 5px 0 8px 5px;
-                }
-                .btn {
-                    margin: 0 5px;
-                }
-                input {
-                    height: 23px;
-                    width: 128px;
-                    background: url(/juju-ui/assets/images/searchbox_icon.png)
-                                no-repeat 4px 4px whiteSmoke;
-                    margin: 0 10px;
-                    padding: 3px 3px 3px 26px;
-                    font-style: italic;
-                    font-size: 0.9em;
-
-                    &:valid {
-                        background: white;
-                        padding: 3px;
-                        width: 151px;
-                        font-style: normal;
-                        font-size: 1em;
-                    }
-                    &:focus {
-                        color: gray;
-                        border-color: rgba(82, 168, 236, 0.8);
-                        outline: 0;
-                        outline: thin dotted 9;
-                        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
-                                    0 0 8px rgba(82, 168, 236, 0.6);
-                    }
-                }
-                a, a:hover, a:visited, a:active {
-                    color: @navbar-color;
-                    text-decoration: none;
-                }
-            }
+        .brand {
+            margin: 12px 20px 0 20px;
+            padding: 0;
         }
-        span:first-child .nav-section {
-            border-left: none;
-            padding: 0 6px;
-        }
-        &#nav-alerts-charms {
-            float: right;
-
-            .nav-container:first-child .nav-section {
-                position: relative;
-            }
-            .nav-container:last-child {
-                margin-right: 100px; /* To make room for the alert dropdown */
-            }
-        }
-        &#nav-brand-env .nav-container {
+        #environment-switcher {
             float: left;
+            height: 47px;
+            padding: 23px 0 0 20px;
+            border-left: 1px solid @navbar-divider-colour;
+        }
+        .nav {
+            float: right;
+            margin: 0;
 
-            .provider-type {
-                font-size: 0.7em;
+            li,
+            li a {
+                color: #fff;
+            }
+            & > li {
+                height: 50px;
+                padding: 20px 20px 0 20px;
+                border-left: 1px solid @navbar-divider-colour;
+                font-size: 12pt;
+
+                & > a {
+                    margin: -20px -20px 0 -20px;
+                    padding: 0 20px;
+                    line-height: 70px;
+
+                    &:hover {
+                        background-color: #404040;
+                    }
+                }
+                #notifications,
+                #notifications a,
+                #notifications li {
+                    color: #333;
+                }
+                #notifications {
+                    #notify-indicator {
+                        .three-image-button-background(
+                            "header_notification_left.png",
+                            "header_notification_right.png",
+                            "header_notification_centre.png"
+                            );
+                        display: inline-block;
+                        height: 32px;
+                        margin-right: 9px;
+                        padding: 0 15px;
+                        line-height: 30px;
+                        color: #fff;
+                        text-decoration: none;
+                    }
+                    #notify-list {
+                        white-space: normal;
+                        overflow: auto;
+                    }
+                }
             }
         }
     }

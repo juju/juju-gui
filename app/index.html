@@ -109,44 +109,36 @@ if (/*@cc_on!@*/false) {
       <div id="viewport-wrapper">
         <div id="vp-left-border"></div>
         <div id="viewport">
-            <div class="navbar">
+          <div class="navbar">
+            <div class="navbar-inner">
               <div id="nav-brand-env">
-                <span>
-                  <a class="brand" href="/">
-                    <i class="sprite juju_logo" title="Juju GUI"></i>
-                  </a>
-                </span>
-                <span class="nav-container">
-                  <span class="nav-section">
-                    <i class="sprite environment_icon"> </i>
-                      <span id="environment-name" draggable="true"></span>
-                    <span id="provider-type" class="provider-type"></span>
-                  </span>
-                </span>
+                <a class="brand" href="/">
+                  <i class="sprite juju_logo_dark" title="Juju GUI"></i>
+                </a>
+                <div id="environment-switcher">
+                  <i class="sprite environment_icon"> </i>
+                  <span id="environment-name" draggable="true"></span>
+                  <span id="provider-type" class="provider-type"></span>
+                </div>
               </div>
-              <div id="nav-alerts-charms">
-                <span class="nav-container">
-                  <span class="nav-section">
-                    <i class="sprite alert_icon"></i>
-                    Alerts
-                    <span id="notifications"></span>
-                  </span>
-                </span>
-                <span class="nav-container">
-                  <span class="nav-section active-border">
-                    <div id="logout-trigger">Logout</div>
-                  </span>
-                </span>
-              </div>
+              <ul class="nav">
+                <li>
+                  <span id="notifications"></span>
+                  Alerts
+                </li>
+                <li>
+                  <a href="" id="logout-trigger">Logout</a>
+                </li>
+              </ul>
             </div>
-            <div id="content">
-                <div id="shortcut-help" style="display:none"></div>
-                <div id="subapp-browser-min" style="display: none;"></div>
-                <div id="subapp-browser"></div>
-                <div id="main">
-                </div> <!-- /container -->
-            </div>
-
+          </div>
+          <div id="content">
+              <div id="shortcut-help" style="display:none"></div>
+              <div id="subapp-browser-min" style="display: none;"></div>
+              <div id="subapp-browser"></div>
+              <div id="main">
+              </div> <!-- /container -->
+          </div>
         </div>
         <div id="vp-right-border"></div>
     </div>
