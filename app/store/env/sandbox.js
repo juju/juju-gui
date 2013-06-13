@@ -761,7 +761,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     receive: function(data) {
       console.log('client message', data);
       if (this.connected) {
-        this['handle_' + data.Type + '_' + data.Request](data,
+        this['handle' + data.Type + data.Request](data,
             this.get('client'), this.get('state'));
       } else {
         throw CLOSEDERROR;
@@ -771,12 +771,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle Login messages to the state object.
 
-    @method handle_Admin_Login
+    @method handleAdminLogin
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Admin_Login: function(data, client, state) {
+    handleAdminLogin: function(data, client, state) {
       data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
       client.receive(data);
     },
@@ -784,12 +784,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle EnvironmentView messages.
 
-    @method handle_Client_ServiceGet
+    @method handleClientServiceGet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Client_EnvironmentInfo: function(data, client, state) {
+    handleClientEnvironmentInfo: function(data, client, state) {
       client.receive({
         ProviderType: state.get('providerType'),
         DefaultSeries: state.get('defaultSeries'),
@@ -800,12 +800,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle WatchAll messages.
 
-    @method handle_Client_WatchAll
+    @method handleClientWatchAll
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Client_WatchAll: function(data, client, state) {
+    handleClientWatchAll: function(data, client, state) {
       // TODO wire up delta stream to "Next" responses here.
       client.receive({Response: {AllWatcherId: '42'}});
     },
@@ -813,12 +813,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle AllWatcher Next messages.
 
-    @method handle_AllWatcher_Next
+    @method handleAllWatcherNext
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_AllWatcher_Next: function(data, client, state) {
+    handleAllWatcherNext: function(data, client, state) {
       // This is a noop for the moment because it must exist but the current
       // functionality does not depend on it having any effect.
       // TODO See if there are any changes and if so, send them.
@@ -827,12 +827,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle ServiceDeploy messages
 
-    @method handle_Client_ServiceDeploy
+    @method handleClientServiceDeploy
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Client_ServiceDeploy: function(data, client, state) {
+    handleClientServiceDeploy: function(data, client, state) {
       var callback = function(result) {
         var response = {RequestId: data.RequestId};
         if (result.error) {
@@ -851,12 +851,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle SetAnnotations messages
 
-    @method handle_Client_SetAnnotations
+    @method handleClientSetAnnotations
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Client_SetAnnotations: function(data, client, state) {
+    handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
       var reply = state.updateAnnotations(serviceId, data.Params.Pairs);
       client.receive({
@@ -867,12 +867,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle ServiceGet messages
 
-    @method handle_Client_ServiceGet
+    @method handleClientServiceGet
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
     */
-    handle_Client_ServiceGet: function(data, client, state) {
+    handleClientServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
       // TODO Include the optional Config or Constraints in the response.
       client.receive({

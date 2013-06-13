@@ -185,8 +185,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
         client, env, utils, cleanups;
 
-    this.timeout(2000); // Long timeouts make async failures hard to detect.
-
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
@@ -1430,8 +1428,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
     it('should support export', function(done) {
-      this.timeout(250);
-
       client.open();
       promise(state, 'deploy', 'cs:wordpress')
        .then(promise(state, 'deploy', 'cs:mysql'))
@@ -1447,7 +1443,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should support import', function(done) {
-      this.timeout(300);
       var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
 
       client.onmessage = function() {
@@ -1481,9 +1476,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
       'juju-models', 'promise'];
     var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
-        client, env, utils, cleanups;
-
-    this.timeout(2000); // Long timeouts make async failures hard to detect.
+        client, env, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -1499,11 +1492,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.GoEnvironment({conn: client});
-      cleanups = [];
     });
 
     afterEach(function() {
-      Y.each(cleanups, function(f) {f();});
       env.destroy();
       client.destroy();
       juju.destroy();
