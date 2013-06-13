@@ -182,14 +182,23 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
-      if (
-          !this._viewState.search &&
+      var should = false;
+      // If the viewmode has changed, and seach is not enabled then yes
+      if (!this._viewState.search &&
           this._hasStateChanged('viewmode')
       ) {
-        return true;
-      } else {
-        return false;
+        should = true;
       }
+
+      // Even if viewmode hasn't changed, but search has changed and is false
+      // then yes
+      if (!this._viewState.search &&
+          this._hasStateChanged('search')
+      ) {
+        should = true;
+      }
+
+      return should;
     },
 
     /**
@@ -744,10 +753,12 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Check if we have exactly two url parts in our path.
-      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+      // The best way to count the parts is to strip the start/end slash and
+      // then split on the rest. We only care if there are exactly two parts.
+      var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (req.path.match(hasIdMatch)) {
+      if (idBits.length === 2) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {

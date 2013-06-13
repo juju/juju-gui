@@ -41,6 +41,10 @@ YUI.add('juju-databinding', function(Y) {
       textarea: {
         'get': function(node) { return node.get('text');},
         'set': function(node, value) { node.set('text', value);}
+      },
+      'default': {
+        'get': function(node) { return node.get('text');},
+        'set': function(node, value) { node.setHTML(value);}
       }
     };
 
@@ -102,9 +106,10 @@ YUI.add('juju-databinding', function(Y) {
     /**
      * @method addBinding
      * @param {Object} config A bindings Object, see description in `bind`.
+     * @param {Object} viewlet A reference to the viewlet being bound.
      * @chainable
      */
-    BindingEngine.prototype.addBinding = function(config) {
+    BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
@@ -112,6 +117,7 @@ YUI.add('juju-databinding', function(Y) {
       if (typeof binding.target === 'string') {
         binding.target = [binding.target];
       }
+      binding.viewlet = viewlet;
       this._bindings.push(binding);
       return this;
     };
@@ -169,6 +175,7 @@ YUI.add('juju-databinding', function(Y) {
       @chainable
     */
     BindingEngine.prototype._bind = function(model, viewlet) {
+      var viewletModel = model;
       if (!viewlet) {
         throw new Error('Unable to bind, invalid Viewlet');
       }
@@ -177,13 +184,19 @@ YUI.add('juju-databinding', function(Y) {
       this.model = model;
       this._viewlets[viewlet.name] = viewlet;
 
+      if (viewlet.rebind) {
+        viewletModel = viewlet.rebind(model);
+      }
       // Check model or modellist?
-      if (checkClassImplements(model, 'model')) {
+      if (checkClassImplements(viewletModel, 'model')) {
         // Bind and listen for model changes.
         if (viewlet.bindings) {
-          Y.each(viewlet.bindings, function(b) {this.addBinding(b);}, this);
+          Y.each(viewlet.bindings, function(b) {
+            this.addBinding(b, viewlet);
+          }, this);
         }
-        this._events.push(model.on('change', this._modelChangeHandler, this));
+        this._events.push(viewletModel.on(
+            'change', this._modelChangeHandler, this));
         this._updateDOM();
       } else {
         // Model list
@@ -193,7 +206,7 @@ YUI.add('juju-databinding', function(Y) {
         // We don't do data-binding on child elements, the viewlet will be
         // triggered to re-render its contents. All our collection views
         // are currently read-only so this work ok.
-        this._events.push(model.after(['add', 'remove', '*:change'],
+        this._events.push(viewletModel.after(['add', 'remove', '*:change'],
                                       this._modelListChange, this));
         this._modelListChange();
       }
@@ -217,6 +230,9 @@ YUI.add('juju-databinding', function(Y) {
       // Force an update to each viewlet registered to the
       // ModelList.
       Y.each(this._viewlets, function(viewlet) {
+        if (viewlet.rebind) {
+          list = viewlet.rebind(list);
+        }
         if (viewlet.update) {
           viewlet.update.call(viewlet, list);
         } else {
@@ -256,17 +272,22 @@ YUI.add('juju-databinding', function(Y) {
 
       Y.each(delta, function(binding) {
         Y.each(binding.target, function(target) {
-          var selection = Y.all(target);
+          var viewlet = binding.viewlet;
+          var selection = viewlet.container.all(target);
+          var viewletModel = viewlet.rebind && viewlet.rebind(model) || model;
           Y.each(selection, function(node) {
             // This could be done ahead of time, but by doing this at runtime
             // we allow very flexible DOM mutation out of band. Revisit if
             // this shows up on a profile.
             var elementKind = node.getDOMNode().tagName.toLowerCase();
             var field = self._fieldHandlers[elementKind];
+            if (!field) {
+              field = self._fieldHandlers['default'];
+            }
 
             // Do conflict detection
             // Do data-field
-            field.set.call(binding, node, binding.get(model));
+            field.set.call(binding, node, binding.get(viewletModel));
           });
         });
       });

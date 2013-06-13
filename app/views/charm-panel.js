@@ -643,11 +643,7 @@ YUI.add('juju-charm-panel', function(Y) {
                     env.update_annotations(
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),
-                          'gui-y': ghostService.get('y') },
-                        function() {
-                          ghostService.removeAttr('x');
-                          ghostService.removeAttr('y');
-                        });
+                          'gui-y': ghostService.get('y') });
                   }
                   // Update the ghost service to match the configuration.
                   ghostService.setAttrs({
@@ -772,7 +768,7 @@ YUI.add('juju-charm-panel', function(Y) {
           }
         });
         hide();
-        app.db.fire('update');
+        panel._clearGhostService();
       }, this));
     });
 

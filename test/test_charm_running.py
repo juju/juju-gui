@@ -14,10 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import browser
+from __future__ import print_function
 import unittest
 
 from selenium.common import exceptions
+
+import browser
 
 
 class TestBasics(browser.TestCase):
@@ -71,7 +73,8 @@ class TestBasics(browser.TestCase):
                     tests_completed, 'Unable to complete test run.',
                     timeout=180)
             except exceptions.TimeoutException:
-                print(self.driver.execute_script('return testRunner.stats;'))
+                browser.printerr(
+                    self.driver.execute_script('return testRunner.stats;'))
                 raise
             return total, failures
         self.load('/test/')
@@ -81,9 +84,9 @@ class TestBasics(browser.TestCase):
                 # XXX bug 1161937 gary 2013-03-29
                 # We sometimes see initial failures and we don't know why :-(.
                 # Reload and retry.
-                print(
-                    '{} failure(s) running {} tests.  Retrying.'.format(
-                        failures, total))
+                msg = '{} failure(s) running {} tests.  Retrying.'.format(
+                    failures, total)
+                browser.printerr(msg)
                 self.driver.refresh()
             else:
                 break
@@ -113,8 +116,10 @@ class DeployTestMixin(object):
             charm_search = driver.find_element_by_id('charm-search-trigger')
             # Click to open the charm panel.
             # Implicit wait should let this resolve.
-            charm_search.click()
-            return driver.find_element_by_id('juju-search-charm-panel')
+            self.click(charm_search)
+            panel = driver.find_element_by_id('juju-search-charm-panel')
+            if panel.is_displayed():
+                return panel
 
         charm_panel = self.wait_for(
             charm_panel_loaded, error='Unable to load charm panel.')
@@ -123,9 +128,10 @@ class DeployTestMixin(object):
         deploy_button = charm_panel.find_element_by_css_selector(
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
             'button.deploy[data-url*={}]'.format(charm_name))
-        deploy_button.click()
+        self.click(deploy_button)
         # Click to confirm deployment.
-        charm_panel.find_element_by_id('charm-deploy').click()
+        confirm_button = charm_panel.find_element_by_id('charm-deploy')
+        self.click(confirm_button)
 
         # Zoom out so that it is possible to see the deployed service in
         # Saucelabs.  This also seems to fix a Firefox bug preventing the name
@@ -133,7 +139,7 @@ class DeployTestMixin(object):
         # displayed.
         zoom_out = self.driver.find_element_by_id('zoom-out-btn')
         for _ in range(2):
-            zoom_out.click()
+            self.click(zoom_out)
 
         def service_deployed(driver):
             return charm_name in self.get_service_names()
