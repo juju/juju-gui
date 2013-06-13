@@ -292,6 +292,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       app.routeDirectCharmId(req, null, next);
       // The viewmode should be populated now to the default.
       assert.equal(req.params, undefined);
+
+      req = {
+        path: '/login/'
+      };
+
+      app.routeDirectCharmId(req, null, next);
+      // The viewmode should be populated now to the default.
+      assert.equal(req.params, undefined);
     });
 
   });
