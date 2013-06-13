@@ -88,7 +88,6 @@ YUI.add('juju-charm-panel', function(Y) {
               scrollContainer.get('clientHeight') -
               parseInt(scrollContainer.getComputedStyle('height'), 10)),
               scrollHeight = height - diff - clientDiff - 576;
-              console.log(height, diff, clientDiff);
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
       },
