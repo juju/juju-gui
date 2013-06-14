@@ -17,7 +17,10 @@
 from __future__ import print_function
 
 import base64
-from functools import wraps
+from functools import (
+    partial,
+    wraps,
+)
 import getpass
 import httplib
 import json
@@ -36,6 +39,10 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.support import ui
 import shelltoolbox
+
+
+# Utility function to print to stderr.
+printerr = partial(print, file=sys.stderr)
 
 # Add ../lib to sys.path to get the retry module.
 root_path = os.path.dirname(os.path.dirname(os.path.normpath(__file__)))
@@ -194,7 +201,7 @@ class TestCase(unittest.TestCase):
             capabilities = get_capabilities(name)
             driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            print('* Platform: local {}'.format(get_platform(driver)))
+            printerr('* Platform: local {}'.format(get_platform(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
             capabilities = get_capabilities(browser_name)
@@ -205,11 +212,11 @@ class TestCase(unittest.TestCase):
                 command_executor=command_executor)
             cls.remote_driver = True
             details = 'https://saucelabs.com/jobs/' + driver.session_id
-            print(
+            printerr(
                 '* Platform: {}'.format(get_platform(driver)),
                 '* Testcase: {}'.format(cls.__name__),
                 '* Details: {}'.format(details),
-                sep='\n'
+                sep='\n',
             )
         # Enable implicit waits for all browsers (DOM polling behavior)
         driver.implicitly_wait(20)
@@ -235,6 +242,20 @@ class TestCase(unittest.TestCase):
         """Load a page using the current Selenium driver."""
         url = urlparse.urljoin(self.app_url, path)
         self.driver.get(url)
+
+    def click(self, element):
+        """Click on the given element in a cross-browser compatible way.
+
+        The element argument is the element object returned by driver.find*
+        methods.
+        """
+        if browser_name in ('ie', 'local-ie'):
+            # For some reason, the Internet Explorer web driver disconnects if
+            # the usual element.click() is used here.
+            # As a workaround, use native JavaScript instead.
+            self.driver.execute_script('arguments[0].click()', element)
+        else:
+            element.click()
 
     def handle_browser_warning(self):
         """Overstep the browser warning dialog if required."""
@@ -277,7 +298,7 @@ class TestCase(unittest.TestCase):
     def logout(self):
         """Log out from the application, clicking the "logout" link."""
         logout_link = self.driver.find_element_by_id('logout-trigger')
-        logout_link.click()
+        self.click(logout_link)
 
     def handle_login(self):
         """Log in."""
@@ -367,7 +388,7 @@ class TestCase(unittest.TestCase):
             cls.wait_for(condition, error=error, timeout=timeout)
         except TimeoutException:
             current = cls.driver.current_url
-            print('Expected: {}\nCurrent: {}'.format(url, current))
+            printerr('Expected: {}\nCurrent: {}'.format(url, current))
             raise
 
     @classmethod
@@ -375,7 +396,7 @@ class TestCase(unittest.TestCase):
     def change_options(cls, options):
         """Change the charm config options."""
         args = ['{}={}'.format(key, value) for key, value in options.items()]
-        print('- setting new options:', ', '.join(args))
+        printerr('- setting new options:', ', '.join(args))
         juju('set', '-e', 'juju-gui-testing', 'juju-gui', *args)
 
     @retry(subprocess.CalledProcessError, tries=2)
@@ -389,14 +410,15 @@ class TestCase(unittest.TestCase):
         function as part of their own clean up process.
         """
         if internal_ip:
-            print('\n- restarting API backend with ip:%s...' % internal_ip)
+            printerr(
+                '\n- restarting API backend with ip:{}...'.format(internal_ip))
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
             # firewalls and provider issues in some cases.
             ssh('ubuntu@%s' % internal_ip,
                 'sudo', 'service', 'juju-api-improv', 'restart')
         else:
-            print('\n- restarting API backend using juju ssh...')
+            printerr('\n- restarting API backend using juju ssh...')
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
                  'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
@@ -405,4 +427,4 @@ class TestCase(unittest.TestCase):
             'return app && app.env.get("connected");',
             error='Impossible to connect to the API backend after restart.',
             timeout=30)
-        print('- done')
+        printerr('- done')

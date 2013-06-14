@@ -95,6 +95,7 @@ YUI.add('juju-notifications', function(Y) {
          * @method notifyToggle
          */
         notifyToggle: function(evt) {
+          evt.halt();
           var container = this.get('container'),
               notifications = this.get('notifications'),
               target = evt.target.getAttribute('data-target'),

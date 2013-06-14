@@ -42,7 +42,12 @@ YUI.add('juju-topology-utils', function(Y) {
       @return {array} An x/y coordinate pair.
     */
     function _exteriorToHull(vertices, padding) {
-      var hull = d3.geom.hull(vertices);
+      var hull;
+      try {
+        hull = d3.geom.hull(vertices);
+      } catch (e) {
+        hull = vertices;
+      }
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
@@ -94,8 +99,37 @@ YUI.add('juju-topology-utils', function(Y) {
   */
   utils.serviceBoxesToVertices = function(serviceBoxes) {
     return Y.Array.map(Y.Object.values(serviceBoxes), function(box) {
-      return [box.x, box.y];
+      // Default undefined x/y attributes to 0.
+      return box.center || [box.x || 0, box.y || 0];
     });
+  };
+
+  /**
+    Given a set of vertices, find the centroid and pan to that location.
+
+    @method centroid
+    @param {array} vertices A list of vertices in the form [x, y].
+    @return {array} an x/y coordinate pair for the centroid.
+  */
+  utils.centroid = function(vertices) {
+    var centroid = [];
+    switch (vertices.length) {
+      case 0:
+        centroid = [0, 0];
+        break;
+      case 1:
+        centroid = vertices[0];
+        break;
+      case 2:
+        centroid = [
+          vertices[0][0] - ((vertices[0][0] - vertices[1][0]) / 2),
+          vertices[0][1] - ((vertices[0][1] - vertices[1][1]) / 2)
+        ];
+        break;
+      default:
+        centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
+    }
+    return centroid;
   };
 
 }, '0.1.0', {

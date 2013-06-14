@@ -107,6 +107,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // In order to avoid rewriting all of these go tests we need to destroy
       // the env created in the beforeEach
       env.destroy();
+      // We need to clear any credentials stored in sessionStorage.
+      env.setCredentials(null);
       oldHandleLogin = Y.juju.environments.GoEnvironment.handleLogin;
       Y.juju.environments.GoEnvironment.handleLogin = function() {};
       conn = new utils.SocketStub();

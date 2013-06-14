@@ -130,6 +130,7 @@ YUI.add('subapp-browser', function(Y) {
     _initState: function() {
       this._oldState = {
         charmID: null,
+        hash: null,
         querystring: null,
         search: null,
         viewmode: null
@@ -181,14 +182,23 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
-      if (
-          !this._viewState.search &&
+      var should = false;
+      // If the viewmode has changed, and seach is not enabled then yes
+      if (!this._viewState.search &&
           this._hasStateChanged('viewmode')
       ) {
-        return true;
-      } else {
-        return false;
+        should = true;
       }
+
+      // Even if viewmode hasn't changed, but search has changed and is false
+      // then yes
+      if (!this._viewState.search &&
+          this._hasStateChanged('search')
+      ) {
+        should = true;
+      }
+
+      return should;
     },
 
     /**
@@ -313,9 +323,14 @@ YUI.add('subapp-browser', function(Y) {
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
-          query = req.query;
+          query = req.query,
+          hash = window.location.hash;
 
       this._viewState.viewmode = params.viewmode;
+
+      if (hash) {
+        this._viewState.hash = hash.replace('/', '');
+      }
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
@@ -418,10 +433,19 @@ YUI.add('subapp-browser', function(Y) {
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
       var extraCfg = {
+        activeTab: this._viewState.hash,
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
+
+      // If the only thing that changed was the hash, then don't redraw. It's
+      // just someone clicking a tab in the UI.
+      if (this._details && this._hasStateChanged('hash') &&
+          !(this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode'))) {
+        return;
+      }
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
@@ -729,10 +753,12 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Check if we have exactly two url parts in our path.
-      var hasIdMatch = '^\/?([^/]+\/?){2}$',
+      // The best way to count the parts is to strip the start/end slash and
+      // then split on the rest. We only care if there are exactly two parts.
+      var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (req.path.match(hasIdMatch)) {
+      if (idBits.length === 2) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
@@ -854,8 +880,8 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default Charmworld1
-         @type {Charmworld1}
+         @default Charmworld2
+         @type {Charmworld2}
        */
       store: {
         /**
@@ -877,7 +903,7 @@ YUI.add('subapp-browser', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld1(cfg);
+          return new Y.juju.Charmworld2(cfg);
         }
       },
 

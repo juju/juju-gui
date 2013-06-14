@@ -88,6 +88,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   // Merge third-party files to the filesToLoad list
   filesToLoad.js.push.apply(filesToLoad.js, [
     'app/assets/javascripts/app-subapp-extension.js',
+    'app/assets/javascripts/app-cookies-extension.js',
     'app/assets/javascripts/d3-components.js',
     'app/assets/javascripts/d3.v2.min.js',
     'app/assets/javascripts/event-tracker.js',
@@ -109,7 +110,7 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   var cssFiles = filesToLoad.css;
   cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
-  cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
+  cssFiles.push('app/assets/stylesheets/juju-bootstrap.css');
   cssFiles.push('app/assets/stylesheets/prettify.css');
   cssFiles.push('app/assets/stylesheets/cssgrids-responsive-min.css');
   merge.combineCSS(cssFiles,

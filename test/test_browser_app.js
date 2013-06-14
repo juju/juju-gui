@@ -1,4 +1,4 @@
-/*
+/**
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -152,7 +152,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
-        store: new Y.juju.Charmworld1({
+        store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
       });
@@ -287,6 +287,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       app.sidebar = function() {};
       var req = {
         path: 'fullscreen/search'
+      };
+
+      app.routeDirectCharmId(req, null, next);
+      // The viewmode should be populated now to the default.
+      assert.equal(req.params, undefined);
+
+      req = {
+        path: '/login/'
       };
 
       app.routeDirectCharmId(req, null, next);
@@ -766,6 +774,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('back from searching dispatches editorial', function() {
+      var req = {
+        path: '/sidebar/search/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      resetHits();
+
+      // Now update the request to be back to /sidebar.
+      req = {
+        path: '/sidebar/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // The viewmode did not change so we don't hit sidebar again.
+      var expected = Y.merge(hits, {
+        sidebar: false,
+        renderSearchResults: false,
+        renderEditorial: true
+      });
       assert.deepEqual(hits, expected);
     });
 

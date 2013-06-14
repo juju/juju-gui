@@ -76,6 +76,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       var browserCharm = this.get('charm');
       var charm = new models.Charm(browserCharm.getAttrs());
+      charm.set('config', {
+        options: browserCharm.get('options')
+      });
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
@@ -513,9 +516,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       renderTo.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
+        render: true,
         srcNode: tplNode.one('.tabs')
       });
-      this.tabview.render();
       this._dispatchTabEvents(this.tabview);
 
       // Start loading the readme so it's ready to go.
@@ -527,6 +530,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
         );
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
+      }
+
+      if (this.get('activeTab')) {
+        this.get('container').one(
+            '.tabs a[href="' + this.get('activeTab') + '"]').get(
+            'parentNode').simulate('click');
       }
 
       // XXX: Ideally we shouldn't have to do this; resetting the container
@@ -628,7 +637,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld1}
+       * @type {Charmworld2}
        *
        */
       store: {},
@@ -654,6 +663,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'datatype-date',
     'datatype-date-format',
     'event-tracker',
+    'event-simulate',
     'gallery-markdown',
     'juju-charm-store',
     'juju-models',

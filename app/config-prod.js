@@ -47,6 +47,7 @@ var juju_config = {
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
   readOnly: false,
+  // Enable Google Analytics usage and calls. Also implies using cookies.
   // XXX: BradCrittenden 2013-06-10 bug=1189502: set to 'true' by default
   // only after this bug is resolved, exposing the setting in the charm.
   useAnalytics: false,

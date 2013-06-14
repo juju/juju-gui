@@ -47,7 +47,8 @@ YUI.add('juju-gui', function(Y) {
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
-                                                  Y.juju.NSRouter], {
+                                                  Y.juju.NSRouter,
+                                                  Y.juju.Cookies], {
 
     /*
       Extension properties
@@ -208,6 +209,10 @@ YUI.add('juju-gui', function(Y) {
         fire: 'zoom_out',
         help: 'Zoom Out'
       },
+      'S-0': {
+        fire: 'panToCenter',
+        help: 'Center the Environment overview'
+      },
       'esc': {
         fire: 'clearState',
         callback: function() {
@@ -355,10 +360,18 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-
-      if (window.flags.websocket_capture) {
+      if (window.flags && window.flags.websocket_capture) {
         this.websocketLogging = new Y.juju.WebsocketLogging();
       }
+
+      /**
+        Reference to the juju.Cookies instance.
+
+        @property cookieHandler
+        @type {juju.Cookies}
+        @default null
+      */
+      this.cookieHandler = null;
 
       this.renderEnvironment = true;
       // If this property has a value other than '/' then
@@ -434,7 +447,7 @@ YUI.add('juju-gui', function(Y) {
         };
         var apiBackend = this.get('apiBackend');
         // The sandbox mode does not support the Go API (yet?).
-        if (this.get('sandbox') && apiBackend === 'python') {
+        if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
           var state = new State({charmStore: this.charm_store});
@@ -443,8 +456,16 @@ YUI.add('juju-gui', function(Y) {
             credentials[envOptions.user] = envOptions.password;
             state.set('authorizedUsers', credentials);
           }
-          envOptions.conn = new sandboxModule.ClientConnection(
-              {juju: new sandboxModule.PyJujuAPI({state: state})});
+          if (apiBackend === 'python') {
+            envOptions.conn = new sandboxModule.ClientConnection(
+                {juju: new sandboxModule.PyJujuAPI({state: state})});
+          } else if (apiBackend === 'go') {
+            envOptions.conn = new sandboxModule.ClientConnection(
+                {juju: new sandboxModule.GoJujuAPI({state: state})});
+          } else {
+            throw 'unrecognized backend type: ' + apiBackend;
+          }
+
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
@@ -534,10 +555,6 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         app: this
       });
-      this.charmPanel.setDefaultSeries(this.env.get('defaultSeries'));
-      this.env.after('defaultSeriesChange', Y.bind(function(ev) {
-        this.charmPanel.setDefaultSeries(ev.newVal);
-      }, this));
 
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
@@ -550,7 +567,10 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('#logout-trigger').on('click', this.logout, this);
+      Y.one('#logout-trigger').on('click', function(e) {
+        e.halt();
+        this.logout();
+      }, this);
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
@@ -581,7 +601,7 @@ YUI.add('juju-gui', function(Y) {
         catch (err) {
           // Unable to create simulator, usually due to mocks or an
           // unsupported environment
-          console.log('Unable to create simulator: ', err);
+          console.log('Unable to create simulator: ');
         }
       }
     },
@@ -924,7 +944,7 @@ YUI.add('juju-gui', function(Y) {
       // If the Juju environment is not connected, exit without letting the
       // route dispatch proceed. On env connection change, the app will
       // re-dispatch and this route callback will be executed again.
-      if (!this.env.get('connected')) {
+      if (!this.env || !this.env.get('connected')) {
         return;
       }
       var credentials = this.env.getCredentials();
@@ -1197,6 +1217,24 @@ YUI.add('juju-gui', function(Y) {
         finalPath = this.nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
+    },
+
+    /**
+     * Make sure the user agrees to cookie usage.
+     *
+     * @method authorizeCookieUse
+     * @param {Object} req The request.
+     * @param {Object} res The response.
+     * @param {Object} next The next route handler.
+     *
+     */
+    authorizeCookieUse: function(req, res, next) {
+      var analyticsEnabled = this.get('useAnalytics');
+      if (analyticsEnabled) {
+        this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
+        this.cookieHandler.check();
+      }
+      next();
     }
 
   }, {
@@ -1219,7 +1257,7 @@ YUI.add('juju-gui', function(Y) {
        * `namespace`: (optional) when namespace is specified this route should
        *   only match when the URL fragment occurs in that namespace. The
        *   default namespace (as passed to this.nsRouter) is assumed if no
-       *   namespace  attribute is specified.
+       *   namespace attribute is specified.
        *
        * `model`: `model.name` (required)
        *
@@ -1240,6 +1278,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
@@ -1287,7 +1326,7 @@ YUI.add('juju-gui', function(Y) {
 
   Y.namespace('juju').App = JujuGUI;
 
-}, '0.5.2', {
+}, '0.5.3', {
   requires: [
     'juju-charm-models',
     'juju-charm-panel',
@@ -1315,6 +1354,8 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
+    'app-cookies-extension',
+    'cookie',
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',

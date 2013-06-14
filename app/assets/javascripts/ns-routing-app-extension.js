@@ -144,8 +144,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
       }
 
       if (result.search) {
-        result.pathname = result.pathname.substr(0,
-                          (result.pathname.length - result.search.length) - 1);
+        result.pathname = result.pathname.substr(
+            0,
+            (result.pathname.length - result.search.length) - 1);
       }
 
       return result;
@@ -416,11 +417,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         delete options.overrideAllNamespaces;
       } else {
         var loc = Y.getLocation();
-        var qs = this.nsRouter.getQS(url);
         result = this.nsRouter.combine(loc.pathname, url);
-        if (qs) {
-          result += '?' + qs;
-        }
       }
       if (Y.App.prototype._navigate.call(this, result, options)) {
         return true;

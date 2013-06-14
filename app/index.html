@@ -42,6 +42,7 @@ if (/*@cc_on!@*/false) {
     <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
     <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
     <link rel="stylesheet" href="/juju-ui/assets/sprite.css">
+
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -65,8 +66,8 @@ if (/*@cc_on!@*/false) {
 
   <body>
       <!-- This <img> tag is here just to force early loading of the background
-        image so it displays more quickly.  This makes a large improvment to the
-        way the app looks while loading on a slow connection. -->
+        image so it displays more quickly.  This makes a large improvement to
+        the way the app looks while loading on a slow connection. -->
       <img src="/juju-ui/assets/images/pattern_tile.png" style="display: none;">
 
       <div id="full-screen-mask" class="crosshatch-background">
@@ -105,58 +106,49 @@ if (/*@cc_on!@*/false) {
         </div>
       </div>
       <div id="notifier-box"></div>
+      <div class="cookie-policy" style="display:none;">
+        <div class="wrapper">
+          <a href="" class="link-cta">Close</a>
+          <p>
+            We use cookies to improve your experience. By your continued use of
+            this application you accept such use. To change your settings please
+            <a href="http://www.ubuntu.com/privacy-policy#cookies">see our policy</a>
+          </p>
+        </div>
+      </div>
       <div id="viewport-wrapper">
         <div id="vp-left-border"></div>
         <div id="viewport">
-            <div class="navbar">
+          <div class="navbar">
+            <div class="navbar-inner">
               <div id="nav-brand-env">
-                <span>
-                  <a class="brand" href="/">
-                    <i class="sprite juju_logo" title="Juju GUI"></i>
-                  </a>
-                </span>
-                <span class="nav-container">
-                  <span class="nav-section">
-                    <i class="sprite environment_icon"> </i>
-                      <span id="environment-name" draggable="true"></span>
-                    <span id="provider-type" class="provider-type"></span>
-                  </span>
-                </span>
+                <a class="brand" href="/">
+                  <i class="sprite juju_logo_dark" title="Juju GUI"></i>
+                </a>
+                <div id="environment-switcher">
+                  <i class="sprite environment_icon"> </i>
+                  <span id="environment-name" draggable="true"></span>
+                  <span id="provider-type" class="provider-type"></span>
+                </div>
               </div>
-              <div id="nav-alerts-charms">
-                <span class="nav-container">
-                  <span class="nav-section">
-                    <i class="sprite alert_icon"></i>
-                    Alerts
-                    <span id="notifications"></span>
-                  </span>
-                </span>
-                <span class="nav-container">
-                  <span class="nav-section active-border">
-                    <div id="logout-trigger">Logout</div>
-                  </span>
-                </span>
-                <span class="nav-container" id="charm-search-trigger-container">
-                  <span class="nav-section active-border">
-                    <span id="charm-search-trigger">
-                      <i id="charm-search-icon" class="sprite charm_icon"></i>
-                      Charms
-                      <i id="charm-search-chevron" class="sprite chevron_down"></i>
-                    </span>
-                    <input type="text" id="charm-search-field"
-                     required="required" placeholder="Search for a charm" />
-                  </span>
-                </span>
-              </div>
+              <ul class="nav">
+                <li>
+                  <span id="notifications"></span>
+                  Alerts
+                </li>
+                <li>
+                  <a href="" id="logout-trigger">Logout</a>
+                </li>
+              </ul>
             </div>
-            <div id="content">
-                <div id="shortcut-help" style="display:none"></div>
-                <div id="subapp-browser-min" style="display: none;"></div>
-                <div id="subapp-browser"></div>
-                <div id="main">
-                </div> <!-- /container -->
-            </div>
-
+          </div>
+          <div id="content">
+              <div id="shortcut-help" style="display:none"></div>
+              <div id="subapp-browser-min" style="display: none;"></div>
+              <div id="subapp-browser"></div>
+              <div id="main">
+              </div> <!-- /container -->
+          </div>
         </div>
         <div id="vp-right-border"></div>
     </div>

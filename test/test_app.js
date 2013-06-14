@@ -112,6 +112,15 @@ function injectData(app, data) {
           assert.equal(app.env.get('password'), undefined);
         });
 
+    it('should report backend misconfiguration', function() {
+      var config = {
+        sandbox: true,
+        apiBackend: 'not really a backend'};
+      assert.throws(
+          function() {var stupidLinter = new Y.juju.App(config);},
+          'unrecognized backend type: not really a backend');
+    });
+
     it('should propagate login credentials from the configuration',
         function(done) {
           var the_username = 'nehi';
@@ -487,7 +496,7 @@ function injectData(app, data) {
 })();
 
 (function() {
-  describe('Application sandbox', function() {
+  describe('Application sandbox mode', function() {
     var Y, app, container, utils;
 
     before(function(done) {
@@ -507,7 +516,7 @@ function injectData(app, data) {
       }
     });
 
-    it('app instantiates correctly in sandbox mode.', function() {
+    it('instantiates correctly', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
