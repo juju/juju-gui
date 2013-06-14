@@ -355,6 +355,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Load the related charm data into the model for use.
+     *
+     * @method _loadRelatedCharms
+     *
+     */
+    _loadRelatedCharms: function() {
+      // Start an indicator on the charm details sidebar if it's in
+      // fullscreen.
+      this.hideIndicator(node);
+      this.get('store').qa(
+          this.get('charm').get('id'), {
+            'success': function(data) {
+              this.get('charm').buildRelatedCharms(
+                  data.result.provides, data.result.requires);
+
+            },
+            'failure': function(data, request) {
+              console.log('Error loading related charm data.')
+              console.log(data);
+            }
+          }, this);
+
+    },
+
+    /**
      * The readme file in a charm can be upper/lower/etc. This helps find a
      * readme from the list of files in a charm.
      *

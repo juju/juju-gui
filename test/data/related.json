@@ -1,0 +1,594 @@
+{
+  "result": {
+    "provides": {
+      "mysql-oneway-replication": [
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/galera-0", 
+          "name": "galera", 
+          "weight": 1.0
+        }
+      ]
+    }, 
+    "requires": {
+      "local-monitors": [
+        {
+          "categories": [], 
+          "id": "precise/nrpe-1", 
+          "name": "nrpe", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/nrpe-5", 
+          "name": "nrpe", 
+          "weight": 1.0
+        }
+      ], 
+      "monitors": [
+        {
+          "categories": [], 
+          "id": "precise/nagios-4", 
+          "name": "nagios", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/nagios-11", 
+          "name": "nagios", 
+          "weight": 1.0
+        }
+      ], 
+      "munin-node": [
+        {
+          "categories": [], 
+          "id": "precise/munin-3", 
+          "name": "munin", 
+          "weight": 10.0
+        }
+      ], 
+      "mysql": [
+        {
+          "categories": [], 
+          "id": "precise/hive-2", 
+          "name": "hive", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/firefox-sync-2", 
+          "name": "firefox-sync", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "id": "precise/openstack-dashboard-9", 
+          "name": "openstack-dashboard", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/limesurvey-4", 
+          "name": "limesurvey", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/roundcube-0", 
+          "name": "roundcube", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/spip-0", 
+          "name": "spip", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "id": "precise/tt-rss-0", 
+          "name": "tt-rss", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/rack-2", 
+          "name": "rack", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "id": "precise/wordpress-15", 
+          "name": "wordpress", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/gitlab-2", 
+          "name": "gitlab", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "id": "precise/mediawiki-8", 
+          "name": "mediawiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/joomla-1", 
+          "name": "joomla", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/statusnet-4", 
+          "name": "statusnet", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/thinkup-2", 
+          "name": "thinkup", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/owncloud-6", 
+          "name": "owncloud", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/rails-0", 
+          "name": "rails", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/stackmobile-1", 
+          "name": "stackmobile", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/tracks-1", 
+          "name": "tracks", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/drupal6-0", 
+          "name": "drupal6", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/etherpad-lite-4", 
+          "name": "etherpad-lite", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "id": "precise/appflower-1", 
+          "name": "appflower", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/kusabax-0", 
+          "name": "kusabax", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~charmers/precise/drupal6-0", 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~chilicuil/precise/observiu-0", 
+          "name": "observiu", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "id": "~james-falkner/precise/liferay-0", 
+          "name": "liferay", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~nathwill/precise/owncloud-17", 
+          "name": "owncloud", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~nskaggs/precise/vivo-11", 
+          "name": "vivo", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "id": "~nextrevision/precise/tt-rss-3", 
+          "name": "tt-rss", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~shazzner/precise/kusabax-5", 
+          "name": "kusabax", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~utlemming/precise/fsync-4", 
+          "name": "fsync", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "id": "~chilicuil/precise/observium-3", 
+          "name": "observium", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/bacula-3", 
+          "name": "bacula", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/bacula-director-0", 
+          "name": "bacula-director", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~helio-mota/precise/joomla-9", 
+          "name": "joomla", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~mark-mims/precise/mediawiki-0", 
+          "name": "mediawiki", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~mfisch/precise/tracks-4", 
+          "name": "tracks", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~pierre-amadio/precise/spip-8", 
+          "name": "spip", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~yolanda.robla/precise/openstack-dashboard-5", 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~tasdomas/precise/drupal-0", 
+          "name": "drupal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/openstack-dashboard-3", 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~fenris/precise/symfony-0", 
+          "name": "symfony", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~imbrandon/precise/drupal6-1", 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~jmac/precise/wordpress-multi-0", 
+          "name": "wordpress-multi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/openstack-dashboard-11", 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~pavel-pachkovskij/precise/rack-4", 
+          "name": "rack", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/limesurvey-2", 
+          "name": "limesurvey", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~hazmat/precise/drupal7-3", 
+          "name": "drupal7", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~helio-mota/precise/gitlab-4", 
+          "name": "gitlab", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~marcoceppi/precise/wordpress-17", 
+          "name": "wordpress", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~mark-mims/precise/rails-4", 
+          "name": "rails", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~mars/precise/reviewboard-1", 
+          "name": "reviewboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~robert-ayres/precise/hive-1", 
+          "name": "hive", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~shazzner/precise/phplist-2", 
+          "name": "phplist", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-oneway-replication": [
+        {
+          "categories": [], 
+          "id": "~clint-fewbar/precise/galera-0", 
+          "name": "galera", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-root": [
+        {
+          "categories": [], 
+          "id": "precise/phpmyadmin-3", 
+          "name": "phpmyadmin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~vtuson/precise/your-charms-name-0", 
+          "name": "your-charms-name", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-shared": [
+        {
+          "categories": [], 
+          "id": "precise/glance-17", 
+          "name": "glance", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "id": "precise/keystone-15", 
+          "name": "keystone", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/nova-compute-12", 
+          "name": "nova-compute", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/solr-1", 
+          "name": "solr", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/lamp-1", 
+          "name": "lamp", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/nova-volume-6", 
+          "name": "nova-volume", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/cinder-8", 
+          "name": "cinder", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/nova-cloud-controller-13", 
+          "name": "nova-cloud-controller", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "precise/quantum-gateway-4", 
+          "name": "quantum-gateway", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/keystone-20", 
+          "name": "keystone", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/nova-volume-11", 
+          "name": "nova-volume", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/quantum-gateway-2", 
+          "name": "quantum-gateway", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/quantal-0", 
+          "name": "quantal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~robert-ayres/precise/tomcat-3", 
+          "name": "tomcat", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~vtuson/precise/lamp-3", 
+          "name": "lamp", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/keystone-1", 
+          "name": "keystone", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/glance-2", 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/nova-cloud-controller-2", 
+          "name": "nova-cloud-controller", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/nova-volume-2", 
+          "name": "nova-volume", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/cinder-9", 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~gandelman-a/precise/nova-compute-3", 
+          "name": "nova-compute", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~hopem/precise/cinder-1", 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~ivoks/precise/nova-cloud-controler-0", 
+          "name": "nova-cloud-controler", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/glance-13", 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/nova-compute-27", 
+          "name": "nova-compute", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~robert-ayres/precise/solr-4", 
+          "name": "solr", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~hopem/precise/glance-0", 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/cinder-9", 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~openstack-ubuntu-testing/precise/nova-cloud-controller-27", 
+          "name": "nova-cloud-controller", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "id": "~smoser/precise/keystone-0", 
+          "name": "keystone", 
+          "weight": 1.0
+        }
+      ]
+    }
+  }
+}

@@ -330,11 +330,15 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+    // Only care about at most, this number of related charms per interface.
+    maxRelatedCharms: 3,
+
     /**
-     * Load the recent commits into a format we can use nicely.
-     *
-     * @method _loadRecentCommits
-     *
+
+      Load the recent commits into a format we can use nicely.
+
+      @method _loadRecentCommits
+
      */
     _loadRecentCommits: function() {
       var source = this.get('code_source'),
@@ -384,6 +388,82 @@ YUI.add('juju-charm-models', function(Y) {
       if (cfg && cfg.downloads_in_past_30_days) {
         this.set('recent_download_count', cfg.downloads_in_past_30_days);
       }
+    },
+
+
+    /**
+      Build the relatedCharms attribute from api data
+
+      @method buildRelatedCharms
+      @param {Object} provides the list of provides interfaces/charms.
+      @param {Object} requires the list of requires interfaces/charms.
+
+    */
+    buildRelatedCharms: function(provides, requires) {
+      var provideCharms = {},
+          requireCharms = {},
+          track = {
+            scores: [],
+            charms: []
+          };
+
+      // WHAT ABOUT keeping a running total of the charms and do a final sort
+      // on the object weight and then slice to grab the top 5?
+
+      /**
+        Helper to handle updating the tracker with new data.
+
+        @method updateOverall
+        @param {Object} relation the related charm data.
+
+       */
+      var updateOverall = function(relation) {
+        // If there are already the max number of scores, remove the
+        // lowest one.
+        if (track.scores.length === this.maxRelatedCharms) {
+          track.scores.shift();
+          track.charms.shift();
+        }
+
+        // Tack on our new score
+        track.scores.push(relation.weight);
+        // this fails as don't resort based on the score.
+        // @TODO this needs to be resorted on both the scores and the charms
+        // much match.
+        track.charms.push(relation);
+      }
+
+      Y.Object.each(provides, function(interface) {
+        // The relations are in the order of score, so we can limit them right
+        // off the bat.
+        provideCharms[interface] = Y.Array.slice(0, this.maxRelatedCharms);
+
+        // Check the top three against the scores in the top overall charms.
+        Y.Array.each(provideCharms[interface], function(relation) {
+          if (track.scores[0] < relation.weight) {
+            updateOverall(relation);
+          }
+        });
+      });
+
+      Y.Object.each(requires, function(interface) {
+        // The relations are in the order of score, so we can limit them right
+        // off the bat.
+        requireCharms[interface] = Y.Array.slice(0, this.maxRelatedCharms);
+
+        // Check the top three against the scores in the top overall charms.
+        Y.Array.each(requireCharms[interface], function(relation) {
+          if (track.scores[0] < relation.weight) {
+            updateOverall(relation);
+          }
+        });
+      });
+
+      this.set('relatedCharms', {
+        overall: track.charms,
+        provides: provideCharms,
+        requires: requireCharms
+      });
     }
   }, {
     ATTRS: {
@@ -633,6 +713,21 @@ YUI.add('juju-charm-models', function(Y) {
           return 0;
         }
       },
+      /**
+        The related charms object is three parts for use in our situations.
+        The keys are
+        - overall: the top scored related charms regardless of interface or
+                   provide/requires
+        - provides: a nested object of the related charms for each provide
+                    interface
+        - requires: a nested object of the related charms for each require
+                    interface
+        @attribute relatedCharms
+        @default undefined
+        @type {Object}
+
+       */
+      relatedCharms: {},
       relations: {},
 
       /**
