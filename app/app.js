@@ -555,10 +555,6 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         app: this
       });
-      this.charmPanel.setDefaultSeries(this.env.get('defaultSeries'));
-      this.env.after('defaultSeriesChange', Y.bind(function(ev) {
-        this.charmPanel.setDefaultSeries(ev.newVal);
-      }, this));
 
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
@@ -571,7 +567,10 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
-      Y.one('#logout-trigger').on('click', this.logout, this);
+      Y.one('#logout-trigger').on('click', function(e) {
+        e.halt();
+        this.logout();
+      }, this);
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
@@ -602,7 +601,7 @@ YUI.add('juju-gui', function(Y) {
         catch (err) {
           // Unable to create simulator, usually due to mocks or an
           // unsupported environment
-          console.log('Unable to create simulator: ', err);
+          console.log('Unable to create simulator: ');
         }
       }
     },
