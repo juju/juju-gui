@@ -1,3 +1,4 @@
+
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
@@ -9,6 +10,9 @@
                     Close
                 {{/if}}
             </a>
+            {{! The add class is used by the deploy method in
+                test/test_charm_running.py.  If you change this name, change
+                the other one too! }}
             <a href="" class="add">Add</a>
             <a href="" class="share">
                 <img src="/juju-ui/assets/images/browser_share_button_icon.png"
