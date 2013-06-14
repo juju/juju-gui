@@ -679,6 +679,33 @@ describe('BrowserCharm test', function() {
     });
   });
 
+  it('must be able to determine if an icon should be shown', function() {
+    var approved_with_icon = new models.BrowserCharm({
+      id: 'cs:precise/mysql-2',
+      is_approved: true,
+      files: ['icon.svg']
+    });
+    var approved_without_icon = new models.BrowserCharm({
+      id: 'cs:precise/mysql-2',
+      is_approved: true,
+      files: []
+    });
+    var unapproved_with_icon = new models.BrowserCharm({
+      id: 'cs:precise/mysql-2',
+      is_approved: false,
+      files: ['icon.svg']
+    });
+    var unapproved_without_icon = new models.BrowserCharm({
+      id: 'cs:precise/mysql-2',
+      is_approved: false,
+      files: []
+    });
+    assert.isTrue(approved_with_icon.get('shouldShowIcon'));
+    assert.isFalse(approved_without_icon.get('shouldShowIcon'));
+    assert.isFalse(unapproved_with_icon.get('shouldShowIcon'));
+    assert.isFalse(unapproved_without_icon.get('shouldShowIcon'));
+  });
+
   it('tracks recent commits in the last 30 days', function() {
     instance = new models.BrowserCharm(data.charm);
     var commits = instance.get('recent_commits'),

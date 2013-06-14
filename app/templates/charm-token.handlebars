@@ -6,7 +6,7 @@
             <span class="badge-approved"
                 title="This charm has been reviewed."></span>
         {{/if}}
-        {{#if hasIcon}}
+        {{#if shouldShowIcon}}
             <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
         {{else}}
           {{#if mainCategory}}
