@@ -8,6 +8,9 @@
             <a href="" class="delete">
                 <img src="/juju-ui/assets/images/browser_searchbox_delete_icon.png"
                     alt="Delete" /></a>
+            {{! The bws-search name is used by the deploy method in
+                test/test_charm_running.py.  If you change this name, change
+                the other one too! }}
             <input type="search" name="bws-search"
                 value="{{ filters.text }}"
                 placeholder="Search charms"/>
