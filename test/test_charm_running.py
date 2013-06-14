@@ -111,39 +111,46 @@ class DeployTestMixin(object):
 
     def deploy(self, charm_name):
         """Deploy a charm."""
-        # Warning!!!
+        # Warning!
         # This depends on manage.jujucharms.com being up and working properly.
         # For many reasons, hopefully this is not an issue :-) but if
         # some inexplicable failure is going on here, try that possible
         # source.
-        def charm_panel_loaded(driver):
-            """Wait for the charm panel to be visible."""
-            # The charm browser sidebar should be open by default
-            return driver.find_element_by_css_selector(
-                '.yui3-charmtoken-content .charm-token')
+        def get_search_box(driver):
+            # The charm browser sidebar should be open by default.
+            return driver.find_element_by_css_selector('[name=bws-search]')
 
-        def charm_details_loaded(driver):
-            """Wait for the charm details panel to be visible."""
+        def get_charm_token(driver):
+            # See http://www.w3.org/TR/css3-selectors/#attribute-substrings .
+            return driver.find_element_by_css_selector(
+                '.yui3-charmtoken-content '
+                '.charm-token[data-charmid*={}]'.format(charm_name))
+
+        def get_add_button(driver):
             return driver.find_element_by_css_selector('.bws-view-data .add')
 
-        def charm_config_loaded(driver):
-            """Wait for the charm configuration panel to be visible."""
+        def get_deploy_button(driver):
             return driver.find_element_by_id('charm-deploy')
 
+        # Search for the charm
+        search_box = self.wait_for(
+            get_search_box, error='Charm search box is not visible')
+        search_box.send_keys(charm_name)
+        search_box.send_keys('\n')
 
         # Open details page
         charm_token = self.wait_for(
-            charm_panel_loaded, error='Charm sidebar is not visible.')
+            get_charm_token, error='Charm sidebar is not visible.')
         charm_token.click()
 
         # Create Ghost
         add_button = self.wait_for(
-            charm_details_loaded, error='Charm details page is not visible.')
+            get_add_button, error='Charm details page is not visible.')
         add_button.click()
 
         # Deploy a charm.
         deploy_button = self.wait_for(
-            charm_config_loaded, error='Charm config panel is not visible.')
+            get_deploy_button, error='Charm config panel is not visible.')
         deploy_button.click()
 
         # Zoom out so that it is possible to see the deployed service in
