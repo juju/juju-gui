@@ -700,10 +700,10 @@ describe('BrowserCharm test', function() {
       is_approved: false,
       files: []
     });
-    assert.isTrue(approved_with_icon.get('showIcon'));
-    assert.isFalse(approved_without_icon.get('showIcon'));
-    assert.isFalse(unapproved_with_icon.get('showIcon'));
-    assert.isFalse(unapproved_without_icon.get('showIcon'));
+    assert.isTrue(approved_with_icon.get('shouldShowIcon'));
+    assert.isFalse(approved_without_icon.get('shouldShowIcon'));
+    assert.isFalse(unapproved_with_icon.get('shouldShowIcon'));
+    assert.isFalse(unapproved_without_icon.get('shouldShowIcon'));
   });
 
   it('tracks recent commits in the last 30 days', function() {

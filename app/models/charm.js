@@ -461,12 +461,12 @@ YUI.add('juju-charm-models', function(Y) {
           return tmp.join('/');
         }
       },
-      showIcon: {
+      shouldShowIcon: {
         /**
           Should this charm display its icon. Helper used for template
           rendering decisions.
 
-          @method showIcon.valueFn
+          @method shouldShowIcon.valueFn
           @return {Boolean} Does the charm have an icon that should be shown?
 
          */
