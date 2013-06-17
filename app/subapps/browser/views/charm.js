@@ -507,6 +507,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
+      if (window.flags.sharing_enabled) {
+        tplData.shareFlag = true; 
+      } else {
+        tplData.shareFlag = false; 
+      }
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
