@@ -363,19 +363,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _loadRelatedCharms: function() {
       // Start an indicator on the charm details sidebar if it's in
       // fullscreen.
-      this.hideIndicator(node);
-      this.get('store').qa(
+      // this.hideIndicator(node);
+      this.get('store').related(
           this.get('charm').get('id'), {
             'success': function(data) {
               this.get('charm').buildRelatedCharms(
                   data.result.provides, data.result.requires);
-
             },
             'failure': function(data, request) {
-              console.log('Error loading related charm data.')
+              console.log('Error loading related charm data.');
               console.log(data);
             }
-          }, this);
+          },
+          this);
 
     },
 
@@ -503,6 +503,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+      Render the related charms sidebar.
+
+      @method _renderRelatedCharms
+      @param {Object} charm the charm model we're rendering the related
+      charms for.
+
+     */
+    _renderRelatedCharms: function() {
+
+
+    },
+
+    /**
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
@@ -555,6 +568,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
         );
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
+      }
+
+      if (isFullscreen) {
+        if (!this.get('model').get('relatedCharms')) {
+          this._loadRelatedCharms();
+        }
+        this._renderRelatedCharms();
       }
 
       if (this.get('activeTab')) {

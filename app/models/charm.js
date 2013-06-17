@@ -390,7 +390,6 @@ YUI.add('juju-charm-models', function(Y) {
       }
     },
 
-
     /**
       Build the relatedCharms attribute from api data
 
@@ -402,70 +401,51 @@ YUI.add('juju-charm-models', function(Y) {
     buildRelatedCharms: function(provides, requires) {
       var provideCharms = {},
           requireCharms = {},
-          track = {
-            scores: [],
-            charms: []
-          };
+          allCharms = {};
 
-      // WHAT ABOUT keeping a running total of the charms and do a final sort
-      // on the object weight and then slice to grab the top 5?
+      Y.Object.each(provides, function(face, key) {
+        // The relations are in the order of score, so we can limit them right
+        // off the bat.
+        provideCharms[key] = face.slice(0, this.maxRelatedCharms);
 
-      /**
-        Helper to handle updating the tracker with new data.
+        // Check the top three against the scores in the top overall charms.
+        Y.Array.each(provideCharms[key], function(relation) {
+          allCharms[relation.id] = relation;
+        });
+      }, this);
 
-        @method updateOverall
-        @param {Object} relation the related charm data.
+      Y.Object.each(requires, function(face, key) {
+        // The relations are in the order of score, so we can limit them right
+        // off the bat.
+        requireCharms[key] = face.slice(0, this.maxRelatedCharms);
 
-       */
-      var updateOverall = function(relation) {
-        // If there are already the max number of scores, remove the
-        // lowest one.
-        if (track.scores.length === this.maxRelatedCharms) {
-          track.scores.shift();
-          track.charms.shift();
-        }
+        // Check the top three against the scores in the top overall charms.
+        Y.Array.each(requireCharms[key], function(relation) {
+          allCharms[relation.id] = relation;
+        });
+      }, this);
 
-        // Tack on our new score
-        track.scores.push(relation.weight);
-        // this fails as don't resort based on the score.
-        // @TODO this needs to be resorted on both the scores and the charms
-        // much match.
-        track.charms.push(relation);
+      // Find the highest weight charms, but make sure there are no
+      // duplicates. We build the object to index on key and remove dupes,
+      // then we get a list of results and sort them by weight, grabbing the
+      // top set.
+      var allCharmsList = Y.Object.values(allCharms);
+
+      function compareWeights(charm1, charm2) {
+        return charm1.weight - charm2.weight;
       }
 
-      Y.Object.each(provides, function(interface) {
-        // The relations are in the order of score, so we can limit them right
-        // off the bat.
-        provideCharms[interface] = Y.Array.slice(0, this.maxRelatedCharms);
-
-        // Check the top three against the scores in the top overall charms.
-        Y.Array.each(provideCharms[interface], function(relation) {
-          if (track.scores[0] < relation.weight) {
-            updateOverall(relation);
-          }
-        });
-      });
-
-      Y.Object.each(requires, function(interface) {
-        // The relations are in the order of score, so we can limit them right
-        // off the bat.
-        requireCharms[interface] = Y.Array.slice(0, this.maxRelatedCharms);
-
-        // Check the top three against the scores in the top overall charms.
-        Y.Array.each(requireCharms[interface], function(relation) {
-          if (track.scores[0] < relation.weight) {
-            updateOverall(relation);
-          }
-        });
-      });
+      allCharmsList.sort(compareWeights);
 
       this.set('relatedCharms', {
-        overall: track.charms,
+        overall: allCharmsList.slice(0, this.maxRelatedCharms),
         provides: provideCharms,
         requires: requireCharms
       });
     }
   }, {
+
+
     ATTRS: {
       id: {
         validator: function(val) {
