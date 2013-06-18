@@ -29,7 +29,8 @@ describe('juju application notifications', function() {
       'juju-gui',
       'juju-env',
       'juju-tests-utils',
-      'node-event-simulate'],
+      'node-event-simulate',
+      'ns-routing-app-extension'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -56,14 +57,6 @@ describe('juju application notifications', function() {
   });
 
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
-      'node-event-simulate',
-      'ns-routing-app-extension'],
     function(Y) {
       viewContainer = Y.namespace('juju-tests.utils')
         .makeContainer('container');
@@ -89,9 +82,6 @@ describe('juju application notifications', function() {
     viewContainer.remove(true);
     window.setTimeout = _setTimeout;
     views.highlightRow = _viewsHighlightRow;
-    // This should have no effect whatsoever, and yet without it,
-    // tests do not pass. Also, jshint is not happy, and cannot be made so.
-    delete nsRouter;
   });
 
   it('should notify errors in the notifications view', function() {
@@ -275,6 +265,7 @@ describe('juju application notifications', function() {
         app.showView(new Y.View());
         app.env.fire('permissionDenied', {title: 'title', message: 'message'});
         assert.equal(1, app.db.notifications.size());
+        app.destroy();
         logoNode.destroy();
       });
 

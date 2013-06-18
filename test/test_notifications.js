@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('notifications', function() {
-  var Y, juju, models, views, nsRouter, logoNode;
+  var Y, juju, models, views, nsRouter, logoNode, app;
 
   var default_env = {
     'result': [
@@ -101,9 +101,9 @@ describe('notifications', function() {
   });
 
   afterEach(function() {
-    // This should have no effect whatsoever, and yet without it,
-    // tests do not pass. Also, jshint is not happy, and cannot be made so.
-    delete nsRouter;
+    if (app) {
+      app.destroy();
+    }
   });
 
   after(function() {
@@ -216,8 +216,8 @@ describe('notifications', function() {
         conn = new(Y.namespace('juju-tests.utils')).SocketStub();
     var env = juju.newEnvironment({conn: conn});
     env.connect();
-    var app = new Y.juju.App({env: env, container: container}),
-        db = app.db,
+    app = new Y.juju.App({env: env, container: container}),
+    var db = app.db,
         mw = db.services.create({
           id: 'mediawiki',
           name: 'mediawiki',
@@ -263,12 +263,12 @@ describe('notifications', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = juju.newEnvironment({conn: conn}),
-        app = new Y.juju.App({
-          env: env,
-          container: container,
-          viewContainer: container
-        });
+        env = juju.newEnvironment({conn: conn});
+    app = new Y.juju.App({
+      env: env,
+      container: container,
+      viewContainer: container
+    });
     app.navigate = function() { return; };
     app.showView(new Y.View());
     env.connect();
@@ -309,7 +309,7 @@ describe('notifications', function() {
         var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
         var env = juju.newEnvironment({conn: conn});
         env.connect();
-        var app = new Y.juju.App({
+        app = new Y.juju.App({
           env: env,
           container: container,
           viewContainer: container
