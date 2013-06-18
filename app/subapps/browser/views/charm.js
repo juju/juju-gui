@@ -478,23 +478,27 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Clean up after ourselves.
-     *
-     * @method destructor
-     *
+      Clean up after ourselves.
+
+      @method destructor
+
      */
     destructor: function() {
       if (this.tabview) {
         this.tabview.destroy();
       }
+
+      if (this.featuredCharmContainer) {
+        this.featuredCharmContainer.destroy();
+      }
     },
 
     /**
-     * Generic YUI initializer. Make sure we track indicators for cleanup.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     * @return {undefined} Nothing.
+      Generic YUI initializer. Make sure we track indicators for cleanup.
+
+      @method initializer
+      @param {Object} cfg configuration object.
+      @return {undefined} Nothing.
      */
     initializer: function(cfg) {
       // Hold onto references of the indicators used so we can clean them all
@@ -503,7 +507,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-      Render the related charms sidebar.
+      Render the related charms sidebar. It generates a charm container with
+      the tokens but at tiny size.
 
       @method _renderRelatedCharms
       @param {Object} charm the charm model we're rendering the related
@@ -511,8 +516,22 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     _renderRelatedCharms: function() {
-
-
+      var relatedCharms = this.get('charm').get('relatedCharms');
+      // If there are no overall related charms then just skip it all.
+      if (relatedCharms.overall) {
+        var relatedNode = tplNode.one('.related-charms');
+        this.relatedCharmContainer = new widgets.browser.CharmContainer(
+            Y.merge({
+              name: 'Related Charms',
+              cutoff: 10,
+              children: relatedCharms.overall
+            }), {
+              additionalChildConfig: {
+                  size: 'tiny'
+              }
+            });
+        this.relatedCharmContainer.render(relatedNode);
+      }
     },
 
     /**
@@ -571,7 +590,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (isFullscreen) {
-        if (!this.get('model').get('relatedCharms')) {
+        if (!this.get('charm').get('relatedCharms')) {
           this._loadRelatedCharms();
         }
         this._renderRelatedCharms();
@@ -703,6 +722,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-charm-container',
     'browser-overlay-indicator',
     'browser-tabview',
     'datatype-date',

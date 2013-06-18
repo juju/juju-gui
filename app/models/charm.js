@@ -444,8 +444,6 @@ YUI.add('juju-charm-models', function(Y) {
       });
     }
   }, {
-
-
     ATTRS: {
       id: {
         validator: function(val) {
