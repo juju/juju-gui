@@ -289,8 +289,7 @@ lint-license-headers:
 
 virtualenv/bin/python:
 	virtualenv virtualenv --system-site-packages
-	virtualenv/bin/pip install pyyaml==3.10
-	virtualenv/bin/pip install selenium==2.33.0
+	virtualenv/bin/easy_install archives/selenium-2.33.0.tar.gz
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz

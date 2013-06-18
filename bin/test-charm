@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script expects that the system has python-shelltoolbox and py-juju
-# installed:
-# sudo apt-get install python-shelltoolbox juju
+# This script expects that the system has some dependencies already installed:
+# sudo apt-get install python-shelltoolbox python-yaml juju
 
 # This script will deploy the charm, using an alternate origin if given.  All
 # arguments that are accepted by lib/deploy_charm_for_testing.py are
