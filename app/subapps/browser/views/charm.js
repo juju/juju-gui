@@ -507,11 +507,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
+      tplData.shareFlag = false;
       if (window.flags.sharing_enabled) {
-        tplData.shareFlag = true; 
-      } else {
-        tplData.shareFlag = false; 
+        tplData.shareFlag = true;
       }
+
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
@@ -520,6 +520,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
+      if (tplData.shareFlag) {
+        this.shareOverlay =  new widgets.browser.SharingOverlay({
+          button: renderTo.one('.share')
+        });
+        this.shareOverlay.render(renderTo.one('.share'));
+      }
       this.tabview = new widgets.browser.TabView({
         render: true,
         srcNode: tplNode.one('.tabs')
@@ -657,13 +663,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       deploy: {}
-
     }
   });
 
 }, '0.1.0', {
   requires: [
     'browser-overlay-indicator',
+    'browser-sharing-overlay',
     'browser-tabview',
     'datatype-date',
     'datatype-date-format',
