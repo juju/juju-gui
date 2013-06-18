@@ -269,8 +269,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets a charm.', function() {
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false, 
-        callback);
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
       assert.isUndefined(result.error);
       assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
     });
@@ -285,10 +285,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.db.units.each(function(unit) {
         unit.agent_state = 'error';
       });
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false, 
-        callback);
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
       assert.equal(result.error, 'Cannot set charm on a service with units ' +
-        'in error without the force flag.');
+          'in error without the force flag.');
       assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
     });
 
@@ -296,8 +296,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.db.units.each(function(unit) {
         unit.agent_state = 'error';
       });
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', true, 
-        callback);
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', true,
+          callback);
       assert.isUndefined(result.error);
       assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
     });

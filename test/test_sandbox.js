@@ -1678,7 +1678,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isUndefined(receivedData.err);
         var service = state.db.services.getById('wordpress');
         assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
-        done()
+        done();
       };
       client.open();
       client.send(Y.JSON.stringify(data));

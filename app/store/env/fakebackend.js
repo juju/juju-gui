@@ -310,7 +310,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           }
       );
     },
-    
+
     /**
     Set the given service to use the given charm, optionally forcing units in
     error state to use the charm.
@@ -334,11 +334,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var serviceInError = this.db.units.get_units_for_service(service)
         .some(function(unit) {
-          return /error/.test(unit.agent_state)
-        });
+            return (/error/).test(unit.agent_state);
+          });
       if (serviceInError && !force) {
         return callback({error: 'Cannot set charm on a service with units in ' +
-          'error without the force flag.'});
+              'error without the force flag.'});
       }
       this._loadCharm(
           charmId,
