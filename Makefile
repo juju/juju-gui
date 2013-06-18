@@ -143,7 +143,7 @@ DATE=$(shell date -u)
 # As an optimization, we stash this value in the local PWD variable.
 PWD=$(shell pwd)
 
-all: build
+all: build virtualenv/bin/python
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 

@@ -87,6 +87,9 @@ on_exit() {
     fi
 }
 
+# We use a virtualenv so we can have newer dependencies than the OS provides.
+make virtualenv/bin/python
+
 # Ensure we clean up things even if this script exits with an error.
 trap on_exit EXIT
 
