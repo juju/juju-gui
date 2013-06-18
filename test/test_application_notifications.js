@@ -89,6 +89,8 @@ describe('juju application notifications', function() {
     viewContainer.remove(true);
     window.setTimeout = _setTimeout;
     views.highlightRow = _viewsHighlightRow;
+    // This should have no effect whatsoever, and yet without it,
+    // tests do not pass. Also, jshint is not happy, and cannot be made so.
     delete nsRouter;
   });
 
