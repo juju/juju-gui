@@ -369,15 +369,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Load the related charm data into the model for use.
-     *
-     * @method _loadRelatedCharms
-     *
+      Load the related charm data into the model for use.
+
+      @method _loadRelatedCharms
+
      */
     _loadRelatedCharms: function(callback) {
       // Start an indicator on the charm details sidebar if it's in
       // fullscreen.
-      // this.hideIndicator(node);
+      // this.hideIndicato(node);
       this.get('store').related(
           this.get('charm').get('id'), {
             'success': function(data) {
@@ -546,6 +546,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
               }
             });
         this.relatedCharmContainer.render(relatedNode);
+        this.hideIndicator(Y.one('.related-charms'));
       }
     },
 
@@ -606,6 +607,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
+          this.showIndicator(Y.one('.related-charms'));
           this._loadRelatedCharms(this._renderRelatedCharms);
         }
       }
