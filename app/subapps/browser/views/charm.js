@@ -59,6 +59,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.nav .back': {
         click: '_handleBack'
+      },
+      '.charm-token': {
+        click: '_handleCharmSelection'
       }
     },
 
@@ -259,6 +262,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
     },
 
+    _handleCharmSelection: function(ev) {
+      ev.halt();
+      var charm = ev.currentTarget;
+      var charmID = charm.getData('charmid');
+      var change = {
+        charmID: charmID
+      };
+
+      this.fire('viewNavigate', {change: change});
+    },
+
     /**
      * Determine which intro copy to display depending on the number
      * of interfaces.
@@ -360,7 +374,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @method _loadRelatedCharms
      *
      */
-    _loadRelatedCharms: function() {
+    _loadRelatedCharms: function(callback) {
       // Start an indicator on the charm details sidebar if it's in
       // fullscreen.
       // this.hideIndicator(node);
@@ -369,6 +383,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
             'success': function(data) {
               this.get('charm').buildRelatedCharms(
                   data.result.provides, data.result.requires);
+              if (callback) {
+                callback.call(this);
+              }
             },
             'failure': function(data, request) {
               console.log('Error loading related charm data.');
@@ -376,7 +393,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
             }
           },
           this);
-
     },
 
     /**
@@ -519,7 +535,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var relatedCharms = this.get('charm').get('relatedCharms');
       // If there are no overall related charms then just skip it all.
       if (relatedCharms.overall) {
-        var relatedNode = tplNode.one('.related-charms');
+        var relatedNode = this.get('container').one('.related-charms');
         this.relatedCharmContainer = new widgets.browser.CharmContainer(
             Y.merge({
               name: 'Related Charms',
@@ -527,7 +543,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
               children: relatedCharms.overall
             }), {
               additionalChildConfig: {
-                  size: 'tiny'
               }
             });
         this.relatedCharmContainer.render(relatedNode);
@@ -591,9 +606,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
-          this._loadRelatedCharms();
+          this._loadRelatedCharms(this._renderRelatedCharms);
         }
-        this._renderRelatedCharms();
       }
 
       if (this.get('activeTab')) {

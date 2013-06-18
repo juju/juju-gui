@@ -379,6 +379,25 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     /**
+      Given the set of data for relatedCharms, make it compatible with the
+      model api to be used in the charm-token widget, for example.
+
+      @method _convertRelatedData
+      @param {Object} data a related charm object.
+
+     */
+    _convertRelatedData: function(data) {
+      return {
+        shouldShowIcon: data.has_icon,
+        id: data.id,
+        mainCategory: data.categories[0],
+        name: data.name,
+        recent_commit_count: data.commits_in_past_30_days,
+        recent_download_count: data.downloads_in_past_30_days
+      };
+    },
+
+    /**
      * Initializer
      *
      * @method initializer
@@ -409,9 +428,12 @@ YUI.add('juju-charm-models', function(Y) {
         provideCharms[key] = face.slice(0, this.maxRelatedCharms);
 
         // Check the top three against the scores in the top overall charms.
-        Y.Array.each(provideCharms[key], function(relation) {
-          allCharms[relation.id] = relation;
-        });
+        Y.Array.each(provideCharms[key], function(relation, idx) {
+          // Update the related object with the converted version so that it's
+          // follows the model ATTRS
+          provideCharms[key][idx] = this._convertRelatedData(relation);
+          allCharms[relation.id] = provideCharms[key][idx];
+        }, this);
       }, this);
 
       Y.Object.each(requires, function(face, key) {
@@ -420,9 +442,13 @@ YUI.add('juju-charm-models', function(Y) {
         requireCharms[key] = face.slice(0, this.maxRelatedCharms);
 
         // Check the top three against the scores in the top overall charms.
-        Y.Array.each(requireCharms[key], function(relation) {
-          allCharms[relation.id] = relation;
-        });
+        Y.Array.each(requireCharms[key], function(relation, idx) {
+          // Update the related object with the converted version so that it's
+          // follows the model ATTRS
+          requireCharms[key][idx] = this._convertRelatedData(relation);
+          allCharms[relation.id] = requireCharms[key][idx];
+
+        }, this);
       }, this);
 
       // Find the highest weight charms, but make sure there are no
