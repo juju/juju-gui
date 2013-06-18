@@ -29,8 +29,7 @@ describe('juju application notifications', function() {
       'juju-gui',
       'juju-env',
       'juju-tests-utils',
-      'node-event-simulate',
-      'ns-routing-app-extension'],
+      'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -57,6 +56,14 @@ describe('juju application notifications', function() {
   });
 
   beforeEach(function(done) {
+    Y = YUI(GlobalConfig).use(['node',
+      'juju-models',
+      'juju-views',
+      'juju-gui',
+      'juju-env',
+      'juju-tests-utils',
+      'node-event-simulate',
+      'ns-routing-app-extension'],
     function(Y) {
       viewContainer = Y.namespace('juju-tests.utils')
         .makeContainer('container');
