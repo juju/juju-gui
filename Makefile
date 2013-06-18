@@ -143,7 +143,7 @@ DATE=$(shell date -u)
 # As an optimization, we stash this value in the local PWD variable.
 PWD=$(shell pwd)
 
-all: build
+all: build virtualenv/bin/python
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
@@ -208,7 +208,7 @@ $(NON_SPRITE_IMAGES):
 install-npm-packages: $(NODE_TARGETS)
 
 $(NODE_TARGETS): package.json
-	npm install
+	npm install --cache-min=999999999
 	# Keep all targets up to date, not just new/changed ones.
 	for dirname in $(NODE_TARGETS); do touch $$dirname ; done
 	@# Check to see if we made what we expected to make, and warn if we did
@@ -288,7 +288,8 @@ lint-license-headers:
 	|| (echo "The above files are missing copyright headers."; false)
 
 virtualenv/bin/python:
-	virtualenv virtualenv
+	virtualenv virtualenv --system-site-packages
+	virtualenv/bin/easy_install archives/selenium-2.33.0.tar.gz
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
