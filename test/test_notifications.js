@@ -216,7 +216,7 @@ describe('notifications', function() {
         conn = new(Y.namespace('juju-tests.utils')).SocketStub();
     var env = juju.newEnvironment({conn: conn});
     env.connect();
-    app = new Y.juju.App({env: env, container: container}),
+    app = new Y.juju.App({env: env, container: container});
     var db = app.db,
         mw = db.services.create({
           id: 'mediawiki',
