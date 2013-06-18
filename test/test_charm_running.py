@@ -112,15 +112,15 @@ class DeployTestMixin(object):
     def deploy(self, charm_name):
         """Deploy a charm.
 
-        This method only start the deployment process. If waiting for the newly
-        created service to be ready is required, use
+        This method only starts the deployment process. If waiting for the
+        newly created service to be ready is required, use
         self.assert_deployed(service_name) right after the deploy() call.
         """
         # Warning!
         # This depends on manage.jujucharms.com being up and working properly.
         # For many reasons, hopefully this is not an issue :-) but if
-        # some inexplicable failure is going on here, try that possible
-        # source.
+        # some inexplicable failure is going on here, you may want to
+        # investigate in that direction.
         def get_search_box(driver):
             # The charm browser sidebar should be open by default.
             return driver.find_element_by_css_selector('[name=bws-search]')
