@@ -817,6 +817,34 @@ g.unit {
 }
 
 /*
+ * Feedback box
+ */
+#feedback-box {
+    position: absolute;
+    right: -25px;
+    bottom: 107px;
+    background-color: @charm-panel-orange;
+    z-index: 1;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    height: 30px;
+    width: 96px;
+    &:hover {
+        background-color: #f24619;
+        height: 40px;
+    }
+    a {
+        font-family: @font-family-medium;
+        font-weight: normal;
+        text-decoration: none;
+        color: white;
+        margin-top: 15px;
+        margin-left: 15px;
+     }
+}
+
+/*
  * Overview Module
  */
 #overview {
@@ -1223,7 +1251,7 @@ g.unit {
                     width: 250px;
                     margin: 0;
 
-                    // XXX: This doesn't seem to make sense here:
+                    // XXX: This does not seem to make sense here:
                     input[type=text] {
                         height: 15px;
                     }
