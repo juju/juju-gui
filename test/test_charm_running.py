@@ -110,7 +110,12 @@ class DeployTestMixin(object):
         return self.wait_for(services_found, 'Services not displayed.')
 
     def deploy(self, charm_name):
-        """Deploy a charm."""
+        """Deploy a charm.
+
+        This method only start the deployment process. If waiting for the newly
+        created service to be ready is required, use
+        self.assert_deployed(service_name) right after the deploy() call.
+        """
         # Warning!
         # This depends on manage.jujucharms.com being up and working properly.
         # For many reasons, hopefully this is not an issue :-) but if
@@ -192,6 +197,9 @@ class TestNotifications(browser.TestCase, DeployTestMixin):
     def test_error(self):
         # An error notification is created when attempting to deploy a service
         # with an already used name.
+        # The service name is arbitrary, and connected to the charm name only
+        # by default/convention. Since charms are deployed using the default
+        # name, it is safe to reuse one of the service names here.
         service = self.get_service_names().pop()
         self.deploy(service)
         notifications = self.get_notifications()
