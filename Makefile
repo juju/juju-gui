@@ -288,7 +288,9 @@ lint-license-headers:
 	|| (echo "The above files are missing copyright headers."; false)
 
 virtualenv/bin/python:
-	virtualenv virtualenv
+	virtualenv virtualenv --system-site-packages
+	virtualenv/bin/pip install pyyaml==3.10
+	virtualenv/bin/pip install selenium==2.33.0
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
