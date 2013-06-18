@@ -100,6 +100,10 @@ describe('notifications', function() {
     nsRouter = Y.namespace('juju').Router('charmstore');
   });
 
+  afterEach(function() {
+    delete nsRouter;
+  });
+
   after(function() {
     logoNode.destroy(true);
   });

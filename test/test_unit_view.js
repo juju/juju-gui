@@ -58,6 +58,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     after(function(done)  {
       env.destroy();
+      delete nsRouter;
       done();
     });
 

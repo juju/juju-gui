@@ -89,6 +89,7 @@ describe('juju application notifications', function() {
     viewContainer.remove(true);
     window.setTimeout = _setTimeout;
     views.highlightRow = _viewsHighlightRow;
+    delete nsRouter;
   });
 
   it('should notify errors in the notifications view', function() {

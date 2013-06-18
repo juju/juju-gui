@@ -463,6 +463,8 @@ YUI.add('juju-gui', function(Y) {
             envOptions.conn = new sandboxModule.ClientConnection(
                 {juju: new sandboxModule.GoJujuAPI({state: state})});
           } else {
+            // Clean ourselves up before giving up the ghost, for tests' sake.
+            this.destroy();
             throw 'unrecognized backend type: ' + apiBackend;
           }
 
