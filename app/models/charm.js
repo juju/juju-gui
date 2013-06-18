@@ -457,11 +457,9 @@ YUI.add('juju-charm-models', function(Y) {
       // top set.
       var allCharmsList = Y.Object.values(allCharms);
 
-      function compareWeights(charm1, charm2) {
+      allCharmsList.sort(function(charm1, charm2) {
         return charm1.weight - charm2.weight;
-      }
-
-      allCharmsList.sort(compareWeights);
+      });
 
       this.set('relatedCharms', {
         overall: allCharmsList.slice(0, this.maxRelatedCharms),

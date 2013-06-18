@@ -262,6 +262,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
     },
 
+    /**
+      Navigate when selecting a charm token in the view.
+
+      @method _handleCharmSelection
+      @param {Event} ev the click event for the selected charm.
+
+     */
     _handleCharmSelection: function(ev) {
       ev.halt();
       var charm = ev.currentTarget;

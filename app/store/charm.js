@@ -377,8 +377,8 @@ YUI.add('juju-charm-store', function(Y) {
 
       @method related
       @param {String} charmID The charm to find related charms for.
-      @param callbacks {Object} The success/failure callbacks to use.
-      @param bindScope {Object} An object scope to perform callbacks in.
+      @param {Object} callbacks The success/failure callbacks to use.
+      @param {Object} bindscope An object scope to perform callbacks in.
       @return {Object} data loaded from the api call.
 
      */
