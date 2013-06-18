@@ -692,7 +692,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     GoJujuAPI.superclass.constructor.apply(this, arguments);
   }
 
-  GoJujuAPI.NAME = 'sandbox-py-juju-api';
+  GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
     state: {},
     client: {}
@@ -846,6 +846,26 @@ YUI.add('juju-env-sandbox', function(Y) {
         configYAML: data.Params.ConfigYAML,
         unitCount: data.Params.NumUnits
       });
+    },
+
+    /**
+    Handle ServiceSetCharm messages
+
+    @method handleClientServiceSetCharm
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    */
+    handleClientServiceSetCharm: function(data, client, state) {
+      var callback = function(result) {
+        var response = {RequestId: data.RequestId};
+        if (result.error) {
+          response.Error = result.error;
+        }
+        client.receive(response);
+      };
+      state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
+          data.Params.Force, callback);
     },
 
     /**
