@@ -36,6 +36,10 @@ describe('Namespaced Routing', function() {
     app.showView(new Y.View());
   });
 
+  afterEach(function() {
+    app.destroy();
+  });
+
   it('should support basic namespaced urls', function() {
     var router = juju.Router('charmstore');
 
