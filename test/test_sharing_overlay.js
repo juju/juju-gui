@@ -49,4 +49,15 @@ describe.only('sharing overlay', function() {
     overlay.render(container);
     assert.isFalse(overlay.get('visible'));
   });
+
+  it('changes visiblity when the button is clicked', function() {
+    var overlay =  new Y.juju.widgets.browser.SharingOverlay({
+      button: container
+    });
+    overlay.render(container);
+    container.simulate('click');
+    assert.isTrue(overlay.get('visible'));
+    container.simulate('click');
+    assert.isFalse(overlay.get('visible'));
+  });
 });
