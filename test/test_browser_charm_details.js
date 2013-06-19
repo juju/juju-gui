@@ -386,6 +386,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not display qa data when there is none.', function() {
       var data = utils.loadFixture('data/qa.json', true);
+      var testContainer = utils.makeContainer();
       // munge the data so that scores is null.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
@@ -410,7 +411,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        renderTo: utils.makeContainer(),
+        renderTo: testContainer,
         store: fakeStore
       });
 
@@ -431,6 +432,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._loadQAContent();
       foundNode = view.get('container').one('.no-qa-reviewed');
       assert.ok(foundNode);
+      // Little cleanup.
+      testContainer.remove(true);
     });
 
     it('should catch when the open log is clicked', function(done) {
@@ -748,6 +751,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('renders out the related charms correctly', function(done) {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -768,7 +772,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new CharmView({
         charm: new models.BrowserCharm(data),
         isFullscreen: true,
-        renderTo: utils.makeContainer(),
+        renderTo: testContainer,
         store: fakeStore
       });
       view.render();
@@ -784,6 +788,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // on the browser due to many charms with the same score of 10 in the
         // sample data..
         assert(ev.change.charmID);
+        testContainer.remove(true);
         done();
       });
       view.get('container').one('.charm-token').simulate('click');
