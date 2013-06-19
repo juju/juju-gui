@@ -67,6 +67,13 @@ YUI.add('browser-sharing-overlay', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+         The "button" that is used to show or hide the sharing overlay.
+         
+         @attribute button
+         @default {Undefined}
+         @type {Y.Node}
+       */
       button: {}
     }
   });
