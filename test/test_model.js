@@ -622,7 +622,7 @@ describe('BrowserCharm test', function() {
     Y = YUI(GlobalConfig).use([
       'io',
       'juju-charm-models',
-      'juju-tests-utils',
+      'juju-tests-utils'
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
