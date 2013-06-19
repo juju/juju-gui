@@ -511,8 +511,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this.tabview.destroy();
       }
 
-      if (this.featuredCharmContainer) {
-        this.featuredCharmContainer.destroy();
+      if (this.relatedCharmContainer) {
+        this.relatedCharmContainer.destroy();
       }
     },
 
