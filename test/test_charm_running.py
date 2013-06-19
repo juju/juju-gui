@@ -160,6 +160,11 @@ class DeployTestMixin(object):
 
     def assert_deployed(self, service_name):
         """Ensure the given service is actually present in the environment."""
+        # Close, if displayed, the cookie policy message box, so that it does
+        # not hide the zoom control widgets.
+        cookie_msg_close_link = self.driver.find_element_by_css_selector(
+            '.cookie-policy a')
+        self.click(cookie_msg_close_link)
         # Zoom out so that it is possible to see the deployed service in
         # Saucelabs.  This also seems to fix a Firefox bug preventing the name
         # of the service to be retrieved if the associated element is not
