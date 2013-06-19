@@ -277,7 +277,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       hostname = 'http://localhost';
       api = new Y.juju.Charmworld2({
         apiHost: hostname
-      }),
+      });
       ds = api.get('datasource');
       ds.get('source').should.eql('http://localhost/api/2/');
 

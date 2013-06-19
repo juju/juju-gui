@@ -531,7 +531,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
     /**
       Render the related charms sidebar. It generates a charm container with
-      the tokens but at tiny size.
+      the tokens.
 
       @method _renderRelatedCharms
       @param {Object} charm the charm model we're rendering the related

@@ -331,7 +331,7 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
     // Only care about at most, this number of related charms per interface.
-    maxRelatedCharms: 3,
+    maxRelatedCharms: 5,
 
     /**
 
@@ -393,7 +393,8 @@ YUI.add('juju-charm-models', function(Y) {
         mainCategory: data.categories[0],
         name: data.name,
         recent_commit_count: data.commits_in_past_30_days,
-        recent_download_count: data.downloads_in_past_30_days
+        recent_download_count: data.downloads_in_past_30_days,
+        weight: data.weight
       };
     },
 
@@ -427,11 +428,12 @@ YUI.add('juju-charm-models', function(Y) {
         // off the bat.
         provideCharms[key] = face.slice(0, this.maxRelatedCharms);
 
-        // Check the top three against the scores in the top overall charms.
-        Y.Array.each(provideCharms[key], function(relation, idx) {
+        provideCharms[key].forEach(function(relation, idx) {
           // Update the related object with the converted version so that it's
           // follows the model ATTRS
           provideCharms[key][idx] = this._convertRelatedData(relation);
+          // Then track the highest provides charm to be in the running for
+          // overall most weighted related charm.
           allCharms[relation.id] = provideCharms[key][idx];
         }, this);
       }, this);
@@ -441,13 +443,13 @@ YUI.add('juju-charm-models', function(Y) {
         // off the bat.
         requireCharms[key] = face.slice(0, this.maxRelatedCharms);
 
-        // Check the top three against the scores in the top overall charms.
-        Y.Array.each(requireCharms[key], function(relation, idx) {
+        requireCharms[key].forEach(function(relation, idx) {
           // Update the related object with the converted version so that it's
           // follows the model ATTRS
           requireCharms[key][idx] = this._convertRelatedData(relation);
+          // Then track the highest provides charm to be in the running for
+          // overall most weighted related charm.
           allCharms[relation.id] = requireCharms[key][idx];
-
         }, this);
       }, this);
 
@@ -458,7 +460,7 @@ YUI.add('juju-charm-models', function(Y) {
       var allCharmsList = Y.Object.values(allCharms);
 
       allCharmsList.sort(function(charm1, charm2) {
-        return charm1.weight - charm2.weight;
+        return charm2.weight - charm1.weight;
       });
 
       this.set('relatedCharms', {

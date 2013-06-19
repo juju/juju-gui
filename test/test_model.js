@@ -472,7 +472,7 @@ describe('juju charm load', function() {
   });
 
   beforeEach(function() {
-    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.connect();
     conn.open();
@@ -616,14 +616,16 @@ describe('juju charm load', function() {
 
 
 describe('BrowserCharm test', function() {
-  var data, instance, models, sampleData, Y;
+  var data, instance, models, relatedData, sampleData, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'io',
-      'juju-charm-models'
+      'juju-charm-models',
+      'juju-tests-utils',
     ], function(Y) {
       models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -631,9 +633,7 @@ describe('BrowserCharm test', function() {
   before(function() {
     sampleData = Y.io('data/browsercharm.json', {sync: true});
     data = Y.JSON.parse(sampleData.responseText);
-  });
-
-  beforeEach(function() {
+    relatedData = utils.loadFixture('data/related.json', true).result;
   });
 
   afterEach(function() {
@@ -733,6 +733,42 @@ describe('BrowserCharm test', function() {
     // openstack on HP. If the openstack test fails, both are failing.
     instance.get('failingProviders').should.eql(
         ['ec2', 'local', 'openstack', 'hp']);
+  });
+
+  // Testing a private method because if this test fails it'll provide a much
+  // nicer hint as to why something in a View or such doesn't work correctly.
+  // This must be converted properly.
+  it('maps related data to the model-ish api', function() {
+    var providesData = relatedData.provides['mysql-oneway-replication'][0];
+    instance = new models.BrowserCharm(data.charm);
+    var converted = instance._convertRelatedData(providesData);
+    assert.equal(providesData.name, converted.name);
+    assert.equal(providesData.id, converted.id);
+    assert.equal(
+        providesData.commits_in_past_30_days,
+        converted.recent_commit_count);
+    assert.equal(
+        providesData.downloads_in_past_30_days,
+        converted.recent_download_count);
+    assert.equal(providesData.has_icon, converted.shouldShowIcon);
+  });
+
+  it('builds proper relatedCharms object', function() {
+    instance = new models.BrowserCharm(data.charm);
+    instance.buildRelatedCharms(relatedData.provides, relatedData.requires);
+    var relatedObject = instance.get('relatedCharms');
+
+    // The overall should have the default 5 max charms listed.
+    assert.equal(5, relatedObject.overall.length);
+    // The requires for mysql should be truncated to the max of 5 as well.
+    assert.equal(5, relatedObject.requires.mysql.length);
+    // There's only one key in the provides section.
+    assert.equal(1, Y.Object.keys(relatedObject.provides).length);
+
+    // None of the overall weights should be one.
+    relatedObject.overall.forEach(function(charm) {
+      assert.notEqual(1, charm.weight);
+    });
   });
 });
 

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('browser_charm_view', function() {
+  describe.only('browser_charm_view', function() {
     var container, CharmView, models, node, utils, view, views, Y;
 
     before(function(done) {
@@ -39,6 +39,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
+            // Need the handlebars helper for the charm-token to render.
+            Y.Handlebars.registerHelper(
+                'charmFilePath',
+                function(charmID, file) {
+                  return '/path/to/charm/' + file;
+                });
             done();
           });
     });
@@ -447,7 +453,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -664,7 +669,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -689,7 +693,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -710,7 +713,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets a category icon if available', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -727,7 +729,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('selects the proper tab when given one', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -745,6 +746,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(selected.getAttribute('href'), '#bws-interfaces');
     });
 
+    it('renders out the related charms correctly', function(done) {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: utils.makeContainer(),
+        store: fakeStore
+      });
+      view.render();
+
+      // We've selected the activeTab specified.
+      var tokens = view.get('container').all('.charm-token');
+      assert.equal(5, tokens.size());
+
+      // And clicking on one of those charms navigates correctly.
+      view.on('viewNavigate', function(ev) {
+        ev.halt();
+        assert.equal(ev.change.charmID, 'precise/openstack-dashboard-9');
+        done();
+      });
+      view.get('container').one('.charm-token').simulate('click');
+    });
   });
 
 })();
