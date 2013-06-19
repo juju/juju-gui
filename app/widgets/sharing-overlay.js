@@ -31,7 +31,13 @@ YUI.add('browser-sharing-overlay', function(Y) {
   ns.SharingOverlay= Y.Base.create('SharingOverlay', Y.Widget, [], {
     TEMPLATE: Y.namespace('juju.views').Templates['sharing-overlay'],
 
-    _handleClick: function(e) {
+    /**
+       Toggles the sharing overlay's visibility.
+      
+       @method _toggleVisible
+       @param {Y.EventFacade} e The click event.
+     */
+    _toggleVisible: function(e) {
       if (this.get('visible')) {
         this.hide();
       } else {
@@ -45,8 +51,7 @@ YUI.add('browser-sharing-overlay', function(Y) {
        @method bindUI
      */
     bindUI: function() {
-      var button = this.get('button');
-      button.on('click', this._handleClick, this);
+      this.get('button').on('click', this._toggleVisible, this);
     },
 
     /**
