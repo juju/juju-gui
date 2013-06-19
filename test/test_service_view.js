@@ -17,6 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
+
 (function() {
   describe('Service config view (views.service_config)', function() {
     var models, Y, container, service, db, conn, env, charm, views, view;
@@ -900,6 +901,3 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
   });
 })();
-
-
-

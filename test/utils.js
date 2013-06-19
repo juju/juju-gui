@@ -88,18 +88,19 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
     },
 
-    _cached_charms: (function() {
-      var charms = {},
+    _cached_charms: {},
+
+    _generate_cached_charms: function() {
+      var url, charms = {},
           names = [
             'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
             'memcached'];
       Y.Array.each(names, function(name) {
-        charms[name] = Y.JSON.parse(
-            Y.io('data/' + name + '-charmdata.json', {sync: true})
-            .responseText);
-      });
+        url = 'data/' + name + '-charmdata.json';
+        charms[name] = this.loadFixture(url, true);
+      }, this);
       return charms;
-    })(),
+    },
 
     TestCharmStore: Y.Base.create(
         'test-charm-store', Y.juju.CharmStore, [], {
@@ -118,6 +119,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     ),
 
     makeFakeBackendWithCharmStore: function() {
+      this._cached_charms = this._generate_cached_charms();
       var fakebackend = new Y.juju.environments.FakeBackend(
           {charmStore: new jujuTests.utils.TestCharmStore()});
       fakebackend.login('admin', 'password');
@@ -129,8 +131,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      *
      * @method loadFixture
      * @param {String} url to synchronously load.
-     * @param {Boolean} parseJSON when true return will be processed
-     *                  as a JSON blob before returning.
+     * @param {Boolean} parseJSON when true, the response will be processed
+     *                  as a JSON blob before being returned.
      * @return {Object} fixture data resulting from call.
      */
     loadFixture: function(url, parseJson) {
