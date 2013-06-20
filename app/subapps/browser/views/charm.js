@@ -521,10 +521,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       renderTo.setHTML(tplNode);
 
       if (tplData.shareFlag) {
-        this.shareOverlay = new widgets.browser.SharingOverlay({
+        this.shareWidget = new widgets.browser.SharingWidget({
           button: renderTo.one('.share')
         });
-        this.shareOverlay.render(renderTo.one('.share'));
+        this.shareWidget.render(renderTo.one('.share'));
       }
       this.tabview = new widgets.browser.TabView({
         render: true,
@@ -669,7 +669,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-overlay-indicator',
-    'browser-sharing-overlay',
+    'browser-sharing-widget',
     'browser-tabview',
     'datatype-date',
     'datatype-date-format',

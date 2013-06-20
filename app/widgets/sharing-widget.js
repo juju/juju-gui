@@ -20,19 +20,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
-   Provides the sharing overlay widget.
+   Provides the sharing widget.
 
    @namespace juju
    @module widgets
    @submodule browser
  */
-YUI.add('browser-sharing-overlay', function(Y) {
+YUI.add('browser-sharing-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
-  ns.SharingOverlay = Y.Base.create('SharingOverlay', Y.Widget, [], {
-    TEMPLATE: Y.namespace('juju.views').Templates['sharing-overlay'],
+  ns.SharingWidget = Y.Base.create('SharingWidget', Y.Widget, [], {
+    TEMPLATE: Y.namespace('juju.views').Templates['sharing-widget'],
 
     /**
-       Toggles the sharing overlay's visibility.
+       Toggles the sharing widget's visibility.
 
        @method _toggleVisible
        @param {Y.EventFacade} e The click event.
@@ -55,7 +55,7 @@ YUI.add('browser-sharing-overlay', function(Y) {
     },
 
     /**
-       Renders the overlay.
+       Renders the widget.
 
        @method renderUI
      */
@@ -68,7 +68,7 @@ YUI.add('browser-sharing-overlay', function(Y) {
   }, {
     ATTRS: {
       /**
-         The "button" that is used to show or hide the sharing overlay.
+         The "button" that is used to show or hide the sharing widget.
 
          @attribute button
          @default {Undefined}

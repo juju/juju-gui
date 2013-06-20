@@ -19,12 +19,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('sharing overlay', function() {
+describe('sharing widget', function() {
   var container, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'browser-sharing-overlay',
+      'browser-sharing-widget',
       'node',
       'node-event-simulate',
       'juju-tests-utils'
@@ -43,21 +43,21 @@ describe('sharing overlay', function() {
   });
 
   it('renders invisibly', function() {
-    var overlay = new Y.juju.widgets.browser.SharingOverlay({
+    var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container
     });
-    overlay.render(container);
-    assert.isFalse(overlay.get('visible'));
+    widget.render(container);
+    assert.isFalse(widget.get('visible'));
   });
 
   it('changes visiblity when the button is clicked', function() {
-    var overlay = new Y.juju.widgets.browser.SharingOverlay({
+    var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container
     });
-    overlay.render(container);
+    widget.render(container);
     container.simulate('click');
-    assert.isTrue(overlay.get('visible'));
+    assert.isTrue(widget.get('visible'));
     container.simulate('click');
-    assert.isFalse(overlay.get('visible'));
+    assert.isFalse(widget.get('visible'));
   });
 });
