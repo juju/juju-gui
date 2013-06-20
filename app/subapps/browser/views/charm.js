@@ -545,10 +545,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
               name: 'Related Charms',
               cutoff: 10,
               children: relatedCharms.overall
-            }), {
-              additionalChildConfig: {
-              }
-            });
+            }));
         this.relatedCharmContainer.render(relatedNode);
         this.hideIndicator(Y.one('.related-charms'));
       }

@@ -74,6 +74,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.remove(true);
     });
 
+    after(function(done) {
+      Y.Handlebars.helpers.charmFilePath = undefined;
+      done();
+    });
+
     it('should be able to locate a readme file', function() {
       view = new CharmView({
         charm: new models.BrowserCharm({

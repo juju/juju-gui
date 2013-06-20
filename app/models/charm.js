@@ -388,7 +388,9 @@ YUI.add('juju-charm-models', function(Y) {
      */
     _convertRelatedData: function(data) {
       return {
-        shouldShowIcon: data.has_icon,
+        // Only show the icon if it has one and the charm has been reviewed to
+        // have a safe icon.
+        shouldShowIcon: data.has_icon && data.is_approved,
         id: data.id,
         mainCategory: data.categories[0],
         name: data.name,
@@ -419,45 +421,36 @@ YUI.add('juju-charm-models', function(Y) {
 
     */
     buildRelatedCharms: function(provides, requires) {
-      var provideCharms = {},
-          requireCharms = {},
-          allCharms = {};
+      var charms = {
+        all: {},
+        provides: {},
+        requires: {}
+      };
 
-      Y.Object.each(provides, function(face, key) {
-        // The relations are in the order of score, so we can limit them right
-        // off the bat.
-        provideCharms[key] = face.slice(0, this.maxRelatedCharms);
+      var buildWeightedList = function(relationName, relationData, scope) {
+        Y.Object.each(relationData, function(face, key) {
+          // The relations are in the order of score, so we can limit them right
+          // off the bat.
+          charms[relationName][key] = face.slice(0, this.maxRelatedCharms);
+          charms[relationName][key].forEach(function(relation, idx) {
+            // Update the related object with the converted version so that it's
+            // follows the model ATTRS
+            charms[relationName][key][idx] = this._convertRelatedData(relation);
+            // Then track the highest provides charm to be in the running for
+            // overall most weighted related charm.
+            charms.all[relation.id] = charms[relationName][key][idx];
+          }, scope);
+        }, scope);
+      };
 
-        provideCharms[key].forEach(function(relation, idx) {
-          // Update the related object with the converted version so that it's
-          // follows the model ATTRS
-          provideCharms[key][idx] = this._convertRelatedData(relation);
-          // Then track the highest provides charm to be in the running for
-          // overall most weighted related charm.
-          allCharms[relation.id] = provideCharms[key][idx];
-        }, this);
-      }, this);
-
-      Y.Object.each(requires, function(face, key) {
-        // The relations are in the order of score, so we can limit them right
-        // off the bat.
-        requireCharms[key] = face.slice(0, this.maxRelatedCharms);
-
-        requireCharms[key].forEach(function(relation, idx) {
-          // Update the related object with the converted version so that it's
-          // follows the model ATTRS
-          requireCharms[key][idx] = this._convertRelatedData(relation);
-          // Then track the highest provides charm to be in the running for
-          // overall most weighted related charm.
-          allCharms[relation.id] = requireCharms[key][idx];
-        }, this);
-      }, this);
+      buildWeightedList('provides', provides, this);
+      buildWeightedList('requires', requires, this);
 
       // Find the highest weight charms, but make sure there are no
       // duplicates. We build the object to index on key and remove dupes,
       // then we get a list of results and sort them by weight, grabbing the
       // top set.
-      var allCharmsList = Y.Object.values(allCharms);
+      var allCharmsList = Y.Object.values(charms.all);
 
       allCharmsList.sort(function(charm1, charm2) {
         return charm2.weight - charm1.weight;
@@ -465,8 +458,8 @@ YUI.add('juju-charm-models', function(Y) {
 
       this.set('relatedCharms', {
         overall: allCharmsList.slice(0, this.maxRelatedCharms),
-        provides: provideCharms,
-        requires: requireCharms
+        provides: charms.provides,
+        requires: charms.requires
       });
     }
   }, {
