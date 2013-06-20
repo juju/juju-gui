@@ -31,83 +31,75 @@ describe('data binding library', function() {
     });
   });
 
-  afterEach(function() {
-    if (container) {container.remove(true);}
-  });
-
   describe('supports declarative bindings', function() {
     var engine, form, model;
-
-    function makeForm(dom, container) {
-      if (!container) {
-        container = utils.makeContainer();
-      }
-      form = container.append(Y.Node.create('<form/>'));
-      form.append(dom);
-      return form;
-    }
 
     describe('binding tests', function() {
       var engine;
 
       it('bind should fail on invalid DOM', function() {
         engine = new BindingEngine();
-        assert.throws(function() {engine.bind({}, null);},
+        assert.throws(function() {engine.bind(new Y.Model(), null);},
                       'Unable to bind, invalid Viewlet');
       });
 
       it('maintains proper binding references', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
         var viewlet = {
           container: container,
-          bindings: []
+          _changedValues: []
         };
         engine = new BindingEngine();
-        container = utils.makeContainer();
+
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         // The default model object should be in place.
-        assert.equal(Y.Object.keys(engine._events).length, 1);
-        // Assign a new default model, the old event handler
-        // will be unbound leaving the length consistent.
-        engine.bind(new Y.Model({foo: 'bar'}), viewlet);
-        assert.equal(Y.Object.keys(engine._events).length, 1);
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
       });
     });
 
     describe('field types', function() {
-      beforeEach(function(done) {
-        engine = new BindingEngine();
-        done();
-      });
+      var viewlet, engine, container;
 
-      function fieldShould(spec, dom, v1, v2) {
-        return it(spec, function(done) {
-          // Prep the DOM with a known selector
-          var model = new Y.Model({test: v1});
-          if (Y.Lang.isString(dom)) {
-            dom = Y.Node.create(dom);
-          }
-          dom.set('name', 'test');
-          form = makeForm(dom);
-          engine.bind(model,
-              {
-                container: form,
-                bindings: [{name: 'test', target: ['[name=test]']}]
-              });
-          assert.equal(dom.get('value'), v1);
-          model.set('test', v2);
-          assert.equal(dom.get('value'), v2);
-          done();
-        });
+      function generateEngine(input) {
+        container = utils.makeContainer();
+        container.setHTML(input);
+        viewlet = {
+          container: container,
+          _changedValues: []
+        };
+        engine = new BindingEngine();
       }
 
-      fieldShould('bind string to inputs',
-          '<input type="text"/>',
-          'Wintermute', 'Neuromancer');
-      fieldShould('bind strings to textareas',
-          '<textarea/>', 'Hello\nWorld', 'Goodbye');
+      afterEach(function() {
+        container.remove().destroy(true);
+        viewlet = null;
+        engine = null;
+      });
 
-      fieldShould('bind numbers to inputs',
-          '<input type="number"/>', 1, 10);
+      it('binds strings to inputs', function() {
+        generateEngine('<input type="text" data-bind="a"></input>');
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind=a]').get('value'), 'b');
+      });
+
+      it('binds strings to textareas', function() {
+        generateEngine('<textarea data-bind="g"/></textarea>');
+        engine.bind(new Y.Model({g: 'g'}), viewlet);
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind=g]').get('value'), 'g');
+      });
+
+      it('binds numbers to inputs', function() {
+        generateEngine('<input type="number" data-bind="e"/>');
+        engine.bind(new Y.Model({e: '7'}), viewlet);
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind=e]').get('value'), '7');
+      });
+
     });
   });
 

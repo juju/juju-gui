@@ -1328,7 +1328,9 @@ YUI.add('juju-topology-service', function(Y) {
       if (flags.serviceInspector) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service);
+          serviceInspector = new views.ServiceInspector(service, {
+            db: topo.get('db')
+          });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);
           });
