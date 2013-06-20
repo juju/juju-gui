@@ -28,7 +28,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('browser-sharing-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
-  ns.SharingWidget = Y.Base.create('SharingWidget', Y.Widget, [], {
+  ns.SharingWidget = Y.Base.create('SharingWidget', Y.Widget, [
+    Y.Event.EventTracker
+  ], {
     TEMPLATE: Y.namespace('juju.views').Templates['sharing-widget'],
 
     /**
@@ -51,7 +53,8 @@ YUI.add('browser-sharing-widget', function(Y) {
        @method bindUI
      */
     bindUI: function() {
-      this.get('button').on('click', this._toggleVisible, this);
+      this.addEvent(
+        this.get('button').on('click', this._toggleVisible, this));
     },
 
     /**
@@ -81,6 +84,7 @@ YUI.add('browser-sharing-widget', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'event-tracker',
     'handlebars',
     'juju-templates',
     'widget'
