@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 'use strict';
 
 
@@ -518,6 +519,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (window.flags && window.flags.sharing_enabled) {
         this.shareWidget = new widgets.browser.SharingWidget({
+          share_text: window.location.href,
           button: renderTo.one('.share')
         });
         this.shareWidget.render(renderTo.one('.share'));

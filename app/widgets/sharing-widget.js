@@ -63,7 +63,7 @@ YUI.add('browser-sharing-widget', function(Y) {
        @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE();
+      var content = this.TEMPLATE({share_text: this.get('share_text')});
       var container = this.get('contentBox');
       container.setHTML(content);
       this.hide();
@@ -86,7 +86,7 @@ YUI.add('browser-sharing-widget', function(Y) {
          @default ""
          @type {String}
        */
-      link: {
+      share_text: {
         /**
          * setter for the link attr; urlencodes the given link
          *
@@ -94,7 +94,8 @@ YUI.add('browser-sharing-widget', function(Y) {
          * @param {String} val The link.
          */
         setter: function(val) {
-          return escape(val);
+          var text = "Check out this charm on JujuGUI: "
+          return text + escape(val);
         }
       }
     }
