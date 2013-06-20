@@ -21,12 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('service module annotations', function() {
   var db, juju, models, utils, viewContainer, views, Y, serviceModule;
   var called, location;
+
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
-      'juju-tests-utils',
-      'juju-models',
-      'juju-views',
+    Y = YUI(GlobalConfig).use([
       'juju-gui',
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views',
+      'node',
       'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
@@ -98,6 +100,7 @@ describe('service module annotations', function() {
 describe('service module events', function() {
   var db, juju, models, serviceModule, topo, utils,
       view, viewContainer, views, Y;
+
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-tests-utils',
@@ -112,6 +115,8 @@ describe('service module events', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       utils = Y.namespace('juju-tests.utils');
+      // A global variable required for testing.
+      window.flags = {};
       done();
     });
   });
@@ -142,6 +147,10 @@ describe('service module events', function() {
     if (viewContainer) {
       viewContainer.remove(true);
     }
+  });
+
+  after(function() {
+    delete window.flags;
   });
 
   it('should toggle the service menu',

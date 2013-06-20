@@ -2,9 +2,12 @@
   <h2 data-bind="displayName"></h2>
 
   <input type="text" data-bind="charm"/>
+  <h4>Unit Count:</h4>
   <div data-bind="unit_count"></div>
   <div>
-    <span data-bind="running"> /
-    <span data-bind="error"> /
+    Running: <span data-bind="aggregated_status.running"></span>
+  </div>
+  <div>
+    Error: <span data-bind="aggregated_status.error"></span>
   </div>
 </div>

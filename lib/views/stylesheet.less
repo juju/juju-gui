@@ -188,9 +188,17 @@ table tr.highlighted td {
     padding: 10px;
 
     .control-group {
+        position: relative;
+
         .warning-message {
             color: red;
             padding: 1em;
+        }
+        .conflicted {
+            position: absolute;
+            border: 1px solid grey;
+            margin-top: -140px;
+            background-color: white;
         }
     }
 }
@@ -817,6 +825,44 @@ g.unit {
 }
 
 /*
+ * Feedback box
+ */
+#feedback-box {
+    position: fixed;
+    right: -40px;
+    bottom: 100px;
+    a {
+        color: white;
+        background-color: @charm-panel-orange;
+        display: block;
+        line-height: 30px;
+        height: 40px;
+        // width: 96px;
+        font-family: @font-family-medium;
+        font-weight: normal;
+        font-size: 16px;
+        padding-top: 0px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 0px;
+        margin-right: 3px;
+        -webkit-transition: all 0.15s ease-in-out;
+        -moz-transition: all 0.15s ease-in-out;
+        transition: all 0.15s ease-in-out;
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+        &:hover {
+            text-decoration: none;
+            background-color: #df6920;
+            margin-right: 13px;
+        }
+    }
+}
+
+/*
  * Overview Module
  */
 #overview {
@@ -1033,7 +1079,6 @@ g.unit {
     padding: 0;
     top: 70px;
     right: 0;
-    height: 100px;
     position: absolute;
     width: @charm-panel-width;
     background-color: white;
@@ -1223,7 +1268,7 @@ g.unit {
                     width: 250px;
                     margin: 0;
 
-                    // XXX: This doesn't seem to make sense here:
+                    // XXX: This does not seem to make sense here:
                     input[type=text] {
                         height: 15px;
                     }
