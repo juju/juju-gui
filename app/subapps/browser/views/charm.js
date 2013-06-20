@@ -382,9 +382,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     _loadRelatedCharms: function(callback) {
-      // Start an indicator on the charm details sidebar if it's in
-      // fullscreen.
-      // this.hideIndicato(node);
       this.get('store').related(
           this.get('charm').get('id'), {
             'success': function(data) {

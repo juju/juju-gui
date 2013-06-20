@@ -353,6 +353,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           iconPath,
           'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
     });
+
   });
 
 })();

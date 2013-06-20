@@ -737,7 +737,8 @@ describe('BrowserCharm test', function() {
 
   // Testing a private method because if this test fails it'll provide a much
   // nicer hint as to why something in a View or such doesn't work correctly.
-  // This must be converted properly.
+  // The api data that we get must be converted into what the
+  // CharmMode.getAttrs() would have sent out to the charm-token widget.
   it('maps related data to the model-ish api', function() {
     var providesData = relatedData.provides['mysql-oneway-replication'][0];
     instance = new models.BrowserCharm(data.charm);
