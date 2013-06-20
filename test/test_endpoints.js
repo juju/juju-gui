@@ -26,12 +26,10 @@ describe('Relation endpoints logic', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'io', 'json-parse', 'array-extras'], function(Y) {
-      function loadFixture(url) {
-        return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
-      }
-      sample_env = loadFixture('data/large_stream.json');
-      sample_endpoints = loadFixture('data/large_endpoints.json');
+      'array-extras', 'io', 'json-parse', 'juju-tests-utils'], function(Y) {
+      utils = Y.namespace('juju-tests.utils');
+      sample_env = utils.loadFixture('data/large_stream.json', true);
+      sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       done();
     });
   });
@@ -45,7 +43,6 @@ describe('Relation endpoints logic', function() {
                                'juju-controllers'],
     function(Y) {
       juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
       var conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
