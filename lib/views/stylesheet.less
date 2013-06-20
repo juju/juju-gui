@@ -188,9 +188,17 @@ table tr.highlighted td {
     padding: 10px;
 
     .control-group {
+        position: relative;
+
         .warning-message {
             color: red;
             padding: 1em;
+        }
+        .conflicted {
+            position: absolute;
+            border: 1px solid grey;
+            margin-top: -140px;
+            background-color: white;
         }
     }
 }
@@ -1071,7 +1079,6 @@ g.unit {
     padding: 0;
     top: 70px;
     right: 0;
-    height: 100px;
     position: absolute;
     width: @charm-panel-width;
     background-color: white;

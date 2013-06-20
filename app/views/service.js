@@ -1037,16 +1037,11 @@ YUI.add('juju-view-service', function(Y) {
    */
   var ServiceInspector = (function() {
     var juju = Y.namespace('juju');
+
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
-        template: Templates.serviceOverview,
-        bindings: [
-          {name: 'displayName', target: '[data-bind=displayName]'},
-          {name: 'charm', target: '[data-bind=charm]'},
-          {name: 'aggregated_status.running', target: '[data-bind=running]'},
-          {name: 'aggregated_status.error', target: '[data-bind=error]'}
-        ]
+        template: Templates.serviceOverview
       },
       units: {
         name: 'units',
@@ -1058,8 +1053,47 @@ YUI.add('juju-view-service', function(Y) {
           var data = {units: modellist.toArray()};
           this.container.setHTML(this.template(data));
         }
+      },
+      config: {
+        name: 'config',
+        template: Templates['service-configuration'],
+
+        'render': function(service) {
+          var settings = [];
+          Y.Object.each(service.get('config'), function(value, key) {
+            settings.push({name: key, value: value});
+          });
+          this.container = Y.Node.create(this.templateWrapper);
+          this.container.setHTML(
+              this.template({service: service, settings: settings}));
+        },
+        'conflict': function(node, model, viewletName, resolve) {
+          /**
+            Calls the databinding resolve method
+            @method sendResolve
+          */
+          function sendResolve(e) {
+            handler.detach();
+            if (e.currentTarget.hasClass('conflicted-confirm')) {
+              node.setStyle('borderColor', 'black');
+              resolve(node, viewletName, newVal);
+            }
+            // if they don't accept the new value then do nothing.
+            message.setStyle('display', 'none');
+          }
+
+          node.setStyle('borderColor', 'red');
+
+          var message = node.ancestor('.control-group').one('.conflicted'),
+              newVal = model.get('config')[node.getData('bind').split('.')[1]];
+
+          message.one('.newval').setHTML(newVal);
+          message.setStyle('display', 'block');
+
+          var handler = message.delegate('click', sendResolve, 'button', this);
+
+        }
       }
-      //config: {},
       //constraints: {},
       //relations: {}
     };

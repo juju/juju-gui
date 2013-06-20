@@ -39,8 +39,8 @@ YUI.add('juju-databinding', function(Y) {
         'set': function(node, value) { node.set('value', value);}
       },
       textarea: {
-        'get': function(node) { return node.get('text');},
-        'set': function(node, value) { node.set('text', value);}
+        'get': function(node) { return node.get('value');},
+        'set': function(node, value) { node.set('value', value);}
       },
       'default': {
         'get': function(node) { return node.get('text');},
@@ -65,7 +65,9 @@ YUI.add('juju-databinding', function(Y) {
         return this._bindings;
       }
       return this._bindings.filter(function(binding) {
-        return (modelChangeKeys.indexOf(binding.name) > -1);
+        // This is to support binding on sub properties
+        // It's pretty ugly we can probably find a cleaner way.
+        return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
       });
     }
 
@@ -161,6 +163,8 @@ YUI.add('juju-databinding', function(Y) {
       @chainable
     */
     BindingEngine.prototype.bind = function(model, viewlet) {
+      this._events.push(
+          model.on('change', this._modelChangeHandler, this));
       if (!Y.Lang.isArray(viewlet)) { viewlet = [viewlet]; }
       Y.each(viewlet, function(v) { this._bind(model, v);}, this);
       return this;
@@ -179,8 +183,7 @@ YUI.add('juju-databinding', function(Y) {
       if (!viewlet) {
         throw new Error('Unable to bind, invalid Viewlet');
       }
-      // If we have a model, unbind it.
-      if (this.model) {this.unbind();}
+
       this.model = model;
       this._viewlets[viewlet.name] = viewlet;
 
@@ -190,13 +193,17 @@ YUI.add('juju-databinding', function(Y) {
       // Check model or modellist?
       if (checkClassImplements(viewletModel, 'model')) {
         // Bind and listen for model changes.
-        if (viewlet.bindings) {
-          Y.each(viewlet.bindings, function(b) {
-            this.addBinding(b, viewlet);
-          }, this);
-        }
-        this._events.push(viewletModel.on(
-            'change', this._modelChangeHandler, this));
+        viewlet.container.all('[data-bind]').each(function(node) {
+          // Add the binding for each element
+          this.addBinding({
+            name: node.getData('bind'),
+            target: node
+          }, viewlet);
+          // Add listeners for model cloning for conflict resolution
+          this._events.push(
+              node.on(
+                  'valueChange', this._storeChanged, this, viewlet));
+        }, this);
         this._updateDOM();
       } else {
         // Model list
@@ -206,8 +213,9 @@ YUI.add('juju-databinding', function(Y) {
         // We don't do data-binding on child elements, the viewlet will be
         // triggered to re-render its contents. All our collection views
         // are currently read-only so this work ok.
-        this._events.push(viewletModel.after(['add', 'remove', '*:change'],
-                                      this._modelListChange, this));
+        this._events.push(viewletModel.after(['add', 'remove', 'change'],
+            this._modelListChange, this));
+
         this._modelListChange();
       }
       return this;
@@ -242,6 +250,26 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
+      Called on valueChange on a bound input to store dirty input references
+
+      @method _storeChanged
+      @param {Event} e event object.
+      @param {Object} viewlet reference.
+    */
+    BindingEngine.prototype._storeChanged = function(e, viewlet) {
+      var key = e.currentTarget.getData('bind'),
+          save = true;
+      viewlet._changedValues.forEach(function(value) {
+        if (value === key) {
+          save = false;
+        }
+      });
+      if (save) {
+        viewlet._changedValues.push(key);
+      }
+    };
+
+    /**
       Handle for Y.Model change event. Here we can choose
       which bindings to change based on the change event.
       This is called automatically by the framework.
@@ -266,31 +294,69 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var model = this.model;
+      var resolve = self.resolve;
       if (delta === undefined) {
         delta = deltaFromChange.call(this);
       }
 
       Y.each(delta, function(binding) {
-        Y.each(binding.target, function(target) {
-          var viewlet = binding.viewlet;
-          var selection = viewlet.container.all(target);
-          var viewletModel = viewlet.rebind && viewlet.rebind(model) || model;
-          Y.each(selection, function(node) {
-            // This could be done ahead of time, but by doing this at runtime
-            // we allow very flexible DOM mutation out of band. Revisit if
-            // this shows up on a profile.
-            var elementKind = node.getDOMNode().tagName.toLowerCase();
-            var field = self._fieldHandlers[elementKind];
-            if (!field) {
-              field = self._fieldHandlers['default'];
-            }
+        var viewlet = binding.viewlet;
+        var viewletModel = viewlet.rebind && viewlet.rebind(model) || model;
+        var conflicted;
 
-            // Do conflict detection
-            // Do data-field
-            field.set.call(binding, node, binding.get(viewletModel));
-          });
+        // This could be done ahead of time, but by doing this at runtime
+        // we allow very flexible DOM mutation out of band. Revisit if
+        // this shows up on a profile.
+        var elementKind = binding.target.getDOMNode().tagName.toLowerCase();
+        var field = self._fieldHandlers[elementKind];
+        if (!field) {
+          field = self._fieldHandlers['default'];
+        }
+        var dataKey = binding.target.getData('bind');
+
+        // If the field has been changed while the user was editing it
+
+        viewlet._changedValues.forEach(function(value) {
+          if (value === dataKey) {
+            conflicted = binding.target;
+            binding.viewlet.conflict(
+                binding.target, viewletModel, binding.viewlet.name,
+                Y.bind(resolve, self));
+          }
         });
+
+        // Do conflict detection
+        if (binding.target !== conflicted) {
+          field.set.call(binding, binding.target, binding.get(viewletModel));
+        }
       });
+    };
+
+    /**
+      Called by the viewlets conflict method after the user has chosen
+      to resolve the conflict
+
+      @method resolve
+      @param {Y.Node} node that the model is bound to.
+      @param {String} viewletName of the viewlet.
+      @param {Any} value that the user has accepted to resolve with.
+    */
+    BindingEngine.prototype.resolve = function(node, viewletName, value) {
+      var key = node.getData('bind');
+      var changedValues = Y.Array.filter(
+          this._viewlets[viewletName]._changedValues, function(value) {
+            if (value !== key) {
+              return true;
+            }
+            return false;
+          });
+      this._viewlets[viewletName]._changedValues = changedValues;
+      var elementKind = node.getDOMNode().tagName.toLowerCase();
+      var field = this._fieldHandlers[elementKind];
+      if (!field) {
+        field = this._fieldHandlers['default'];
+      }
+      field.set.call(this, node, value);
     };
 
     return BindingEngine;
