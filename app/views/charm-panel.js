@@ -643,7 +643,14 @@ YUI.add('juju-charm-panel', function(Y) {
                     env.update_annotations(
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),
-                          'gui-y': ghostService.get('y') });
+                          'gui-y': ghostService.get('y') },
+                        function() {
+                          // The x/y attributes need to be removed to prevent
+                          // lingering position problems after the service is
+                          // positioned by the update code.
+                          ghostService.removeAttr('x');
+                          ghostService.removeAttr('y');
+                        });
                   }
                   // Update the ghost service to match the configuration.
                   ghostService.setAttrs({
