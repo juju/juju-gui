@@ -24,7 +24,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     Note: you cannot .only this test suite. it required the
     window.featureFlags method which is loaded from the test_startup.js file
     that should be loaded before this file in the test suite.
-
   */
   describe('window feature flag tests', function() {
     var featureFlags;
@@ -60,9 +59,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('parses urls with and without flags', function() {
       var urls = {
-        '/:flags:/': {
-
-        },
+        '/:flags:/': {},
 
         '/:flags:/foo/': {
           foo: true
@@ -100,5 +97,5 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
   });
-})();
 
+})();

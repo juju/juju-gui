@@ -75,13 +75,6 @@
       assert.equal(loadingStyle.display, 'block');
     });
 
-    it('sets the window.flags data', function() {
-      // By default we just get an empty object, but the fact that there's
-      // an object means our code was hit and processed checks for flags.
-      // The actual flag tests verify it all processes correctly. This is
-      // only testing that we run it in index.html.
-      assert.deepEqual(window.flags, {});
-    });
-
   });
+
 }) ();

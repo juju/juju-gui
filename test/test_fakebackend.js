@@ -361,6 +361,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('FakeBackend.getCharm', function() {
+
+      before(function() {
+        // A global variable required for testing.
+        window.flags = {};
+      });
+
+      after(function() {
+        delete window.flags;
+      });
+
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
         fakebackend.getCharm('cs:wordpress', ERROR('Please log in.', done));

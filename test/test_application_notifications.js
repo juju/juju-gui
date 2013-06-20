@@ -272,6 +272,7 @@ describe('juju application notifications', function() {
         app.showView(new Y.View());
         app.env.fire('permissionDenied', {title: 'title', message: 'message'});
         assert.equal(1, app.db.notifications.size());
+        app.destroy();
         logoNode.destroy();
       });
 

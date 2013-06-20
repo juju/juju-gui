@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <meta charset="utf-8">
   <link rel="stylesheet" href="assets/mocha.css">
 
-
   <!-- Load test runner/environment -->
   <script src="assets/chai.js"></script>
   <script src="assets/mocha.js"></script>
@@ -44,11 +43,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
   <script src="utils.js"></script>
 
+  <!-- Tests (Alphabetical) -->
 
-  <!-- Tests (Alphabetical)-->
-
-  <script src="test_app_hotkeys.js"></script>
   <script src="test_app.js"></script>
+  <script src="test_app_hotkeys.js"></script>
   <script src="test_application_notifications.js"></script>
   <script src="test_browser_app.js"></script>
   <script src="test_browser_charm_details.js"></script>
@@ -62,54 +60,72 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="test_charm_panel.js"></script>
   <script src="test_charm_store.js"></script>
   <script src="test_charm_token.js"></script>
+
+  <!-- FIXME: tests flicker, add container. -->
   <script src="test_charm_view.js"></script>
+
   <script src="test_console.js"></script>
   <script src="test_cookies_app_extension.js"></script>
   <script src="test_databinding.js"></script>
   <script src="test_d3_components.js"></script>
   <script src="test_endpoints.js"></script>
-  <script src="test_env_go.js"></script>
-  <script src="test_environment_view.js"></script>
   <script src="test_env.js"></script>
+  <script src="test_env_go.js"></script>
   <script src="test_env_python.js"></script>
+  <script src="test_environment_view.js"></script>
   <script src="test_event_tracker.js"></script>
   <script src="test_fakebackend.js"></script>
   <script src="test_filter_widget.js"></script>
   <script src="test_inspector_widget.js"></script>
   <script src="test_landscape.js"></script>
   <script src="test_login.js"></script>
-  <script src="test_model_handlers.js"></script>
+
+  <!-- FIXME: latter three modules depend on side effects from model tests. -->
   <script src="test_model.js"></script>
-  <!-- placed after the model tests to give more meaningful failures-->
   <script src="test_model_controller.js"></script>
+  <script src="test_topology.js"></script>
+  <script src="test_topology_relation.js"></script>
+
+  <script src="test_model_handlers.js"></script>
   <script src="test_notifications.js"></script>
   <script src="test_notifier_widget.js"></script>
+
+  <!-- FIXME: intermittent test failure under "make test-server" and Chromium -
+      position matches on setBusy: expected 100 to equal 109.09090423583984 -->
   <script src="test_overlay_indicator.js"></script>
+
   <script src="test_panzoom.js"></script>
   <script src="test_prettify.js"></script>
   <script src="test_resizing_textarea.js"></script>
   <script src="test_routing.js"></script>
   <script src="test_sandbox.js"></script>
+
+  <!-- FIXME: tests flicker, add container. -->
+  <script src="test_service_config_view.js"></script>
+
+  <!-- FIXME: tests leave DOM elements behind. -->
   <script src="test_service_module.js"></script>
-  <script src="test_startup.js"></script>
-  <!-- Feature flags require the startup to be available to provide the
-       featureFlags method to the test suite. -->
-  <script src="test_feature_flags.js"></script>
+
+  <script src="test_service_view.js"></script>
   <script src="test_simulator.js"></script>
-  <script src="test_subapp_app_extension.js"></script>
+
+  <!-- FIXME: feature flags depend on code loaded by the startup test. -->
+  <script src="test_startup.js"></script>
+  <script src="test_feature_flags.js"></script>
+
   <script src="test_sub_app.js"></script>
+  <script src="test_subapp_app_extension.js"></script>
   <script src="test_tabview.js"></script>
   <script src="test_templates.js"></script>
-  <script src="test_topology.js"></script>
-  <script src="test_topology_relation.js"></script>
   <script src="test_topology_utils.js"></script>
+
+  <!-- FIXME: tests flicker, add container. -->
   <script src="test_unit_view.js"></script>
+
   <script src="test_utils.js"></script>
   <script src="test_view_container.js"></script>
   <script src="test_viewport_module.js"></script>
   <script src="test_websocket_logging.js"></script>
-  <script src="test_service_config_view.js"></script>
-  <script src="test_service_view.js"></script>
   <script>
   YUI_config = {
       async: false,
