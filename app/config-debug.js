@@ -42,11 +42,11 @@ var juju_config = {
   user: 'admin',
   password: 'admin',
   apiBackend: 'python', // Value can be 'python' or 'go'.
-  sandbox: false,
+  sandbox: true,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
   // There is also a hotkey to toggle the simulator.
-  simulateEvents: false,
+  simulateEvents: true,
   readOnly: false,
   // Enable Google Analytics usage and calls. Also implies using cookies.
   // For the debug configuration, analytics should generally be false to
