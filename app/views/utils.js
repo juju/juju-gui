@@ -1316,6 +1316,17 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
+  /**
+    * Check a flag in the template. 
+    *
+    * {{#if checkFlag some_flag}}{{/if}}
+    */
+  Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
+    debugger;
+    if (window.flags[flag]) {
+      return options.fn(this);
+    }
+  });
   /*
    * Extension for views to provide an apiFailure method.
    *

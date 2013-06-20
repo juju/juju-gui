@@ -507,10 +507,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
-      tplData.shareFlag = false;
-      if (window.flags && window.flags.sharing_enabled) {
-        tplData.shareFlag = true;
-      }
 
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
@@ -520,12 +516,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
-      if (tplData.shareFlag) {
+      if (window.flags && window.flags.sharing_enabled) {
         this.shareWidget = new widgets.browser.SharingWidget({
           button: renderTo.one('.share')
         });
         this.shareWidget.render(renderTo.one('.share'));
       }
+
       this.tabview = new widgets.browser.TabView({
         render: true,
         srcNode: tplNode.one('.tabs')

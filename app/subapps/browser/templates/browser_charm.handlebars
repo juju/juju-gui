@@ -13,12 +13,12 @@
                 test/test_charm_running.py.  If you change this name, change
                 the other one too! }}
             <a href="" class="add">Add</a>
-            {{#if shareFlag}}
+            {{#ifFlag 'sharing_enabled'}}
               <a href="" class="share">
                   <img src="/juju-ui/assets/images/browser_share_button_icon.png"
                       alt="Share" />Share
               </a>
-            {{/if}}
+            {{/ifFlag}}
         </div>
 
         {{#if failingProviders}}
