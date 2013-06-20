@@ -23,6 +23,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
+
     makeContainer: function(id) {
       var container = Y.Node.create('<div>');
       if (id) {
@@ -88,15 +89,36 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
     },
 
+    /**
+     * Util to load a fixture (typically as 'data/filename.json').
+     *
+     * @method loadFixture
+     * @param {String} url to synchronously load.
+     * @param {Boolean} parseJSON when true return will be processed
+     *                  as a JSON blob before returning.
+     * @return {Object} fixture data resulting from call.
+     */
+    loadFixture: function(url, parseJson) {
+      var response = Y.io(url, {sync: true}).responseText;
+      if (parseJson) {
+        response = Y.JSON.parse(response);
+      }
+      return response;
+    }
+  };
+
+  // Split jujuTests.utils definition, so that charms can be cached
+  // right away, while at the same time reusing the loadFixture method.
+  Y.mix(jujuTests.utils, {
+
     _cached_charms: (function() {
-      var charms = {},
+      var url, charms = {},
           names = [
             'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
             'memcached'];
       Y.Array.each(names, function(name) {
-        charms[name] = Y.JSON.parse(
-            Y.io('data/' + name + '-charmdata.json', {sync: true})
-            .responseText);
+        url = 'data/' + name + '-charmdata.json';
+        charms[name] = jujuTests.utils.loadFixture(url, true);
       });
       return charms;
     })(),
@@ -122,25 +144,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           {charmStore: new jujuTests.utils.TestCharmStore()});
       fakebackend.login('admin', 'password');
       return fakebackend;
-    },
-
-    /**
-     * Util to load a fixture (typically as 'data/filename.json').
-     *
-     * @method loadFixture
-     * @param {String} url to synchronously load.
-     * @param {Boolean} parseJSON when true return will be processed
-     *                  as a JSON blob before returning.
-     * @return {Object} fixture data resulting from call.
-     */
-    loadFixture: function(url, parseJson) {
-      var response = Y.io(url, {sync: true}).responseText;
-      if (parseJson) {
-        response = Y.JSON.parse(response);
-      }
-      return response;
     }
-  };
+
+  });
 
 }, '0.1.0', {
   requires: [

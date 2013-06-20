@@ -22,6 +22,20 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
+- 0.6.0:
+    - New charm browser for finding available charms.
+    - Visual styling changes.
+    - The beginings of a Go backend sandbox.
+    - Bug fixes and improved CI reliability.
+    - Automatic view portal zoom and centering.
+    - Support for Google Analytics.
+    - Linting of yuidoc comments.
+    - Linting of copyright headers.
+    - Linting of project documentation files.
+    - Utility for recording and playback of websocket traffic for debugging.
+    - Caching of search results.
+    - Improved development HTTP server behavior.
+    - Improved project documentaiton.
 - 0.5.0:
     - Visual styling fixes.
     - Many small bugfixes.

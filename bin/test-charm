@@ -16,14 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script expects that the system has python-shelltoolbox, python-
-# selenium, python-yaml, and juju installed:
-# sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
+# This script expects that the system has some dependencies already installed:
+# sudo apt-get install python-shelltoolbox python-yaml juju
 
-# Deploy the charm, using an alternate origin if given.
-# Takes all arguments that are valid for lib/deploy_charm_for_testing.py
-#  --origin
-#  --charm
+# This script will deploy the charm, using an alternate origin if given.  All
+# arguments that are accepted by lib/deploy_charm_for_testing.py are
+# recognized.  --origin and --charm are especially useful.  See
+# docs/continuous-integration.rst for more information.
 
 # If FAIL_FAST is set to 1 in the environment, the testing loop will exit when
 # the first tested browser returns a failure, rather than trying them all.
@@ -38,7 +37,7 @@ ENV='juju-gui-testing'
 
 bootstrap_and_deploy() {
     # Bootstrap a juju enviroment and deploy the Juju GUI charm.
-    python lib/deploy_charm_for_testing.py "$@"
+    virtualenv/bin/python lib/deploy_charm_for_testing.py "$@"
     retcode=$?
     if [ $retcode -ne 0 ]; then
         echo "Unable to deploy Charm."
@@ -62,7 +61,7 @@ run_tests() {
     do
         export JUJU_GUI_TEST_BROWSER
         echo "Launching $JUJU_GUI_TEST_BROWSER tests."
-        python test/test_charm_running.py -v || retcode=1
+        virtualenv/bin/python test/test_charm_running.py -v || retcode=1
         if [ ${FAIL_FAST:-0} -eq 1 -a $retcode -eq 1 ]; then
             exit 1;
         fi
@@ -86,6 +85,9 @@ on_exit() {
         rm -f juju-internal-ip
     fi
 }
+
+# We use a virtualenv so we can have newer dependencies than the OS provides.
+make virtualenv/bin/python
 
 # Ensure we clean up things even if this script exits with an error.
 trap on_exit EXIT
