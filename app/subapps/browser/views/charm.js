@@ -521,7 +521,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       renderTo.setHTML(tplNode);
 
       if (tplData.shareFlag) {
-        this.shareOverlay =  new widgets.browser.SharingOverlay({
+        this.shareOverlay = new widgets.browser.SharingOverlay({
           button: renderTo.one('.share')
         });
         this.shareOverlay.render(renderTo.one('.share'));

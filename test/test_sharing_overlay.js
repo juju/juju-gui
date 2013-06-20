@@ -43,7 +43,7 @@ describe.only('sharing overlay', function() {
   });
 
   it('renders invisibly', function() {
-    var overlay =  new Y.juju.widgets.browser.SharingOverlay({
+    var overlay = new Y.juju.widgets.browser.SharingOverlay({
       button: container
     });
     overlay.render(container);
@@ -51,7 +51,7 @@ describe.only('sharing overlay', function() {
   });
 
   it('changes visiblity when the button is clicked', function() {
-    var overlay =  new Y.juju.widgets.browser.SharingOverlay({
+    var overlay = new Y.juju.widgets.browser.SharingOverlay({
       button: container
     });
     overlay.render(container);

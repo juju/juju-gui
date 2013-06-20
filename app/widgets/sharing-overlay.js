@@ -28,12 +28,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('browser-sharing-overlay', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
-  ns.SharingOverlay= Y.Base.create('SharingOverlay', Y.Widget, [], {
+  ns.SharingOverlay = Y.Base.create('SharingOverlay', Y.Widget, [], {
     TEMPLATE: Y.namespace('juju.views').Templates['sharing-overlay'],
 
     /**
        Toggles the sharing overlay's visibility.
-      
+
        @method _toggleVisible
        @param {Y.EventFacade} e The click event.
      */
@@ -69,7 +69,7 @@ YUI.add('browser-sharing-overlay', function(Y) {
     ATTRS: {
       /**
          The "button" that is used to show or hide the sharing overlay.
-         
+
          @attribute button
          @default {Undefined}
          @type {Y.Node}
