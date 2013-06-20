@@ -60,4 +60,11 @@ describe('sharing widget', function() {
     container.simulate('click');
     assert.isFalse(widget.get('visible'));
   });
+
+  it('escapes the charm link it is sharing', function() {
+    var overlay =  new Y.juju.widgets.browser.SharingOverlay({
+      button: container,
+      link: 'http://example.com/foo/bar_baz?buzz'
+    });
+  });
 });

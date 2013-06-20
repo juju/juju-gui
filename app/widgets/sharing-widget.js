@@ -77,7 +77,26 @@ YUI.add('browser-sharing-widget', function(Y) {
          @default {Undefined}
          @type {Y.Node}
        */
-      button: {}
+      button: {},
+
+      /**
+         The link to be shared.
+         
+         @attribute link 
+         @default ""
+         @type {String}
+       */
+      link: {
+        /**
+         * setter for the link attr; urlencodes the given link
+         *
+         * @method link.setter
+         * @param {String} val The link.
+         */
+        setter: function(val) {
+          return escape(val);
+        }
+      }
     }
   });
 
