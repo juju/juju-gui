@@ -508,7 +508,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       tplData.shareFlag = false;
-      if (window.flags.sharing_enabled) {
+      if (window.flags && window.flags.sharing_enabled) {
         tplData.shareFlag = true;
       }
 
