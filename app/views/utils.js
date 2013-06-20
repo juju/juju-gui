@@ -1319,7 +1319,7 @@ YUI.add('juju-view-utils', function(Y) {
   /**
     * Check a flag in the template.
     *
-    * {{#if checkFlag some_flag}}{{/if}}
+    * {{#ifFlag some_flag}}
     */
   Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
     if (window.flags[flag]) {
