@@ -1316,11 +1316,6 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
-  /**
-    * Check a flag in the template.
-    *
-    * {{#ifFlag some_flag}}
-    */
   Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
     if (window.flags[flag]) {
       return options.fn(this);
