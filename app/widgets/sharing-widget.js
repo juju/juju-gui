@@ -54,7 +54,7 @@ YUI.add('browser-sharing-widget', function(Y) {
      */
     bindUI: function() {
       this.addEvent(
-        this.get('button').on('click', this._toggleVisible, this));
+          this.get('button').on('click', this._toggleVisible, this));
     },
 
     /**
