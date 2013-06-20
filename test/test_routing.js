@@ -18,15 +18,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// A global variable required for testing feature flags.
-var flags = {};
-
 describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
+      // A global variable required for testing.
+      window.flags = {};
       done();
     });
   });
@@ -38,6 +37,10 @@ describe('Namespaced Routing', function() {
 
   afterEach(function() {
     app.destroy();
+  });
+
+  after(function() {
+    delete window.flags;
   });
 
   it('should support basic namespaced urls', function() {
