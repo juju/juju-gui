@@ -775,6 +775,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleAdminLogin: function(data, client, state) {
       data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
@@ -788,6 +789,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientEnvironmentInfo: function(data, client, state) {
       client.receive({
@@ -804,6 +806,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientWatchAll: function(data, client, state) {
       // TODO wire up delta stream to "Next" responses here.
@@ -817,6 +820,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
       // This is a noop for the moment because it must exist but the current
@@ -831,6 +835,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientServiceDeploy: function(data, client, state) {
       var callback = function(result) {
@@ -855,6 +860,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientServiceSetCharm: function(data, client, state) {
       var callback = function(result) {
@@ -875,6 +881,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
@@ -891,6 +898,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);

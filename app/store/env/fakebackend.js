@@ -289,7 +289,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
-    @return {undefined} Get the result from the callback.
+    @return {undefined} All results are passed to the callback.
     */
     deploy: function(charmId, callback, options) {
       if (!this.get('authenticated')) {
@@ -321,7 +321,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {Boolean} force Whether or not to force the issue.
     @param {Function} callback A call that will receive an object, potentially
       with an "error" attribute containing a string describing the problem.
-    @return {undefined} Get the result from the callback.
+    @return {undefined} All results are passed to the callback.
     */
     setCharm: function(serviceName, charmId, force, callback) {
       if (!this.get('authenticated')) {

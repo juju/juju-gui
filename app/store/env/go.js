@@ -417,12 +417,12 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Transform the data returned from juju-core 'setCharm' into that suitable
-       for the user callback.
+       Transform the data returned from juju-core 'setCharm' into a form which
+       is suitable for the user callback.
 
        @method handleSetCharm
        @param {Function} userCallback The callback originally submitted by the
-       call site.
+         call site.
        @param {String} service_name The name of the service.  Passed in since
          it is not part of the response.
        @param {String} charm_url The URL of the charm.  Passed in since
