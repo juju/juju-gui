@@ -1317,7 +1317,7 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
-    if (window.flags[flag]) {
+    if (window.flags && window.flags[flag]) {
       return options.fn(this);
     }
   });
