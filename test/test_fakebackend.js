@@ -244,6 +244,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend.setCharm', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, result, callback, service;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackendWithCharmStore();
+      result = undefined;
+      callback = function(response) { result = response; };
+      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      service = fakebackend.db.services.getById('wordpress');
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('sets a charm.', function() {
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
+      assert.isUndefined(result.error);
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+    });
+
+    it('fails when the service does not exist', function() {
+      fakebackend.setCharm('nope', 'nuh-uh', false, callback);
+      assert.equal(result.error, 'Service "nope" not found.');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+    });
+
+    it('fails if a service is in error without force.', function() {
+      fakebackend.db.units.each(function(unit) {
+        unit.agent_state = 'error';
+      });
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
+      assert.equal(result.error, 'Cannot set charm on a service with units ' +
+          'in error without the force flag.');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+    });
+
+    it('succeeds if a service is in error with force.', function() {
+      fakebackend.db.units.each(function(unit) {
+        unit.agent_state = 'error';
+      });
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', true,
+          callback);
+      assert.isUndefined(result.error);
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+    });
+  });
+
   describe('FakeBackend.uniformOperations', function() {
     var requires = ['node',
       'juju-tests-utils', 'juju-models', 'juju-charm-models'];
