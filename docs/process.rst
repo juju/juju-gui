@@ -265,7 +265,9 @@ In addition to this, one might want to go through the cards in the Releasable
 lane and try to break new (and old) features.  Any breakages would stop the
 release process and be worthy of a test in their own right.
 
-Using whatever branch will be used for the release, run ``make devel``.
+Using whatever branch will be used for the release, run ``make prod`` while 
+improv is running.  Additionally, these steps may be completed with both
+``sandbox`` and ``simulateEvents`` set to ``true``.
 
 - Add MySQL.
 - Drag MySQL ghost.
@@ -284,7 +286,7 @@ Using whatever branch will be used for the release, run ``make devel``.
 - Confirm adding it.
 - Delete it.
 - Leave the simulator running for a minute or so to ensure nothing weird
-  happens.
+  happens (only applicable if the simulator is running).
 - Pan and zoom around the canvas.
 - Hit ')' to re-center the services in the viewport.
 - Log out and back in.
@@ -293,21 +295,6 @@ Using whatever branch will be used for the release, run ``make devel``.
 - Go between fullscreen and minimized views in the charm browser.
 - Visit the internal pages by double clicking a service, ensure 
   sanity (this step will go away with future designs).
-
-Run improv and set 'sandbox' and 'simulator' to false in 
-``app/config-debug.js``, then complete the following:
-
-- Add MySQL.
-- Drag MySQL ghost.
-- Confirm adding MySQL.
-- Confirm it retains position.
-- Add WordPress.
-- Drag WordPress ghost.
-- Confirm adding WordPress.
-- Confirm it retains position.
-- Drag both services to ensure they retain position.
-- Add a relation between the two services.
-- Drag both services to ensure the relation line follows.
 
 Making NPM Cache Files
 ======================
