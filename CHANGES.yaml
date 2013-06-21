@@ -21,6 +21,7 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
+- unreleased:
 - 0.6.1:
     - >
       Fix critical jumping service bug (LP bug 1192596) and related drag
