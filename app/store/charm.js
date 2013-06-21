@@ -370,6 +370,25 @@ YUI.add('juju-charm-store', function(Y) {
       }
 
       this._makeRequest('charms/interesting', callbacks);
+    },
+
+    /**
+      Fetch the related charm info from the charmworld api.
+
+      @method related
+      @param {String} charmID The charm to find related charms for.
+      @param {Object} callbacks The success/failure callbacks to use.
+      @param {Object} bindscope An object scope to perform callbacks in.
+      @return {Object} data loaded from the api call.
+
+     */
+    related: function(charmID, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID + '/related';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks);
     }
   }, {
     ATTRS: {
