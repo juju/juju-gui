@@ -141,7 +141,8 @@ Checklist for Making a Stable Release
 - Visually QA the GUI against improv both with and without the --landscape
   switch.  Load the app, open the charm panel, go to an inner page, and make
   sure there are no 404s or Javascript errors in the console.  Verify that the
-  Landscape icons, links, and badges are present when expected.
+  Landscape icons, links, and badges are present when expected.  Additionally,
+  run through the steps in the QA Checklist below.
 - Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
   version string.  It should be bigger than the most recent version found on
   <https://launchpad.net/juju-gui/stable>.  If the most recent version string
@@ -209,6 +210,7 @@ Checklist for Making a Developer Release
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
   ``bzr pull``.
+- Run through the QA Checklist (below).
 - Verify that the top-most version in ``CHANGES.yaml`` is ``unreleased``.
 - Run ``bzr revno``.  The revno should be bigger than the most recent release
   found on `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
@@ -253,6 +255,59 @@ Checklist for Making a Developer Release
   the ``cmp`` command).
 
 You are done!
+
+QA Checklist
+------------
+
+The following is a quick checklist to run through to ensure that the default
+story of a new user is clean when they experience the GUI for the first time.
+In addition to this, one might want to go through the cards in the Releasable
+lane and try to break new (and old) features.  Any breakages would stop the
+release process and be worthy of a test in their own right.
+
+Using whatever branch will be used for the release, run ``make devel``.
+
+- Add MySQL.
+- Drag MySQL ghost.
+- Confirm adding MySQL.
+- Confirm it retains position.
+- Add WordPress.
+- Drag WordPress ghost.
+- Confirm adding WordPress.
+- Confirm it retains position.
+- Drag both services to ensure they retain position.
+- Add a relation between the two services.
+- Drag both services to ensure the relation line follows.
+- Add another charm.
+- Cancel adding.
+- Add another charm.
+- Confirm adding it.
+- Delete it.
+- Leave the simulator running for a minute or so to ensure nothing weird
+  happens.
+- Pan and zoom around the canvas.
+- Hit ')' to re-center the services in the viewport.
+- Log out and back in.
+- Search for apache.
+- Ensure results look sane.
+- Go between fullscreen and minimized views in the charm browser.
+- Visit the internal pages by double clicking a service, ensure 
+  sanity (this step will go away with future designs).
+
+Run improv and set 'sandbox' and 'simulator' to false in 
+``app/config-debug.js``, then complete the following:
+
+- Add MySQL.
+- Drag MySQL ghost.
+- Confirm adding MySQL.
+- Confirm it retains position.
+- Add WordPress.
+- Drag WordPress ghost.
+- Confirm adding WordPress.
+- Confirm it retains position.
+- Drag both services to ensure they retain position.
+- Add a relation between the two services.
+- Drag both services to ensure the relation line follows.
 
 Making NPM Cache Files
 ======================
