@@ -263,7 +263,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       // If the service box is pending, ensure that the charm panel is
       // visible, but don't do anything else.
-      if (box.pending && !flags.serviceInspector) {
+      if (box.pending && !window.flags.serviceInspector) {
         // Prevent the clickoutside event from firing and immediately closing
         // the panel.
         d3.event.halt();

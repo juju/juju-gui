@@ -539,8 +539,10 @@ YUI.add('juju-gui', function(Y) {
       this.db.on('update', this.on_database_changed, this);
 
       // Watch specific things, (add units), remove db.update above
-      this.db.services.after(['add', 'remove', '*:change'], this.on_database_changed, this);
-      this.db.relations.after(['add', 'remove', '*:change'], this.on_database_changed, this);
+      this.db.services.after(['add', 'remove', '*:change'],
+                             this.on_database_changed, this);
+      this.db.relations.after(['add', 'remove', '*:change'],
+                              this.on_database_changed, this);
 
       this.enableBehaviors();
 
@@ -582,7 +584,7 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
-      if (flags.serviceInspector) {
+      if (window.flags.serviceInspector) {
         cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
       }
       this.addSubApplications(cfg);

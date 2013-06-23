@@ -207,15 +207,15 @@ YUI.add('juju-models', function(Y) {
       });
     },
 
-  /**
-   * Add a ghost (pending) service to the
-   * database. The canvas should pick this up
-   * independently.
-   *
-   * @method ghostService
-   * @param {Model} charm to add.
-   * @return {Model} Ghosted Service model
-   **/
+    /**
+     Add a ghost (pending) service to the
+     database. The canvas should pick this up
+     independently.
+
+     @method ghostService
+     @param {Model} charm to add.
+     @return {Model} Ghosted Service model.
+   */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
       var serviceCount = this.filter(function(service) {
