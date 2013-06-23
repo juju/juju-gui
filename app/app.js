@@ -38,7 +38,8 @@ YUI.add('juju-gui', function(Y) {
 
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      utils = views.utils;
 
   /**
    * The main app class.
@@ -537,6 +538,10 @@ YUI.add('juju-gui', function(Y) {
       // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
 
+      // Watch specific things, (add units), remove db.update above
+      this.db.services.after(['add', 'remove', '*:change'], this.on_database_changed, this);
+      this.db.relations.after(['add', 'remove', '*:change'], this.on_database_changed, this);
+
       this.enableBehaviors();
 
       this.once('ready', function(e) {
@@ -577,6 +582,9 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
+      if (flags.serviceInspector) {
+        cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
+      }
       this.addSubApplications(cfg);
     },
 

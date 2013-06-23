@@ -190,6 +190,14 @@ YUI.add('juju-databinding', function(Y) {
       if (viewlet.rebind) {
         viewletModel = viewlet.rebind(model);
       }
+
+      // XXX: there is a case (such as pending services)
+      // where rebind wouldn't return a valid target (no units for example)
+      // In this case we skip the binding.
+      if (!viewletModel) {
+        return this;
+      }
+
       // Check model or modellist?
       if (checkClassImplements(viewletModel, 'model')) {
         // Bind and listen for model changes.

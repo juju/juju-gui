@@ -1028,8 +1028,6 @@ YUI.add('juju-view-service', function(Y) {
   });
 
   views.service = ServiceView;
-
-
   /**
     Service Inspector View Container Controller
 
