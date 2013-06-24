@@ -158,17 +158,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _dispatchTabEvents: function(tab) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
-            var tab = ev.newVal.get('content');
-            switch (tab) {
-              case 'Interfaces':
-                console.log('not implemented interfaces handler');
-                break;
-              case 'Quality':
-                this._loadQAContent();
-                break;
-              default:
-                break;
+            var tabContent = ev.newVal.get('content');
+            if (tabContent === 'Quality') {
+              this._loadQAContent();
+              return;
             }
+
+            if (tabContent.indexOf('interface-list') !== -1) {
+              this._loadInterfacesTabCharms();
+              return;
+            }
+
           }, this)
       );
     },
@@ -349,6 +349,45 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Load the file, but make sure we prettify the code.
       if (filename) {
         this._loadFile(node, filename, true);
+      }
+    },
+
+    /**
+     * Load the related charms data and display the related charms into each
+     * interface of the charm.
+     *
+     * @method _loadInterfacesTabCharms
+     *
+     */
+    _loadInterfacesTabCharms: function() {
+      // If we don't have our related-charms data then force it to load.
+      var relatedCharms = this.get('charm').get('relatedCharms');
+      debugger;
+      if (!relatedCharms) {
+        // If we don't have the related charm data, go get and call us back
+        // when it's done loading so we can update the display.
+        this._loadRelatedCharms(this._loadInterfacesTabCharms);
+      } else {
+        // Add the icon-name for charms related to the interface.
+        // We do requires first since it's first in the UI and we want to get
+        // that in front of the user asap. If that changes, this might need
+        // to be updated for best UX.
+        debugger;
+        Y.Object.each(relatedCharms.requires, function(interface, list) {
+          // we only care about the top three charms in the list.
+          var charms = list.slice(0, 3);
+          var ids = list.map(function(charm) {
+            return charm.
+
+          });
+
+          var uiID = [
+            'requires',
+            ''
+          ].join('-');
+
+        });
+
       }
     },
 
@@ -622,6 +661,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           this.showIndicator(Y.one('.related-charms'));
           this._loadRelatedCharms(this._renderRelatedCharms);
         }
+
       }
 
       if (this.get('activeTab')) {
