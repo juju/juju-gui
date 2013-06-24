@@ -1753,13 +1753,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function generateIntegrationServices(callback) {
       var localCb = function(result) {
         env.add_unit('kumquat', 2, function(data) {
-           // After finished generating integrated services.
-           callback(data);
+          // After finished generating integrated services.
+          callback(data);
         });
       };
       env.connect();
       env.deploy(
-        'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
     }
 
     /**
@@ -1806,7 +1806,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-        'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
     }
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
@@ -1816,7 +1816,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             mock = {
               Response: {
                 Units: ['wordpress/1', 'wordpress/2']
-              },
+              }
             };
         // Do we have enough total units?
         assert.lengthOf(units, 3);

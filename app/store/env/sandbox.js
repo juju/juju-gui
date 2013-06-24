@@ -924,7 +924,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits);
       var units = [];
       if (!reply.error) {
-        units = reply.units.map(function(u) {return u.id});
+        units = reply.units.map(function(u) {return u.id;});
       }
       client.receive({
         RequestId: data.RequestId,

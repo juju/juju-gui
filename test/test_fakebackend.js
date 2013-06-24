@@ -344,8 +344,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('errors on invalid service', function() {
       var result = fakebackend.expose('Je ne suis pas un service');
       assert.equal(
-        '`Je ne suis pas un service` is an invalid service name.',
-        result.error);
+          '`Je ne suis pas un service` is an invalid service name.',
+          result.error);
       assert.isUndefined(result.warning);
     });
 
@@ -356,8 +356,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       result = fakebackend.expose('wordpress');
       assert.isUndefined(result.error);
       assert.equal(
-        'Service `wordpress` was already exposed.',
-        result.warning);
+          'Service `wordpress` was already exposed.',
+          result.warning);
     });
   });
 
@@ -404,8 +404,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('errors on invalid service', function() {
       var result = fakebackend.unexpose('Je ne suis pas un service');
       assert.equal(
-        '`Je ne suis pas un service` is an invalid service name.',
-        result.error);
+          '`Je ne suis pas un service` is an invalid service name.',
+          result.error);
       assert.isUndefined(result.warning);
     });
 
@@ -415,8 +415,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isFalse(service.get('exposed'));
       assert.isUndefined(result.error);
       assert.equal(
-        'Service `wordpress` is not exposed.',
-        result.warning);
+          'Service `wordpress` is not exposed.',
+          result.warning);
     });
   });
 
