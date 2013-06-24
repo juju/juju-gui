@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var app; // TODO Figure out how to wire this up correctly.
+
 
 /**
  * browser-charm-container provides a container used for categorizing charm
@@ -147,6 +149,57 @@ YUI.add('browser-charm-container', function(Y) {
       }
     },
 
+    _makeDraggable: function(element, dragImage, charmId) {
+      element.setAttribute('draggable', 'true');
+      element.on('dragstart',
+          this._makeDragStartHandler(dragImage, charmId));
+    },
+
+    _makeDragStartHandler: function(dragImage, charmId) {
+      return function(evt) {
+        evt = evt._event; // We want the real event.
+        evt.dataTransfer.effectAllowed = 'copy';
+        evt.dataTransfer.setData('charmId', charmId);
+        evt.dataTransfer.setDragImage(dragImage._node, 0, 0);
+      };
+    },
+
+    _getZoomPlane: function() {
+      return Y.one('.zoom-plane');
+    },
+
+    /**
+    Enable deploying a service by dragging charm tokens into the environment
+    view.
+
+    @method addCharmTokenDragAndDrop
+    @param container {Node} The node which contains the charm list.
+    @returns {undefined}  Nothing; side-effects only.
+    */
+    addCharmTokenDragAndDrop: function(container) {
+      var zoomPlane = this._getZoomPlane();
+      if (!container || !zoomPlane) {
+        // XXX We must be in a test.  It would be nice not to have to do this.
+        return;
+      }
+      container.all('.yui3-charmtoken').each(function(charmToken) {
+        var charmId = charmToken.one('a').getData('charmid');
+        this._makeDraggable(charmToken, charmToken, charmId);
+        // The token's child elements need to be in on the draggability too.
+        charmToken.all('*').each(function(child) {
+          this._makeDraggable(child, charmToken, charmId);
+        }, this);
+      }, this);
+      // In addition to the charm tokens being draggable, we need to react to
+      // dropping them.
+      zoomPlane.on('drop', function(evt) {
+        var charmId = evt._event.dataTransfer.getData('charmId');
+        app.modelController.getCharm(charmId).then(function(charm) {
+          app.charmPanel.deploy(charm);
+        });
+      });
+    },
+
     /**
      * Sets up the DOM nodes and renders them to the DOM.
      *
@@ -238,6 +291,9 @@ YUI.add('browser-charm-container', function(Y) {
     'array',
     'base-build',
     'browser-charm-token',
+    'dd-delegate',
+    'dd-drop-plugin',
+    'dd-ddm',
     'event-tracker',
     'handlebars',
     'juju-templates',

@@ -94,7 +94,7 @@ describe('notifier widget', function() {
     setTimeout(function() {
       assertNumNotifiers(0);
       done();
-    }, 250);
+    }, 500);
   });
 
   it('should destroy notifications on click', function(done) {
@@ -105,7 +105,7 @@ describe('notifier widget', function() {
     setTimeout(function() {
       assertNumNotifiers(0);
       done();
-    }, 250);
+    }, 500);
   });
 
   it('should prevent notification removal on mouse enter', function(done) {
@@ -116,7 +116,7 @@ describe('notifier widget', function() {
     setTimeout(function() {
       assertNumNotifiers(1);
       done();
-    }, 250);
+    }, 500);
   });
 
 });
