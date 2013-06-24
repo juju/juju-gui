@@ -116,7 +116,7 @@ describe('charm token drag and drop', function() {
   it('can set up drag and drop configuration', function() {
     charmContainer = new Y.juju.widgets.browser.CharmContainer();
     var setDataCalled, setDragImageCalled;
-    var dragImage = {};
+    var dragImage = {_node: {id: 'the real drag image'}};
     var charmId = 'charm-id';
     var handler = charmContainer._makeDragStartHandler(dragImage, charmId);
     var evt = {
@@ -128,7 +128,7 @@ describe('charm token drag and drop', function() {
             setDataCalled = true;
           },
           setDragImage: function(provideDragImage, x, y) {
-            assert.equal(provideDragImage, dragImage);
+            assert.equal(provideDragImage, dragImage._node);
             assert.equal(x, 0);
             assert.equal(y, 0);
             setDragImageCalled = true;
