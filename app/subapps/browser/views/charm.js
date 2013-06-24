@@ -158,7 +158,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _dispatchTabEvents: function(tab) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
-            debugger;
             var tabContent = ev.newVal.get('content');
             if (tabContent === 'Quality') {
               this._loadQAContent();
@@ -364,33 +363,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // If we don't have our related-charms data then force it to load.
       var relatedCharms = this.get('charm').get('relatedCharms');
 
-      debugger;
       if (!relatedCharms) {
         // If we don't have the related charm data, go get and call us back
         // when it's done loading so we can update the display.
         this._loadRelatedCharms(this._loadInterfacesTabCharms);
       } else {
-        // Add the icon-name for charms related to the interface.
-        // We do requires first since it's first in the UI and we want to get
-        // that in front of the user asap. If that changes, this might need
-        // to be updated for best UX.
-        Y.Object.each(relatedCharms.requires, function(iface, list) {
-          debugger;
-          // we only care about the top three charms in the list.
-          var charms = list.slice(0, 3);
-          var ids = list.forEach(function(charm) {
-            var uiID = [
-              'requires',
-              iface,
-              charm.id
-            ].join('-');
-
-            charm.size = 'tiny';
-            var ct = new widgets.browser.CharmToken(charm);
-            ct.render(Y.one(uiID));
-          });
-        });
-
+        this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
+        this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
       }
     },
 
@@ -566,6 +545,33 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+    },
+
+    /**
+     * Render out a charmtoken for the related charms for each interface.
+     *
+     * @method _renderRelatedInterfaceCharms
+     * @param {String} type Is this for provides or requires?
+     * @param {Object} relatedCharms An object of the interfaces and related
+     * charms for each.
+     *
+     */
+    _renderRelatedInterfaceCharms: function(type, relatedCharms) {
+      Y.Object.each(relatedCharms, function(list, iface) {
+        // we only care about the top three charms in the list.
+        var charms = list.slice(0, 3);
+        list.forEach(function(charm) {
+          var uiID = [
+            type,
+            iface
+          ].join('-');
+
+          charm.size = 'tiny';
+          var ct = new widgets.browser.CharmToken(charm);
+          var node = Y.one('[data-interface="' + uiID + '"]');
+          ct.render(node);
+        });
+      });
     },
 
     /**
