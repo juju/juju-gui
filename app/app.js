@@ -351,6 +351,9 @@ YUI.add('juju-gui', function(Y) {
       cfg = cfg || {};
       window.flags = window.flags || {};
 
+      // Push event handles to list to clean on destruction.
+      this._eventHandles = [];
+
       // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
@@ -637,6 +640,7 @@ YUI.add('juju-gui', function(Y) {
            this.landscape, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
+              o.detachAll();
               o.destroy();
             }
           }

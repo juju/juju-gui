@@ -695,6 +695,21 @@ YUI.add('juju-models', function(Y) {
       };
     },
 
+    /**
+     * Nicely clean up.
+     *
+     * @method destructor
+     */
+    destructor: function() {
+      [this.services, this.relations,
+        this.machines, this.units,
+        this.charms, this.environment,
+        this.notifications].forEach(function(ml) {
+          ml.detachAll();
+          ml.destroy();
+        });
+    },
+
     /*
      * Model Id is a [db[model_list_name], model.get('id')]
      * sequence that can be used to lookup models relative
