@@ -18,8 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var app; // TODO Figure out how to wire this up correctly.
-
 
 /**
  * browser-charm-container provides a container used for categorizing charm

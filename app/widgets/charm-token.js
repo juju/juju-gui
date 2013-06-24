@@ -42,7 +42,7 @@ YUI.add('browser-charm-token', function(Y) {
     *
     * @method initializer
     * @param {Object} cfg the config for the widget.
-    *
+    * @return {undefined} Nothing.
     */
     initializer: function(charmAttributes) {
       // This passed-in config is made up of charm attributes.
