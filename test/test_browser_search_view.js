@@ -100,9 +100,10 @@ describe('search view', function() {
 
   it('renders correctly', function() {
     view.render();
+    var container = view.get('container');
     assert.equal('charms?text=foo', apiURL);
-    assert.equal(1, Y.all('.yui3-charmtoken').size());
-    var charmText = Y.one('.yui3-charmtoken').one('.title').get('text');
+    assert.equal(1, container.all('.yui3-charmtoken').size());
+    var charmText = container.one('.yui3-charmtoken').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
   });
 

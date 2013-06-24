@@ -1,0 +1,962 @@
+{
+  "result": {
+    "provides": {
+      "mysql-oneway-replication": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/galera-0", 
+          "is_approved": false, 
+          "name": "galera", 
+          "weight": 1.0
+        }
+      ]
+    }, 
+    "requires": {
+      "local-monitors": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/nrpe-1", 
+          "is_approved": true, 
+          "name": "nrpe", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/nrpe-5", 
+          "is_approved": false, 
+          "name": "nrpe", 
+          "weight": 1.0
+        }
+      ], 
+      "monitors": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 19, 
+          "has_icon": false, 
+          "id": "precise/nagios-4", 
+          "is_approved": true, 
+          "name": "nagios", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/nagios-11", 
+          "is_approved": false, 
+          "name": "nagios", 
+          "weight": 1.0
+        }
+      ], 
+      "munin-node": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/munin-3", 
+          "is_approved": true, 
+          "name": "munin", 
+          "weight": 10.0
+        }
+      ], 
+      "mysql": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/hive-2", 
+          "is_approved": true, 
+          "name": "hive", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/firefox-sync-2", 
+          "is_approved": true, 
+          "name": "firefox-sync", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/roundcube-0", 
+          "is_approved": true, 
+          "name": "roundcube", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 42, 
+          "has_icon": true, 
+          "id": "precise/openstack-dashboard-9", 
+          "is_approved": true, 
+          "name": "openstack-dashboard", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/limesurvey-4", 
+          "is_approved": true, 
+          "name": "limesurvey", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/spip-0", 
+          "is_approved": true, 
+          "name": "spip", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": true, 
+          "id": "precise/tt-rss-0", 
+          "is_approved": true, 
+          "name": "tt-rss", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/rack-2", 
+          "is_approved": true, 
+          "name": "rack", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 298, 
+          "has_icon": true, 
+          "id": "precise/wordpress-15", 
+          "is_approved": true, 
+          "name": "wordpress", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 156, 
+          "has_icon": true, 
+          "id": "precise/mediawiki-8", 
+          "is_approved": true, 
+          "name": "mediawiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": false, 
+          "id": "precise/gitlab-2", 
+          "is_approved": true, 
+          "name": "gitlab", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/joomla-1", 
+          "is_approved": true, 
+          "name": "joomla", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 6, 
+          "has_icon": false, 
+          "id": "precise/statusnet-4", 
+          "is_approved": true, 
+          "name": "statusnet", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/thinkup-2", 
+          "is_approved": true, 
+          "name": "thinkup", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 17, 
+          "has_icon": false, 
+          "id": "precise/owncloud-6", 
+          "is_approved": true, 
+          "name": "owncloud", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 13, 
+          "has_icon": false, 
+          "id": "precise/rails-0", 
+          "is_approved": true, 
+          "name": "rails", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/stackmobile-1", 
+          "is_approved": true, 
+          "name": "stackmobile", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/tracks-1", 
+          "is_approved": true, 
+          "name": "tracks", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/drupal6-0", 
+          "is_approved": true, 
+          "name": "drupal6", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 11, 
+          "has_icon": false, 
+          "id": "precise/etherpad-lite-4", 
+          "is_approved": true, 
+          "name": "etherpad-lite", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 24, 
+          "has_icon": false, 
+          "id": "precise/appflower-1", 
+          "is_approved": true, 
+          "name": "appflower", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/kusabax-0", 
+          "is_approved": true, 
+          "name": "kusabax", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/drupal6-0", 
+          "is_approved": false, 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observiu-0", 
+          "is_approved": false, 
+          "name": "observiu", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~james-falkner/precise/liferay-2", 
+          "is_approved": false, 
+          "name": "liferay", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/owncloud-17", 
+          "is_approved": false, 
+          "name": "owncloud", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~nextrevision/precise/tt-rss-3", 
+          "is_approved": false, 
+          "name": "tt-rss", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nskaggs/precise/vivo-11", 
+          "is_approved": false, 
+          "name": "vivo", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~utlemming/precise/fsync-4", 
+          "is_approved": false, 
+          "name": "fsync", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/kusabax-5", 
+          "is_approved": false, 
+          "name": "kusabax", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observium-3", 
+          "is_approved": false, 
+          "name": "observium", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/bacula-director-0", 
+          "is_approved": false, 
+          "name": "bacula-director", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/bacula-3", 
+          "is_approved": false, 
+          "name": "bacula", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/joomla-9", 
+          "is_approved": false, 
+          "name": "joomla", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/mediawiki-0", 
+          "is_approved": false, 
+          "name": "mediawiki", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mfisch/precise/tracks-4", 
+          "is_approved": false, 
+          "name": "tracks", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pierre-amadio/precise/spip-8", 
+          "is_approved": false, 
+          "name": "spip", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~yolanda.robla/precise/openstack-dashboard-5", 
+          "is_approved": false, 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~tasdomas/precise/drupal-0", 
+          "is_approved": false, 
+          "name": "drupal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/openstack-dashboard-3", 
+          "is_approved": false, 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~fenris/precise/symfony-0", 
+          "is_approved": false, 
+          "name": "symfony", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~imbrandon/precise/drupal6-1", 
+          "is_approved": false, 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~jmac/precise/wordpress-multi-0", 
+          "is_approved": false, 
+          "name": "wordpress-multi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/openstack-dashboard-11", 
+          "is_approved": false, 
+          "name": "openstack-dashboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pavel-pachkovskij/precise/rack-4", 
+          "is_approved": false, 
+          "name": "rack", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/limesurvey-2", 
+          "is_approved": false, 
+          "name": "limesurvey", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/gitlab-4", 
+          "is_approved": false, 
+          "name": "gitlab", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/drupal7-3", 
+          "is_approved": false, 
+          "name": "drupal7", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~marcoceppi/precise/wordpress-17", 
+          "is_approved": false, 
+          "name": "wordpress", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/rails-4", 
+          "is_approved": false, 
+          "name": "rails", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mars/precise/reviewboard-1", 
+          "is_approved": false, 
+          "name": "reviewboard", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~robert-ayres/precise/hive-1", 
+          "is_approved": false, 
+          "name": "hive", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/phplist-2", 
+          "is_approved": false, 
+          "name": "phplist", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-oneway-replication": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/galera-0", 
+          "is_approved": false, 
+          "name": "galera", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-root": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 8, 
+          "has_icon": false, 
+          "id": "precise/phpmyadmin-3", 
+          "is_approved": true, 
+          "name": "phpmyadmin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/your-charms-name-0", 
+          "is_approved": false, 
+          "name": "your-charms-name", 
+          "weight": 1.0
+        }
+      ], 
+      "mysql-shared": [
+        {
+          "categories": [
+            "misc"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 65, 
+          "has_icon": true, 
+          "id": "precise/keystone-15", 
+          "is_approved": true, 
+          "name": "keystone", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 42, 
+          "has_icon": false, 
+          "id": "precise/glance-17", 
+          "is_approved": true, 
+          "name": "glance", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 52, 
+          "has_icon": true, 
+          "id": "precise/nova-compute-12", 
+          "is_approved": true, 
+          "name": "nova-compute", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 6, 
+          "has_icon": false, 
+          "id": "precise/solr-1", 
+          "is_approved": true, 
+          "name": "solr", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 8, 
+          "has_icon": false, 
+          "id": "precise/lamp-1", 
+          "is_approved": true, 
+          "name": "lamp", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 31, 
+          "has_icon": true, 
+          "id": "precise/nova-volume-6", 
+          "is_approved": true, 
+          "name": "nova-volume", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 10, 
+          "has_icon": true, 
+          "id": "precise/cinder-8", 
+          "is_approved": true, 
+          "name": "cinder", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 44, 
+          "has_icon": false, 
+          "id": "precise/nova-cloud-controller-13", 
+          "is_approved": true, 
+          "name": "nova-cloud-controller", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": true, 
+          "id": "precise/quantum-gateway-4", 
+          "is_approved": true, 
+          "name": "quantum-gateway", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/keystone-20", 
+          "is_approved": false, 
+          "name": "keystone", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/nova-volume-11", 
+          "is_approved": false, 
+          "name": "nova-volume", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/quantum-gateway-2", 
+          "is_approved": false, 
+          "name": "quantum-gateway", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/quantal-0", 
+          "is_approved": false, 
+          "name": "quantal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": false, 
+          "id": "~robert-ayres/precise/tomcat-3", 
+          "is_approved": false, 
+          "name": "tomcat", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/lamp-3", 
+          "is_approved": false, 
+          "name": "lamp", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/nova-cloud-controller-2", 
+          "is_approved": false, 
+          "name": "nova-cloud-controller", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/keystone-1", 
+          "is_approved": false, 
+          "name": "keystone", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/nova-volume-2", 
+          "is_approved": false, 
+          "name": "nova-volume", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/glance-2", 
+          "is_approved": false, 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/cinder-9", 
+          "is_approved": false, 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/nova-compute-3", 
+          "is_approved": false, 
+          "name": "nova-compute", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~hopem/precise/cinder-1", 
+          "is_approved": false, 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~ivoks/precise/nova-cloud-controler-0", 
+          "is_approved": false, 
+          "name": "nova-cloud-controler", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/glance-13", 
+          "is_approved": false, 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 5, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~openstack-ubuntu-testing/precise/nova-compute-27", 
+          "is_approved": false, 
+          "name": "nova-compute", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~robert-ayres/precise/solr-4", 
+          "is_approved": false, 
+          "name": "solr", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/glance-0", 
+          "is_approved": false, 
+          "name": "glance", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 4, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~openstack-ubuntu-testing/precise/cinder-9", 
+          "is_approved": false, 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~openstack-ubuntu-testing/precise/nova-cloud-controller-27", 
+          "is_approved": false, 
+          "name": "nova-cloud-controller", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~smoser/precise/keystone-0", 
+          "is_approved": false, 
+          "name": "keystone", 
+          "weight": 1.0
+        }
+      ]
+    }
+  }
+}

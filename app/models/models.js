@@ -70,6 +70,8 @@ YUI.add('juju-models', function(Y) {
           Y.each(data, function(value, key) {
             instance[key] = value;
           });
+          // Lazy model lists don't fire change events
+          list.fire('change');
         }
       }
     }
@@ -260,7 +262,6 @@ YUI.add('juju-models', function(Y) {
     process_delta: function(action, data, db) {
       var instance = _process_delta(this, action, data, {relation_errors: {}});
       if (!instance || !db) {return;}
-
       // Apply this action for this instance to all service models as well.
       // In the future we can transition from using db.units to always
       // looking at db.services[serviceId].units

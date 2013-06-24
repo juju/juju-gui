@@ -388,6 +388,59 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+       Set a service's charm.
+
+       @method setCharm
+       @param {String} charm_url The URL of the charm.
+       @param {String} service_name The name of the service to be deployed.
+       @param {Function} callback A callable that must be called once the
+         operation is performed.
+       @return {undefined} Sends a message to the server only.
+     */
+    setCharm: function(service_name, charm_url, force, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleSetCharm, this,
+            callback, service_name, charm_url);
+      }
+      this._send_rpc(
+          { Type: 'Client',
+            Request: 'ServiceSetCharm',
+            Params: {
+              ServiceName: service_name,
+              CharmUrl: charm_url,
+              Force: force
+            }
+          },
+          intermediateCallback
+      );
+    },
+
+    /**
+       Transform the data returned from juju-core 'setCharm' into a form which
+       is suitable for the user callback.
+
+       @method handleSetCharm
+       @param {Function} userCallback The callback originally submitted by the
+         call site.
+       @param {String} service_name The name of the service.  Passed in since
+         it is not part of the response.
+       @param {String} charm_url The URL of the charm.  Passed in since
+         it is not part of the response.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+     */
+    handleSetCharm: function(userCallback, service_name, charm_url, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: service_name,
+        charm_url: charm_url
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
+    /**
      * Add units to the provided service.
      *
      * @method add_unit

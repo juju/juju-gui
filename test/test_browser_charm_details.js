@@ -39,6 +39,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
+            // Need the handlebars helper for the charm-token to render.
+            Y.Handlebars.registerHelper(
+                'charmFilePath',
+                function(charmID, file) {
+                  return '/path/to/charm/' + file;
+                });
             done();
           });
     });
@@ -66,6 +72,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       node.remove(true);
       delete window.juju_config;
       container.remove(true);
+    });
+
+    after(function(done) {
+      Y.Handlebars.helpers.charmFilePath = undefined;
+      done();
     });
 
     it('should be able to locate a readme file', function() {
@@ -380,6 +391,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not display qa data when there is none.', function() {
       var data = utils.loadFixture('data/qa.json', true);
+      var testContainer = utils.makeContainer();
       // munge the data so that scores is null.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
@@ -404,7 +416,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        renderTo: utils.makeContainer(),
+        renderTo: testContainer,
         store: fakeStore
       });
 
@@ -425,6 +437,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._loadQAContent();
       foundNode = view.get('container').one('.no-qa-reviewed');
       assert.ok(foundNode);
+      // Little cleanup.
+      testContainer.remove(true);
     });
 
     it('should catch when the open log is clicked', function(done) {
@@ -447,7 +461,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('changelog is reformatted and displayed', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -664,7 +677,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('displays a provider warning due to failed tests', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -689,7 +701,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('shows and hides an indicator', function(done) {
       var hit = 0;
 
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -710,7 +721,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets a category icon if available', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -727,7 +737,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('selects the proper tab when given one', function() {
-      var fakeStore = new Y.juju.Charmworld2({});
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
@@ -745,6 +754,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(selected.getAttribute('href'), '#bws-interfaces');
     });
 
+    it('renders out the related charms correctly', function(done) {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+      view.render();
+
+      // We've selected the activeTab specified.
+      var tokens = view.get('container').all('.charm-token');
+      assert.equal(5, tokens.size());
+
+      // And clicking on one of those charms navigates correctly.
+      view.on('viewNavigate', function(ev) {
+        ev.halt();
+        // Just make sure we've got an id. The order will vary some depending
+        // on the browser due to many charms with the same score of 10 in the
+        // sample data..
+        assert(ev.change.charmID);
+        testContainer.remove(true);
+        done();
+      });
+      view.get('container').one('.charm-token').simulate('click');
+    });
   });
 
 })();
