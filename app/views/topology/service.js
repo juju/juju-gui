@@ -77,7 +77,8 @@ YUI.add('juju-topology-service', function(Y) {
           mouseout: 'serviceStatusMouseOut'
         },
         '.zoom-plane': {
-          click: 'canvasClick'
+          click: 'canvasClick',
+          drop: 'canvasDropHandler'
         },
         // Menu/Controls
         '.view-service': {
@@ -375,6 +376,24 @@ YUI.add('juju-topology-service', function(Y) {
     canvasClick: function(box, self) {
       var topo = self.get('component');
       topo.fire('clearState');
+    },
+
+    /**
+     * Handle deploying a services by dropping a charm onto the canvas.
+     *
+     * @method canvasDropHandler
+     * @return {undefined} Nothing
+     */
+    canvasDropHandler: function() {
+      // XXX Why do we have to dig so deep just to get to the event?  And why
+      // is it not just passed into the handler?
+      var evt = d3.event._event;
+      var dataType = evt.dataTransfer.getData('dataType');
+      if (dataType === 'charm-token-drag-and-drop') {
+        var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
+        var charm = new models.Charm(charmData);
+        Y.fire('initiateDeploy', charm);
+      }
     },
 
     /**

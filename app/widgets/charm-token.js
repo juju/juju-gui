@@ -38,6 +38,18 @@ YUI.add('browser-charm-token', function(Y) {
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
+    * Default general initializer method.
+    *
+    * @method initializer
+    * @param {Object} cfg the config for the widget.
+    *
+    */
+    initializer: function(charmAttributes) {
+      // This passed-in config is made up of charm attributes.
+      this.charmAttributes = charmAttributes;
+    },
+
+    /**
       Setter for the boundingBox attribute
 
       **Override vs YUI to prevent node id setting based on BrowserCharm**
@@ -56,6 +68,63 @@ YUI.add('browser-charm-token', function(Y) {
     },
 
     /**
+     * Generate a function that records drag and drop data when a drag starts.
+     *
+     * @method _makeDragStartHandler
+     * @param {Node} dragImage The node to show during the drag.
+     * @param {String} charmId The ID of the charm being dragged.
+     * @return {undefined} Nothing.
+     */
+    _makeDragStartHandler: function(dragImage, charmId, charmData) {
+      return function(evt) {
+        evt = evt._event; // We want the real event.
+        evt.dataTransfer.effectAllowed = 'copy';
+        evt.dataTransfer.setData('charmId', charmId);
+        evt.dataTransfer.setData('charmData', charmData);
+        evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
+        evt.dataTransfer.setDragImage(dragImage._node, 0, 0);
+      };
+    },
+
+    /**
+     * Make an element draggable.
+     *
+     * @method _makeDraggable
+     * @param {Node} element The node which is to be made draggable.
+     * @param {Node} dragImage The node which will be displayed during
+     *   dragging.
+     * @param {String} charmId The ID of the charm being dragged.
+     * @return {undefined} Nothing.
+     */
+    _makeDraggable: function(element, dragImage, charmId, charmData) {
+      element.setAttribute('draggable', 'true');
+      element.on('dragstart',
+          this._makeDragStartHandler(dragImage, charmId, charmData));
+    },
+
+    /**
+     * Make the charm token draggable.
+     *
+     * @method _addDraggability
+     * @param {Node} container he node which contains the charm list.
+     * @return {undefined}  Nothing; side-effects only.
+    */
+    _addDraggability: function(container) {
+      if (!container) {
+        // XXX We must be in a test.  It would be nice not to have to do this.
+        return;
+      }
+      // XXX can't we just get the charm ID off of "this"?
+      var charmId = container.one('a').getData('charmid');
+      var charmData = Y.JSON.stringify(this.charmAttributes);
+      this._makeDraggable(container, container, charmId, charmData);
+      // The token's child elements need to be in on the draggability too.
+      container.all('*').each(function(child) {
+        this._makeDraggable(child, container, charmId, charmData);
+      }, this);
+    },
+
+    /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
      * @method renderUI
@@ -64,7 +133,11 @@ YUI.add('browser-charm-token', function(Y) {
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
       container.setHTML(content);
-      container.ancestor('.yui3-charmtoken').addClass('yui3-u');
+      var outer_container = container.ancestor('.yui3-charmtoken');
+      outer_container.addClass('yui3-u');
+      // XXX Do we really have to reach back up to yui3-charmtoken or could we
+      // just use contentBox?
+      this._addDraggability(outer_container);
     }
 
   }, {

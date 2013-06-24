@@ -166,13 +166,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
             popularCharmContainer
           ];
 
-          // If we are not in fullscreen mode then we want to turn on charm
-          // token dragging to deploy services.
-          if (!this.get('isFullscreen')) {
-            Y.Array.each(this.charmContainers, function(container) {
-              container.addCharmTokenDragAndDrop(this.get('container'));
-            }, this);
-          }
+//          // If we are not in fullscreen mode then we want to turn on charm
+//          // token dragging to deploy services.
+//          if (!this.get('isFullscreen')) {
+//            Y.Array.each(this.charmContainers, function(container) {
+//              container.addCharmTokenDragAndDrop(this.get('container'));
+//            }, this);
+//          }
 
           // Set the active charm if available.
           var active = this.get('activeID');

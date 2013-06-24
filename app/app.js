@@ -345,6 +345,7 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      */
     initializer: function(cfg) {
+      var self = this;
       // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
@@ -576,6 +577,12 @@ YUI.add('juju-gui', function(Y) {
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
+
+      // When someone wants a charm to be deployed they fire initiateDeploy
+      // and we show the charm panel to configure/deploy the service.
+      Y.on('initiateDeploy', function(charm) {
+        self.charmPanel.deploy(charm);
+      });
     },
 
     /**
