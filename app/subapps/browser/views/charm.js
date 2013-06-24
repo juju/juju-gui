@@ -59,6 +59,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.nav .back': {
         click: '_handleBack'
+      },
+      '.charm-token': {
+        click: '_handleCharmSelection'
       }
     },
 
@@ -260,6 +263,24 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+      Navigate when selecting a charm token in the view.
+
+      @method _handleCharmSelection
+      @param {Event} ev the click event for the selected charm.
+
+     */
+    _handleCharmSelection: function(ev) {
+      ev.halt();
+      var charm = ev.currentTarget;
+      var charmID = charm.getData('charmid');
+      var change = {
+        charmID: charmID
+      };
+
+      this.fire('viewNavigate', {change: change});
+    },
+
+    /**
      * Determine which intro copy to display depending on the number
      * of interfaces.
      *
@@ -352,6 +373,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
             }
           }, this);
+    },
+
+    /**
+      Load the related charm data into the model for use.
+
+      @method _loadRelatedCharms
+
+     */
+    _loadRelatedCharms: function(callback) {
+      this.get('store').related(
+          this.get('charm').get('id'), {
+            'success': function(data) {
+              this.get('charm').buildRelatedCharms(
+                  data.result.provides, data.result.requires);
+              if (callback) {
+                callback.call(this);
+              }
+            },
+            'failure': function(data, request) {
+              console.log('Error loading related charm data.');
+              console.log(data);
+            }
+          },
+          this);
     },
 
     /**
@@ -453,28 +498,57 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Clean up after ourselves.
-     *
-     * @method destructor
-     *
+      Clean up after ourselves.
+
+      @method destructor
+
      */
     destructor: function() {
       if (this.tabview) {
         this.tabview.destroy();
       }
+
+      if (this.relatedCharmContainer) {
+        this.relatedCharmContainer.destroy();
+      }
     },
 
     /**
-     * Generic YUI initializer. Make sure we track indicators for cleanup.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     * @return {undefined} Nothing.
+      Generic YUI initializer. Make sure we track indicators for cleanup.
+
+      @method initializer
+      @param {Object} cfg configuration object.
+      @return {undefined} Nothing.
      */
     initializer: function(cfg) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+    },
+
+    /**
+      Render the related charms sidebar. It generates a charm container with
+      the tokens.
+
+      @method _renderRelatedCharms
+      @param {Object} charm the charm model we're rendering the related
+      charms for.
+
+     */
+    _renderRelatedCharms: function() {
+      var relatedCharms = this.get('charm').get('relatedCharms');
+      // If there are no overall related charms then just skip it all.
+      if (relatedCharms.overall) {
+        var relatedNode = this.get('container').one('.related-charms');
+        this.relatedCharmContainer = new widgets.browser.CharmContainer(
+            Y.merge({
+              name: 'Related Charms',
+              cutoff: 10,
+              children: relatedCharms.overall
+            }));
+        this.relatedCharmContainer.render(relatedNode);
+        this.hideIndicator(Y.one('.related-charms'));
+      }
     },
 
     /**
@@ -507,6 +581,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
+      tplData.shareFlag = false;
+      if (window.flags && window.flags.sharing_enabled) {
+        tplData.shareFlag = true;
+      }
+
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
@@ -515,6 +594,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
+      if (tplData.shareFlag) {
+        this.shareWidget = new widgets.browser.SharingWidget({
+          button: renderTo.one('.share')
+        });
+        this.shareWidget.render(renderTo.one('.share'));
+      }
       this.tabview = new widgets.browser.TabView({
         render: true,
         srcNode: tplNode.one('.tabs')
@@ -530,6 +615,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
         );
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
+      }
+
+      if (isFullscreen) {
+        if (!this.get('charm').get('relatedCharms')) {
+          this.showIndicator(Y.one('.related-charms'));
+          this._loadRelatedCharms(this._renderRelatedCharms);
+        }
       }
 
       if (this.get('activeTab')) {
@@ -652,13 +744,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       deploy: {}
-
     }
   });
 
 }, '0.1.0', {
   requires: [
+    'browser-charm-container',
     'browser-overlay-indicator',
+    'browser-sharing-widget',
     'browser-tabview',
     'datatype-date',
     'datatype-date-format',
