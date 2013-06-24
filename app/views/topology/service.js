@@ -382,7 +382,7 @@ YUI.add('juju-topology-service', function(Y) {
      * Handle deploying a services by dropping a charm onto the canvas.
      *
      * @method canvasDropHandler
-     * @return {undefined} Nothing
+     * @return {undefined} Nothing.
      */
     canvasDropHandler: function() {
       // XXX Why do we have to dig so deep just to get to the event?  And why
