@@ -1,0 +1,22 @@
+<div class="charm-panel config-variant">
+  {{#if settings}}
+  <!-- Service configuration form -->
+  <div class="charm-section">
+    <h4>Service Settings<i class="sprite chevron_up"></i></h4>
+    <div class="collapsible">
+      <div class="config-file-upload control-group">
+        <input class="config-file-upload" type="file">
+        <div>
+          <span class="config-file-upload">Use configuration file</span>
+          <span class="config-file-name"></span>
+        </div>
+      </div>
+      <form class="charm-settings">
+        <div class="service-config">
+          {{> service-config}}
+        </div>
+      </form>
+    </div>
+  </div>
+  {{/if}}
+</div>

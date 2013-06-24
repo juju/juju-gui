@@ -1122,7 +1122,7 @@ YUI.add('juju-view-service', function(Y) {
       options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
                                true, undefined, 0, true);
       options.model = model;
-      this.inspector = new juju.ViewContainer(options);
+      this.inspector = new views.ViewContainer(options);
       this.inspector.render();
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));

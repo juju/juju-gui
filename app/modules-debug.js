@@ -264,6 +264,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/view-container.js'
         },
 
+        'juju-ghost-inspector': {
+          fullpath: '/juju-ui/views/ghost-inspector.js'
+        },
+
         'juju-views': {
           use: [
             'handlebars',

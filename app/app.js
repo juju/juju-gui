@@ -48,7 +48,8 @@ YUI.add('juju-gui', function(Y) {
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
-                                                  Y.juju.Cookies], {
+                                                  Y.juju.Cookies,
+                                                  Y.juju.GhostDeployer], {
 
     /*
       Extension properties
@@ -576,7 +577,13 @@ YUI.add('juju-gui', function(Y) {
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
-      cfg.deploy = this.charmPanel.deploy;
+      // If you're using the new service Inspector then use the deploy method
+      // from the Y.juju.GhostDeployer extension
+      if (window.flags && window.flags.serviceInspector) {
+        cfg.deploy = Y.bind(this.deployService, this);
+      } else {
+        cfg.deploy = this.charmPanel.deploy;
+      }
       this.addSubApplications(cfg);
     },
 
@@ -1365,6 +1372,7 @@ YUI.add('juju-gui', function(Y) {
     'event-touch',
     'model-controller',
     'FileSaver',
-    'juju-inspector-widget'
+    'juju-inspector-widget',
+    'juju-ghost-inspector'
   ]
 });
