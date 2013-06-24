@@ -72,14 +72,13 @@ YUI.add('browser-charm-token', function(Y) {
      *
      * @method _makeDragStartHandler
      * @param {Node} dragImage The node to show during the drag.
-     * @param {String} charmId The ID of the charm being dragged.
+     * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDragStartHandler: function(dragImage, charmId, charmData) {
+    _makeDragStartHandler: function(dragImage, charmData) {
       return function(evt) {
         evt = evt._event; // We want the real event.
         evt.dataTransfer.effectAllowed = 'copy';
-        evt.dataTransfer.setData('charmId', charmId);
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
         evt.dataTransfer.setDragImage(dragImage._node, 0, 0);
@@ -93,13 +92,13 @@ YUI.add('browser-charm-token', function(Y) {
      * @param {Node} element The node which is to be made draggable.
      * @param {Node} dragImage The node which will be displayed during
      *   dragging.
-     * @param {String} charmId The ID of the charm being dragged.
+     * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDraggable: function(element, dragImage, charmId, charmData) {
+    _makeDraggable: function(element, dragImage, charmData) {
       element.setAttribute('draggable', 'true');
       element.on('dragstart',
-          this._makeDragStartHandler(dragImage, charmId, charmData));
+          this._makeDragStartHandler(dragImage, charmData));
     },
 
     /**
@@ -114,13 +113,11 @@ YUI.add('browser-charm-token', function(Y) {
         // XXX We must be in a test.  It would be nice not to have to do this.
         return;
       }
-      // XXX can't we just get the charm ID off of "this"?
-      var charmId = container.one('a').getData('charmid');
       var charmData = Y.JSON.stringify(this.charmAttributes);
-      this._makeDraggable(container, container, charmId, charmData);
+      this._makeDraggable(container, container, charmData);
       // The token's child elements need to be in on the draggability too.
       container.all('*').each(function(child) {
-        this._makeDraggable(child, container, charmId, charmData);
+        this._makeDraggable(child, container, charmData);
       }, this);
     },
 
@@ -129,15 +126,13 @@ YUI.add('browser-charm-token', function(Y) {
      *
      * @method renderUI
      */
-    renderUI: function() {
+    renderUI: function(container) {
       var content = this.TEMPLATE(this.getAttrs());
-      var container = this.get('contentBox');
+      container = container || this.get('contentBox');
       container.setHTML(content);
-      var outer_container = container.ancestor('.yui3-charmtoken');
-      outer_container.addClass('yui3-u');
-      // XXX Do we really have to reach back up to yui3-charmtoken or could we
-      // just use contentBox?
-      this._addDraggability(outer_container);
+      var outerContainer = container.ancestor('.yui3-charmtoken')
+        .addClass('yui3-u');
+      this._addDraggability(outerContainer);
     }
 
   }, {

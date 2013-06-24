@@ -119,3 +119,55 @@ describe('charm token', function() {
   });
 
 });
+
+
+//describe('charm token drag and drop', function() {
+//  var charmContainer, CharmToken, Y, utils;
+
+//  before(function(done) {
+//    Y = YUI(GlobalConfig).use(
+//        ['browser-charm-token', 'node-event-simulate',
+//         'juju-tests-utils'], function(Y) {
+//          CharmToken = Y.juju.widgets.browser.CharmToken;
+//          utils = Y.namespace('juju-tests.utils');
+//          done();
+//        });
+//  });
+
+//  beforeEach(function() {
+//    charmContainer = utils.makeContainer('charm-container');
+//  });
+
+//  afterEach(function() {
+//    charmContainer.remove(true);
+//  });
+
+//  it('makes each charm token draggable', function() {
+//    var charmData = [{
+//      name: 'foo',
+//      id: 'foo-id'
+//    }, {
+//      name: 'bar',
+//      id: 'bar-id'
+//    }, {
+//      name: 'baz',
+//      id: 'baz-id'
+//    }];
+//    charmContainer = new Y.juju.widgets.browser.CharmContainer({
+//      children: charmData
+//    });
+//    charmContainer.render(container);
+//    var draggableCharms = [];
+//    charmContainer._makeDraggable = function(element, dragImage, charmId) {
+//      draggableCharms.push(charmId);
+//    };
+//    charmContainer.addCharmTokenDragAndDrop(container);
+//    // Since each individual element in the charm token DOM is made draggable,
+//    // the total number of DOM nodes touched is greater than the number of
+//    // charms represented.
+//    assert.isTrue(draggableCharms.length > charmData.length);
+//    // All of the charm tokens are made draggable.
+//    draggableCharms = Y.Array.dedupe(draggableCharms);
+//    assert.deepEqual(draggableCharms, ['foo-id', 'bar-id', 'baz-id']);
+//  });
+//});
