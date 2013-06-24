@@ -149,12 +149,30 @@ YUI.add('browser-charm-container', function(Y) {
       }
     },
 
+    /**
+     * Make an element draggable.
+     *
+     * @method _makeDraggable
+     * @param {Node} element The node which is to be made draggable.
+     * @param {Node} dragImage The node which will be displayed during
+     *   dragging.
+     * @param {String} charmId The ID of the charm being dragged.
+     * @return {undefined} Nothing.
+     */
     _makeDraggable: function(element, dragImage, charmId) {
       element.setAttribute('draggable', 'true');
       element.on('dragstart',
           this._makeDragStartHandler(dragImage, charmId));
     },
 
+    /**
+     * Generate a function that records drag and drop data when a drag starts.
+     *
+     * @method _makeDragStartHandler
+     * @param {Node} dragImage The node to show during the drag.
+     * @param {String} charmId The ID of the charm being dragged.
+     * @return {undefined} Nothing.
+     */
     _makeDragStartHandler: function(dragImage, charmId) {
       return function(evt) {
         evt = evt._event; // We want the real event.
@@ -164,21 +182,27 @@ YUI.add('browser-charm-container', function(Y) {
       };
     },
 
-    _getZoomPlane: function() {
+    /**
+     * Find the element on which charms will be dropped to deploy them.
+     *
+     * @method _getDropZone
+     * @return {Node} The node which will receive drop events.
+     */
+    _getDropZone: function() {
       return Y.one('.zoom-plane');
     },
 
     /**
-    Enable deploying a service by dragging charm tokens into the environment
-    view.
-
-    @method addCharmTokenDragAndDrop
-    @param container {Node} The node which contains the charm list.
-    @returns {undefined}  Nothing; side-effects only.
+     * Enable deploying a service by dragging charm tokens into the environment
+     * view.
+     *
+     * @method addCharmTokenDragAndDrop
+     * @param {Node} container he node which contains the charm list.
+     * @return {undefined}  Nothing; side-effects only.
     */
     addCharmTokenDragAndDrop: function(container) {
-      var zoomPlane = this._getZoomPlane();
-      if (!container || !zoomPlane) {
+      var dropZone = this._getDropZone();
+      if (!container || !dropZone) {
         // XXX We must be in a test.  It would be nice not to have to do this.
         return;
       }
@@ -192,7 +216,7 @@ YUI.add('browser-charm-container', function(Y) {
       }, this);
       // In addition to the charm tokens being draggable, we need to react to
       // dropping them.
-      zoomPlane.on('drop', function(evt) {
+      dropZone.on('drop', function(evt) {
         var charmId = evt._event.dataTransfer.getData('charmId');
         app.modelController.getCharm(charmId).then(function(charm) {
           app.charmPanel.deploy(charm);

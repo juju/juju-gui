@@ -19,23 +19,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charm token drag and drop', function() {
-  var Y, charmContainer, container, CharmContainer, zoomPlane;
+  var Y, charmContainer, container, CharmContainer, dropZone;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-        'browser-charm-container',
-        'juju-tests-utils'
-      ],
-      function(Y) {
-        CharmContainer = Y.juju.widgets.browser.CharmContainer;
-        done();
-      });
+      'browser-charm-container',
+      'juju-tests-utils'
+    ],
+    function(Y) {
+      CharmContainer = Y.juju.widgets.browser.CharmContainer;
+      done();
+    });
 
   });
 
   beforeEach(function() {
     container = Y.namespace('juju-tests.utils').makeContainer('container');
-    zoomPlane = Y.namespace('juju-tests.utils').makeContainer('a-zoom-plane')
+    dropZone = Y.namespace('juju-tests.utils').makeContainer('the-drop-zone')
       .addClass('zoom-plane');
   });
 
@@ -48,15 +48,15 @@ describe('charm token drag and drop', function() {
 
   it('makes each charm token draggable', function() {
     var charmData = [{
-        name: 'foo',
-        id: 'foo-id'
-      }, {
-        name: 'bar',
-        id: 'bar-id'
-      }, {
-        name: 'baz',
-        id: 'baz-id'
-      }];
+      name: 'foo',
+      id: 'foo-id'
+    }, {
+      name: 'bar',
+      id: 'bar-id'
+    }, {
+      name: 'baz',
+      id: 'baz-id'
+    }];
     charmContainer = new Y.juju.widgets.browser.CharmContainer({
       children: charmData
     });
@@ -75,16 +75,16 @@ describe('charm token drag and drop', function() {
     assert.deepEqual(draggableCharms, ['foo-id', 'bar-id', 'baz-id']);
   });
 
-  it('adds a drop handler to the zoom plane', function(done) {
+  it('adds a drop handler to the drop zone', function(done) {
     charmContainer = new Y.juju.widgets.browser.CharmContainer();
-    zoomPlane = {
+    dropZone = {
       on: function(what, callable) {
         assert.equal(what, 'drop');
         done();
       }
     };
     charmContainer.render(container);
-    charmContainer._getZoomPlane = function() {return zoomPlane;};
+    charmContainer._getDropZone = function() {return dropZone;};
     charmContainer.addCharmTokenDragAndDrop(container);
   });
 
@@ -102,7 +102,7 @@ describe('charm token drag and drop', function() {
         onCalled = true;
       }
     };
-    var dragImage = new Object();
+    var dragImage = {};
     charmContainer._makeDragStartHandler = function(dragImage, charmId) {
       assert.equal(element, element);
       assert.equal(dragImage, dragImage);
@@ -116,7 +116,7 @@ describe('charm token drag and drop', function() {
   it('can set up drag and drop configuration', function() {
     charmContainer = new Y.juju.widgets.browser.CharmContainer();
     var setDataCalled, setDragImageCalled;
-    var dragImage = new Object();
+    var dragImage = {};
     var charmId = 'charm-id';
     var handler = charmContainer._makeDragStartHandler(dragImage, charmId);
     var evt = {
@@ -138,13 +138,13 @@ describe('charm token drag and drop', function() {
     };
     handler(evt);
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
-    assert.isTrue(setDataCalled):
-    assert.isTrue(setDragImageCalled):
+    assert.isTrue(setDataCalled);
+    assert.isTrue(setDragImageCalled);
   });
 
-  it('can get the zoom plane', function() {
+  it('can get the drop zone', function() {
     charmContainer = new Y.juju.widgets.browser.CharmContainer();
-    assert.equal(charmContainer._getZoomPlane().get('id'), 'a-zoom-plane');
+    assert.equal(charmContainer._getDropZone().get('id'), 'the-drop-zone');
   });
 
 });
