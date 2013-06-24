@@ -191,9 +191,7 @@ YUI.add('juju-databinding', function(Y) {
         viewletModel = viewlet.rebind(model);
       }
 
-      // XXX: there is a case (such as pending services)
-      // where rebind wouldn't return a valid target (no units for example)
-      // In this case we skip the binding.
+      // When rebind doesn't return a valid target, skip the binding.
       if (!viewletModel) {
         return this;
       }
