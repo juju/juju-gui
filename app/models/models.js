@@ -705,9 +705,9 @@ YUI.add('juju-models', function(Y) {
         this.machines, this.units,
         this.charms, this.environment,
         this.notifications].forEach(function(ml) {
-          ml.detachAll();
-          ml.destroy();
-        });
+        ml.detachAll();
+        ml.destroy();
+      });
     },
 
     /*
