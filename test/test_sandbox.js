@@ -1433,6 +1433,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     }
 
+
     it('should support export', function(done) {
       client.open();
       promise(state, 'deploy', 'cs:wordpress')
@@ -1707,6 +1708,127 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.setCharm('wordpress', 'cs:precise/mediawiki-6', false, callback);
     });
+
+    /**
+      Generates the services required for some tests. After the services have
+      been generated it will call the supplied callback.
+
+      This interacts directly with the fakebackend bypassing the environment.
+      The test "can add additional units" tests this code directly so as long
+      as it passes you can consider this method valid.
+
+      @method generateServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateServices(callback) {
+      state.deploy('cs:wordpress', function(service) {
+        var data = {
+          Type: 'Client',
+          Request: 'AddServiceUnits',
+          Params: {
+            ServiceName: 'wordpress',
+            NumUnits: 2
+          }
+        };
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function(received) {
+            // After done generating the services
+            callback(received);
+          };
+          client.send(Y.JSON.stringify(data));
+        };
+        client.open();
+        client.onmessage();
+      });
+    }
+
+    /**
+      Same as generateServices but uses the environment integration methods.
+      Should be considered valid if "can add additional units (integration)"
+      test passes.
+
+      @method generateIntegrationServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateIntegrationServices(callback) {
+      var localCb = function(result) {
+        env.add_unit('kumquat', 2, function(data) {
+           // After finished generating integrated services.
+           callback(data);
+        });
+      };
+      env.connect();
+      env.deploy(
+        'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+    }
+
+    it('can add additional units', function(done) {
+      function testForAddedUnits(received) {
+        var service = state.db.services.getById('wordpress'),
+            units = state.db.units.get_units_for_service(service),
+            data = Y.JSON.parse(received.data),
+            mock = {
+              Response: {
+                Units: ['wordpress/1', 'wordpress/2']
+              },
+            };
+        // Do we have enough total units?
+        assert.lengthOf(units, 3);
+        // Does the response object contain the proper data
+        assert.deepEqual(data, mock);
+        // Error is undefined
+        assert.isUndefined(data.Error);
+        done();
+      }
+      // Generate the default services and add units
+      generateServices(testForAddedUnits);
+    });
+
+    it('throws an error when adding units to an invalid service',
+        function(done) {
+          state.deploy('cs:wordpress', function(service) {
+            var data = {
+              Type: 'Client',
+              Request: 'AddServiceUnits',
+              Params: {
+                ServiceName: 'noservice',
+                NumUnits: 2
+              }
+            };
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(received) {
+                var data = Y.JSON.parse(received.data);
+
+                // If there is no error data.err will be undefined
+                assert.equal(true, !!data.Error);
+                done();
+              };
+              client.send(Y.JSON.stringify(data));
+            };
+            client.open();
+            client.onmessage();
+          });
+        }
+    );
+
+    it('can add additional units (integration)', function(done) {
+      function testForAddedUnits(data) {
+        var service = state.db.services.getById('kumquat'),
+            units = state.db.units.get_units_for_service(service);
+        assert.lengthOf(units, 3);
+        done();
+      }
+      generateIntegrationServices(testForAddedUnits);
+    });
+
+    it('can expose a service', function() {
+    });
+
+
   });
 
 })();
