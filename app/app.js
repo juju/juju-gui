@@ -351,9 +351,6 @@ YUI.add('juju-gui', function(Y) {
       cfg = cfg || {};
       window.flags = window.flags || {};
 
-      // Push event handles to list to clean on destruction.
-      this._eventHandles = [];
-
       // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
@@ -543,12 +540,6 @@ YUI.add('juju-gui', function(Y) {
       // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
 
-      // Watch specific things, (add units), remove db.update above
-      this.db.services.after(['add', 'remove', '*:change'],
-                             this.on_database_changed, this);
-      this.db.relations.after(['add', 'remove', '*:change'],
-                              this.on_database_changed, this);
-
       this.enableBehaviors();
 
       this.once('ready', function(e) {
@@ -591,6 +582,11 @@ YUI.add('juju-gui', function(Y) {
       cfg.deploy = this.charmPanel.deploy;
       if (window.flags && window.flags.serviceInspector) {
         cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
+        //Watch specific things, (add units), remove db.update above
+        this.db.services.after(['add', 'remove', '*:change'],
+                               this.on_database_changed, this);
+        this.db.relations.after(['add', 'remove', '*:change'],
+                                this.on_database_changed, this);
       }
       this.addSubApplications(cfg);
     },

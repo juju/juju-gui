@@ -1095,6 +1095,7 @@ YUI.add('juju-view-service', function(Y) {
       //constraints: {},
       //relations: {}
     };
+
     /**
       Constructor for View Container Controller
 
@@ -1125,8 +1126,6 @@ YUI.add('juju-view-service', function(Y) {
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
       this.inspector.showViewlet('overview');
-      // XXX: to debug
-      window.SI = this;
     }
 
     ServiceInspector.prototype = {
@@ -1144,11 +1143,9 @@ YUI.add('juju-view-service', function(Y) {
     };
 
     return ServiceInspector;
-
   })();
+
   views.ServiceInspector = ServiceInspector;
-
-
 }, '0.1.0', {
   requires: ['panel',
     'dd',

@@ -1365,7 +1365,6 @@ YUI.add('juju-view-utils', function(Y) {
       }
     }
   };
-
 }, '0.1.0', {
   requires: [
     'base-build',
