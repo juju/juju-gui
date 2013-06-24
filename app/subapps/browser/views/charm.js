@@ -158,6 +158,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _dispatchTabEvents: function(tab) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
+            debugger;
             var tabContent = ev.newVal.get('content');
             if (tabContent === 'Quality') {
               this._loadQAContent();
@@ -362,6 +363,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _loadInterfacesTabCharms: function() {
       // If we don't have our related-charms data then force it to load.
       var relatedCharms = this.get('charm').get('relatedCharms');
+
       debugger;
       if (!relatedCharms) {
         // If we don't have the related charm data, go get and call us back
@@ -372,20 +374,21 @@ YUI.add('subapp-browser-charmview', function(Y) {
         // We do requires first since it's first in the UI and we want to get
         // that in front of the user asap. If that changes, this might need
         // to be updated for best UX.
-        debugger;
-        Y.Object.each(relatedCharms.requires, function(interface, list) {
+        Y.Object.each(relatedCharms.requires, function(iface, list) {
+          debugger;
           // we only care about the top three charms in the list.
           var charms = list.slice(0, 3);
-          var ids = list.map(function(charm) {
-            return charm.
+          var ids = list.forEach(function(charm) {
+            var uiID = [
+              'requires',
+              iface,
+              charm.id
+            ].join('-');
 
+            charm.size = 'tiny';
+            var ct = new widgets.browser.CharmToken(charm);
+            ct.render(Y.one(uiID));
           });
-
-          var uiID = [
-            'requires',
-            ''
-          ].join('-');
-
         });
 
       }
