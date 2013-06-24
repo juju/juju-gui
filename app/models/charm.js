@@ -330,11 +330,15 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+    // Only care about at most, this number of related charms per interface.
+    maxRelatedCharms: 5,
+
     /**
-     * Load the recent commits into a format we can use nicely.
-     *
-     * @method _loadRecentCommits
-     *
+
+      Load the recent commits into a format we can use nicely.
+
+      @method _loadRecentCommits
+
      */
     _loadRecentCommits: function() {
       var source = this.get('code_source'),
@@ -375,6 +379,28 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     /**
+      Given the set of data for relatedCharms, make it compatible with the
+      model api to be used in the charm-token widget, for example.
+
+      @method _convertRelatedData
+      @param {Object} data a related charm object.
+
+     */
+    _convertRelatedData: function(data) {
+      return {
+        // Only show the icon if it has one and the charm has been reviewed to
+        // have a safe icon.
+        shouldShowIcon: data.has_icon && data.is_approved,
+        id: data.id,
+        mainCategory: data.categories[0],
+        name: data.name,
+        recent_commit_count: data.commits_in_past_30_days,
+        recent_download_count: data.downloads_in_past_30_days,
+        weight: data.weight
+      };
+    },
+
+    /**
      * Initializer
      *
      * @method initializer
@@ -384,6 +410,57 @@ YUI.add('juju-charm-models', function(Y) {
       if (cfg && cfg.downloads_in_past_30_days) {
         this.set('recent_download_count', cfg.downloads_in_past_30_days);
       }
+    },
+
+    /**
+      Build the relatedCharms attribute from api data
+
+      @method buildRelatedCharms
+      @param {Object} provides the list of provides interfaces/charms.
+      @param {Object} requires the list of requires interfaces/charms.
+
+    */
+    buildRelatedCharms: function(provides, requires) {
+      var charms = {
+        all: {},
+        provides: {},
+        requires: {}
+      };
+
+      var buildWeightedList = function(relationName, relationData, scope) {
+        Y.Object.each(relationData, function(face, key) {
+          // The relations are in the order of score, so we can limit them right
+          // off the bat.
+          charms[relationName][key] = face.slice(0, this.maxRelatedCharms);
+          charms[relationName][key].forEach(function(relation, idx) {
+            // Update the related object with the converted version so that it's
+            // follows the model ATTRS
+            charms[relationName][key][idx] = this._convertRelatedData(relation);
+            // Then track the highest provides charm to be in the running for
+            // overall most weighted related charm.
+            charms.all[relation.id] = charms[relationName][key][idx];
+          }, scope);
+        }, scope);
+      };
+
+      buildWeightedList('provides', provides, this);
+      buildWeightedList('requires', requires, this);
+
+      // Find the highest weight charms, but make sure there are no
+      // duplicates. We build the object to index on key and remove dupes,
+      // then we get a list of results and sort them by weight, grabbing the
+      // top set.
+      var allCharmsList = Y.Object.values(charms.all);
+
+      allCharmsList.sort(function(charm1, charm2) {
+        return charm2.weight - charm1.weight;
+      });
+
+      this.set('relatedCharms', {
+        overall: allCharmsList.slice(0, this.maxRelatedCharms),
+        provides: charms.provides,
+        requires: charms.requires
+      });
     }
   }, {
     ATTRS: {
@@ -633,6 +710,21 @@ YUI.add('juju-charm-models', function(Y) {
           return 0;
         }
       },
+      /**
+        The related charms object is three parts for use in our situations.
+        The keys are
+        - overall: the top scored related charms regardless of interface or
+                   provide/requires
+        - provides: a nested object of the related charms for each provide
+                    interface
+        - requires: a nested object of the related charms for each require
+                    interface
+        @attribute relatedCharms
+        @default undefined
+        @type {Object}
+
+       */
+      relatedCharms: {},
       relations: {},
 
       /**

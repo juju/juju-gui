@@ -56,7 +56,7 @@ describe('charm token', function() {
     };
     var charm = new CharmToken(cfg);
     charm.render(charm_container);
-    var metadata = Y.one('.metadata');
+    var metadata = charm_container.one('.metadata');
     assert.equal(
         ' 3 downloads, 1 commit ',
         metadata.get('text').replace(/\s+/g, ' '));
@@ -96,7 +96,7 @@ describe('charm token', function() {
 
     var charm = new CharmToken(cfg);
     charm.render(charm_container);
-    var iconNode = Y.one('.category-icon');
+    var iconNode = charm_container.one('.category-icon');
     assert.equal(iconNode.hasClass('charm-app-servers-64'), true);
   });
 
@@ -114,7 +114,7 @@ describe('charm token', function() {
 
     var charm = new CharmToken(cfg);
     charm.render(charm_container);
-    var iconNode = Y.one('.category-icon');
+    var iconNode = charm_container.one('.category-icon');
     assert.equal(iconNode.hasClass('charm-app-servers-96'), true);
   });
 
