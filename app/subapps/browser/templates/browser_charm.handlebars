@@ -1,5 +1,5 @@
 <div class="charm yui3-g">
-    <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
+    <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
         <div class="nav">
             <a href="" class="back">
                 {{#if isFullscreen}}
@@ -13,10 +13,12 @@
                 test/test_charm_running.py.  If you change this name, change
                 the other one too! }}
             <a href="" class="add">Add</a>
-            <a href="" class="share">
-                <img src="/juju-ui/assets/images/browser_share_button_icon.png"
-                    alt="Share" />Share
-            </a>
+            {{#ifFlag 'sharing_enabled'}}
+              <a href="" class="share">
+                  <img src="/juju-ui/assets/images/browser_share_button_icon.png"
+                      alt="Share" />Share
+              </a>
+            {{/ifFlag}}
         </div>
 
         {{#if failingProviders}}
@@ -265,7 +267,7 @@
         </div>
     </div>
     {{#if isFullscreen}}
-        <div class="content-sidebar yui3-u-1-6">
+        <div class="content-sidebar yui3-u-1-4">
             <h3>Useful links</h3>
             <ul class="vertical-links">
                 <li><a href="">Juju community</a></li>
@@ -273,6 +275,10 @@
                 <li><a href="">Write your own Charm</a></li>
                 <li><a href="">Contribute to this Charm</a></li>
             </ul>
+
+            <div class="related-charms">
+            </div>
         </div>
+
     {{/if}}
 </div>

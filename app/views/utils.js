@@ -1317,6 +1317,17 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /*
+   * Check if a flag is set.
+   *
+   * {{ifFlag 'flag_name'}}
+   *
+   */
+  Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
+    if (window.flags && window.flags[flag]) {
+      return options.fn(this);
+    }
+  });
+  /*
    * Extension for views to provide an apiFailure method.
    *
    * @class apiFailure

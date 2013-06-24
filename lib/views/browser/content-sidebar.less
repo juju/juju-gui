@@ -25,4 +25,20 @@
             border: none;
         }
     }
+
+    .related-charms {
+        min-height: 100px;
+        background-color: inherit;
+        .yui3-charmtoken {
+            width: 100%;
+            border-bottom: 1px solid @bws-border;
+
+            .description {
+                display: none;
+            }
+            &.last {
+                border-bottom: none;
+            }
+        }
+    }
 }
