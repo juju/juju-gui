@@ -921,10 +921,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientAddRelation: function(data, client, state) {
       var stateResp = state.addRelation(
         data.Params.Endpoints[0], data.Params.Endpoints[1]);
-      var resp = {
-        RequestId: data.RequestId,
-        Error: undefined
-      };
+      var resp = {RequestId: data.RequestId};
       if (stateResp === false) {
         // Everything checks out but could not create a new relation model.
         resp.Error = 'Unable to create relation';
@@ -969,6 +966,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientDestroyRelation: function(data, client, state) {
+      var stateResp = state.removeRelation(
+        data.Params.Endpoints[0], data.Params.Endpoints[1]);
+      var resp = {RequestId: data.RequestId};
+      if (stateResp.error) {
+        resp.Error = stateResp.error;
+      }
+      client.receive(resp);
     }
 
   });

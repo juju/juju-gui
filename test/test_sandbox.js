@@ -1713,20 +1713,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation', function(done) {
       // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
-      function localCallback() {
-        state.deploy('cs:mysql', function(service) {
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
           var data = {
+            RequestId: 42,
             Type: 'Client',
             Request: 'AddRelation',
             Params: {
               Endpoints: ['wordpress', 'mysql']
-            },
-            RequestId: 42
+            }
           };
           client.onmessage = function(received) {
             var receivedData = Y.JSON.parse(received.data);
-            assert.equal(receivedData.Error, undefined);
             assert.equal(receivedData.RequestId, data.RequestId);
+            assert.equal(receivedData.Error, undefined);
             var receivedEndpoints = receivedData.Response.Params.Endpoints;
             assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
             assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
@@ -1735,8 +1735,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           client.open();
           client.send(Y.JSON.stringify(data));
         });
-      }
-      state.deploy('cs:wordpress', localCallback);
+      });
+    });
+
+    it('can remove a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var relation = ['wordpress:db', 'mysql:db'];
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
+          state.addRelation(relation[0], relation[1]);
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'DestroyRelation',
+            Params: {
+              Endpoints: relation
+            }
+          };
+          client.onmessage = function(received) {
+            var receivedData = Y.JSON.parse(received.data);
+            assert.equal(receivedData.RequestId, data.RequestId);
+            assert.equal(receivedData.Error, undefined);
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
     });
 
   });
