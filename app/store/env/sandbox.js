@@ -907,6 +907,68 @@ YUI.add('juju-env-sandbox', function(Y) {
         RequestId: data.RequestId,
         Error: reply.error,
         Response: {Service: data.Params.ServiceName}});
+    },
+
+    /**
+    Handle AddRelation messages
+
+    @method handleClientAddRelation
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddRelation: function(data, client, state) {
+      var stateResp = state.addRelation(
+        data.Params.Endpoints[0], data.Params.Endpoints[1]);
+      var resp = {
+        RequestId: data.RequestId,
+        Error: undefined
+      };
+      if (stateResp === false) {
+        // Everything checks out but could not create a new relation model.
+        resp.Error = 'Unable to create relation';
+        client.receive(resp);
+        return;
+      }
+      if (stateResp.error) {
+        resp.Error = stateResp.error;
+        client.receive(resp);
+        return;
+      }
+      var endpoints = {},
+          epA = {
+            Name: stateResp.endpoints[0][1].name,
+            Scope: stateResp.scope,
+            Interface: '',
+            Role: ''
+          },
+          epB = {
+            Name: stateResp.endpoints[1][1].name,
+            Scope: stateResp.scope,
+            Interface: '',
+            Role: ''
+          };
+      endpoints[stateResp.endpoints[0][0]] = epA;
+      endpoints[stateResp.endpoints[1][0]] = epB;
+      resp.Response = {
+        Params: {
+          Endpoints: endpoints
+        }
+      };
+      client.receive(resp);
+    },
+
+    /**
+    Handle DestroyRelation messages
+
+    @method handleClientDestroyRelation
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientDestroyRelation: function(data, client, state) {
     }
 
   });

@@ -249,6 +249,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     function generateAndRelateServices(charms, relation,
         removeRelation, mock, done) {
+      // FIXME: removeRelation is not used.
       state.deploy(charms[0], function() {
         state.deploy(charms[1], function() {
           client.onmessage = function() {
@@ -1228,6 +1229,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['wordpress:db', 'mysql:db'],
           {endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
+      // FIXME: relation removal is not done (in generateAndRelateServices)
+      // nor tested (here).
     });
 
     it('can remove a relation(integration)', function(done) {
@@ -1707,6 +1710,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.setCharm('wordpress', 'cs:precise/mediawiki-6', false, callback);
     });
+
+    it('can add a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      function localCallback() {
+        state.deploy('cs:mysql', function(service) {
+          var data = {
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress', 'mysql']
+            },
+            RequestId: 42
+          };
+          client.onmessage = function(received) {
+            var receivedData = Y.JSON.parse(received.data);
+            assert.equal(receivedData.Error, undefined);
+            assert.equal(receivedData.RequestId, data.RequestId);
+            var receivedEndpoints = receivedData.Response.Params.Endpoints;
+            assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
+            assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      }
+      state.deploy('cs:wordpress', localCallback);
+    });
+
   });
 
 })();
