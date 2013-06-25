@@ -3,21 +3,44 @@
 }
 
 .yui3-sharingwidget {
-    background: @charm-panel-background-color;
-    border: 1px solid @bws-border;
+    position: absolute;
+    padding-top: 15px;
 
     li {
-        width: 45px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        border-top: 1px solid @bws-border;
+        border-top: 1px solid #d4d4d4;
 
-        #sharing-first {
+        &#sharing-first {
             border-top: none;
         }
-
         a {
-            margin-left: 15px;
+            display: block;
+            padding: 20px;
+
+            &:hover {
+                background-color: #eee;
+            }
         }
+    }
+    .yui3-sharingwidget-content {
+        position: relative;
+        z-index: 5;
+        background-color: #f9f9f9;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
+    &:after {
+        content: ' ';
+        position: absolute;
+        display: block;
+        left: 50%;
+        top: 7px;
+        width: 20px;
+        height: 20px;
+        margin-left: -10px;
+        background-color: #f9f9f9;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     }
 }

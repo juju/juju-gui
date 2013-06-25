@@ -38,7 +38,8 @@ YUI.add('juju-gui', function(Y) {
 
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      utils = views.utils;
 
   /**
    * The main app class.
@@ -348,6 +349,8 @@ YUI.add('juju-gui', function(Y) {
       // If no cfg is passed in, use a default empty object so we don't blow up
       // getting at things.
       cfg = cfg || {};
+      window.flags = window.flags || {};
+
       // If this flag is true, start the application with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
@@ -577,6 +580,17 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
+      if (window.flags && window.flags.serviceInspector) {
+        cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
+        // Watch specific things, (add units), remove db.update above
+        // Note: This hides under tha flag as tests don't properly clean
+        // up sometimes and this binding creates spooky interaction
+        // at a distance and strange failures.
+        this.db.services.after(['add', 'remove', '*:change'],
+                               this.on_database_changed, this);
+        this.db.relations.after(['add', 'remove', '*:change'],
+                                this.on_database_changed, this);
+      }
       this.addSubApplications(cfg);
     },
 
@@ -625,6 +639,7 @@ YUI.add('juju-gui', function(Y) {
            this.landscape, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
+              o.detachAll();
               o.destroy();
             }
           }
