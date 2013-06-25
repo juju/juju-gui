@@ -158,17 +158,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _dispatchTabEvents: function(tab) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
-            var tab = ev.newVal.get('content');
-            switch (tab) {
-              case 'Interfaces':
-                console.log('not implemented interfaces handler');
-                break;
-              case 'Quality':
-                this._loadQAContent();
-                break;
-              default:
-                break;
+            var tabContent = ev.newVal.get('content');
+            if (tabContent === 'Quality') {
+              this._loadQAContent();
+              return;
             }
+
+            if (tabContent.indexOf('interface-list') !== -1) {
+              this._loadInterfacesTabCharms();
+              return;
+            }
+
           }, this)
       );
     },
@@ -353,6 +353,27 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Load the related charms data and display the related charms into each
+     * interface of the charm.
+     *
+     * @method _loadInterfacesTabCharms
+     *
+     */
+    _loadInterfacesTabCharms: function() {
+      // If we don't have our related-charms data then force it to load.
+      var relatedCharms = this.get('charm').get('relatedCharms');
+
+      if (!relatedCharms) {
+        // If we don't have the related charm data, go get and call us back
+        // when it's done loading so we can update the display.
+        this._loadRelatedCharms(this._loadInterfacesTabCharms);
+      } else {
+        this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
+        this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
+      }
+    },
+
+    /**
      * Load the charm's QA data and fill it into the tab when selected.
      *
      * @method _loadQAContent
@@ -511,6 +532,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.relatedCharmContainer) {
         this.relatedCharmContainer.destroy();
       }
+
+      if (this.charmTokens) {
+        this.charmTokens.forEach(function(token) {
+          token.destroy();
+        });
+      }
     },
 
     /**
@@ -524,6 +551,35 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+    },
+
+    /**
+     * Render out a charmtoken for the related charms for each interface.
+     *
+     * @method _renderRelatedInterfaceCharms
+     * @param {String} type Is this for provides or requires?
+     * @param {Object} relatedCharms An object of the interfaces and related
+     * charms for each.
+     *
+     */
+    _renderRelatedInterfaceCharms: function(type, relatedCharms) {
+      this.charmTokens = [];
+      Y.Object.each(relatedCharms, function(list, iface) {
+        // we only care about the top three charms in the list.
+        var charms = list.slice(0, 3);
+        charms.forEach(function(charm) {
+          var uiID = [
+            type,
+            iface
+          ].join('-');
+
+          charm.size = 'tiny';
+          var ct = new widgets.browser.CharmToken(charm);
+          var node = Y.one('[data-interface="' + uiID + '"]');
+          ct.render(node);
+          this.charmTokens.push(ct);
+        }, this);
+      }, this);
     },
 
     /**
@@ -618,6 +674,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
         if (!this.get('charm').get('relatedCharms')) {
           this.showIndicator(Y.one('.related-charms'));
           this._loadRelatedCharms(this._renderRelatedCharms);
+        } else {
+          // We have related charm info, get to rendering them.
+          this._renderRelatedCharms();
         }
       }
 
