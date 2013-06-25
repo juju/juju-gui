@@ -97,8 +97,8 @@ YUI.add('browser-charm-token', function(Y) {
      */
     _makeDraggable: function(element, dragImage, charmData) {
       element.setAttribute('draggable', 'true');
-      element.on('dragstart',
-          this._makeDragStartHandler(dragImage, charmData));
+      this.addEvent(element.on('dragstart',
+          this._makeDragStartHandler(dragImage, charmData)));
     },
 
     /**
@@ -109,16 +109,9 @@ YUI.add('browser-charm-token', function(Y) {
      * @return {undefined}  Nothing; side-effects only.
     */
     _addDraggability: function(container) {
-      if (!container) {
-        // XXX We must be in a test.  It would be nice not to have to do this.
-        return;
-      }
       var charmData = Y.JSON.stringify(this.charmAttributes);
       this._makeDraggable(container, container, charmData);
-      // The token's child elements need to be in on the draggability too.
-      container.all('*').each(function(child) {
-        this._makeDraggable(child, container, charmData);
-      }, this);
+      this._makeDraggable(container.one('a'), container, charmData)
     },
 
     /**
@@ -128,11 +121,14 @@ YUI.add('browser-charm-token', function(Y) {
      */
     renderUI: function(container) {
       var content = this.TEMPLATE(this.getAttrs());
+      // This way we can pass in a container for easier testing.
       container = container || this.get('contentBox');
       container.setHTML(content);
       var outerContainer = container.ancestor('.yui3-charmtoken')
         .addClass('yui3-u');
-      this._addDraggability(outerContainer);
+      if (this.get('isDraggable')) {
+        this._addDraggability(outerContainer);
+      }
     }
 
   }, {
@@ -215,6 +211,17 @@ YUI.add('browser-charm-token', function(Y) {
        */
       size: {
         value: 'small'
+      },
+      /**
+       * Should the charm token be draggable?
+       *
+       * @attribute isDraggable
+       * @default true
+       * @type {Boolean}
+       *
+       */
+      isDraggable: {
+        value: true,
       }
     }
   });

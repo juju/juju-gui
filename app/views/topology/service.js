@@ -382,6 +382,7 @@ YUI.add('juju-topology-service', function(Y) {
      * Handle deploying a services by dropping a charm onto the canvas.
      *
      * @method canvasDropHandler
+     * @static
      * @return {undefined} Nothing.
      */
     canvasDropHandler: function() {

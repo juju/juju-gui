@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charm token drag and drop', function() {
-  var Y, charmContainer, container, outerContainer, CharmToken, dropZone;
+  var Y, container, outerContainer, CharmToken, token;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -41,7 +41,10 @@ describe('charm token drag and drop', function() {
   });
 
   afterEach(function() {
-    outerContainer.remove(true);
+    outerContainer.remove().destroy(true);
+    if (token) {
+      token.destroy();
+    }
   });
 
   it('makes each charm token draggable', function() {
@@ -53,7 +56,7 @@ describe('charm token drag and drop', function() {
       recent_download_count: 3,
       tested_providers: ['ec2']
     };
-    var token = new CharmToken(cfg);
+    token = new CharmToken(cfg);
     var draggable = [];
     token._makeDraggable = function(element, dragImage, charmData) {
       draggable.push(Y.JSON.parse(charmData).id);
@@ -69,7 +72,7 @@ describe('charm token drag and drop', function() {
   });
 
   it('can make an element draggable', function() {
-    var token = new CharmToken();
+    token = new CharmToken();
     var setAttributeCalled, onCalled;
     var element = {
       setAttribute: function(name, value) {
@@ -80,6 +83,7 @@ describe('charm token drag and drop', function() {
       on: function(when, callable) {
         assert.equal(when, 'dragstart');
         onCalled = true;
+        return {detach: function() {}};
       }
     };
     var dragImage = {};
@@ -94,7 +98,7 @@ describe('charm token drag and drop', function() {
   });
 
   it('can set up drag and drop configuration', function() {
-    var token = new CharmToken();
+    token = new CharmToken();
     var setDataCalled, setDragImageCalled;
     var dragImage = {_node: {id: 'the real drag image'}};
     var charmData = 'data';
@@ -122,6 +126,22 @@ describe('charm token drag and drop', function() {
         '[["charmData","data"],["dataType","charm-token-drag-and-drop"]]');
     assert.isTrue(setDataCalled);
     assert.isTrue(setDragImageCalled);
+  });
+
+  it('respects the isDraggable switch', function() {
+    token = new CharmToken();
+    token.set('isDraggable', false);
+    var dragEnabled = false;
+    token._addDraggability = function() {
+      dragEnabled = true;
+    }
+    token.renderUI(container);
+    // Since we set isDraggable to false, _addDraggability was not called.
+    assert.isFalse(dragEnabled);
+    // If we set isDraggable to true, _addDraggability will be called.
+    token.set('isDraggable', true);
+    token.renderUI(container);
+    assert.isTrue(dragEnabled);
   });
 
 });

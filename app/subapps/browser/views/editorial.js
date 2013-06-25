@@ -115,7 +115,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
           var containerCfg = {
             additionalChildConfig: {
-              size: this.get('isFullscreen') ? 'large' : 'small'
+              size: this.get('isFullscreen') ? 'large' : 'small',
+              isDraggable: !this.get('isFullscreen'),
             }
           };
 
