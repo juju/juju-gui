@@ -52,8 +52,8 @@ YUI.add('browser-sharing-widget', function(Y) {
     /**
        Handles the links in the sharing widget to ensure they open in a new
        window.
-      
-       @method _openShareLink 
+
+       @method _openShareLink
        @param {Y.EventFacade} e The click event.
      */
     _openShareLink: function(e) {
