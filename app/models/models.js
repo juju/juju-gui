@@ -105,6 +105,7 @@ YUI.add('juju-models', function(Y) {
     ATTRS: {
       name: {},
       provider: {},
+      defaultSeries: {},
       annotations: {
         valueFn: function() {return {};}
       }
@@ -169,6 +170,18 @@ YUI.add('juju-models', function(Y) {
       // to help support scale.
       annotations: {value: {}},
       constraints: {},
+      constraintsStr: {
+        getter: function() {
+          var result = [];
+          Y.each(this.get('constraints'), function(v, k) {
+            result.push(k + '=' + v);
+          });
+          if (result.length) {
+            return result.join(',');
+          }
+          return undefined;
+        }
+      },
       exposed: {
         value: false
       },
@@ -784,12 +797,65 @@ YUI.add('juju-models', function(Y) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
+    },
+
+    /**
+     * Export deployer formatted dump of the current environment.
+     * Note: When we have a selection UI in place this should honor
+     * that.
+     *
+     * @method exportDeployer
+     * @param {Object} db for application.
+     * @return {Object} export object suitable for serialization.
+     */
+    exportDeployer: function() {
+      var self = this,
+          serviceList = this.services,
+          relationList = this.relations,
+          result = {
+            export: {
+              series: this.environment.get('defaultSeries'),
+              services: [],
+              relations: []
+          }
+        };
+
+      serviceList.each(function(s) {
+        var units = s.units;
+        var charm = self.charms.getById(s.get('charm'));
+        if (s.get('pending') === true) {return;}
+        var serviceData = {
+          // Using package name here so the default series
+          // is picked up. This will likely have to be the full
+          // path in the future.
+          charm: charm.get('package_name'),
+          options: s.get('config'),
+          num_units: units && units.size() || 1
+        };
+        // Add constraints
+        var constraints = s.get('constraintsStr');
+        if (constraints) {
+          serviceData.constraints = constraints;
+        }
+        result.export.services.push(serviceData);
+      });
+
+      relationList.each(function(r) {
+        var relationData = [];
+        Y.each(r.get('endpoints'), function(data, name) {
+          relationData.push([data[0], data[1].name]);
+        });
+        // Skip peer, they should add automatically.
+        if (relationData.length === 1) {
+          return;
+        }
+        result.export.relations.push(relationData);
+      });
+
+      return result;
     }
-
   });
-
   models.Database = Database;
-
 }, '0.1.0', {
   requires: [
     'model',

@@ -109,6 +109,7 @@ YUI.add('juju-topology-importexport', function(Y) {
          * @method update
          */
         update: function() {
+          var self = this;
           // Check the feature flag
           if (!this._dragHandle && window.flags.dndexport) {
             var env = this.get('component').get('env');
