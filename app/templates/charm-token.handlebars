@@ -1,3 +1,6 @@
+{{! The charm-token class is used by the deploy method in
+    test/test_charm_running.py.  If you change this name, change the other
+    one too! }}
 <a href="/{{id}}"
     class="charm-token yui3-g {{size}}"
     data-charmid="{{id}}">
@@ -11,7 +14,17 @@
         {{else}}
           {{#if mainCategory}}
             <div title="category {{mainCategory}}"
-                class="category-icon sprite charm-{{mainCategory}}-{{#if_eq size 'small'}}64{{else}}96{{/if_eq}}">
+                class="category-icon sprite
+                  {{#if_eq size 'tiny'}}
+                    charm-{{mainCategory}}-48
+                  {{/if_eq}}
+                  {{#if_eq size 'small'}}
+                    charm-{{mainCategory}}-64
+                  {{/if_eq}}
+                  {{#if_eq size 'large'}}
+                    charm-{{mainCategory}}-96
+                  {{/if_eq}}
+            ">
             </div>
           {{else}}
             <div class="charm-icon">

@@ -1,5 +1,5 @@
 <div class="charm yui3-g">
-    <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
+    <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
         <div class="nav">
             <a href="" class="back">
                 {{#if isFullscreen}}
@@ -9,11 +9,16 @@
                     Close
                 {{/if}}
             </a>
+            {{! The add class is used by the deploy method in
+                test/test_charm_running.py.  If you change this name, change
+                the other one too! }}
             <a href="" class="add">Add</a>
-            <a href="" class="share">
-                <img src="/juju-ui/assets/images/browser_share_button_icon.png"
-                    alt="Share" />Share
-            </a>
+            {{#if shareFlag}}
+              <a href="" class="share">
+                  <img src="/juju-ui/assets/images/browser_share_button_icon.png"
+                      alt="Share" />Share
+              </a>
+            {{/if}}
         </div>
 
         {{#if failingProviders}}
@@ -181,33 +186,52 @@
                     </p>
                     {{#if requires}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1">
+                            <div class="interfaces-heading yui3-u-1-3">
                                 <h3>Requires</h3>
                             </div>
+                            <div class="interfaces-heading yui3-u-1-3">
+                                <h3>Related charms</h3>
+                            </div>
+                            <div class="yui3-u-1-3">
+                            </div>
+
+                            <ul class="interface-list yui3-u-1">
+                                {{#arrayObject requires}}
+                                    <li class="interface-row yui3-g">
+                                        <div class="interface yui3-u-1-2">
+                                            <h4>{{value.interface}}</h4>
+                                            <div>{{key}}</div>
+                                        </div>
+
+                                        <div class="related yui3-u-1-2" data-interface="provides-{{value.interface}}">
+                                        </div>
+                                    </li>
+                                {{/arrayObject}}
+                            </ul>
                         </div>
-                        <ul class="interface-list">
-                            {{#arrayObject requires}}
-                                <li class="interface-row yui3-g">
-                                    <div class="interface yui3-u-1-3">
-                                        <h4>{{value.interface}}</h4>
-                                        <div>{{key}}</div>
-                                    </div>
-                                </li>
-                            {{/arrayObject}}
-                        </ul>
                     {{/if}}
                     {{#if provides}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1">
+                            <div class="interfaces-heading yui3-u-1-3">
                                 <h3>Provides</h3>
+                            </div>
+                            <div class="interfaces-heading yui3-u-1-3">
+                                <h3>Related charms</h3>
+                            </div>
+                            <div class="yui3-u-1-3">
                             </div>
                         </div>
                         <ul class="interface-list">
                             {{#arrayObject provides}}
-                                <li class="interface-row yui3-g">
-                                    <div class="interface yui3-u-1-3">
+                                <li class="interface-row yui3-g-u-1">
+                                    <div class="yui3-g">
+                                    <div class="interface yui3-u-1-2">
                                         <h4>{{value.interface}}</h4>
                                         <div>{{key}}</div>
+                                    </div>
+
+                                    <div class="related yui3-u-1-2" data-interface="requires-{{value.interface}}">
+                                    </div>
                                     </div>
                                 </li>
                             {{/arrayObject}}
@@ -262,7 +286,7 @@
         </div>
     </div>
     {{#if isFullscreen}}
-        <div class="content-sidebar yui3-u-1-6">
+        <div class="content-sidebar yui3-u-1-4">
             <h3>Useful links</h3>
             <ul class="vertical-links">
                 <li><a href="">Juju community</a></li>
@@ -270,6 +294,10 @@
                 <li><a href="">Write your own Charm</a></li>
                 <li><a href="">Contribute to this Charm</a></li>
             </ul>
+
+            <div class="related-charms">
+            </div>
         </div>
+
     {{/if}}
 </div>

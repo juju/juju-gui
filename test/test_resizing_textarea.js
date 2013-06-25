@@ -186,7 +186,7 @@ describe('textarea autosize plugin', function() {
     container.append(target);
     container.append(target2);
 
-    var targets = Y.all('.test_multiple');
+    var targets = container.all('.test_multiple');
 
     targets.plug(Y.juju.plugins.ResizingTextarea, {
       skip_animations: true,
@@ -200,10 +200,10 @@ describe('textarea autosize plugin', function() {
     });
 
     // Now set the content in the first one and check it's unique.
-    update_content(Y.one('.first'), test_text);
+    update_content(container.one('.first'), test_text);
 
-    var first = Y.one('.first');
-    var second = Y.one('.second');
+    var first = container.one('.first');
+    var second = container.one('.second');
 
     var first_height = get_height(first);
     assert.isTrue(first_height > 100,

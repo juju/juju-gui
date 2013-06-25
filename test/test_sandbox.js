@@ -190,6 +190,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
+        // A global variable required for testing.
+        window.flags = {};
         done();
       });
     });
@@ -208,6 +210,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.destroy();
       juju.destroy();
       state.destroy();
+    });
+
+    after(function() {
+      delete window.flags;
     });
 
     /**
@@ -1483,6 +1489,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
+        // A global variable required for testing.
+        window.flags = {};
         done();
       });
     });
@@ -1499,6 +1507,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.destroy();
       juju.destroy();
       state.destroy();
+    });
+
+    after(function() {
+      delete window.flags;
     });
 
     it('opens successfully.', function() {
@@ -1661,6 +1673,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback);
     });
 
+    it('can set a charm.', function(done) {
+      state.deploy('cs:wordpress', function() {});
+      var data = {
+        Type: 'Client',
+        Request: 'ServiceSetCharm',
+        Params: {
+          ServiceName: 'wordpress',
+          CharmUrl: 'cs:precise/mediawiki-6',
+          Force: false
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.isUndefined(receivedData.err);
+        var service = state.db.services.getById('wordpress');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can set a charm (environment integration).', function(done) {
+      env.connect();
+      state.deploy('cs:wordpress', function() {});
+      var callback = function(result) {
+        assert.isUndefined(result.err);
+        var service = state.db.services.getById('wordpress');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+        done();
+      };
+      env.setCharm('wordpress', 'cs:precise/mediawiki-6', false, callback);
+    });
   });
 
 })();

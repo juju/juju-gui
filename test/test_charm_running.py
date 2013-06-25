@@ -110,29 +110,61 @@ class DeployTestMixin(object):
         return self.wait_for(services_found, 'Services not displayed.')
 
     def deploy(self, charm_name):
-        """Deploy a charm."""
-        def charm_panel_loaded(driver):
-            """Wait for the charm panel to be ready and displayed."""
-            charm_search = driver.find_element_by_id('charm-search-trigger')
-            # Click to open the charm panel.
-            # Implicit wait should let this resolve.
-            self.click(charm_search)
-            panel = driver.find_element_by_id('juju-search-charm-panel')
-            if panel.is_displayed():
-                return panel
+        """Deploy a charm.
 
-        charm_panel = self.wait_for(
-            charm_panel_loaded, error='Unable to load charm panel.')
+        This method only starts the deployment process. If waiting for the
+        newly created service to be ready is required, use
+        self.assert_deployed(service_name) right after the deploy() call.
+        """
+        # Warning!
+        # This depends on manage.jujucharms.com being up and working properly.
+        # For many reasons, hopefully this is not an issue :-) but if
+        # some inexplicable failure is going on here, you may want to
+        # investigate in that direction.
+        def get_search_box(driver):
+            # The charm browser sidebar should be open by default.
+            return driver.find_element_by_css_selector('[name=bws-search]')
+
+        def get_charm_token(driver):
+            # See http://www.w3.org/TR/css3-selectors/#attribute-substrings .
+            return driver.find_element_by_css_selector(
+                '.yui3-charmtoken-content '
+                '.charm-token[data-charmid*={}]'.format(charm_name))
+
+        def get_add_button(driver):
+            return driver.find_element_by_css_selector('.bws-view-data .add')
+
+        def get_deploy_button(driver):
+            return driver.find_element_by_id('charm-deploy')
+
+        # Search for the charm
+        search_box = self.wait_for(
+            get_search_box, error='Charm search box is not visible')
+        search_box.send_keys(charm_name)
+        search_box.send_keys('\n')
+
+        # Open details page
+        charm_token = self.wait_for(
+            get_charm_token, error='Charm sidebar is not visible.')
+        charm_token.click()
+
+        # Create Ghost
+        add_button = self.wait_for(
+            get_add_button, error='Charm details page is not visible.')
+        add_button.click()
 
         # Deploy a charm.
-        deploy_button = charm_panel.find_element_by_css_selector(
-            # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
-            'button.deploy[data-url*={}]'.format(charm_name))
-        self.click(deploy_button)
-        # Click to confirm deployment.
-        confirm_button = charm_panel.find_element_by_id('charm-deploy')
-        self.click(confirm_button)
+        deploy_button = self.wait_for(
+            get_deploy_button, error='Charm config panel is not visible.')
+        deploy_button.click()
 
+    def assert_deployed(self, service_name):
+        """Ensure the given service is actually present in the environment."""
+        # Close, if displayed, the cookie policy message box, so that it does
+        # not hide the zoom control widgets.
+        cookie_msg_close_link = self.driver.find_element_by_css_selector(
+            '.cookie-policy a')
+        self.click(cookie_msg_close_link)
         # Zoom out so that it is possible to see the deployed service in
         # Saucelabs.  This also seems to fix a Firefox bug preventing the name
         # of the service to be retrieved if the associated element is not
@@ -142,8 +174,46 @@ class DeployTestMixin(object):
             self.click(zoom_out)
 
         def service_deployed(driver):
-            return charm_name in self.get_service_names()
-        self.wait_for(service_deployed, error='Service not deployed.')
+            return service_name in self.get_service_names()
+        self.wait_for(
+            service_deployed,
+            error='Service {} not deployed.'.format(service_name))
+
+
+class TestNotifications(browser.TestCase, DeployTestMixin):
+
+    def setUp(self):
+        super(TestNotifications, self).setUp()
+        self.load()
+        self.handle_browser_warning()
+        self.handle_login()
+
+    def get_notifications(self):
+        """Return the contents of currently displayed notifications."""
+        notifier_box = self.wait_for_css_selector('#notifier-box')
+        notifications = notifier_box.find_elements_by_xpath('./*')
+        return [notification.text for notification in notifications]
+
+    def test_initial(self):
+        # No error notifications are displayed when the page is loaded.
+        notifications = self.get_notifications()
+        self.assertEqual(0, len(notifications))
+
+    def test_error(self):
+        # An error notification is created when attempting to deploy a service
+        # with an already used name.
+        # The service name is arbitrary, and connected to the charm name only
+        # by default/convention. Since charms are deployed using the default
+        # name, it is safe to reuse one of the service names here.
+        service = self.get_service_names().pop()
+        self.deploy(service)
+        notifications = self.get_notifications()
+        self.assertEqual(1, len(notifications))
+        expected = (
+            'Attempting to deploy service {}\n'
+            'A service with that name already exists.'
+        ).format(service)
+        self.assertEqual(expected, notifications[0])
 
 
 class TestStaging(browser.TestCase, DeployTestMixin):
@@ -156,6 +226,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         # The unit tests log us out so we want to make sure we log back in.
         self.handle_login()
         self.deploy('appflower')
+        self.assert_deployed('appflower')
 
     def test_initial_services(self):
         # The staging API backend contains already deployed services.
@@ -255,6 +326,7 @@ class TestSandbox(browser.TestCase, DeployTestMixin):
         self.handle_browser_warning()
         self.handle_login()
         self.deploy('appflower')
+        self.assert_deployed('appflower')
 
 
 if __name__ == '__main__':
