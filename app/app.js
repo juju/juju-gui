@@ -581,11 +581,11 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       if (window.flags && window.flags.serviceInspector) {
-        // If you're using the new service Inspector then use the deploy method
+        // To use the new service Inspector use the deploy method
         // from the Y.juju.GhostDeployer extension
         cfg.deploy = Y.bind(this.deployService, this);
         // Watch specific things, (add units), remove db.update above
-        // Note: This hides under tha flag as tests don't properly clean
+        // Note: This hides under the flag as tests don't properly clean
         // up sometimes and this binding creates spooky interaction
         // at a distance and strange failures.
         this.db.services.after(['add', 'remove', '*:change'],

@@ -35,7 +35,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       utils = views.utils;
 
   /**
-    JujuGUI app extension to add the ghost deployer method
+    JujuGUI app extension to add the ghost deployer method.
 
     @class GhostDeployer
     @extension App
@@ -44,7 +44,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   GhostDeployer.prototype = {
     /**
-      A collection of the open ghost inspectors
+      A collection of the open ghost inspectors.
 
       @property _ghostInspectors
       @private
@@ -59,13 +59,15 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.Model} charm model to add to the charms database.
     */
     deployService: function(charm) {
-      // XXX Is this flag still required???
+      // XXX - Jeff 25/06/2013
+      // Is this flag still required? Don't the modelController promises pull
+      // these in fully populated now?
       charm.loaded = true;
 
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
       var ghostInspector = new Y.juju.GhostInspector(charm, {
-        // this is an extension `this` points to the JujuApp
+        // Because this is an extension `this` points to the JujuApp
         db: this.db,
         env: this.env,
         ghostService: ghostService
@@ -74,7 +76,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
       this._ghostInspectors.push(ghostInspector);
 
       ghostInspector.inspector.after('destroy', function(e) {
-
+        // This loops through the instantiated ghostInspectors to find one
+        // which matches the one which has fired the destroy event notifying
+        // that it's been destroyed so we can remove it from the collection
         this._ghostInspectors.forEach(function(inspector, index) {
           if (e.currentTarget === inspector.inspector) {
             self._ghostInspectors.splice(index, 1);
@@ -105,12 +109,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
         'render': function(model) {
           this.container = Y.Node.create(this.templateWrapper);
 
-          if (typeof this.template === 'string') {
-            this.template = Y.Handlebars.compile(this.template);
-          }
           var options = model.getAttrs();
-          // XXX not sure this should be done like this
-          // but this will allow us to use the old template
+          // XXX - Jeff
+          // not sure this should be done like this
+          // but this will allow us to use the old template.
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
@@ -172,7 +174,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         return;
       }
 
-      // Check if a file has been uploaded and use that config
+      // Check if a file has been uploaded and use that config.
       if (this.configFileContent) {
         config = null;
       } else {
@@ -188,7 +190,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Checks the database for an existing service with the same name
+      Checks the database for an existing service with the same name.
 
       @method checkForExistingService
       @param {String} serviceName of the new service to deploy.
@@ -209,7 +211,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Updates the ghost service name when the user changes it in the inspector
+      Updates the ghost service name when the user changes it in the inspector.
 
       @method updateGhostName
       @param {Y.EventFacade} e event object from valuechange.
@@ -220,8 +222,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Shows the file dialogue, it's intentionally a noop because we don't have
-      a ux story for this any longer.
+      Shows the file dialogue.
+
+      XXX it's a noop because we don't have a ux story for this yet.
 
       @method _showFileDialogue
     */
@@ -234,8 +237,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Handles the file upload, it's intentionally a noop because we don't have
-      a ux story for this any longer.
+      Handles the file upload.
+
+      XXX It's a noop because we don't have a ux story for this yet.
 
       @method _handleFileUpload
     */
