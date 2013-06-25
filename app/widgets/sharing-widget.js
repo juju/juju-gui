@@ -41,7 +41,7 @@ YUI.add('browser-sharing-widget', function(Y) {
     _getSharingData: function() {
       var link = this.get('link');
       return {
-        'link': link,
+        'link': escape(link),
         'twitter_text': escape('Checkout this charm on jujucharms: ' + link),
         'email_subject': escape('Check out this charm on jujucharms'),
         'email_text': escape(

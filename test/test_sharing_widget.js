@@ -61,10 +61,27 @@ describe('sharing widget', function() {
     assert.isFalse(widget.get('visible'));
   });
 
-  it('escapes the charm link it is sharing', function() {
-    var overlay =  new Y.juju.widgets.browser.SharingOverlay({
+  it('escapes links for the template', function() {
+    var widget =  new Y.juju.widgets.browser.SharingWidget({
       button: container,
-      link: 'http://example.com/foo/bar_baz?buzz'
+      link: 'http://example.com/foo/bar'
     });
+    var escaped_link = 'http%3A//example.com/foo/bar';
+    var data = widget._getSharingData();
+    assert.equal(escaped_link, data.link);
+  });
+
+  it('handles clicks on the links', function() {
+    var widget =  new Y.juju.widgets.browser.SharingWidget({
+      button: container,
+      link: 'http://example.com/foo/bar'
+    });
+    var linkOpened = false;
+    widget._openShareLink = function(e) {
+      linkOpened = true;
+    };
+    widget.render(container);
+    container.one('a').simulate('click');
+    assert.isTrue(linkOpened);
   });
 });
