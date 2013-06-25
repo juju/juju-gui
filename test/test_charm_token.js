@@ -83,6 +83,24 @@ describe('charm token', function() {
     charm_container.one('.charm-token').hasClass('large').should.equal(true);
   });
 
+  it('allows setting a tiny size', function() {
+    var charm = new CharmToken({
+      size: 'tiny',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      recent_commit_count: 1,
+      recent_download_count: 3
+    });
+    assert.equal('tiny', charm.get('size'));
+
+    // and the css class should be on the token once rendered.
+    charm.render(charm_container);
+    assert(charm_container.one('.charm-token').hasClass('tiny'));
+
+    var iconNode = charm_container.one('.category-icon');
+    assert.equal(iconNode.hasClass('charm-app-servers-48'), true);
+  });
+
   it('sets an icon per the category if available', function() {
     var cfg = {
       id: 'test',

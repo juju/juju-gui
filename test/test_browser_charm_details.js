@@ -798,6 +798,92 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.get('container').one('.charm-token').simulate('click');
     });
+
+    it('loads related charms when interface tab selected', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+      view.render();
+
+      assert.equal(
+          9,
+          testContainer.all('#bws-interfaces .charm-token').size());
+    });
+
+    it('only loads the interface data once', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+
+      var origLoadRelatedCharms = view._loadRelatedCharms;
+      var state = {
+        loadCount: 0,
+        hitTabRender: false,
+        hitRelatedRender: false
+      };
+      view._loadRelatedCharms = function(callback) {
+        state.loadCount += 1;
+        origLoadRelatedCharms.call(view, callback);
+      };
+      view._renderRelatedInterfaceCharms = function() {
+        state.hitTabRender = true;
+      };
+      view._renderRelatedCharms = function() {
+        state.hitRelatedRender = true;
+      };
+      view.render();
+
+      assert.equal(1, state.loadCount);
+      assert(state.hitTabRender);
+      assert(state.hitRelatedRender);
+    });
+
   });
 
 })();
