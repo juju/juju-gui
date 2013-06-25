@@ -54,6 +54,10 @@ describe('sharing widget', function() {
     var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container
     });
+    // Stub share link behavior so we don't trigger it in this test.
+    widget._openShareLink = function(e) {
+      e.halt();
+    };
     widget.render(container);
     container.simulate('click');
     assert.isTrue(widget.get('visible'));
@@ -78,6 +82,7 @@ describe('sharing widget', function() {
     });
     var linkOpened = false;
     widget._openShareLink = function(e) {
+      e.halt();
       linkOpened = true;
     };
     widget.render(container);
