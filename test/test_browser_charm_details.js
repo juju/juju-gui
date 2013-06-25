@@ -742,7 +742,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-configuration',
         charm: new models.BrowserCharm(data.charm),
         container: utils.makeContainer()
       });
@@ -751,7 +751,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // We've selected the activeTab specified.
       var selected = view.get('container').one('.yui3-tab-selected a');
-      assert.equal(selected.getAttribute('href'), '#bws-interfaces');
+      assert.equal(selected.getAttribute('href'), '#bws-configuration');
     });
 
     it('renders out the related charms correctly', function(done) {

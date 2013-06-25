@@ -665,6 +665,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this._noReadme(tplNode.one('#bws-readme'));
       }
 
+      debugger;
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
           this.showIndicator(Y.one('.related-charms'));
