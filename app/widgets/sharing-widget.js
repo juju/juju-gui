@@ -34,6 +34,22 @@ YUI.add('browser-sharing-widget', function(Y) {
     TEMPLATE: Y.namespace('juju.views').Templates['sharing-widget'],
 
     /**
+       Gets the sharing data for the template.
+
+       @method _getSharingData
+     */
+    _getSharingData: function() {
+      var link = this.get('link');
+      return {
+        'link': link,
+        'twitter_text': escape('Checkout this charm on jujucharms: ' + link),
+        'email_subject': escape('Check out this charm on jujucharms'),
+        'email_text': escape(
+          'Check out this great charm on jujucharms: ' + link)
+      };
+    },
+
+    /**
        Toggles the sharing widget's visibility.
 
        @method _toggleVisible
@@ -63,7 +79,7 @@ YUI.add('browser-sharing-widget', function(Y) {
        @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE({share_text: this.get('share_text')});
+      var content = this.TEMPLATE(this._getSharingData());
       var container = this.get('contentBox');
       container.setHTML(content);
       this.hide();
@@ -81,23 +97,12 @@ YUI.add('browser-sharing-widget', function(Y) {
 
       /**
          The link to be shared.
-         
-         @attribute link 
-         @default ""
+
+         @attribute link
+         @default {Undefined}
          @type {String}
        */
-      share_text: {
-        /**
-         * setter for the link attr; urlencodes the given link
-         *
-         * @method link.setter
-         * @param {String} val The link.
-         */
-        setter: function(val) {
-          var text = "Check out this charm on JujuGUI: "
-          return text + escape(val);
-        }
-      }
+      link: {}
     }
   });
 
