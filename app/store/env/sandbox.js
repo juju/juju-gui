@@ -764,7 +764,6 @@ YUI.add('juju-env-sandbox', function(Y) {
         var client = this.get('client');
         this['handle' + data.Type + data.Request](data,
             client, this.get('state'));
-        //client.receiveNow(data);
       } else {
         throw CLOSEDERROR;
       }

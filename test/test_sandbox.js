@@ -979,7 +979,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 var data = Y.JSON.parse(rec.data);
                 assert.equal(data.result, false);
                 assert.equal(data.err,
-                   '`foobar` is an invalid service name.');
+                   '"foobar" is an invalid service name.');
                 done();
               };
               client.send(Y.JSON.stringify(command));
@@ -1063,7 +1063,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
               assert.equal(data.result, false);
-              assert.equal(data.err, '`foobar` is an invalid service name.');
+              assert.equal(data.err, '"foobar" is an invalid service name.');
               done();
             };
             client.send(Y.JSON.stringify(command));
@@ -1432,7 +1432,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       });
     }
-
 
     it('should support export', function(done) {
       client.open();
@@ -1926,7 +1925,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
               assert.equal(data.Error,
-                 '`foobar` is an invalid service name.');
+                 '"foobar" is an invalid service name.');
               done();
             };
             client.open();
@@ -2008,7 +2007,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
-              assert.equal(data.Error, '`foobar` is an invalid service name.');
+              assert.equal(data.Error, '"foobar" is an invalid service name.');
               done();
             };
             client.send(Y.JSON.stringify(command));
