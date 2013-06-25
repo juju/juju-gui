@@ -560,13 +560,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
       Y.Object.each(relatedCharms, function(list, iface) {
         // we only care about the top three charms in the list.
         var charms = list.slice(0, 3);
-        list.forEach(function(charm) {
+        charms.forEach(function(charm) {
           var uiID = [
             type,
             iface
           ].join('-');
 
           charm.size = 'tiny';
+          debugger;
           var ct = new widgets.browser.CharmToken(charm);
           var node = Y.one('[data-interface="' + uiID + '"]');
           ct.render(node);
