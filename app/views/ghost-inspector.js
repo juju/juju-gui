@@ -59,13 +59,29 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.Model} charm model to add to the charms database
     */
     deployService: function(charm) {
-      // XXX Is this still required???
+      // XXX Is this flag still required???
       charm.loaded = true;
-      this._ghostInspectors.push(new Y.juju.GhostInspector(charm, {
+
+      var ghostService = this.db.services.ghostService(charm);
+      var self = this;
+      var ghostInspector = new Y.juju.GhostInspector(charm, {
         // this is an extension `this` points to the JujuApp
         db: this.db,
-        env: this.env
-      }));
+        env: this.env,
+        ghostService: ghostService
+      });
+
+      this._ghostInspectors.push(ghostInspector);
+
+      ghostInspector.inspector.after('destroy', function(e) {
+
+        this._ghostInspectors.forEach(function(inspector, index) {
+          if (e.currentTarget === inspector.inspector) {
+            self._ghostInspectors.splice(index, 1);
+          }
+        });
+      }, this);
+
     }
   };
 
@@ -80,6 +96,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
   function GhostInspector(model, options) {
     options = options || {};
     this.options = options;
+    this.configFileContent = null;
 
     var viewlets = {
       configuration: {
@@ -139,7 +156,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var options = this.options,
           container = options.container,
           serviceName = container.one('input[name=service-name]').get('value'),
-          numUnits = container.one('input[name=number-units]').get('value'),
+          numUnits = parseInt(
+              container.one('input[name=number-units]').get('value'), 10),
           config;
 
       if (this.checkForExistingService(serviceName)) {
@@ -160,10 +178,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
-      this.options.env.deploy(
+      options.env.deploy(
           this.options.model.get('id'),
           serviceName, config, this.configFileContent,
-          numUnits, Y.bind(this._deployCallbackHandler, this));
+          numUnits, Y.bind(
+              this._deployCallbackHandler, this, serviceName, config));
     },
 
     /**
@@ -186,8 +205,15 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
     },
 
-    _deployCallbackHandler: function(e) {
-      var db = this.options.db;
+    closeInspector: function() {
+      this.inspector.destroy();
+    },
+
+    _deployCallbackHandler: function(serviceName, config, e) {
+      var options = this.options,
+          db = options.db,
+          ghostService = options.ghostService;
+
       if (e.err) {
         db.notifications.add(
             new models.Notification({
@@ -195,16 +221,53 @@ YUI.add('juju-ghost-inspector', function(Y) {
               message: 'Could not deploy the requested service.',
               level: 'error'
             }));
-      } else {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Deployed ' + serviceName,
-              message: 'Successfully deployed the requested service.',
-              level: 'info'
-            }));
+        return;
       }
 
-      // update the UI
+      db.notifications.add(
+          new models.Notification({
+            title: 'Deployed ' + serviceName,
+            message: 'Successfully deployed the requested service.',
+            level: 'info'
+          }));
+
+                  // Update the annotations with the box's x/y coordinates if
+                  // they have been set by dragging the ghost.
+      if (ghostService.get('dragged')) {
+        options.env.update_annotations(
+            serviceName, 'service',
+            { 'gui-x': ghostService.get('x'),
+              'gui-y': ghostService.get('y') },
+            function() {
+              // Make sure that annotations are set on the ghost
+              // service before they come back from the delta to
+              // prevent the service from jumping to the middle of
+              // the canvas and back.
+              var annotations = ghostService.get('annotations');
+              if (!annotations) {
+                annotations = {};
+              }
+              Y.mix(annotations, {
+                'gui-x': ghostService.get('x'),
+                'gui-y': ghostService.get('y')
+              });
+              ghostService.set('annotations', annotations);
+              // The x/y attributes need to be removed to prevent
+              // lingering position problems after the service is
+              // positioned by the update code.
+              ghostService.removeAttr('x');
+              ghostService.removeAttr('y');
+            });
+      }
+
+      ghostService.setAttrs({
+        id: serviceName,
+        pending: false,
+        loading: false,
+        config: config
+      });
+
+      this.closeInspector();
     }
 
   };
