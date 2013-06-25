@@ -1288,6 +1288,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('Sandbox Annotations', function() {
+
       it('should handle service annotation updates', function(done) {
         generateServices(function(data) {
           // Post deploy of wordpress we should be able to
@@ -1376,6 +1377,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           client.send(Y.JSON.stringify(op));
         });
       });
+
     });
 
     it('should allow unit resolved to be called', function(done) {
@@ -1810,6 +1812,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy(
           'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
     }
+
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
@@ -2023,6 +2026,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
       state.deploy('cs:wordpress', function() {
         state.deploy('cs:mysql', function() {
+          client.onmessage = function(received) {
+            var receivedData = Y.JSON.parse(received.data);
+            assert.equal(receivedData.RequestId, data.RequestId);
+            assert.equal(receivedData.Error, undefined);
+            var receivedEndpoints = receivedData.Response.Endpoints;
+            assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
+            assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
+            done();
+          };
+          client.open();
           var data = {
             RequestId: 42,
             Type: 'Client',
@@ -2031,16 +2044,69 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               Endpoints: ['wordpress', 'mysql']
             }
           };
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can add a relation (integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function () {
+        env.deploy('cs:mysql', null, null, null, 1, function () {
+          var endpointA = ['wordpress', {name: 'db', role:'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function(receivedData) {
+            assert.equal(receivedData.err, undefined);
+            assert.equal(receivedData.endpoint_a, 'wordpress:db');
+            assert.equal(receivedData.endpoint_b, 'mysql:db');
+            assert.isObject(receivedData.result);
+            done();
+          });
+        });
+      });
+    });
+
+    it('is able to add a relation with a subordinate service', function(done) {
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:puppet', function(service) {
           client.onmessage = function(received) {
             var receivedData = Y.JSON.parse(received.data);
             assert.equal(receivedData.RequestId, data.RequestId);
             assert.equal(receivedData.Error, undefined);
-            var receivedEndpoints = receivedData.Response.Params.Endpoints;
+            var receivedEndpoints = receivedData.Response.Endpoints;
             assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
             assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
+
+            var data = Y.JSON.parse(rec.data),
+                mock = {
+                  endpoint_a: 'wordpress:juju-info',
+                  endpoint_b: 'puppet:juju-info',
+                  op: 'add_relation',
+                  result: {
+                    id: 'relation-0',
+                    'interface': 'juju-info',
+                    scope: 'container',
+                    endpoints: [
+                      {puppet: {name: 'juju-info'}},
+                      {wordpress: {name: 'juju-info'}}
+                    ]
+                  }
+                };
+
+            assert.equal(data.err, undefined);
+            assert.equal(typeof data.result, 'object');
+            assert.deepEqual(data, mock);
             done();
           };
           client.open();
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress', 'puppet']
+            }
+          };
           client.send(Y.JSON.stringify(data));
         });
       });
@@ -2068,6 +2134,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           };
           client.open();
           client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can remove a relation(integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function () {
+        env.deploy('cs:mysql', null, null, null, 1, function () {
+          var endpointA = ['wordpress', {name: 'db', role:'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function() {
+            env.remove_relation(endpointA, endpointB, function(receivedData) {
+              assert.equal(receivedData.err, undefined);
+              assert.equal(receivedData.endpoint_a, 'wordpress:db');
+              assert.equal(receivedData.endpoint_b, 'mysql:db');
+              done();
+            });
+          });
         });
       });
     });

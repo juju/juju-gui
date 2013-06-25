@@ -976,39 +976,39 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientAddRelation: function(data, client, state) {
-      var stateResp = state.addRelation(
+      var stateData = state.addRelation(
         data.Params.Endpoints[0], data.Params.Endpoints[1]);
       var resp = {RequestId: data.RequestId};
-      if (stateResp === false) {
+      if (stateData === false) {
         // Everything checks out but could not create a new relation model.
         resp.Error = 'Unable to create relation';
         client.receive(resp);
         return;
       }
-      if (stateResp.error) {
-        resp.Error = stateResp.error;
+      if (stateData.error) {
+        resp.Error = stateData.error;
         client.receive(resp);
         return;
       }
-      var endpoints = {},
+      var respEndpoints = {},
+          stateEpA = stateData.endpoints[0],
+          stateEpB = stateData.endpoints[1],
           epA = {
-            Name: stateResp.endpoints[0][1].name,
-            Scope: stateResp.scope,
-            Interface: '',
-            Role: ''
+            Name: stateEpA[1].name,
+            Role: stateEpA[1].role,
+            Scope: stateData.scope,
+            Interface: stateData.interface
           },
           epB = {
-            Name: stateResp.endpoints[1][1].name,
-            Scope: stateResp.scope,
-            Interface: '',
-            Role: ''
+            Name: stateEpB[1].name,
+            Role: stateEpB[1].role,
+            Scope: stateData.scope,
+            Interface: stateData.interface
           };
-      endpoints[stateResp.endpoints[0][0]] = epA;
-      endpoints[stateResp.endpoints[1][0]] = epB;
+      respEndpoints[stateEpA[0]] = epA;
+      respEndpoints[stateEpB[0]] = epB;
       resp.Response = {
-        Params: {
-          Endpoints: endpoints
-        }
+        Endpoints: respEndpoints
       };
       client.receive(resp);
     },
@@ -1023,11 +1023,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientDestroyRelation: function(data, client, state) {
-      var stateResp = state.removeRelation(
+      var stateData = state.removeRelation(
         data.Params.Endpoints[0], data.Params.Endpoints[1]);
       var resp = {RequestId: data.RequestId};
-      if (stateResp.error) {
-        resp.Error = stateResp.error;
+      if (stateData.error) {
+        resp.Error = stateData.error;
       }
       client.receive(resp);
     }
