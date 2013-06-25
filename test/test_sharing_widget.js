@@ -66,7 +66,7 @@ describe('sharing widget', function() {
   });
 
   it('escapes links for the template', function() {
-    var widget =  new Y.juju.widgets.browser.SharingWidget({
+    var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container,
       link: 'http://example.com/foo/bar'
     });
@@ -76,7 +76,7 @@ describe('sharing widget', function() {
   });
 
   it('handles clicks on the links', function() {
-    var widget =  new Y.juju.widgets.browser.SharingWidget({
+    var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container,
       link: 'http://example.com/foo/bar'
     });
