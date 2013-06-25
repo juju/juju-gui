@@ -1,13 +1,22 @@
-<div>
-  <h2 data-bind="displayName"></h2>
-
-  <input type="text" data-bind="charm"/>
-  <h4>Unit Count:</h4>
-  <div data-bind="unit_count"></div>
-  <div>
-    Running: <span data-bind="aggregated_status.running"></span>
+<div class="content">
+  <div class="service-charm">
+  <div class="charm-icon">
   </div>
-  <div>
-    Error: <span data-bind="aggregated_status.error"></span>
+  <span data-bind="displayName" class="service-name"></span><br />
+  <span data-bind="charm"></span>
   </div>
+  <div class="notifications"></div>
+  <div class="status running">
+    &nbsp;<span data-bind="aggregated_status.running"></span>&nbsp;
+  </div><div class="status pending">
+    &nbsp;<span data-bind="aggregated_status.pending"></span>&nbsp;
+  </div><div class="status error">
+    &nbsp;<span data-bind="aggregated_status.error"></span>&nbsp;
+  </div>
+</div>
+<h3>Scale units</h3>
+<div class="content">
+</div>
+<h3>Units</h3>
+<div class="content">
 </div>

@@ -220,6 +220,32 @@ YUI.add('juju-models', function(Y) {
       });
     },
 
+    /**
+     Add a ghost (pending) service to the
+     database. The canvas should pick this up
+     independently.
+
+     @method ghostService
+     @param {Model} charm to add.
+     @return {Model} Ghosted Service model.
+   */
+    ghostService: function(charm) {
+      var config = charm && charm.get('config');
+      var serviceCount = this.filter(function(service) {
+        return service.get('charm') === charm.get('id');
+      }).length + 1;
+      var ghostService = this.create({
+        id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+        annotations: {},
+        pending: true,
+        charm: charm.get('id'),
+        unit_count: 0,  // No units yet.
+        loaded: false,
+        config: config
+      });
+      return ghostService;
+    },
+
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
     }
@@ -680,6 +706,21 @@ YUI.add('juju-models', function(Y) {
         'relation': Relation,
         'charm': models.Charm
       };
+    },
+
+    /**
+     * Nicely clean up.
+     *
+     * @method destructor
+     */
+    destructor: function() {
+      [this.services, this.relations,
+        this.machines, this.units,
+        this.charms, this.environment,
+        this.notifications].forEach(function(ml) {
+        ml.detachAll();
+        ml.destroy();
+      });
     },
 
     /*
