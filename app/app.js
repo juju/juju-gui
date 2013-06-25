@@ -581,7 +581,7 @@ YUI.add('juju-gui', function(Y) {
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
       if (window.flags && window.flags.serviceInspector) {
-        cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
+        //cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
         // Watch specific things, (add units), remove db.update above
         // Note: This hides under tha flag as tests don't properly clean
         // up sometimes and this binding creates spooky interaction
