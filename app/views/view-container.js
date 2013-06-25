@@ -65,16 +65,6 @@ YUI.add('juju-view-container', function(Y) {
     template: '{{viewlet}}', // compiled handlebars template
 
     /**
-      Collection of key object pairs to set up events on the viewlet similar to
-      how a Y.View works.
-
-      @property events
-      @type {Object}
-      @default {}
-    */
-    //events: {},
-
-    /**
       The rendered viewlet element
 
       @property container
@@ -205,7 +195,7 @@ YUI.add('juju-view-container', function(Y) {
       // Passed in on instantiation
       this.viewletConfig = options.viewlets;
       this.template = options.template;
-      this.templateConfig = options.templateConfig || {} ;
+      this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets();
       this.events = options.events;

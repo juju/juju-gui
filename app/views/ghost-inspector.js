@@ -56,7 +56,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       Show the deploy/configuration panel for a charm.
 
       @method deployService
-      @param {Y.Model} charm model to add to the charms database
+      @param {Y.Model} charm model to add to the charms database.
     */
     deployService: function(charm) {
       // XXX Is this flag still required???
@@ -102,7 +102,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       configuration: {
         name: 'configuration',
         template: Templates['ghost-config-viewlet'],
-        render: function(model) {
+        'render': function(model) {
           this.container = Y.Node.create(this.templateWrapper);
 
           if (typeof this.template === 'string') {
@@ -114,19 +114,23 @@ YUI.add('juju-ghost-inspector', function(Y) {
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
-        },
+        }
       }
     };
 
     options.viewlets = viewlets;
     options.template = Templates['ghost-config-wrapper'];
-    options.model    = model;
-    options.events   = {
+    options.model = model;
+    options.events = {
       '.close' : { 'click': 'destroy' },
       '.cancel': { 'click': 'destroy' },
       '.deploy': { 'click': Y.bind(this.deployCharm, this) },
-      'input.config-file-upload': { 'change': 'handleFileUpload' },
-      'span.config-file-upload': { 'click': 'showFileDialogue' }
+      'input.config-file-upload': {
+        'change': Y.bind(this._handleFileUpload, this) },
+      'span.config-file-upload': {
+        'click': Y.bind(this._showFileDialogue, this) },
+      'input[name=service-name]': {
+        'valuechange': Y.bind(this.updateGhostName, this) }
     };
     options.templateConfig = {
       packageName: model.get('package_name'),
@@ -142,13 +146,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
     this.inspector = new views.ViewContainer(options);
     this.inspector.render();
     this.inspector.showViewlet('configuration');
-
-    // Create ghost
   }
 
   GhostInspector.prototype = {
     /**
-      Deploys the charm
+      Handles deployment of the charm.
 
       @method handleDeploy
     */
@@ -194,21 +196,59 @@ YUI.add('juju-ghost-inspector', function(Y) {
     */
     checkForExistingService: function(serviceName) {
       var existingService = this.options.db.services.getById(serviceName);
-      // Will need to check if it mathes the Ghost once Ben's code has been
-      // merged in
       return (existingService) ? true : false;
     },
 
-    showFileDialogue: function() {
-      if (this.configFileContent) {
-        // remove the old file that was selected
-      }
-    },
+    /**
+      Destroys the inspector.
 
+      @method closeInspector
+    */
     closeInspector: function() {
       this.inspector.destroy();
     },
 
+    /**
+      Updates the ghost service name when the user changes it in the inspector
+
+      @method updateGhostName
+      @param {Y.EventFacade} e event object from valuechange.
+    */
+    updateGhostName: function(e) {
+      this.options.ghostService.set(
+          'id', '(' + e.currentTarget.get('value') + ')');
+    },
+
+    /**
+      Shows the file dialogue, it's intentionally a noop because we don't have
+      a ux story for this any longer.
+
+      @method _showFileDialogue
+    */
+    _showFileDialogue: function() {
+      if (this.configFileContent) {
+        var a = null; // tricking the linter
+        // intentionally left blank as we don't have a UX for this
+        // functionality yet
+      }
+    },
+
+    /**
+      Handles the file upload, it's intentionally a noop because we don't have
+      a ux story for this any longer.
+
+      @method _handleFileUpload
+    */
+    _handleFileUpload: function() {},
+
+    /**
+      The callback handler from the env.deploy() of the charm.
+
+      @method _deployCallbackHandler
+      @param {String} serviceName The service name.
+      @param {Object} config The configuration oject of the service.
+      @param {Y.EventFacade} e The event facade from the deploy event.
+    */
     _deployCallbackHandler: function(serviceName, config, e) {
       var options = this.options,
           db = options.db,
@@ -231,8 +271,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
             level: 'info'
           }));
 
-                  // Update the annotations with the box's x/y coordinates if
-                  // they have been set by dragging the ghost.
+      // Update the annotations with the box's x/y coordinates if
+      // they have been set by dragging the ghost.
       if (ghostService.get('dragged')) {
         options.env.update_annotations(
             serviceName, 'service',
