@@ -2,5 +2,49 @@
     position: absolute;
     width: 292px;
     min-height: 250px;
-    background-color: #eee;
+    background-color: #333;
+    color: #fff;
+
+    h1, h2, h3, h4, h5, h6 {
+        background-color: #282828;
+        padding-left: 1em;
+    }
+
+    .content {
+        margin: 1em;
+    }
+
+    .service-charm {
+        overflow: auto;
+        width: 100%;
+        margin: 0 0 1em 0;
+
+        .charm-icon {
+            width: 64px;
+            height: 64px;
+            float: left;
+            margin-right: 1em;
+            background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
+        }
+
+        .service-name {
+            font-size: 16pt;
+        }
+    }
+    
+
+    .status {
+        display: inline-block;
+        width: 33%;
+        text-align: center;
+        &.running {
+            background-color: #00b711;
+        }
+        &.pending {
+            background-color: #ede837;
+        }
+        &.error {
+            background-color: #ba0000;
+        }
+    }
 }
