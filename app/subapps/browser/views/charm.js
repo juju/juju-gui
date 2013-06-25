@@ -666,13 +666,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (isFullscreen) {
-        console.log('is fullscreen');
         if (!this.get('charm').get('relatedCharms')) {
-          console.log('no related data');
           this.showIndicator(Y.one('.related-charms'));
           this._loadRelatedCharms(this._renderRelatedCharms);
         } else {
-          console.log('has related data');
           // We have related charm info, get to rendering them.
           this._renderRelatedCharms();
         }
