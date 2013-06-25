@@ -584,7 +584,6 @@ YUI.add('juju-gui', function(Y) {
         // If you're using the new service Inspector then use the deploy method
         // from the Y.juju.GhostDeployer extension
         cfg.deploy = Y.bind(this.deployService, this);
-//cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
         // Watch specific things, (add units), remove db.update above
         // Note: This hides under tha flag as tests don't properly clean
         // up sometimes and this binding creates spooky interaction

@@ -761,8 +761,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     receive: function(data) {
       console.log('client message', data);
       if (this.connected) {
+        var client = this.get('client');
         this['handle' + data.Type + data.Request](data,
-            this.get('client'), this.get('state'));
+            client, this.get('state'));
       } else {
         throw CLOSEDERROR;
       }
@@ -907,6 +908,62 @@ YUI.add('juju-env-sandbox', function(Y) {
         RequestId: data.RequestId,
         Error: reply.error,
         Response: {Service: data.Params.ServiceName}});
+    },
+
+    /**
+    Handle AddServiceUnits messages
+
+    @method handleClientAddServiceUnits
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddServiceUnits: function(data, client, state) {
+      var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits);
+      var units = [];
+      if (!reply.error) {
+        units = reply.units.map(function(u) {return u.id;});
+      }
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {Units: units}
+      });
+    },
+
+    /**
+    Handle ServiceExpose messages
+
+    @method handleClientServiceExpose
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceExpose: function(data, client, state) {
+      var reply = state.expose(data.Params.ServiceName);
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {}});
+    },
+
+    /**
+    Handle ServiceUnexpose messages
+
+    @method handleClientServiceUnexpose
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceUnexpose: function(data, client, state) {
+      var reply = state.unexpose(data.Params.ServiceName);
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {}});
     }
 
   });
