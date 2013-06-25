@@ -846,7 +846,6 @@ YUI.add('juju-models', function(Y) {
      * that.
      *
      * @method exportDeployer
-     * @param {Object} db for application.
      * @return {Object} export object suitable for serialization.
      */
     exportDeployer: function() {
@@ -861,29 +860,30 @@ YUI.add('juju-models', function(Y) {
             }
           };
 
-      serviceList.each(function(s) {
-        var units = s.units;
-        var charm = self.charms.getById(s.get('charm'));
-        if (s.get('pending') === true) {return;}
+      serviceList.each(function(service) {
+        var units = service.units;
+        var charm = self.charms.getById(service.get('charm'));
+        if (service.get('pending') === true) {return;}
         var serviceData = {
           // Using package name here so the default series
           // is picked up. This will likely have to be the full
           // path in the future.
           charm: charm.get('package_name'),
-          options: s.get('config'),
+          options: service.get('config'),
+          // Test models or ghosts might not have a units LazyModelList.
           num_units: units && units.size() || 1
         };
         // Add constraints
-        var constraints = s.get('constraintsStr');
+        var constraints = service.get('constraintsStr');
         if (constraints) {
           serviceData.constraints = constraints;
         }
         result.envExport.services.push(serviceData);
       });
 
-      relationList.each(function(r) {
+      relationList.each(function(relation) {
         var relationData = [];
-        Y.each(r.get('endpoints'), function(data, name) {
+        Y.each(relation.get('endpoints'), function(data, name) {
           relationData.push([data[0], data[1].name]);
         });
         // Skip peer, they should add automatically.
