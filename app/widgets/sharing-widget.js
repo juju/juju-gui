@@ -50,6 +50,19 @@ YUI.add('browser-sharing-widget', function(Y) {
     },
 
     /**
+       Handles the links in the sharing widget to ensure they open in a new
+       window.
+      
+       @method _openShareLink 
+       @param {Y.EventFacade} e The click event.
+     */
+    _openShareLink: function(e) {
+      e.halt();
+      var shareLink = e.currentTarget.get('href');
+      window.open(shareLink, 'share_window');
+    },
+
+    /**
        Toggles the sharing widget's visibility.
 
        @method _toggleVisible
@@ -71,6 +84,9 @@ YUI.add('browser-sharing-widget', function(Y) {
     bindUI: function() {
       this.addEvent(
           this.get('button').on('click', this._toggleVisible, this));
+      this.addEvent(
+          this.get('contentBox').delegate(
+              'click', this._openShareLink, 'li a', this));
     },
 
     /**
