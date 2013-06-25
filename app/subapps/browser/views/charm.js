@@ -532,6 +532,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.relatedCharmContainer) {
         this.relatedCharmContainer.destroy();
       }
+
+      if (this.charmTokens) {
+        this.charmTokens.forEach(function(token) {
+          token.destroy();
+        });
+      }
     },
 
     /**
@@ -557,6 +563,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _renderRelatedInterfaceCharms: function(type, relatedCharms) {
+      this.charmTokens = [];
       Y.Object.each(relatedCharms, function(list, iface) {
         // we only care about the top three charms in the list.
         var charms = list.slice(0, 3);
@@ -570,8 +577,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
           var ct = new widgets.browser.CharmToken(charm);
           var node = Y.one('[data-interface="' + uiID + '"]');
           ct.render(node);
-        });
-      });
+          this.charmTokens.push(ct);
+        }, this);
+      }, this);
     },
 
     /**

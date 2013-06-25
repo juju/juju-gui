@@ -784,7 +784,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // We've selected the activeTab specified.
       var tokens = view.get('container').all('.charm-token');
-      assert.equal(5, tokens.size());
+      assert.equal(tokens.size(), 5);
 
       // And clicking on one of those charms navigates correctly.
       view.on('viewNavigate', function(ev) {
@@ -829,8 +829,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          9,
-          testContainer.all('#bws-interfaces .charm-token').size());
+          testContainer.all('#bws-interfaces .charm-token').size(),
+          9);
     });
 
     it('only loads the interface data once', function() {
@@ -879,7 +879,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       view.render();
 
-      assert.equal(1, state.loadCount);
+      assert.equal(state.loadCount, 1);
       assert(state.hitTabRender);
       assert(state.hitRelatedRender);
     });
