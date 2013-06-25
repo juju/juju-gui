@@ -870,6 +870,7 @@ YUI.add('juju-models', function(Y) {
           // is picked up. This will likely have to be the full
           // path in the future.
           charm: charm.get('package_name'),
+          //charm: s.get('charm'),
           options: s.get('config'),
           num_units: units && units.size() || 1
         };
