@@ -134,7 +134,7 @@ describe('charm token drag and drop', function() {
     var dragEnabled = false;
     token._addDraggability = function() {
       dragEnabled = true;
-    }
+    };
     token.renderUI(container);
     // Since we set isDraggable to false, _addDraggability was not called.
     assert.isFalse(dragEnabled);

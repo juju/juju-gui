@@ -111,7 +111,7 @@ YUI.add('browser-charm-token', function(Y) {
     _addDraggability: function(container) {
       var charmData = Y.JSON.stringify(this.charmAttributes);
       this._makeDraggable(container, container, charmData);
-      this._makeDraggable(container.one('a'), container, charmData)
+      this._makeDraggable(container.one('a'), container, charmData);
     },
 
     /**
@@ -221,7 +221,7 @@ YUI.add('browser-charm-token', function(Y) {
        *
        */
       isDraggable: {
-        value: true,
+        value: true
       }
     }
   });
