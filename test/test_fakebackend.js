@@ -108,12 +108,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // clientId varies.
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
+      console.log("DEPLOY", attrs);
       assert.deepEqual(attrs, {
         annotations: {},
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
         constraints: {},
+        constraintsStr: undefined,
         destroyed: false,
         displayName: 'wordpress',
         exposed: false,
