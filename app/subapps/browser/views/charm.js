@@ -567,7 +567,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
           ].join('-');
 
           charm.size = 'tiny';
-          debugger;
           var ct = new widgets.browser.CharmToken(charm);
           var node = Y.one('[data-interface="' + uiID + '"]');
           ct.render(node);
@@ -667,11 +666,16 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (isFullscreen) {
+        console.log('is fullscreen');
         if (!this.get('charm').get('relatedCharms')) {
+          console.log('no related data');
           this.showIndicator(Y.one('.related-charms'));
           this._loadRelatedCharms(this._renderRelatedCharms);
+        } else {
+          console.log('has related data');
+          // We have related charm info, get to rendering them.
+          this._renderRelatedCharms();
         }
-
       }
 
       if (this.get('activeTab')) {
