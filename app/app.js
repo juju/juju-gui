@@ -235,7 +235,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          var yaml
+          var yaml;
           var result = this.db.exportDeployer();
           var exportData = jsyaml.dump(result);
           var exportBlob = new Blob([exportData],

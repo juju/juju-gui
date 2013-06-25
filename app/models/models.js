@@ -171,7 +171,7 @@ YUI.add('juju-models', function(Y) {
       annotations: {value: {}},
       constraints: {},
       constraintsStr: {
-        getter: function() {
+        'getter': function() {
           var result = [];
           Y.each(this.get('constraints'), function(v, k) {
             result.push(k + '=' + v);
@@ -854,12 +854,12 @@ YUI.add('juju-models', function(Y) {
           serviceList = this.services,
           relationList = this.relations,
           result = {
-            export: {
+            envExport: {
               series: this.environment.get('defaultSeries'),
               services: [],
               relations: []
-          }
-        };
+            }
+          };
 
       serviceList.each(function(s) {
         var units = s.units;
@@ -870,7 +870,6 @@ YUI.add('juju-models', function(Y) {
           // is picked up. This will likely have to be the full
           // path in the future.
           charm: charm.get('package_name'),
-          //charm: s.get('charm'),
           options: s.get('config'),
           num_units: units && units.size() || 1
         };
@@ -879,7 +878,7 @@ YUI.add('juju-models', function(Y) {
         if (constraints) {
           serviceData.constraints = constraints;
         }
-        result.export.services.push(serviceData);
+        result.envExport.services.push(serviceData);
       });
 
       relationList.each(function(r) {
@@ -891,7 +890,7 @@ YUI.add('juju-models', function(Y) {
         if (relationData.length === 1) {
           return;
         }
-        result.export.relations.push(relationData);
+        result.envExport.relations.push(relationData);
       });
 
       return result;
