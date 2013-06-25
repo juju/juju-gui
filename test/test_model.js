@@ -773,6 +773,44 @@ describe('BrowserCharm test', function() {
   });
 });
 
+describe('database export', function() {
+  var models;
+  before(function(done) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  it('can export in deployer format', function() {
+    var db = new models.Database();
+    var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
+    var wordpress = db.services.add({
+      id: 'wordpress',
+      charm: 'precise/wordpress-1'});
+    var rel0 = db.relations.add({
+      id: 'relation-0',
+      endpoints: [
+        ['mysql', {name: 'db', role: 'server'}],
+        ['wordpress', {name: 'app', role: 'client'}]],
+      'interface': 'db'
+    });
+
+    db.environment.set('defaultSeries', 'precise');
+
+    // Add the charms so we can resolve them in the export.
+    db.charms.add([{id: 'precise/mysql-1'}, {id: 'precise/wordpress-1'}]);
+    var result = db.exportDeployer().envExport;
+    var relation = result.relations[0];
+
+    assert.equal(result.series, 'precise');
+    assert.equal(result.services[0].charm, 'mysql');
+    assert.equal(result.services[1].charm, 'wordpress');
+
+    assert.deepEqual(relation[0], ['mysql', 'db']);
+    assert.deepEqual(relation[1], ['wordpress', 'app']);
+  });
+});
 
 describe('service models', function() {
   var models, list, django, rails, wordpress, mysql;
