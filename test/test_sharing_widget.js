@@ -71,7 +71,8 @@ describe('sharing widget', function() {
       link: 'http://example.com/foo/bar'
     });
     var escaped_link = 'http%3A//example.com/foo/bar';
-    var escaped_text = 'Check%20out%20this%20great%20charm%20on%20jujucharms%3A%20' + escaped_link;
+    var escaped_text = 'Check%20out%20this%20great%20charm%20on%20jujucharms' +
+        '%3A%20' + escaped_link;
     var data = widget._getSharingData();
     assert.equal(data.link, escaped_link);
     assert.equal(data.twitter_text, escaped_text);
