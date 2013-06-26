@@ -73,6 +73,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         ghostService: ghostService,
         // controller will show the first one in this array by default
         viewletList: ['ghostConfig'],
+        // the view container template
         template: Y.juju.views.Templates['ghost-config-wrapper'],
         // these events are for the viewlet container
         events: {
@@ -88,6 +89,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           'span.config-file-upload': { 'click': '_showFileDialogue' },
           'input[name=service-name]': { 'valuechange': 'updateGhostName' }
         },
+        // the configuration for the view container template
         templateConfig: {
           packageName: charm.get('package_name'),
           id: charm.get('id')
@@ -112,6 +114,15 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
+  /*@
+    A collection of methods and properties which will be mixed into the
+    prototype of the view container controller to add the functionality for
+    the ghost inspector interactions
+
+    @property ghostInspector
+    @submodule juju.controller
+    @type {Object}
+  */
   Y.namespace('juju.controller').ghostInspector = {
     /**
       Handles deployment of the charm.
