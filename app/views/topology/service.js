@@ -386,11 +386,11 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     canvasDropHandler: function() {
-      // XXX Why do we have to dig so deep just to get to the event?  And why
-      // is it not just passed into the handler?
-      var evt = d3.event._event;
+      var evt = d3.event._event;  // So well hidden.
       var dataType = evt.dataTransfer.getData('dataType');
       if (dataType === 'charm-token-drag-and-drop') {
+        // The charm data was JSON encoded because the dataTransfer mechanism
+        // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm);

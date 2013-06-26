@@ -109,6 +109,8 @@ YUI.add('browser-charm-token', function(Y) {
      * @return {undefined}  Nothing; side-effects only.
     */
     _addDraggability: function(container) {
+      // Since the browser's dataTransfer mechanism only accepts string values
+      // we have to JSON encode the charm data.
       var charmData = Y.JSON.stringify(this.charmAttributes);
       this._makeDraggable(container, container, charmData);
       this._makeDraggable(container.one('a'), container, charmData);
@@ -117,6 +119,8 @@ YUI.add('browser-charm-token', function(Y) {
     /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
+     * @param {Node} container The contaner to render into.  Mainly for
+     *   testing.
      * @method renderUI
      */
     renderUI: function(container) {

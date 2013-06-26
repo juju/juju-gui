@@ -54,7 +54,7 @@ describe('charm token drag and drop', function() {
       description: 'some description',
       recent_commit_count: 1,
       recent_download_count: 3,
-      tested_providers: ['ec2']
+      tested_providers: ['ec2'],
     };
     token = new CharmToken(cfg);
     var draggable = [];
@@ -129,7 +129,7 @@ describe('charm token drag and drop', function() {
   });
 
   it('respects the isDraggable switch', function() {
-    token = new CharmToken();
+    token = new CharmToken({contentBox: container});
     token.set('isDraggable', false);
     var dragEnabled = false;
     token._addDraggability = function() {
