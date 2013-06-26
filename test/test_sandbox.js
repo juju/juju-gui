@@ -1272,6 +1272,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
+          // FIXME: it should be "err", not "error".
+          // generateAndRelateServices is not actually checking the error.
           {error: 'Charm not loaded.',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
@@ -1282,6 +1284,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
+          // FIXME: it should be "err", not "error".
+          // generateAndRelateServices is not actually checking the error.
           {error: 'Relationship does not exist',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
@@ -2026,24 +2030,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
       state.deploy('cs:wordpress', function() {
         state.deploy('cs:mysql', function() {
-          client.onmessage = function(received) {
-            var receivedData = Y.JSON.parse(received.data);
-            assert.equal(receivedData.RequestId, data.RequestId);
-            assert.equal(receivedData.Error, undefined);
-            var receivedEndpoints = receivedData.Response.Endpoints;
-            assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
-            assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
-            done();
-          };
-          client.open();
           var data = {
             RequestId: 42,
             Type: 'Client',
             Request: 'AddRelation',
             Params: {
-              Endpoints: ['wordpress', 'mysql']
+              Endpoints: ['wordpress:db', 'mysql:db']
             }
           };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'db');
+            assert.equal(recEndpoints.wordpress.Scope, 'global');
+            assert.equal(recEndpoints.mysql.Name, 'db');
+            assert.equal(recEndpoints.mysql.Scope, 'global');
+            done();
+          };
+          client.open();
           client.send(Y.JSON.stringify(data));
         });
       });
@@ -2055,11 +2061,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.deploy('cs:mysql', null, null, null, 1, function () {
           var endpointA = ['wordpress', {name: 'db', role:'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
-          env.add_relation(endpointA, endpointB, function(receivedData) {
-            assert.equal(receivedData.err, undefined);
-            assert.equal(receivedData.endpoint_a, 'wordpress:db');
-            assert.equal(receivedData.endpoint_b, 'mysql:db');
-            assert.isObject(receivedData.result);
+          env.add_relation(endpointA, endpointB, function(recData) {
+            assert.equal(recData.err, undefined);
+            assert.equal(recData.endpoint_a, 'wordpress:db');
+            assert.equal(recData.endpoint_b, 'mysql:db');
+            assert.isObject(recData.result);
             done();
           });
         });
@@ -2069,46 +2075,73 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('is able to add a relation with a subordinate service', function(done) {
       state.deploy('cs:wordpress', function() {
         state.deploy('cs:puppet', function(service) {
-          client.onmessage = function(received) {
-            var receivedData = Y.JSON.parse(received.data);
-            assert.equal(receivedData.RequestId, data.RequestId);
-            assert.equal(receivedData.Error, undefined);
-            var receivedEndpoints = receivedData.Response.Endpoints;
-            assert.isObject(receivedEndpoints[data.Params.Endpoints[0]]);
-            assert.isObject(receivedEndpoints[data.Params.Endpoints[1]]);
-
-            var data = Y.JSON.parse(rec.data),
-                mock = {
-                  endpoint_a: 'wordpress:juju-info',
-                  endpoint_b: 'puppet:juju-info',
-                  op: 'add_relation',
-                  result: {
-                    id: 'relation-0',
-                    'interface': 'juju-info',
-                    scope: 'container',
-                    endpoints: [
-                      {puppet: {name: 'juju-info'}},
-                      {wordpress: {name: 'juju-info'}}
-                    ]
-                  }
-                };
-
-            assert.equal(data.err, undefined);
-            assert.equal(typeof data.result, 'object');
-            assert.deepEqual(data, mock);
-            done();
-          };
-          client.open();
           var data = {
             RequestId: 42,
             Type: 'Client',
             Request: 'AddRelation',
             Params: {
-              Endpoints: ['wordpress', 'puppet']
+              Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
             }
           };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'juju-info');
+            assert.equal(recEndpoints.wordpress.Scope, 'container');
+            assert.equal(recEndpoints.puppet.Name, 'juju-info');
+            assert.equal(recEndpoints.puppet.Scope, 'container');
+            done();
+          };
+          client.open();
           client.send(Y.JSON.stringify(data));
         });
+      });
+    });
+
+    it('throws an error if only one endpoint is supplied', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error,
+            'Two string endpoint names required to establish a relation');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('throws an error if endpoints are not relatable', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db', 'mysql:foo']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error, 'Charm not loaded.');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
       });
     });
 
@@ -2127,9 +2160,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           };
           client.onmessage = function(received) {
-            var receivedData = Y.JSON.parse(received.data);
-            assert.equal(receivedData.RequestId, data.RequestId);
-            assert.equal(receivedData.Error, undefined);
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
             done();
           };
           client.open();
@@ -2145,10 +2178,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var endpointA = ['wordpress', {name: 'db', role:'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
           env.add_relation(endpointA, endpointB, function() {
-            env.remove_relation(endpointA, endpointB, function(receivedData) {
-              assert.equal(receivedData.err, undefined);
-              assert.equal(receivedData.endpoint_a, 'wordpress:db');
-              assert.equal(receivedData.endpoint_b, 'mysql:db');
+            env.remove_relation(endpointA, endpointB, function(recData) {
+              assert.equal(recData.err, undefined);
+              assert.equal(recData.endpoint_a, 'wordpress:db');
+              assert.equal(recData.endpoint_b, 'mysql:db');
               done();
             });
           });
