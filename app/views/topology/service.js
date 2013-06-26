@@ -1275,6 +1275,24 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var securityURL, rebootURL;
+      var flags = window.flags;
+
+      if (flags.serviceInspector) {
+        var setInspector = topo.get('setInspector');
+        var getInspector = topo.get('getInspector');
+        // XXX: switch on pending to handle ghost config.
+        var serviceInspector = getInspector(service.get('id'));
+        if (!serviceInspector) {
+          serviceInspector = new views.ServiceInspector(service, {
+            db: topo.get('db')
+          });
+          serviceInspector.inspector.after('destroy', function(e) {
+            setInspector(e.currentTarget, true);
+          });
+          setInspector(serviceInspector);
+        }
+        return;
+      }
 
       // Update landscape links and show/hide as needed.
       if (landscape) {
