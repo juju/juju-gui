@@ -1106,7 +1106,7 @@ YUI.add('juju-view-service', function(Y) {
           node.setStyle('borderColor', 'red');
 
           var message = node.ancestor('.control-group').one('.conflicted'),
-              newVal = model.get('config')[node.getData('bind').split('.')[1]];
+              newVal = model.get(node.getData('bind'));
 
           message.one('.newval').setHTML(newVal);
           message.setStyle('display', 'block');
@@ -1195,6 +1195,9 @@ YUI.add('juju-view-service', function(Y) {
       // that the model will change
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
+      this.inspector.after('destroy', function() {
+        this.bindingEngine.unbind();
+      }, this);
       this.inspector.showViewlet(options.viewletList[0]);
     }
 

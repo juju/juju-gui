@@ -59,6 +59,25 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
       });
 
+      it('supports nested model bindings', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a.b.c.d"></div>');
+
+        var viewlet = {
+          container: container,
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: {b: {c: {d: 'nested'}}
+              }}), viewlet);
+        // The default model object should be in place.
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind="a.b.c.d"]').getHTML(),
+                     'nested');
+      });
+
+
       it('supports formatters', function() {
         container = utils.makeContainer();
         container.append('<div data-bind="a"></div>');
