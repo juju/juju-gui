@@ -2057,9 +2057,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation (integration)', function(done) {
       env.connect();
-      env.deploy('cs:wordpress', null, null, null, 1, function () {
-        env.deploy('cs:mysql', null, null, null, 1, function () {
-          var endpointA = ['wordpress', {name: 'db', role:'client'}],
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
           env.add_relation(endpointA, endpointB, function(recData) {
             assert.equal(recData.err, undefined);
@@ -2115,7 +2115,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var recData = Y.JSON.parse(received.data);
           assert.equal(recData.RequestId, data.RequestId);
           assert.equal(recData.Error,
-            'Two string endpoint names required to establish a relation');
+              'Two string endpoint names required to establish a relation');
           done();
         };
         client.open();
@@ -2173,9 +2173,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation(integration)', function(done) {
       env.connect();
-      env.deploy('cs:wordpress', null, null, null, 1, function () {
-        env.deploy('cs:mysql', null, null, null, 1, function () {
-          var endpointA = ['wordpress', {name: 'db', role:'client'}],
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
           env.add_relation(endpointA, endpointB, function() {
             env.remove_relation(endpointA, endpointB, function(recData) {

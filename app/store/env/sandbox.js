@@ -977,7 +977,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientAddRelation: function(data, client, state) {
       var stateData = state.addRelation(
-        data.Params.Endpoints[0], data.Params.Endpoints[1]);
+          data.Params.Endpoints[0], data.Params.Endpoints[1]);
       var resp = {RequestId: data.RequestId};
       if (stateData === false) {
         // Everything checks out but could not create a new relation model.
@@ -997,13 +997,13 @@ YUI.add('juju-env-sandbox', function(Y) {
             Name: stateEpA[1].name,
             Role: stateEpA[1].role,
             Scope: stateData.scope,
-            Interface: stateData.interface
+            Interface: stateData['interface']
           },
           epB = {
             Name: stateEpB[1].name,
             Role: stateEpB[1].role,
             Scope: stateData.scope,
-            Interface: stateData.interface
+            Interface: stateData['interface']
           };
       respEndpoints[stateEpA[0]] = epA;
       respEndpoints[stateEpB[0]] = epB;
@@ -1024,7 +1024,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientDestroyRelation: function(data, client, state) {
       var stateData = state.removeRelation(
-        data.Params.Endpoints[0], data.Params.Endpoints[1]);
+          data.Params.Endpoints[0], data.Params.Endpoints[1]);
       var resp = {RequestId: data.RequestId};
       if (stateData.error) {
         resp.Error = stateData.error;
