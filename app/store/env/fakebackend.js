@@ -326,7 +326,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     setCharm: function(serviceName, charmId, force, callback) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return callback(UNAUTHENTICATED_ERROR);
       }
       var self = this;
       var service = this.db.services.getById(serviceName);
