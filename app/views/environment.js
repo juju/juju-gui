@@ -97,6 +97,82 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
+          Creates a new service inspector instance of the passed in type.
+
+          @method createServiceInspector
+          @param {String} type of inspector to create (ghost, service).
+          @param {Y.Model} model service or charm depending on inspector type.
+          @param {Object} config object of options to overwrite default config.
+        */
+        createServiceInspector: function(type, model, config) {
+          console.log('pending: ', model.get('pending'));
+          var serviceInspector = this.getInspector(model.get('id'));
+          if (serviceInspector) { return serviceInspector; }
+
+          var combinedConfig = {}
+          var configBase = {
+            db: this.topo.get('db'),
+            events: {
+              '.close': {'click': 'destroy'}
+            },
+          };
+
+          var configService = {
+            events: {
+              '.tab': {'click': 'showViewlet'}
+            },
+            viewletList: ['overview', 'units', 'config'],
+            template: Y.juju.views.Templates['view-container']
+          };
+
+          var configGhost = {
+            env: this.topo.get('env'),
+            // controller will show the first one in this array by default
+            viewletList: ['ghostConfig'],
+            // the view container template
+            template: Y.juju.views.Templates['ghost-config-wrapper'],
+            // these events are for the viewlet container
+            events: {
+              '.cancel': { 'click': 'destroy' }
+            },
+            // these events are for the viewlets and have their callbacks bound to
+            // the controllers prototype and are then mixed with the containers
+            // events for final binding
+            viewletEvents: {
+              '.deploy': { 'click': 'deployCharm' },
+              'input.config-file-upload': { 'change': 'handleFileUpload' },
+              'span.config-file-upload': { 'click': '_showFileDialogue' },
+              'input[name=service-name]': { 'valuechange': 'updateGhostName' }
+            },
+            // the configuration for the view container template
+            templateConfig: {
+              packageName: model.get('package_name'),
+              id: model.get('id')
+            }
+          };
+
+          if (type === 'ghost') {
+            combinedConfig = Y.mix(
+                configBase, configGhost, true, undefined, 0, true);
+          } else if (type === 'service') {
+            combinedConfig = Y.mix(
+                configBase, configService, true, undefined, 0, true);
+          } else {
+            console.log('Service inspector type not supported.');
+            return;
+          }
+
+          Y.mix(combinedConfig, config, true, undefined, 0, true);
+
+          serviceInspector = new views.ServiceInspector(model, combinedConfig);
+
+          serviceInspector.inspector.after('destroy', function(e) {
+            this.setInspector(e.currentTarget, true);
+          }, this);
+          this.setInspector(serviceInspector);
+        },
+
+        /**
          * @method render
          * @chainable
          */
@@ -144,6 +220,7 @@ YUI.add('juju-view-environment', function(Y) {
               db: this.get('db'),
               getInspector: Y.bind(this.getInspector, this),
               setInspector: Y.bind(this.setInspector, this),
+              createServiceInspector: Y.bind(this.createServiceInspector, this),
               landscape: this.get('landscape'),
               getModelURL: this.get('getModelURL'),
               container: container,

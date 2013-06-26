@@ -1345,6 +1345,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var setInspector = topo.get('setInspector');
       var getInspector = topo.get('getInspector');
+      var createServiceInspector = topo.get('createServiceInspector');
       var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
       // to satisfy linter;
@@ -1352,23 +1353,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
-        // XXX: switch on pending to handle ghost config.
-        var serviceInspector = getInspector(service.get('id'));
-        if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db'),
-            events: {
-              '.tab': {'click': 'showViewlet'},
-              '.close': {'click': 'destroy'}
-            },
-            viewletList: ['overview', 'units', 'config'],
-            template: Y.juju.views.Templates['view-container']
-          });
-          serviceInspector.inspector.after('destroy', function(e) {
-            setInspector(e.currentTarget, true);
-          });
-          setInspector(serviceInspector);
-        }
+        createServiceInspector('service', service);
       } else {
         topo.fire('navigateTo', {
           url: getModelURL(service)
