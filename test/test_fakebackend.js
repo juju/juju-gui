@@ -114,6 +114,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         charm: 'cs:precise/wordpress-10',
         config: undefined,
         constraints: {},
+        constraintsStr: undefined,
         destroyed: false,
         displayName: 'wordpress',
         exposed: false,
