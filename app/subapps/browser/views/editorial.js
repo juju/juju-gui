@@ -242,7 +242,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-charm-container',
-    'browser-charm-token',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',

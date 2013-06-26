@@ -290,7 +290,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
-    @return {undefined} Get the result from the callback.
+    @return {undefined} All results are passed to the callback.
     */
     deploy: function(charmId, callback, options) {
       if (!this.get('authenticated')) {
@@ -306,6 +306,48 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // On success deploy the successfully-obtained charm.
             success: function(charm) {
               self._deployFromCharm(charm, callback, options);
+            },
+            failure: callback
+          }
+      );
+    },
+
+    /**
+    Set the given service to use the given charm, optionally forcing units in
+    error state to use the charm.
+
+    @method setCharm
+    @param {String} serviceName The name of the service to set.
+    @param {String} charmId The charm to use.
+    @param {Boolean} force Whether or not to force the issue.
+    @param {Function} callback A call that will receive an object, potentially
+      with an "error" attribute containing a string describing the problem.
+    @return {undefined} All results are passed to the callback.
+    */
+    setCharm: function(serviceName, charmId, force, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      var self = this;
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return callback({error: 'Service "' + serviceName + '" not found.'});
+      }
+      var serviceInError = this.db.units.get_units_for_service(service)
+        .some(function(unit) {
+            return (/error/).test(unit.agent_state);
+          });
+      if (serviceInError && !force) {
+        return callback({error: 'Cannot set charm on a service with units in ' +
+              'error without the force flag.'});
+      }
+      this._loadCharm(
+          charmId,
+          {
+            success: function(charm) {
+              service.set('charm', charm.get('id'));
+              self.changes.services[service.get('id')] = [service, true];
+              callback({});
             },
             failure: callback
           }
@@ -709,10 +751,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
           service.set('exposed', true);
           this.changes.services[service.get('id')] = [service, true];
         } else {
-          warning = 'Service `' + serviceName + '` was already exposed.';
+          warning = 'Service "' + serviceName + '" was already exposed.';
         }
       } else {
-        error = '`' + serviceName + '` is an invalid service name.';
+        error = '"' + serviceName + '" is an invalid service name.';
       }
 
       return {
@@ -741,10 +783,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
           service.set('exposed', false);
           this.changes.services[service.get('id')] = [service, true];
         } else {
-          warning = 'Service `' + serviceName + '` is not exposed.';
+          warning = 'Service "' + serviceName + '" is not exposed.';
         }
       } else {
-        error = '`' + serviceName + '` is an invalid service name.';
+        error = '"' + serviceName + '" is an invalid service name.';
       }
 
       return {
@@ -1170,7 +1212,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           services: [], relations: []},
           blackLists = {
             service: ['id', 'aggregated_status', 'clientId', 'initialized',
-              'destroyed', 'pending'],
+              'constraintsStr', 'destroyed', 'pending'],
             relation: ['id', 'relation_id', 'clientId', 'initialized',
               'destroyed', 'pending']
           };

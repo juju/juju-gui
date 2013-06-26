@@ -643,7 +643,27 @@ YUI.add('juju-charm-panel', function(Y) {
                     env.update_annotations(
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),
-                          'gui-y': ghostService.get('y') });
+                          'gui-y': ghostService.get('y') },
+                        function() {
+                          // Make sure that annotations are set on the ghost
+                          // service before they come back from the delta to
+                          // prevent the service from jumping to the middle of
+                          // the canvas and back.
+                          var annotations = ghostService.get('annotations');
+                          if (!annotations) {
+                            annotations = {};
+                          }
+                          Y.mix(annotations, {
+                            'gui-x': ghostService.get('x'),
+                            'gui-y': ghostService.get('y')
+                          });
+                          ghostService.set('annotations', annotations);
+                          // The x/y attributes need to be removed to prevent
+                          // lingering position problems after the service is
+                          // positioned by the update code.
+                          ghostService.removeAttr('x');
+                          ghostService.removeAttr('y');
+                        });
                   }
                   // Update the ghost service to match the configuration.
                   ghostService.setAttrs({

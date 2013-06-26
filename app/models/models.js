@@ -70,6 +70,8 @@ YUI.add('juju-models', function(Y) {
           Y.each(data, function(value, key) {
             instance[key] = value;
           });
+          // Lazy model lists don't fire change events
+          list.fire('change');
         }
       }
     }
@@ -103,6 +105,7 @@ YUI.add('juju-models', function(Y) {
     ATTRS: {
       name: {},
       provider: {},
+      defaultSeries: {},
       annotations: {
         valueFn: function() {return {};}
       }
@@ -167,6 +170,18 @@ YUI.add('juju-models', function(Y) {
       // to help support scale.
       annotations: {value: {}},
       constraints: {},
+      constraintsStr: {
+        'getter': function() {
+          var result = [];
+          Y.each(this.get('constraints'), function(v, k) {
+            result.push(k + '=' + v);
+          });
+          if (result.length) {
+            return result.join(',');
+          }
+          return undefined;
+        }
+      },
       exposed: {
         value: false
       },
@@ -203,6 +218,32 @@ YUI.add('juju-models', function(Y) {
       return this.filter({asList: true}, function(model) {
         return model.isAlive() || model.hasErrors();
       });
+    },
+
+    /**
+     Add a ghost (pending) service to the
+     database. The canvas should pick this up
+     independently.
+
+     @method ghostService
+     @param {Model} charm to add.
+     @return {Model} Ghosted Service model.
+   */
+    ghostService: function(charm) {
+      var config = charm && charm.get('config');
+      var serviceCount = this.filter(function(service) {
+        return service.get('charm') === charm.get('id');
+      }).length + 1;
+      var ghostService = this.create({
+        id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+        annotations: {},
+        pending: true,
+        charm: charm.get('id'),
+        unit_count: 0,  // No units yet.
+        loaded: false,
+        config: config
+      });
+      return ghostService;
     },
 
     process_delta: function(action, data) {
@@ -260,7 +301,6 @@ YUI.add('juju-models', function(Y) {
     process_delta: function(action, data, db) {
       var instance = _process_delta(this, action, data, {relation_errors: {}});
       if (!instance || !db) {return;}
-
       // Apply this action for this instance to all service models as well.
       // In the future we can transition from using db.units to always
       // looking at db.services[serviceId].units
@@ -668,6 +708,21 @@ YUI.add('juju-models', function(Y) {
       };
     },
 
+    /**
+     * Nicely clean up.
+     *
+     * @method destructor
+     */
+    destructor: function() {
+      [this.services, this.relations,
+        this.machines, this.units,
+        this.charms, this.environment,
+        this.notifications].forEach(function(ml) {
+        ml.detachAll();
+        ml.destroy();
+      });
+    },
+
     /*
      * Model Id is a [db[model_list_name], model.get('id')]
      * sequence that can be used to lookup models relative
@@ -783,12 +838,65 @@ YUI.add('juju-models', function(Y) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
+    },
+
+    /**
+     * Export deployer formatted dump of the current environment.
+     * Note: When we have a selection UI in place this should honor
+     * that.
+     *
+     * @method exportDeployer
+     * @return {Object} export object suitable for serialization.
+     */
+    exportDeployer: function() {
+      var self = this,
+          serviceList = this.services,
+          relationList = this.relations,
+          result = {
+            envExport: {
+              series: this.environment.get('defaultSeries'),
+              services: [],
+              relations: []
+            }
+          };
+
+      serviceList.each(function(service) {
+        var units = service.units;
+        var charm = self.charms.getById(service.get('charm'));
+        if (service.get('pending') === true) {return;}
+        var serviceData = {
+          // Using package name here so the default series
+          // is picked up. This will likely have to be the full
+          // path in the future.
+          charm: charm.get('package_name'),
+          options: service.get('config'),
+          // Test models or ghosts might not have a units LazyModelList.
+          num_units: units && units.size() || 1
+        };
+        // Add constraints
+        var constraints = service.get('constraintsStr');
+        if (constraints) {
+          serviceData.constraints = constraints;
+        }
+        result.envExport.services.push(serviceData);
+      });
+
+      relationList.each(function(relation) {
+        var relationData = [];
+        Y.each(relation.get('endpoints'), function(data, name) {
+          relationData.push([data[0], data[1].name]);
+        });
+        // Skip peer, they should add automatically.
+        if (relationData.length === 1) {
+          return;
+        }
+        result.envExport.relations.push(relationData);
+      });
+
+      return result;
     }
-
   });
-
   models.Database = Database;
-
 }, '0.1.0', {
   requires: [
     'model',

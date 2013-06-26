@@ -145,6 +145,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/overlay-indicator.js'
         },
 
+        'browser-sharing-widget': {
+          fullpath: '/juju-ui/widgets/sharing-widget.js'
+        },
+
         'browser-search-widget': {
           fullpath: '/juju-ui/widgets/charm-search.js'
         },

@@ -264,7 +264,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       // If the service box is pending, ensure that the charm panel is
       // visible, but don't do anything else.
-      if (box.pending) {
+      if (box.pending && !window.flags.serviceInspector) {
         // Prevent the clickoutside event from firing and immediately closing
         // the panel.
         d3.event.halt();
@@ -1346,9 +1346,12 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
+        // XXX: switch on pending to handle ghost config.
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service);
+          serviceInspector = new views.ServiceInspector(service, {
+            db: topo.get('db')
+          });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);
           });

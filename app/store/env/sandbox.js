@@ -692,7 +692,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     GoJujuAPI.superclass.constructor.apply(this, arguments);
   }
 
-  GoJujuAPI.NAME = 'sandbox-py-juju-api';
+  GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
     state: {},
     client: {}
@@ -761,8 +761,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     receive: function(data) {
       console.log('client message', data);
       if (this.connected) {
+        var client = this.get('client');
         this['handle' + data.Type + data.Request](data,
-            this.get('client'), this.get('state'));
+            client, this.get('state'));
       } else {
         throw CLOSEDERROR;
       }
@@ -775,6 +776,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleAdminLogin: function(data, client, state) {
       data.Error = !state.login(data.Params.AuthTag, data.Params.Password);
@@ -788,6 +790,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientEnvironmentInfo: function(data, client, state) {
       client.receive({
@@ -804,6 +807,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientWatchAll: function(data, client, state) {
       // TODO wire up delta stream to "Next" responses here.
@@ -817,6 +821,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
       // This is a noop for the moment because it must exist but the current
@@ -831,6 +836,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientServiceDeploy: function(data, client, state) {
       var callback = function(result) {
@@ -849,12 +855,34 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle ServiceSetCharm messages
+
+    @method handleClientServiceSetCharm
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceSetCharm: function(data, client, state) {
+      var callback = function(result) {
+        var response = {RequestId: data.RequestId};
+        if (result.error) {
+          response.Error = result.error;
+        }
+        client.receive(response);
+      };
+      state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
+          data.Params.Force, callback);
+    },
+
+    /**
     Handle SetAnnotations messages
 
     @method handleClientSetAnnotations
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
@@ -871,6 +899,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
     */
     handleClientServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
@@ -879,6 +908,62 @@ YUI.add('juju-env-sandbox', function(Y) {
         RequestId: data.RequestId,
         Error: reply.error,
         Response: {Service: data.Params.ServiceName}});
+    },
+
+    /**
+    Handle AddServiceUnits messages
+
+    @method handleClientAddServiceUnits
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddServiceUnits: function(data, client, state) {
+      var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits);
+      var units = [];
+      if (!reply.error) {
+        units = reply.units.map(function(u) {return u.id;});
+      }
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {Units: units}
+      });
+    },
+
+    /**
+    Handle ServiceExpose messages
+
+    @method handleClientServiceExpose
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceExpose: function(data, client, state) {
+      var reply = state.expose(data.Params.ServiceName);
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {}});
+    },
+
+    /**
+    Handle ServiceUnexpose messages
+
+    @method handleClientServiceUnexpose
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceUnexpose: function(data, client, state) {
+      var reply = state.unexpose(data.Params.ServiceName);
+      client.receive({
+        RequestId: data.RequestId,
+        Error: reply.error,
+        Response: {}});
     }
 
   });

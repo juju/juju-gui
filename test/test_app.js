@@ -66,6 +66,7 @@ function injectData(app, data) {
 
     beforeEach(function() {
       window._gaq = [];
+      window.flags = {};
       container = Y.one('#main')
         .appendChild(Y.Node.create('<div/>'))
           .set('id', 'test-container')
@@ -496,6 +497,7 @@ function injectData(app, data) {
 })();
 
 (function() {
+
   describe('Application sandbox mode', function() {
     var Y, app, container, utils;
 
@@ -533,9 +535,11 @@ function injectData(app, data) {
       assert.isObject(app.env.get('conn').get('juju').get('state'));
     });
   });
+
 })();
 
 (function() {
+
   describe('configuration parsing', function() {
 
     var Y, app, container, getLocation;
@@ -636,6 +640,6 @@ function injectData(app, data) {
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');
     });
-
   });
+
 })();

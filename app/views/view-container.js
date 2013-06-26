@@ -98,20 +98,23 @@ YUI.add('juju-view-container', function(Y) {
       User defined update method which re-renders the contents of the viewlet.
       Called by the binding engine if a modellist is updated. This is
       accomplished by grabbing the viewlets container and setHTML() with the
-      new contents.
+      new contents. Passed a reference to the modellist in question.
 
-      @property update
+      @method update
       @type {function}
+      @param {Y.ModelList | Y.LazyModelList} modellist from the rebind.
       @default {noop function}
     */
     update: function(modellist) {},
 
     /**
       Render method to generate the container and insert the compiled viewlet
-      template into it.
+      template into it. It's passed reference to the model passed to the view
+      container.
 
-      @property render
+      @method render
       @type {function}
+      @param {Y.Model} model passed to the view container.
       @default {render function}
     */
     render: function(model) {
@@ -121,7 +124,27 @@ YUI.add('juju-view-container', function(Y) {
         this.template = Y.Handlebars.compile(this.template);
       }
       this.container.setHTML(this.template(model.getAttrs()));
-    }
+    },
+
+    /**
+      Called when there is a bind conflict in the viewlet.
+
+      @method conflict
+      @type {function}
+      @default {noop function}
+    */
+    conflict: function(node) {},
+
+    /**
+      Used for conflict resolution. When the user changes a value on a bound
+      viewlet we store a reference of the element key here so that we know to
+      offer a conflict resolution.
+
+      @property _changedValues
+      @type {Array}
+      @default empty array
+    */
+    _changedValues: []
   };
 
   /**
@@ -317,7 +340,14 @@ YUI.add('juju-view-container', function(Y) {
         @attribute model
         @default undefined
       */
-      model: {}
+      model: {},
+      /**
+        Reference to the database
+
+        @attribute db
+        @default undefined
+      */
+      db: {}
     }
 
   });

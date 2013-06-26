@@ -114,6 +114,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         charm: 'cs:precise/wordpress-10',
         config: undefined,
         constraints: {},
+        constraintsStr: undefined,
         destroyed: false,
         displayName: 'wordpress',
         exposed: false,
@@ -244,6 +245,182 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend.setCharm', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, result, callback, service;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackendWithCharmStore();
+      result = undefined;
+      callback = function(response) { result = response; };
+      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      service = fakebackend.db.services.getById('wordpress');
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('sets a charm.', function() {
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
+      assert.isUndefined(result.error);
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+    });
+
+    it('fails when the service does not exist', function() {
+      fakebackend.setCharm('nope', 'nuh-uh', false, callback);
+      assert.equal(result.error, 'Service "nope" not found.');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+    });
+
+    it('fails if a service is in error without force.', function() {
+      fakebackend.db.units.each(function(unit) {
+        unit.agent_state = 'error';
+      });
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+          callback);
+      assert.equal(result.error, 'Cannot set charm on a service with units ' +
+          'in error without the force flag.');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+    });
+
+    it('succeeds if a service is in error with force.', function() {
+      fakebackend.db.units.each(function(unit) {
+        unit.agent_state = 'error';
+      });
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', true,
+          callback);
+      assert.isUndefined(result.error);
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+    });
+  });
+
+  describe('FakeBackend.expose', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, result, callback, service;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackendWithCharmStore();
+      result = undefined;
+      callback = function(response) { result = response; };
+      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      service = fakebackend.db.services.getById('wordpress');
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.expose('wordpress');
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('exposes a service', function() {
+      assert.isFalse(service.get('exposed'));
+      var result = fakebackend.expose('wordpress');
+      assert.isTrue(service.get('exposed'));
+      assert.isUndefined(result.error);
+      assert.isUndefined(result.warning);
+    });
+
+    it('errors on invalid service', function() {
+      var result = fakebackend.expose('Je ne suis pas un service');
+      assert.equal(
+          '"Je ne suis pas un service" is an invalid service name.',
+          result.error);
+      assert.isUndefined(result.warning);
+    });
+
+    it('warns if a service is already exposed', function() {
+      assert.isFalse(service.get('exposed'));
+      var result = fakebackend.expose('wordpress');
+      assert.isTrue(service.get('exposed'));
+      result = fakebackend.expose('wordpress');
+      assert.isUndefined(result.error);
+      assert.equal(
+          'Service "wordpress" was already exposed.',
+          result.warning);
+    });
+  });
+
+  describe('FakeBackend.unexpose', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, result, callback, service;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackendWithCharmStore();
+      result = undefined;
+      callback = function(response) { result = response; };
+      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      service = fakebackend.db.services.getById('wordpress');
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.unexpose('wordpress');
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('unexposes a service', function() {
+      assert.isFalse(service.get('exposed'));
+      var result = fakebackend.expose('wordpress');
+      assert.isTrue(service.get('exposed'));
+      result = fakebackend.unexpose('wordpress');
+      assert.isFalse(service.get('exposed'));
+      assert.isUndefined(result.error);
+      assert.isUndefined(result.warning);
+    });
+
+    it('errors on invalid service', function() {
+      var result = fakebackend.unexpose('Je ne suis pas un service');
+      assert.equal(
+          '"Je ne suis pas un service" is an invalid service name.',
+          result.error);
+      assert.isUndefined(result.warning);
+    });
+
+    it('warns if a service is already unexposed', function() {
+      assert.isFalse(service.get('exposed'));
+      var result = fakebackend.unexpose('wordpress');
+      assert.isFalse(service.get('exposed'));
+      assert.isUndefined(result.error);
+      assert.equal(
+          'Service "wordpress" is not exposed.',
+          result.warning);
+    });
+  });
+
   describe('FakeBackend.uniformOperations', function() {
     var requires = ['node',
       'juju-tests-utils', 'juju-models', 'juju-charm-models'];
@@ -361,6 +538,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('FakeBackend.getCharm', function() {
+
+      before(function() {
+        // A global variable required for testing.
+        window.flags = {};
+      });
+
+      after(function() {
+        delete window.flags;
+      });
+
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
         fakebackend.getCharm('cs:wordpress', ERROR('Please log in.', done));

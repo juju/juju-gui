@@ -1,0 +1,1856 @@
+{
+  "result": {
+    "provides": {
+      "http": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/firefox-sync-2", 
+          "is_approved": true, 
+          "name": "firefox-sync", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/dokuwiki-2", 
+          "is_approved": true, 
+          "name": "dokuwiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 28, 
+          "has_icon": true, 
+          "id": "precise/jenkins-5", 
+          "is_approved": true, 
+          "name": "jenkins", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 13, 
+          "has_icon": false, 
+          "id": "precise/node-app-6", 
+          "is_approved": true, 
+          "name": "node-app", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/limesurvey-4", 
+          "is_approved": true, 
+          "name": "limesurvey", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/openerp-web-1", 
+          "is_approved": true, 
+          "name": "openerp-web", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/roundcube-0", 
+          "is_approved": true, 
+          "name": "roundcube", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/tomcat7-1", 
+          "is_approved": true, 
+          "name": "tomcat7", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/spip-0", 
+          "is_approved": true, 
+          "name": "spip", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": true, 
+          "id": "precise/tt-rss-0", 
+          "is_approved": true, 
+          "name": "tt-rss", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/shelrtv-0", 
+          "is_approved": true, 
+          "name": "shelrtv", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 257, 
+          "has_icon": true, 
+          "id": "precise/juju-gui-61", 
+          "is_approved": true, 
+          "name": "juju-gui", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/hbase-4", 
+          "is_approved": true, 
+          "name": "hbase", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/ceph-radosgw-4", 
+          "is_approved": true, 
+          "name": "ceph-radosgw", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/squid-forwardproxy-0", 
+          "is_approved": true, 
+          "name": "squid-forwardproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 21, 
+          "has_icon": false, 
+          "id": "precise/nagios-4", 
+          "is_approved": true, 
+          "name": "nagios", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/opentsdb-1", 
+          "is_approved": true, 
+          "name": "opentsdb", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 294, 
+          "has_icon": true, 
+          "id": "precise/wordpress-15", 
+          "is_approved": true, 
+          "name": "wordpress", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": false, 
+          "id": "precise/varnish-1", 
+          "is_approved": true, 
+          "name": "varnish", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/vdbench-2", 
+          "is_approved": true, 
+          "name": "vdbench", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/chef-server-2", 
+          "is_approved": true, 
+          "name": "chef-server", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/gitlab-2", 
+          "is_approved": true, 
+          "name": "gitlab", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "app-servers"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/apache2-passenger-3", 
+          "is_approved": true, 
+          "name": "apache2-passenger", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/joomla-1", 
+          "is_approved": true, 
+          "name": "joomla", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 162, 
+          "has_icon": true, 
+          "id": "precise/mediawiki-8", 
+          "is_approved": true, 
+          "name": "mediawiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/lamp-1", 
+          "is_approved": true, 
+          "name": "lamp", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/munin-3", 
+          "is_approved": true, 
+          "name": "munin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/musica-1", 
+          "is_approved": true, 
+          "name": "musica", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/phpmyadmin-3", 
+          "is_approved": true, 
+          "name": "phpmyadmin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 6, 
+          "has_icon": false, 
+          "id": "precise/openerp-server-1", 
+          "is_approved": true, 
+          "name": "openerp-server", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/statusnet-4", 
+          "is_approved": true, 
+          "name": "statusnet", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/python-moinmoin-2", 
+          "is_approved": true, 
+          "name": "python-moinmoin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/thinkup-2", 
+          "is_approved": true, 
+          "name": "thinkup", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/tomcat6-1", 
+          "is_approved": true, 
+          "name": "tomcat6", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 78, 
+          "has_icon": false, 
+          "id": "precise/haproxy-18", 
+          "is_approved": true, 
+          "name": "haproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 27, 
+          "has_icon": false, 
+          "id": "precise/ganglia-3", 
+          "is_approved": true, 
+          "name": "ganglia", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/loggerhead-1", 
+          "is_approved": true, 
+          "name": "loggerhead", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/nginx-passenger-1", 
+          "is_approved": true, 
+          "name": "nginx-passenger", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/lodgeit-1", 
+          "is_approved": true, 
+          "name": "lodgeit", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/opengrok-0", 
+          "is_approved": true, 
+          "name": "opengrok", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/rails-0", 
+          "is_approved": true, 
+          "name": "rails", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 15, 
+          "has_icon": false, 
+          "id": "precise/owncloud-6", 
+          "is_approved": true, 
+          "name": "owncloud", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/stackmobile-1", 
+          "is_approved": true, 
+          "name": "stackmobile", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/subway-1", 
+          "is_approved": true, 
+          "name": "subway", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/tracks-1", 
+          "is_approved": true, 
+          "name": "tracks", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/drupal6-0", 
+          "is_approved": true, 
+          "name": "drupal6", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/python-django-3", 
+          "is_approved": true, 
+          "name": "python-django", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 12, 
+          "has_icon": false, 
+          "id": "precise/etherpad-lite-4", 
+          "is_approved": true, 
+          "name": "etherpad-lite", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/oops-tools-1", 
+          "is_approved": true, 
+          "name": "oops-tools", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 25, 
+          "has_icon": false, 
+          "id": "precise/appflower-1", 
+          "is_approved": true, 
+          "name": "appflower", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 8, 
+          "has_icon": false, 
+          "id": "precise/kusabax-0", 
+          "is_approved": true, 
+          "name": "kusabax", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/pictor-2", 
+          "is_approved": true, 
+          "name": "pictor", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/squid-reverseproxy-0", 
+          "is_approved": true, 
+          "name": "squid-reverseproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/solr-jetty-5", 
+          "is_approved": true, 
+          "name": "solr-jetty", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bcsaller/precise/juju-gui-1", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bcsaller/precise/node-app-5", 
+          "is_approved": false, 
+          "name": "node-app", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~ameetp/precise/vdbench-5", 
+          "is_approved": false, 
+          "name": "vdbench", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bkerensa/precise/subway-1", 
+          "is_approved": false, 
+          "name": "subway", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/drupal6-0", 
+          "is_approved": false, 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~charmers/precise/juju-gui-10", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observiu-0", 
+          "is_approved": false, 
+          "name": "observiu", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~deanproctor/precise/riak-0", 
+          "is_approved": false, 
+          "name": "riak", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/aws-elb-5", 
+          "is_approved": false, 
+          "name": "aws-elb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/ceph-radosgw-0", 
+          "is_approved": false, 
+          "name": "ceph-radosgw", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/template-5", 
+          "is_approved": false, 
+          "name": "template", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~james-falkner/precise/liferay-2", 
+          "is_approved": false, 
+          "name": "liferay", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/owncloud-17", 
+          "is_approved": false, 
+          "name": "owncloud", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~menesis/precise/schooltool-2", 
+          "is_approved": false, 
+          "name": "schooltool", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nskaggs/precise/vivo-11", 
+          "is_approved": false, 
+          "name": "vivo", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "misc"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~nextrevision/precise/tt-rss-3", 
+          "is_approved": false, 
+          "name": "tt-rss", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "~robert-ayres/precise/tomcat-3", 
+          "is_approved": false, 
+          "name": "tomcat", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/kusabax-5", 
+          "is_approved": false, 
+          "name": "kusabax", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~thedac/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~timrchavez/precise/offspring-web-1", 
+          "is_approved": false, 
+          "name": "offspring-web", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~utlemming/precise/fsync-4", 
+          "is_approved": false, 
+          "name": "fsync", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/lamp-3", 
+          "is_approved": false, 
+          "name": "lamp", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/your-charms-name-0", 
+          "is_approved": false, 
+          "name": "your-charms-name", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~alexlist/precise/squid-reverseproxy-4", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~abentley/precise/charmworld-8", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bzr/precise/loggerhead-0", 
+          "is_approved": false, 
+          "name": "loggerhead", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bilalakhtar/precise/dokuwiki-1", 
+          "is_approved": false, 
+          "name": "dokuwiki", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~cjohnston/precise/summit-0", 
+          "is_approved": false, 
+          "name": "summit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observium-3", 
+          "is_approved": false, 
+          "name": "observium", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/mediagoblin-1", 
+          "is_approved": false, 
+          "name": "mediagoblin", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~cloudware/precise/squid-rp-mirror-0", 
+          "is_approved": false, 
+          "name": "squid-rp-mirror", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 5, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~daisy-pluckers/precise/errors-24", 
+          "is_approved": false, 
+          "name": "errors", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gnuoy/precise/solr-jetty-4", 
+          "is_approved": false, 
+          "name": "solr-jetty", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/joomla-9", 
+          "is_approved": false, 
+          "name": "joomla", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": true, 
+          "id": "~juju-jitsu/precise/charmworld-44", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "commits_in_past_30_days": 19, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/discourse-18", 
+          "is_approved": false, 
+          "name": "discourse", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/mediawiki-0", 
+          "is_approved": false, 
+          "name": "mediawiki", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/stingray-4", 
+          "is_approved": false, 
+          "name": "stingray", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mariusko/precise/node-app-11", 
+          "is_approved": false, 
+          "name": "node-app", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mfisch/precise/tracks-4", 
+          "is_approved": false, 
+          "name": "tracks", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/varnish-8", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": true, 
+          "id": "~patrick-hetu/precise/python-django-5", 
+          "is_approved": false, 
+          "name": "python-django", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pierre-amadio/precise/spip-8", 
+          "is_approved": false, 
+          "name": "spip", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/haproxy-28", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-forwardproxy-1", 
+          "is_approved": false, 
+          "name": "squid-forwardproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~stefan-hartmann/precise/chive-1", 
+          "is_approved": false, 
+          "name": "chive", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bkerensa/precise/locker-0", 
+          "is_approved": false, 
+          "name": "locker", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/haproxy-1", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/cinder-9", 
+          "is_approved": false, 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~hatch/precise/juju-gui-14", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/juju-gui-3", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~marcoceppi/precise/charmworld-7", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~lifeless/precise/opentsdb-2", 
+          "is_approved": false, 
+          "name": "opentsdb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/promultest-1", 
+          "is_approved": false, 
+          "name": "promultest", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~nextrevision/precise/openvpn-as-1", 
+          "is_approved": false, 
+          "name": "openvpn-as", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~negronjl/precise/seafile-0", 
+          "is_approved": false, 
+          "name": "seafile", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pavel-pachkovskij/precise/apache2-passenger-3", 
+          "is_approved": false, 
+          "name": "apache2-passenger", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/graphite-0", 
+          "is_approved": false, 
+          "name": "graphite", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~tasdomas/precise/drupal-0", 
+          "is_approved": false, 
+          "name": "drupal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~wiz/precise/gitit-0", 
+          "is_approved": false, 
+          "name": "gitit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/promultest-0", 
+          "is_approved": false, 
+          "name": "promultest", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~davidpbritton/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 4, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~daisy-pluckers/precise/daisy-17", 
+          "is_approved": false, 
+          "name": "daisy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~fenris/precise/symfony-0", 
+          "is_approved": false, 
+          "name": "symfony", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hatch/precise/juju-gui-conflict-0", 
+          "is_approved": false, 
+          "name": "juju-gui-conflict", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "application"
+          ], 
+          "commits_in_past_30_days": 20, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": true, 
+          "id": "~george-edison55/precise/discourse-0", 
+          "is_approved": false, 
+          "name": "discourse", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/chef-server-9", 
+          "is_approved": false, 
+          "name": "chef-server", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~imbrandon/precise/drupal6-1", 
+          "is_approved": false, 
+          "name": "drupal6", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~jmac/precise/wordpress-multi-0", 
+          "is_approved": false, 
+          "name": "wordpress-multi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~irc-charmers/precise/alice-irc-2", 
+          "is_approved": false, 
+          "name": "alice-irc", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 9, 
+          "downloads_in_past_30_days": 95, 
+          "has_icon": true, 
+          "id": "~juju-gui/precise/juju-gui-68", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~kaaloo/precise/kibana-1", 
+          "is_approved": false, 
+          "name": "kibana", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~mew/precise/squid-9", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~matsubara/precise/oops-tools-1", 
+          "is_approved": false, 
+          "name": "oops-tools", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~peter-petrakis/precise/opengrok-10", 
+          "is_approved": false, 
+          "name": "opengrok", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~paulcz/precise/auth-proxy-0", 
+          "is_approved": false, 
+          "name": "auth-proxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pavel-pachkovskij/precise/nginx-passenger-3", 
+          "is_approved": false, 
+          "name": "nginx-passenger", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~alexlist/precise/squid-forwardproxy-10", 
+          "is_approved": false, 
+          "name": "squid-forwardproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~andrewsomething/precise/bzr-and-loggerhead-0", 
+          "is_approved": false, 
+          "name": "bzr-and-loggerhead", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/alice-irc-1", 
+          "is_approved": false, 
+          "name": "alice-irc", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/nagios-11", 
+          "is_approved": false, 
+          "name": "nagios", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/limesurvey-2", 
+          "is_approved": false, 
+          "name": "limesurvey", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chrisjohnston/precise/summit-1", 
+          "is_approved": false, 
+          "name": "summit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dames/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/naxsi-0", 
+          "is_approved": false, 
+          "name": "naxsi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/drupal7-3", 
+          "is_approved": false, 
+          "name": "drupal7", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 18, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~hloeung/precise/varnish-2", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/gitlab-4", 
+          "is_approved": false, 
+          "name": "gitlab", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~marcoceppi/precise/wordpress-17", 
+          "is_approved": false, 
+          "name": "wordpress", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/charmtester-6", 
+          "is_approved": false, 
+          "name": "charmtester", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/juju-gui-0", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/summit-3", 
+          "is_approved": false, 
+          "name": "summit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/rails-4", 
+          "is_approved": false, 
+          "name": "rails", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/charmrunner-4", 
+          "is_approved": false, 
+          "name": "charmrunner", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~med/precise/squid-rp-mirror-0", 
+          "is_approved": false, 
+          "name": "squid-rp-mirror", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-reverseproxy-20", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/moztrap-0", 
+          "is_approved": false, 
+          "name": "moztrap", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/phplist-2", 
+          "is_approved": false, 
+          "name": "phplist", 
+          "weight": 1.0
+        }
+      ]
+    }, 
+    "requires": {
+      "http": [
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 3, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/landscape-client-8", 
+          "is_approved": true, 
+          "name": "landscape-client", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 7, 
+          "has_icon": false, 
+          "id": "precise/varnish-1", 
+          "is_approved": true, 
+          "name": "varnish", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 78, 
+          "has_icon": false, 
+          "id": "precise/haproxy-18", 
+          "is_approved": true, 
+          "name": "haproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/squid-reverseproxy-0", 
+          "is_approved": true, 
+          "name": "squid-reverseproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/aws-elb-5", 
+          "is_approved": false, 
+          "name": "aws-elb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "~jjo/precise/httpload-2", 
+          "is_approved": false, 
+          "name": "httpload", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mreed8855/precise/apachebench-5", 
+          "is_approved": false, 
+          "name": "apachebench", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~thedac/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~alexlist/precise/squid-reverseproxy-4", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": true, 
+          "id": "~juju-jitsu/precise/charmworld-44", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/stingray-4", 
+          "is_approved": false, 
+          "name": "stingray", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/varnish-8", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/haproxy-28", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/haproxy-1", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~imbrandon/precise/nginx-proxy-4", 
+          "is_approved": false, 
+          "name": "nginx-proxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~davidpbritton/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~mew/precise/squid-9", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dames/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dannf/precise/siege-4", 
+          "is_approved": false, 
+          "name": "siege", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/naxsi-0", 
+          "is_approved": false, 
+          "name": "naxsi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "commits_in_past_30_days": 18, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~hloeung/precise/varnish-2", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-reverseproxy-20", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }
+      ], 
+      "nrpe-external-master": [
+        {
+          "categories": [
+            "misc"
+          ], 
+          "commits_in_past_30_days": 1, 
+          "downloads_in_past_30_days": 49, 
+          "has_icon": true, 
+          "id": "precise/rabbitmq-server-12", 
+          "is_approved": true, 
+          "name": "rabbitmq-server", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/nrpe-external-master-1", 
+          "is_approved": true, 
+          "name": "nrpe-external-master", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "commits_in_past_30_days": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mthaddon/precise/nrpe-external-master-2", 
+          "is_approved": false, 
+          "name": "nrpe-external-master", 
+          "weight": 1.0
+        }
+      ]
+    }
+  }
+}

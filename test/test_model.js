@@ -472,7 +472,7 @@ describe('juju charm load', function() {
   });
 
   beforeEach(function() {
-    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.connect();
     conn.open();
@@ -616,14 +616,16 @@ describe('juju charm load', function() {
 
 
 describe('BrowserCharm test', function() {
-  var data, instance, models, sampleData, Y;
+  var data, instance, models, relatedData, sampleData, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'io',
-      'juju-charm-models'
+      'juju-charm-models',
+      'juju-tests-utils'
     ], function(Y) {
       models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
@@ -631,9 +633,7 @@ describe('BrowserCharm test', function() {
   before(function() {
     sampleData = Y.io('data/browsercharm.json', {sync: true});
     data = Y.JSON.parse(sampleData.responseText);
-  });
-
-  beforeEach(function() {
+    relatedData = utils.loadFixture('data/related.json', true).result;
   });
 
   afterEach(function() {
@@ -734,8 +734,83 @@ describe('BrowserCharm test', function() {
     instance.get('failingProviders').should.eql(
         ['ec2', 'local', 'openstack', 'hp']);
   });
+
+  // Testing a private method because if this test fails it'll provide a much
+  // nicer hint as to why something in a View or such doesn't work correctly.
+  // The api data that we get must be converted into what the
+  // CharmMode.getAttrs() would have sent out to the charm-token widget.
+  it('maps related data to the model-ish api', function() {
+    var providesData = relatedData.provides.http[0];
+    instance = new models.BrowserCharm(data.charm);
+    var converted = instance._convertRelatedData(providesData);
+    assert.equal(providesData.name, converted.name);
+    assert.equal(providesData.id, converted.id);
+    assert.equal(
+        providesData.commits_in_past_30_days,
+        converted.recent_commit_count);
+    assert.equal(
+        providesData.downloads_in_past_30_days,
+        converted.recent_download_count);
+    assert.equal(providesData.has_icon, converted.shouldShowIcon);
+  });
+
+  it('builds proper relatedCharms object', function() {
+    instance = new models.BrowserCharm(data.charm);
+    instance.buildRelatedCharms(relatedData.provides, relatedData.requires);
+    var relatedObject = instance.get('relatedCharms');
+
+    // The overall should have the default 5 max charms listed.
+    assert.equal(5, relatedObject.overall.length);
+    // The requires for mysql should be truncated to the max of 5 as well.
+    assert.equal(5, relatedObject.requires.http.length);
+    // There's only one key in the provides section.
+    assert.equal(1, Y.Object.keys(relatedObject.provides).length);
+
+    // None of the overall weights should be one.
+    relatedObject.overall.forEach(function(charm) {
+      assert.notEqual(1, charm.weight);
+    });
+  });
 });
 
+describe('database export', function() {
+  var models;
+  before(function(done) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  it('can export in deployer format', function() {
+    var db = new models.Database();
+    var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
+    var wordpress = db.services.add({
+      id: 'wordpress',
+      charm: 'precise/wordpress-1'});
+    var rel0 = db.relations.add({
+      id: 'relation-0',
+      endpoints: [
+        ['mysql', {name: 'db', role: 'server'}],
+        ['wordpress', {name: 'app', role: 'client'}]],
+      'interface': 'db'
+    });
+
+    db.environment.set('defaultSeries', 'precise');
+
+    // Add the charms so we can resolve them in the export.
+    db.charms.add([{id: 'precise/mysql-1'}, {id: 'precise/wordpress-1'}]);
+    var result = db.exportDeployer().envExport;
+    var relation = result.relations[0];
+
+    assert.equal(result.series, 'precise');
+    assert.equal(result.services[0].charm, 'mysql');
+    assert.equal(result.services[1].charm, 'wordpress');
+
+    assert.deepEqual(relation[0], ['mysql', 'db']);
+    assert.deepEqual(relation[1], ['wordpress', 'app']);
+  });
+});
 
 describe('service models', function() {
   var models, list, django, rails, wordpress, mysql;
