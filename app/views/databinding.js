@@ -145,13 +145,14 @@ YUI.add('juju-databinding', function(Y) {
 
         - container {Y.Node} The container into which the viewlet renders.
 
-        - bindings {Array}: An array of binding descriptors. These
-            take the following form:
-              name: {String} Name of Attribute on model,
-              target: {String || Array of String} CSS selectors to
-                      elements bound to this model attribute.
-              get: {Function} (optional) method to override
-                  default attr access pattern. get(model) -> value.
+        - bindings {Object}: A mapping from model property names
+              to additional properties available to the binding.
+              Currently we support the following callbacks on
+              a per binding name basis:
+                format(value) -> {New Value}
+                update(node, value) -> Mutate DOM directly. If
+                   format was provided as well the formatted
+                   value will be used.
 
             Bindings is optional in the case of ModelLists as the
             pattern is to re-render children.

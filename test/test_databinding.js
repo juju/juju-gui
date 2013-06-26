@@ -99,6 +99,29 @@ describe('data binding library', function() {
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'overide');
       });
+
+      it('update callback uses formatted value', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              format: function() {return 'hi';},
+              update: function(node, value) {
+                node.set('text', value);
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
+      });
+
     });
 
     describe('field types', function() {
