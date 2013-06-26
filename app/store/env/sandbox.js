@@ -964,6 +964,72 @@ YUI.add('juju-env-sandbox', function(Y) {
         RequestId: data.RequestId,
         Error: reply.error,
         Response: {}});
+    },
+
+    /**
+    Handle AddRelation messages
+
+    @method handleClientAddRelation
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientAddRelation: function(data, client, state) {
+      var stateData = state.addRelation(
+          data.Params.Endpoints[0], data.Params.Endpoints[1]);
+      var resp = {RequestId: data.RequestId};
+      if (stateData === false) {
+        // Everything checks out but could not create a new relation model.
+        resp.Error = 'Unable to create relation';
+        client.receive(resp);
+        return;
+      }
+      if (stateData.error) {
+        resp.Error = stateData.error;
+        client.receive(resp);
+        return;
+      }
+      var respEndpoints = {},
+          stateEpA = stateData.endpoints[0],
+          stateEpB = stateData.endpoints[1],
+          epA = {
+            Name: stateEpA[1].name,
+            Role: stateEpA[1].role,
+            Scope: stateData.scope,
+            Interface: stateData['interface']
+          },
+          epB = {
+            Name: stateEpB[1].name,
+            Role: stateEpB[1].role,
+            Scope: stateData.scope,
+            Interface: stateData['interface']
+          };
+      respEndpoints[stateEpA[0]] = epA;
+      respEndpoints[stateEpB[0]] = epB;
+      resp.Response = {
+        Endpoints: respEndpoints
+      };
+      client.receive(resp);
+    },
+
+    /**
+    Handle DestroyRelation messages
+
+    @method handleClientDestroyRelation
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientDestroyRelation: function(data, client, state) {
+      var stateData = state.removeRelation(
+          data.Params.Endpoints[0], data.Params.Endpoints[1]);
+      var resp = {RequestId: data.RequestId};
+      if (stateData.error) {
+        resp.Error = stateData.error;
+      }
+      client.receive(resp);
     }
 
   });

@@ -369,4 +369,20 @@ describe('service module events', function() {
     assert.deepPropertyVal(boxes, 'wordpress.model', wordpress);
   });
 
+  it('should deploy a service on charm token drop events', function(done) {
+    d3.event._event = {dataTransfer: {
+      getData: function(name) {
+        if (name === 'dataType') {
+          return 'charm-token-drag-and-drop';
+        } else if (name === 'charmData') {
+          return '{"id": "cs:foo/bar-1"}';
+        }
+      }}};
+    var eventHandle = Y.on('initiateDeploy', function(charm) {
+      eventHandle.detach();
+      done();
+    });
+    serviceModule.canvasDropHandler();
+  });
+
 });
