@@ -42,8 +42,9 @@ YUI.add('browser-sharing-widget', function(Y) {
       var link = this.get('link');
       return {
         'link': escape(link),
-        'twitter_text': escape('Checkout this charm on jujucharms: ' + link),
-        'email_subject': escape('Check out this charm on jujucharms'),
+        'twitter_text': escape(
+            'Check out this great charm on jujucharms: ' + link),
+        'email_subject': escape('Check out this great charm on jujucharms!'),
         'email_text': escape(
             'Check out this great charm on jujucharms: ' + link)
       };
