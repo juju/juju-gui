@@ -1330,7 +1330,13 @@ YUI.add('juju-topology-service', function(Y) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
+            db: topo.get('db'),
+            events: {
+              '.tab': {'click': 'showViewlet'},
+              '.close': {'click': 'destroy'}
+            },
+            viewletList: ['overview', 'units', 'config'],
+            template: Y.juju.views.Templates['view-container']
           });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);

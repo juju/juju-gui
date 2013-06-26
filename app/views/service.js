@@ -1028,6 +1028,20 @@ YUI.add('juju-view-service', function(Y) {
   });
 
   views.service = ServiceView;
+
+  Y.namespace('juju.controller').serviceInspector = {
+    'getName': function() {
+      return this.inspector.getName();
+    },
+    'bind': function(model, viewlet) {
+      this.bindingEngine.bind(model, viewlet);
+      return this;
+    },
+    'render': function() {
+      this.inspector.render();
+      return this;
+    }
+  };
   /**
     Service Inspector View Container Controller
 
@@ -1091,11 +1105,27 @@ YUI.add('juju-view-service', function(Y) {
           var handler = message.delegate('click', sendResolve, 'button', this);
 
         }
-      }
+      },
       //constraints: {},
-      //relations: {}
+      //relations: {},
+      ghostConfig: {
+        name: 'ghostConfig',
+        template: Templates['ghost-config-viewlet'],
+        'render': function(model) {
+          this.container = Y.Node.create(this.templateWrapper);
+
+          var options = model.getAttrs();
+          // XXX - Jeff
+          // not sure this should be done like this
+          // but this will allow us to use the old template.
+          options.settings = utils.extractServiceSettings(options.options);
+
+          this.container.setHTML(this.template(options));
+        }
+      }
     };
 
+    var prototype = {};
     /**
       Constructor for View Container Controller
 
@@ -1104,43 +1134,54 @@ YUI.add('juju-view-service', function(Y) {
     */
     function ServiceInspector(model, options) {
       this.model = model;
+      this.options = options;
       options = options || {};
-      options.viewlets = options.viewlets || {};
-      options.template = Templates['view-container'];
+      options.viewlets = {};
+      options.templateConfig = options.templateConfig || {};
+
       var container = Y.Node.create('<div>')
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
       var dd = new Y.DD.Drag({ node: container });
+      var self = this;
       options.container = container;
       options.viewletContainer = '.viewlet-container';
-      options.events = {
-        '.tab': {'click': 'showViewlet'},
-        '.close': {'click': 'destroy'}
-      };
-      options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
-                               true, undefined, 0, true);
+
+      options.viewletList.forEach(function(viewlet) {
+        options.viewlets[viewlet] = DEFAULT_VIEWLETS[viewlet];
+      });
+
       options.model = model;
+
+      // Merge the various prototype objects together
+      var c = Y.juju.controller;
+      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
+        prototype = Y.mix(prototype, controller);
+      });
+
+      // Bind the viewletEvents to this class
+      Y.Object.each(options.viewletEvents, function(
+          handlers, selector, collection) {
+            // You can have multiple listeners per selector
+            Y.Object.each(handlers, function(callback, event, obj) {
+              options.viewletEvents[selector][event] = Y.bind(
+                  prototype[callback], self);
+            });
+          });
+
+      options.events = Y.mix(options.events, options.viewletEvents);
+
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
+      // We create a new binding engine even if it's unliley
+      // that the will change
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
-      this.inspector.showViewlet('overview');
+      this.inspector.showViewlet(options.viewletList[0]);
     }
 
-    ServiceInspector.prototype = {
-      'getName': function() {
-        return this.inspector.getName();
-      },
-      'bind': function(model, viewlet) {
-        this.bindingEngine.bind(model, viewlet);
-        return this;
-      },
-      'render': function() {
-        this.inspector.render();
-        return this;
-      }
-    };
+    ServiceInspector.prototype = prototype;
 
     return ServiceInspector;
   })();

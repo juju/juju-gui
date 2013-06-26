@@ -66,11 +66,32 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
-      var ghostInspector = new Y.juju.GhostInspector(charm, {
+      var ghostInspector = new Y.juju.views.ServiceInspector(charm, {
         // Because this is an extension `this` points to the JujuApp
         db: this.db,
         env: this.env,
-        ghostService: ghostService
+        ghostService: ghostService,
+        // controller will show the first one in this array by default
+        viewletList: ['ghostConfig'],
+        template: Y.juju.views.Templates['ghost-config-wrapper'],
+        // these events are for the viewlet container
+        events: {
+          '.close' : { 'click': 'destroy' },
+          '.cancel': { 'click': 'destroy' }
+        },
+        // these events are for the viewlets and have their callbacks bound to
+        // the controllers prototype and are then mixed with the containers
+        // events for final binding
+        viewletEvents: {
+          '.deploy': { 'click': 'deployCharm' },
+          'input.config-file-upload': { 'change': 'handleFileUpload' },
+          'span.config-file-upload': { 'click': '_showFileDialogue' },
+          'input[name=service-name]': { 'valuechange': 'updateGhostName' }
+        },
+        templateConfig: {
+          packageName: charm.get('package_name'),
+          id: charm.get('id')
+        }
       });
 
       this._ghostInspectors.push(ghostInspector);
@@ -91,66 +112,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-  /**
-    Ghost Inspector View Container Controller
-
-    @class GhostInspector
-    @constructor
-  */
-  function GhostInspector(model, options) {
-    options = options || {};
-    this.options = options;
-    this.configFileContent = null;
-
-    var viewlets = {
-      configuration: {
-        name: 'configuration',
-        template: Templates['ghost-config-viewlet'],
-        'render': function(model) {
-          this.container = Y.Node.create(this.templateWrapper);
-
-          var options = model.getAttrs();
-          // XXX - Jeff
-          // not sure this should be done like this
-          // but this will allow us to use the old template.
-          options.settings = utils.extractServiceSettings(options.options);
-
-          this.container.setHTML(this.template(options));
-        }
-      }
-    };
-
-    options.viewlets = viewlets;
-    options.template = Templates['ghost-config-wrapper'];
-    options.model = model;
-    options.events = {
-      '.close' : { 'click': 'destroy' },
-      '.cancel': { 'click': 'destroy' },
-      '.deploy': { 'click': Y.bind(this.deployCharm, this) },
-      'input.config-file-upload': {
-        'change': Y.bind(this._handleFileUpload, this) },
-      'span.config-file-upload': {
-        'click': Y.bind(this._showFileDialogue, this) },
-      'input[name=service-name]': {
-        'valuechange': Y.bind(this.updateGhostName, this) }
-    };
-    options.templateConfig = {
-      packageName: model.get('package_name'),
-      id: model.get('id')
-    };
-    var container = Y.Node.create('<div>')
-        .addClass('panel yui3-juju-inspector')
-        .appendTo(Y.one('#content'));
-    var dd = new Y.DD.Drag({ node: container });
-    options.container = container;
-    options.viewletContainer = '.viewlet-container';
-
-    this.inspector = new views.ViewContainer(options);
-    this.inspector.render();
-    this.inspector.showViewlet('configuration');
-  }
-
-  GhostInspector.prototype = {
+  Y.namespace('juju.controller').ghostInspector = {
     /**
       Handles deployment of the charm.
 
@@ -315,7 +277,5 @@ YUI.add('juju-ghost-inspector', function(Y) {
     }
 
   };
-
-  Y.namespace('juju').GhostInspector = GhostInspector;
 
 });
