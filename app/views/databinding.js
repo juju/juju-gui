@@ -134,11 +134,11 @@ YUI.add('juju-databinding', function(Y) {
       in the DOM. Special handling is provided to detect conflicts and indicate
       when form values differ from the model.
 
-      From within the DOM data-bind='model key' attributes can be used to
+      From within the DOM, data-bind='model key' attributes can be used to
       associate bindings from the model into the DOM. Nested keys are supported
       by using '.' (dotted) paths. As an important development/debug tip when
       trying to use YUI to select a dotted path name make sure to quote the
-      entire path. For example Y.one('data-bind="a.b.c."]').
+      entire path. For example Y.one('[data-bind="a.b.c."]').
 
       Viewlets can provide a number of configuration options
       for use here:
