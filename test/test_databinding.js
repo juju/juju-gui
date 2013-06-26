@@ -58,6 +58,47 @@ describe('data binding library', function() {
         assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
       });
+
+      it('supports formatters', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              format: function(value) {
+                return value + 'FORMATTED';
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'bFORMATTED');
+      });
+
+      it('supports callbacks on binding updates', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              update: function(node, value) {
+                node.set('text', 'overide');
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'overide');
+      });
     });
 
     describe('field types', function() {
@@ -95,7 +136,7 @@ describe('data binding library', function() {
 
       it('binds numbers to inputs', function() {
         generateEngine('<input type="number" data-bind="e"/>');
-        engine.bind(new Y.Model({e: '7'}), viewlet);
+        engine.bind(new Y.Model({e: 7}), viewlet);
         assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=e]').get('value'), '7');
       });

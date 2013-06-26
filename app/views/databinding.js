@@ -115,6 +115,12 @@ YUI.add('juju-databinding', function(Y) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
+      // Explicitly allow additional binding information to
+      // be passed in the viewlet config. From this we can
+      // resolve formatters and update callbacks.
+      if (viewlet.bindings && viewlet.bindings[config.name]) {
+        binding = Y.mix(binding, viewlet.bindings[config.name]);
+      }
       // Ensure 'target' is an Array.
       if (typeof binding.target === 'string') {
         binding.target = [binding.target];
@@ -327,13 +333,23 @@ YUI.add('juju-databinding', function(Y) {
             conflicted = binding.target;
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self));
+                Y.bind(resolve, binding));
           }
         });
 
         // Do conflict detection
         if (binding.target !== conflicted) {
-          field.set.call(binding, binding.target, binding.get(viewletModel));
+          var value = binding.get(viewletModel);
+          if (binding.format) {
+            value = binding.format.call(binding, value);
+          }
+          // If an apply callback was provided use it to update
+          // the DOM otherwise used the field type default.
+          if (binding.update) {
+            binding.update.call(binding, binding.target, value);
+          } else {
+            field.set.call(binding, binding.target, value);
+          }
         }
       });
     };
