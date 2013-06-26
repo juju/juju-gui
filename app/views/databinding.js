@@ -115,6 +115,12 @@ YUI.add('juju-databinding', function(Y) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
+      // Explicitly allow additional binding information to
+      // be passed in the viewlet config. From this we can
+      // resolve formatters and update callbacks.
+      if (viewlet.bindings && viewlet.bindings[config.name]) {
+        binding = Y.mix(binding, viewlet.bindings[config.name]);
+      }
       // Ensure 'target' is an Array.
       if (typeof binding.target === 'string') {
         binding.target = [binding.target];
@@ -139,13 +145,14 @@ YUI.add('juju-databinding', function(Y) {
 
         - container {Y.Node} The container into which the viewlet renders.
 
-        - bindings {Array}: An array of binding descriptors. These
-            take the following form:
-              name: {String} Name of Attribute on model,
-              target: {String || Array of String} CSS selectors to
-                      elements bound to this model attribute.
-              get: {Function} (optional) method to override
-                  default attr access pattern. get(model) -> value.
+        - bindings {Object}: A mapping from model property names
+              to additional properties available to the binding.
+              Currently we support the following callbacks on
+              a per binding name basis:
+                format(value) -> {New Value}
+                update(node, value) -> Mutate DOM directly. If
+                   format was provided as well the formatted
+                   value will be used.
 
             Bindings is optional in the case of ModelLists as the
             pattern is to re-render children.
@@ -327,13 +334,23 @@ YUI.add('juju-databinding', function(Y) {
             conflicted = binding.target;
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self));
+                Y.bind(resolve, binding));
           }
         });
 
         // Do conflict detection
         if (binding.target !== conflicted) {
-          field.set.call(binding, binding.target, binding.get(viewletModel));
+          var value = binding.get(viewletModel);
+          if (binding.format) {
+            value = binding.format.call(binding, value);
+          }
+          // If an apply callback was provided use it to update
+          // the DOM otherwise used the field type default.
+          if (binding.update) {
+            binding.update.call(binding, binding.target, value);
+          } else {
+            field.set.call(binding, binding.target, value);
+          }
         }
       });
     };
