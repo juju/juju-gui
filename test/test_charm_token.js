@@ -19,8 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('charm token', function() {
-  var charm_container, CharmToken, Y;
+describe.only('charm token', function() {
+  var charm_container, CharmToken, token, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -38,11 +38,14 @@ describe('charm token', function() {
 
   afterEach(function() {
     charm_container.remove(true);
+    if (token) {
+      token.destory();
+    }
   });
 
   it('exists', function() {
-    var charm = new CharmToken();
-    assert.isObject(charm);
+    var token = new CharmToken();
+    assert.isObject(token);
   });
 
   it('renders with correct metadata', function() {
@@ -54,47 +57,47 @@ describe('charm token', function() {
       recent_download_count: 3,
       tested_providers: ['ec2']
     };
-    var charm = new CharmToken(cfg);
-    charm.render(charm_container);
+    var token = new CharmToken(cfg);
+    token.render(charm_container);
     var metadata = charm_container.one('.metadata');
     assert.equal(
         ' 3 downloads, 1 commit ',
         metadata.get('text').replace(/\s+/g, ' '));
-    charm.get('boundingBox').getAttribute('id').should.not.eql('test');
+    token.get('boundingBox').getAttribute('id').should.not.eql('test');
   });
 
   it('sets a default of small size', function() {
-    var charm = new CharmToken();
-    charm.get('size').should.eql('small');
+    var token = new CharmToken();
+    token.get('size').should.eql('small');
 
     // and the css class should be on the token once rendered.
-    charm.render(charm_container);
+    token.render(charm_container);
     charm_container.one('.charm-token').hasClass('small').should.equal(true);
   });
 
   it('allows setting a large size', function() {
-    var charm = new CharmToken({
+    var token = new CharmToken({
       size: 'large'
     });
-    charm.get('size').should.eql('large');
+    token.get('size').should.eql('large');
 
     // and the css class should be on the token once rendered.
-    charm.render(charm_container);
+    token.render(charm_container);
     charm_container.one('.charm-token').hasClass('large').should.equal(true);
   });
 
   it('allows setting a tiny size', function() {
-    var charm = new CharmToken({
+    var token = new CharmToken({
       size: 'tiny',
       description: 'some description',
       mainCategory: 'app-servers',
       recent_commit_count: 1,
       recent_download_count: 3
     });
-    assert.equal('tiny', charm.get('size'));
+    assert.equal('tiny', token.get('size'));
 
     // and the css class should be on the token once rendered.
-    charm.render(charm_container);
+    token.render(charm_container);
     assert(charm_container.one('.charm-token').hasClass('tiny'));
 
     var iconNode = charm_container.one('.category-icon');
@@ -112,8 +115,8 @@ describe('charm token', function() {
       tested_providers: ['ec2']
     };
 
-    var charm = new CharmToken(cfg);
-    charm.render(charm_container);
+    var token = new CharmToken(cfg);
+    token.render(charm_container);
     var iconNode = charm_container.one('.category-icon');
     assert.equal(iconNode.hasClass('charm-app-servers-64'), true);
   });
@@ -130,8 +133,8 @@ describe('charm token', function() {
       tested_providers: ['ec2']
     };
 
-    var charm = new CharmToken(cfg);
-    charm.render(charm_container);
+    var token = new CharmToken(cfg);
+    token.render(charm_container);
     var iconNode = charm_container.one('.category-icon');
     assert.equal(iconNode.hasClass('charm-app-servers-96'), true);
   });
