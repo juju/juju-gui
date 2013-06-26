@@ -593,6 +593,12 @@ YUI.add('juju-gui', function(Y) {
                                 this.on_database_changed, this);
       }
       this.addSubApplications(cfg);
+
+      // When someone wants a charm to be deployed they fire initiateDeploy
+      // and we show the charm panel to configure/deploy the service.
+      Y.on('initiateDeploy', function(charm) {
+        this.deploy(charm);
+      }, this.charmPanel);
     },
 
     /**

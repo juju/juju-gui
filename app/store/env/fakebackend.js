@@ -28,7 +28,8 @@ An in-memory fake Juju backend and supporting elements.
 YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var UNAUTHENTICATEDERROR = {error: 'Please log in.'};
+  var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
+  var VALUE_ERROR = {error: 'Unparsable environment data.'};
 
   /**
     Loops through the charm endpoint data to determine whether we have a
@@ -163,7 +164,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     nextChanges: function() {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var result;
       if (Y.Object.isEmpty(this.changes.services) &&
@@ -205,7 +206,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     nextAnnotations: function() {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var result;
       if (Y.Object.isEmpty(this.annotations.services) &&
@@ -293,7 +294,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     deploy: function(charmId, callback, options) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return callback(UNAUTHENTICATED_ERROR);
       }
       if (!options) {
         options = {};
@@ -325,7 +326,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     setCharm: function(serviceName, charmId, force, callback) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return callback(UNAUTHENTICATED_ERROR);
       }
       var self = this;
       var service = this.db.services.getById(serviceName);
@@ -502,7 +503,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     destroyService: function(serviceName) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
@@ -539,7 +540,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     getService: function(serviceName) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
@@ -567,7 +568,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     getCharm: function(charmName, callback) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return callback(UNAUTHENTICATED_ERROR);
       }
       var formatCharm = function(charm) {
         // Simulate a delay in the charm loading for testing.
@@ -597,7 +598,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     addUnit: function(serviceName, numUnits) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       if (Y.Lang.isUndefined(numUnits)) {
         numUnits = 1;
@@ -742,7 +743,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           warning, error;
 
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
 
       if (service) {
@@ -775,7 +776,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           warning, error;
 
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       if (service) {
         if (service.get('exposed')) {
@@ -805,7 +806,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     addRelation: function(endpointA, endpointB) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       if ((typeof endpointA !== 'string') ||
           (typeof endpointB !== 'string')) {
@@ -886,7 +887,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     removeRelation: function(endpointA, endpointB) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       if ((typeof endpointA !== 'string') ||
           (typeof endpointB !== 'string')) {
@@ -960,7 +961,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     updateAnnotations: function(entityName, annotations) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var entity = this.db.resolveModelByName(entityName);
       var existing;
@@ -993,7 +994,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     getAnnotations: function(entityName) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var entity = this.db.resolveModelByName(entityName);
 
@@ -1015,7 +1016,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     removeAnnotations: function(entityName, keys) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var entity = this.db.resolveModelByName(entityName);
       var annotations;
@@ -1058,7 +1059,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     setConfig: function(serviceName, config) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
@@ -1096,7 +1097,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var constraints = {};
 
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
@@ -1138,7 +1139,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     resolved: function(unitName, relationName) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
       var unit = this.db.units.getById(unitName);
       if (!unit) {
@@ -1217,7 +1218,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           };
 
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return UNAUTHENTICATED_ERROR;
       }
 
       serviceList.each(function(s) {
@@ -1260,11 +1261,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
    */
     importEnvironment: function(jsonData, callback) {
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return callback(UNAUTHENTICATED_ERROR);
       }
-      var data = JSON.parse(jsonData),
-          version = 0,
-          importImpl;
+      var data;
+      try {
+        data = JSON.parse(jsonData);
+      } catch (e) {
+        console.log('error parsing environment data');
+        return callback(VALUE_ERROR);
+      }
+      var version = 0;
+      var importImpl;
       // Dispatch to the correct version after inspecting the JSON data.
       if (data.meta && data.meta.exportFormat) {
         version = data.meta.exportFormat;

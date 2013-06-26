@@ -856,7 +856,7 @@ YUI.add('juju-charm-panel', function(Y) {
         charmId: charm.get('id')
       });
       // Since we are showing the configure/deploy panel ex nihilo, we want the
-      // panel to disappear when the deploy completes or is candled, but just
+      // panel to disappear when the deploy completes or is canceled, but just
       // this once (i.e., they should work normally if the user opens the panel
       // via a charm search).
       panels.configuration.once('panelRemoved', hide);
