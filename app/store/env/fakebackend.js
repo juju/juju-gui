@@ -750,10 +750,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
           service.set('exposed', true);
           this.changes.services[service.get('id')] = [service, true];
         } else {
-          warning = 'Service `' + serviceName + '` was already exposed.';
+          warning = 'Service "' + serviceName + '" was already exposed.';
         }
       } else {
-        error = '`' + serviceName + '` is an invalid service name.';
+        error = '"' + serviceName + '" is an invalid service name.';
       }
 
       return {
@@ -782,10 +782,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
           service.set('exposed', false);
           this.changes.services[service.get('id')] = [service, true];
         } else {
-          warning = 'Service `' + serviceName + '` is not exposed.';
+          warning = 'Service "' + serviceName + '" is not exposed.';
         }
       } else {
-        error = '`' + serviceName + '` is an invalid service name.';
+        error = '"' + serviceName + '" is an invalid service name.';
       }
 
       return {
@@ -1211,7 +1211,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           services: [], relations: []},
           blackLists = {
             service: ['id', 'aggregated_status', 'clientId', 'initialized',
-              'destroyed', 'pending'],
+              'constraintsStr', 'destroyed', 'pending'],
             relation: ['id', 'relation_id', 'clientId', 'initialized',
               'destroyed', 'pending']
           };

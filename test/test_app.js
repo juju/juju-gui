@@ -66,6 +66,7 @@ function injectData(app, data) {
 
     beforeEach(function() {
       window._gaq = [];
+      window.flags = {};
       container = Y.one('#main')
         .appendChild(Y.Node.create('<div/>'))
           .set('id', 'test-container')
