@@ -65,17 +65,6 @@ YUI.add('juju-view-container', function(Y) {
     template: '{{viewlet}}', // compiled handlebars template
 
     /**
-      Bindings config for the binding engine
-      ex) [ { name: 'modelFieldName', target: 'querySelectorString' } ]
-      ex) [ { name: 'modelFieldName', target: [ 'querySelectorString' ] } ]
-
-      @property bindings
-      @type {array}
-      @default []
-    */
-    bindings: [],
-
-    /**
       The rendered viewlet element
 
       @property container
@@ -155,8 +144,8 @@ YUI.add('juju-view-container', function(Y) {
     @class ViewContainer
     @constructor
   */
-  var juju = Y.namespace('juju');
-  juju.ViewContainer = new Y.Base.create('view-container', Y.View, [], {
+  var jujuViews = Y.namespace('juju.views');
+  jujuViews.ViewContainer = new Y.Base.create('view-container', Y.View, [], {
 
     /**
       DOM bound events for any view container related events
@@ -206,7 +195,7 @@ YUI.add('juju-view-container', function(Y) {
       // Passed in on instantiation
       this.viewletConfig = options.viewlets;
       this.template = options.template;
-      this.templateConfig = options.templateConfig;
+      this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets();
       this.events = options.events;

@@ -1278,19 +1278,7 @@ YUI.add('juju-topology-service', function(Y) {
       var flags = window.flags;
 
       if (flags.serviceInspector) {
-        var setInspector = topo.get('setInspector');
-        var getInspector = topo.get('getInspector');
-        // XXX: switch on pending to handle ghost config.
-        var serviceInspector = getInspector(service.get('id'));
-        if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
-          });
-          serviceInspector.inspector.after('destroy', function(e) {
-            setInspector(e.currentTarget, true);
-          });
-          setInspector(serviceInspector);
-        }
+        this.show_service(service);
         return;
       }
 
@@ -1368,7 +1356,13 @@ YUI.add('juju-topology-service', function(Y) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
+            db: topo.get('db'),
+            events: {
+              '.tab': {'click': 'showViewlet'},
+              '.close': {'click': 'destroy'}
+            },
+            viewletList: ['overview', 'units', 'config'],
+            template: Y.juju.views.Templates['view-container']
           });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);

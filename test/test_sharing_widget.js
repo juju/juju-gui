@@ -54,10 +54,42 @@ describe('sharing widget', function() {
     var widget = new Y.juju.widgets.browser.SharingWidget({
       button: container
     });
+    // Stub share link behavior so we don't trigger it in this test.
+    widget._openShareLink = function(e) {
+      e.halt();
+    };
     widget.render(container);
     container.simulate('click');
     assert.isTrue(widget.get('visible'));
     container.simulate('click');
     assert.isFalse(widget.get('visible'));
+  });
+
+  it('escapes data for the template', function() {
+    var widget = new Y.juju.widgets.browser.SharingWidget({
+      button: container,
+      link: 'http://example.com/foo/bar'
+    });
+    var escaped_link = 'http%3A//example.com/foo/bar';
+    var escaped_text = 'Check%20out%20this%20great%20charm%20on%20jujucharms' +
+        '%3A%20' + escaped_link;
+    var data = widget._getSharingData();
+    assert.equal(data.link, escaped_link);
+    assert.equal(data.twitter_text, escaped_text);
+  });
+
+  it('handles clicks on the links', function() {
+    var widget = new Y.juju.widgets.browser.SharingWidget({
+      button: container,
+      link: 'http://example.com/foo/bar'
+    });
+    var linkOpened = false;
+    widget._openShareLink = function(e) {
+      e.halt();
+      linkOpened = true;
+    };
+    widget.render(container);
+    container.one('a').simulate('click');
+    assert.isTrue(linkOpened);
   });
 });
