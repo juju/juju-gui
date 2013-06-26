@@ -235,12 +235,12 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          this.env.exportEnvironment(function(r) {
-            var exportData = JSON.stringify(r.result, undefined, 2);
-            var exportBlob = new Blob([exportData],
-                                      {type: 'application/json;charset=utf-8'});
-            saveAs(exportBlob, 'export.json');
-          });
+          var yaml;
+          var result = this.db.exportDeployer();
+          var exportData = jsyaml.dump(result);
+          var exportBlob = new Blob([exportData],
+                                    {type: 'application/yaml;charset=utf-8'});
+          saveAs(exportBlob, 'export.yaml');
         },
         help: 'Export the environment'
       },
@@ -502,6 +502,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('providerTypeChange', this.onProviderTypeChange, this);
       this.env.after('environmentNameChange',
           this.onEnvironmentNameChange, this);
+      this.env.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
 
       // Once the user logs in, we need to redraw.
       this.env.after('login', this.onLogin, this);
@@ -1070,6 +1071,20 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.set('provider', providerType);
       Y.all('.provider-type').set('text', 'on ' + providerType);
     },
+
+    /**
+     * Record environment default series changes in our model.
+     *
+     * The provider type arrives asynchronously.  Instead of updating the
+     * display from the environment code (a separation of concerns violation),
+     * we update it here.
+     *
+     * @method onDefaultSeriesChange
+     */
+    onDefaultSeriesChange: function(evt) {
+      this.db.environment.set('defaultSeries', evt.newVal);
+    },
+
 
     /**
       Display the Environment Name.
