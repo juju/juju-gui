@@ -249,6 +249,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     function generateAndRelateServices(charms, relation,
         removeRelation, mock, done) {
+      // FIXME: removeRelation is not used.
       state.deploy(charms[0], function() {
         state.deploy(charms[1], function() {
           client.onmessage = function() {
@@ -1228,6 +1229,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['wordpress:db', 'mysql:db'],
           {endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
+      // FIXME: relation removal is not done (in generateAndRelateServices)
+      // nor tested (here).
     });
 
     it('can remove a relation(integration)', function(done) {
@@ -1269,6 +1272,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
+          // FIXME: it should be "err", not "error".
+          // generateAndRelateServices is not actually checking the error.
           {error: 'Charm not loaded.',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
@@ -1279,12 +1284,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
+          // FIXME: it should be "err", not "error".
+          // generateAndRelateServices is not actually checking the error.
           {error: 'Relationship does not exist',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
 
     describe('Sandbox Annotations', function() {
+
       it('should handle service annotation updates', function(done) {
         generateServices(function(data) {
           // Post deploy of wordpress we should be able to
@@ -1373,6 +1381,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           client.send(Y.JSON.stringify(op));
         });
       });
+
     });
 
     it('should allow unit resolved to be called', function(done) {
@@ -1807,6 +1816,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy(
           'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
     }
+
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
@@ -2015,6 +2025,169 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           generateAndExposeService(unexposeService);
         }
     );
+
+    it('can add a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress:db', 'mysql:db']
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'db');
+            assert.equal(recEndpoints.wordpress.Scope, 'global');
+            assert.equal(recEndpoints.mysql.Name, 'db');
+            assert.equal(recEndpoints.mysql.Scope, 'global');
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can add a relation (integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function(recData) {
+            assert.equal(recData.err, undefined);
+            assert.equal(recData.endpoint_a, 'wordpress:db');
+            assert.equal(recData.endpoint_b, 'mysql:db');
+            assert.isObject(recData.result);
+            done();
+          });
+        });
+      });
+    });
+
+    it('is able to add a relation with a subordinate service', function(done) {
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:puppet', function(service) {
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'juju-info');
+            assert.equal(recEndpoints.wordpress.Scope, 'container');
+            assert.equal(recEndpoints.puppet.Name, 'juju-info');
+            assert.equal(recEndpoints.puppet.Scope, 'container');
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('throws an error if only one endpoint is supplied', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error,
+              'Two string endpoint names required to establish a relation');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('throws an error if endpoints are not relatable', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db', 'mysql:foo']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error, 'Charm not loaded.');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can remove a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var relation = ['wordpress:db', 'mysql:db'];
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
+          state.addRelation(relation[0], relation[1]);
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'DestroyRelation',
+            Params: {
+              Endpoints: relation
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can remove a relation(integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function() {
+            env.remove_relation(endpointA, endpointB, function(recData) {
+              assert.equal(recData.err, undefined);
+              assert.equal(recData.endpoint_a, 'wordpress:db');
+              assert.equal(recData.endpoint_b, 'mysql:db');
+              done();
+            });
+          });
+        });
+      });
+    });
 
   });
 
