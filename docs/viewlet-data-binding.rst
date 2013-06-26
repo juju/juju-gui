@@ -89,8 +89,8 @@ in the `viewlets` object property and have a few configuration properties:
 - templateWrapper: String or compiled Handlebars template to use as the wrapper
   for the viewlet.
 - template: String or compiled Handlebars template for the viewlet.
-- bindings: An array of modelAttributeKey-querySelector bindings which are
-  passed through to the binding engine.
+- bindings: An object mapping additional methods onto the binding. 'format' and 
+  'update' are examples. See Developer docs.
 - rebind: A function that returns a model or model list to which this viewlet
   should be bound. This was designed to return a  model or modellist that was
   nested in the model passed to the `View Container`_ for binding.
