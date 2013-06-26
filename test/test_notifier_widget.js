@@ -89,34 +89,34 @@ describe('notifier widget', function() {
 
   it('should destroy notifications after N milliseconds', function(done) {
     makeNotifier('mytitle', 'mymessage', 1);
-    // A timeout of 250 milliseconds is used so that we ensure the destroying
-    // animation can be completed.
+    // A timeout is used so that we ensure the destroying animation can be
+    // completed.
     setTimeout(function() {
       assertNumNotifiers(0);
       done();
-    }, 250);
+    }, 500);
   });
 
   it('should destroy notifications on click', function(done) {
     makeNotifier();
     notifierBox.one('*').simulate('click');
-    // A timeout of 250 milliseconds is used so that we ensure the destroying
-    // animation can be completed.
+    // A timeout is used so that we ensure the destroying animation can be
+    // completed.
     setTimeout(function() {
       assertNumNotifiers(0);
       done();
-    }, 250);
+    }, 500);
   });
 
   it('should prevent notification removal on mouse enter', function(done) {
     makeNotifier('mytitle', 'mymessage', 1);
     notifierBox.one('*').simulate('mouseover');
-    // A timeout of 250 milliseconds is used so that we ensure the node is not
-    // preserved by the destroying animation.
+    // A timeout is used so that we ensure the destroying animation can be
+    // completed.
     setTimeout(function() {
       assertNumNotifiers(1);
       done();
-    }, 250);
+    }, 500);
   });
 
 });
