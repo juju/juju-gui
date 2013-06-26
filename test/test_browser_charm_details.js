@@ -742,7 +742,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-configuration',
         charm: new models.BrowserCharm(data.charm),
         container: utils.makeContainer()
       });
@@ -751,7 +751,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // We've selected the activeTab specified.
       var selected = view.get('container').one('.yui3-tab-selected a');
-      assert.equal(selected.getAttribute('href'), '#bws-interfaces');
+      assert.equal(selected.getAttribute('href'), '#bws-configuration');
     });
 
     it('renders out the related charms correctly', function(done) {
@@ -784,7 +784,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // We've selected the activeTab specified.
       var tokens = view.get('container').all('.charm-token');
-      assert.equal(5, tokens.size());
+      assert.equal(tokens.size(), 5);
 
       // And clicking on one of those charms navigates correctly.
       view.on('viewNavigate', function(ev) {
@@ -798,6 +798,92 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.get('container').one('.charm-token').simulate('click');
     });
+
+    it('loads related charms when interface tab selected', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+      view.render();
+
+      assert.equal(
+          testContainer.all('#bws-interfaces .charm-token').size(),
+          9);
+    });
+
+    it('only loads the interface data once', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        activeTab: '#bws-interfaces',
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+
+      var origLoadRelatedCharms = view._loadRelatedCharms;
+      var state = {
+        loadCount: 0,
+        hitTabRender: false,
+        hitRelatedRender: false
+      };
+      view._loadRelatedCharms = function(callback) {
+        state.loadCount += 1;
+        origLoadRelatedCharms.call(view, callback);
+      };
+      view._renderRelatedInterfaceCharms = function() {
+        state.hitTabRender = true;
+      };
+      view._renderRelatedCharms = function() {
+        state.hitRelatedRender = true;
+      };
+      view.render();
+
+      assert.equal(state.loadCount, 1);
+      assert(state.hitTabRender);
+      assert(state.hitRelatedRender);
+    });
+
   });
 
 })();

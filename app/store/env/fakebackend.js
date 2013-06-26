@@ -1211,7 +1211,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           services: [], relations: []},
           blackLists = {
             service: ['id', 'aggregated_status', 'clientId', 'initialized',
-              'destroyed', 'pending'],
+              'constraintsStr', 'destroyed', 'pending'],
             relation: ['id', 'relation_id', 'clientId', 'initialized',
               'destroyed', 'pending']
           };
