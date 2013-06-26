@@ -1275,6 +1275,12 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var securityURL, rebootURL;
+      var flags = window.flags;
+
+      if (flags.serviceInspector) {
+        this.show_service(service);
+        return;
+      }
 
       // Update landscape links and show/hide as needed.
       if (landscape) {
