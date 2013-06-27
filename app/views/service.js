@@ -1115,7 +1115,20 @@ YUI.add('juju-view-service', function(Y) {
 
         }
       },
-      //constraints: {},
+      constraints: {
+        name: 'constraints',
+        template: Templates['service-constraints-viewlet'],
+
+        'render': function(service) {
+          var constraints = [];
+          Y.Object.each(service.get('constraints'), function(value, key) {
+            constraints.push({name: key, value: value});
+          });
+          this.container = Y.Node.create(this.templateWrapper);
+          this.container.setHTML(
+              this.template({service: service, constraints: constraints}));
+        }
+      },
       //relations: {},
       ghostConfig: {
         name: 'ghostConfig',

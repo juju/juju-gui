@@ -1361,7 +1361,7 @@ YUI.add('juju-topology-service', function(Y) {
               '.tab': {'click': 'showViewlet'},
               '.close': {'click': 'destroy'}
             },
-            viewletList: ['overview', 'units', 'config'],
+            viewletList: ['overview', 'units', 'config', 'constraints'],
             template: Y.juju.views.Templates['view-container']
           });
           serviceInspector.inspector.after('destroy', function(e) {
