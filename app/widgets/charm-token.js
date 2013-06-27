@@ -47,10 +47,6 @@ YUI.add('browser-charm-token', function(Y) {
     initializer: function(charmAttributes) {
       // This passed-in config is made up of charm attributes.
       this.charmAttributes = charmAttributes;
-      if (this.get('isDraggable')) {
-        var func = Y.bind(this._addDraggability, this);
-        setTimeout(func, 1000);
-      }
     },
 
     /**
@@ -75,12 +71,29 @@ YUI.add('browser-charm-token', function(Y) {
      * Generate a function that records drag and drop data when a drag starts.
      *
      * @method _makeDragStartHandler
-     * @param {Node} dragImage The node to show during the drag.
      * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDragStartHandler: function(dragImage, charmData) {
+    _makeDragStartHandler: function(charmData) {
+      var container = this.get('boundingBox');
       return function(evt) {
+        var dragImage;
+        var icon = container.one('.icon');
+        // Chome creates drag images in a silly way, so CSS background
+        // tranparency doesn't work and if part of the drag image is off-screen,
+        // that part is simply white.  Therefore, we clone the image and place it
+        // safely on-screen but burried at a very low z-index.
+        if (icon) {
+          dragImage = Y.one('body')
+            .appendChild(icon.cloneNode(true))
+              .setStyle('z-index', -1000)
+              .setStyle('height', icon.one('img').get('height'))
+              .setStyle('width', icon.one('img').get('width'));
+        } else {
+          dragImage =
+            container.one('.charm-icon') ||
+            container.one('.category-icon');
+        }
         evt = evt._event; // We want the real event.
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
@@ -99,10 +112,10 @@ YUI.add('browser-charm-token', function(Y) {
      * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDraggable: function(element, dragImage, charmData) {
+    _makeDraggable: function(element, charmData) {
       element.setAttribute('draggable', 'true');
       this.addEvent(element.on('dragstart',
-          this._makeDragStartHandler(dragImage, charmData)));
+          this._makeDragStartHandler(charmData)));
     },
 
     /**
@@ -116,32 +129,13 @@ YUI.add('browser-charm-token', function(Y) {
     */
     _addDraggability: function() {
       var container = this.get('boundingBox');
-      var dragImage;
-      var icon = container.one('.icon');
-      debugger;
-      // Chome creates drag images in a silly way, so CSS background
-      // tranparency doesn't work and if part of the drag image is off-screen,
-      // that part is simply white.  Therefore, we clone the image and place it
-      // safely on-screen but burried at a very low z-index.
-      if (icon) {
-        dragImage = Y.one('body')
-          .appendChild(icon.cloneNode(true))
-            .setStyle('z-index', -1000)
-            .setStyle('height', icon.one('img').get('height'))
-            .setStyle('width', icon.one('img').get('width'));
-      } else {
-        dragImage =
-          container.one('.icon') ||
-          container.one('.charm-icon') ||
-          container.one('.category-icon');
-      }
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.
       var charmData = Y.JSON.stringify(this.charmAttributes);
-      this._makeDraggable(container, dragImage, charmData);
+      this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
-          this._makeDraggable(element, dragImage, charmData);
+          this._makeDraggable(element, charmData);
       }, this);
     },
 
@@ -158,6 +152,9 @@ YUI.add('browser-charm-token', function(Y) {
       var outerContainer = container.ancestor('.yui3-charmtoken')
         .addClass('yui3-u');
       container.setHTML(content);
+      if (this.get('isDraggable')) {
+        this._addDraggability()
+      }
     },
 
   }, {
