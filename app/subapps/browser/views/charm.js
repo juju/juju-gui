@@ -574,7 +574,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
           ].join('-');
 
           charm.size = 'tiny';
-          debugger;
           var ct = new widgets.browser.CharmToken(charm);
           var node = Y.one('[data-interface="' + uiID + '"]');
           ct.render(node);
