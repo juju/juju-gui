@@ -247,27 +247,48 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     }
 
+    /**
+      Generates the two services required for relation removal tests. After the
+      services have been generated, a relation between them will be added and
+      then removed.
+
+      This interacts directly with the fakebackend bypassing the environment.
+
+      @method generateAndRelateServices
+      @param {Array} charms Two strings with the charm ids to be deployed.
+      @param {Array} relation Two strings with the charm ids to be related.
+      @param {Array} removeRelation
+      @param {Object} mock Object with the expected return values.
+      @param {Function} done To be called to signal the test end.
+      @return {undefined} Side effects only.
+    */
     function generateAndRelateServices(charms, relation,
         removeRelation, mock, done) {
-      // FIXME: removeRelation is not used.
       state.deploy(charms[0], function() {
         state.deploy(charms[1], function() {
-          client.onmessage = function() {
-            var data = {
-              op: 'add_relation',
-              endpoint_a: relation[0],
-              endpoint_b: relation[1]
-            };
-            client.onmessage = function(rec) {
-              var data = Y.JSON.parse(rec.data);
-              assert.equal(data.err, mock.err);
-              assert.equal(data.endpoint_a, mock.endpoint_a);
-              assert.equal(data.endpoint_b, mock.endpoint_b);
+          if (relation) {
+            state.addRelation(relation[0], relation[1]);
+          }
+          var data = {
+            op: 'remove_relation',
+            endpoint_a: removeRelation[0],
+            endpoint_b: removeRelation[1]
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            // Skip the defaultSeriesChange message.
+            if (recData.default_series === undefined) {
+              assert.equal(recData.result, mock.result);
+              assert.equal(recData.err, mock.err);
+              if (!recData.err) {
+                assert.equal(recData.endpoint_a, mock.endpoint_a);
+                assert.equal(recData.endpoint_b, mock.endpoint_b);
+              }
               done();
-            };
-            client.send(Y.JSON.stringify(data));
+            }
           };
           client.open();
+          client.send(Y.JSON.stringify(data));
         });
       });
     }
@@ -1227,13 +1248,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
-          {endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
+          {result: true, endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
-      // FIXME: relation removal is not done (in generateAndRelateServices)
-      // nor tested (here).
     });
 
-    it('can remove a relation(integration)', function(done) {
+    it('can remove a relation (integration)', function(done) {
       var endpoints = [
         ['kumquat',
           { name: 'db',
@@ -1242,7 +1261,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           { name: 'db',
             role: 'server' }]
       ];
-
       env.after('defaultSeriesChange', function() {
         function localCb(result) {
           var mock = {
@@ -1256,13 +1274,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
-              env.deploy('cs:mysql', null, null, null, 1, function() {
-                env.add_relation(endpoints[0], endpoints[1], function() {
-                  env.remove_relation(endpoints[0], endpoints[1], localCb);
-                });
+          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
+            env.deploy('cs:mysql', null, null, null, 1, function() {
+              env.add_relation(endpoints[0], endpoints[1], function() {
+                env.remove_relation(endpoints[0], endpoints[1], localCb);
               });
             });
+          }
+        );
       });
       env.connect();
     });
@@ -1271,10 +1290,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       generateAndRelateServices(
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
-          ['wordpress:db', 'mysql:db'],
-          // FIXME: it should be "err", not "error".
-          // generateAndRelateServices is not actually checking the error.
-          {error: 'Charm not loaded.',
+          ['no_such', 'charms'],
+          {err: 'Charm not loaded.',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
@@ -1282,11 +1299,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('throws an error if the relationship does not exist', function(done) {
       generateAndRelateServices(
           ['cs:wordpress', 'cs:mysql'],
+          null,
           ['wordpress:db', 'mysql:db'],
-          ['wordpress:db', 'mysql:db'],
-          // FIXME: it should be "err", not "error".
-          // generateAndRelateServices is not actually checking the error.
-          {error: 'Relationship does not exist',
+          {err: 'Relationship does not exist',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
