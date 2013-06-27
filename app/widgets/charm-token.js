@@ -134,12 +134,26 @@ YUI.add('browser-charm-token', function(Y) {
       container.setHTML(content);
       var outerContainer = container.ancestor('.yui3-charmtoken')
         .addClass('yui3-u');
-      var dragImage =
-        container.one('.icon') ||
-        container.one('.charm-icon') ||
-        container.one('.category-icon');
+      var dragImage;
+      var icon = container.one('.icon');
+      // Chome creates drag images in a silly way, so CSS background
+      // tranparency doesn't work and if part of the drag image is off-screen,
+      // that part is simply white.  Therefore, we clone the image and place it
+      // safely on-screen but burried at a very low z-index.
+      if (icon) {
+        debugger;
+        dragImage = Y.one('body')
+          .appendChild(icon.cloneNode(true))
+            .setStyle('z-index', -1000)
+            .setStyle('height', icon.one('img').get('height'))
+            .setStyle('width', icon.one('img').get('width'));
+      } else {
+        dragImage =
+          container.one('.icon') ||
+          container.one('.charm-icon') ||
+          container.one('.category-icon');
+      }
       if (!dragImage) debugger;
-      console.log(dragImage);
       if (this.get('isDraggable')) {
         this._addDraggability(outerContainer, dragImage);
       }
