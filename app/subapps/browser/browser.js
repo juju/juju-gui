@@ -88,7 +88,6 @@ YUI.add('subapp-browser', function(Y) {
         // match our current routes.
         urlParts.push(this._viewState.viewmode);
       }
-      // urlParts.push(this._viewState.viewmode);
 
       if (this._viewState.search) {
         urlParts.push('search');

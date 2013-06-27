@@ -303,7 +303,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       assert.equal(url, '');
 
-      // The viewmode is required for search related routs though.
+      // The viewmode is required for search related routes though.
       url = app._getStateUrl({
         viewmode: 'sidebar',
         charmID: undefined,
