@@ -255,11 +255,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       This interacts directly with the fakebackend bypassing the environment.
 
       @method generateAndRelateServices
-      @param {Array} charms Two strings with the charm ids to be deployed.
-      @param {Array} relation Two strings with the charm ids to be related.
-      @param {Array} removeRelation Two strings with the charm ids that
-        identify the relation to be removed.
-      @param {Object} mock Object with the expected return values.
+      @param {Array} charms The URLs of two charms to be deployed.
+      @param {Array} relation Two endpoint strings to be related.
+      @param {Array} removeRelation Two enpoint strings identifying
+        a relation to be removed.
+      @param {Object} mock Object with the expected return values of
+        the relation removal operation.
       @param {Function} done To be called to signal the test end.
       @return {undefined} Side effects only.
     */
