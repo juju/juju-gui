@@ -77,6 +77,52 @@ describe('data binding library', function() {
                      'nested');
       });
 
+      it('supports providing functions from object attributes to its properties',
+        function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a.b"></div>');
+
+        var viewlet = {
+          container: container,
+          _changedValues: [],
+          bindings: {
+            a: {
+              format: function() {return 'parent';}
+            }
+          }
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+        assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+                     'parent');
+      });
+
+      it('does not override child property methods',
+        function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a.b"></div>');
+
+        var viewlet = {
+          container: container,
+          _changedValues: [],
+          bindings: {
+            a: {
+              format: function() {return 'parent';}
+            },
+            'a.b': {
+              format: function() { return 'child format';}
+            }
+          }
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+        assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+                     'child format');
+      });
+
+
 
       it('supports formatters', function() {
         container = utils.makeContainer();
