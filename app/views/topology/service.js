@@ -77,7 +77,8 @@ YUI.add('juju-topology-service', function(Y) {
           mouseout: 'serviceStatusMouseOut'
         },
         '.zoom-plane': {
-          click: 'canvasClick'
+          click: 'canvasClick',
+          drop: 'canvasDropHandler'
         },
         // Menu/Controls
         '.view-service': {
@@ -375,6 +376,25 @@ YUI.add('juju-topology-service', function(Y) {
     canvasClick: function(box, self) {
       var topo = self.get('component');
       topo.fire('clearState');
+    },
+
+    /**
+     * Handle deploying a services by dropping a charm onto the canvas.
+     *
+     * @method canvasDropHandler
+     * @static
+     * @return {undefined} Nothing.
+     */
+    canvasDropHandler: function() {
+      var evt = d3.event._event;  // So well hidden.
+      var dataType = evt.dataTransfer.getData('dataType');
+      if (dataType === 'charm-token-drag-and-drop') {
+        // The charm data was JSON encoded because the dataTransfer mechanism
+        // only allows for string values.
+        var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
+        var charm = new models.Charm(charmData);
+        Y.fire('initiateDeploy', charm);
+      }
     },
 
     /**
@@ -1255,6 +1275,12 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var securityURL, rebootURL;
+      var flags = window.flags;
+
+      if (flags.serviceInspector) {
+        this.show_service(service);
+        return;
+      }
 
       // Update landscape links and show/hide as needed.
       if (landscape) {
@@ -1330,7 +1356,13 @@ YUI.add('juju-topology-service', function(Y) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
+            db: topo.get('db'),
+            events: {
+              '.tab': {'click': 'showViewlet'},
+              '.close': {'click': 'destroy'}
+            },
+            viewletList: ['overview', 'units', 'config'],
+            template: Y.juju.views.Templates['view-container']
           });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);

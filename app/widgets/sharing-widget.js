@@ -34,6 +34,36 @@ YUI.add('browser-sharing-widget', function(Y) {
     TEMPLATE: Y.namespace('juju.views').Templates['sharing-widget'],
 
     /**
+       Gets the sharing data for the template.
+
+       @method _getSharingData
+     */
+    _getSharingData: function() {
+      var link = this.get('link');
+      return {
+        'link': escape(link),
+        'twitter_text': escape(
+            'Check out this great charm on jujucharms: ' + link),
+        'email_subject': escape('Check out this great charm on jujucharms!'),
+        'email_text': escape(
+            'Check out this great charm on jujucharms: ' + link)
+      };
+    },
+
+    /**
+       Handles the links in the sharing widget to ensure they open in a new
+       window.
+
+       @method _openShareLink
+       @param {Y.EventFacade} e The click event.
+     */
+    _openShareLink: function(e) {
+      e.halt();
+      var shareLink = e.currentTarget.get('href');
+      window.open(shareLink, 'share_window');
+    },
+
+    /**
        Toggles the sharing widget's visibility.
 
        @method _toggleVisible
@@ -55,6 +85,9 @@ YUI.add('browser-sharing-widget', function(Y) {
     bindUI: function() {
       this.addEvent(
           this.get('button').on('click', this._toggleVisible, this));
+      this.addEvent(
+          this.get('contentBox').delegate(
+              'click', this._openShareLink, 'li a', this));
     },
 
     /**
@@ -63,7 +96,7 @@ YUI.add('browser-sharing-widget', function(Y) {
        @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE();
+      var content = this.TEMPLATE(this._getSharingData());
       var container = this.get('contentBox');
       container.setHTML(content);
       this.hide();
@@ -77,7 +110,16 @@ YUI.add('browser-sharing-widget', function(Y) {
          @default {Undefined}
          @type {Y.Node}
        */
-      button: {}
+      button: {},
+
+      /**
+         The link to be shared.
+
+         @attribute link
+         @default {Undefined}
+         @type {String}
+       */
+      link: {}
     }
   });
 

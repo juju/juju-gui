@@ -648,6 +648,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (window.flags && window.flags.sharing_enabled) {
         this.shareWidget = new widgets.browser.SharingWidget({
+          link: window.location.origin + '/' + this.get('charm').get('id'),
           button: renderTo.one('.share')
         });
         this.shareWidget.render(renderTo.one('.share'));

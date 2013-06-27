@@ -247,26 +247,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     }
 
+    /**
+      Generates the two services required for relation removal tests. After the
+      services have been generated, a relation between them will be added and
+      then removed.
+
+      This interacts directly with the fakebackend bypassing the environment.
+
+      @method generateAndRelateServices
+      @param {Array} charms The URLs of two charms to be deployed.
+      @param {Array} relation Two endpoint strings to be related.
+      @param {Array} removeRelation Two enpoint strings identifying
+        a relation to be removed.
+      @param {Object} mock Object with the expected return values of
+        the relation removal operation.
+      @param {Function} done To be called to signal the test end.
+      @return {undefined} Side effects only.
+    */
     function generateAndRelateServices(charms, relation,
         removeRelation, mock, done) {
       state.deploy(charms[0], function() {
         state.deploy(charms[1], function() {
-          client.onmessage = function() {
-            var data = {
-              op: 'add_relation',
-              endpoint_a: relation[0],
-              endpoint_b: relation[1]
-            };
-            client.onmessage = function(rec) {
-              var data = Y.JSON.parse(rec.data);
-              assert.equal(data.err, mock.err);
-              assert.equal(data.endpoint_a, mock.endpoint_a);
-              assert.equal(data.endpoint_b, mock.endpoint_b);
+          if (relation) {
+            state.addRelation(relation[0], relation[1]);
+          }
+          var data = {
+            op: 'remove_relation',
+            endpoint_a: removeRelation[0],
+            endpoint_b: removeRelation[1]
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            // Skip the defaultSeriesChange message.
+            if (recData.default_series === undefined) {
+              assert.equal(recData.result, mock.result);
+              assert.equal(recData.err, mock.err);
+              if (!recData.err) {
+                assert.equal(recData.endpoint_a, mock.endpoint_a);
+                assert.equal(recData.endpoint_b, mock.endpoint_b);
+              }
               done();
-            };
-            client.send(Y.JSON.stringify(data));
+            }
           };
           client.open();
+          client.send(Y.JSON.stringify(data));
         });
       });
     }
@@ -1226,11 +1250,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
-          {endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
+          {result: true, endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
 
-    it('can remove a relation(integration)', function(done) {
+    it('can remove a relation (integration)', function(done) {
       var endpoints = [
         ['kumquat',
           { name: 'db',
@@ -1239,7 +1263,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           { name: 'db',
             role: 'server' }]
       ];
-
       env.after('defaultSeriesChange', function() {
         function localCb(result) {
           var mock = {
@@ -1259,7 +1282,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   env.remove_relation(endpoints[0], endpoints[1], localCb);
                 });
               });
-            });
+            }
+        );
       });
       env.connect();
     });
@@ -1268,8 +1292,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       generateAndRelateServices(
           ['cs:wordpress', 'cs:mysql'],
           ['wordpress:db', 'mysql:db'],
-          ['wordpress:db', 'mysql:db'],
-          {error: 'Charm not loaded.',
+          ['no_such', 'charms'],
+          {err: 'Charm not loaded.',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
@@ -1277,14 +1301,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('throws an error if the relationship does not exist', function(done) {
       generateAndRelateServices(
           ['cs:wordpress', 'cs:mysql'],
+          null,
           ['wordpress:db', 'mysql:db'],
-          ['wordpress:db', 'mysql:db'],
-          {error: 'Relationship does not exist',
+          {err: 'Relationship does not exist',
             endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
           done);
     });
 
     describe('Sandbox Annotations', function() {
+
       it('should handle service annotation updates', function(done) {
         generateServices(function(data) {
           // Post deploy of wordpress we should be able to
@@ -1373,6 +1398,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           client.send(Y.JSON.stringify(op));
         });
       });
+
     });
 
     it('should allow unit resolved to be called', function(done) {
@@ -1807,6 +1833,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy(
           'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
     }
+
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
@@ -2015,6 +2042,169 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           generateAndExposeService(unexposeService);
         }
     );
+
+    it('can add a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress:db', 'mysql:db']
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'db');
+            assert.equal(recEndpoints.wordpress.Scope, 'global');
+            assert.equal(recEndpoints.mysql.Name, 'db');
+            assert.equal(recEndpoints.mysql.Scope, 'global');
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can add a relation (integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function(recData) {
+            assert.equal(recData.err, undefined);
+            assert.equal(recData.endpoint_a, 'wordpress:db');
+            assert.equal(recData.endpoint_b, 'mysql:db');
+            assert.isObject(recData.result);
+            done();
+          });
+        });
+      });
+    });
+
+    it('is able to add a relation with a subordinate service', function(done) {
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:puppet', function(service) {
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'AddRelation',
+            Params: {
+              Endpoints: ['wordpress:juju-info', 'puppet:juju-info']
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            var recEndpoints = recData.Response.Endpoints;
+            assert.equal(recEndpoints.wordpress.Name, 'juju-info');
+            assert.equal(recEndpoints.wordpress.Scope, 'container');
+            assert.equal(recEndpoints.puppet.Name, 'juju-info');
+            assert.equal(recEndpoints.puppet.Scope, 'container');
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('throws an error if only one endpoint is supplied', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error,
+              'Two string endpoint names required to establish a relation');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('throws an error if endpoints are not relatable', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      state.deploy('cs:wordpress', function() {
+        var data = {
+          RequestId: 42,
+          Type: 'Client',
+          Request: 'AddRelation',
+          Params: {
+            Endpoints: ['wordpress:db', 'mysql:foo']
+          }
+        };
+        client.onmessage = function(received) {
+          var recData = Y.JSON.parse(received.data);
+          assert.equal(recData.RequestId, data.RequestId);
+          assert.equal(recData.Error, 'Charm not loaded.');
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can remove a relation', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var relation = ['wordpress:db', 'mysql:db'];
+      state.deploy('cs:wordpress', function() {
+        state.deploy('cs:mysql', function() {
+          state.addRelation(relation[0], relation[1]);
+          var data = {
+            RequestId: 42,
+            Type: 'Client',
+            Request: 'DestroyRelation',
+            Params: {
+              Endpoints: relation
+            }
+          };
+          client.onmessage = function(received) {
+            var recData = Y.JSON.parse(received.data);
+            assert.equal(recData.RequestId, data.RequestId);
+            assert.equal(recData.Error, undefined);
+            done();
+          };
+          client.open();
+          client.send(Y.JSON.stringify(data));
+        });
+      });
+    });
+
+    it('can remove a relation(integration)', function(done) {
+      env.connect();
+      env.deploy('cs:wordpress', null, null, null, 1, function() {
+        env.deploy('cs:mysql', null, null, null, 1, function() {
+          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+              endpointB = ['mysql', {name: 'db', role: 'server'}];
+          env.add_relation(endpointA, endpointB, function() {
+            env.remove_relation(endpointA, endpointB, function(recData) {
+              assert.equal(recData.err, undefined);
+              assert.equal(recData.endpoint_a, 'wordpress:db');
+              assert.equal(recData.endpoint_b, 'mysql:db');
+              done();
+            });
+          });
+        });
+      });
+    });
 
   });
 
