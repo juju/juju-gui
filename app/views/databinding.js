@@ -248,7 +248,7 @@ YUI.add('juju-databinding', function(Y) {
 
      @method _setupHeirarchicalBindings
     */
-   BindingEngine.prototype._setupHeirarchicalBindings = function() {
+    BindingEngine.prototype._setupHeirarchicalBindings = function() {
       this._bindings.forEach(function(binding) {
         if (binding.name.indexOf('.') === -1) {
           // The path isn't dotted so nothing to
@@ -271,7 +271,7 @@ YUI.add('juju-databinding', function(Y) {
         // Non-overwriting mix into binding.
         Y.mix(binding, parentBinding, false);
       });
-   };
+    };
 
     /**
      Unbind all event listeners

@@ -77,50 +77,50 @@ describe('data binding library', function() {
                      'nested');
       });
 
-      it('supports providing functions from object attributes to its properties',
-        function() {
-        container = utils.makeContainer();
-        container.append('<div data-bind="a.b"></div>');
+      it('inherits unctions from object attributes to its properties',
+         function() {
+           container = utils.makeContainer();
+           container.append('<div data-bind="a.b"></div>');
 
-        var viewlet = {
-          container: container,
-          _changedValues: [],
-          bindings: {
-            a: {
-              format: function() {return 'parent';}
-            }
-          }
-        };
-        engine = new BindingEngine();
+           var viewlet = {
+             container: container,
+             _changedValues: [],
+             bindings: {
+               a: {
+                 format: function() {return 'parent';}
+               }
+             }
+           };
+           engine = new BindingEngine();
 
-        engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
-        assert.equal(container.one('[data-bind="a.b"]').getHTML(),
-                     'parent');
-      });
+           engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+           assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+           'parent');
+         });
 
       it('does not override child property methods',
-        function() {
-        container = utils.makeContainer();
-        container.append('<div data-bind="a.b"></div>');
+         function() {
+           container = utils.makeContainer();
+           container.append('<div data-bind="a.b"></div>');
 
-        var viewlet = {
-          container: container,
-          _changedValues: [],
-          bindings: {
-            a: {
-              format: function() {return 'parent';}
-            },
-            'a.b': {
-              format: function() { return 'child format';}
-            }
-          }
-        };
-        engine = new BindingEngine();
+           var viewlet = {
+             container: container,
+             _changedValues: [],
+             bindings: {
+               a: {
+                 format: function() {return 'parent';}
+               },
+               'a.b': {
+                 format: function() { return 'child format';}
+               }
+             }
+           };
+           engine = new BindingEngine();
 
-        engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
-        assert.equal(container.one('[data-bind="a.b"]').getHTML(),
-                     'child format');
-      });
+           engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+           assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+           'child format');
+         });
 
 
 
