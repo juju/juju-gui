@@ -385,15 +385,24 @@ YUI.add('juju-topology-service', function(Y) {
      * @static
      * @return {undefined} Nothing.
      */
-    canvasDropHandler: function() {
+    canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
       var dataType = evt.dataTransfer.getData('dataType');
+      var topo = self.get('component');
+      var translation = topo.get('translate');
+      var scale = topo.get('scale');
+      var dropXY = d3.mouse(this);
+      var ghostXY = []
+      // Take the x,y offset (translation) of the topology view into account.
+      Y.Array.each(dropXY, function(_, index) {
+        ghostXY[index] = (dropXY[index] - translation[index]) / scale;
+      });
       if (dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
         var charm = new models.Charm(charmData);
-        Y.fire('initiateDeploy', charm);
+        Y.fire('initiateDeploy', charm, ghostXY);
       }
     },
 

@@ -81,7 +81,7 @@ YUI.add('browser-charm-token', function(Y) {
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        evt.dataTransfer.setDragImage(dragImage._node, 0, 0);
+        evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
       };
     },
 
@@ -105,15 +105,25 @@ YUI.add('browser-charm-token', function(Y) {
      * Make the charm token draggable.
      *
      * @method _addDraggability
-     * @param {Node} container he node which contains the charm list.
+     * @param {Node} container The node which contains the charm list.
+     * @param {Node} dragImage The node which will be displayed during
+     *   dragging.
      * @return {undefined}  Nothing; side-effects only.
     */
-    _addDraggability: function(container) {
+    _addDraggability: function(container, dragImage) {
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.
       var charmData = Y.JSON.stringify(this.charmAttributes);
-      this._makeDraggable(container, container, charmData);
-      this._makeDraggable(container.one('a'), container, charmData);
+      this._makeDraggable(container, dragImage, charmData);
+      this._makeDraggable(container.one('a'), dragImage, charmData);
+      container.one('img') && this._makeDraggable(container.one('img'), dragImage, charmData);
+//      container.one('img') && this._makeDraggable(container.one('img'), dragImage, charmData);
+//      Y.Array.each(container.all('*'), function(element) {
+//        try {
+//          this._makeDraggable(element, container, charmData);
+//        } catch (e) {
+//        };
+//      });
     },
 
     /**
@@ -130,8 +140,16 @@ YUI.add('browser-charm-token', function(Y) {
       container.setHTML(content);
       var outerContainer = container.ancestor('.yui3-charmtoken')
         .addClass('yui3-u');
+      var dragImage =
+        container.one('.icon') ||
+        container.one('.charm-icon') ||
+        container.one('.category-icon');
+      console.log(dragImage);
+//      var dragImage = Y.one('body');
+      if (!dragImage) debugger;
+      console.log(dragImage);
       if (this.get('isDraggable')) {
-        this._addDraggability(outerContainer);
+        this._addDraggability(outerContainer, dragImage);
       }
     }
 
