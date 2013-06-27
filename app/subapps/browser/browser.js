@@ -82,16 +82,24 @@ YUI.add('subapp-browser', function(Y) {
 
       this._viewState = Y.merge(this._viewState, change);
 
-      urlParts.push(this._viewState.viewmode);
+      if (this._viewState.viewmode !== 'sidebar' || this._viewState.search) {
+        // Sidebar is the default viewmode. There's no need to add it if we
+        // don't need it. However it's currently required for search views to
+        // match our current routes.
+        urlParts.push(this._viewState.viewmode);
+      }
+
       if (this._viewState.search) {
         urlParts.push('search');
       } else if (this._oldState.search) {
         // We had a search, but are moving away; clear the old search.
         this._filter.reset();
       }
+
       if (this._viewState.charmID) {
         urlParts.push(this._viewState.charmID);
       }
+
       var url = urlParts.join('/');
       if (this._viewState.querystring) {
         url = Y.Lang.sub('{ url }?{ qs }', {
