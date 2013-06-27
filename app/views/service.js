@@ -1056,10 +1056,18 @@ YUI.add('juju-view-service', function(Y) {
         name: 'config',
         template: Templates['service-configuration'],
 
-        'render': function(service) {
+        'render': function(service, viewContainerAttrs) {
           var settings = [];
+          var db = viewContainerAttrs.db;
+          var charm = db.charms.getById(service.get('charm'));
+          var charmOptions = charm.get('config').options;
           Y.Object.each(service.get('config'), function(value, key) {
-            settings.push({name: key, value: value});
+            settings.push({
+              name: key,
+              value: value,
+              description: charmOptions[key].description,
+              'type': charmOptions[key].type
+            });
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
@@ -1111,7 +1119,7 @@ YUI.add('juju-view-service', function(Y) {
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
-      var dd = new Y.DD.Drag({ node: container });
+      var _ = new Y.DD.Drag({ node: container });
       options.container = container;
       options.viewletContainer = '.viewlet-container';
       options.events = {

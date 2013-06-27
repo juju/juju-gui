@@ -1,8 +1,5 @@
 {{#settings}}
   <div class="control-group">
-    <div class="well control-description">
-      {{description}}
-    </div>
     <div class="conflicted warning-message" style="display: none">
       <p>This field has been changed on another system. Accept the new value?</p>
       <p class="newval"></p>
@@ -29,5 +26,8 @@
         </div>
       {{/if}}
     {{/if}}
+    <div class="control-description">
+      {{description}}
+    </div>
   </div>
 {{/settings}}
