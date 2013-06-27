@@ -807,8 +807,8 @@ describe('database export', function() {
     assert.equal(result.services[0].charm, 'mysql');
     assert.equal(result.services[1].charm, 'wordpress');
 
-    assert.deepEqual(relation[0], ['mysql', 'db']);
-    assert.deepEqual(relation[1], ['wordpress', 'app']);
+    assert.equal(relation[0], 'mysql:db');
+    assert.equal(relation[1], 'wordpress:app');
   });
 });
 
