@@ -1051,7 +1051,14 @@ YUI.add('juju-view-service', function(Y) {
       return this;
     },
     'hideSettingsHelp': function(e) {
+      e.container.one('#hide-settings-help').hide();
       e.container.all('.control-description').hide();
+      e.container.one('#show-settings-help').show();
+    },
+    'showSettingsHelp': function(e) {
+      e.container.one('#show-settings-help').hide();
+      e.container.all('.control-description').show();
+      e.container.one('#hide-settings-help').show();
     }
   };
   /**
