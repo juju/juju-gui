@@ -1357,6 +1357,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service, {
             db: topo.get('db'),
+            env: topo.get('env'),
             events: {
               '.tab': {'click': 'showViewlet'},
               '.close': {'click': 'destroy'}

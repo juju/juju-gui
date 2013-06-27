@@ -1120,18 +1120,40 @@ YUI.add('juju-view-service', function(Y) {
         name: 'constraints',
         template: Templates['service-constraints-viewlet'],
 
-        'render': function(service) {
-          var constraints = this._getConstraints(service);
-          // Y.Object.each(service.get('constraints'), function(value, key) {
-          //   constraints.push({name: key, value: value});
-          // });
+        'render': function(service, options) {
+          var constraints = this._getConstraints(
+            service.get('constraints') || {},
+            options.env.genericConstraints);
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
               this.template({service: service, constraints: constraints}));
         },
 
-        _getConstraints: function() {
-          return [{name: 'ciao', value: 'pippo'}];
+        bindings: {
+          'constraints.mem': {
+            format: function(value) {
+              console.log('HERE2! ------->', value);
+              return value;
+            }
+          }
+        },
+
+        _getConstraints: function(serviceConstraints, genericConstraints) {
+          var constraints = [],
+              readOnlyConstraints = ['provider-type', 'ubuntu-series'];
+          // Populate constraints.
+          Y.Object.each(serviceConstraints, function(value, key) {
+            if (!(key in readOnlyConstraints)) {
+              constraints.push({name: key, value: value});
+            }
+          });
+          // Add generic constraints.
+          Y.Array.each(genericConstraints, function(key) {
+            if (!(key in serviceConstraints)) {
+              constraints.push({name: key, value: ''});
+            }
+          });
+          return constraints;
         }
       },
       //relations: {},

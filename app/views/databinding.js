@@ -65,7 +65,7 @@ YUI.add('juju-databinding', function(Y) {
         return this._bindings;
       }
       return this._bindings.filter(function(binding) {
-        return (modelChangeKeys.indexOf(binding.name) > -1);
+        return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
       });
     }
 
