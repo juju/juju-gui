@@ -884,7 +884,7 @@ YUI.add('juju-models', function(Y) {
       relationList.each(function(relation) {
         var relationData = [];
         Y.each(relation.get('endpoints'), function(data, name) {
-          relationData.push([data[0], data[1].name]);
+          relationData.push(data[0] + ':' + data[1].name);
         });
         // Skip peer, they should add automatically.
         if (relationData.length === 1) {
