@@ -22,8 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
    SubApp for the Browser
 
-   @module juju
-   @submodule subapps
+   @module juju.subapps
  */
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),

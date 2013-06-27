@@ -392,6 +392,7 @@ YUI.add('juju-charm-models', function(Y) {
         // have a safe icon.
         shouldShowIcon: data.has_icon && data.is_approved,
         id: data.id,
+        is_approved: data.is_approved,
         mainCategory: data.categories[0],
         name: data.name,
         recent_commit_count: data.commits_in_past_30_days,
