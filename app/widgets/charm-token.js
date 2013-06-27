@@ -115,15 +115,9 @@ YUI.add('browser-charm-token', function(Y) {
       // we have to JSON encode the charm data.
       var charmData = Y.JSON.stringify(this.charmAttributes);
       this._makeDraggable(container, dragImage, charmData);
-      this._makeDraggable(container.one('a'), dragImage, charmData);
-      container.one('img') && this._makeDraggable(container.one('img'), dragImage, charmData);
-//      container.one('img') && this._makeDraggable(container.one('img'), dragImage, charmData);
-//      Y.Array.each(container.all('*'), function(element) {
-//        try {
-//          this._makeDraggable(element, container, charmData);
-//        } catch (e) {
-//        };
-//      });
+      container.all('*').each(function(element) {
+          this._makeDraggable(element, dragImage, charmData);
+      }, this);
     },
 
     /**
@@ -144,8 +138,6 @@ YUI.add('browser-charm-token', function(Y) {
         container.one('.icon') ||
         container.one('.charm-icon') ||
         container.one('.category-icon');
-      console.log(dragImage);
-//      var dragImage = Y.one('body');
       if (!dragImage) debugger;
       console.log(dragImage);
       if (this.get('isDraggable')) {
