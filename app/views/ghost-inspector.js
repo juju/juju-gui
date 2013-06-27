@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
   The ghost inspector is the view-container implementation of the ghost
-  configuration view
+  configuration view.
 
   @module views
   @submodule views.ghostInspector
@@ -67,29 +67,29 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
       var ghostInspector = new Y.juju.views.ServiceInspector(charm, {
-        // Because this is an extension `this` points to the JujuApp
+        // Because this is an extension `this` points to the JujuApp.
         db: this.db,
         env: this.env,
         ghostService: ghostService,
-        // controller will show the first one in this array by default
+        // Controller will show the first one in this array by default.
         viewletList: ['ghostConfig'],
-        // the view container template
+        // The view container template.
         template: Y.juju.views.Templates['ghost-config-wrapper'],
-        // these events are for the viewlet container
+        // These events are for the viewlet container.
         events: {
           '.close' : { 'click': 'destroy' },
           '.cancel': { 'click': 'destroy' }
         },
-        // these events are for the viewlets and have their callbacks bound to
-        // the controllers prototype and are then mixed with the containers
-        // events for final binding
+        // These events are for the viewlets and have their callbacks bound to
+        // the controller's prototype and are then mixed with the container's
+        // events for final binding.
         viewletEvents: {
           '.deploy': { 'click': 'deployCharm' },
           'input.config-file-upload': { 'change': 'handleFileUpload' },
           'span.config-file-upload': { 'click': '_showFileDialogue' },
           'input[name=service-name]': { 'valuechange': 'updateGhostName' }
         },
-        // the configuration for the view container template
+        // The configuration for the view container template.
         templateConfig: {
           packageName: charm.get('package_name'),
           id: charm.get('id')

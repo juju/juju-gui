@@ -1049,6 +1049,9 @@ YUI.add('juju-view-service', function(Y) {
     'render': function() {
       this.inspector.render();
       return this;
+    },
+    'hideSettingsHelp': function(e) {
+      e.container.all('.control-description').hide();
     }
   };
   /**
@@ -1095,6 +1098,11 @@ YUI.add('juju-view-service', function(Y) {
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
               this.template({service: service, settings: settings}));
+          this.container.all('textarea.config-field').plug(plugins.ResizingTextarea,
+              { max_height: 200,
+                min_height: 18,
+                single_line: 18});
+
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
@@ -1142,9 +1150,9 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
-    // This variable is assigned an agregate collection of methods and
+    // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
-    // ServiceInspector constructor
+    // ServiceInspector constructor.
     var controllerPrototype = {};
     /**
       Constructor for View Container Controller
@@ -1168,27 +1176,27 @@ YUI.add('juju-view-service', function(Y) {
       options.container = container;
       options.viewletContainer = '.viewlet-container';
 
-      // Build a collection of viewlets from the list of required viewlets
+      // Build a collection of viewlets from the list of required viewlets.
       var viewlets = {};
       options.viewletList.forEach(function(viewlet) {
         viewlets[viewlet] = DEFAULT_VIEWLETS[viewlet];
       });
-      // Mix in any custom viewlet configuration options provided by the config
+      // Mix in any custom viewlet configuration options provided by the config.
       options.viewlets = Y.mix(
           viewlets, options.viewlets, true, undefined, 0, true);
 
       options.model = model;
 
-      // Merge the various prototype objects together
+      // Merge the various prototype objects together.
       var c = Y.juju.controller;
       [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
         controllerPrototype = Y.mix(controllerPrototype, controller);
       });
 
-      // Bind the viewletEvents to this class
+      // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
           handlers, selector, collection) {
-            // You can have multiple listeners per selector
+            // You can have multiple listeners per selector.
             Y.Object.each(handlers, function(callback, event, obj) {
               options.viewletEvents[selector][event] = Y.bind(
                   controllerPrototype[callback], self);
@@ -1200,7 +1208,7 @@ YUI.add('juju-view-service', function(Y) {
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
       // We create a new binding engine even if it's unlikely
-      // that the model will change
+      // that the model will change.
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
       this.inspector.after('destroy', function() {
