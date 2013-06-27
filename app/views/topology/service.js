@@ -1275,6 +1275,12 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var securityURL, rebootURL;
+      var flags = window.flags;
+
+      if (flags.serviceInspector) {
+        this.show_service(service);
+        return;
+      }
 
       // Update landscape links and show/hide as needed.
       if (landscape) {
@@ -1350,7 +1356,13 @@ YUI.add('juju-topology-service', function(Y) {
         var serviceInspector = getInspector(service.get('id'));
         if (!serviceInspector) {
           serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
+            db: topo.get('db'),
+            events: {
+              '.tab': {'click': 'showViewlet'},
+              '.close': {'click': 'destroy'}
+            },
+            viewletList: ['overview', 'units', 'config'],
+            template: Y.juju.views.Templates['view-container']
           });
           serviceInspector.inspector.after('destroy', function(e) {
             setInspector(e.currentTarget, true);

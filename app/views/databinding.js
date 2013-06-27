@@ -65,9 +65,7 @@ YUI.add('juju-databinding', function(Y) {
         return this._bindings;
       }
       return this._bindings.filter(function(binding) {
-        // This is to support binding on sub properties
-        // It's pretty ugly we can probably find a cleaner way.
-        return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
+        return (modelChangeKeys.indexOf(binding.name) > -1);
       });
     }
 
@@ -115,6 +113,12 @@ YUI.add('juju-databinding', function(Y) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
+      // Explicitly allow additional binding information to
+      // be passed in the viewlet config. From this we can
+      // resolve formatters and update callbacks.
+      if (viewlet.bindings && viewlet.bindings[config.name]) {
+        binding = Y.mix(binding, viewlet.bindings[config.name]);
+      }
       // Ensure 'target' is an Array.
       if (typeof binding.target === 'string') {
         binding.target = [binding.target];
@@ -130,6 +134,11 @@ YUI.add('juju-databinding', function(Y) {
       in the DOM. Special handling is provided to detect conflicts and indicate
       when form values differ from the model.
 
+      From within the DOM, data-bind='model key' attributes can be used to
+      associate bindings from the model into the DOM. Nested keys are supported
+      by using '.' (dotted) paths. As an important development/debug tip when
+      trying to use YUI to select a dotted path name make sure to quote the
+      entire path. For example Y.one('[data-bind="a.b.c."]').
 
       Viewlets can provide a number of configuration options
       for use here:
@@ -139,13 +148,14 @@ YUI.add('juju-databinding', function(Y) {
 
         - container {Y.Node} The container into which the viewlet renders.
 
-        - bindings {Array}: An array of binding descriptors. These
-            take the following form:
-              name: {String} Name of Attribute on model,
-              target: {String || Array of String} CSS selectors to
-                      elements bound to this model attribute.
-              get: {Function} (optional) method to override
-                  default attr access pattern. get(model) -> value.
+        - bindings {Object}: A mapping from model property names
+              to additional properties available to the binding.
+              Currently we support the following callbacks on
+              a per binding name basis:
+                format(value) -> {New Value}
+                update(node, value) -> Mutate DOM directly. If
+                   format was provided as well the formatted
+                   value will be used.
 
             Bindings is optional in the case of ModelLists as the
             pattern is to re-render children.
@@ -327,13 +337,23 @@ YUI.add('juju-databinding', function(Y) {
             conflicted = binding.target;
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self));
+                Y.bind(resolve, binding));
           }
         });
 
         // Do conflict detection
         if (binding.target !== conflicted) {
-          field.set.call(binding, binding.target, binding.get(viewletModel));
+          var value = binding.get(viewletModel);
+          if (binding.format) {
+            value = binding.format.call(binding, value);
+          }
+          // If an apply callback was provided use it to update
+          // the DOM otherwise used the field type default.
+          if (binding.update) {
+            binding.update.call(binding, binding.target, value);
+          } else {
+            field.set.call(binding, binding.target, value);
+          }
         }
       });
     };

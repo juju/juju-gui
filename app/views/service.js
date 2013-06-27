@@ -1028,6 +1028,29 @@ YUI.add('juju-view-service', function(Y) {
   });
 
   views.service = ServiceView;
+
+  /**
+    A collection of methods and properties which will be mixed into the
+    prototype of the view container controller to add the functionality for
+    the ghost inspector interactions
+
+    @property serviceInspector
+    @submodule juju.controller
+    @type {Object}
+  */
+  Y.namespace('juju.controller').serviceInspector = {
+    'getName': function() {
+      return this.inspector.getName();
+    },
+    'bind': function(model, viewlet) {
+      this.bindingEngine.bind(model, viewlet);
+      return this;
+    },
+    'render': function() {
+      this.inspector.render();
+      return this;
+    }
+  };
   /**
     Service Inspector View Container Controller
 
@@ -1083,7 +1106,7 @@ YUI.add('juju-view-service', function(Y) {
           node.setStyle('borderColor', 'red');
 
           var message = node.ancestor('.control-group').one('.conflicted'),
-              newVal = model.get('config')[node.getData('bind').split('.')[1]];
+              newVal = model.get(node.getData('bind'));
 
           message.one('.newval').setHTML(newVal);
           message.setStyle('display', 'block');
@@ -1091,11 +1114,30 @@ YUI.add('juju-view-service', function(Y) {
           var handler = message.delegate('click', sendResolve, 'button', this);
 
         }
-      }
+      },
       //constraints: {},
-      //relations: {}
+      //relations: {},
+      ghostConfig: {
+        name: 'ghostConfig',
+        template: Templates['ghost-config-viewlet'],
+        'render': function(model) {
+          this.container = Y.Node.create(this.templateWrapper);
+
+          var options = model.getAttrs();
+          // XXX - Jeff
+          // not sure this should be done like this
+          // but this will allow us to use the old template.
+          options.settings = utils.extractServiceSettings(options.options);
+
+          this.container.setHTML(this.template(options));
+        }
+      }
     };
 
+    // This variable is assigned an agregate collection of methods and
+    // properties provided by various controller objects in the
+    // ServiceInspector constructor
+    var controllerPrototype = {};
     /**
       Constructor for View Container Controller
 
@@ -1104,43 +1146,62 @@ YUI.add('juju-view-service', function(Y) {
     */
     function ServiceInspector(model, options) {
       this.model = model;
+      this.options = options;
       options = options || {};
-      options.viewlets = options.viewlets || {};
-      options.template = Templates['view-container'];
+      options.viewlets = {};
+      options.templateConfig = options.templateConfig || {};
+
       var container = Y.Node.create('<div>')
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
       var dd = new Y.DD.Drag({ node: container });
+      var self = this;
       options.container = container;
       options.viewletContainer = '.viewlet-container';
-      options.events = {
-        '.tab': {'click': 'showViewlet'},
-        '.close': {'click': 'destroy'}
-      };
-      options.viewlets = Y.mix(DEFAULT_VIEWLETS, options.viewlets,
-                               true, undefined, 0, true);
+
+      // Build a collection of viewlets from the list of required viewlets
+      var viewlets = {};
+      options.viewletList.forEach(function(viewlet) {
+        viewlets[viewlet] = DEFAULT_VIEWLETS[viewlet];
+      });
+      // Mix in any custom viewlet configuration options provided by the config
+      options.viewlets = Y.mix(
+          viewlets, options.viewlets, true, undefined, 0, true);
+
       options.model = model;
-      this.inspector = new juju.ViewContainer(options);
+
+      // Merge the various prototype objects together
+      var c = Y.juju.controller;
+      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
+        controllerPrototype = Y.mix(controllerPrototype, controller);
+      });
+
+      // Bind the viewletEvents to this class
+      Y.Object.each(options.viewletEvents, function(
+          handlers, selector, collection) {
+            // You can have multiple listeners per selector
+            Y.Object.each(handlers, function(callback, event, obj) {
+              options.viewletEvents[selector][event] = Y.bind(
+                  controllerPrototype[callback], self);
+            });
+          });
+
+      options.events = Y.mix(options.events, options.viewletEvents);
+
+      this.inspector = new views.ViewContainer(options);
       this.inspector.render();
+      // We create a new binding engine even if it's unlikely
+      // that the model will change
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
-      this.inspector.showViewlet('overview');
+      this.inspector.after('destroy', function() {
+        this.bindingEngine.unbind();
+      }, this);
+      this.inspector.showViewlet(options.viewletList[0]);
     }
 
-    ServiceInspector.prototype = {
-      'getName': function() {
-        return this.inspector.getName();
-      },
-      'bind': function(model, viewlet) {
-        this.bindingEngine.bind(model, viewlet);
-        return this;
-      },
-      'render': function() {
-        this.inspector.render();
-        return this;
-      }
-    };
+    ServiceInspector.prototype = controllerPrototype;
 
     return ServiceInspector;
   })();
