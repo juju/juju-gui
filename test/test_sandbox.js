@@ -257,7 +257,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       @method generateAndRelateServices
       @param {Array} charms Two strings with the charm ids to be deployed.
       @param {Array} relation Two strings with the charm ids to be related.
-      @param {Array} removeRelation
+      @param {Array} removeRelation Two strings with the charm ids that
+        identify the relation to be removed.
       @param {Object} mock Object with the expected return values.
       @param {Function} done To be called to signal the test end.
       @return {undefined} Side effects only.
@@ -1274,13 +1275,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
-            env.deploy('cs:mysql', null, null, null, 1, function() {
-              env.add_relation(endpoints[0], endpoints[1], function() {
-                env.remove_relation(endpoints[0], endpoints[1], localCb);
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
+              env.deploy('cs:mysql', null, null, null, 1, function() {
+                env.add_relation(endpoints[0], endpoints[1], function() {
+                  env.remove_relation(endpoints[0], endpoints[1], localCb);
+                });
               });
-            });
-          }
+            }
         );
       });
       env.connect();
