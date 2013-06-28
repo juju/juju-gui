@@ -34,7 +34,7 @@ describe('View Container', function() {
     if (render) { viewletConfig.render = render; }
     if (update) { viewletConfig.update = update; }
 
-    viewContainer = new Y.juju.ViewContainer({
+    viewContainer = new Y.juju.views.ViewContainer({
       viewlets: {
         serviceConfig: Y.merge(viewletConfig),
         constraints: Y.merge(viewletConfig)

@@ -49,7 +49,8 @@ YUI.add('juju-gui', function(Y) {
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
-                                                  Y.juju.Cookies], {
+                                                  Y.juju.Cookies,
+                                                  Y.juju.GhostDeployer], {
 
     /*
       Extension properties
@@ -580,17 +581,20 @@ YUI.add('juju-gui', function(Y) {
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
-      cfg.deploy = this.charmPanel.deploy;
       if (window.flags && window.flags.serviceInspector) {
-        //cfg.deploy = Y.bind(cfg.db.services.ghostService, cfg.db.services);
+        // To use the new service Inspector use the deploy method
+        // from the Y.juju.GhostDeployer extension
+        cfg.deploy = Y.bind(this.deployService, this);
         // Watch specific things, (add units), remove db.update above
-        // Note: This hides under tha flag as tests don't properly clean
+        // Note: This hides under the flag as tests don't properly clean
         // up sometimes and this binding creates spooky interaction
         // at a distance and strange failures.
         this.db.services.after(['add', 'remove', '*:change'],
                                this.on_database_changed, this);
         this.db.relations.after(['add', 'remove', '*:change'],
                                 this.on_database_changed, this);
+      } else {
+        cfg.deploy = this.charmPanel.deploy;
       }
       this.addSubApplications(cfg);
 
@@ -1401,6 +1405,7 @@ YUI.add('juju-gui', function(Y) {
     'event-touch',
     'model-controller',
     'FileSaver',
-    'juju-inspector-widget'
+    'juju-inspector-widget',
+    'juju-ghost-inspector'
   ]
 });

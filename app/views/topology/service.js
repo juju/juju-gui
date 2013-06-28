@@ -1284,6 +1284,12 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var securityURL, rebootURL;
+      var flags = window.flags;
+
+      if (flags.serviceInspector) {
+        this.show_service(service);
+        return;
+      }
 
       // Update landscape links and show/hide as needed.
       if (landscape) {
@@ -1348,6 +1354,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var setInspector = topo.get('setInspector');
       var getInspector = topo.get('getInspector');
+      var createServiceInspector = topo.get('createServiceInspector');
       var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
       // to satisfy linter;
@@ -1355,17 +1362,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
-        // XXX: switch on pending to handle ghost config.
-        var serviceInspector = getInspector(service.get('id'));
-        if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db')
-          });
-          serviceInspector.inspector.after('destroy', function(e) {
-            setInspector(e.currentTarget, true);
-          });
-          setInspector(serviceInspector);
-        }
+        createServiceInspector(service);
       } else {
         topo.fire('navigateTo', {
           url: getModelURL(service)

@@ -58,6 +58,135 @@ describe('data binding library', function() {
         assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
       });
+
+      it('supports nested model bindings', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a.b.c.d"></div>');
+
+        var viewlet = {
+          container: container,
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: {b: {c: {d: 'nested'}}
+              }}), viewlet);
+        // The default model object should be in place.
+        assert.equal(Y.Object.keys(engine._events).length, 2);
+        assert.equal(container.one('[data-bind="a.b.c.d"]').getHTML(),
+                     'nested');
+      });
+
+      it('inherits unctions from object attributes to its properties',
+         function() {
+           container = utils.makeContainer();
+           container.append('<div data-bind="a.b"></div>');
+
+           var viewlet = {
+             container: container,
+             _changedValues: [],
+             bindings: {
+               a: {
+                 format: function() {return 'parent';}
+               }
+             }
+           };
+           engine = new BindingEngine();
+
+           engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+           assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+           'parent');
+         });
+
+      it('does not override child property methods',
+         function() {
+           container = utils.makeContainer();
+           container.append('<div data-bind="a.b"></div>');
+
+           var viewlet = {
+             container: container,
+             _changedValues: [],
+             bindings: {
+               a: {
+                 format: function() {return 'parent';}
+               },
+               'a.b': {
+                 format: function() { return 'child format';}
+               }
+             }
+           };
+           engine = new BindingEngine();
+
+           engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
+           assert.equal(container.one('[data-bind="a.b"]').getHTML(),
+           'child format');
+         });
+
+
+
+      it('supports formatters', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              format: function(value) {
+                return value + 'FORMATTED';
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'bFORMATTED');
+      });
+
+      it('supports callbacks on binding updates', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              update: function(node, value) {
+                node.set('text', 'overide');
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'overide');
+      });
+
+      it('update callback uses formatted value', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              format: function() {return 'hi';},
+              update: function(node, value) {
+                node.set('text', value);
+              }
+            }
+          },
+          _changedValues: []
+        };
+        engine = new BindingEngine();
+
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
+      });
+
     });
 
     describe('field types', function() {
@@ -95,7 +224,7 @@ describe('data binding library', function() {
 
       it('binds numbers to inputs', function() {
         generateEngine('<input type="number" data-bind="e"/>');
-        engine.bind(new Y.Model({e: '7'}), viewlet);
+        engine.bind(new Y.Model({e: 7}), viewlet);
         assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=e]').get('value'), '7');
       });
