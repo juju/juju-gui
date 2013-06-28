@@ -150,7 +150,6 @@ YUI.add('juju-view-environment', function(Y) {
           // Restrict to a single inspector instance
           if (Y.Object.size(this._inspectors) >= 1) {
             Y.Object.each(this._inspectors, function(inspector) {
-              console.log(inspector);
               inspector.inspector.destroy();
             });
           }
