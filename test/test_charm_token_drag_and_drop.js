@@ -119,9 +119,7 @@ describe('charm token drag and drop', function() {
             setDataCalled = true;
           },
           setDragImage: function(provideDragImage, x, y) {
-            assert.equal(
-                provideDragImage.outerHTML.indexOf('<div class="charm-icon"'),
-                0);
+            assert.equal(provideDragImage.className.indexOf('charm-icon'), 0);
             assert.equal(x, 0);
             assert.equal(y, 0);
             setDragImageCalled = true;
