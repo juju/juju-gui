@@ -77,43 +77,20 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        console.log('starting drag');
+        var dragImage;
+        var icon = container.one('.icon');
         // Chome creates drag images in a silly way, so CSS background
         // tranparency doesn't work and if part of the drag image is off-screen,
-        // that part is simply white.  Therefore, we create a new image and
-        // place it safely on-screen but burried at a very low z-index.
-        var iconURL, dragImage;
-        var icon = container.one('.icon img');
+        // that part is simply white.  Therefore, we clone the image and place it
+        // safely on-screen but burried at a very low z-index.
         if (icon) {
-          // If the charm has a custom icon, we will use that as the dragImage.
-          iconURL = icon.get('src');
+          dragImage = icon
+            .setStyle('height', icon.one('img').get('height'))
+            .setStyle('width', icon.one('img').get('width'));
         } else {
-          // Otherwise we will use the generic charm icon or the category icon,
-          // whichever is displayed by the charm token.
-          var imageSource =
+          dragImage =
             container.one('.charm-icon') ||
             container.one('.category-icon');
-          iconURL = imageSource.getStyle('backgroundImage').slice(4, -1);
-        }
-        console.log(iconURL);
-        // Now that we have the dragImage, we need to place it on-screen so
-        // chrome will display it correctly.
-        dragImage = Y.one('body')
-          .appendChild(Y.Node.create('<img/>'))
-            .set('src', iconURL)
-            .setStyle('position', 'relative')
-            .setStyle('top', 0)
-            .setStyle('left', 0)
-            .setStyle('z-index', -1000);
-        console.log(dragImage);
-        // If the source of the drag image is a custom charm icon, then we need
-        // to transfer the rendered size from the icon to the dragImage,
-        // otherwise the default SVG height and width will be used (which is
-        // almost always the wrong size).
-        if (icon) {
-          dragImage
-            .setStyle('height', icon.get('height'))
-            .setStyle('width', icon.get('width'));
         }
         evt = evt._event; // We want the real event.
         evt.dataTransfer.effectAllowed = 'copy';
