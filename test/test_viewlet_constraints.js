@@ -21,13 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Constraints viewlet', function() {
-    var env, inspector, model, utils, viewlet, views, Y;
+    var container, env, inspector, model, utils, viewlet, views, Y;
 
     before(function(done) {
       // var requirements = ['juju-view-service', 'juju-tests-utils', 'handlebars'];
       var requirements = [
+        // XXX: reduce the number of requirements.
         'juju-views', 'juju-models', 'base', 'node', 'json-parse', 'juju-env',
-        'node-event-simulate', 'juju-tests-utils', 'event-key'];
+        'node-event-simulate', 'juju-tests-utils', 'event-key', 'juju-view-service'];
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -45,6 +46,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function(done) {
+      container = utils.makeContainer('content');
+      // XXX: this raises an error.
       inspector = new views.ServiceInspector(model, {
         env: env,
         viewletList: ['constraints'],
@@ -56,6 +59,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function(done) {
       inspector.destroy();
+      container.remove();
+      container.destroy(true);
       done();
     });
 
