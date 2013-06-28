@@ -103,6 +103,9 @@ YUI.add('browser-charm-token', function(Y) {
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
         evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
+        // This event is registered on many nested elements, but we only have
+        // to handle the drag start once, so stop now.
+        evt.stopPropagation();
       };
     },
 
