@@ -1049,7 +1049,7 @@ YUI.add('juju-view-service', function(Y) {
     'render': function() {
       this.inspector.render();
       return this;
-    }
+    },
   };
   /**
     Service Inspector View Container Controller
@@ -1062,7 +1062,13 @@ YUI.add('juju-view-service', function(Y) {
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
-        template: Templates.serviceOverview
+        template: Templates.serviceOverview,
+        'rebind': function(model) {
+          var units = {units: model.get('units').toArray()};
+          this.container.one('.overview-unit-list')
+            .setHTML(Templates.serviceOverviewUnitList(units));
+          return model;
+        }
       },
       units: {
         name: 'units',
@@ -1173,9 +1179,10 @@ YUI.add('juju-view-service', function(Y) {
 
       // Merge the various prototype objects together
       var c = Y.juju.controller;
-      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
-        controllerPrototype = Y.mix(controllerPrototype, controller);
-      });
+      [c.ghostInspector, c.serviceInspector, manageUnitsMixin]
+        .forEach(function(controller) {
+          controllerPrototype = Y.mix(controllerPrototype, controller);
+        });
 
       // Bind the viewletEvents to this class
       Y.Object.each(options.viewletEvents, function(
@@ -1199,6 +1206,8 @@ YUI.add('juju-view-service', function(Y) {
         this.bindingEngine.unbind();
       }, this);
       this.inspector.showViewlet(options.viewletList[0]);
+      this.inspector.modifyUnits = manageUnitsMixin.modifyUnits;
+      this.inspector.resetUnits = manageUnitsMixin.resetUnits;
     }
 
     ServiceInspector.prototype = controllerPrototype;

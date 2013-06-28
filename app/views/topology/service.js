@@ -1361,6 +1361,12 @@ YUI.add('juju-topology-service', function(Y) {
               '.tab': {'click': 'showViewlet'},
               '.close': {'click': 'destroy'}
             },
+            viewletEvents: {
+              '#num-service-units': {
+                'keydown': 'modifyUnits',
+                'blur': 'resetUnits'
+              }
+            },
             viewletList: ['overview', 'units', 'config'],
             template: Y.juju.views.Templates['view-container']
           });
