@@ -392,7 +392,7 @@ YUI.add('juju-topology-service', function(Y) {
       var translation = topo.get('translate');
       var scale = topo.get('scale');
       var dropXY = d3.mouse(this);
-      var ghostXY = []
+      var ghostXY = [];
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
         ghostXY[index] = (dropXY[index] - translation[index]) / scale;

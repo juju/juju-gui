@@ -106,7 +106,7 @@ describe('charm token drag and drop', function() {
       contentBox: container
     };
     token = new CharmToken(cfg);
-    token.render()
+    token.render();
     var setDataCalled, setDragImageCalled;
     var charmData = 'data';
     var handler = token._makeDragStartHandler(charmData);
@@ -120,7 +120,8 @@ describe('charm token drag and drop', function() {
           },
           setDragImage: function(provideDragImage, x, y) {
             assert.equal(
-              provideDragImage.outerHTML.indexOf('<div class="charm-icon"'), 0);
+                provideDragImage.outerHTML.indexOf('<div class="charm-icon"'),
+                0);
             assert.equal(x, 0);
             assert.equal(y, 0);
             setDragImageCalled = true;

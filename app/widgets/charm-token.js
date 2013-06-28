@@ -48,8 +48,8 @@ YUI.add('browser-charm-token', function(Y) {
       this.cfg = Y.merge(cfg);
       // Since we later serialize the config (which contains the charm
       // attributes) we need to remove any non-JSON-encodable bits.
-      delete this.cfg['boundingBox'];
-      delete this.cfg['contentBox'];
+      delete this.cfg.boundingBox;
+      delete this.cfg.contentBox;
     },
 
     /**
@@ -93,13 +93,13 @@ YUI.add('browser-charm-token', function(Y) {
             .setStyle('overflow', 'hidden')
             .appendChild(icon.cloneNode(true))
               .setStyle('height', icon.one('img').get('height'))
-              .setStyle('width', icon.one('img').get('width'))
+              .setStyle('width', icon.one('img').get('width'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
           dragImage =
-            container.one('.charm-icon') ||
-            container.one('.category-icon');
+              container.one('.charm-icon') ||
+              container.one('.category-icon');
         }
         evt = evt._event; // We want the real event.
         evt.dataTransfer.effectAllowed = 'copy';
@@ -146,7 +146,7 @@ YUI.add('browser-charm-token', function(Y) {
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
-          this._makeDraggable(element, charmData);
+        this._makeDraggable(element, charmData);
       }, this);
     },
 
@@ -164,9 +164,9 @@ YUI.add('browser-charm-token', function(Y) {
         .addClass('yui3-u');
       container.setHTML(content);
       if (this.get('isDraggable')) {
-        this._addDraggability()
+        this._addDraggability();
       }
-    },
+    }
 
   }, {
     ATTRS: {

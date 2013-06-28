@@ -378,11 +378,11 @@ describe('service module events', function() {
           } else if (name === 'charmData') {
             return '{"id": "cs:foo/bar-1"}';
           }
-        },
-      },
+        }
+      }
     };
     d3.mouse = function() {
-        return [5, 7];
+      return [5, 7];
     };
     var eventHandle = Y.on('initiateDeploy', function(charm) {
       eventHandle.detach();
