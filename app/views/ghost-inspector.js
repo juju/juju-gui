@@ -51,11 +51,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.Model} charm model to add to the charms database.
     */
     deployService: function(charm) {
-      // XXX - Jeff 25/06/2013
-      // Is this flag still required? Don't the modelController promises pull
-      // these in fully populated now?
-      charm.loaded = true;
-
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);

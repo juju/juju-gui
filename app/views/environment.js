@@ -143,6 +143,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           serviceInspector = new views.ServiceInspector(model, combinedConfig);
 
+          // Because the inspector can trigger it's own destruction we need to
+          // listen for the event and remove it from the list of open inspectors
           serviceInspector.inspector.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
           }, this);
