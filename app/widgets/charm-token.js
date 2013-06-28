@@ -77,20 +77,29 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
-        var icon = container.one('.icon');
+        console.log('starting drag');
         // Chome creates drag images in a silly way, so CSS background
         // tranparency doesn't work and if part of the drag image is off-screen,
-        // that part is simply white.  Therefore, we clone the image and place it
-        // safely on-screen but burried at a very low z-index.
+        // that part is simply white.  Therefore, we create a new image and
+        // place it safely on-screen but burried at a very low z-index.
+        var iconURL, dragImage;
+        var icon = container.one('.icon img');
         if (icon) {
+          // If the charm has a custom icon, we will use that as the dragImage.
+          // If the source of the drag image is a custom charm icon, then we
+          // need to transfer the rendered size from the icon to the dragImage,
+          // otherwise the default SVG height and width will be used (which is
+          // almost always the wrong size).
           dragImage = Y.one('body')
-            .appendChild(icon.cloneNode(true))
+            .appendChild(Y.Node.create('<img/>'))
+              .set('src', icon.get('src'))
               .setStyle('z-index', -1000)
-              .setStyle('height', icon.one('img').get('height'))
-              .setStyle('width', icon.one('img').get('width'));
+              .setStyle('height', icon.get('height'))
+              .setStyle('width', icon.get('width'));
         } else {
-          dragImage =
+          // Otherwise we will use the generic charm icon or the category icon,
+          // whichever is displayed by the charm token.
+          var dragImage =
             container.one('.charm-icon') ||
             container.one('.category-icon');
         }
