@@ -281,6 +281,48 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(req.params.id, 'precise/mysql-10');
     });
 
+    it('does not add sidebar to urls that do not require it', function() {
+      app = new browser.Browser();
+
+      // sidebar is the default viewmode and is not required on urls that have
+      // a charm id in them or the root url. Leave out the viewmode in these
+      // cases.
+      var url = app._getStateUrl({
+        viewmode: 'sidebar',
+        charmID: 'precise/mysql-10',
+        search: undefined,
+        filter: undefined
+      });
+      assert.equal(url, 'precise/mysql-10');
+
+      url = app._getStateUrl({
+        viewmode: 'sidebar',
+        charmID: undefined,
+        search: undefined,
+        filter: undefined
+      });
+      assert.equal(url, '');
+
+      // The viewmode is required for search related routes though.
+      url = app._getStateUrl({
+        viewmode: 'sidebar',
+        charmID: undefined,
+        search: true,
+        filter: undefined
+      });
+      assert.equal(url, 'sidebar/search');
+
+      // If the viewmode is set to something not sidebar, it's part of the
+      // url.
+      url = app._getStateUrl({
+        viewmode: 'fullscreen',
+        charmID: undefined,
+        search: undefined,
+        filter: undefined
+      });
+      assert.equal(url, 'fullscreen');
+    });
+
     it('/charm/id router ignores other urls', function() {
       app = new browser.Browser();
       // Stub out the sidebar so we don't render anything.
