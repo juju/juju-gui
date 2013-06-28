@@ -78,20 +78,22 @@ YUI.add('browser-charm-token', function(Y) {
       var container = this.get('boundingBox');
       return function(evt) {
         var dragImage;
-        var icon = container.one('.icon img');
-        // Chome creates drag images in a silly way, so CSS background
-        // tranparency doesn't work and if part of the drag image is off-screen,
-        // that part is simply white.
+        var icon = container.one('.icon');
         if (icon) {
+          // Chome creates drag images in a silly way, so CSS background
+          // tranparency doesn't work and if part of the drag image is
+          // off-screen, that part is simply white.  Therefore we have to clone
+          // the icon and make sure it is visible.  We don't really want it to
+          // be visible though, so we make sure the overflow induced by the
+          // icon is hidden.
           dragImage = Y.one('body')
-            .appendChild(icon.cloneNode(true)
-              .setStyle('position', 'fixed')
-              .setStyle('top', 100)
-              .setStyle('left', 100)
-              .setStyle('height', icon.get('height'))
-              .setStyle('width', icon.get('width')))
-//              .setStyle('z-index', -1000));
+            .setStyle('overflow', 'hidden')
+            .appendChild(icon.cloneNode(true))
+              .setStyle('height', icon.one('img').get('height'))
+              .setStyle('width', icon.one('img').get('width'))
         } else {
+          // On chrome, if part of this drag image is not visible, that part
+          // will be transparent.
           dragImage =
             container.one('.charm-icon') ||
             container.one('.category-icon');
