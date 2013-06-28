@@ -1119,12 +1119,20 @@ YUI.add('juju-view-service', function(Y) {
       constraints: {
         name: 'constraints',
         template: Templates['service-constraints-viewlet'],
+        readOnlyConstraints: ['provider-type', 'ubuntu-series'],
+        constraintDescriptions: {
+          arch: {title: 'Architecture'},
+          cpu: {title: 'CPU', unit: 'Ghz'},
+          'cpu-cores': {title: 'CPU Cores'},
+          'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+          mem: {title: 'Memory', unit: 'GB'}
+        },
 
         bindings: {
-          'constraints.mem': {
+          'constraints': {
             format: function(value) {
-              console.log('HERE2! ------->', value);
-              return value;
+              // Display undefined constraints as empty strings.
+              return value || '';
             }
           }
         },
@@ -1133,14 +1141,32 @@ YUI.add('juju-view-service', function(Y) {
           var constraints = this._getConstraints(
             service.get('constraints') || {},
             options.env.genericConstraints);
+          var contents = this.template({
+            service: service,
+            constraints: constraints
+          });
           this.container = Y.Node.create(this.templateWrapper);
-          this.container.setHTML(
-              this.template({service: service, constraints: constraints}));
+          this.container.setHTML(contents);
         },
 
+        /**
+          Prepare the constraints object to be used as part of the template
+          context.
+
+          @method _getConstraints
+          @private
+          @param {Object} serviceConstraints A key-value pairs representing
+            the current service constraints.
+          @param {Array} genericConstraints Generic constraint keys for the
+            environment in use.
+          @return {Array} The resulting constraints list, each item being
+            an object with the following fields: name, value, title, unit
+            (optional).
+        */
         _getConstraints: function(serviceConstraints, genericConstraints) {
           var constraints = [],
-              readOnlyConstraints = ['provider-type', 'ubuntu-series'];
+              readOnlyConstraints = this.readOnlyConstraints,
+              constraintDescriptions = this.constraintDescriptions;
           // Populate constraints.
           Y.Object.each(serviceConstraints, function(value, key) {
             if (!(key in readOnlyConstraints)) {
@@ -1153,7 +1179,16 @@ YUI.add('juju-view-service', function(Y) {
               constraints.push({name: key, value: ''});
             }
           });
-          return constraints;
+          // Add constraint descriptions.
+          return Y.Array.filter(constraints, function(item) {
+            if (item.name in constraintDescriptions) {
+              return Y.mix(item, constraintDescriptions[item.name]);
+            }
+            // If the current key is not included in the descriptions, use the
+            // name as the title to display to the user.
+            item.title = item.name;
+            return item;
+          });
         },
 
         'conflict': function(node, model, viewletName, resolve) {

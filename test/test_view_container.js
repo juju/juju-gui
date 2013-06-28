@@ -127,6 +127,15 @@ describe('View Container', function() {
     });
   });
 
+  it('passes model and attrs to the viewlet render method', function(done) {
+    generateViewContainer(function(model, attrs) {
+      assert.deepEqual(viewContainer.get('model'), model);
+      assert.deepEqual(viewContainer.getAttrs(), attrs);
+      done();
+    });
+    viewContainer.render();
+  });
+
   it('allows you to define your own update method', function() {
     generateViewContainer(null, function() {
       return 'foo';
