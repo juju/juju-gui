@@ -105,7 +105,7 @@ YUI.add('juju-view-environment', function(Y) {
         */
         createServiceInspector: function(model, config) {
           config = config || {};
-          var type = "service",
+          var type = 'service',
               charm = this.get('db').charms.getById(model.get('charm'));
 
           // This method is called with a charm or service depending on if it's
