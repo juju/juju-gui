@@ -81,8 +81,7 @@ YUI.add('browser-charm-token', function(Y) {
         var icon = container.one('.icon');
         // Chome creates drag images in a silly way, so CSS background
         // tranparency doesn't work and if part of the drag image is off-screen,
-        // that part is simply white.  Therefore, we clone the image and place it
-        // safely on-screen but burried at a very low z-index.
+        // that part is simply white.
         if (icon) {
           dragImage = icon
             .setStyle('height', icon.one('img').get('height'))
