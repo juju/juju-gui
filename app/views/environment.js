@@ -105,58 +105,35 @@ YUI.add('juju-view-environment', function(Y) {
           @param {Object} config object of options to overwrite default config.
         */
         createServiceInspector: function(type, model, config) {
-          console.log('pending: ', model.get('pending'));
+          config = config || {};
+
+          // This method is called with a charm or service depending on if it's
+          // called from the charm browser or from the environment. If it is
+          // called from the environment with a ghost it still needs access to
+          // the charm so that's what this switcheroo is doing here.
+          if (model.get('pending')) {
+            type = 'ghost';
+            config.ghostService = model;
+            model = this.get('db').charms.getById(model.get('charm'));
+          }
+
+          // If the user is trying to open the same inspector twice
+          if (this.getInspector(model.get('id'))) {
+            return;
+          }
+
           var serviceInspector = this.getInspector(model.get('id'));
           if (serviceInspector) { return serviceInspector; }
 
-          var combinedConfig = {}
-          var configBase = {
-            db: this.topo.get('db'),
-            events: {
-              '.close': {'click': 'destroy'}
-            },
-          };
-
-          var configService = {
-            events: {
-              '.tab': {'click': 'showViewlet'}
-            },
-            viewletList: ['overview', 'units', 'config'],
-            template: Y.juju.views.Templates['view-container']
-          };
-
-          var configGhost = {
-            env: this.topo.get('env'),
-            // controller will show the first one in this array by default
-            viewletList: ['ghostConfig'],
-            // the view container template
-            template: Y.juju.views.Templates['ghost-config-wrapper'],
-            // these events are for the viewlet container
-            events: {
-              '.cancel': { 'click': 'destroy' }
-            },
-            // these events are for the viewlets and have their callbacks bound to
-            // the controllers prototype and are then mixed with the containers
-            // events for final binding
-            viewletEvents: {
-              '.deploy': { 'click': 'deployCharm' },
-              'input.config-file-upload': { 'change': 'handleFileUpload' },
-              'span.config-file-upload': { 'click': '_showFileDialogue' },
-              'input[name=service-name]': { 'valuechange': 'updateGhostName' }
-            },
-            // the configuration for the view container template
-            templateConfig: {
-              packageName: model.get('package_name'),
-              id: model.get('id')
-            }
-          };
+          var combinedConfig = {};
+          var configs = this._generateConfigs(model);
 
           if (type === 'ghost') {
-            combinedConfig = Y.mix(
-                configBase, configGhost, true, undefined, 0, true);
+            combinedConfig = Y.mix(configs.configBase, configs.configGhost,
+                                   true, undefined, 0, true);
           } else if (type === 'service') {
-            combinedConfig = Y.mix(
-                configBase, configService, true, undefined, 0, true);
+            combinedConfig = Y.mix(configs.configBase, configs.configService,
+                                   true, undefined, 0, true);
           } else {
             console.log('Service inspector type not supported.');
             return;
@@ -169,7 +146,68 @@ YUI.add('juju-view-environment', function(Y) {
           serviceInspector.inspector.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
           }, this);
+
+          // Restrict to a single inspector instance
+          if (Y.Object.size(this._inspectors) >= 1) {
+            Y.Object.each(this._inspectors, function(inspector) {
+              console.log(inspector);
+              inspector.inspector.destroy();
+            });
+          }
+
           this.setInspector(serviceInspector);
+        },
+
+        /**
+          Basic method to return a populated configuration object for all of the
+          different service inspector view types
+
+          @method _generateConfigs
+          @param {Y.Model} model of the service.
+          @return {Object} an object containing the configuration objects.
+        */
+        _generateConfigs: function(model) {
+          var configs = {
+            configBase: {
+              db: this.topo.get('db'),
+              events: {
+                '.close': {'click': 'destroy'}
+              }
+            },
+            configService: {
+              events: {
+                '.tab': {'click': 'showViewlet'}
+              },
+              viewletList: ['overview', 'units', 'config'],
+              template: Y.juju.views.Templates['view-container']
+            },
+            configGhost: {
+              env: this.topo.get('env'),
+              // controller will show the first one in this array by default
+              viewletList: ['ghostConfig'],
+              // the view container template
+              template: Y.juju.views.Templates['ghost-config-wrapper'],
+              // these events are for the viewlet container
+              events: {
+                '.cancel': { 'click': 'destroy' }
+              },
+              // these events are for the viewlets and have their callbacks
+              // bound to the controllers prototype and are then mixed with the
+              // containers events for final binding
+              viewletEvents: {
+                '.deploy': { 'click': 'deployCharm' },
+                'input.config-file-upload': { 'change': 'handleFileUpload' },
+                'span.config-file-upload': { 'click': '_showFileDialogue' },
+                'input[name=service-name]': { 'valuechange': 'updateGhostName' }
+              },
+              // the configuration for the view container template
+              templateConfig: {
+                packageName: model.get('package_name'),
+                id: model.get('id')
+              }
+            }
+          };
+          return configs;
         },
 
         /**

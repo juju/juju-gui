@@ -43,14 +43,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
   function GhostDeployer() {}
 
   GhostDeployer.prototype = {
-    /**
-      A collection of the open ghost inspectors.
-
-      @property _ghostInspectors
-      @private
-      @type {Array}
-    */
-//    _ghostInspectors: [],
 
     /**
       Show the deploy/configuration panel for a charm.
@@ -64,6 +56,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // these in fully populated now?
       charm.loaded = true;
 
+      this.db.charms.add(charm);
+
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
 
@@ -71,50 +65,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
           ghostInspector = environment.createServiceInspector('ghost', charm, {
             ghostService: ghostService
           });
-
-      // var ghostInspector = new Y.juju.views.ServiceInspector(charm, {
-      //   // Because this is an extension `this` points to the JujuApp
-      //   db: this.db,
-      //   env: this.env,
-      //   ghostService: ghostService,
-      //   // controller will show the first one in this array by default
-      //   viewletList: ['ghostConfig'],
-      //   // the view container template
-      //   template: Y.juju.views.Templates['ghost-config-wrapper'],
-      //   // these events are for the viewlet container
-      //   events: {
-      //     '.close' : { 'click': 'destroy' },
-      //     '.cancel': { 'click': 'destroy' }
-      //   },
-      //   // these events are for the viewlets and have their callbacks bound to
-      //   // the controllers prototype and are then mixed with the containers
-      //   // events for final binding
-      //   viewletEvents: {
-      //     '.deploy': { 'click': 'deployCharm' },
-      //     'input.config-file-upload': { 'change': 'handleFileUpload' },
-      //     'span.config-file-upload': { 'click': '_showFileDialogue' },
-      //     'input[name=service-name]': { 'valuechange': 'updateGhostName' }
-      //   },
-      //   // the configuration for the view container template
-      //   templateConfig: {
-      //     packageName: charm.get('package_name'),
-      //     id: charm.get('id')
-      //   }
-      // });
-
-      // this._ghostInspectors.push(ghostInspector);
-
-      // ghostInspector.inspector.after('destroy', function(e) {
-      //   // This loops through the instantiated ghostInspectors to find one
-      //   // which matches the one which has fired the destroy event notifying
-      //   // that it's been destroyed so we can remove it from the collection
-      //   this._ghostInspectors.forEach(function(inspector, index) {
-      //     if (e.currentTarget === inspector.inspector) {
-      //       self._ghostInspectors.splice(index, 1);
-      //     }
-      //   });
-      // }, this);
-
     }
   };
 
