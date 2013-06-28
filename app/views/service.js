@@ -1120,15 +1120,6 @@ YUI.add('juju-view-service', function(Y) {
         name: 'constraints',
         template: Templates['service-constraints-viewlet'],
 
-        'render': function(service, options) {
-          var constraints = this._getConstraints(
-            service.get('constraints') || {},
-            options.env.genericConstraints);
-          this.container = Y.Node.create(this.templateWrapper);
-          this.container.setHTML(
-              this.template({service: service, constraints: constraints}));
-        },
-
         bindings: {
           'constraints.mem': {
             format: function(value) {
@@ -1136,6 +1127,15 @@ YUI.add('juju-view-service', function(Y) {
               return value;
             }
           }
+        },
+
+        'render': function(service, options) {
+          var constraints = this._getConstraints(
+            service.get('constraints') || {},
+            options.env.genericConstraints);
+          this.container = Y.Node.create(this.templateWrapper);
+          this.container.setHTML(
+              this.template({service: service, constraints: constraints}));
         },
 
         _getConstraints: function(serviceConstraints, genericConstraints) {
@@ -1154,6 +1154,29 @@ YUI.add('juju-view-service', function(Y) {
             }
           });
           return constraints;
+        },
+
+        'conflict': function(node, model, viewletName, resolve) {
+          /**
+            Calls the databinding resolve method.
+            @method sendResolve
+          */
+          function sendResolve(ev) {
+            handler.detach();
+            if (ev.currentTarget.hasClass('conflicted-confirm')) {
+              node.setStyle('borderColor', 'black');
+              resolve(node, viewletName, newVal);
+            }
+            // If they don't accept the new value then do nothing.
+            message.setStyle('display', 'none');
+          }
+
+          node.setStyle('borderColor', 'red');
+          var message = node.ancestor('.control-group').one('.conflicted'),
+              newVal = model.get(node.getData('bind'));
+          message.one('.newval').setHTML(newVal);
+          message.setStyle('display', 'block');
+          var handler = message.delegate('click', sendResolve, 'button', this);
         }
       },
       //relations: {},
