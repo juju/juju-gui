@@ -78,14 +78,19 @@ YUI.add('browser-charm-token', function(Y) {
       var container = this.get('boundingBox');
       return function(evt) {
         var dragImage;
-        var icon = container.one('.icon');
+        var icon = container.one('.icon img');
         // Chome creates drag images in a silly way, so CSS background
         // tranparency doesn't work and if part of the drag image is off-screen,
         // that part is simply white.
         if (icon) {
-          dragImage = icon
-            .setStyle('height', icon.one('img').get('height'))
-            .setStyle('width', icon.one('img').get('width'));
+          dragImage = Y.one('body')
+            .appendChild(icon.cloneNode(true)
+              .setStyle('position', 'fixed')
+              .setStyle('top', 100)
+              .setStyle('left', 100)
+              .setStyle('height', icon.get('height'))
+              .setStyle('width', icon.get('width')))
+//              .setStyle('z-index', -1000));
         } else {
           dragImage =
             container.one('.charm-icon') ||
