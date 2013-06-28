@@ -86,22 +86,34 @@ YUI.add('browser-charm-token', function(Y) {
         var icon = container.one('.icon img');
         if (icon) {
           // If the charm has a custom icon, we will use that as the dragImage.
-          // If the source of the drag image is a custom charm icon, then we
-          // need to transfer the rendered size from the icon to the dragImage,
-          // otherwise the default SVG height and width will be used (which is
-          // almost always the wrong size).
-          dragImage = Y.one('body')
-            .appendChild(Y.Node.create('<img/>'))
-              .set('src', icon.get('src'))
-              .setStyle('z-index', -1000)
-              .setStyle('height', icon.get('height'))
-              .setStyle('width', icon.get('width'));
+          iconURL = icon.get('src');
         } else {
           // Otherwise we will use the generic charm icon or the category icon,
           // whichever is displayed by the charm token.
-          var dragImage =
+          var imageSource =
             container.one('.charm-icon') ||
             container.one('.category-icon');
+          iconURL = imageSource.getStyle('backgroundImage').slice(4, -1);
+        }
+        console.log(iconURL);
+        // Now that we have the dragImage, we need to place it on-screen so
+        // chrome will display it correctly.
+        dragImage = Y.one('body')
+          .appendChild(Y.Node.create('<img/>'))
+            .set('src', iconURL)
+            .setStyle('position', 'relative')
+            .setStyle('top', 0)
+            .setStyle('left', 0)
+            .setStyle('z-index', -1000);
+        console.log(dragImage);
+        // If the source of the drag image is a custom charm icon, then we need
+        // to transfer the rendered size from the icon to the dragImage,
+        // otherwise the default SVG height and width will be used (which is
+        // almost always the wrong size).
+        if (icon) {
+          dragImage
+            .setStyle('height', icon.get('height'))
+            .setStyle('width', icon.get('width'));
         }
         evt = evt._event; // We want the real event.
         evt.dataTransfer.effectAllowed = 'copy';
