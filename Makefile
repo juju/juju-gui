@@ -122,7 +122,9 @@ endif
 endif
 endif
 ### End of release-specific variables ###
-TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
+TEMPLATE_TARGETS=$(shell find app -type f -regextype posix-extended -regex '.+\.(handlebars|partial)')
+
+CSS_TARGETS=$(shell find lib/views -type f -name '*.less')
 
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
@@ -299,7 +301,8 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
+$(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
+		build-shared/juju-ui/templates.js \
 		bin/merge-files lib/merge-files.js \
 		app/assets/javascripts/js-yaml.min.js \
 		app/assets/javascripts/spin.min.js | $(JAVASCRIPT_LIBRARIES)
