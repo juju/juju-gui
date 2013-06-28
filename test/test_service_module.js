@@ -370,19 +370,26 @@ describe('service module events', function() {
   });
 
   it('should deploy a service on charm token drop events', function(done) {
-    d3.event._event = {dataTransfer: {
-      getData: function(name) {
-        if (name === 'dataType') {
-          return 'charm-token-drag-and-drop';
-        } else if (name === 'charmData') {
-          return '{"id": "cs:foo/bar-1"}';
-        }
-      }}};
+    d3.event._event = {
+      dataTransfer: {
+        getData: function(name) {
+          if (name === 'dataType') {
+            return 'charm-token-drag-and-drop';
+          } else if (name === 'charmData') {
+            return '{"id": "cs:foo/bar-1"}';
+          }
+        },
+      },
+    };
+    d3.mouse = function() {
+        return [5, 7];
+    };
     var eventHandle = Y.on('initiateDeploy', function(charm) {
       eventHandle.detach();
       done();
     });
-    serviceModule.canvasDropHandler();
+    serviceModule.set('component', topo);
+    serviceModule.canvasDropHandler(undefined, serviceModule);
   });
 
 });

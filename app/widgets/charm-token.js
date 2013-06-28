@@ -44,9 +44,12 @@ YUI.add('browser-charm-token', function(Y) {
     * @param {Object} cfg the config for the widget.
     * @return {undefined} Nothing.
     */
-    initializer: function(charmAttributes) {
-      // This passed-in config is made up of charm attributes.
-      this.charmAttributes = charmAttributes;
+    initializer: function(cfg) {
+      this.cfg = Y.merge(cfg);
+      // Since we later serialize the config (which contains the charm
+      // attributes) we need to remove any non-JSON-encodable bits.
+      delete this.cfg['boundingBox'];
+      delete this.cfg['contentBox'];
     },
 
     /**
@@ -137,8 +140,9 @@ YUI.add('browser-charm-token', function(Y) {
     _addDraggability: function() {
       var container = this.get('boundingBox');
       // Since the browser's dataTransfer mechanism only accepts string values
-      // we have to JSON encode the charm data.
-      var charmData = Y.JSON.stringify(this.charmAttributes);
+      // we have to JSON encode the charm data.  This passed-in config includes
+      // charm attributes.
+      var charmData = Y.JSON.stringify(this.cfg);
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {

@@ -54,11 +54,14 @@ describe('charm token drag and drop', function() {
       description: 'some description',
       recent_commit_count: 1,
       recent_download_count: 3,
-      tested_providers: ['ec2']
+      tested_providers: ['ec2'],
+      boundingBox: container,
+      contentBox: container
     };
+    // We need to simulate a complex token with several nested elements.
     token = new CharmToken(cfg);
     var draggable = [];
-    token._makeDraggable = function(element, dragImage, charmData) {
+    token._makeDraggable = function(element, charmData) {
       draggable.push(Y.JSON.parse(charmData).id);
     };
     token.renderUI(container);
@@ -97,12 +100,16 @@ describe('charm token drag and drop', function() {
     assert.isTrue(onCalled);
   });
 
-  it('can set up drag and drop configuration', function() {
-    token = new CharmToken();
+  it('can set up drag and drop configuration', function(done) {
+    var cfg = {
+      boundingBox: container,
+      contentBox: container
+    };
+    token = new CharmToken(cfg);
+    token.render()
     var setDataCalled, setDragImageCalled;
-    var dragImage = {_node: {id: 'the real drag image'}};
     var charmData = 'data';
-    var handler = token._makeDragStartHandler(dragImage, charmData);
+    var handler = token._makeDragStartHandler(charmData);
     var dragDataSet = [];
     var evt = {
       _event: {
@@ -112,11 +119,16 @@ describe('charm token drag and drop', function() {
             setDataCalled = true;
           },
           setDragImage: function(provideDragImage, x, y) {
-            assert.equal(provideDragImage, dragImage._node);
+            assert.equal(
+              provideDragImage.outerHTML.indexOf('<div class="charm-icon"'), 0);
             assert.equal(x, 0);
             assert.equal(y, 0);
             setDragImageCalled = true;
           }
+        },
+        stopPropagation: function() {
+          // The last thing the event handler does is to stop event propegation.
+          done();
         }
       }
     };
