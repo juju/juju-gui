@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('charm token drag and drop', function() {
+describe('charm token drag and drop', function() {
   var Y, container, outerContainer, CharmToken, token;
 
   before(function(done) {
