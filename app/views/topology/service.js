@@ -1353,7 +1353,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
-        createServiceInspector('service', service);
+        createServiceInspector(service);
       } else {
         topo.fire('navigateTo', {
           url: getModelURL(service)

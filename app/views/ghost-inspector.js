@@ -51,15 +51,17 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.Model} charm model to add to the charms database.
     */
     deployService: function(charm) {
+      // This flag is still required because it comes fully populated from the
+      // browser but won't be fully populated when coming in on the delta.
+      charm.loaded = true;
+
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
 
       var environment = this.views.environment.instance,
-          ghostInspector = environment.createServiceInspector('ghost', charm, {
-            ghostService: ghostService
-          });
+          ghostInspector = environment.createServiceInspector(ghostService);
     }
   };
 

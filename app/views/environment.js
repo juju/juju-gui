@@ -100,12 +100,13 @@ YUI.add('juju-view-environment', function(Y) {
           Creates a new service inspector instance of the passed in type.
 
           @method createServiceInspector
-          @param {String} type of inspector to create (ghost, service).
           @param {Y.Model} model service or charm depending on inspector type.
           @param {Object} config object of options to overwrite default config.
         */
-        createServiceInspector: function(type, model, config) {
+        createServiceInspector: function(model, config) {
           config = config || {};
+          var type = "service",
+              charm = this.get('db').charms.getById(model.get('charm'));
 
           // This method is called with a charm or service depending on if it's
           // called from the charm browser or from the environment. If it is
@@ -114,7 +115,7 @@ YUI.add('juju-view-environment', function(Y) {
           if (model.get('pending')) {
             type = 'ghost';
             config.ghostService = model;
-            model = this.get('db').charms.getById(model.get('charm'));
+            model = charm;
           }
 
           // If the user is trying to open the same inspector twice
@@ -134,9 +135,6 @@ YUI.add('juju-view-environment', function(Y) {
           } else if (type === 'service') {
             combinedConfig = Y.mix(configs.configBase, configs.configService,
                                    true, undefined, 0, true);
-          } else {
-            console.log('Service inspector type not supported.');
-            return;
           }
 
           Y.mix(combinedConfig, config, true, undefined, 0, true);
