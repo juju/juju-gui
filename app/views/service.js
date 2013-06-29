@@ -1050,6 +1050,13 @@ YUI.add('juju-view-service', function(Y) {
       this.inspector.render();
       return this;
     },
+
+    /**
+      Handles showing/hiding the configuration settings descriptions
+
+      @method toggleSettingsHelp
+      @param {Y.EventFacade} e An event object.
+    */
     toggleSettingsHelp: function(e) {
       var button = e.currentTarget,
           descriptions = e.container.all('.settings-description'),
@@ -1063,22 +1070,46 @@ YUI.add('juju-view-service', function(Y) {
         descriptions.hide();
       }
     },
+
+    /**
+      Handles the click on the file input and dispatches to the proper function
+      depending if a file has beem previously loaded or not
+
+      @method handleFileClick
+      @param {Y.EventFacade} e An event object.
+    */
     handleFileClick: function(e) {
       if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
         e.container.one('input[type=file]').getDOMNode().click();
       } else {
-        this.removeFile(e);
+        this.onRemoveFile(e);
       }
     },
+
+    /**
+      Handle the file upload click event. Creates a FileReader instance to
+      parse the file data
+
+
+      @method onFileChange
+      @param {Y.EventFacade} e An event object.
+    */
     handleFileChange: function(e) {
       var file = e.currentTarget.get('files').shift(),
           reader = new FileReader();
       reader.onerror = Y.bind(this.onFileError, this);
       reader.onload = Y.bind(this.onFileLoaded, this);
       reader.readAsText(file);
-      // We need a 'remove file UI'
       e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
     },
+
+    /**
+      Callback called when an error occurs during file upload.
+      Hide the charm configuration section.
+
+      @method onFileError
+      @param {Object} e An event object (with a "target.error" attr).
+    */
     onFileError: function(e) {
       var error = e.target.error, msg;
       switch (error.code) {
@@ -1103,6 +1134,14 @@ YUI.add('juju-view-service', function(Y) {
             }));
       }
     },
+
+    /**
+      Callback called when a file is correctly uploaded.
+      Hide the charm configuration section.
+
+      @method onFileLoaded
+      @param {Object} e An event object.
+    */
     onFileLoaded: function(e) {
       //set the fileContent on the view-container so we can have access to it
       // when the user submit their config.
@@ -1124,7 +1163,15 @@ YUI.add('juju-view-service', function(Y) {
       container.all('.settings-wrapper').hide();
       container.one('.toggle-settings-help').hide();
     },
-    removeFile: function(e) {
+
+    /**
+      Handle the file remove click event by clearing out the input
+      and resetting the UI.
+
+      @method onRemoveFile
+      @param {Y.EventFacade} e an event object from click.
+    */
+    onRemoveFile: function(e) {
       var container = this.inspector.get('container');
       this.inspector.fileContent = null;
       container.one('.fakebutton').setHTML('Import config file...');
@@ -1136,6 +1183,7 @@ YUI.add('juju-view-service', function(Y) {
                .replace(Y.Node.create('<input type="file"/>'));
     }
   };
+
   /**
     Service Inspector View Container Controller
 
@@ -1180,11 +1228,11 @@ YUI.add('juju-view-service', function(Y) {
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
               this.template({service: service, settings: settings}));
-          this.container.all('textarea.config-field').plug(plugins.ResizingTextarea,
-              { max_height: 200,
-                min_height: 18,
-                single_line: 18});
-
+          this.container.all('textarea.config-field')
+                        .plug(plugins.ResizingTextarea,
+                              { max_height: 200,
+                                min_height: 18,
+                                single_line: 18});
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
