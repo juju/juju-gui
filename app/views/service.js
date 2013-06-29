@@ -1050,15 +1050,90 @@ YUI.add('juju-view-service', function(Y) {
       this.inspector.render();
       return this;
     },
-    'hideSettingsHelp': function(e) {
-      e.container.one('.hide-settings-help').hide();
-      e.container.all('.control-description').hide();
-      e.container.one('.show-settings-help').show();
+    toggleSettingsHelp: function(e) {
+      var button = e.currentTarget,
+          descriptions = e.container.all('.settings-description'),
+          btnString = 'Hide settings help';
+
+      if (e.currentTarget.getHTML().indexOf('Hide') < 0) {
+        button.setHTML(btnString);
+        descriptions.show();
+      } else {
+        button.setHTML('Show settings help');
+        descriptions.hide();
+      }
     },
-    'showSettingsHelp': function(e) {
-      e.container.one('.show-settings-help').hide();
-      e.container.all('.control-description').show();
-      e.container.one('.hide-settings-help').show();
+    handleFileClick: function(e) {
+      if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+        e.container.one('input[type=file]').getDOMNode().click();
+      } else {
+        this.removeFile(e);
+      }
+    },
+    handleFileChange: function(e) {
+      var file = e.currentTarget.get('files').shift(),
+          reader = new FileReader();
+      reader.onerror = Y.bind(this.onFileError, this);
+      reader.onload = Y.bind(this.onFileLoaded, this);
+      reader.readAsText(file);
+      // We need a 'remove file UI'
+      e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
+    },
+    onFileError: function(e) {
+      var error = e.target.error, msg;
+      switch (error.code) {
+        case error.NOT_FOUND_ERR:
+          msg = 'File not found';
+          break;
+        case error.NOT_READABLE_ERR:
+          msg = 'File is not readable';
+          break;
+        case error.ABORT_ERR:
+          break; // noop
+        default:
+          msg = 'An error occurred reading this file.';
+      }
+      if (msg) {
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error reading configuration file',
+              message: msg,
+              level: 'error'
+            }));
+      }
+    },
+    onFileLoaded: function(e) {
+      //set the fileContent on the view-container so we can have access to it
+      // when the user submit their config.
+      this.inspector.fileContent = e.target.result;
+      if (!this.inspector.fileContent) {
+        // Some file read errors do not go through the error handler as
+        // expected but instead return an empty string.  Warn the user if
+        // this happens.
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Configuration file error',
+              message: 'The configuration file loaded is empty.  ' +
+                  'Do you have read access?',
+              level: 'error'
+            }));
+      }
+      var container = this.inspector.get('container');
+      container.all('.settings-wrapper').hide();
+      container.one('.toggle-settings-help').hide();
+    },
+    removeFile: function(e) {
+      var container = this.inspector.get('container');
+      this.inspector.fileContent = null;
+      container.one('.fakebutton').setHTML('Import config file...');
+      container.all('.settings-wrapper').show();
+      // Replace the file input node.  There does not appear to be any way
+      // to reset the element, so the only option is this rather crude
+      // replacement.  It actually works well in practice.
+      container.one('input[type=file]')
+               .replace(Y.Node.create('<input type="file"/>'));
     }
   };
   /**

@@ -1362,8 +1362,9 @@ YUI.add('juju-topology-service', function(Y) {
               '.close': {'click': 'destroy'}
             },
             viewletEvents: {
-              '.hide-settings-help': {click: 'hideSettingsHelp'},
-              '.show-settings-help': {click: 'showSettingsHelp'}
+              '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+              '.config-file .fakebutton': { click: 'handleFileClick'},
+              '.config-file input[type=file]': { change: 'handleFileChange'}
             },
             viewletList: ['overview', 'units', 'config'],
             template: Y.juju.views.Templates['view-container']
