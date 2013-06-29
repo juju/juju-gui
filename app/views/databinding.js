@@ -65,7 +65,10 @@ YUI.add('juju-databinding', function(Y) {
         return this._bindings;
       }
       return this._bindings.filter(function(binding) {
-        return (modelChangeKeys.indexOf(binding.name) > -1);
+        // Change events don't honor nested key paths. This means
+        // we may update bindings that impact multiple DOM nodes
+        // (our granularity is too low).
+        return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
       });
     }
 
@@ -220,6 +223,7 @@ YUI.add('juju-databinding', function(Y) {
               node.on(
                   'valueChange', this._storeChanged, this, viewlet));
         }, this);
+        this._setupHeirarchicalBindings();
         this._updateDOM();
       } else {
         // Model list
@@ -235,6 +239,38 @@ YUI.add('juju-databinding', function(Y) {
         this._modelListChange();
       }
       return this;
+    };
+
+    /**
+     Specialize bindings related to dotted key paths to look for higher
+     level objects and mix in their methods when present. This is called
+     automatically during the binding process.
+
+     @method _setupHeirarchicalBindings
+    */
+    BindingEngine.prototype._setupHeirarchicalBindings = function() {
+      this._bindings.forEach(function(binding) {
+        if (binding.name.indexOf('.') === -1) {
+          // The path isn't dotted so nothing to
+          // inherit.
+          return;
+        }
+        if (!binding.viewlet.bindings) {
+          // There are not bindings so nothing to
+          // inherit.
+          return;
+        }
+        // We have a nested path, see if there is a bindings
+        // entry under the viewlet and use its methods where
+        // present in parent and not present in the child.
+        var parentName = binding.name.split('.')[0];
+        var parentBinding = binding.viewlet.bindings[parentName];
+        if (!parentBinding) {
+          return;
+        }
+        // Non-overwriting mix into binding.
+        Y.mix(binding, parentBinding, false);
+      });
     };
 
     /**
