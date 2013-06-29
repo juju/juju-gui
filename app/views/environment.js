@@ -178,7 +178,12 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletList: ['overview', 'units', 'config'],
-              template: Y.juju.views.Templates['view-container']
+              template: Y.juju.views.Templates['view-container'],
+              viewletEvents: {
+                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.config-file .fakebutton': { click: 'handleFileClick'},
+                '.config-file input[type=file]': { change: 'handleFileChange'}
+              }
             },
             configGhost: {
               env: this.topo.get('env'),
@@ -195,10 +200,9 @@ YUI.add('juju-view-environment', function(Y) {
               // containers events for final binding
               viewletEvents: {
                 '.deploy': { 'click': 'deployCharm' },
-                'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
-                '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'}
+                'input.config-file-upload': { 'change': 'handleFileUpload' },
+                'span.config-file-upload': { 'click': '_showFileDialogue' },
+                'input[name=service-name]': { valuechange: 'updateGhostName' }
               },
               // the configuration for the view container template
               templateConfig: {
