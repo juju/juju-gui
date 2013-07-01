@@ -40,21 +40,9 @@ YUI.add('juju-topology-importexport', function(Y) {
         events: {
           scene: {
             '.zoom-plane': {
-              dragenter: '_ignore',
-              dragover: '_ignore',
               drop: '_handleFileDrop'
             }
           }
-        },
-
-        /**
-         * Ingore some of the drag events.
-         * @method _ignore
-         */
-        _ignore: function(box, module) {
-          var evt = d3.event;
-          evt.preventDefault();
-          evt.stopPropagation();
         },
 
         /**
