@@ -385,15 +385,24 @@ YUI.add('juju-topology-service', function(Y) {
      * @static
      * @return {undefined} Nothing.
      */
-    canvasDropHandler: function() {
+    canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
       var dataType = evt.dataTransfer.getData('dataType');
+      var topo = self.get('component');
+      var translation = topo.get('translate');
+      var scale = topo.get('scale');
+      var dropXY = d3.mouse(this);
+      var ghostXY = [];
+      // Take the x,y offset (translation) of the topology view into account.
+      Y.Array.each(dropXY, function(_, index) {
+        ghostXY[index] = (dropXY[index] - translation[index]) / scale;
+      });
       if (dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
         var charm = new models.Charm(charmData);
-        Y.fire('initiateDeploy', charm);
+        Y.fire('initiateDeploy', charm, ghostXY);
       }
     },
 
@@ -1345,6 +1354,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var setInspector = topo.get('setInspector');
       var getInspector = topo.get('getInspector');
+      var createServiceInspector = topo.get('createServiceInspector');
       var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
       // to satisfy linter;
@@ -1352,29 +1362,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       if (flags.serviceInspector) {
-        // XXX: switch on pending to handle ghost config.
-        var serviceInspector = getInspector(service.get('id'));
-        if (!serviceInspector) {
-          serviceInspector = new views.ServiceInspector(service, {
-            db: topo.get('db'),
-            events: {
-              '.tab': {'click': 'showViewlet'},
-              '.close': {'click': 'destroy'}
-            },
-            viewletEvents: {
-              '#num-service-units': {
-                'keydown': 'modifyUnits',
-                'blur': 'resetUnits'
-              }
-            },
-            viewletList: ['overview', 'units', 'config'],
-            template: Y.juju.views.Templates['view-container']
-          });
-          serviceInspector.inspector.after('destroy', function(e) {
-            setInspector(e.currentTarget, true);
-          });
-          setInspector(serviceInspector);
-        }
+        createServiceInspector(service);
       } else {
         topo.fire('navigateTo', {
           url: getModelURL(service)

@@ -752,6 +752,7 @@ describe('BrowserCharm test', function() {
         providesData.downloads_in_past_30_days,
         converted.recent_download_count);
     assert.equal(providesData.has_icon, converted.shouldShowIcon);
+    assert.equal(converted.is_approved, providesData.is_approved);
   });
 
   it('builds proper relatedCharms object', function() {
@@ -807,8 +808,8 @@ describe('database export', function() {
     assert.equal(result.services[0].charm, 'mysql');
     assert.equal(result.services[1].charm, 'wordpress');
 
-    assert.deepEqual(relation[0], ['mysql', 'db']);
-    assert.deepEqual(relation[1], ['wordpress', 'app']);
+    assert.equal(relation[0], 'mysql:db');
+    assert.equal(relation[1], 'wordpress:app');
   });
 });
 

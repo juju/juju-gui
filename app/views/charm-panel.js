@@ -277,6 +277,13 @@ YUI.add('juju-charm-panel', function(Y) {
               loaded: false,
               config: config
             });
+            // If we have been given coordinates at which the ghost should be
+            // created, respect them.
+            var ghostXY = this.get('ghostXY');
+            if (ghostXY !== undefined) {
+              ghostService.set('x', ghostXY[0]);
+              ghostService.set('y', ghostXY[1]);
+            }
             this.set('ghostService', ghostService);
             db.fire('update');
           } else {
@@ -762,6 +769,7 @@ YUI.add('juju-charm-panel', function(Y) {
       newPanel.set('height', calculatePanelPosition().height -
                    panelHeightOffset[activePanelName] - 1);
       if (config.charmId) {
+        newPanel.set('ghostXY', config.ghostXY);
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
         if (charm.loaded) {
@@ -844,7 +852,7 @@ YUI.add('juju-charm-panel', function(Y) {
      * @param {String} charmUrl The URL of the charm to configure/deploy.
      * @return {undefined} Nothing.
      */
-    function deploy(charm) {
+    function deploy(charm, ghostXY) {
       // Any passed-in charm is fully loaded but the caller doesn't know about
       // the charm panel's internal detail of marking loaded charms, so we will
       // do the marking here.
@@ -853,7 +861,8 @@ YUI.add('juju-charm-panel', function(Y) {
       // Show the configuration panel.
       setPanel({
         name: 'configuration',
-        charmId: charm.get('id')
+        charmId: charm.get('id'),
+        ghostXY: ghostXY
       });
       // Since we are showing the configure/deploy panel ex nihilo, we want the
       // panel to disappear when the deploy completes or is canceled, but just

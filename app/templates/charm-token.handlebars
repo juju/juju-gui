@@ -10,7 +10,9 @@
                 title="This charm has been reviewed."></span>
         {{/if}}
         {{#if shouldShowIcon}}
-            <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
+            <div class="icon">
+                <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon">
+            </div>
         {{else}}
           {{#if mainCategory}}
             <div title="category {{mainCategory}}"
