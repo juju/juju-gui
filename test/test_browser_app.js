@@ -243,8 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('* route uses the default viewmode', function() {
-      app = new browser.Browser();
-      // Stub out the sidebar so we don't render anything.
+      app = new browser.Browser({default_viewmode: 'sidebar'});
       app.sidebar = function() {};
       var req = {
         path: '/'
@@ -252,13 +251,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       app.routeDefault(req, null, next);
       // The viewmode should be populated now to the default.
-      assert.equal(app.get('default_viewmode'), 'sidebar');
       assert.equal(req.params.viewmode, 'sidebar');
+
+      app = new browser.Browser({default_viewmode: 'fullscreen'});
+      app.fullscreen = function() {};
+      req = {
+        path: '/'
+      };
+      app.routeDefault(req, null, next);
+      assert.equal(req.params.viewmode, 'fullscreen');
     });
 
     it('prevents * route from doing more than the default viewmode', function() {
-      app = new browser.Browser();
-      assert.equal(app.get('default_viewmode'), 'sidebar');
+      app = new browser.Browser({default_viewmode: 'sidebar'});
       var req = {
         path: '/sidebar'
       };
@@ -266,6 +271,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       app.routeDefault(req, null, next);
       // The viewmode is ignored. This path isn't meant for this route
       // callable to deal with at all.
+      assert.equal(req.params, undefined);
+
+      app = new browser.Browser({default_viewmode: 'fullscreen'});
+      var req = {
+        path: '/fullscreen'
+      };
+      app.routeDefault(req, null, next);
       assert.equal(req.params, undefined);
     });
 
