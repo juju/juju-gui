@@ -54,7 +54,7 @@ describe('charm token', function() {
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,
-      recent_download_count: 3,
+      downloads: 3,
       tested_providers: ['ec2']
     };
     var token = new CharmToken(cfg);
@@ -92,7 +92,7 @@ describe('charm token', function() {
       description: 'some description',
       mainCategory: 'app-servers',
       recent_commit_count: 1,
-      recent_download_count: 3
+      downloads: 3
     });
     assert.equal('tiny', token.get('size'));
 
@@ -111,7 +111,7 @@ describe('charm token', function() {
       description: 'some description',
       mainCategory: 'app-servers',
       recent_commit_count: 1,
-      recent_download_count: 3,
+      downloads: 3,
       tested_providers: ['ec2']
     };
 
@@ -128,7 +128,7 @@ describe('charm token', function() {
       description: 'some description',
       mainCategory: 'app-servers',
       recent_commit_count: 1,
-      recent_download_count: 3,
+      downloads: 3,
       size: 'large',
       tested_providers: ['ec2']
     };
