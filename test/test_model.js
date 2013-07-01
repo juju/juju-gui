@@ -763,14 +763,15 @@ describe('BrowserCharm test', function() {
     // The overall should have the default 5 max charms listed.
     assert.equal(5, relatedObject.overall.length);
     // The requires for mysql should be truncated to the max of 5 as well.
-    assert.equal(5, relatedObject.requires.http.length);
+    assert.equal(1, relatedObject.requires.http.length);
     // There's only one key in the provides section.
     assert.equal(1, Y.Object.keys(relatedObject.provides).length);
 
-    // None of the overall weights should be one.
-    relatedObject.overall.forEach(function(charm) {
-      assert.notEqual(1, charm.weight);
+    // The overall should be sorted by their weights.
+    var weights = relatedObject.overall.map(function(charm) {
+      return charm.weight;
     });
+    assert.equal(weights.sort(), weights);
   });
 });
 

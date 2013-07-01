@@ -180,6 +180,13 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
+       * @attribute downloads
+       * @default undefined
+       * @type {Number}
+       */
+      downloads: {},
+
+      /**
        * @attribute shouldShowIcon
        * @default false
        * @type {Boolean}
@@ -229,13 +236,6 @@ YUI.add('browser-charm-token', function(Y) {
        * @type {Number}
        */
       recent_commit_count: {},
-
-      /**
-       * @attribute recent_download_count
-       * @default undefined
-       * @type {Number}
-       */
-      recent_download_count: {},
 
       /**
          Supports size attributes of small and large that turn into the css

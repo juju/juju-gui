@@ -830,7 +830,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.all('#bws-interfaces .charm-token').size(),
-          9);
+          4);
     });
 
     it('only loads the interface data once', function() {
