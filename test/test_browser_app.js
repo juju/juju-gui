@@ -242,7 +242,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('* route set sidebar by default', function() {
+    it('* route uses the default viewmode', function() {
       app = new browser.Browser();
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
@@ -250,18 +250,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         path: '/'
       };
 
-      app.routeSidebarDefault(req, null, next);
+      app.routeDefault(req, null, next);
       // The viewmode should be populated now to the default.
+      assert.equal(app.get('default_viewmode'), 'sidebar');
       assert.equal(req.params.viewmode, 'sidebar');
     });
 
-    it('prevents * route from doing more than sidebar by default', function() {
+    it('prevents * route from doing more than the default viewmode', function() {
       app = new browser.Browser();
+      assert.equal(app.get('default_viewmode'), 'sidebar');
       var req = {
         path: '/sidebar'
       };
 
-      app.routeSidebarDefault(req, null, next);
+      app.routeDefault(req, null, next);
       // The viewmode is ignored. This path isn't meant for this route
       // callable to deal with at all.
       assert.equal(req.params, undefined);
