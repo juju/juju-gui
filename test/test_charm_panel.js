@@ -85,6 +85,39 @@ describe('charm panel', function() {
     node.getStyle('display').should.equal('none');
   });
 
+  it('has a deploy function that munges the charm options', function() {
+    var panel = Y.namespace('juju.views').CharmPanel
+          .getInstance({
+          testing: true,
+          container: container,
+          app: { views: { environment: {}}}
+        }),
+        node = panel.node;
+    panel.setActivePanelName('configuration');
+    // For whatever reason, the charm configuration panel now expects the charm
+    // options as an attribute of the charm config.  The deploy function
+    // therefore arranges for that to be true.
+    var OPTIONS = 'we are the options, my friend';
+    var setCalled = false;
+    var charm = {
+      id: 'cs:precise/juju-gui-7',
+      get: function(name) {
+        if (name === 'id') {
+          return 'cs:precise/juju-gui-7';
+        }
+        assert.equal(name, 'options');
+        return OPTIONS;
+      },
+      set: function(name, value) {
+        assert.equal(name, 'config');
+        assert.deepEqual(value, {options: OPTIONS});
+        setCalled = true;
+      }
+    };
+    panel.deploy(charm, undefined, function() {});
+    assert.isTrue(setCalled);
+  });
+
   describe('service ghost', function() {
     var app, db, env, panel, serviceName, store;
 
