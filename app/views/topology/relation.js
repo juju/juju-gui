@@ -433,7 +433,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
-        var mouse = d3.mouse(this);
+        var mouse = d3.mouse(Y.one('svg g').getDOMNode());
         var box = self.get('addRelationStart_service');
         d3.event.x = mouse[0];
         d3.event.y = mouse[1];
