@@ -61,15 +61,31 @@ YUI.add('juju-databinding', function(Y) {
     function deltaFromChange(modelChangeKeys) {
       /*jshint validthis:true */
       var self = this;
+      var bindings = Y.Object.values(this._bindings);
+      var result = [];
       if (modelChangeKeys === undefined) {
-        return this._bindings;
+        return bindings;
       }
-      return this._bindings.filter(function(binding) {
+      // XXX: Too many copies, but we don't want to modify the list
+      // above while iterating it.
+      bindings.filter(function(binding) {
         // Change events don't honor nested key paths. This means
         // we may update bindings that impact multiple DOM nodes
         // (our granularity is too low).
         return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
+      }).forEach(function(binding) {
+        result.push(binding);
+        if (binding.dependents) {
+          binding.dependents.forEach(function(dep) {
+            var depends = self._bindings[dep];
+            if (depends) {
+              result.push(depends);
+            }
+          });
+        }
       });
+
+      return result;
     }
 
     /**
@@ -102,7 +118,7 @@ YUI.add('juju-databinding', function(Y) {
       this.model = null;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._events = [];    // [event handle]
-      this._bindings = [];  // [binding, ...]
+      this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
     }
 
@@ -110,7 +126,7 @@ YUI.add('juju-databinding', function(Y) {
      * @method addBinding
      * @param {Object} config A bindings Object, see description in `bind`.
      * @param {Object} viewlet A reference to the viewlet being bound.
-     * @chainable
+     * @return {Object} binding
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
@@ -127,8 +143,8 @@ YUI.add('juju-databinding', function(Y) {
         binding.target = [binding.target];
       }
       binding.viewlet = viewlet;
-      this._bindings.push(binding);
-      return this;
+      this._bindings[config.name] = binding;
+      return binding;
     };
 
     /**
@@ -224,6 +240,7 @@ YUI.add('juju-databinding', function(Y) {
                   'valueChange', this._storeChanged, this, viewlet));
         }, this);
         this._setupHeirarchicalBindings();
+        this._setupDependencies();
         this._updateDOM();
       } else {
         // Model list
@@ -249,7 +266,7 @@ YUI.add('juju-databinding', function(Y) {
      @method _setupHeirarchicalBindings
     */
     BindingEngine.prototype._setupHeirarchicalBindings = function() {
-      this._bindings.forEach(function(binding) {
+      Y.each(this._bindings, function(binding) {
         if (binding.name.indexOf('.') === -1) {
           // The path isn't dotted so nothing to
           // inherit.
@@ -270,6 +287,37 @@ YUI.add('juju-databinding', function(Y) {
         }
         // Non-overwriting mix into binding.
         Y.mix(binding, parentBinding, false);
+      });
+    };
+
+    /**
+     Setup an inverted mapping from the optional binding.depends list
+     such that we can directly translate from a change event on a
+     dependency to the bindings it should trigger. Called automatically.
+
+     @method _setupDependencies
+     */
+    BindingEngine.prototype._setupDependencies = function() {
+      var self = this;
+      var bindings = Y.Object.values(this._bindings)
+      bindings.forEach(function(binding) {
+        if (binding.depends) {
+          binding.depends.forEach(function(dep) {
+            var source = self._bindings[dep];
+            if (!source) {
+              // This can indicate we depend on an implicit binding (one only
+              // referenced in the DOM). At this point we must create a binding
+              // object to satisfy dependency.
+              source = self.addBinding({
+                name: dep,
+                dependents: []}, binding.viewlet);
+            }
+            if (source.dependents === undefined) {
+              source.dependents = [];
+            }
+            source.dependents.push(binding.name);
+          });
+        }
       });
     };
 
@@ -355,6 +403,13 @@ YUI.add('juju-databinding', function(Y) {
         var viewlet = binding.viewlet;
         var viewletModel = viewlet.rebind && viewlet.rebind(model) || model;
         var conflicted;
+        // With the introduction of dependencies in the binding
+        // layer, its possible to depend on a dependent value
+        // but not on its trigger (which in turn might have no
+        // binding target in the DOM)
+        if (!binding.target) {
+          return;
+        }
 
         // This could be done ahead of time, but by doing this at runtime
         // we allow very flexible DOM mutation out of band. Revisit if

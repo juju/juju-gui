@@ -23,7 +23,8 @@ describe('data binding library', function() {
 
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
-                    'handlebars', 'model', 'model-list'];
+                    'base', 'handlebars',
+                    'model', 'model-list'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       BindingEngine = Y.namespace('juju.views').BindingEngine;
@@ -77,7 +78,7 @@ describe('data binding library', function() {
                      'nested');
       });
 
-      it('inherits unctions from object attributes to its properties',
+      it('inherits functions from object attributes to its properties',
          function() {
            container = utils.makeContainer();
            container.append('<div data-bind="a.b"></div>');
@@ -95,7 +96,7 @@ describe('data binding library', function() {
 
            engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
            assert.equal(container.one('[data-bind="a.b"]').getHTML(),
-           'parent');
+                        'parent');
          });
 
       it('does not override child property methods',
@@ -230,6 +231,61 @@ describe('data binding library', function() {
       });
 
     });
+  });
+
+  describe('dependencies in bindings', function() {
+    var TestModel, engine, viewlet, container;
+
+    beforeEach(function() {
+      TestModel = Y.Base.create('tester', Y.Model, [], {}, {
+        ATTRS: {
+          first: {},
+          last: {},
+          full: {
+            getter: function() {return this.get('first') +
+              ' '  + this.get('last');}
+          }
+        }
+      });
+
+      container = utils.makeContainer();
+      viewlet = {
+        container: container,
+        bindings: {
+          full: {
+            depends: ['first', 'last']
+          }
+        },
+        _changedValues: []
+      };
+    });
+
+    it('should properly update dependent fields', function() {
+      var model = new TestModel({first: 'Ned', last: 'Stark'});
+      container.setHTML(
+        '<input data-bind="first"><input data-bind="full">');
+      engine = new BindingEngine();
+      engine.bind(model, viewlet);
+      assert.equal(container.one('[data-bind="full"]')
+                   .get('value'), 'Ned Stark');
+      // Update something full depends on.
+      model.set('first', 'Sansa');
+      assert.equal(container.one('[data-bind="first"]')
+                   .get('value'), 'Sansa');
+
+      assert.equal(container.one('[data-bind="full"]')
+                   .get('value'), 'Sansa Stark');
+
+      // Last name isn't bound the DOM fragment but is a dep
+      // of full. The system should allow for this
+      model.set('last', 'Lannister');
+      assert.equal(container.one('[data-bind="full"]')
+                   .get('value'), 'Sansa Lannister');
+
+
+
+    });
+
   });
 
   describe('modellist tests', function() {
