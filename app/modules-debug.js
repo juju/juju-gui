@@ -153,6 +153,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-search.js'
         },
 
+        'viewmode-controls': {
+          fullpath: '/juju-ui/widgets/viewmode-controls.js'
+        },
+
         'browser-tabview': {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
         },
