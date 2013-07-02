@@ -262,7 +262,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(req.params.viewmode, 'fullscreen');
     });
 
-    it('prevents * route from doing more than the default viewmode', function() {
+    it('prevents * route from doing more than the default', function() {
       app = new browser.Browser({default_viewmode: 'sidebar'});
       var req = {
         path: '/sidebar'
