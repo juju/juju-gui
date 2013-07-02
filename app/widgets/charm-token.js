@@ -82,6 +82,7 @@ YUI.add('browser-charm-token', function(Y) {
       return function(evt) {
         var dragImage, clonedIcon;
         var icon = container.one('.icon');
+        evt = evt._event; // We want the real event.
         if (icon) {
           // Chome creates drag images in a silly way, so CSS background
           // tranparency doesn't work and if part of the drag image is
@@ -97,6 +98,8 @@ YUI.add('browser-charm-token', function(Y) {
             .appendChild(clonedIcon)
               .setStyle('height', icon.one('img').get('height'))
               .setStyle('width', icon.one('img').get('width'));
+          // Pass the cloned id through the drag data system.
+          evt.dataTransfer.setData('clonedIcon', clonedIcon.getAttribute('id'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
@@ -104,12 +107,10 @@ YUI.add('browser-charm-token', function(Y) {
               container.one('.charm-icon') ||
               container.one('.category-icon');
         }
-        evt = evt._event; // We want the real event.
+
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        // Pass the cloned id through the drag data system.
-        evt.dataTransfer.setData('clonedIcon', clonedIcon.getAttribute('id'));
         evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.

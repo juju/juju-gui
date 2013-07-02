@@ -416,7 +416,10 @@ YUI.add('juju-topology-service', function(Y) {
         // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
         // Remove the cloned drag icon.
-        Y.one('#' + dataTransfer.getData('clonedIcon')).remove().destroy(true);
+        var icon = Y.one('#' + dataTransfer.getData('clonedIcon'));
+        if (icon) {
+          icon.remove().destroy(true);
+        }
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostXY);
       }
