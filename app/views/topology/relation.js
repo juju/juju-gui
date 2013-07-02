@@ -992,11 +992,11 @@ YUI.add('juju-topology-relation', function(Y) {
   }, {
     ATTRS: {
       /**
-        @property {d3ns.Component} component
+        @attribute {d3ns.Component} component
       */
       component: {},
       /**
-        @property {DOMNode} dragplane
+        @attribute {DOMNode} dragplane
 
         Stores an element used for retrieving the cursor's position on drag.
       */
