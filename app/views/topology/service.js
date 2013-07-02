@@ -78,6 +78,8 @@ YUI.add('juju-topology-service', function(Y) {
         },
         '.zoom-plane': {
           click: 'canvasClick',
+          dragenter: '_ignore',
+          dragover: '_ignore',
           drop: 'canvasDropHandler'
         },
         // Menu/Controls
@@ -180,6 +182,17 @@ YUI.add('juju-topology-service', function(Y) {
       // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
+
+    /**
+      * Ignore a drag event.
+      * @method _ignore
+      */
+    _ignore: function() {
+      var evt = d3.event;
+      evt.preventDefault();
+      evt.stopPropagation();
+    },
+
 
     /**
       Attaches the touchstart event handlers for the service elements. This is
