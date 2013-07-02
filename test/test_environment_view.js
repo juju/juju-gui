@@ -860,12 +860,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                .should.equal(1);
 
          // Ensure that mousemove was fired and the dragline moved.
-         var x2 = view.topo.vis.select('.dragline').attr('x2');
-         var y2 = view.topo.vis.select('.dragline').attr('y2');
+         var x2 = parseInt(view.topo.vis.select('.dragline').attr('x2'), 10);
+         var y2 = parseInt(view.topo.vis.select('.dragline').attr('y2'), 10);
          container.one('.topology rect:first-child')
            .simulate('mousemove', { clientX: -1, clientY: -1 });
-         view.topo.vis.select('.dragline').attr('x2').should.not.equal(x2);
-         view.topo.vis.select('.dragline').attr('y2').should.not.equal(y2);
+         parseInt(view.topo.vis.select('.dragline').attr('x2'), 10)
+           .should.equal(x2 - 1);
+         parseInt(view.topo.vis.select('.dragline').attr('y2'), 10)
+           .should.equal(y2 - 1);
 
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(
