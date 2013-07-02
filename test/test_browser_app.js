@@ -243,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('* route uses the default viewmode', function() {
-      app = new browser.Browser({default_viewmode: 'sidebar'});
+      app = new browser.Browser({defaultViewmode: 'sidebar'});
       app.sidebar = function() {};
       var req = {
         path: '/'
@@ -253,7 +253,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The viewmode should be populated now to the default.
       assert.equal(req.params.viewmode, 'sidebar');
 
-      app = new browser.Browser({default_viewmode: 'fullscreen'});
+      app = new browser.Browser({defaultViewmode: 'fullscreen'});
       app.fullscreen = function() {};
       req = {
         path: '/'
@@ -263,7 +263,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('prevents * route from doing more than the default', function() {
-      app = new browser.Browser({default_viewmode: 'sidebar'});
+      app = new browser.Browser({defaultViewmode: 'sidebar'});
       var req = {
         path: '/sidebar'
       };
@@ -273,7 +273,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // callable to deal with at all.
       assert.equal(req.params, undefined);
 
-      app = new browser.Browser({default_viewmode: 'fullscreen'});
+      app = new browser.Browser({defaultViewmode: 'fullscreen'});
       req = {
         path: '/fullscreen'
       };

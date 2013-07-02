@@ -81,7 +81,7 @@ YUI.add('subapp-browser', function(Y) {
 
       this._viewState = Y.merge(this._viewState, change);
 
-      if (this._viewState.viewmode !== this.get('default_viewmode') ||
+      if (this._viewState.viewmode !== this.get('defaultViewmode') ||
           this._viewState.search) {
         //There's no need to add the default view if we
         // don't need it. However it's currently required for search views to
@@ -714,7 +714,7 @@ YUI.add('subapp-browser', function(Y) {
     routeDefault: function(req, res, next) {
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
-      var viewmode = this.get('default_viewmode');
+      var viewmode = this.get('defaultViewmode');
       if (req.path.replace(/\//, '') !== '') {
         next();
         return;
@@ -757,7 +757,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     routeDirectCharmId: function(req, res, next) {
       // If we don't have a valid store we can't do any work here.
-      var viewmode = this.get('default_viewmode');
+      var viewmode = this.get('defaultViewmode');
       if (!this._hasValidStore()) {
         return;
       }
@@ -812,7 +812,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (!req.params.viewmode) {
-        req.params.viewmode = this.get('default_viewmode');
+        req.params.viewmode = this.get('defaultViewmode');
       }
 
       // If the viewmode isn't found, it's not one of our urls. Carry on.
@@ -957,11 +957,11 @@ YUI.add('subapp-browser', function(Y) {
       /**
         The default viewmode
 
-         @attribute default_viewmode
+         @attribute defaultViewmode
          @default sidebar
          @type {String}
        */
-      default_viewmode: {
+      defaultViewmode: {
         value: 'sidebar'
       },
 
