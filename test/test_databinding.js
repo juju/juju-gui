@@ -269,7 +269,7 @@ describe('data binding library', function() {
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Ned Stark');
       // Update something full depends on.
-      model.set('first', 'Sansa');
+      model.setAttrs({first: 'Sansa'});
       assert.equal(container.one('[data-bind="first"]')
                    .get('value'), 'Sansa');
 
@@ -281,9 +281,6 @@ describe('data binding library', function() {
       model.set('last', 'Lannister');
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Lannister');
-
-
-
     });
 
   });

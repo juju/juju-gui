@@ -66,8 +66,6 @@ YUI.add('juju-databinding', function(Y) {
       if (modelChangeKeys === undefined) {
         return bindings;
       }
-      // XXX: Too many copies, but we don't want to modify the list
-      // above while iterating it.
       bindings.filter(function(binding) {
         // Change events don't honor nested key paths. This means
         // we may update bindings that impact multiple DOM nodes
