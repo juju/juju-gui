@@ -1032,7 +1032,7 @@ YUI.add('juju-view-service', function(Y) {
   /**
     A collection of methods and properties which will be mixed into the
     prototype of the view container controller to add the functionality for
-    the ghost inspector interactions
+    the ghost inspector interactions.
 
     @property serviceInspector
     @submodule juju.controller
@@ -1052,7 +1052,7 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
-      Handles showing/hiding the configuration settings descriptions
+      Handles showing/hiding the configuration settings descriptions.
 
       @method toggleSettingsHelp
       @param {Y.EventFacade} e An event object.
@@ -1073,13 +1073,16 @@ YUI.add('juju-view-service', function(Y) {
 
     /**
       Handles the click on the file input and dispatches to the proper function
-      depending if a file has beem previously loaded or not
+      depending if a file has been previously loaded or not.
 
       @method handleFileClick
       @param {Y.EventFacade} e An event object.
     */
     handleFileClick: function(e) {
       if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+        // Because we can't style file input buttons properly we style a normal
+        // element and then simulate a click on the real hidden input when our
+        // fake button is clicked.
         e.container.one('input[type=file]').getDOMNode().click();
       } else {
         this.onRemoveFile(e);
@@ -1088,7 +1091,7 @@ YUI.add('juju-view-service', function(Y) {
 
     /**
       Handle the file upload click event. Creates a FileReader instance to
-      parse the file data
+      parse the file data.
 
 
       @method onFileChange
