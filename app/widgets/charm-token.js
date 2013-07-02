@@ -80,7 +80,7 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
+        var dragImage, clonedIcon;
         var icon = container.one('.icon');
         if (icon) {
           // Chome creates drag images in a silly way, so CSS background
@@ -89,7 +89,7 @@ YUI.add('browser-charm-token', function(Y) {
           // the icon and make sure it is visible.  We don't really want it to
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
-          var clonedIcon = icon.cloneNode(true);
+          clonedIcon = icon.cloneNode(true);
           // Set a unique id on the cloned icon so we can remove it after drop
           clonedIcon.setAttribute('id', clonedIcon.get('_yuid'));
           dragImage = Y.one('body')
