@@ -283,6 +283,9 @@ YUI.add('juju-charm-panel', function(Y) {
             if (ghostXY !== undefined) {
               ghostService.set('x', ghostXY[0]);
               ghostService.set('y', ghostXY[1]);
+              // Set the dragged attribute to true so that the x/y coords are
+              // stored in annotations as well as on the service box.
+              ghostService.set('dragged', true);
             }
             this.set('ghostService', ghostService);
             db.fire('update');
