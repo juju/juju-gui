@@ -126,7 +126,7 @@ YUI.add('juju-databinding', function(Y) {
      * @method addBinding
      * @param {Object} config A bindings Object, see description in `bind`.
      * @param {Object} viewlet A reference to the viewlet being bound.
-     * @return {Object} binding
+     * @return {Object} binding.
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
@@ -299,7 +299,7 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._setupDependencies = function() {
       var self = this;
-      var bindings = Y.Object.values(this._bindings)
+      var bindings = Y.Object.values(this._bindings);
       bindings.forEach(function(binding) {
         if (binding.depends) {
           binding.depends.forEach(function(dep) {

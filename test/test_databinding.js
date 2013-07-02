@@ -243,7 +243,7 @@ describe('data binding library', function() {
           last: {},
           full: {
             getter: function() {return this.get('first') +
-              ' '  + this.get('last');}
+                  ' ' + this.get('last');}
           }
         }
       });
@@ -263,7 +263,7 @@ describe('data binding library', function() {
     it('should properly update dependent fields', function() {
       var model = new TestModel({first: 'Ned', last: 'Stark'});
       container.setHTML(
-        '<input data-bind="first"><input data-bind="full">');
+          '<input data-bind="first"><input data-bind="full">');
       engine = new BindingEngine();
       engine.bind(model, viewlet);
       assert.equal(container.one('[data-bind="full"]')
