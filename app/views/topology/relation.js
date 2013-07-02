@@ -433,7 +433,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
-        var mouse = d3.mouse(Y.one('svg g').getDOMNode());
+        var mouse = d3.mouse(self.get('dragplane'));
         var box = self.get('addRelationStart_service');
         d3.event.x = mouse[0];
         d3.event.y = mouse[1];
@@ -512,7 +512,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      var mouse = d3.mouse(container.one('svg g').getDOMNode());
+      this.set('dragplane', Y.one('svg g').getDOMNode());
+      var mouse = d3.mouse(this.get('dragplane'));
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
@@ -993,7 +994,13 @@ YUI.add('juju-topology-relation', function(Y) {
       /**
         @property {d3ns.Component} component
       */
-      component: {}
+      component: {},
+      /**
+        @property {DOMNode} dragplane
+
+        Stores an element used for retrieving the cursor's position on drag.
+      */
+      dragplane: {}
     }
 
   });
