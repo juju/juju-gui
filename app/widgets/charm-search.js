@@ -153,27 +153,6 @@ YUI.add('browser-search-widget', function(Y) {
           container.one('input').on(
               'blur', this._toggleActive, this)
       );
-      this.addEvent(
-          container.one('.delete').on(
-              'click',
-              function(ev) {
-                ev.halt();
-                this.clearSearch();
-              },
-              this)
-      );
-    },
-
-    /**
-     * Clear the search input control in order to reset it.
-     *
-     * @method clearSearch
-     *
-     */
-    clearSearch: function() {
-      var input = this.get('contentBox').one('input');
-      input.focus();
-      input.set('value', '');
     },
 
     /**

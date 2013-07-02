@@ -39,89 +39,22 @@
     color: @bws-text;
   }
   .bws-header {
-    position: relative;
-    padding: 10px 20px;
-    background: @bws-dark;
-    color: #fff;
+      padding: 20px;
+      border-bottom: 1px solid @bws-border;
 
-    .bws-icon {
-      float: left;
-    }
-    .bws-title {
-      display: inline-block;
-      margin: 10px 0 12px 8px;
-      font-size: 19pt;
-      color: #fff;
-    }
-    .toggle-fullscreen-container {
-      position: absolute;
-      right: 20px;
-      top: 10px;
-      padding-left: 21px;
-      background: transparent url(/juju-ui/assets/images/header_nav_border.jpg)
-          repeat-y left top;
-
-      .toggle-fullscreen {
+    //XXX: this can be removed once the control has been moved to the header.
+    .toggle-fullscreen {
+        position: absolute;
         display: block;
+        right: -40px;
+        top: 20px;
         width: 40px;
         height: 40px;
-        background: transparent url(/juju-ui/assets/images/browser_min_max.png)
-            no-repeat 0 0;
-
-        &:hover {
-          background-position: 0 -60px;
-        }
-        &:active {
-          background-position: 0 -120px;
-        }
-      }
-    }
-    .bws-searchbox {
-      float: right;
-      margin-right: 80px;
-
-      form {
-        margin: 0;
-        position: relative;
-
-        .search,
-        .delete {
-          position: absolute;
-        }
-        .search {
-          top: 11px;
-          left: 13px;
-        }
-        .delete {
-          display: none;
-          top: 9px;
-          left: 10px;
-        }
-        input {
-          .border-box;
-          width: 300px;
-          height: 40px;
-          margin: 0;
-          padding: 12px 12px 12px 39px;
-          background-color: #fff;
-          border: none;
-          border-radius: 4px;
-          font-size: 12pt;
-          color: #bbb;
-        }
-
-        &.active {
-          input {
-            color: @bws-heading;
-          }
-          .search {
-            display: none;
-          }
-          .delete {
-            display: block;
-          }
-        }
-      }
+        background: @bws-dark url(/juju-ui/assets/images/browser_min_max.png)
+        no-repeat 0 0;
+        box-shadow: 3px 0 2px rgba(0, 0, 0, 0.1);
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
   }
   #bws-search {
@@ -183,7 +116,7 @@
   .bws-view-data,
   #bws-sidebar,
   #bws-fullscreen {
-    background-color: #f5f5f5;
+    background-color: @bws-background;
     z-index: 1;
   }
   .bws-view-data,
@@ -225,18 +158,15 @@
     right: auto;
     width: @bws-sidebar-width;
     min-width: @bws-sidebar-min-width;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    border-right: 1px solid #a6a6a6;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
 
     .bws-searchbox {
-      float: none;
-      margin: 10px 0 0 0;
-
-      input {
         width: 100%;
-      }
     }
     .bws-content {
-      top: 110px;
+      top: @bws-sidebar-header-height;
+      border-top: 8px solid #d8d7d3;
 
       .section-title {
         padding-left: 20px;
@@ -244,13 +174,11 @@
       }
       .yui3-charmtoken {
         width: 100%;
-        border-bottom: 1px solid @bws-border;
+        border-top: 1px solid @bws-groove-light;
+        border-bottom: 1px solid @bws-groove-dark;
 
         .description {
             display: none;
-        }
-        &.last {
-            border-bottom: none;
         }
       }
     }
