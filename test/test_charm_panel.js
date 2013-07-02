@@ -202,7 +202,7 @@ describe('charm panel', function() {
       assert.include(service.get('id'), serviceName);
       // Check that annotations were set from dragging.
       var annotations = service.get('annotations');
-      assert.deepEqual(annotations, {'gui-x': 123, 'gui-y': 321})
+      assert.deepEqual(annotations, {'gui-x': 123, 'gui-y': 321});
     });
 
   });
