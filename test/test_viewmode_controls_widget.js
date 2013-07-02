@@ -40,14 +40,14 @@ describe('viewmode controls widgets', function() {
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
       '<div class="fullscreen"</div>',
-      '</div>',
+      '</div>'
     ].join('')).appendTo(container);
   });
 
   afterEach(function() {
     container.remove(true);
     if (controls) {
-        controls.destroy();
+      controls.destroy();
     }
   });
 

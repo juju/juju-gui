@@ -50,7 +50,7 @@ YUI.add('viewmode-controls', function(Y) {
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
-     * @method _toggleFullScreen
+     * @method _goFullscreen
      * @param {Event} ev the click event from the control.
      * @private
      *
@@ -60,6 +60,14 @@ YUI.add('viewmode-controls', function(Y) {
       this.fire(this.EVT_FULLSCREEN);
     },
 
+    /**
+     * Expose to the outside world that we've got a request to go sidebar.
+     *
+     * @method _goSidebar
+     * @param {Event} ev the click event from the control.
+     * @private
+     *
+     */
     _goSidebar: function(ev) {
       ev.halt();
       this.fire(this.EVT_SIDEBAR);
@@ -90,10 +98,11 @@ YUI.add('viewmode-controls', function(Y) {
 
       this.addEvent(
           Y.one('#content').delegate(
-            'click',
-            this._toggleViewable,
-            '.bws-icon',
-            this)
+              'click',
+              this._toggleViewable,
+              '.bws-icon',
+              this
+          )
       );
       this.addEvent(
           container.one('.fullscreen').on(
@@ -134,13 +143,14 @@ YUI.add('viewmode-controls', function(Y) {
        *
        */
       boundingBox: {
-          /**
-           * boundingBox.valueFn
-           *
-           */
-          valueFn: function() {
-            return Y.one('#browser-nav');
-          }
+        /**
+         * @method boundingBox.valueFn
+         * @return {Node} The already present browser-nav node.
+         *
+         */
+        valueFn: function() {
+          return Y.one('#browser-nav');
+        }
       }
 
     }
