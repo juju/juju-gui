@@ -24,7 +24,7 @@ describe('browser search widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
-      'juju-tests-utils',
+                               'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
@@ -56,31 +56,4 @@ describe('browser search widget', function() {
     container.one('input').get('value').should.eql('test');
   });
 
-  it('should fire a toggle fullscreen event when expand clicked', function() {
-    var search = new Search(),
-        triggered = false;
-    search.render(container);
-
-    search.on(search.EVT_TOGGLE_FULLSCREEN, function(ev) {
-      triggered = true;
-    });
-
-    var toggle = container.one('.toggle-fullscreen');
-    toggle.simulate('click');
-    triggered.should.eql(true);
-  });
-
-  it('should fire a toggle viewable event when icon clicked', function() {
-    var search = new Search(),
-        triggered = false;
-    search.render(container);
-
-    search.on(search.EVT_TOGGLE_VIEWABLE, function(ev) {
-      triggered = true;
-    });
-
-    var toggle = container.one('.bws-icon');
-    toggle.simulate('click');
-    triggered.should.eql(true);
-  });
 });
