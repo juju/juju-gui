@@ -37,6 +37,9 @@ YUI.add('viewmode-controls', function(Y) {
    *
    * @class ViewmodeControls
    * @extends {Y.Widget}
+   * @event EV_TOGGLE_VIEWABLE toggle if the browser is visible.
+   * @event EV_FULLSCREEN force fullscreen viewmode.
+   * @event EV_SIDEBAR force the sidebar viewmode.
    *
    */
   ns.ViewmodeControls = Y.Base.create('viewmode-controls', Y.Widget, [
@@ -131,7 +134,8 @@ YUI.add('viewmode-controls', function(Y) {
        *
        */
       this.publish(this.EVT_TOGGLE_VIEWABLE);
-      this.publish(this.EVT_TOGGLE_FULLSCREEN);
+      this.publish(this.EVT_SIDEBAR);
+      this.publish(this.EVT_FULLSCREEN);
     }
 
   }, {
