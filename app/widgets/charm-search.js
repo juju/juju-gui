@@ -38,6 +38,9 @@ YUI.add('browser-search-widget', function(Y) {
    *
    * @class Search
    * @extends {Y.Widget}
+   * @event EV_CLEAR_SEARCH the widget requests all search reset.
+   * @event EV_SEARCH_CHANGED the widgets notifies that the search input has
+   * changed.
    *
    */
   ns.Search = Y.Base.create('search-widget', Y.Widget, [
