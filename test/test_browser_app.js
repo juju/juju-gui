@@ -274,7 +274,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(req.params, undefined);
 
       app = new browser.Browser({default_viewmode: 'fullscreen'});
-      var req = {
+      req = {
         path: '/fullscreen'
       };
       app.routeDefault(req, null, next);
