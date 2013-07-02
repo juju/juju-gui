@@ -89,9 +89,12 @@ YUI.add('browser-charm-token', function(Y) {
           // the icon and make sure it is visible.  We don't really want it to
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
+          var clonedIcon = icon.cloneNode(true);
+          // Set a unique id on the cloned icon so we can remove it after drop
+          clonedIcon.setAttribute('id', clonedIcon.get('_yuid'));
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
-            .appendChild(icon.cloneNode(true))
+            .appendChild(clonedIcon)
               .setStyle('height', icon.one('img').get('height'))
               .setStyle('width', icon.one('img').get('width'));
         } else {
@@ -105,6 +108,8 @@ YUI.add('browser-charm-token', function(Y) {
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
+        // Pass the cloned id through the drag data system.
+        evt.dataTransfer.setData('clonedIcon', clonedIcon.getAttribute('id'));
         evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
