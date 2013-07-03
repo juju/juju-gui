@@ -33,29 +33,29 @@ YUI.add('subapp-browser-jujucharms', function(Y) {
       models = Y.namespace('juju.models');
 
   ns.JujucharmsLandingView = Y.Base.create('browser-jujucharms-view', Y.View,
-    [], {
-      template: views.Templates.jujucharms,
+      [], {
+        template: views.Templates.jujucharms,
 
-      /**
-       * Renders the landing page.
-       *
-       * @method render
-       */
-      render: function(container) {
-        //XXX j.c.sackett July 2, 2013: This is a placeholder, it just renders a
-        //big hello world across the page.
-        var tpl = this.template(),
-            tplNode = Y.Node.create(tpl);
-        if (typeof container !== 'object') {
-          container = this.get('container');
-        } else {
-          this.set('container', container);
+        /**
+         * Renders the landing page.
+         *
+         * @method render
+         */
+        render: function(container) {
+          //XXX j.c.sackett July 2, 2013: This is a placeholder, it just renders
+          //a big hello world across the page.
+          var tpl = this.template(),
+              tplNode = Y.Node.create(tpl);
+          if (typeof container !== 'object') {
+            container = this.get('container');
+          } else {
+            this.set('container', container);
+          }
+          container.setHTML(tplNode);
         }
-        container.setHTML(tplNode);
-      }
-    }, {
-      ATTRS: {}
-    });
+      }, {
+        ATTRS: {}
+      });
 
 }, '0.1.0', {
   requires: [
