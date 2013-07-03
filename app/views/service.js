@@ -53,8 +53,17 @@ YUI.add('juju-view-service', function(Y) {
      * XXX Makyo - all instances of testing this.inspector will go away once
      * the inspector becomes the default, rather than internal pages.
      */
+    /**
+     * No-Op function to replace getModelURL for the time being.
+     * XXX Makyo - remove when inspector becomes the default.
+     *
+     * @method noop
+     * @return {undefined} Nothing.
+     */
+    noop: function() { return; },
+
     resetUnits: function() {
-      var container, field, model;
+      var container, model;
       if (this.inspector) {
         container = this.inspector.get('container');
         model = this.inspector.get('model');
@@ -147,7 +156,7 @@ YUI.add('juju-view-service', function(Y) {
       var service, getModelURL, db;
       if (this.inspector) {
         service = this.inspector.get('model');
-        getModelURL = function() { return ''; };
+        getModelURL = this.noop;
         db = this.inspector.get('db');
       } else {
         service = this.get('model');
@@ -182,7 +191,7 @@ YUI.add('juju-view-service', function(Y) {
       var service, getModelURL, db;
       if (this.inspector) {
         service = this.inspector.get('model');
-        getModelURL = function() { return ''; };
+        getModelURL = this.noop;
         db = this.inspector.get('db');
       } else {
         service = this.get('model');
