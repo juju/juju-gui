@@ -188,7 +188,7 @@ YUI.add('juju-view-environment', function(Y) {
                 }
               },
               viewletList: ['overview', 'units', 'config'],
-              template: Y.juju.views.Templates['view-container'],
+              template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
               // controller will show the first one in this array by default
