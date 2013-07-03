@@ -174,6 +174,7 @@ YUI.add('juju-view-environment', function(Y) {
               }
             },
             configService: {
+              env: this.topo.get('env'),
               events: {
                 '.tab': {'click': 'showViewlet'}
               },
@@ -181,6 +182,7 @@ YUI.add('juju-view-environment', function(Y) {
               template: Y.juju.views.Templates['view-container'],
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'}
               }
