@@ -702,6 +702,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Sync that the state has changed.
       this._saveState();
+      next();
     },
 
     /**
