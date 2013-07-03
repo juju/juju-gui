@@ -90,7 +90,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 })();
 
-
 (function() {
   describe('browser sidebar view', function() {
     var Y, browser, container, view, views, Sidebar;
@@ -131,7 +130,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.Node.create('<div id="subapp-browser">' +
           '</div>').appendTo(container);
     };
-
 
     it('knows that it is not fullscreen', function() {
       view = new Sidebar();
@@ -220,6 +218,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.each(app.get('routes'), function(route) {
         assert.isTrue(typeof app[route.callback] === 'function');
       });
+    });
+
+    it('can go to a default jujucharms landing page', function() {
+      app = new browser.Browser({isJujucharms: true});
+      var called = false;
+      app.jujucharms = function() {
+        called = true;
+      };
+      var req = {
+        path: '/'
+      };
+
+      app.routeDefault(req, null, next);
+      assert.isTrue(called);
     });
 
     it('correctly strips viewmode from the charmID', function() {
