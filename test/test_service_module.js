@@ -384,7 +384,8 @@ describe('service module events', function() {
             return 'foo';
           }
         }
-      }
+      },
+      preventDefault: function() { return; }
     };
     d3.mouse = function() {
       return [5, 7];
