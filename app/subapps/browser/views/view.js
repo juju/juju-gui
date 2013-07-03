@@ -85,13 +85,17 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _bindSearchWidgetEvents: function() {
       this.addEvent(
-          this.search.on(
-              this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
+          this.controls.on(
+              this.controls.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
       );
 
       this.addEvent(
-          this.search.on(
-              this.search.EVT_TOGGLE_FULLSCREEN, this._toggleFullscreen, this)
+          this.controls.on(
+              this.controls.EVT_FULLSCREEN, this._goFullscreen, this)
+      );
+      this.addEvent(
+          this.controls.on(
+              this.controls.EVT_SIDEBAR, this._goSidebar, this)
       );
 
       this.addEvent(
@@ -114,6 +118,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
         fullscreenTarget: this._fullscreenTarget
       });
       this.search.render(node.one('.bws-header'));
+
+      this.controls = new widgets.ViewmodeControls();
+      this.controls.render();
     },
 
     /**
@@ -153,20 +160,36 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
-      Upon clicking the fullscreen toggle icon make sure we re-route to the
+      Upon clicking the browser icon make sure we re-route to the
       new form of the UX.
 
-      @method _toggleFullscreen
+      @method _goFullscreen
       @param {Event} ev the click event handler on the button.
 
      */
-    _toggleFullscreen: function(ev) {
+    _goFullscreen: function(ev) {
       ev.halt();
-      var change = {
-        viewmode: this.isFullscreen() ? 'sidebar' : 'fullscreen'
-      };
       this.fire('viewNavigate', {
-        change: change
+        change: {
+          viewmode: 'fullscreen'
+        }
+      });
+    },
+
+    /**
+      Upon clicking the build icon make sure we re-route to the
+      new form of the UX.
+
+      @method _goSidebar
+      @param {Event} ev the click event handler on the button.
+
+     */
+    _goSidebar: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'sidebar'
+        }
       });
     },
 
@@ -263,6 +286,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-models',
     'querystring-stringify',
-    'view'
+    'view',
+    'viewmode-controls'
   ]
 });

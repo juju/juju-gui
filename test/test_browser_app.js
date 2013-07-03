@@ -47,8 +47,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     var addBrowserContainer = function(Y) {
-      Y.Node.create('<div id="subapp-browser">' +
-                    '</div>').appendTo(container);
+      Y.Node.create([
+        '<div id="content">',
+        '<div id="browser-nav">',
+        '<div class="sidebar"></div>',
+        '<div class="fullscreen"</div>',
+        '</div>',
+        '<div id="subapp-browser"></div>',
+        '</div>'
+      ].join('')).appendTo(container);
     };
 
     afterEach(function() {
@@ -127,8 +134,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     var addBrowserContainer = function(Y) {
-      Y.Node.create('<div id="subapp-browser">' +
-          '</div>').appendTo(container);
+      Y.Node.create([
+        '<div id="content">',
+        '<div id="browser-nav">',
+        '<div class="sidebar"></div>',
+        '<div class="fullscreen"</div>',
+        '</div>',
+        '<div id="subapp-browser"></div>',
+        '</div>'
+      ].join('')).appendTo(container);
     };
 
     it('knows that it is not fullscreen', function() {
