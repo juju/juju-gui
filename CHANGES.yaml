@@ -21,7 +21,7 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- 0.7.0:
+- 0.7.1:
     - Added drag and drop deployment from charm browser.
     - >
       Export environment to Juju deployer YAML format from
