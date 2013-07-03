@@ -407,6 +407,8 @@ YUI.add('juju-topology-service', function(Y) {
       var scale = topo.get('scale');
       var dropXY = d3.mouse(this);
       var ghostXY = [];
+      // Required - causes Ubuntu FF 22.0 to refresh without.
+      evt.preventDefault();
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
         ghostXY[index] = (dropXY[index] - translation[index]) / scale;
