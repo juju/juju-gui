@@ -752,7 +752,6 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        debugger;
         if (this.get('isJujucharms')) {
           this.jujucharms(req, res, next);
         } else {
