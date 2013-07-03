@@ -191,7 +191,6 @@ YUI.add('juju-view-environment', function(Y) {
               template: Y.juju.views.Templates['view-container'],
             },
             configGhost: {
-              env: this.topo.get('env'),
               // controller will show the first one in this array by default
               viewletList: ['ghostConfig'],
               // the view container template
