@@ -45,7 +45,6 @@ describe('browser search widget', function() {
     var search = new Search();
     search.render(container);
     assert.isObject(container.one('.bws-searchbox'));
-    assert.isObject(container.one('.bws-icon'));
   });
 
   it('should support setting search string', function() {
