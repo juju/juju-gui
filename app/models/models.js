@@ -300,11 +300,20 @@ YUI.add('juju-models', function(Y) {
 
     process_delta: function(action, data, db) {
       var instance = _process_delta(this, action, data, {relation_errors: {}});
-      if (!instance || !db) {return;}
+      if (!db) {
+        return;
+      }
       // Apply this action for this instance to all service models as well.
       // In the future we can transition from using db.units to always
-      // looking at db.services[serviceId].units
-      var service = db.services.getById(instance.service);
+      // looking at db.services[serviceId].units.  Note that, in the case of
+      // `action === 'remove'`, instance will be null, so we retrieve the
+      // service name from `data`, which is the removed unit's name.
+      var service;
+      if (!instance) {
+        service = db.services.getById(data.split('/')[0]);
+      } else {
+        service = db.services.getById(instance.service);
+      }
       if (!service) { return; }
       // Get the unit list for this service. (lazy)
       var unitList = service.get('units');

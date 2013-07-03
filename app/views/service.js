@@ -50,15 +50,19 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /*
-     * XXX Makyo - all instances of 'this.inspect ?' will go away once the
-     * inspector becomes the default, rather than internal pages.
+     * XXX Makyo - all instances of testing this.inspector will go away once
+     * the inspector becomes the default, rather than internal pages.
      */
     resetUnits: function() {
-      var container = this.inspector ?
-          this.inspector.get('container') : this.get('container');
+      var container, field, model;
+      if (this.inspector) {
+        container = this.inspector.get('container');
+        model = this.inspector.get('model');
+      } else {
+        container = this.get('container');
+        model = this.get('model');
+      }
       var field = container.one('#num-service-units');
-      var model = this.inspector ? this.inspector.get('model') :
-          this.get('model');
       field.set('value', model.get('unit_count'));
       field.set('disabled', false);
     },
@@ -67,8 +71,12 @@ YUI.add('juju-view-service', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container = this.inspector ?
-          this.inspector.get('container') : this.get('container');
+      var container;
+      if (this.inspector) {
+        container = this.inspector.get('container');
+      } else {
+        container = this.get('container');
+      }
       var field = container.one('#num-service-units');
 
       if (ev.keyCode === ESC) {
@@ -87,12 +95,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _modifyUnits: function(requested_unit_count) {
-      var container = this.inspector ?
-          this.inspector.get('container') : this.get('container');
+      var container, env;
+      if (this.inspector) {
+        container = this.inspector.get('container');
+        env = this.inspector.get('env');
+      } else {
+        container = this.get('container');
+        env = this.get('env');
+      }
       var service = this.model ? this.model : this.get('model');
       var unit_count = service.get('unit_count');
       var field = container.one('#num-service-units');
-      var env = this.inspector ? this.inspector.get('env') : this.get('env');
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -108,7 +121,12 @@ YUI.add('juju-view-service', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var db = this.inspector ? this.inspector.get('db') : this.get('db');
+        var db;
+        if (this.inspector) {
+          db = this.inspector.get('db');
+        } else {
+          db = this.get('db');
+        }
         var units = db.units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
@@ -126,12 +144,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _addUnitCallback: function(ev) {
-      var service = this.inspector ? this.inspector.get('model') :
-          this.get('model'),
-          getModelURL = this.inspector ?
-          function() { return ''; } : this.get('getModelURL'),
-          db = this.inspector ? this.inspector.get('db') : this.get('db'),
-          unit_names = ev.result || [];
+      var service, getModelURL, db;
+      if (this.inspector) {
+        service = this.inspector.get('model');
+        getModelURL = function() { return ''; };
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -156,12 +179,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _removeUnitCallback: function(ev) {
-      var service = this.inspector ? this.inspector.get('model') :
-          this.get('model'),
-          getModelURL = this.inspector ?
-          function() { return ''; } : this.get('getModelURL'),
-          db = this.inspector ? this.inspector.get('db') : this.get('db'),
-          unit_names = ev.unit_names;
+      var service, getModelURL, db;
+      if (this.inspector) {
+        service = this.inspector.get('model');
+        getModelURL = function() { return ''; };
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.unit_names;
 
       if (ev.err) {
         db.notifications.add(
