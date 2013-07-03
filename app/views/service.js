@@ -434,7 +434,7 @@ YUI.add('juju-view-service', function(Y) {
                     '.service-header-partial')),
                 footerHeight = getHeight(container.one('.bottom-navbar')),
                 size = (Math.max(windowHeight, 600) - navbarHeight -
-                        headerHeight - footerHeight - 1);
+                        headerHeight - footerHeight - 19);
             viewContainer.set('offsetHeight', size);
             Y.fire('afterPageSizeRecalculation');
           }
@@ -1032,7 +1032,7 @@ YUI.add('juju-view-service', function(Y) {
   /**
     A collection of methods and properties which will be mixed into the
     prototype of the view container controller to add the functionality for
-    the ghost inspector interactions
+    the ghost inspector interactions.
 
     @property serviceInspector
     @submodule juju.controller
@@ -1049,8 +1049,144 @@ YUI.add('juju-view-service', function(Y) {
     'render': function() {
       this.inspector.render();
       return this;
+    },
+
+    /**
+      Handles showing/hiding the configuration settings descriptions.
+
+      @method toggleSettingsHelp
+      @param {Y.EventFacade} e An event object.
+    */
+    toggleSettingsHelp: function(e) {
+      var button = e.currentTarget,
+          descriptions = e.container.all('.settings-description'),
+          btnString = 'Hide settings help';
+
+      if (e.currentTarget.getHTML().indexOf('Hide') < 0) {
+        button.setHTML(btnString);
+        descriptions.show();
+      } else {
+        button.setHTML('Show settings help');
+        descriptions.hide();
+      }
+    },
+
+    /**
+      Handles the click on the file input and dispatches to the proper function
+      depending if a file has been previously loaded or not.
+
+      @method handleFileClick
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileClick: function(e) {
+      if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+        // Because we can't style file input buttons properly we style a normal
+        // element and then simulate a click on the real hidden input when our
+        // fake button is clicked.
+        e.container.one('input[type=file]').getDOMNode().click();
+      } else {
+        this.onRemoveFile(e);
+      }
+    },
+
+    /**
+      Handle the file upload click event. Creates a FileReader instance to
+      parse the file data.
+
+
+      @method onFileChange
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileChange: function(e) {
+      var file = e.currentTarget.get('files').shift(),
+          reader = new FileReader();
+      reader.onerror = Y.bind(this.onFileError, this);
+      reader.onload = Y.bind(this.onFileLoaded, this);
+      reader.readAsText(file);
+      e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
+    },
+
+    /**
+      Callback called when an error occurs during file upload.
+      Hide the charm configuration section.
+
+      @method onFileError
+      @param {Object} e An event object (with a "target.error" attr).
+    */
+    onFileError: function(e) {
+      var error = e.target.error, msg;
+      switch (error.code) {
+        case error.NOT_FOUND_ERR:
+          msg = 'File not found';
+          break;
+        case error.NOT_READABLE_ERR:
+          msg = 'File is not readable';
+          break;
+        case error.ABORT_ERR:
+          break; // noop
+        default:
+          msg = 'An error occurred reading this file.';
+      }
+      if (msg) {
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error reading configuration file',
+              message: msg,
+              level: 'error'
+            }));
+      }
+    },
+
+    /**
+      Callback called when a file is correctly uploaded.
+      Hide the charm configuration section.
+
+      @method onFileLoaded
+      @param {Object} e An event object.
+    */
+    onFileLoaded: function(e) {
+      //set the fileContent on the view-container so we can have access to it
+      // when the user submit their config.
+      this.inspector.fileContent = e.target.result;
+      if (!this.inspector.fileContent) {
+        // Some file read errors do not go through the error handler as
+        // expected but instead return an empty string.  Warn the user if
+        // this happens.
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Configuration file error',
+              message: 'The configuration file loaded is empty.  ' +
+                  'Do you have read access?',
+              level: 'error'
+            }));
+      }
+      var container = this.inspector.get('container');
+      container.all('.settings-wrapper').hide();
+      container.one('.toggle-settings-help').hide();
+    },
+
+    /**
+      Handle the file remove click event by clearing out the input
+      and resetting the UI.
+
+      @method onRemoveFile
+      @param {Y.EventFacade} e an event object from click.
+    */
+    onRemoveFile: function(e) {
+      var container = this.inspector.get('container');
+      this.inspector.fileContent = null;
+      container.one('.fakebutton').setHTML('Import config file...');
+      container.all('.settings-wrapper').show();
+      // Replace the file input node.  There does not appear to be any way
+      // to reset the element, so the only option is this rather crude
+      // replacement.  It actually works well in practice.
+      container.one('input[type=file]')
+               .replace(Y.Node.create('<input type="file"/>'));
     }
   };
+
   /**
     Service Inspector View Container Controller
 
@@ -1079,14 +1215,27 @@ YUI.add('juju-view-service', function(Y) {
         name: 'config',
         template: Templates['service-configuration'],
 
-        'render': function(service) {
+        'render': function(service, viewContainerAttrs) {
           var settings = [];
+          var db = viewContainerAttrs.db;
+          var charm = db.charms.getById(service.get('charm'));
+          var charmOptions = charm.get('config').options;
           Y.Object.each(service.get('config'), function(value, key) {
-            settings.push({name: key, value: value});
+            settings.push({
+              name: key,
+              value: value,
+              description: charmOptions[key].description,
+              'type': charmOptions[key].type
+            });
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
               this.template({service: service, settings: settings}));
+          this.container.all('textarea.config-field')
+                        .plug(plugins.ResizingTextarea,
+                              { max_height: 200,
+                                min_height: 18,
+                                single_line: 18});
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
@@ -1134,9 +1283,9 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
-    // This variable is assigned an agregate collection of methods and
+    // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
-    // ServiceInspector constructor
+    // ServiceInspector constructor.
     var controllerPrototype = {};
     /**
       Constructor for View Container Controller
@@ -1155,32 +1304,32 @@ YUI.add('juju-view-service', function(Y) {
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
-      var dd = new Y.DD.Drag({ node: container });
+      var _ = new Y.DD.Drag({ node: container });
       var self = this;
       options.container = container;
       options.viewletContainer = '.viewlet-container';
 
-      // Build a collection of viewlets from the list of required viewlets
+      // Build a collection of viewlets from the list of required viewlets.
       var viewlets = {};
       options.viewletList.forEach(function(viewlet) {
         viewlets[viewlet] = DEFAULT_VIEWLETS[viewlet];
       });
-      // Mix in any custom viewlet configuration options provided by the config
+      // Mix in any custom viewlet configuration options provided by the config.
       options.viewlets = Y.mix(
           viewlets, options.viewlets, true, undefined, 0, true);
 
       options.model = model;
 
-      // Merge the various prototype objects together
+      // Merge the various prototype objects together.
       var c = Y.juju.controller;
       [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
         controllerPrototype = Y.mix(controllerPrototype, controller);
       });
 
-      // Bind the viewletEvents to this class
+      // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
           handlers, selector, collection) {
-            // You can have multiple listeners per selector
+            // You can have multiple listeners per selector.
             Y.Object.each(handlers, function(callback, event, obj) {
               options.viewletEvents[selector][event] = Y.bind(
                   controllerPrototype[callback], self);
@@ -1192,7 +1341,7 @@ YUI.add('juju-view-service', function(Y) {
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
       // We create a new binding engine even if it's unlikely
-      // that the model will change
+      // that the model will change.
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
       this.inspector.after('destroy', function() {

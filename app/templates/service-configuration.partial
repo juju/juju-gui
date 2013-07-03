@@ -1,8 +1,5 @@
 {{#settings}}
-  <div class="control-group">
-    <div class="well control-description">
-      {{description}}
-    </div>
+  <div class="settings-wrapper">
     <div class="conflicted warning-message" style="display: none">
       <p>This field has been changed on another system. Accept the new value?</p>
       <p class="newval"></p>
@@ -10,24 +7,27 @@
       <button class="conflicted-cancel">Cancel</button>
     </div>
     {{#if isBool}}
-      <div class="control-label" for="{{name}}">{{name}}</div>
+      <label for="input-{{name}}">{{name}}</label>
       <div class="controls boolean">
         <input class="config-field boolean" type="checkbox" name="{{name}}"
             id="input-{{name}}" data-bind="config.{{name}}" {{value}}/>
       </div>
     {{else}}
       {{#if isNumeric}}
-        <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
+        <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div class="controls">
           <input class="config-field" type="text" name="{{name}}"
               id="input-{{name}}" value="{{value}}" data-bind="config.{{name}}"/>
         </div>
       {{else}}
-        <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
+        <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div class="controls">
           <textarea data-bind="config.{{name}}" class="config-field" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
         </div>
       {{/if}}
     {{/if}}
+    <div class="settings-description">
+      {{description}}
+    </div>
   </div>
 {{/settings}}

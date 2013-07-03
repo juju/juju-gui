@@ -84,8 +84,9 @@ YUI.add('subapp-browser', function(Y) {
 
       this._viewState = Y.merge(this._viewState, change);
 
-      if (this._viewState.viewmode !== 'sidebar' || this._viewState.search) {
-        // Sidebar is the default viewmode. There's no need to add it if we
+      if (this._viewState.viewmode !== this.get('defaultViewmode') ||
+          this._viewState.search) {
+        //There's no need to add the default view if we
         // don't need it. However it's currently required for search views to
         // match our current routes.
         urlParts.push(this._viewState.viewmode);
@@ -378,6 +379,10 @@ YUI.add('subapp-browser', function(Y) {
       },
       sidebar: {
         type: 'juju.browser.views.Sidebar',
+        preserve: false
+      },
+      jujucharms: {
+        type: 'juju.browser.views.JujucharmsLandingView',
         preserve: false
       }
     },
@@ -704,27 +709,43 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      When there's no charm or viewmode default to a sidebar view for all
+       Handle the route for the jujucharms.com landing view.
+
+       @method jujucharms
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+     */
+    jujucharms: function(req, res, next) {
+      //XXX j.c.sackett July 2, 2013: This is a placeholder function that will
+      //need some reworking when we have assets. It will probably want to render
+      //to body instead of the fullscreen renderto.
+      this._jujucharms = this.showView('jujucharms', this._getViewCfg());
+    },
+
+    /**
+      When there's no charm or viewmode default to the default viewmode for all
       pages.
 
-      @method routeSidebarDefault
+      @method routeDefault
       @param {Request} req current request object.
       @param {Response} res current response object.
       @param {function} next callable for the next route in the chain.
 
      */
-    routeSidebarDefault: function(req, res, next) {
+    routeDefault: function(req, res, next) {
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
+      var viewmode = this.get('defaultViewmode');
       if (req.path.replace(/\//, '') !== '') {
         next();
         return;
       }
 
       // For the * request there will be no req.params. Update it forcing
-      // sidebar default viewmode.
+      // the default viewmode.
       req.params = {
-        viewmode: 'sidebar'
+        viewmode: viewmode
       };
 
       // Update the state for the rest of things to figure out what to do.
@@ -735,7 +756,11 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this.sidebar(req, res, next);
+        if (this.get('isJujucharms')) {
+          this.jujucharms(req, res, next);
+        } else {
+          this[viewmode](req, res, next);
+        }
       } else {
         // Let the next route go on.
         next();
@@ -758,6 +783,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     routeDirectCharmId: function(req, res, next) {
       // If we don't have a valid store we can't do any work here.
+      var viewmode = this.get('defaultViewmode');
       if (!this._hasValidStore()) {
         return;
       }
@@ -768,7 +794,8 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (idBits.length === 2) {
+      if ((idBits.length === 3 && idBits[0][0] === '~') || // new charms
+          (idBits.length === 2)) {                         // reviewed charms
         id = this._stripViewMode(req.path);
       }
       if (!id) {
@@ -778,7 +805,7 @@ YUI.add('subapp-browser', function(Y) {
         // We've got a valid id. Setup the params for our view state.
         req.params = {
           id: id,
-          viewmode: 'sidebar'
+          viewmode: viewmode
         };
       }
 
@@ -790,7 +817,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this.sidebar(req, res, next);
+        this[viewmode](req, res, next);
       } else {
         // Let the next route go on.
         next();
@@ -812,7 +839,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (!req.params.viewmode) {
-        req.params.viewmode = 'sidebar';
+        req.params.viewmode = this.get('defaultViewmode');
       }
 
       // If the viewmode isn't found, it's not one of our urls. Carry on.
@@ -926,7 +953,7 @@ YUI.add('subapp-browser', function(Y) {
         value: [
           // Show the sidebar on all places if its not manually shut off or
           // turned into a fullscreen route.
-          { path: '*', callbacks: 'routeSidebarDefault'},
+          { path: '*', callbacks: 'routeDefault'},
           { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/:viewmode/', callbacks: 'routeView' },
           { path: '/:viewmode/search/', callbacks: 'routeView' },
@@ -953,6 +980,17 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       deploy: {},
+
+      /**
+        The default viewmode
+
+         @attribute defaultViewmode
+         @default sidebar
+         @type {String}
+       */
+      defaultViewmode: {
+        value: 'sidebar'
+      },
 
       /**
          @attribute minNode
@@ -986,6 +1024,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
+    'subapp-browser-jujucharms',
     'subapp-browser-minimized',
     'subapp-browser-searchview',
     'subapp-browser-sidebar'
