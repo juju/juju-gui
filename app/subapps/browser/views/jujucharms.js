@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Browser SubApp Sidebar View handler.
+ * Browser SubApp Jujucharms View handler.
  *
  * @module juju.browser
  * @submodule views
