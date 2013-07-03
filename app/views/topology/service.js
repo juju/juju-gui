@@ -78,6 +78,8 @@ YUI.add('juju-topology-service', function(Y) {
         },
         '.zoom-plane': {
           click: 'canvasClick',
+          dragenter: '_ignore',
+          dragover: '_ignore',
           drop: 'canvasDropHandler'
         },
         // Menu/Controls
@@ -180,6 +182,17 @@ YUI.add('juju-topology-service', function(Y) {
       // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
+
+    /**
+      * Ignore a drag event.
+      * @method _ignore
+      */
+    _ignore: function() {
+      var evt = d3.event;
+      evt.preventDefault();
+      evt.stopPropagation();
+    },
+
 
     /**
       Attaches the touchstart event handlers for the service elements. This is
@@ -387,7 +400,8 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
-      var dataType = evt.dataTransfer.getData('dataType');
+      var dataTransfer = evt.dataTransfer;
+      var dataType = dataTransfer.getData('dataType');
       var topo = self.get('component');
       var translation = topo.get('translate');
       var scale = topo.get('scale');
@@ -401,6 +415,11 @@ YUI.add('juju-topology-service', function(Y) {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
+        // Remove the cloned drag icon.
+        var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
+        if (icon) {
+          icon.remove().destroy(true);
+        }
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostXY);
       }
@@ -556,6 +575,7 @@ YUI.add('juju-topology-service', function(Y) {
         topo.fire('addRelationDragEnd');
       }
       else {
+
         // If the service hasn't been dragged (in the case of long-click to add
         // relation, or a double-fired event) or the old and new coordinates
         // are the same, exit.
@@ -564,14 +584,16 @@ YUI.add('juju-topology-service', function(Y) {
              box.oldY === box.y)) {
           return;
         }
+
         // If the service is still pending, persist x/y coordinates in order
         // to set them as annotations when the service is created.
         if (box.pending) {
-          box.model.set('dragged', true);
+          box.model.set('hasBeenPositioned', true);
           box.model.set('x', box.x);
           box.model.set('y', box.y);
           return;
         }
+
         topo.get('env').update_annotations(
             box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
             function() {
@@ -719,7 +741,7 @@ YUI.add('juju-topology-service', function(Y) {
           new_services[0].model.set('x', coords[0]);
           new_services[0].model.set('y', coords[1]);
           // This ensures that the x/y coordinates will be saved as annotations.
-          new_services[0].model.set('dragged', true);
+          new_services[0].model.set('hasBeenPositioned', true);
           // Set the centroid to the new service's position
           topo.centroid = coords;
           topo.fire('panToPoint', {point: topo.centroid});
@@ -893,7 +915,8 @@ YUI.add('juju-topology-service', function(Y) {
             annotations = service.get('annotations'),
             x, y;
 
-        if (!annotations) {
+        // If there are no annotations or the service is being dragged
+        if (!annotations || service.inDrag === views.DRAG_ACTIVE) {
           return;
         }
 

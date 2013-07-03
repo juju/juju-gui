@@ -238,11 +238,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.notDeepEqual(charm, browserCharm);
         var madeCharm = new models.Charm(browserCharm.getAttrs());
         assert.equal(charm.get('id'), madeCharm.get('id'));
-        // Verify that the charm config from the BrowserCharm is now part of
-        // config.options in the new Charm instance.
-        assert.equal(
-            browserCharm.get('options').configName,
-            charm.get('config').options.configName);
         done();
       });
       view._addCharmEnvironment({halt: function() {}});
@@ -830,7 +825,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.all('#bws-interfaces .charm-token').size(),
-          9);
+          4);
     });
 
     it('only loads the interface data once', function() {
