@@ -56,5 +56,4 @@ var juju_config = {
       'often be found by looking in ~/.juju/environments.yaml.'),
   isJujucharms: false,
   defaultViewmode: 'sidebar'
-
 };
