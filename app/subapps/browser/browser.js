@@ -48,13 +48,16 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     _detailsVisible: function(visible) {
-      var detailsNode = Y.one('.bws-view-data');
+      var detailsNode = Y.one('.bws-view-data'),
+          container = Y.one('.charmbrowser');
       if (detailsNode) {
         if (visible) {
           detailsNode.show();
+          container.addClass('content-visible');
         }
         else {
           detailsNode.hide();
+          container.removeClass('content-visible');
         }
       }
     },
