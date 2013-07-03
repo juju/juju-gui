@@ -53,7 +53,7 @@ describe('charm token drag and drop', function() {
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,
-      recent_download_count: 3,
+      downloads: 3,
       tested_providers: ['ec2'],
       boundingBox: container,
       contentBox: container

@@ -80,8 +80,9 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
+        var dragImage, clonedIcon;
         var icon = container.one('.icon');
+        evt = evt._event; // We want the real event.
         if (icon) {
           // Chome creates drag images in a silly way, so CSS background
           // tranparency doesn't work and if part of the drag image is
@@ -89,11 +90,17 @@ YUI.add('browser-charm-token', function(Y) {
           // the icon and make sure it is visible.  We don't really want it to
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
+          clonedIcon = icon.cloneNode(true);
+          // Set a unique id on the cloned icon so we can remove it after drop
+          clonedIcon.setAttribute('id', clonedIcon.get('_yuid'));
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
-            .appendChild(icon.cloneNode(true))
+            .appendChild(clonedIcon)
               .setStyle('height', icon.one('img').get('height'))
               .setStyle('width', icon.one('img').get('width'));
+          // Pass the cloned id through the drag data system.
+          evt.dataTransfer.setData(
+              'clonedIconId', clonedIcon.getAttribute('id'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
@@ -101,7 +108,7 @@ YUI.add('browser-charm-token', function(Y) {
               container.one('.charm-icon') ||
               container.one('.category-icon');
         }
-        evt = evt._event; // We want the real event.
+
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
@@ -180,6 +187,13 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
+       * @attribute downloads
+       * @default undefined
+       * @type {Number}
+       */
+      downloads: {},
+
+      /**
        * @attribute shouldShowIcon
        * @default false
        * @type {Boolean}
@@ -229,13 +243,6 @@ YUI.add('browser-charm-token', function(Y) {
        * @type {Number}
        */
       recent_commit_count: {},
-
-      /**
-       * @attribute recent_download_count
-       * @default undefined
-       * @type {Number}
-       */
-      recent_download_count: {},
 
       /**
          Supports size attributes of small and large that turn into the css

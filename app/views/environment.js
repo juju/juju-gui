@@ -179,13 +179,16 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
+                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.config-file .fakebutton': { click: 'handleFileClick'},
+                '.config-file input[type=file]': { change: 'handleFileChange'},
                 '#num-service-units': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 }
               },
               viewletList: ['overview', 'units', 'config'],
-              template: Y.juju.views.Templates['view-container']
+              template: Y.juju.views.Templates['view-container'],
             },
             configGhost: {
               env: this.topo.get('env'),
@@ -204,7 +207,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
-                'input[name=service-name]': { 'valuechange': 'updateGhostName' }
+                'input[name=service-name]': { valuechange: 'updateGhostName' }
               },
               // the configuration for the view container template
               templateConfig: {

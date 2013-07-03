@@ -39,91 +39,8 @@
     color: @bws-text;
   }
   .bws-header {
-    position: relative;
-    padding: 10px 20px;
-    background: @bws-dark;
-    border-top: 1px solid #606060;
-    color: #fff;
-
-    .bws-icon {
-      float: left;
-    }
-    .bws-title {
-      display: inline-block;
-      margin: 10px 0 12px 8px;
-      font-size: 19pt;
-      color: #fff;
-    }
-    .toggle-fullscreen-container {
-      position: absolute;
-      right: 20px;
-      top: 10px;
-      padding-left: 21px;
-      background: transparent url(/juju-ui/assets/images/header_nav_border.jpg)
-          repeat-y left top;
-
-      .toggle-fullscreen {
-        display: block;
-        width: 40px;
-        height: 40px;
-        background: transparent url(/juju-ui/assets/images/browser_min_max.png)
-            no-repeat 0 0;
-
-        &:hover {
-          background-position: 0 -60px;
-        }
-        &:active {
-          background-position: 0 -120px;
-        }
-      }
-    }
-    .bws-searchbox {
-      float: right;
-      margin-right: 80px;
-
-      form {
-        margin: 0;
-        position: relative;
-
-        .search,
-        .delete {
-          position: absolute;
-        }
-        .search {
-          top: 11px;
-          left: 13px;
-        }
-        .delete {
-          display: none;
-          top: 9px;
-          left: 10px;
-        }
-        input {
-          .border-box;
-          width: 300px;
-          height: 40px;
-          margin: 0;
-          padding: 12px 12px 12px 39px;
-          background-color: #fff;
-          border: none;
-          border-radius: 4px;
-          font-size: 12pt;
-          color: #bbb;
-        }
-
-        &.active {
-          input {
-            color: @bws-heading;
-          }
-          .search {
-            display: none;
-          }
-          .delete {
-            display: block;
-          }
-        }
-      }
-    }
+      padding: 20px;
+      border-bottom: 1px solid @bws-border;
   }
   #bws-search {
     .search-title {
@@ -184,7 +101,7 @@
   .bws-view-data,
   #bws-sidebar,
   #bws-fullscreen {
-    background-color: #f5f5f5;
+    background-color: @bws-background;
     z-index: 1;
   }
   .bws-view-data,
@@ -201,6 +118,8 @@
       top: @bws-header-height;
       bottom: 0;
       left: 0;
+      right: 0;
+      box-shadow: none;
     }
     .toggle-fullscreen {
       background-position: 0 -180px;
@@ -224,19 +143,15 @@
     right: auto;
     width: @bws-sidebar-width;
     min-width: @bws-sidebar-min-width;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    border-right: 1px solid #a6a6a6;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
 
     .bws-searchbox {
-      float: none;
-      margin: 10px 0 0 0;
-
-      input {
         width: 100%;
-      }
     }
     .bws-content {
-      top: 110px;
+      top: @bws-sidebar-header-height;
+      border-top: 8px solid #d8d7d3;
 
       .section-title {
         padding-left: 20px;
@@ -244,23 +159,24 @@
       }
       .yui3-charmtoken {
         width: 100%;
-        border-bottom: 1px solid @bws-border;
+        border-top: 1px solid @bws-groove-light;
+        border-bottom: 1px solid @bws-groove-dark;
 
         .description {
             display: none;
-        }
-        &.last {
-            border-bottom: none;
         }
       }
     }
   }
   .bws-view-data {
     left: @bws-sidebar-width;
+    right: 25%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   }
 }
 @media screen and (max-width: 1400px) {
   #subapp-browser .bws-view-data {
     left: @bws-sidebar-min-width;
+    min-width: 700px;
   }
 }
