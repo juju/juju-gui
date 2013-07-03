@@ -24,6 +24,7 @@
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 @navbar-height: 79px;
+@navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
 
 /* Mixins */
@@ -213,32 +214,14 @@ table tr.highlighted td {
     margin-right: -12px;
     width: 12px;
 }
-.view-container {
-    overflow: auto;
-    padding: 10px;
 
-    .control-group {
-        position: relative;
-
-        .warning-message {
-            color: red;
-            padding: 1em;
-        }
-        .conflicted {
-            position: absolute;
-            border: 1px solid grey;
-            margin-top: -140px;
-            background-color: white;
-        }
-    }
-}
 .navbar {
     min-width: 800px;
-    // Need to subtract 8 for the bottom border
-    height: @navbar-height - 8;
+    // Need to subtract the bottom-border-height.
+    height: @navbar-height - @navbar-bottom-border-height;
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
-    border-bottom: 8px solid #1c1815;
+    border-bottom: @navbar-bottom-border-height solid #1c1815;
 
     .navbar-inner {
         height: 70px;
@@ -254,6 +237,23 @@ table tr.highlighted td {
         .brand {
             margin: 20px 60px 0 10px;
             padding: 0;
+        }
+        #browser-nav {
+            float: left;
+            margin: 0 20px 0 0;
+            padding: 0;
+            list-style: none;
+
+            li {
+                float: left;
+
+                a {
+                    display: block;
+                    padding: 25px 10px 0 10px;
+                    font-size: 12pt;
+                    color: #9b9b9b;
+                }
+            }
         }
         #browser-nav {
             float: left;

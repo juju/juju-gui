@@ -852,14 +852,18 @@ YUI.add('juju-charm-panel', function(Y) {
      * @param {String} charmUrl The URL of the charm to configure/deploy.
      * @return {undefined} Nothing.
      */
-    function deploy(charm, ghostXY) {
+    function deploy(charm, ghostXY, _setPanel) {
+      _setPanel = _setPanel || setPanel; // Injection point for tests.
       // Any passed-in charm is fully loaded but the caller doesn't know about
       // the charm panel's internal detail of marking loaded charms, so we will
       // do the marking here.
       charm.loaded = true;
+      // The config panel expects the config options here instead of the
+      // "options" attribute. <shrug>
+      charm.set('config', {options: charm.get('options')});
       charms.add(charm);
       // Show the configuration panel.
-      setPanel({
+      _setPanel({
         name: 'configuration',
         charmId: charm.get('id'),
         ghostXY: ghostXY
