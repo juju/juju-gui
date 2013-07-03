@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
   The ghost inspector is the view-container implementation of the ghost
-  configuration view
+  configuration view.
 
   @module views
   @submodule views.ghostInspector
@@ -59,7 +59,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var ghostService = this.db.services.ghostService(charm);
       var self = this;
-
       var environment = this.views.environment.instance,
           ghostInspector = environment.createServiceInspector(ghostService);
     }

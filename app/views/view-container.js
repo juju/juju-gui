@@ -104,9 +104,11 @@ YUI.add('juju-view-container', function(Y) {
       @method render
       @type {function}
       @param {Y.Model} model passed to the view container.
+      @param {Object} viewContainerAttrs object of all of the view container
+        attributes.
       @default {render function}
     */
-    render: function(model) {
+    render: function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       if (typeof this.template === 'string') {
@@ -219,8 +221,9 @@ YUI.add('juju-view-container', function(Y) {
       @chainable
     */
     render: function() {
-      var container = this.get('container'),
-          model = this.get('model'),
+      var attrs = this.getAttrs(),
+          container = attrs.container,
+          model = attrs.model,
           viewletTemplate;
 
       // To allow you to pass in a string instead of a precompiled template
@@ -235,7 +238,7 @@ YUI.add('juju-view-container', function(Y) {
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet) {
-        viewlet.render(model);
+        viewlet.render(model, attrs);
         viewletContainer.append(viewlet.container);
       });
 
