@@ -41,15 +41,14 @@ YUI.add('browser-charm-token', function(Y) {
     * Default general initializer method.
     *
     * @method initializer
-    * @param {Object} cfg the config for the widget.
+    * @param {Object} config The widget configuration options.
     * @return {undefined} Nothing.
     */
-    initializer: function(cfg) {
-      this.cfg = Y.merge(cfg);
-      // Since we later serialize the config (which contains the charm
-      // attributes) we need to remove any non-JSON-encodable bits.
-      delete this.cfg.boundingBox;
-      delete this.cfg.contentBox;
+    initializer: function(config) {
+      // Extract the charm configuration values from the jumble of widget
+      // config options.
+      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+      this.charmData = Y.aggregate({}, config, false, charmAttributes);
     },
 
     /**
@@ -92,8 +91,9 @@ YUI.add('browser-charm-token', function(Y) {
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
             .appendChild(icon.cloneNode(true))
-              .setStyle('height', icon.one('img').get('height'))
-              .setStyle('width', icon.one('img').get('width'));
+              .setStyles({
+                'height': icon.one('img').get('height'),
+                'width': icon.one('img').get('width')});
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
@@ -142,7 +142,7 @@ YUI.add('browser-charm-token', function(Y) {
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.  This passed-in config includes
       // charm attributes.
-      var charmData = Y.JSON.stringify(this.cfg);
+      var charmData = Y.JSON.stringify(this.charmData);
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
@@ -268,6 +268,7 @@ YUI.add('browser-charm-token', function(Y) {
     'base',
     'event-tracker',
     'handlebars',
+    'juju-charm-models',
     'juju-templates',
     'juju-view-utils',
     'widget',

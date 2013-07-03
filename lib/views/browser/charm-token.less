@@ -6,6 +6,11 @@
         display: block;
         color: @bws-text;
 
+        .badge-approved {
+            /* The badge needs to be in front of the charm icon. */
+            z-index: 10;
+        }
+
         &.tiny {
             min-width: 200px;
             .charm-icon,
@@ -28,7 +33,6 @@
                 margin-left: -5px;
                 background-image:
                     url(/juju-ui/assets/images/badge_approved_17.png);
-                z-index: 10;
             }
 
             .title {
@@ -65,7 +69,6 @@
                 margin-left: -6px;
                 background-image:
                     url(/juju-ui/assets/images/badge_approved_22.png);
-                z-index: 10;
             }
         }
         &.large {
@@ -89,7 +92,6 @@
                 margin-left: -10px;
                 background-image:
                     url(/juju-ui/assets/images/badge_approved_40.png);
-                z-index: 10;
             }
         }
         .title,
