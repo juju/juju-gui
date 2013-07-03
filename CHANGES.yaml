@@ -21,7 +21,16 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.7.0:
+    - Added drag and drop deployment from charm browser.
+    - >
+      Export environment to Juju deployer YAML format from
+      keyboard shortcut (shift-d).
+    - Databinding and conflict resolution finalized (feature-flagged).
+    - Start of new service inspector development (feature-flagged).
+    - Added relations to Go sandbox (Go sandbox still in progress).
+    - Cleaned up and improved unit tests.
+    - Performance and memory improvements.
 - 0.6.1:
     - >
       Fix critical jumping service bug (LP bug 1192596) and related drag

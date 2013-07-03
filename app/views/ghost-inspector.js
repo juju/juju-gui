@@ -202,7 +202,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       // Update the annotations with the box's x/y coordinates if
       // they have been set by dragging the ghost.
-      if (ghostService.get('dragged')) {
+      if (ghostService.get('hasBeenPositioned')) {
         options.env.update_annotations(
             serviceName, 'service',
             { 'gui-x': ghostService.get('x'),
