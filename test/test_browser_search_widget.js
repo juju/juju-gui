@@ -44,7 +44,7 @@ describe('browser search widget', function() {
   it('needs to render from the template', function() {
     var search = new Search();
     search.render(container);
-    assert.isObject(container.one('.search-container'));
+    assert.isObject(container.one('.bws-searchbox'));
     assert.isObject(container.one('.bws-icon'));
   });
 
@@ -54,19 +54,6 @@ describe('browser search widget', function() {
 
     search.updateSearch('test');
     container.one('input').get('value').should.eql('test');
-  });
-
-  it('should support clearing search string', function() {
-    var search = new Search({
-      filters: {
-        text: 'test'
-      }
-    });
-    search.render(container);
-    container.one('input').get('value').should.eql('test');
-
-    search.clearSearch();
-    container.one('input').get('value').should.eql('');
   });
 
   it('should fire a toggle fullscreen event when expand clicked', function() {
