@@ -285,7 +285,7 @@ YUI.add('juju-charm-panel', function(Y) {
               ghostService.set('y', ghostXY[1]);
               // Set the dragged attribute to true so that the x/y coords are
               // stored in annotations as well as on the service box.
-              ghostService.set('dragged', true);
+              ghostService.set('hasBeenPositioned', true);
             }
             this.set('ghostService', ghostService);
             db.fire('update');
@@ -649,7 +649,7 @@ YUI.add('juju-charm-panel', function(Y) {
                   );
                   // Update the annotations with the box's x/y coordinates if
                   // they have been set by dragging the ghost.
-                  if (ghostService.get('dragged')) {
+                  if (ghostService.get('hasBeenPositioned')) {
                     env.update_annotations(
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),

@@ -196,7 +196,7 @@ describe('charm panel', function() {
       // Fake a service drag to test that the service is cleaned on deploy.
       var service = db.services.item(0);
       service.setAttrs({'x': 123, 'y': 321});
-      service.set('dragged', true);
+      service.set('hasBeenPositioned', true);
       confirmDeployment();
       assert.isFalse(service.get('pending'));
       assert.include(service.get('id'), serviceName);
