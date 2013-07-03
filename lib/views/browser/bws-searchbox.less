@@ -19,13 +19,17 @@
             background-color: #fff;
             border: 1px solid @bws-border;
             border-radius: @bws-corner;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
             font-size: 12pt;
             color: @bws-text-placeholder;
         }
         &.active input {
             border-color: @charm-panel-orange;
             color: @bws-text;
+        }
+        // Need to overwrite bootstrap box shadow on focus.
+        input,
+        &.active input {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
     }
 }
