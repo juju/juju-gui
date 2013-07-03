@@ -294,7 +294,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(req.params.id, 'precise/mysql-10');
     });
 
-    it.only('/charm/id handles routes for new charms correctly', function() {
+    it('/charm/id handles routes for new charms correctly', function() {
       app = new browser.Browser();
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
