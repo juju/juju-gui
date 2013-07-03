@@ -768,7 +768,8 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (idBits.length === 2) {
+      if ((idBits.length === 3 && idBits[0][0] === '~') || // new charms
+          (idBits.length === 2)) {                         // reviewed charms
         id = this._stripViewMode(req.path);
       }
       if (!id) {
