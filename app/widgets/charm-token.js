@@ -91,16 +91,16 @@ YUI.add('browser-charm-token', function(Y) {
           // icon is hidden.
           clonedIcon = icon.cloneNode(true);
           // Set a unique id on the cloned icon so we can remove it after drop
-          clonedIcon.setAttribute('id', clonedIcon.get('_yuid'));
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
-            .appendChild(clonedIcon)
+            .appendChild(icon.cloneNode(true))
               .setStyles({
                 'height': icon.one('img').get('height'),
                 'width': icon.one('img').get('width')});
+          dragImage.setAttribute('id', dragImage.get('_yuid'))
           // Pass the cloned id through the drag data system.
           evt.dataTransfer.setData(
-              'clonedIconId', clonedIcon.getAttribute('id'));
+              'clonedIconId', dragImage.getAttribute('id'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
