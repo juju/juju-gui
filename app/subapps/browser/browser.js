@@ -377,6 +377,10 @@ YUI.add('subapp-browser', function(Y) {
       sidebar: {
         type: 'juju.browser.views.Sidebar',
         preserve: false
+      },
+      jujucharms: {
+        type: 'juju.browser.views.JujucharmsLandingView',
+        preserve: false
       }
     },
 
@@ -702,6 +706,21 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+       Handle the route for the jujucharms.com landing view.
+
+       @method jujucharms
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+     */
+    jujucharms: function(req, res, next) {
+      //XXX j.c.sackett July 2, 2013: This is a placeholder function that will
+      //need some reworking when we have assets. It will probably want to render
+      //to body instead of the fullscreen renderto.
+      this._jujucharms = this.showView('jujucharms', this._getViewCfg());
+    },
+
+    /**
       When there's no charm or viewmode default to the default viewmode for all
       pages.
 
@@ -734,7 +753,11 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this[viewmode](req, res, next);
+        if (this.get('isJujucharms')) {
+          this.jujucharms(req, res, next);
+        } else {
+          this[viewmode](req, res, next);
+        }
       } else {
         // Let the next route go on.
         next();
@@ -998,6 +1021,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
+    'subapp-browser-jujucharms',
     'subapp-browser-minimized',
     'subapp-browser-searchview',
     'subapp-browser-sidebar'
