@@ -766,7 +766,7 @@ YUI.add('subapp-browser', function(Y) {
           id = null;
 
       if ((idBits.length === 3 && idBits[0][0] === '~') || // new charms
-           idBits.length === 2) {                          // reviewed charms
+          (idBits.length === 2)) {                         // reviewed charms
         id = this._stripViewMode(req.path);
       }
       if (!id) {
