@@ -380,7 +380,7 @@ describe('service module events', function() {
             return 'charm-token-drag-and-drop';
           } else if (name === 'charmData') {
             return '{"id": "cs:foo/bar-1"}';
-          } else if (name === 'clonedIcon') {
+          } else if (name === 'clonedIconId') {
             return 'foo';
           }
         }

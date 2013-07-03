@@ -99,7 +99,8 @@ YUI.add('browser-charm-token', function(Y) {
               .setStyle('height', icon.one('img').get('height'))
               .setStyle('width', icon.one('img').get('width'));
           // Pass the cloned id through the drag data system.
-          evt.dataTransfer.setData('clonedIcon', clonedIcon.getAttribute('id'));
+          evt.dataTransfer.setData(
+              'clonedIconId', clonedIcon.getAttribute('id'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
