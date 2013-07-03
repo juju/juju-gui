@@ -125,11 +125,17 @@ if (/*@cc_on!@*/false) {
                 <a class="brand" href="/">
                   <i class="sprite juju_logo_dark" title="Juju GUI"></i>
                 </a>
-                <div id="environment-switcher">
-                  <i class="sprite environment_icon"> </i>
-                  <span id="environment-name" draggable="true"></span>
-                  <span id="provider-type" class="provider-type"></span>
-                </div>
+              </div>
+              <div id="browser-nav">
+                <ul>
+                  <li><a class="fullscreen" href="">Browse</a></li>
+                   <li><a class="sidebar" href="">Build</a></li>
+                </ul>
+              </div>
+              <div id="environment-switcher">
+                <i class="sprite environment_icon"> </i>
+                <span id="environment-name" draggable="true"></span>
+                <span id="provider-type" class="provider-type"></span>
               </div>
               <ul class="nav">
                 <li>
@@ -137,7 +143,7 @@ if (/*@cc_on!@*/false) {
                   Alerts
                 </li>
                 <li>
-                  <a href="" id="logout-trigger">Logout</a>
+                  <a href="" id="logout-trigger" class="button inverse">Logout</a>
                 </li>
               </ul>
             </div>

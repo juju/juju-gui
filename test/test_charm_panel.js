@@ -85,6 +85,39 @@ describe('charm panel', function() {
     node.getStyle('display').should.equal('none');
   });
 
+  it('has a deploy function that munges the charm options', function() {
+    var panel = Y.namespace('juju.views').CharmPanel
+          .getInstance({
+          testing: true,
+          container: container,
+          app: { views: { environment: {}}}
+        }),
+        node = panel.node;
+    panel.setActivePanelName('configuration');
+    // For whatever reason, the charm configuration panel now expects the charm
+    // options as an attribute of the charm config.  The deploy function
+    // therefore arranges for that to be true.
+    var OPTIONS = 'we are the options, my friend';
+    var setCalled = false;
+    var charm = {
+      id: 'cs:precise/juju-gui-7',
+      get: function(name) {
+        if (name === 'id') {
+          return 'cs:precise/juju-gui-7';
+        }
+        assert.equal(name, 'options');
+        return OPTIONS;
+      },
+      set: function(name, value) {
+        assert.equal(name, 'config');
+        assert.deepEqual(value, {options: OPTIONS});
+        setCalled = true;
+      }
+    };
+    panel.deploy(charm, undefined, function() {});
+    assert.isTrue(setCalled);
+  });
+
   describe('service ghost', function() {
     var app, db, env, panel, serviceName, store;
 
@@ -131,8 +164,8 @@ describe('charm panel', function() {
     };
 
     // Start deploying a charm, without confirming.
-    var startDeployment = function() {
-      panel.deploy(new models.Charm({id: 'cs:precise/membase-6'}));
+    var startDeployment = function(ghostXY) {
+      panel.deploy(new models.Charm({id: 'cs:precise/membase-6'}), ghostXY);
     };
 
     // Cancel an unconfirmed deployment.
@@ -151,6 +184,17 @@ describe('charm panel', function() {
       var service = db.services.item(0);
       assert.isTrue(service.get('pending'));
       assert.include(service.get('id'), serviceName);
+    });
+
+    it('is created with x/y coordinates if set', function() {
+      startDeployment([100, 100]);
+      assert.strictEqual(1, db.services.size());
+      var service = db.services.item(0);
+      assert.isTrue(service.get('pending'));
+      assert.include(service.get('id'), serviceName);
+      assert.isTrue(service.get('hasBeenPositioned'));
+      assert.equal(service.get('x'), 100);
+      assert.equal(service.get('y'), 100);
     });
 
     it('is removed from the database if deployment is cancelled', function() {
@@ -196,10 +240,13 @@ describe('charm panel', function() {
       // Fake a service drag to test that the service is cleaned on deploy.
       var service = db.services.item(0);
       service.setAttrs({'x': 123, 'y': 321});
-      service.set('dragged', true);
+      service.set('hasBeenPositioned', true);
       confirmDeployment();
       assert.isFalse(service.get('pending'));
       assert.include(service.get('id'), serviceName);
+      // Check that annotations were set from dragging.
+      var annotations = service.get('annotations');
+      assert.deepEqual(annotations, {'gui-x': 123, 'gui-y': 321});
     });
 
   });
