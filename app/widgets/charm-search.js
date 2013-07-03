@@ -38,14 +38,15 @@ YUI.add('browser-search-widget', function(Y) {
    *
    * @class Search
    * @extends {Y.Widget}
+   * @event EV_CLEAR_SEARCH the widget requests all search reset.
+   * @event EV_SEARCH_CHANGED the widgets notifies that the search input has
+   * changed.
    *
    */
   ns.Search = Y.Base.create('search-widget', Y.Widget, [
     Y.Event.EventTracker
   ], {
     EVT_CLEAR_SEARCH: 'clear_search',
-    EVT_TOGGLE_VIEWABLE: 'toggle_viewable',
-    EVT_TOGGLE_FULLSCREEN: 'toggle_fullscreen',
     EVT_SEARCH_CHANGED: 'search_changed',
 
     TEMPLATE: templates['browser-search'],
@@ -65,33 +66,6 @@ YUI.add('browser-search-widget', function(Y) {
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
       });
-    },
-
-    /**
-     * Expose to the outside world that we've got a request to go fullscreen.
-     *
-     * @method _toggleFullScreen
-     * @param {Event} ev the click event from the control.
-     * @private
-     *
-     */
-    _toggleFullScreen: function(ev) {
-      ev.halt();
-      this.fire(this.EVT_TOGGLE_FULLSCREEN);
-    },
-
-    /**
-     * Expose to the outside world that we've got a request to hide from
-     * sight.
-     *
-     * @method _toggleViewable
-     * @param {Event} ev the click event from the control.
-     * @private
-     *
-     */
-    _toggleViewable: function(ev) {
-      ev.halt();
-      this.fire(this.EVT_TOGGLE_VIEWABLE);
     },
 
     /**
@@ -134,14 +108,6 @@ YUI.add('browser-search-widget', function(Y) {
       var container = this.get('boundingBox');
 
       this.addEvent(
-          container.one('.bws-icon').on(
-              'click', this._toggleViewable, this)
-      );
-      this.addEvent(
-          container.one('.toggle-fullscreen').on(
-              'click', this._toggleFullScreen, this)
-      );
-      this.addEvent(
           container.one('form').on(
               'submit', this._handleSubmit, this)
       );
@@ -170,8 +136,6 @@ YUI.add('browser-search-widget', function(Y) {
        * widget only needs to clear the search input box.
        *
        */
-      this.publish(this.EVT_TOGGLE_VIEWABLE);
-      this.publish(this.EVT_TOGGLE_FULLSCREEN);
       this.publish(this.EVT_SEARCH_CHANGED);
     },
 
@@ -220,16 +184,6 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
-      },
-      /**
-         @attribute fullscreeTarget
-         @default undefined
-         @type {Node}
-         @required true
-
-       */
-      fullscreenTarget: {
-        required: true
       }
     }
   });
