@@ -268,8 +268,9 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     unexposeService: function() {
-      var service = this.inspector ? this.inspector.get('model') : this.get('model'),
-          env = this.inspector ? this.inspector.get('env') : this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var service = svcInspector ? this.inspector.get('model') : this.get('model'),
+          env = svcInspector ? this.inspector.get('env') : this.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -313,8 +314,9 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     exposeService: function() {
-      var service = this.inspector ? this.inspector.get('model') : this.get('model'),
-          env = this.inspector ? this.inspector.get('env') : this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var service = svcInspector ? this.inspector.get('model') : this.get('model'),
+          env = svcInspector ? this.inspector.get('env') : this.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },

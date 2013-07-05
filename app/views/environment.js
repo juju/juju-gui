@@ -171,12 +171,12 @@ YUI.add('juju-view-environment', function(Y) {
           var configs = {
             configBase: {
               db: this.topo.get('db'),
+              env: this.topo.get('env'),
               events: {
                 '.close': {'click': 'destroy'}
               }
             },
             configService: {
-              env: this.topo.get('env'),
               events: {
                 '.tab': {'click': 'showViewlet'}
               },
@@ -190,7 +190,6 @@ YUI.add('juju-view-environment', function(Y) {
               }
             },
             configGhost: {
-              env: this.topo.get('env'),
               // controller will show the first one in this array by default
               viewletList: ['ghostConfig'],
               // the view container template
