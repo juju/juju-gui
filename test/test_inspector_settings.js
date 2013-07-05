@@ -67,13 +67,14 @@ describe('Inspector Settings', function() {
     };
   });
 
-  afterEach(function() {
+  afterEach(function(done) {
     if (view) {
       if (inspector) {
         view.setInspector(inspector, true);
       }
       view.destroy();
     }
+    env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
   });
