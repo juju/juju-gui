@@ -419,6 +419,9 @@ YUI.add('juju-topology-service', function(Y) {
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
         if (icon) {
           icon.remove().destroy(true);
+          // Since we hacked the DOM so the drag icon would be "visible" we now
+          // un-hack it.  It would be nice to find a better way to do this.
+          Y.one('body').setStyle('overflow', 'auto')
         }
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostXY);

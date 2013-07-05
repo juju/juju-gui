@@ -79,7 +79,7 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage, clonedIcon;
+        var dragImage;
         var icon = container.one('.icon');
         evt = evt._event; // We want the real event.
         if (icon) {
@@ -89,15 +89,14 @@ YUI.add('browser-charm-token', function(Y) {
           // the icon and make sure it is visible.  We don't really want it to
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
-          clonedIcon = icon.cloneNode(true);
-          // Set a unique id on the cloned icon so we can remove it after drop
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
             .appendChild(icon.cloneNode(true))
               .setStyles({
                 'height': icon.one('img').get('height'),
                 'width': icon.one('img').get('width')});
-          dragImage.setAttribute('id', dragImage.get('_yuid'))
+          // Set a unique id on the cloned icon so we can remove it after drop
+          dragImage.setAttribute('id', dragImage.get('_yuid'));
           // Pass the cloned id through the drag data system.
           evt.dataTransfer.setData(
               'clonedIconId', dragImage.getAttribute('id'));
