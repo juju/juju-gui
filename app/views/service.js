@@ -269,7 +269,8 @@ YUI.add('juju-view-service', function(Y) {
      */
     unexposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var service = svcInspector ? this.inspector.get('model') : this.get('model'),
+      var service = svcInspector ? this.inspector.get('model') :
+              this.get('model'),
           env = svcInspector ? this.inspector.get('env') : this.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
@@ -315,7 +316,8 @@ YUI.add('juju-view-service', function(Y) {
      */
     exposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var service = svcInspector ? this.inspector.get('model') : this.get('model'),
+      var service = svcInspector ? this.inspector.get('model') :
+              this.get('model'),
           env = svcInspector ? this.inspector.get('env') : this.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
@@ -1236,7 +1238,6 @@ YUI.add('juju-view-service', function(Y) {
       config: {
         name: 'config',
         template: Templates['service-configuration'],
-
         'render': function(service, viewContainerAttrs) {
           var settings = [];
           var db = viewContainerAttrs.db;
@@ -1252,7 +1253,7 @@ YUI.add('juju-view-service', function(Y) {
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
-            this.template({
+              this.template({
                 service: service,
                 settings: settings,
                 exposed: service.get('exposed')}));
@@ -1264,16 +1265,23 @@ YUI.add('juju-view-service', function(Y) {
         },
         bindings: {
           exposed: {
+            /**
+              Updates DOM node with the given value.
+              @method update
+              @param {Object} node The YUI node bound to the changed value.
+              @param {Boolean} value The value of the `exposed` attribute.
+              @return {undefined} Nothing.
+              */
             update: function(node, value) {
               var img = node.one('img');
               var span = node.one('span');
               if (value) {
-                img.set('src', "/juju-ui/assets/images/slider_on.png");
+                img.set('src', '/juju-ui/assets/images/slider_on.png');
                 span.set('text', 'Yes');
                 span.removeClass('off');
                 span.addClass('on');
               } else {
-                img.set('src', "/juju-ui/assets/images/slider_off.png");
+                img.set('src', '/juju-ui/assets/images/slider_off.png');
                 span.set('text', 'No');
                 span.removeClass('on');
                 span.addClass('off');
@@ -1368,8 +1376,8 @@ YUI.add('juju-view-service', function(Y) {
       var c = Y.juju.controller;
       [c.ghostInspector, c.serviceInspector, exposeButtonMixin]
         .forEach(function(controller) {
-          controllerPrototype = Y.mix(controllerPrototype, controller);
-      });
+            controllerPrototype = Y.mix(controllerPrototype, controller);
+          });
 
       // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
