@@ -268,8 +268,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     unexposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -313,8 +315,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     exposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },
@@ -1072,6 +1076,27 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
+      Handles exposing the service.
+
+      @method toggleExpose
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    toggleExpose: function(e) {
+      var service = this.inspector.get('model');
+      var env = this.inspector.get('db').environment;
+      var exposed;
+      if (service.get('exposed')) {
+        this.unexposeService();
+        exposed = false;
+      } else {
+        this.exposeService();
+        exposed = true;
+      }
+      service.set('exposed', exposed);
+    },
+
+    /**
       Handles the click on the file input and dispatches to the proper function
       depending if a file has been previously loaded or not.
 
@@ -1214,7 +1239,6 @@ YUI.add('juju-view-service', function(Y) {
       config: {
         name: 'config',
         template: Templates['service-configuration'],
-
         'render': function(service, viewContainerAttrs) {
           var settings = [];
           var db = viewContainerAttrs.db;
@@ -1230,12 +1254,34 @@ YUI.add('juju-view-service', function(Y) {
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
-              this.template({service: service, settings: settings}));
+              this.template({
+                service: service,
+                settings: settings,
+                exposed: service.get('exposed')}));
           this.container.all('textarea.config-field')
                         .plug(plugins.ResizingTextarea,
                               { max_height: 200,
                                 min_height: 18,
                                 single_line: 18});
+        },
+        bindings: {
+          exposed: {
+            'update': function(node, value) {
+              var img = node.one('img');
+              var span = node.one('span');
+              if (value) {
+                img.set('src', '/juju-ui/assets/images/slider_on.png');
+                span.set('text', 'Yes');
+                span.removeClass('off');
+                span.addClass('on');
+              } else {
+                img.set('src', '/juju-ui/assets/images/slider_off.png');
+                span.set('text', 'No');
+                span.removeClass('on');
+                span.addClass('off');
+              }
+            }
+          }
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
@@ -1322,9 +1368,10 @@ YUI.add('juju-view-service', function(Y) {
 
       // Merge the various prototype objects together.
       var c = Y.juju.controller;
-      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
-        controllerPrototype = Y.mix(controllerPrototype, controller);
-      });
+      [c.ghostInspector, c.serviceInspector, exposeButtonMixin]
+        .forEach(function(controller) {
+            controllerPrototype = Y.mix(controllerPrototype, controller);
+          });
 
       // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
