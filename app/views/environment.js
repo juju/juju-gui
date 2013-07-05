@@ -119,14 +119,10 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           // If the user is trying to open the same inspector twice
-          if (this.getInspector(model.get('id'))) {
+          var serviceInspector = this.getInspector(model.get('id'));
+          if (serviceInspector) {
             return;
           }
-
-          // XXX bac: The following code does not seem to make sense as the
-          // previous check would've caused a return.
-          var serviceInspector = this.getInspector(model.get('id'));
-          if (serviceInspector) { return serviceInspector; }
 
           var combinedConfig = {};
           var configs = this._generateConfigs(model);

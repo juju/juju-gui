@@ -269,9 +269,9 @@ YUI.add('juju-view-service', function(Y) {
      */
     unexposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var service = svcInspector ? this.inspector.get('model') :
-              this.get('model'),
-          env = svcInspector ? this.inspector.get('env') : this.get('env');
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -316,9 +316,9 @@ YUI.add('juju-view-service', function(Y) {
      */
     exposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var service = svcInspector ? this.inspector.get('model') :
-              this.get('model'),
-          env = svcInspector ? this.inspector.get('env') : this.get('env');
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },
@@ -1080,16 +1080,17 @@ YUI.add('juju-view-service', function(Y) {
 
       @method toggleExpose
       @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
     */
     toggleExpose: function(e) {
       var service = this.inspector.get('model');
       var env = this.inspector.get('db').environment;
       var exposed;
       if (service.get('exposed')) {
-        this.inspector.unexposeService();
+        this.unexposeService();
         exposed = false;
       } else {
-        this.inspector.exposeService();
+        this.exposeService();
         exposed = true;
       }
       service.set('exposed', exposed);
@@ -1265,14 +1266,7 @@ YUI.add('juju-view-service', function(Y) {
         },
         bindings: {
           exposed: {
-            /**
-              Updates DOM node with the given value.
-              @method update
-              @param {Object} node The YUI node bound to the changed value.
-              @param {Boolean} value The value of the `exposed` attribute.
-              @return {undefined} Nothing.
-              */
-            update: function(node, value) {
+            'update': function(node, value) {
               var img = node.one('img');
               var span = node.one('span');
               if (value) {
@@ -1401,8 +1395,6 @@ YUI.add('juju-view-service', function(Y) {
         this.bindingEngine.unbind();
       }, this);
       this.inspector.showViewlet(options.viewletList[0]);
-      this.inspector.exposeService = exposeButtonMixin.exposeService;
-      this.inspector.unexposeService = exposeButtonMixin.unexposeService;
     }
 
     ServiceInspector.prototype = controllerPrototype;

@@ -46,6 +46,7 @@ describe('Inspector Settings', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
+          window.flags = {serviceInspector: true};
           done();
         });
 
@@ -54,7 +55,7 @@ describe('Inspector Settings', function() {
   beforeEach(function() {
     exposeCalled = false;
     unexposeCalled = false;
-    container = Y['juju-tests'].utils.makeContainer('container');
+    container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -73,7 +74,12 @@ describe('Inspector Settings', function() {
       }
       view.destroy();
     }
+    env.destroy();
     container.remove(true);
+  });
+
+  after(function() {
+    delete window.flags;
   });
 
   var setUpInspector = function() {
@@ -97,12 +103,6 @@ describe('Inspector Settings', function() {
     view.createServiceInspector(service, {});
     return view.getInspector(service.get('id'));
   };
-
-  it('creates a ServiceInspector', function() {
-    inspector = setUpInspector();
-    assert.isFalse(service.get('exposed'));
-  });
-
 
   it('toggles exposure', function() {
     inspector = setUpInspector();
