@@ -123,6 +123,8 @@ YUI.add('juju-view-environment', function(Y) {
             return;
           }
 
+          // XXX bac: The following code does not seem to make sense as the
+          // previous check would've caused a return.
           var serviceInspector = this.getInspector(model.get('id'));
           if (serviceInspector) { return serviceInspector; }
 
