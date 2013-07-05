@@ -283,6 +283,9 @@ YUI.add('juju-charm-panel', function(Y) {
             if (ghostXY !== undefined) {
               ghostService.set('x', ghostXY[0]);
               ghostService.set('y', ghostXY[1]);
+              // Set the dragged attribute to true so that the x/y coords are
+              // stored in annotations as well as on the service box.
+              ghostService.set('hasBeenPositioned', true);
             }
             this.set('ghostService', ghostService);
             db.fire('update');
@@ -646,7 +649,7 @@ YUI.add('juju-charm-panel', function(Y) {
                   );
                   // Update the annotations with the box's x/y coordinates if
                   // they have been set by dragging the ghost.
-                  if (ghostService.get('dragged')) {
+                  if (ghostService.get('hasBeenPositioned')) {
                     env.update_annotations(
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),
@@ -852,14 +855,18 @@ YUI.add('juju-charm-panel', function(Y) {
      * @param {String} charmUrl The URL of the charm to configure/deploy.
      * @return {undefined} Nothing.
      */
-    function deploy(charm, ghostXY) {
+    function deploy(charm, ghostXY, _setPanel) {
+      _setPanel = _setPanel || setPanel; // Injection point for tests.
       // Any passed-in charm is fully loaded but the caller doesn't know about
       // the charm panel's internal detail of marking loaded charms, so we will
       // do the marking here.
       charm.loaded = true;
+      // The config panel expects the config options here instead of the
+      // "options" attribute. <shrug>
+      charm.set('config', {options: charm.get('options')});
       charms.add(charm);
       // Show the configuration panel.
-      setPanel({
+      _setPanel({
         name: 'configuration',
         charmId: charm.get('id'),
         ghostXY: ghostXY

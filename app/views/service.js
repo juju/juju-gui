@@ -434,7 +434,7 @@ YUI.add('juju-view-service', function(Y) {
                     '.service-header-partial')),
                 footerHeight = getHeight(container.one('.bottom-navbar')),
                 size = (Math.max(windowHeight, 600) - navbarHeight -
-                        headerHeight - footerHeight - 1);
+                        headerHeight - footerHeight - 19);
             viewContainer.set('offsetHeight', size);
             Y.fire('afterPageSizeRecalculation');
           }

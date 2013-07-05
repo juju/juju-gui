@@ -47,8 +47,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     var addBrowserContainer = function(Y) {
-      Y.Node.create('<div id="subapp-browser">' +
-                    '</div>').appendTo(container);
+      Y.Node.create([
+        '<div id="content">',
+        '<div id="browser-nav">',
+        '<div class="sidebar"></div>',
+        '<div class="fullscreen"</div>',
+        '</div>',
+        '<div id="subapp-browser"></div>',
+        '</div>'
+      ].join('')).appendTo(container);
     };
 
     afterEach(function() {
@@ -90,7 +97,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 })();
 
-
 (function() {
   describe('browser sidebar view', function() {
     var Y, browser, container, view, views, Sidebar;
@@ -128,10 +134,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     var addBrowserContainer = function(Y) {
-      Y.Node.create('<div id="subapp-browser">' +
-          '</div>').appendTo(container);
+      Y.Node.create([
+        '<div id="content">',
+        '<div id="browser-nav">',
+        '<div class="sidebar"></div>',
+        '<div class="fullscreen"</div>',
+        '</div>',
+        '<div id="subapp-browser"></div>',
+        '</div>'
+      ].join('')).appendTo(container);
     };
-
 
     it('knows that it is not fullscreen', function() {
       view = new Sidebar();
@@ -222,6 +234,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('can go to a default jujucharms landing page', function() {
+      app = new browser.Browser({isJujucharms: true});
+      var called = false;
+      app.jujucharms = function() {
+        called = true;
+      };
+      var req = {
+        path: '/'
+      };
+
+      app.routeDefault(req, null, next);
+      assert.isTrue(called);
+    });
+
     it('correctly strips viewmode from the charmID', function() {
       app = new browser.Browser();
       var paths = [
@@ -242,32 +268,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('* route set sidebar by default', function() {
-      app = new browser.Browser();
-      // Stub out the sidebar so we don't render anything.
+    it('* route uses the default viewmode', function() {
+      app = new browser.Browser({defaultViewmode: 'sidebar'});
       app.sidebar = function() {};
       var req = {
         path: '/'
       };
 
-      app.routeSidebarDefault(req, null, next);
+      app.routeDefault(req, null, next);
       // The viewmode should be populated now to the default.
       assert.equal(req.params.viewmode, 'sidebar');
+
+      app = new browser.Browser({defaultViewmode: 'fullscreen'});
+      app.fullscreen = function() {};
+      req = {
+        path: '/'
+      };
+      app.routeDefault(req, null, next);
+      assert.equal(req.params.viewmode, 'fullscreen');
     });
 
-    it('prevents * route from doing more than sidebar by default', function() {
-      app = new browser.Browser();
+    it('prevents * route from doing more than the default', function() {
+      app = new browser.Browser({defaultViewmode: 'sidebar'});
       var req = {
         path: '/sidebar'
       };
 
-      app.routeSidebarDefault(req, null, next);
+      app.routeDefault(req, null, next);
       // The viewmode is ignored. This path isn't meant for this route
       // callable to deal with at all.
       assert.equal(req.params, undefined);
+
+      app = new browser.Browser({defaultViewmode: 'fullscreen'});
+      req = {
+        path: '/fullscreen'
+      };
+      app.routeDefault(req, null, next);
+      assert.equal(req.params, undefined);
     });
 
-    it('/charm/id routes to a sidebar view correcetly', function() {
+    it('/charm/id routes to the default view correctly', function() {
       app = new browser.Browser();
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
@@ -279,6 +319,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The viewmode should be populated now to the default.
       assert.equal(req.params.viewmode, 'sidebar');
       assert.equal(req.params.id, 'precise/mysql-10');
+    });
+
+    it('/charm/id handles routes for new charms correctly', function() {
+      app = new browser.Browser();
+      // Stub out the sidebar so we don't render anything.
+      app.sidebar = function() {};
+      var req = {
+        path: '~foo/precise/mysql-10/'
+      };
+      app.routeDirectCharmId(req, null, next);
+      assert.equal(req.params.id, '~foo/precise/mysql-10');
     });
 
     it('does not add sidebar to urls that do not require it', function() {

@@ -370,6 +370,9 @@ describe('service module events', function() {
   });
 
   it('should deploy a service on charm token drop events', function(done) {
+    var localContainer = utils.makeContainer();
+    // this will be removed by the canvas drop handler
+    localContainer.setAttribute('id', 'foo');
     d3.event._event = {
       dataTransfer: {
         getData: function(name) {
@@ -377,9 +380,12 @@ describe('service module events', function() {
             return 'charm-token-drag-and-drop';
           } else if (name === 'charmData') {
             return '{"id": "cs:foo/bar-1"}';
+          } else if (name === 'clonedIconId') {
+            return 'foo';
           }
         }
-      }
+      },
+      preventDefault: function() { return; }
     };
     d3.mouse = function() {
       return [5, 7];
