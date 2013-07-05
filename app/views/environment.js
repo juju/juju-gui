@@ -182,7 +182,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
-                '#num-service-units': {
+                '.num-units-control': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 }

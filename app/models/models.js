@@ -310,7 +310,7 @@ YUI.add('juju-models', function(Y) {
       // service name from `data`, which is the removed unit's name.
       var service;
       if (!instance) {
-        if (data instanceof String) {
+        if (typeof data === 'string') {
           service = db.services.getById(data.split('/')[0]);
         } else if (data.service) {
           service = db.services.getById(data.service);

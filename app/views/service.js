@@ -42,15 +42,17 @@ YUI.add('juju-view-service', function(Y) {
    */
   var manageUnitsMixin = {
     // Mixin attributes
+    // XXX Makyo - this will need to be removed when the serviceInspector flag
+    // goes away.
     events: {
-      '#num-service-units': {
+      '.num-units-control': {
         keydown: 'modifyUnits',
         blur: 'resetUnits'
       }
     },
 
     /*
-     * XXX Makyo - all instances of testing this.inspector will go away once
+     * XXX Makyo - all instances of testing for the flag will go away once
      * the inspector becomes the default, rather than internal pages.
      */
     /**
@@ -63,15 +65,15 @@ YUI.add('juju-view-service', function(Y) {
     noop: function() { return; },
 
     resetUnits: function() {
-      var container, model;
-      if (this.inspector) {
+      var container, model, flags = window.flags;
+      if (flags.serviceInspector) {
         container = this.inspector.get('container');
         model = this.inspector.get('model');
       } else {
         container = this.get('container');
         model = this.get('model');
       }
-      var field = container.one('#num-service-units');
+      var field = container.one('.num-units-control');
       field.set('value', model.get('unit_count'));
       field.set('disabled', false);
     },
@@ -80,13 +82,13 @@ YUI.add('juju-view-service', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container;
-      if (this.inspector) {
+      var container, flags = window.flags;
+      if (flags.serviceInspector) {
         container = this.inspector.get('container');
       } else {
         container = this.get('container');
       }
-      var field = container.one('#num-service-units');
+      var field = container.one('.num-units-control');
 
       if (ev.keyCode === ESC) {
         this.resetUnits();
@@ -104,17 +106,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _modifyUnits: function(requested_unit_count) {
-      var container, env;
-      if (this.inspector) {
+      var container, env, flags = window.flags;
+      if (flags.serviceInspector) {
         container = this.inspector.get('container');
         env = this.inspector.get('env');
       } else {
         container = this.get('container');
         env = this.get('env');
       }
-      var service = this.model ? this.model : this.get('model');
+      var service = this.model || this.get('model');
       var unit_count = service.get('unit_count');
-      var field = container.one('#num-service-units');
+      var field = container.one('.num-units-control');
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -131,7 +133,7 @@ YUI.add('juju-view-service', function(Y) {
       } else if (delta < 0) {
         delta = Math.abs(delta);
         var db;
-        if (this.inspector) {
+        if (flags.serviceInspector) {
           db = this.inspector.get('db');
         } else {
           db = this.get('db');
@@ -153,8 +155,8 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _addUnitCallback: function(ev) {
-      var service, getModelURL, db;
-      if (this.inspector) {
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
         service = this.inspector.get('model');
         getModelURL = this.noop;
         db = this.inspector.get('db');
@@ -188,8 +190,8 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _removeUnitCallback: function(ev) {
-      var service, getModelURL, db;
-      if (this.inspector) {
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
         service = this.inspector.get('model');
         getModelURL = this.noop;
         db = this.inspector.get('db');
@@ -1378,7 +1380,8 @@ YUI.add('juju-view-service', function(Y) {
 
       options.model = model;
 
-      // Merge the various prototype objects together.
+      // Merge the various prototype objects together.  Additionally, merge in
+      // mixins that provide functionality used in the inspector's events.
       var c = Y.juju.controller;
       [c.ghostInspector, c.serviceInspector, manageUnitsMixin]
         .forEach(function(controller) {
@@ -1407,8 +1410,6 @@ YUI.add('juju-view-service', function(Y) {
         this.bindingEngine.unbind();
       }, this);
       this.inspector.showViewlet(options.viewletList[0]);
-      this.inspector.modifyUnits = manageUnitsMixin.modifyUnits;
-      this.inspector.resetUnits = manageUnitsMixin.resetUnits;
     }
 
     ServiceInspector.prototype = controllerPrototype;
