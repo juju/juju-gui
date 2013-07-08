@@ -407,6 +407,8 @@ YUI.add('juju-topology-service', function(Y) {
       var scale = topo.get('scale');
       var dropXY = d3.mouse(this);
       var ghostXY = [];
+      // Required - causes Ubuntu FF 22.0 to refresh without.
+      evt.preventDefault();
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
         ghostXY[index] = (dropXY[index] - translation[index]) / scale;
@@ -588,7 +590,7 @@ YUI.add('juju-topology-service', function(Y) {
         // If the service is still pending, persist x/y coordinates in order
         // to set them as annotations when the service is created.
         if (box.pending) {
-          box.model.set('dragged', true);
+          box.model.set('hasBeenPositioned', true);
           box.model.set('x', box.x);
           box.model.set('y', box.y);
           return;
@@ -741,7 +743,7 @@ YUI.add('juju-topology-service', function(Y) {
           new_services[0].model.set('x', coords[0]);
           new_services[0].model.set('y', coords[1]);
           // This ensures that the x/y coordinates will be saved as annotations.
-          new_services[0].model.set('dragged', true);
+          new_services[0].model.set('hasBeenPositioned', true);
           // Set the centroid to the new service's position
           topo.centroid = coords;
           topo.fire('panToPoint', {point: topo.centroid});
