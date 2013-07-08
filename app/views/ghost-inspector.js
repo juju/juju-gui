@@ -50,7 +50,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method deployService
       @param {Y.Model} charm model to add to the charms database.
     */
-    deployService: function(charm) {
+    deployService: function(charm, ghostXY) {
       // This flag is still required because it comes fully populated from the
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
@@ -58,6 +58,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);
+      if (ghostXY !== undefined) {
+        ghostService.set('x', ghostXY[0]);
+        ghostService.set('y', ghostXY[1]);
+        // Set the dragged attribute to true so that the x/y coords are
+        // stored in annotations as well as on the service box.
+        ghostService.set('hasBeenPositioned', true);
+      }
       var self = this;
       var environment = this.views.environment.instance,
           ghostInspector = environment.createServiceInspector(ghostService);

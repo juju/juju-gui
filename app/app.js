@@ -601,16 +601,6 @@ YUI.add('juju-gui', function(Y) {
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostXY) {
-//        this.get('subApps').charmstore.get('store').charm(charm.get('id'), {
-//          'success': function(data) {
-//            var charm = new models.BrowserCharm(data.charm);
-//            if (data.metadata) {
-//              charm.set('metadata', data.metadata);
-//            }
-//          },
-//          'failure': this.apiFailure
-//        }, this);
-
         cfg.deploy(charm, ghostXY);
       }, this);
     },
