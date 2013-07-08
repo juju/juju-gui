@@ -222,10 +222,6 @@ YUI.add('juju-databinding', function(Y) {
 
       this._viewlets[viewlet.name] = viewlet;
 
-      if (!viewlet._events) {
-        viewlet._events = [];
-      }
-
       if (viewlet.rebind) {
         viewletModel = viewlet.rebind(model);
       }
