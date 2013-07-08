@@ -55,8 +55,6 @@ describe('data binding library', function() {
         engine = new BindingEngine();
 
         engine.bind(new Y.Model({a: 'b'}), viewlet);
-        // The default model object should be in place.
-        assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
       });
 
@@ -73,7 +71,6 @@ describe('data binding library', function() {
         engine.bind(new Y.Model({a: {b: {c: {d: 'nested'}}
               }}), viewlet);
         // The default model object should be in place.
-        assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind="a.b.c.d"]').getHTML(),
                      'nested');
       });
@@ -212,21 +209,18 @@ describe('data binding library', function() {
       it('binds strings to inputs', function() {
         generateEngine('<input type="text" data-bind="a"></input>');
         engine.bind(new Y.Model({a: 'b'}), viewlet);
-        assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=a]').get('value'), 'b');
       });
 
       it('binds strings to textareas', function() {
         generateEngine('<textarea data-bind="g"/></textarea>');
         engine.bind(new Y.Model({g: 'g'}), viewlet);
-        assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=g]').get('value'), 'g');
       });
 
       it('binds numbers to inputs', function() {
         generateEngine('<input type="number" data-bind="e"/>');
         engine.bind(new Y.Model({e: 7}), viewlet);
-        assert.equal(Y.Object.keys(engine._events).length, 2);
         assert.equal(container.one('[data-bind=e]').get('value'), '7');
       });
 
