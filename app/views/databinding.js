@@ -191,7 +191,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype.bind = function(model, viewlet) {
       var modelEvents = this.unbindModel(model);
       modelEvents.push(
-        model.on('change', this._modelChangeHandler, this));
+          model.on('change', this._modelChangeHandler, this));
 
       if (!Y.Lang.isArray(viewlet)) { viewlet = [viewlet]; }
       Y.each(viewlet, function(v, name) {
@@ -352,6 +352,16 @@ YUI.add('juju-databinding', function(Y) {
       });
     };
 
+    /**
+      Unbind model change events from a given model.
+      This shouldn't be called as a client of the framework
+      unless you are sure what you're doing. See viewlet.remove
+
+
+      @method unbindModel
+      @param {Model} to unbind.
+      @return {Array} of modelEvents (empty but appendable)/
+     */
     BindingEngine.prototype.unbindModel = function(model) {
       var mID = model.get('id');
       var modelEvents = this._models[mID] || [];
@@ -366,6 +376,13 @@ YUI.add('juju-databinding', function(Y) {
       return modelEvents;
     };
 
+    /**
+      Unbind DOM events created for a given viewlet.
+
+      @method unbindViewlet
+      @param {Viewlet} viewlet to unbind.
+      @return {Array} (empty) of DOM event handles.
+     */
     BindingEngine.prototype.unbindViewlet = function(viewlet) {
       var events = viewlet._events;
       if (!events) {

@@ -166,11 +166,11 @@ describe('View Container', function() {
     viewContainer.showViewlet('serviceConfig');
 
     assert.equal(
-      viewContainer.viewlets.serviceConfig
+        viewContainer.viewlets.serviceConfig
                    .container.getStyle('display'), 'block');
     // Constraints didn't render, not even its container is set.
     assert.equal(
-      viewContainer.viewlets.constraints.container, undefined);
+        viewContainer.viewlets.constraints.container, undefined);
   });
 
   it('can fill a slot with a viewlet', function() {
@@ -190,32 +190,33 @@ describe('View Container', function() {
   });
 
   it('can replace a slot, removing old bindings and installing a new model',
-    function() {
-    generateViewContainer();
-    //Define a slot mapping on the container for 'left'
-    viewContainer.slots = {
-      left: '.left'
-    };
-    // And constraints will use that slot.
-    viewContainer.viewlets.constraints.slot = 'left';
-    viewContainer.render();
-    viewContainer.showViewlet('serviceConfig');
+     function() {
+       generateViewContainer();
+       //Define a slot mapping on the container for 'left'
+       viewContainer.slots = {
+         left: '.left'
+       };
+       // And constraints will use that slot.
+       viewContainer.viewlets.constraints.slot = 'left';
+       viewContainer.render();
+       viewContainer.showViewlet('serviceConfig');
 
-    // Now render the constraints viewlet.
-    viewContainer.showViewlet('constraints');
-    assert.equal(container.one('.left .viewlet').get('text'), 'foo');
+       // Now render the constraints viewlet.
+       viewContainer.showViewlet('constraints');
+       assert.equal(container.one('.left .viewlet').get('text'), 'foo');
 
-    var replacementModel = new Y.Model({id: 'replacement', name: 'pie'});
-    viewContainer.showViewlet('constraints', replacementModel);
-    assert.equal(container.one('.left .viewlet').get('text'), 'pie');
+       var replacementModel = new Y.Model({id: 'replacement', name: 'pie'});
+       viewContainer.showViewlet('constraints', replacementModel);
+       assert.equal(container.one('.left .viewlet').get('text'), 'pie');
 
-    // And the new databindings are working.
-    replacementModel.set('name', 'ice cream');
-    assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
+       // And the new databindings are working.
+       replacementModel.set('name', 'ice cream');
+       assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
 
-    // The old model (still associated with the viewContianer) isn't bound though.
-    viewContainer.get('model').set('name', 'broken');
-    assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
-    });
+       // The old model (still associated with the viewContianer) isn't bound
+       // though.
+       viewContainer.get('model').set('name', 'broken');
+       assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
+     });
 
 });

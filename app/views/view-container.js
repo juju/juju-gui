@@ -203,7 +203,7 @@ YUI.add('juju-view-container', function(Y) {
       this.events = options.events;
       this.slots = {};  // {String} name: {String} CSS selector in viewContainer
       this._slots = {}; // {String} slot: viewlet.
-            // We create a new binding engine even if it's unlikely
+      // We create a new binding engine even if it's unlikely
       // that the model will change.
       this.bindingEngine = new jujuViews.BindingEngine();
       this.after('destroy', function() {
@@ -247,13 +247,13 @@ YUI.add('juju-view-container', function(Y) {
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet, name) {
-         if (!viewlet.name) {
+        if (!viewlet.name) {
           viewlet.name = name;
         }
         if (viewlet.slot) {
           return;
         }
-       var result = viewlet.render(model, attrs);
+        var result = viewlet.render(model, attrs);
         if (result && typeof result === 'string') {
           viewlet.container = Y.Node.create(result);
         }
@@ -286,6 +286,16 @@ YUI.add('juju-view-container', function(Y) {
       this.viewlets[viewletName].container.show();
     },
 
+    /**
+      Render a viewlet/model pair into a logically named slot.
+      Called automatically by showViewlet when the viewlet has a
+      slot defined.
+
+
+      @method fillSlot
+      @param {Viewlet} viewlet to render
+      @param {Model} to bind to the slot.
+    */
     fillSlot: function(viewlet, model) {
       var target;
       var slot = viewlet.slot;
