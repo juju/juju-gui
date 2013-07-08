@@ -119,12 +119,10 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           // If the user is trying to open the same inspector twice
-          if (this.getInspector(model.get('id'))) {
+          var serviceInspector = this.getInspector(model.get('id'));
+          if (serviceInspector) {
             return;
           }
-
-          var serviceInspector = this.getInspector(model.get('id'));
-          if (serviceInspector) { return serviceInspector; }
 
           var combinedConfig = {};
           var configs = this._generateConfigs(model);
@@ -180,6 +178,7 @@ YUI.add('juju-view-environment', function(Y) {
               },
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 '.num-units-control': {
