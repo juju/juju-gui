@@ -48,6 +48,7 @@ YUI.add('browser-charm-token', function(Y) {
       // Extract the charm configuration values from the jumble of widget
       // config options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+      // @property charmData Contains the extracted charm information.
       this.charmData = Y.aggregate({}, config, false, charmAttributes);
       // The configuration schema comes in as "options" and has to be moved
       // over to the charm data manually.
