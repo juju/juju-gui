@@ -293,7 +293,7 @@ YUI.add('juju-view-container', function(Y) {
 
 
       @method fillSlot
-      @param {Viewlet} viewlet to render
+      @param {Viewlet} viewlet to render.
       @param {Model} to bind to the slot.
     */
     fillSlot: function(viewlet, model) {

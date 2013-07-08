@@ -360,7 +360,7 @@ YUI.add('juju-databinding', function(Y) {
 
       @method unbindModel
       @param {Model} to unbind.
-      @return {Array} of modelEvents (empty but appendable)/
+      @return {Array} of modelEvents (empty but appendable).
      */
     BindingEngine.prototype.unbindModel = function(model) {
       var mID = model.get('id');
