@@ -141,7 +141,7 @@ describe('charm panel', function() {
       },
       set: function(name, value) {
         if (name === 'config') {
-          assert.fail(null, null, 'config should not have been set')
+          assert.fail(null, null, 'config should not have been set');
         }
       }
     };
