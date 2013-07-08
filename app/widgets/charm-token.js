@@ -51,10 +51,10 @@ YUI.add('browser-charm-token', function(Y) {
       this.charmData = Y.aggregate({}, config, false, charmAttributes);
       // The configuration schema comes in as "options" and has to be moved
       // over to the charm data manually.
-//      if (this.charmData.config === undefined) {
-//        this.config = {}
-//      }
-//      this.charmData.config.options = config.options;
+      if (this.charmData.config === undefined) {
+        this.charmData.config = {}
+      }
+      this.charmData.config.options = config.options;
     },
 
     /**
