@@ -133,7 +133,7 @@ describe('charm token drag and drop', function() {
         assert.equal(name, '_yuid');
         getCalled = true;
         return UNIQUE_ID;
-        },
+      },
       setAttribute: function(name, value) {
         // A unique ID is set as the drag image ID so it can be removed from
         // the DOM when the dragging is done.
@@ -190,10 +190,12 @@ describe('charm token drag and drop', function() {
     };
     handler(evt);
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
-    assert.deepEqual(dragDataSet.splice(0, 1), [['clonedIconId','UNIQUE ID']]);
-    assert.deepEqual(dragDataSet.splice(0, 1), [['charmData','data']]);
     assert.deepEqual(dragDataSet.splice(0, 1),
-        [['dataType','charm-token-drag-and-drop']]);
+        [['clonedIconId', 'UNIQUE ID']]);
+    assert.deepEqual(dragDataSet.splice(0, 1),
+        [['charmData', 'data']]);
+    assert.deepEqual(dragDataSet.splice(0, 1),
+        [['dataType', 'charm-token-drag-and-drop']]);
     // Assure that we verified all data that was set.
     assert.deepEqual(dragDataSet, []);
     assert.isTrue(setDataCalled);
