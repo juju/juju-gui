@@ -20,24 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, ENTER;
-  var charmConfig =
-      { config:
-            { options:
-                  { option0:
-                        { name: 'option0',
-                          type: 'string',
-                          description: 'Option Zero'},
-                    option1:
-                        { name: 'option1',
-                          type: 'boolean',
-                          description: 'Option One'},
-                    option2:
-                        { name: 'option2',
-                          type: 'int',
-                          description: 'Option Two'} }
-            }
-      };
+      inspector, Y, jujuViews, ENTER, charmConfig;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -49,6 +32,8 @@ describe('Inspector Overview', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           window.flags = {serviceInspector: true};
+          charmConfig = utils
+            .loadFixture('data/mediawiki-charmdata.json', true);
           done();
         });
 
