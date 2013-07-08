@@ -31,7 +31,7 @@ describe('Inspector Settings', function() {
           juju = Y.namespace('juju');
           window.flags = {serviceInspector: true};
           charmConfig = utils
-            .loadFixture("data/mediawiki-charmdata.json", true);
+            .loadFixture('data/mediawiki-charmdata.json', true);
           done();
         });
 
