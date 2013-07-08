@@ -601,8 +601,8 @@ YUI.add('juju-gui', function(Y) {
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostXY) {
-        this.deploy(charm, ghostXY);
-      }, this.charmPanel);
+        cfg.deploy(charm, ghostXY);
+      }, this);
     },
 
     /**
