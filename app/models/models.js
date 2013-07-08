@@ -162,6 +162,7 @@ YUI.add('juju-models', function(Y) {
       },
       name: {},
       charm: {},
+      icon: {},
       config: {},
       // Annotations on service are an empty dict
       // rather than undefined. This helps make
