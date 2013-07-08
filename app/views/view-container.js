@@ -81,7 +81,7 @@ YUI.add('juju-view-container', function(Y) {
       @type {String}
       @default null
     */
-   slot: null,
+    slot: null,
 
     /**
       When defined it allows the developer to specify another model to bind the
@@ -297,11 +297,12 @@ YUI.add('juju-view-container', function(Y) {
         viewletName = viewletName.currentTarget.getData('viewlet');
       }
       var viewlet = this.viewlets[viewletName];
-      if (model) {
-        viewlet.model = model;
-        this.fillSlot(viewlet, model);
+      if (!model) {
+        model = this.get('model');
       }
-      this.viewlets[viewletName].container.show();
+      viewlet.model = model;
+      this.fillSlot(viewlet, model);
+      viewlet.container.show();
     },
 
     /**
