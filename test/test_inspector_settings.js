@@ -92,6 +92,12 @@ describe('Inspector Settings', function() {
       id: 'mediawiki',
       charm: charmId,
       exposed: false});
+    db.services.add(service);
+    db.onDelta({data: {result: [
+      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
+      ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
+      ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+    ]}});
     view = new jujuViews.environment({
       container: container,
       db: db,
