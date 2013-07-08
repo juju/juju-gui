@@ -153,7 +153,7 @@ describe('charm token drag and drop', function() {
           get: function() {}
         };
       },
-      setStyles: function() {return fauxIcon};
+      setStyles: function() {return fauxIcon;}
     };
     container.one = function(selector) {
       assert.equal(selector, '.icon');
