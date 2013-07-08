@@ -863,6 +863,7 @@ YUI.add('juju-charm-panel', function(Y) {
       charm.loaded = true;
       // The config panel expects the config options here instead of the
       // "options" attribute. <shrug>
+      debugger;
       charm.set('config', {options: charm.get('options')});
       charms.add(charm);
       // Show the configuration panel.

@@ -49,6 +49,12 @@ YUI.add('browser-charm-token', function(Y) {
       // config options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       this.charmData = Y.aggregate({}, config, false, charmAttributes);
+      // The configuration schema comes in as "options" and has to be moved
+      // over to the charm data manually.
+//      if (this.charmData.config === undefined) {
+//        this.config = {}
+//      }
+//      this.charmData.config.options = config.options;
     },
 
     /**
