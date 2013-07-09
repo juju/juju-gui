@@ -398,7 +398,7 @@ describe('service module events', function() {
       // service will be positioned at (150, 75) + the given coordinates due to
       // transposition/scale of the canvas.
       assert.deepEqual(ghostAttributes, {
-        coordinates: [ 155, 82 ],
+        coordinates: [155, 82],
         icon: '/juju-ui/assets/svgs/service_health_mask.svg'
       });
       done();

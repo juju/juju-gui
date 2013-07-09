@@ -235,7 +235,7 @@ describe('charm panel', function() {
       assert.include(service.get('id'), serviceName);
       assert.isTrue(service.get('hasBeenPositioned'));
       assert.equal(service.get('icon'),
-        '/juju-ui/assets/images/zoom_plus.png');
+          '/juju-ui/assets/images/zoom_plus.png');
     });
 
     it('is removed from the database if deployment is cancelled', function() {

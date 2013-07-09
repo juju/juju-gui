@@ -411,8 +411,8 @@ YUI.add('juju-topology-service', function(Y) {
       evt.preventDefault();
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
-        ghostAttributes.coordinates[index] = 
-          (dropXY[index] - translation[index]) / scale;
+        ghostAttributes.coordinates[index] =
+            (dropXY[index] - translation[index]) / scale;
       });
       if (dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
@@ -422,7 +422,7 @@ YUI.add('juju-topology-service', function(Y) {
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
         var iconImage;
         if (icon) {
-          if(icon.one('image')) {
+          if (icon.one('image')) {
             // Maintain the charm icon URL if it exists.
             iconImage = icon.one('img').getAttribute('src');
           }
@@ -896,11 +896,11 @@ YUI.add('juju-topology-service', function(Y) {
       // service health mask.
       status_chart.append('image')
         .attr('xlink:href', function(d) {
-          if (d.pending && d.model.get('icon') !== undefined) {
-            return d.model.get('icon');
-          }
-          return '/juju-ui/assets/svgs/service_health_mask.svg';
-        })
+            if (d.pending && d.model.get('icon') !== undefined) {
+              return d.model.get('icon');
+            }
+            return '/juju-ui/assets/svgs/service_health_mask.svg';
+          })
         .attr('class', 'service-health-mask');
 
       // Add the unit counts, visible only on hover.
