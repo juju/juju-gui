@@ -224,10 +224,6 @@ YUI.add('juju-view-container', function(Y) {
       this._slots = {}; // {String} slot: viewlet.
 
       this.bindingEngine = new jujuViews.BindingEngine();
-      this.after('destroy', function() {
-        this.bindingEngine.unbind();
-      }, this);
-
     },
 
     /**
@@ -410,6 +406,7 @@ YUI.add('juju-view-container', function(Y) {
       @method destructor
     */
     destructor: function() {
+      this.bindingEngine.unbind();
       this.get('container').remove().destroy(true);
     }
 

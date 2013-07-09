@@ -337,7 +337,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype.unbind = function() {
       var self = this;
       // Unbind each model
-      Y.Object.values(this._models, function(handles) {
+      Y.each(this._models, function(handles) {
         handles.forEach(function(handle) {
           handle.detach();
         });
