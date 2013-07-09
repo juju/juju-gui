@@ -400,14 +400,10 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._modelListChange = function(evt) {
       // Force an update to each viewlet registered to the
       // ModelList.
-      var target = evt && evt.target;
-
       Y.each(this._viewlets, function(viewlet) {
         var list = viewlet.model;
         // Only update when list is evt target (if we can know this).
-        if (target && (
-          list._yuid && target._yuid &&
-            list._yuid !== target._yuid)) {
+        if(!checkClassImplements(list, 'modelList')) {
           return;
         }
         if (viewlet.update) {

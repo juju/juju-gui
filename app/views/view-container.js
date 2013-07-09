@@ -300,7 +300,6 @@ YUI.add('juju-view-container', function(Y) {
       if (!model) {
         model = this.get('model');
       }
-      viewlet.model = model;
       this.fillSlot(viewlet, model);
       viewlet.container.show();
     },
