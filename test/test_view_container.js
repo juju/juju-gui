@@ -181,6 +181,8 @@ describe('View Container', function() {
     };
     // And constraints will use that slot.
     viewContainer.viewlets.constraints.slot = 'left';
+    assert.equal(
+      viewContainer.viewlets.constraints.container, undefined);
     viewContainer.render();
     viewContainer.showViewlet('serviceConfig');
 

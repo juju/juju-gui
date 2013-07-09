@@ -357,18 +357,16 @@ YUI.add('juju-databinding', function(Y) {
 
       @method resetModelChangeEvents
       @param {Model} to unbind.
-      @return {Array} of modelEventHandles (empty but appendable).
+      @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
       var mID = model.get('id');
       var modelEventHandles = this._models[mID] || [];
-      if (modelEventHandles.length > 0) {
-        modelEventHandles.forEach(function(handle) {
-          handle.detach();
-        });
-        // Empty the list
-        modelEventHandles.splice(0, modelEventHandles.length);
-      }
+      modelEventHandles.forEach(function(handle) {
+        handle.detach();
+      });
+      // Empty the list
+      modelEventHandles.splice(0, modelEventHandles.length);
       this._models[mID] = modelEventHandles;
       return modelEventHandles;
     };
@@ -391,6 +389,13 @@ YUI.add('juju-databinding', function(Y) {
       return events;
     };
 
+    /**
+      Return the viewlet, given `name`.
+
+      @method getViewlet
+      @param {String} name to lookup.
+      @return {Viewlet} viewlet object.
+    */
     BindingEngine.prototype.getViewlet = function(name) {
       // We need the resolved, annotated viewlet.
       return this._viewlets[name];

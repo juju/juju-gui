@@ -220,8 +220,11 @@ YUI.add('juju-view-container', function(Y) {
       this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets(); // {String}: {Viewlet}
       this.events = options.events;
-      this.slots = {};  // {String} name: {String} CSS selector in viewContainer
-      this._slots = {}; // {String} slot: viewlet.
+      // Map from logical slot name to the CSS selector within viewContainer's
+      // DOM to be used to hold this slot when rendered.
+      this.slots = {};
+      // Internal mapping from slot name to viewlet rendered into slot.
+      this._slots = {};
 
       this.bindingEngine = new jujuViews.BindingEngine();
     },
@@ -240,7 +243,7 @@ YUI.add('juju-view-container', function(Y) {
     /**
       Renders the viewlets into the view container. Viewlets with a logical
       slot name defined are not rendered by defaul and require that showViewlet
-      be called for them to render. Slots are typical filled through event
+      be called for them to render. Slots are typically filled through event
       callback interactions (for example in a click handler).
 
       @method render
@@ -312,7 +315,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @method fillSlot
       @param {Viewlet} viewlet to render.
-      @param {Model} to bind to the slot.
+      @param {Model} model to bind to the slot.
     */
     fillSlot: function(viewlet, model) {
       var target;
