@@ -71,6 +71,7 @@
             width: 20px;
             height: 24px;
             padding: 0;
+            margin-bottom: 1ex;
             background-position: center;
             background-repeat: no-repeat; 
             background-image:
@@ -78,6 +79,11 @@
         }
 
         .destroy-service-prompt {
+            overflow: hidden;
+            height: 0;
+            transition: 2s, height 2s;
+            -webkit-transition: 2s, height 2s;
+
             .message {
                 margin-top: 1ex;
             }
@@ -87,6 +93,10 @@
                 text-align: center;
                 margin: 1em;
             }
+        }
+
+        .destroy-service-prompt.open {
+            height: 100px;
         }
 
         .after-destroy-service-icon {
