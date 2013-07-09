@@ -421,7 +421,7 @@ YUI.add('juju-topology-service', function(Y) {
         // Remove the cloned drag icon.
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
         var iconImage;
-        if (icon) {
+        if (icon && icon.one('img')) {
           // Maintain the charm icon URL if it exists.
           iconImage = icon.one('img').getAttribute('src');
           icon.remove().destroy(true);
