@@ -21,3 +21,4 @@ build-debug
 python-shelltoolbox
 test/test_startup.js
 test/extracted_startup_code
+libpeerconnection.log

@@ -118,6 +118,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         destroyed: false,
         displayName: 'wordpress',
         exposed: false,
+        icon: undefined,
         id: 'wordpress',
         initialized: true,
         name: 'wordpress',
