@@ -127,6 +127,23 @@ YUI.add('juju-view-container', function(Y) {
     conflict: function(node) {},
 
     /**
+      Called by the databinding engine when fields drop out of sync with
+      the supplied model.
+
+      @method unsyncedFields
+      @param {Array} dirtyFields an array of keys representing changed fields.
+    */
+    unsyncedFields: function(dirtyFields) {},
+
+    /**
+      Called by the databinding engine when the viewlet drops out
+      off a conflicted state
+
+      @method syncedFields
+    */
+    syncedFields: function() {},
+
+    /**
       Used for conflict resolution. When the user changes a value on a bound
       viewlet we store a reference of the element key here so that we know to
       offer a conflict resolution.

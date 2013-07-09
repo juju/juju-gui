@@ -1184,6 +1184,78 @@ YUI.add('juju-view-service', function(Y) {
       // replacement.  It actually works well in practice.
       container.one('input[type=file]')
                .replace(Y.Node.create('<input type="file"/>'));
+    },
+
+    /**
+      Pulls the content from each configuration field and sends the values
+      to the environment
+
+      @method saveConfig
+    */
+    saveConfig: function() {
+      var inspector = this.inspector,
+          env = inspector.get('env'),
+          db = inspector.get('db'),
+          service = inspector.get('model'),
+          charmUrl = service.get('charm'),
+          charm = db.charms.getById(charmUrl),
+          schema = charm.get('config').options,
+          container = inspector.get('container'),
+          button = container.one('button.confirm');
+
+      button.set('disabled', 'disabled');
+
+      var newVals = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(newVals, schema);
+
+      if (Y.Object.isEmpty(errors)) {
+        env.set_config(
+            service.get('id'),
+            newVals,
+            null,
+            Y.bind(this._setConfigCallback, this, container)
+        );
+      } else {
+        // XXX throw errors
+        // we have no error handling story yet
+        console.log('Error setting config', errors);
+      }
+    },
+
+    /**
+      Handles the success or failure of setting the new config values
+
+      @method _setConfigCallback
+      @param {Y.Node} container of the view-container
+      @param {Y.EventFacade} e yui event object
+    */
+    _setConfigCallback: function(container, e) {
+      container.one('.controls .confirm').removeAttribute('disabled');
+      // If the user has conflicted fields and still choose to
+      // save then we will be overwriting the values in Juju.
+      this.bindingEngine.clearChangedValues.call(this.bindingEngine, 'config');
+      var db = this.inspector.get('db');
+      if (e.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service config',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: getModelURL(service) + 'config',
+              modelId: service
+            })
+        );
+      } else {
+        // XXX show saved notification
+        // we have no story for this yet
+        db.notifications.add(
+            new models.Notification({
+              title: 'Config saved successfully ',
+              message: e.service_name + ' config set successfully.',
+              level: 'info'
+            })
+        );
+      }
     }
   };
 
@@ -1254,14 +1326,19 @@ YUI.add('juju-view-service', function(Y) {
 
           node.setStyle('borderColor', 'red');
 
-          var message = node.ancestor('.control-group').one('.conflicted'),
+          var message = node.ancestor('.settings-wrapper').one('.conflicted'),
               newVal = model.get(node.getData('bind'));
 
           message.one('.newval').setHTML(newVal);
           message.setStyle('display', 'block');
 
           var handler = message.delegate('click', sendResolve, 'button', this);
-
+        },
+        'unsyncedFields': function(dirtyFields) {
+          this.container.one('.controls .confirm').setHTML('Overwrite');
+        },
+        'syncedFields': function() {
+          this.container.one('.controls .confirm').setHTML('Confirm');
         }
       },
       //constraints: {},

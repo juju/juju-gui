@@ -169,6 +169,7 @@ YUI.add('juju-view-environment', function(Y) {
           var configs = {
             configBase: {
               db: this.topo.get('db'),
+              env: this.topo.get('env'),
               events: {
                 '.close': {'click': 'destroy'}
               }
@@ -182,7 +183,8 @@ YUI.add('juju-view-environment', function(Y) {
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'}
+                '.config-file input[type=file]': { change: 'handleFileChange'},
+                'button.confirm': { click: 'saveConfig'}
               }
             },
             configGhost: {
