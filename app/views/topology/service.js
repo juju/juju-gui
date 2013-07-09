@@ -422,7 +422,7 @@ YUI.add('juju-topology-service', function(Y) {
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
         var iconImage;
         if (icon) {
-          if (icon.one('image')) {
+          if (icon.one('img')) {
             // Maintain the charm icon URL if it exists.
             iconImage = icon.one('img').getAttribute('src');
           }
