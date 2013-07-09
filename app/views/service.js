@@ -1130,6 +1130,26 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
+      Display the "do you really want to destroy this service?" prompt.
+
+      @method showDestroyServicePrompt
+      @param {Y.EventFacade} evt The click event.
+    */
+    showDestroyServicePrompt: function(evt) {
+      evt.container.one('.destroy-service-prompt').removeClass('hidden');
+    },
+
+    /**
+      Hide the "do you really want to destroy this service?" prompt.
+
+      @method hideDestroyServicePrompt
+      @param {Y.EventFacade} evt The click event.
+    */
+    hideDestroyServicePrompt: function(evt) {
+      evt.container.one('.destroy-service-prompt').addClass('hidden');
+    },
+
+    /**
       Handles exposing the service.
 
       @method toggleExpose

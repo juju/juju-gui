@@ -174,7 +174,7 @@ YUI.add('juju-view-environment', function(Y) {
             },
             configService: {
               events: {
-                '.tab': {'click': 'showViewlet'}
+                '.tab': {'click': 'showViewlet'},
               },
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
@@ -184,7 +184,11 @@ YUI.add('juju-view-environment', function(Y) {
                 '.num-units-control': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
-                }
+                },
+                '.destroy-service-button': {
+                  'click': 'showDestroyServicePrompt'
+                },
+                '.cancel-destroy': {'click': 'hideDestroyServicePrompt'}
               },
               viewletList: ['overview', 'units', 'config'],
               template: Y.juju.views.Templates['view-container']
