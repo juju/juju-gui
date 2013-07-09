@@ -57,7 +57,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '#bws-hooks select': {
         change: '_loadHookContent'
       },
-      '.nav .back': {
+      '.heading .back': {
         click: '_handleBack'
       },
       '.charm-token': {
