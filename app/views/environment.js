@@ -176,14 +176,18 @@ YUI.add('juju-view-environment', function(Y) {
               events: {
                 '.tab': {'click': 'showViewlet'}
               },
-              viewletList: ['overview', 'units', 'config'],
-              template: Y.juju.views.Templates['view-container'],
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'}
-              }
+                '.config-file input[type=file]': { change: 'handleFileChange'},
+                '.num-units-control': {
+                  'keydown': 'modifyUnits',
+                  'blur': 'resetUnits'
+                }
+              },
+              viewletList: ['overview', 'units', 'config'],
+              template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
               // controller will show the first one in this array by default

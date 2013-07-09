@@ -339,7 +339,14 @@ YUI.add('juju-view-container', function(Y) {
         @attribute db
         @default undefined
       */
-      db: {}
+      db: {},
+      /**
+        Reference to the environment.
+
+        @attribute env
+        @default undefined
+      */
+      env: {}
     }
 
   });

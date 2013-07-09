@@ -98,24 +98,54 @@ describe('charm panel', function() {
     // options as an attribute of the charm config.  The deploy function
     // therefore arranges for that to be true.
     var OPTIONS = 'we are the options, my friend';
-    var setCalled = false;
+    var optionsSetOnConfig = false;
     var charm = {
       id: 'cs:precise/juju-gui-7',
       get: function(name) {
         if (name === 'id') {
           return 'cs:precise/juju-gui-7';
+        } else if (name === 'config') {
+          return undefined;
         }
         assert.equal(name, 'options');
         return OPTIONS;
       },
       set: function(name, value) {
-        assert.equal(name, 'config');
-        assert.deepEqual(value, {options: OPTIONS});
-        setCalled = true;
+        if (name === 'config') {
+          assert.deepEqual(value, {options: OPTIONS});
+          optionsSetOnConfig = true;
+        }
       }
     };
     panel.deploy(charm, undefined, function() {});
-    assert.isTrue(setCalled);
+    assert.isTrue(optionsSetOnConfig);
+  });
+
+  it('does not set config.options if config is defined', function() {
+    var panel = Y.namespace('juju.views').CharmPanel
+          .getInstance({
+          testing: true,
+          container: container,
+          app: { views: { environment: {}}}
+        }),
+        node = panel.node;
+    panel.setActivePanelName('configuration');
+    var charm = {
+      id: 'cs:precise/juju-gui-7',
+      get: function(name) {
+        if (name === 'id') {
+          return 'cs:precise/juju-gui-7';
+        } else if (name === 'config') {
+          return {};
+        }
+      },
+      set: function(name, value) {
+        if (name === 'config') {
+          assert.fail(null, null, 'config should not have been set');
+        }
+      }
+    };
+    panel.deploy(charm, undefined, function() {});
   });
 
   describe('service ghost', function() {
