@@ -373,6 +373,8 @@ describe('service module events', function() {
     var localContainer = utils.makeContainer();
     // this will be removed by the canvas drop handler
     localContainer.setAttribute('id', 'foo');
+    localContainer
+      .append('<img src="/juju-ui/assets/svgs/service_health_mask.svg" />');
     d3.event._event = {
       dataTransfer: {
         getData: function(name) {
@@ -390,8 +392,15 @@ describe('service module events', function() {
     d3.mouse = function() {
       return [5, 7];
     };
-    var eventHandle = Y.on('initiateDeploy', function(charm) {
+    var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
       eventHandle.detach();
+      // Assert that the correct ghostAttributes are passed; note that the
+      // service will be positioned at (150, 75) + the given coordinates due to
+      // transposition/scale of the canvas.
+      assert.deepEqual(ghostAttributes, {
+        coordinates: [155, 82],
+        icon: '/juju-ui/assets/svgs/service_health_mask.svg'
+      });
       done();
     });
     serviceModule.set('component', topo);

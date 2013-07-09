@@ -38,13 +38,14 @@ YUI.add('juju-view-container', function(Y) {
   var ViewletBase = {
 
     /**
-      The user defined name for the viewlet.
+      The user defined name for the viewlet. This will be inferred from the
+      viewlets object on the ViewContainer when possible.
 
       @property name
       @type {String}
-      @default ''
+      @default null
     */
-    name: '',
+    name: null,
 
     /**
       String template of the viewlet wrapper
@@ -74,14 +75,23 @@ YUI.add('juju-view-container', function(Y) {
     container: null,
 
     /**
+      Optional logical slot name for this viewlet to fill.
+
+      @property slot
+      @type {String}
+      @default null
+    */
+    slot: null,
+
+    /**
       When defined it allows the developer to specify another model to bind the
       Viewlet to, usually one nested in the model passed to the View Container.
 
-      @property rebind
+      @property selectBindModel
       @type {Function}
       @default null
     */
-    rebind: null,
+    selectBindModel: null,
 
     /**
       User defined update method which re-renders the contents of the viewlet.
@@ -91,7 +101,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @method update
       @type {function}
-      @param {Y.ModelList | Y.LazyModelList} modellist from the rebind.
+      @param {Y.ModelList | Y.LazyModelList} modellist from the selectBindModel.
       @default {noop function}
     */
     update: function(modellist) {},
@@ -152,7 +162,16 @@ YUI.add('juju-view-container', function(Y) {
       @type {Array}
       @default empty array
     */
-    _changedValues: []
+    _changedValues: [],
+
+    /**
+     Model change events handles associated with this viewlet.
+
+     @property _eventHandles
+     @type {Array}
+     @default empty array
+     */
+    _eventHandles: []
   };
 
   /**
@@ -216,8 +235,15 @@ YUI.add('juju-view-container', function(Y) {
       this.template = options.template;
       this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;
-      this.viewlets = this._generateViewlets();
+      this.viewlets = this._generateViewlets(); // {String}: {Viewlet}
       this.events = options.events;
+      // Map from logical slot name to the CSS selector within viewContainer's
+      // DOM to be used to hold this slot when rendered.
+      this.slots = {};
+      // Internal mapping from slot name to viewlet rendered into slot.
+      this._slots = {};
+
+      this.bindingEngine = new jujuViews.BindingEngine();
     },
 
     /**
@@ -232,7 +258,10 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Renders the viewlets into the view container.
+      Renders the viewlets into the view container. Viewlets with a logical
+      slot name defined are not rendered by defaul and require that showViewlet
+      be called for them to render. Slots are typically filled through event
+      callback interactions (for example in a click handler).
 
       @method render
       @chainable
@@ -244,20 +273,28 @@ YUI.add('juju-view-container', function(Y) {
           viewletTemplate;
 
       // To allow you to pass in a string instead of a precompiled template
-      if (typeof this.template === 'String') {
+      if (typeof this.template === 'string') {
         this.template = Y.Handlebars.compile(this.template);
       }
-
       container.setHTML(this.template(this.templateConfig));
 
-      // We may want to make this selector user defined at some point
       var viewletContainer = container.one(this.viewletContainer);
 
       // render the viewlets into their containers
-      Y.Object.each(this.viewlets, function(viewlet) {
-        viewlet.render(model, attrs);
+      Y.Object.each(this.viewlets, function(viewlet, name) {
+        if (!viewlet.name) {
+          viewlet.name = name;
+        }
+        if (viewlet.slot) {
+          return;
+        }
+        var result = viewlet.render(model, attrs);
+        if (result && typeof result === 'string') {
+          viewlet.container = Y.Node.create(result);
+        }
         viewletContainer.append(viewlet.container);
-      });
+        this.bindingEngine.bind(model, viewlet);
+      }, this);
 
       // chainable
       return this;
@@ -268,8 +305,9 @@ YUI.add('juju-view-container', function(Y) {
 
       @method showViewlet
       @param {String} viewletName is a string representing the viewlet name.
+      @param {Model} model to associate with the viewlet in its slot.
     */
-    showViewlet: function(viewletName) {
+    showViewlet: function(viewletName, model) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
       container.all('.viewlet-wrapper').hide();
@@ -278,7 +316,56 @@ YUI.add('juju-view-container', function(Y) {
       if (typeof viewletName !== 'string') {
         viewletName = viewletName.currentTarget.getData('viewlet');
       }
-      this.viewlets[viewletName].container.show();
+      var viewlet = this.viewlets[viewletName];
+      if (!model) {
+        model = this.get('model');
+      }
+      this.fillSlot(viewlet, model);
+      viewlet.container.show();
+    },
+
+    /**
+      Render a viewlet/model pair into a logically named slot.
+      Called automatically by showViewlet. When the viewlet has a
+      slot defined this method registers the model bindings
+      properly removing any existing bindings for the slot.
+
+      @method fillSlot
+      @param {Viewlet} viewlet to render.
+      @param {Model} model to bind to the slot.
+    */
+    fillSlot: function(viewlet, model) {
+      var target;
+      var slot = viewlet.slot;
+      if (slot === null) {
+        return;
+      }
+      var existing = this._slots[slot];
+      if (existing) {
+        existing = this.bindingEngine.getViewlet(existing.name);
+        if (existing) {
+          existing.remove();
+        }
+      }
+      if (model === undefined) {
+        model = this.get('model');
+      }
+      if (this.slots[slot]) {
+        // Look up the target selector for the slot.
+        target = this.get('container').one(this.slots[slot]);
+        var result = viewlet.render(model, this.getAttrs());
+        if (result) {
+          if (typeof result === 'string') {
+            result = Y.Node.create(result);
+          }
+          viewlet.container = result;
+        }
+        target.setHTML(viewlet.container);
+        this._slots[slot] = viewlet;
+        this.bindingEngine.bind(model, viewlet);
+      } else {
+        console.error('View Container Missing slot', slot);
+      }
     },
 
     /**
@@ -338,6 +425,7 @@ YUI.add('juju-view-container', function(Y) {
       @method destructor
     */
     destructor: function() {
+      this.bindingEngine.unbind();
       this.get('container').remove().destroy(true);
     }
 
@@ -356,13 +444,21 @@ YUI.add('juju-view-container', function(Y) {
         @attribute db
         @default undefined
       */
-      db: {}
+      db: {},
+      /**
+        Reference to the environment.
+
+        @attribute env
+        @default undefined
+      */
+      env: {}
     }
 
   });
 
 }, '', {
   requires: [
+    'juju-databinding',
     'view',
     'node',
     'base-build',

@@ -113,11 +113,10 @@ YUI.add('juju-databinding', function(Y) {
      * @class BindingEngine
      */
     function BindingEngine() {
-      this.model = null;
       this._viewlets = {};  // {viewlet.name: viewlet}
-      this._events = [];    // [event handle]
       this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
+      this._models = {}; // {ModelName: [Event Handles]}
     }
 
     /**
@@ -186,14 +185,17 @@ YUI.add('juju-databinding', function(Y) {
 
       @method bind
       @param {Object} model || model list.
-      @param {Object||Array} viewlet or array of viewlets.
+      @param {Object||Array} viewlets or array of viewlets.
       @chainable
     */
-    BindingEngine.prototype.bind = function(model, viewlet) {
-      this._events.push(
+    BindingEngine.prototype.bind = function(model, viewlets) {
+      var modelEventHandles = this.resetModelChangeEvents(model);
+      modelEventHandles.push(
           model.on('change', this._modelChangeHandler, this));
-      if (!Y.Lang.isArray(viewlet)) { viewlet = [viewlet]; }
-      Y.each(viewlet, function(v) { this._bind(model, v);}, this);
+
+      if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
+      Y.each(viewlets, function(v) {
+        this._bind(model, v);}, this);
       return this;
     };
 
@@ -211,17 +213,24 @@ YUI.add('juju-databinding', function(Y) {
         throw new Error('Unable to bind, invalid Viewlet');
       }
 
-      this.model = model;
+      // Push a bound remove callback the viewlet can use.
+      viewlet.remove = Y.bind(function() {
+        this.resetModelChangeEvents(model);
+        this.resetViewletDOMEvents(viewlet);
+        viewlet.model = null;
+      }, this);
+
       this._viewlets[viewlet.name] = viewlet;
 
-      if (viewlet.rebind) {
-        viewletModel = viewlet.rebind(model);
+      if (viewlet.selectBindModel) {
+        viewletModel = viewlet.selectBindModel(model);
       }
 
-      // When rebind doesn't return a valid target, skip the binding.
+      // When selectBindModel doesn't return a valid target, skip the binding.
       if (!viewletModel) {
         return this;
       }
+      viewlet.model = viewletModel;
 
       // Check model or modellist?
       if (checkClassImplements(viewletModel, 'model')) {
@@ -233,7 +242,7 @@ YUI.add('juju-databinding', function(Y) {
             target: node
           }, viewlet);
           // Add listeners for model cloning for conflict resolution
-          this._events.push(
+          viewlet._eventHandles.push(
               node.on(
                   'valueChange', this._storeChanged, this, viewlet));
         }, this);
@@ -247,9 +256,10 @@ YUI.add('juju-databinding', function(Y) {
         // use a Object.observe polyfill to get notice on model change.
         // We don't do data-binding on child elements, the viewlet will be
         // triggered to re-render its contents. All our collection views
-        // are currently read-only so this work ok.
-        this._events.push(viewletModel.after(['add', 'remove', 'change'],
-            this._modelListChange, this));
+        // are currently read-only so this works ok.
+        viewlet._eventHandles.push(
+            viewletModel.after(['add', 'remove', 'change'],
+                              this._modelListChange, this));
 
         this._modelListChange();
       }
@@ -325,19 +335,81 @@ YUI.add('juju-databinding', function(Y) {
      @method unbind
     */
     BindingEngine.prototype.unbind = function() {
-      this._events.forEach(function(handle) {
-        handle.detach();
+      var self = this;
+      // Unbind each model
+      Y.each(this._models, function(handles) {
+        handles.forEach(function(handle) {
+          handle.detach();
+        });
+        handles.splice(0, handles.length);
       });
-      this._events = [];
+
+      Y.Object.values(this._viewlets).forEach(function(viewlet) {
+        self.resetViewletDOMEvents(viewlet);
+      });
     };
 
+    /**
+      Unbind model change events from a given model.
+      This shouldn't be called as a client of the framework
+      unless you are sure what you're doing. See viewlet.remove
+
+
+      @method resetModelChangeEvents
+      @param {Model} to unbind.
+      @return {Array} modelEventHandles (empty but appendable).
+     */
+    BindingEngine.prototype.resetModelChangeEvents = function(model) {
+      var mID = model.get('id');
+      var modelEventHandles = this._models[mID] || [];
+      modelEventHandles.forEach(function(handle) {
+        handle.detach();
+      });
+      // Empty the list
+      modelEventHandles.splice(0, modelEventHandles.length);
+      this._models[mID] = modelEventHandles;
+      return modelEventHandles;
+    };
+
+    /**
+      Unbind DOM events created for a given viewlet.
+
+      @method resetViewletDOMEvents
+      @param {Viewlet} viewlet to unbind.
+      @return {Array} (empty) of DOM event handles.
+     */
+    BindingEngine.prototype.resetViewletDOMEvents = function(viewlet) {
+      var events = viewlet._eventHandles;
+      events.forEach(function(handle) {
+        handle.detach();
+      });
+      events.splice(0, events.length);
+
+      // TODO: Filter bindings removing any where viewlet === binding.viewlet.
+      return events;
+    };
+
+    /**
+      Return the viewlet, given `name`.
+
+      @method getViewlet
+      @param {String} name to lookup.
+      @return {Viewlet} viewlet object.
+    */
+    BindingEngine.prototype.getViewlet = function(name) {
+      // We need the resolved, annotated viewlet.
+      return this._viewlets[name];
+    };
+
+
     BindingEngine.prototype._modelListChange = function(evt) {
-      var list = this.model;
       // Force an update to each viewlet registered to the
       // ModelList.
       Y.each(this._viewlets, function(viewlet) {
-        if (viewlet.rebind) {
-          list = viewlet.rebind(list);
+        var list = viewlet.model;
+        // Only update when list is evt target (if we can know this).
+        if (!checkClassImplements(list, 'modelList')) {
+          return;
         }
         if (viewlet.update) {
           viewlet.update.call(viewlet, list);
@@ -391,7 +463,6 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
-      var model = this.model;
       var resolve = self.resolve;
       if (delta === undefined) {
         delta = deltaFromChange.call(this);
@@ -399,7 +470,7 @@ YUI.add('juju-databinding', function(Y) {
 
       Y.each(delta, function(binding) {
         var viewlet = binding.viewlet;
-        var viewletModel = viewlet.rebind && viewlet.rebind(model) || model;
+        var viewletModel = viewlet.model;
         var conflicted;
         // With the introduction of dependencies in the binding
         // layer, its possible to depend on a dependent value

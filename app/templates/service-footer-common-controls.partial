@@ -3,7 +3,7 @@
   <div class="control-unit-count">
     <div class="inline"><span>Unit count</span></div>
     <div class="inline">
-      <input type="text" id="num-service-units"
+      <input type="text" class="num-units-control"
           value="{{service.unit_count}}">
     </div>
   </div>
