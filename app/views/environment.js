@@ -184,9 +184,11 @@ YUI.add('juju-view-environment', function(Y) {
                 '.num-units-control': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
-                }
+                },
+                // Constraints viewlet events.
+                '.save-constraints': {click: 'handleSaveConstraints'}
               },
-              viewletList: ['overview', 'units', 'config'],
+              viewletList: ['overview', 'units', 'config', 'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {

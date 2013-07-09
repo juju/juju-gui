@@ -1263,7 +1263,32 @@ YUI.add('juju-view-service', function(Y) {
       // replacement.  It actually works well in practice.
       container.one('input[type=file]')
                .replace(Y.Node.create('<input type="file"/>'));
+    },
+
+     /**
+      Handles exposing the service.
+
+      @method toggleExpose
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    handleSaveConstraints: function(e) {
+      var service = this.inspector.get('model');
+      var env = this.inspector.get('env');
+      console.log('CONSTRAINTS');
+      console.log(service);
+      console.log(env);
+      // var exposed;
+      // if (service.get('exposed')) {
+      //   this.unexposeService();
+      //   exposed = false;
+      // } else {
+      //   this.exposeService();
+      //   exposed = true;
+      // }
+      // service.set('exposed', exposed);
     }
+
   };
 
   /**

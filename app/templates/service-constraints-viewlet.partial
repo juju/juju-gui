@@ -11,7 +11,7 @@
     <div class="control-label" for="{{name}}">{{title}}</div>
     <div class="controls">
       <input class="constraint-field" type="text" name="{{name}}"
-          id="input-{{name}}" value="{{value}}" data-bind="constraints.{{name}}" />
+          value="{{value}}" data-bind="constraints.{{name}}" />
           {{unit}}
     </div>
 
