@@ -1136,7 +1136,7 @@ YUI.add('juju-view-service', function(Y) {
       @param {Y.EventFacade} evt The click event.
     */
     showDestroyServicePrompt: function(evt) {
-      evt.container.one('.destroy-service-prompt').addClass('open');
+      evt.container.one('.destroy-service-prompt').removeClass('closed');
     },
 
     /**
@@ -1146,7 +1146,7 @@ YUI.add('juju-view-service', function(Y) {
       @param {Y.EventFacade} evt The click event.
     */
     hideDestroyServicePrompt: function(evt) {
-      evt.container.one('.destroy-service-prompt').removeClass('open');
+      evt.container.one('.destroy-service-prompt').addClass('closed');
     },
 
     initiateServiceDestroy: function(evt) {
