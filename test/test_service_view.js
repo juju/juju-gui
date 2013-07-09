@@ -32,6 +32,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             views = Y.namespace('juju.views');
             done();
           });
+      window.flags = {};
     });
 
     beforeEach(function(done) {
@@ -235,7 +236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should show controls to modify units by default', function() {
       var view = makeServiceView();
-      container.one('#num-service-units').should.not.equal(null);
+      container.one('.num-units-control').should.not.equal(null);
     });
 
     it('should not show controls if the charm is subordinate', function() {
@@ -243,7 +244,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       charm._set('is_subordinate', true);
       var view = makeServiceView();
       // "var _ =" makes the linter happy.
-      var _ = expect(container.one('#num-service-units')).to.not.exist;
+      var _ = expect(container.one('.num-units-control')).to.not.exist;
     });
 
     it('should show Landscape controls if needed', function() {
@@ -352,14 +353,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should start with the proper number of units shown in the text field',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.get('value').should.equal('3');
        });
 
     it('should remove multiple units when the text input changes',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 1);
          control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
          var message = conn.last_message();
@@ -370,7 +371,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should not do anything if requested is < 1',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
          var _ = expect(conn.last_message()).to.not.exist;
@@ -382,7 +383,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          service.set('unit_count', 1);
          db.units.remove([1, 2]);
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
          var _ = expect(conn.last_message()).to.not.exist;
@@ -392,7 +393,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should add the correct number of units when entered via text field',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 7);
          control.simulate('keydown', { keyCode: ENTER });
          var message = conn.last_message();
@@ -406,7 +407,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        function() {
          var new_unit_id = 'mysql/5',
              view = makeServiceView(),
-             control = container.one('#num-service-units'),
+             control = container.one('.num-units-control'),
              expected_names = db.units.map(function(u) {return u.id;});
          expected_names.push(new_unit_id);
          expected_names.sort();
@@ -431,7 +432,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        'reply back from the server',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ENTER });
          var callbacks = Y.Object.values(env._txn_callbacks);
@@ -443,7 +444,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should reset values on the control when you press escape',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ESC });
          control.get('value').should.equal('3');
@@ -456,7 +457,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            return;
          }
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('blur');
          control.get('value').should.equal('3');
@@ -465,7 +466,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should reset values on the control when you type invalid value',
        function() {
          var view = makeServiceView();
-         var control = container.one('#num-service-units');
+         var control = container.one('.num-units-control');
 
          var pressKey = function(key) {
            control.set('value', key);

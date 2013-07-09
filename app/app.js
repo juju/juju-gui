@@ -598,11 +598,11 @@ YUI.add('juju-gui', function(Y) {
       }
       this.addSubApplications(cfg);
 
-      // When someone wants a charm to be deployed they fire initiateDeploy
-      // and we show the charm panel to configure/deploy the service.
-      Y.on('initiateDeploy', function(charm) {
-        this.deploy(charm);
-      }, this.charmPanel);
+      // When someone wants a charm to be deployed they fire an event and we
+      // show the charm panel to configure/deploy the service.
+      Y.on('initiateDeploy', function(charm, ghostXY) {
+        cfg.deploy(charm, ghostXY);
+      }, this);
     },
 
     /**

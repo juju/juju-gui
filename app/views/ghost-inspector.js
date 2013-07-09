@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
   The ghost inspector is the view-container implementation of the ghost
-  configuration view
+  configuration view.
 
   @module views
   @submodule views.ghostInspector
@@ -43,14 +43,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
   function GhostDeployer() {}
 
   GhostDeployer.prototype = {
-    /**
-      A collection of the open ghost inspectors.
-
-      @property _ghostInspectors
-      @private
-      @type {Array}
-    */
-    _ghostInspectors: [],
 
     /**
       Show the deploy/configuration panel for a charm.
@@ -58,57 +50,24 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method deployService
       @param {Y.Model} charm model to add to the charms database.
     */
-    deployService: function(charm) {
-      // XXX - Jeff 25/06/2013
-      // Is this flag still required? Don't the modelController promises pull
-      // these in fully populated now?
+    deployService: function(charm, ghostXY) {
+      // This flag is still required because it comes fully populated from the
+      // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
 
+      this.db.charms.add(charm);
+
       var ghostService = this.db.services.ghostService(charm);
+      if (ghostXY !== undefined) {
+        ghostService.set('x', ghostXY[0]);
+        ghostService.set('y', ghostXY[1]);
+        // Set the dragged attribute to true so that the x/y coords are
+        // stored in annotations as well as on the service box.
+        ghostService.set('hasBeenPositioned', true);
+      }
       var self = this;
-      var ghostInspector = new Y.juju.views.ServiceInspector(charm, {
-        // Because this is an extension `this` points to the JujuApp
-        db: this.db,
-        env: this.env,
-        ghostService: ghostService,
-        // controller will show the first one in this array by default
-        viewletList: ['ghostConfig'],
-        // the view container template
-        template: Y.juju.views.Templates['ghost-config-wrapper'],
-        // these events are for the viewlet container
-        events: {
-          '.close' : { 'click': 'destroy' },
-          '.cancel': { 'click': 'destroy' }
-        },
-        // these events are for the viewlets and have their callbacks bound to
-        // the controllers prototype and are then mixed with the containers
-        // events for final binding
-        viewletEvents: {
-          '.deploy': { 'click': 'deployCharm' },
-          'input.config-file-upload': { 'change': 'handleFileUpload' },
-          'span.config-file-upload': { 'click': '_showFileDialogue' },
-          'input[name=service-name]': { 'valuechange': 'updateGhostName' }
-        },
-        // the configuration for the view container template
-        templateConfig: {
-          packageName: charm.get('package_name'),
-          id: charm.get('id')
-        }
-      });
-
-      this._ghostInspectors.push(ghostInspector);
-
-      ghostInspector.inspector.after('destroy', function(e) {
-        // This loops through the instantiated ghostInspectors to find one
-        // which matches the one which has fired the destroy event notifying
-        // that it's been destroyed so we can remove it from the collection
-        this._ghostInspectors.forEach(function(inspector, index) {
-          if (e.currentTarget === inspector.inspector) {
-            self._ghostInspectors.splice(index, 1);
-          }
-        });
-      }, this);
-
+      var environment = this.views.environment.instance,
+          ghostInspector = environment.createServiceInspector(ghostService);
     }
   };
 
@@ -250,7 +209,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       // Update the annotations with the box's x/y coordinates if
       // they have been set by dragging the ghost.
-      if (ghostService.get('dragged')) {
+      if (ghostService.get('hasBeenPositioned')) {
         options.env.update_annotations(
             serviceName, 'service',
             { 'gui-x': ghostService.get('x'),

@@ -104,9 +104,11 @@ YUI.add('juju-view-container', function(Y) {
       @method render
       @type {function}
       @param {Y.Model} model passed to the view container.
+      @param {Object} viewContainerAttrs object of all of the view container
+        attributes.
       @default {render function}
     */
-    render: function(model) {
+    render: function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       if (typeof this.template === 'string') {
@@ -337,7 +339,14 @@ YUI.add('juju-view-container', function(Y) {
         @attribute db
         @default undefined
       */
-      db: {}
+      db: {},
+      /**
+        Reference to the environment.
+
+        @attribute env
+        @default undefined
+      */
+      env: {}
     }
 
   });

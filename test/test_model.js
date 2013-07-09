@@ -274,6 +274,22 @@ describe('juju models', function() {
     db.resolveModelByName('0').should.equal(machine);
   });
 
+  it('should update service units on change', function() {
+    var db = new models.Database();
+    var mysql = new models.Service({id: 'mysql'});
+    db.services.add([mysql]);
+    assert.isUndefined(mysql.get('units'));
+    db.onDelta({data: {result: [
+      ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
+      ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
+    ]}});
+    assert.equal(mysql.get('units').size(), 2);
+    db.onDelta({data: {result: [
+      ['unit', 'remove', 'mysql/1']
+    ]}});
+    assert.equal(mysql.get('units').size(), 1);
+  });
+
   it('onDelta should handle remove changes correctly',
       function() {
         var db = new models.Database();
@@ -763,14 +779,15 @@ describe('BrowserCharm test', function() {
     // The overall should have the default 5 max charms listed.
     assert.equal(5, relatedObject.overall.length);
     // The requires for mysql should be truncated to the max of 5 as well.
-    assert.equal(5, relatedObject.requires.http.length);
+    assert.equal(1, relatedObject.requires.http.length);
     // There's only one key in the provides section.
     assert.equal(1, Y.Object.keys(relatedObject.provides).length);
 
-    // None of the overall weights should be one.
-    relatedObject.overall.forEach(function(charm) {
-      assert.notEqual(1, charm.weight);
+    // The overall should be sorted by their weights.
+    var weights = relatedObject.overall.map(function(charm) {
+      return charm.weight;
     });
+    assert.equal(weights.sort(), weights);
   });
 });
 

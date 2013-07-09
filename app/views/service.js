@@ -42,17 +42,39 @@ YUI.add('juju-view-service', function(Y) {
    */
   var manageUnitsMixin = {
     // Mixin attributes
+    // XXX Makyo - this will need to be removed when the serviceInspector flag
+    // goes away.
     events: {
-      '#num-service-units': {
+      '.num-units-control': {
         keydown: 'modifyUnits',
         blur: 'resetUnits'
       }
     },
 
+    /*
+     * XXX Makyo - all instances of testing for the flag will go away once
+     * the inspector becomes the default, rather than internal pages.
+     */
+    /**
+     * No-Op function to replace getModelURL for the time being.
+     * XXX Makyo - remove when inspector becomes the default.
+     *
+     * @method noop
+     * @return {undefined} Nothing.
+     */
+    noop: function() { return; },
+
     resetUnits: function() {
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
-      field.set('value', this.get('model').get('unit_count'));
+      var container, model, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+        model = this.inspector.get('model');
+      } else {
+        container = this.get('container');
+        model = this.get('model');
+      }
+      var field = container.one('.num-units-control');
+      field.set('value', model.get('unit_count'));
       field.set('disabled', false);
     },
 
@@ -60,8 +82,13 @@ YUI.add('juju-view-service', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
+      var container, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+      } else {
+        container = this.get('container');
+      }
+      var field = container.one('.num-units-control');
 
       if (ev.keyCode === ESC) {
         this.resetUnits();
@@ -79,10 +106,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _modifyUnits: function(requested_unit_count) {
-      var service = this.get('model'),
-          unit_count = service.get('unit_count'),
-          field = this.get('container').one('#num-service-units'),
-          env = this.get('env');
+      var container, env, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+        env = this.inspector.get('env');
+      } else {
+        container = this.get('container');
+        env = this.get('env');
+      }
+      var service = this.model || this.get('model');
+      var unit_count = service.get('unit_count');
+      var field = container.one('.num-units-control');
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -98,7 +132,13 @@ YUI.add('juju-view-service', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var units = this.get('db').units.get_units_for_service(service),
+        var db;
+        if (flags.serviceInspector) {
+          db = this.inspector.get('db');
+        } else {
+          db = this.get('db');
+        }
+        var units = db.units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
         for (var i = units.length - 1;
@@ -115,10 +155,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _addUnitCallback: function(ev) {
-      var service = this.get('model'),
-          getModelURL = this.get('getModelURL'),
-          db = this.get('db'),
-          unit_names = ev.result || [];
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
+        service = this.inspector.get('model');
+        getModelURL = this.noop;
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -143,10 +190,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _removeUnitCallback: function(ev) {
-      var service = this.get('model'),
-          getModelURL = this.get('getModelURL'),
-          db = this.get('db'),
-          unit_names = ev.unit_names;
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
+        service = this.inspector.get('model');
+        getModelURL = this.noop;
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.unit_names;
 
       if (ev.err) {
         db.notifications.add(
@@ -268,8 +322,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     unexposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -313,8 +369,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     exposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },
@@ -434,7 +492,7 @@ YUI.add('juju-view-service', function(Y) {
                     '.service-header-partial')),
                 footerHeight = getHeight(container.one('.bottom-navbar')),
                 size = (Math.max(windowHeight, 600) - navbarHeight -
-                        headerHeight - footerHeight - 1);
+                        headerHeight - footerHeight - 19);
             viewContainer.set('offsetHeight', size);
             Y.fire('afterPageSizeRecalculation');
           }
@@ -1032,7 +1090,7 @@ YUI.add('juju-view-service', function(Y) {
   /**
     A collection of methods and properties which will be mixed into the
     prototype of the view container controller to add the functionality for
-    the ghost inspector interactions
+    the ghost inspector interactions.
 
     @property serviceInspector
     @submodule juju.controller
@@ -1049,8 +1107,165 @@ YUI.add('juju-view-service', function(Y) {
     'render': function() {
       this.inspector.render();
       return this;
+    },
+
+    /**
+      Handles showing/hiding the configuration settings descriptions.
+
+      @method toggleSettingsHelp
+      @param {Y.EventFacade} e An event object.
+    */
+    toggleSettingsHelp: function(e) {
+      var button = e.currentTarget,
+          descriptions = e.container.all('.settings-description'),
+          btnString = 'Hide settings help';
+
+      if (e.currentTarget.getHTML().indexOf('Hide') < 0) {
+        button.setHTML(btnString);
+        descriptions.show();
+      } else {
+        button.setHTML('Show settings help');
+        descriptions.hide();
+      }
+    },
+
+    /**
+      Handles exposing the service.
+
+      @method toggleExpose
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    toggleExpose: function(e) {
+      var service = this.inspector.get('model');
+      var env = this.inspector.get('db').environment;
+      var exposed;
+      if (service.get('exposed')) {
+        this.unexposeService();
+        exposed = false;
+      } else {
+        this.exposeService();
+        exposed = true;
+      }
+      service.set('exposed', exposed);
+    },
+
+    /**
+      Handles the click on the file input and dispatches to the proper function
+      depending if a file has been previously loaded or not.
+
+      @method handleFileClick
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileClick: function(e) {
+      if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+        // Because we can't style file input buttons properly we style a normal
+        // element and then simulate a click on the real hidden input when our
+        // fake button is clicked.
+        e.container.one('input[type=file]').getDOMNode().click();
+      } else {
+        this.onRemoveFile(e);
+      }
+    },
+
+    /**
+      Handle the file upload click event. Creates a FileReader instance to
+      parse the file data.
+
+
+      @method onFileChange
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileChange: function(e) {
+      var file = e.currentTarget.get('files').shift(),
+          reader = new FileReader();
+      reader.onerror = Y.bind(this.onFileError, this);
+      reader.onload = Y.bind(this.onFileLoaded, this);
+      reader.readAsText(file);
+      e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
+    },
+
+    /**
+      Callback called when an error occurs during file upload.
+      Hide the charm configuration section.
+
+      @method onFileError
+      @param {Object} e An event object (with a "target.error" attr).
+    */
+    onFileError: function(e) {
+      var error = e.target.error, msg;
+      switch (error.code) {
+        case error.NOT_FOUND_ERR:
+          msg = 'File not found';
+          break;
+        case error.NOT_READABLE_ERR:
+          msg = 'File is not readable';
+          break;
+        case error.ABORT_ERR:
+          break; // noop
+        default:
+          msg = 'An error occurred reading this file.';
+      }
+      if (msg) {
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error reading configuration file',
+              message: msg,
+              level: 'error'
+            }));
+      }
+    },
+
+    /**
+      Callback called when a file is correctly uploaded.
+      Hide the charm configuration section.
+
+      @method onFileLoaded
+      @param {Object} e An event object.
+    */
+    onFileLoaded: function(e) {
+      //set the fileContent on the view-container so we can have access to it
+      // when the user submit their config.
+      this.inspector.fileContent = e.target.result;
+      if (!this.inspector.fileContent) {
+        // Some file read errors do not go through the error handler as
+        // expected but instead return an empty string.  Warn the user if
+        // this happens.
+        var db = this.inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Configuration file error',
+              message: 'The configuration file loaded is empty.  ' +
+                  'Do you have read access?',
+              level: 'error'
+            }));
+      }
+      var container = this.inspector.get('container');
+      container.all('.settings-wrapper').hide();
+      container.one('.toggle-settings-help').hide();
+    },
+
+    /**
+      Handle the file remove click event by clearing out the input
+      and resetting the UI.
+
+      @method onRemoveFile
+      @param {Y.EventFacade} e an event object from click.
+    */
+    onRemoveFile: function(e) {
+      var container = this.inspector.get('container');
+      this.inspector.fileContent = null;
+      container.one('.fakebutton').setHTML('Import config file...');
+      container.all('.settings-wrapper').show();
+      // Replace the file input node.  There does not appear to be any way
+      // to reset the element, so the only option is this rather crude
+      // replacement.  It actually works well in practice.
+      container.one('input[type=file]')
+               .replace(Y.Node.create('<input type="file"/>'));
     }
   };
+
   /**
     Service Inspector View Container Controller
 
@@ -1062,7 +1277,13 @@ YUI.add('juju-view-service', function(Y) {
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
-        template: Templates.serviceOverview
+        template: Templates.serviceOverview,
+        'rebind': function(model) {
+          var units = {units: model.get('units').toArray()};
+          this.container.one('.overview-unit-list')
+            .setHTML(Templates.serviceOverviewUnitList(units));
+          return model;
+        }
       },
       units: {
         name: 'units',
@@ -1078,15 +1299,49 @@ YUI.add('juju-view-service', function(Y) {
       config: {
         name: 'config',
         template: Templates['service-configuration'],
-
-        'render': function(service) {
+        'render': function(service, viewContainerAttrs) {
           var settings = [];
+          var db = viewContainerAttrs.db;
+          var charm = db.charms.getById(service.get('charm'));
+          var charmOptions = charm.get('config').options;
           Y.Object.each(service.get('config'), function(value, key) {
-            settings.push({name: key, value: value});
+            settings.push({
+              name: key,
+              value: value,
+              description: charmOptions[key].description,
+              'type': charmOptions[key].type
+            });
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
-              this.template({service: service, settings: settings}));
+              this.template({
+                service: service,
+                settings: settings,
+                exposed: service.get('exposed')}));
+          this.container.all('textarea.config-field')
+                        .plug(plugins.ResizingTextarea,
+                              { max_height: 200,
+                                min_height: 18,
+                                single_line: 18});
+        },
+        bindings: {
+          exposed: {
+            'update': function(node, value) {
+              var img = node.one('img');
+              var span = node.one('span');
+              if (value) {
+                img.set('src', '/juju-ui/assets/images/slider_on.png');
+                span.set('text', 'Yes');
+                span.removeClass('off');
+                span.addClass('on');
+              } else {
+                img.set('src', '/juju-ui/assets/images/slider_off.png');
+                span.set('text', 'No');
+                span.removeClass('on');
+                span.addClass('off');
+              }
+            }
+          }
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
@@ -1232,9 +1487,9 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
-    // This variable is assigned an agregate collection of methods and
+    // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
-    // ServiceInspector constructor
+    // ServiceInspector constructor.
     var controllerPrototype = {};
     /**
       Constructor for View Container Controller
@@ -1253,32 +1508,37 @@ YUI.add('juju-view-service', function(Y) {
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
-      var dd = new Y.DD.Drag({ node: container });
+      var _ = new Y.DD.Drag({ node: container });
       var self = this;
       options.container = container;
       options.viewletContainer = '.viewlet-container';
 
-      // Build a collection of viewlets from the list of required viewlets
+      // Build a collection of viewlets from the list of required viewlets.
       var viewlets = {};
       options.viewletList.forEach(function(viewlet) {
         viewlets[viewlet] = DEFAULT_VIEWLETS[viewlet];
       });
-      // Mix in any custom viewlet configuration options provided by the config
+      // Mix in any custom viewlet configuration options provided by the config.
       options.viewlets = Y.mix(
           viewlets, options.viewlets, true, undefined, 0, true);
 
       options.model = model;
 
-      // Merge the various prototype objects together
+      // Merge the various prototype objects together.  Additionally, merge in
+      // mixins that provide functionality used in the inspector's events.
       var c = Y.juju.controller;
-      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
-        controllerPrototype = Y.mix(controllerPrototype, controller);
-      });
+      [c.ghostInspector,
+        c.serviceInspector,
+        manageUnitsMixin,
+        exposeButtonMixin]
+        .forEach(function(controller) {
+            controllerPrototype = Y.mix(controllerPrototype, controller);
+          });
 
-      // Bind the viewletEvents to this class
+      // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
           handlers, selector, collection) {
-            // You can have multiple listeners per selector
+            // You can have multiple listeners per selector.
             Y.Object.each(handlers, function(callback, event, obj) {
               options.viewletEvents[selector][event] = Y.bind(
                   controllerPrototype[callback], self);
@@ -1290,7 +1550,7 @@ YUI.add('juju-view-service', function(Y) {
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
       // We create a new binding engine even if it's unlikely
-      // that the model will change
+      // that the model will change.
       this.bindingEngine = new views.BindingEngine();
       this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
       this.inspector.after('destroy', function() {

@@ -47,18 +47,37 @@ describe('charm token drag and drop', function() {
     }
   });
 
+  it('extracts charm configuration from the widget configuration', function() {
+    // The widget configuration is a superset of the charm configuration, which
+    // is needed when deploying a charm via drag and drop.  The charm
+    // configuration is extracted by the initializer and stored in an
+    // attribute.
+    var config = {
+      id: 'test',
+      description: 'some description',
+      thingThatIsNotCharmConfiguration: 42
+    };
+    token = new CharmToken(config);
+    assert.equal(token.charmData.id, config.id);
+    assert.equal(token.charmData.description, config.description);
+    assert.equal(token.charmData.thingThatIsNotCharmConfiguration, undefined);
+  });
+
   it('makes each charm token draggable', function() {
     var cfg = {
       id: 'test',
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,
-      recent_download_count: 3,
-      tested_providers: ['ec2']
+      downloads: 3,
+      tested_providers: ['ec2'],
+      boundingBox: container,
+      contentBox: container
     };
+    // We need to simulate a complex token with several nested elements.
     token = new CharmToken(cfg);
     var draggable = [];
-    token._makeDraggable = function(element, dragImage, charmData) {
+    token._makeDraggable = function(element, charmData) {
       draggable.push(Y.JSON.parse(charmData).id);
     };
     token.renderUI(container);
@@ -98,11 +117,57 @@ describe('charm token drag and drop', function() {
   });
 
   it('can set up drag and drop configuration', function() {
-    token = new CharmToken();
+    var setAttributeCalled, getCalled, stopPropagationCalled;
+    var UNIQUE_ID = 'UNIQUE ID';
+    var DRAG_IMAGE_DOM_NODE = 'DRAG IMAGE DOM NODE';
+    var fauxIcon = {
+      cloned: false,
+      cloneNode: function() {
+        // The charm's icon is cloned and used as a drag image.
+        fauxIcon.cloned = true;
+        return fauxIcon;
+      },
+      get: function(name) {
+        // The YUI-generated unique ID is used to keep track of the cloned
+        // icon.
+        assert.equal(name, '_yuid');
+        getCalled = true;
+        return UNIQUE_ID;
+      },
+      setAttribute: function(name, value) {
+        // A unique ID is set as the drag image ID so it can be removed from
+        // the DOM when the dragging is done.
+        assert.equal(name, 'id');
+        assert.equal(value, UNIQUE_ID);
+        setAttributeCalled = true;
+      },
+      getAttribute: function(name) {
+        assert.equal(name, 'id');
+        return UNIQUE_ID;
+      },
+      getDOMNode: function() {
+        return DRAG_IMAGE_DOM_NODE;
+      },
+      one: function() {
+        return {
+          get: function() {}
+        };
+      },
+      setStyles: function() {return fauxIcon;}
+    };
+    container.one = function(selector) {
+      assert.equal(selector, '.icon');
+      return fauxIcon;
+    };
+    var cfg = {
+      boundingBox: container,
+      contentBox: container
+    };
+    token = new CharmToken(cfg);
+    token.render();
     var setDataCalled, setDragImageCalled;
-    var dragImage = {_node: {id: 'the real drag image'}};
     var charmData = 'data';
-    var handler = token._makeDragStartHandler(dragImage, charmData);
+    var handler = token._makeDragStartHandler(charmData);
     var dragDataSet = [];
     var evt = {
       _event: {
@@ -111,21 +176,33 @@ describe('charm token drag and drop', function() {
             dragDataSet.push([name, value]);
             setDataCalled = true;
           },
-          setDragImage: function(provideDragImage, x, y) {
-            assert.equal(provideDragImage, dragImage._node);
+          setDragImage: function(providedDragImage, x, y) {
+            assert.equal(providedDragImage, DRAG_IMAGE_DOM_NODE);
             assert.equal(x, 0);
             assert.equal(y, 0);
             setDragImageCalled = true;
           }
+        },
+        stopPropagation: function() {
+          stopPropagationCalled = true;
         }
       }
     };
     handler(evt);
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
-    assert.equal(Y.JSON.stringify(dragDataSet),
-        '[["charmData","data"],["dataType","charm-token-drag-and-drop"]]');
+    assert.deepEqual(dragDataSet.splice(0, 1),
+        [['clonedIconId', 'UNIQUE ID']]);
+    assert.deepEqual(dragDataSet.splice(0, 1),
+        [['charmData', 'data']]);
+    assert.deepEqual(dragDataSet.splice(0, 1),
+        [['dataType', 'charm-token-drag-and-drop']]);
+    // Assure that we verified all data that was set.
+    assert.deepEqual(dragDataSet, []);
     assert.isTrue(setDataCalled);
     assert.isTrue(setDragImageCalled);
+    assert.isTrue(stopPropagationCalled);
+    assert.isTrue(setAttributeCalled);
+    assert.isTrue(getCalled);
   });
 
   it('respects the isDraggable switch', function() {

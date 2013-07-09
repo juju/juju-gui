@@ -31,7 +31,94 @@
             font-size: 16pt;
         }
     }
-    
+
+    .view-container {
+        overflow: auto;
+        padding: 15px;
+
+        h2 {
+            font-size: 18px;
+            padding-left: 0;
+        }
+
+        .toggle-settings-help {
+            cursor: pointer;
+        }
+
+        .toggle-expose {
+            cursor: pointer;
+            padding-bottom: 15px;
+
+            img {
+                position: relative;
+                margin-left: 70px;
+            }
+            .on {
+                font-size: 12px;
+                position: absolute;
+                right: 40px;
+            }
+            .off {
+                font-size: 12px;
+                color: black;
+                position: absolute;
+                right: 60px;
+            }
+        }
+
+        .settings-wrapper {
+            position: relative;
+
+            label {
+                font-size: 14px;
+                margin: 14px 0 7px 0;
+                font-weight: bold;
+            }
+
+            .settings-description {
+                font-style: italic;
+                font-size: 12px;
+                text-align: justify;
+            }
+
+            .warning-message {
+                color: red;
+                padding: 1em;
+            }
+            .conflicted {
+                position: absolute;
+                border: 1px solid grey;
+                margin-top: -140px;
+                background-color: white;
+            }
+        }
+
+        .config-file {
+            margin-bottom: 20px;
+            margin-top: 20px;
+
+            input {
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+                z-index: 0;
+            }
+
+            .fakebutton {
+                font-family: @font-family-medium;
+                border: 1px solid #6B6B6B;
+                border-radius: 5px;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 5px;
+                z-index: 2;
+                cursor: pointer;
+            }
+        }
+    }
+
 
     .status {
         display: inline-block;

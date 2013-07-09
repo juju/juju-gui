@@ -1,0 +1,35 @@
+.bws-searchbox {
+    width: 250px;
+    position: relative;
+
+    form {
+        margin: 0;
+
+        .search {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        input {
+            .border-box;
+            height: 40px;
+            width: 100%;
+            margin: 0;
+            padding: 0 40px 0 10px;
+            background-color: #fff;
+            border: 1px solid @bws-border;
+            border-radius: @bws-corner;
+            font-size: 12pt;
+            color: @bws-text-placeholder;
+        }
+        &.active input {
+            border-color: @charm-panel-orange;
+            color: @bws-text;
+        }
+        // Need to overwrite bootstrap box shadow on focus.
+        input,
+        &.active input {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    }
+}

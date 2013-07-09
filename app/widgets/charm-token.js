@@ -41,12 +41,21 @@ YUI.add('browser-charm-token', function(Y) {
     * Default general initializer method.
     *
     * @method initializer
-    * @param {Object} cfg the config for the widget.
+    * @param {Object} config The widget configuration options.
     * @return {undefined} Nothing.
     */
-    initializer: function(charmAttributes) {
-      // This passed-in config is made up of charm attributes.
-      this.charmAttributes = charmAttributes;
+    initializer: function(config) {
+      // Extract the charm configuration values from the jumble of widget
+      // config options.
+      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+      // @property charmData Contains the extracted charm information.
+      this.charmData = Y.aggregate({}, config, false, charmAttributes);
+      // The configuration schema comes in as "options" and has to be moved
+      // over to the charm data manually.
+      if (this.charmData.config === undefined) {
+        this.charmData.config = {};
+      }
+      this.charmData.config.options = config.options;
     },
 
     /**
@@ -71,17 +80,48 @@ YUI.add('browser-charm-token', function(Y) {
      * Generate a function that records drag and drop data when a drag starts.
      *
      * @method _makeDragStartHandler
-     * @param {Node} dragImage The node to show during the drag.
      * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDragStartHandler: function(dragImage, charmData) {
+    _makeDragStartHandler: function(charmData) {
+      var container = this.get('boundingBox');
       return function(evt) {
+        var dragImage;
+        var icon = container.one('.icon');
         evt = evt._event; // We want the real event.
+        if (icon) {
+          // Chome creates drag images in a silly way, so CSS background
+          // tranparency doesn't work and if part of the drag image is
+          // off-screen, that part is simply white.  Therefore we have to clone
+          // the icon and make sure it is visible.  We don't really want it to
+          // be visible though, so we make sure the overflow induced by the
+          // icon is hidden.
+          dragImage = Y.one('body')
+            .setStyle('overflow', 'hidden')
+            .appendChild(icon.cloneNode(true))
+              .setStyles({
+                'height': icon.one('img').get('height'),
+                'width': icon.one('img').get('width')});
+          // Set a unique id on the cloned icon so we can remove it after drop
+          dragImage.setAttribute('id', dragImage.get('_yuid'));
+          // Pass the cloned id through the drag data system.
+          evt.dataTransfer.setData(
+              'clonedIconId', dragImage.getAttribute('id'));
+        } else {
+          // On chrome, if part of this drag image is not visible, that part
+          // will be transparent.
+          dragImage =
+              container.one('.charm-icon') ||
+              container.one('.category-icon');
+        }
+
         evt.dataTransfer.effectAllowed = 'copy';
         evt.dataTransfer.setData('charmData', charmData);
         evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        evt.dataTransfer.setDragImage(dragImage._node, 0, 0);
+        evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
+        // This event is registered on many nested elements, but we only have
+        // to handle the drag start once, so stop now.
+        evt.stopPropagation();
       };
     },
 
@@ -95,25 +135,32 @@ YUI.add('browser-charm-token', function(Y) {
      * @param {String} charmData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDraggable: function(element, dragImage, charmData) {
+    _makeDraggable: function(element, charmData) {
       element.setAttribute('draggable', 'true');
       this.addEvent(element.on('dragstart',
-          this._makeDragStartHandler(dragImage, charmData)));
+          this._makeDragStartHandler(charmData)));
     },
 
     /**
      * Make the charm token draggable.
      *
      * @method _addDraggability
-     * @param {Node} container he node which contains the charm list.
+     * @param {Node} container The node which contains the charm list.
+     * @param {Node} dragImage The node which will be displayed during
+     *   dragging.
      * @return {undefined}  Nothing; side-effects only.
     */
-    _addDraggability: function(container) {
+    _addDraggability: function() {
+      var container = this.get('boundingBox');
       // Since the browser's dataTransfer mechanism only accepts string values
-      // we have to JSON encode the charm data.
-      var charmData = Y.JSON.stringify(this.charmAttributes);
-      this._makeDraggable(container, container, charmData);
-      this._makeDraggable(container.one('a'), container, charmData);
+      // we have to JSON encode the charm data.  This passed-in config includes
+      // charm attributes.
+      var charmData = Y.JSON.stringify(this.charmData);
+      this._makeDraggable(container, charmData);
+      // We need all the children to participate.
+      container.all('*').each(function(element) {
+        this._makeDraggable(element, charmData);
+      }, this);
     },
 
     /**
@@ -123,15 +170,14 @@ YUI.add('browser-charm-token', function(Y) {
      *   testing.
      * @method renderUI
      */
-    renderUI: function(container) {
+    renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
-      // This way we can pass in a container for easier testing.
-      container = container || this.get('contentBox');
-      container.setHTML(content);
+      var container = this.get('contentBox');
       var outerContainer = container.ancestor('.yui3-charmtoken')
         .addClass('yui3-u');
+      container.setHTML(content);
       if (this.get('isDraggable')) {
-        this._addDraggability(outerContainer);
+        this._addDraggability();
       }
     }
 
@@ -145,6 +191,13 @@ YUI.add('browser-charm-token', function(Y) {
       description: {
         value: ''
       },
+
+      /**
+       * @attribute downloads
+       * @default undefined
+       * @type {Number}
+       */
+      downloads: {},
 
       /**
        * @attribute shouldShowIcon
@@ -198,13 +251,6 @@ YUI.add('browser-charm-token', function(Y) {
       recent_commit_count: {},
 
       /**
-       * @attribute recent_download_count
-       * @default undefined
-       * @type {Number}
-       */
-      recent_download_count: {},
-
-      /**
          Supports size attributes of small and large that turn into the css
          class around the charm token.
 
@@ -235,6 +281,7 @@ YUI.add('browser-charm-token', function(Y) {
     'base',
     'event-tracker',
     'handlebars',
+    'juju-charm-models',
     'juju-templates',
     'juju-view-utils',
     'widget',

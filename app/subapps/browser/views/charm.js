@@ -79,9 +79,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       var browserCharm = this.get('charm');
       var charm = new models.Charm(browserCharm.getAttrs());
-      charm.set('config', {
-        options: browserCharm.get('options')
-      });
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
@@ -646,13 +643,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
-      if (window.flags && window.flags.sharing_enabled) {
-        this.shareWidget = new widgets.browser.SharingWidget({
-          link: window.location.origin + '/' + this.get('charm').get('id'),
-          button: renderTo.one('.share')
-        });
-        this.shareWidget.render(renderTo.one('.share'));
-      }
+      this.shareWidget = new widgets.browser.SharingWidget({
+        link: window.location.origin + '/' + this.get('charm').get('id'),
+        button: renderTo.one('.share')
+      });
+      this.shareWidget.render(renderTo.one('.share'));
 
       this.tabview = new widgets.browser.TabView({
         render: true,
