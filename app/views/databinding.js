@@ -403,7 +403,7 @@ YUI.add('juju-databinding', function(Y) {
       Y.each(this._viewlets, function(viewlet) {
         var list = viewlet.model;
         // Only update when list is evt target (if we can know this).
-        if(!checkClassImplements(list, 'modelList')) {
+        if (!checkClassImplements(list, 'modelList')) {
           return;
         }
         if (viewlet.update) {
