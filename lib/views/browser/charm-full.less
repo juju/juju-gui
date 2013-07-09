@@ -20,7 +20,7 @@
     h2,
     h3,
     h4 {
-        .heading-font;
+        
     }
     li,
     p {
@@ -47,107 +47,80 @@
     .content {
         .border-box;
         display: table-cell;
-        padding: 0 20px 25px 20px;
-    }
-    .nav {
-        height: 30px;
-        margin: 0;
-        padding: 11px 0 10px 0;
-        border-bottom: 1px solid @bws-border;
-
-        .back,
-        .share,
-        .add {
-            .heading-font;
-            display: block;
-            height: 30px;
-            line-height: 23pt;
-        }
-        .share,
-        .back {
-            .three-image-button-background(
-                "browser_back_button_left.png",
-                "browser_back_button_right.png",
-                "browser_back_button_centre.png"
-                );
-            color: @bws-heading;
-        }
-        .share,
-        .add {
-            float: right;
-        }
-        .back {
-            float: left;
-            padding: 0 12px 0 11px;
-
-            img {
-                margin-right: 9px;
-                vertical-align: baseline;
-            }
-        }
-        .share {
-            margin-right: 10px;
-            padding: 0 10px 0 7px;
-
-            img {
-                margin-right: 11px;
-                vertical-align: middle;
-            }
-        }
-        .add {
-            .three-image-button-background(
-                "browser_add_button_left.png",
-                "browser_add_button_right.png",
-                "browser_add_button_centre.png"
-                );
-            padding: 0 27px;
-            color: #fff;
-        }
     }
     .heading {
-        margin: 18px 0 22px 0;
+        .type13;
+        position: relative;
+        padding: 30px;
+        background-color: @bws-background;
+        border-bottom: 1px solid @bws-border;
 
+        li a {
+            color: @bws-text;
+            text-decoration: underline;
+        }
+        .block-icon {
+            display: inline-block;
+            float: left;
+        }
         .charm-icon,
         .category-icon,
         img.icon {
-            width: 160px;
-            height: 160px;
+            width: 120px;
+            height: 120px;
         }
         .charm-icon {
             background: transparent
                     url(/juju-ui/assets/images/charm_160.png)
                     left top no-repeat;
+            background-size: 120px 120px;
         }
-        .badge-approved {
-            width: 57px;
-            height: 57px;
-            margin-top: -13px;
-            margin-left: -14px;
-            background-image: url(/juju-ui/assets/images/badge_approved_57.png);
-        }
+        .add-reviewed {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
 
+            .add {
+                // Using a variable here because LESS strips commas in mixin args.
+                @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
+                .create-box-shadow(@box-shadow);
+                .create-border-radius(@bws-corner);
+                display: block;
+                margin-top: 17px;
+                padding: 10px 30px;
+                background-color: @charm-panel-orange;
+                color: #fff;
+            }
+        }
         .charm-details {
-            margin-left: 19px;
+            display: inline-block;
+            margin-left: 20px;
 
             h1 {
-                font-size: 23pt;
+                .type2;
+                margin: -3px 0 5px 0;
             }
-            dt,
-            dd {
-                font-size: 12pt;
-                line-height: 150%;
+            li {
+                max-width: 100%;
+                line-height: 1.55;
             }
-            dt {
-                float: left;
-                margin-right: 5px;
-            }
-            dd {
-                clear: right;
-
-                img {
-                    margin-left: 3px;
-                }
-            }
+        }
+        .back.icon,
+        .share {
+            position: absolute;
+            top: 30px;
+        }
+        .back.icon {
+            display: block;
+            right: 30px;
+            width: 20px;
+            height: 20px;
+            background: transparent
+                    url(/juju-ui/assets/images/panel_close.png)
+                    left top no-repeat;
+        }
+        .share {
+            right: 70px;
         }
     }
     .changelog {
@@ -185,7 +158,6 @@
     }
     .summary {
         padding-top: 12px;
-        border-top: 1px solid @bws-border;
 
         h2 {
             margin-top: 10px;

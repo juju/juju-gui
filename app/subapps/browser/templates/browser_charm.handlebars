@@ -1,24 +1,6 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        <div class="nav">
-            <a href="" class="back">
-                {{#if isFullscreen}}
-                    <img src="/juju-ui/assets/images/browser_back_button_arrow.png"
-                        alt="&lt;" />Back
-                {{else}}
-                    Close
-                {{/if}}
-            </a>
-            {{! The add class is used by the deploy method in
-                test/test_charm_running.py.  If you change this name, change
-                the other one too! }}
-            <a href="" class="add">Add</a>
-            <a href="" class="share">
-                <img src="/juju-ui/assets/images/browser_share_button_icon.png"
-                    alt="Share" />Share
-            </a>
-        </div>
-
+        {{#if isFullscreen}}<a href="" class="back"></a>{{/if}}
         {{#if failingProviders}}
             <div class="provider-warning"><i class="sprite alert_icon2"></i>
                 <span>Currently fails on</span>
@@ -29,13 +11,10 @@
             </div>
         {{/if}}
 
-        <div class="heading yui3-g">
-            <div class="yui3-u">
-                {{#if is_approved}}
-                    <span class="badge-approved"
-                        title="This charm has been reviewed."></span>
-                {{/if}}
-
+        <div class="heading">
+                {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                <a href="" class="share">Share</a>
+            <div class="block-icon">
                 {{#if shouldShowIcon}}
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
                 {{else}}
@@ -49,26 +28,35 @@
                     {{/if}}
                 {{/if}}
             </div>
-            <div class="charm-details yui3-u-1-2">
+            <div class="add-reviewed">
+                {{#if is_approved}}
+                    <div>
+                        <i class="sprite approved_star"></i>
+                        Reviewed by the Juju team
+                    </div>
+                {{/if}}
+                {{! The add class is used by the deploy method in
+                    test/test_charm_running.py.  If you change this name, change
+                    the other one too! }}
+                <a href="" class="add">Add to my canvas</a>
+            </div>
+            <div class="charm-details">
                 <h1>{{ name }}</h1>
-                <dl>
-                    <dt>Recent activity</dt>
-                    <dd>
-                        <strong>{{ downloads }}</strong>
-                        {{pluralize 'download' downloads}},
-                        <strong>{{ recent_commit_count }}</strong>
-                        {{pluralize 'commit' recent_commit_count}}
-                    </dd>
-                    <dt>Ubuntu series</dt>
-                    <dd>{{ distro_series }}</dd>
-                    <dt>Location</dt>
-                    <dd>{{ url }}</dd>
-                    <dt>Links</dt>
-                    <dd>
+                <ul>
+                    <li>
+                        Recent activity: {{ downloads }}
+                        {{pluralize 'Download' downloads}},
+                        {{ recent_commit_count }}
+                        {{pluralize 'Commit' recent_commit_count}}
+                    </li>
+                    <li>Ubuntu series: {{ distro_series }}</li>
+                    <li>Location: {{ url }}</li>
+                    <li>
+                        Links:
                         <a href="{{ sourceLink }}">Source</a>
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
-                    </dd>
-                </dl>
+                    </li>
+                </ul>
             </div>
         </div>
 
