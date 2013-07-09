@@ -402,9 +402,6 @@ YUI.add('juju-databinding', function(Y) {
       // ModelList.
       Y.each(this._viewlets, function(viewlet) {
         var list = viewlet.model;
-        if (viewlet.selectBindModel) {
-          list = viewlet.selectBindModel(list);
-        }
         if (viewlet.update) {
           viewlet.update.call(viewlet, list);
         } else {

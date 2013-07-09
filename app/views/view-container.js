@@ -322,7 +322,7 @@ YUI.add('juju-view-container', function(Y) {
     fillSlot: function(viewlet, model) {
       var target;
       var slot = viewlet.slot;
-      if (slot === undefined) {
+      if (slot === null) {
         return;
       }
       var existing = this._slots[slot];
