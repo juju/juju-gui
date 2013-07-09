@@ -1149,6 +1149,10 @@ YUI.add('juju-view-service', function(Y) {
       evt.container.one('.destroy-service-prompt').addClass('hidden');
     },
 
+    initiateServiceDestroy: function(evt) {
+      this.hideDestroyServicePrompt(evt);
+    },
+
     /**
       Handles exposing the service.
 

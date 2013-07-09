@@ -185,10 +185,11 @@ YUI.add('juju-view-environment', function(Y) {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
-                '.destroy-service-button': {
+                '.destroy-service-icon': {
                   'click': 'showDestroyServicePrompt'
                 },
-                '.cancel-destroy': {'click': 'hideDestroyServicePrompt'}
+                'button.cancel-destroy': {'click': 'hideDestroyServicePrompt'},
+                'button.initiate-destroy': {'click': 'initiateServiceDestroy'}
               },
               viewletList: ['overview', 'units', 'config'],
               template: Y.juju.views.Templates['view-container']
