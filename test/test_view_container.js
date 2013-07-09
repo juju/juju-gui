@@ -213,7 +213,7 @@ describe('View Container', function() {
        replacementModel.set('name', 'ice cream');
        assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
 
-       // The old model (still associated with the viewContianer) isn't bound
+       // The old model (still associated with the viewContainer) isn't bound
        // though.
        viewContainer.get('model').set('name', 'broken');
        assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');

@@ -51,7 +51,7 @@ describe('data binding library', function() {
         var viewlet = {
           container: container,
           _changedValues: [],
-          _events: []
+          _eventHandles: []
         };
         engine = new BindingEngine();
 
@@ -66,7 +66,7 @@ describe('data binding library', function() {
         var viewlet = {
           container: container,
           _changedValues: [],
-          _events: []
+          _eventHandles: []
         };
         engine = new BindingEngine();
 
@@ -85,7 +85,7 @@ describe('data binding library', function() {
            var viewlet = {
              container: container,
              _changedValues: [],
-             _events: [],
+             _eventHandles: [],
              bindings: {
                a: {
                  format: function() {return 'parent';}
@@ -107,7 +107,7 @@ describe('data binding library', function() {
            var viewlet = {
              container: container,
              _changedValues: [],
-             _events: [],
+             _eventHandles: [],
              bindings: {
                a: {
                  format: function() {return 'parent';}
@@ -132,7 +132,7 @@ describe('data binding library', function() {
 
         var viewlet = {
           container: container,
-          _events: [],
+          _eventHandles: [],
           bindings: {
             a: {
               format: function(value) {
@@ -161,7 +161,7 @@ describe('data binding library', function() {
             }
           },
           _changedValues: [],
-          _events: []
+          _eventHandles: []
         };
         engine = new BindingEngine();
 
@@ -184,7 +184,7 @@ describe('data binding library', function() {
             }
           },
           _changedValues: [],
-          _events: []
+          _eventHandles: []
         };
         engine = new BindingEngine();
 
@@ -203,7 +203,7 @@ describe('data binding library', function() {
         viewlet = {
           container: container,
           _changedValues: [],
-          _events: []
+          _eventHandles: []
         };
         engine = new BindingEngine();
       }
@@ -259,7 +259,7 @@ describe('data binding library', function() {
           }
         },
         _changedValues: [],
-        _events: []
+        _eventHandles: []
       };
     });
 
@@ -306,7 +306,7 @@ describe('data binding library', function() {
       container = utils.makeContainer();
       engine.bind(list, {
         name: 'testViewlet',
-        _events: [],
+        _eventHandles: [],
         container: container,
         update: function(modellist) {
           var data = modellist.map(function(m) {return m.getAttrs();});

@@ -87,11 +87,11 @@ YUI.add('juju-view-container', function(Y) {
       When defined it allows the developer to specify another model to bind the
       Viewlet to, usually one nested in the model passed to the View Container.
 
-      @property rebind
+      @property selectBindModel
       @type {Function}
       @default null
     */
-    rebind: null,
+    selectBindModel: null,
 
     /**
       User defined update method which re-renders the contents of the viewlet.
@@ -101,7 +101,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @method update
       @type {function}
-      @param {Y.ModelList | Y.LazyModelList} modellist from the rebind.
+      @param {Y.ModelList | Y.LazyModelList} modellist from the selectBindModel.
       @default {noop function}
     */
     update: function(modellist) {},
@@ -148,13 +148,13 @@ YUI.add('juju-view-container', function(Y) {
     _changedValues: [],
 
     /**
-     Model change events associated with this viewlet.
+     Model change events handles associated with this viewlet.
 
-     @property _events
+     @property _eventHandles
      @type {Array}
      @default empty array
      */
-    _events: []
+    _eventHandles: []
   };
 
   /**
@@ -242,7 +242,10 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Renders the viewlets into the view container.
+      Renders the viewlets into the view container. Viewlets with a logical
+      slot name defined are not rendered by defaul and require that showViewlet
+      be called for them to render. Slots are typical filled through event
+      callback interactions (for example in a click handler).
 
       @method render
       @chainable
@@ -286,6 +289,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @method showViewlet
       @param {String} viewletName is a string representing the viewlet name.
+      @param {Model} model to associate with the viewlet in its slot.
     */
     showViewlet: function(viewletName, model) {
       var container = this.get('container');
@@ -324,9 +328,9 @@ YUI.add('juju-view-container', function(Y) {
       var existing = this._slots[slot];
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
-      }
-      if (existing) {
-        existing.remove();
+        if (existing) {
+          existing.remove();
+        }
       }
       if (model === undefined) {
         model = this.get('model');
