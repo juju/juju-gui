@@ -421,9 +421,11 @@ YUI.add('juju-topology-service', function(Y) {
         // Remove the cloned drag icon.
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
         var iconImage;
-        if (icon && icon.one('img')) {
-          // Maintain the charm icon URL if it exists.
-          iconImage = icon.one('img').getAttribute('src');
+        if (icon) {
+          if(icon.one('image')) {
+            // Maintain the charm icon URL if it exists.
+            iconImage = icon.one('img').getAttribute('src');
+          }
           icon.remove().destroy(true);
           // Since we hacked the DOM (see _makeDragStartHandler in
           // app/widgets/charm-token.js so the drag icon would be "visible" we
