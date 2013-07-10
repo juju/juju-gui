@@ -55,6 +55,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
 
+      // This allows us to use the old util methods for parsing the config
+      // fields while consuming the new charm model from the charm browser.
       if (charm.get('options') === undefined) {
         charm.set('options', charm.get('config').options);
       }
