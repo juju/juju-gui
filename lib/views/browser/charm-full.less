@@ -2,6 +2,20 @@
     display: table;
     width: 100%;
 
+    .section-title,
+    .section-title a {
+        .type5;
+    }
+    .section-title {
+        margin: 0 0 5px 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+
+        a:hover {
+            background: transparent;
+        }
+    }
     .changelog li,
     .changelog p,
     .charm-details,
@@ -125,22 +139,6 @@
         }
     }
     .changelog {
-        padding-top: 10px;
-
-        .section-title,
-        .section-title a {
-            .type5;
-        }
-        .section-title {
-            margin: 0 0 5px 0;
-            padding: 0;
-            background: transparent;
-            border: none;
-
-            a:hover {
-                background: transparent;
-            }
-        }
         .remaining {
             margin-top: 10px;
         }
@@ -264,6 +262,68 @@
                     }
                 }
             }
+        }
+    }
+}
+
+#bws-fullscreen .charm {
+    background-color: #fff;
+
+    .heading {
+        z-index: 10;
+        float: left;
+        width: 25%;
+        padding: 0;
+        background-color: #fff;
+        border: none;
+
+        .block-icon,
+        .charm-details {
+            display: block;
+            float: none;
+        }
+        .block-icon {
+            margin: 20px;
+        }
+        .charm-details {
+            margin-left: 0;
+            padding: 0 20px;
+        }
+        .add-reviewed {
+            position: relative;
+            right: auto;
+            bottom: auto;
+            margin: 30px -20px 20px -20px;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid @bws-border;
+
+            .add {
+                display: inline-block;
+            }
+        }
+        .back {
+            display: block;
+            margin: 20px;
+        }
+        .share {
+            top: 20px;
+            right: 20px;
+        }
+    }
+    .tabs {
+        margin-left: 25%;
+        border-left: 1px solid @bws-border;
+    }
+    .related-charms {
+        .section-title {
+            padding-bottom: 20px;
+            border-bottom: 1px solid @bws-border;
+        }
+        .yui3-charmtoken {
+            border-width: 0 1px 1px 0;
+            border-style: solid;
+            border-color: @bws-border;
+            width: 50%;
         }
     }
 }
