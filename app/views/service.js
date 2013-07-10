@@ -1132,25 +1132,43 @@ YUI.add('juju-view-service', function(Y) {
     /**
       Display the "do you really want to destroy this service?" prompt.
 
-      @method showDestroyServicePrompt
+      @method showDestroyPrompt
       @param {Y.EventFacade} evt The click event.
     */
-    showDestroyServicePrompt: function(evt) {
+    showDestroyPrompt: function(evt) {
       evt.container.one('.destroy-service-prompt').removeClass('closed');
     },
 
     /**
       Hide the "do you really want to destroy this service?" prompt.
 
-      @method hideDestroyServicePrompt
+      @method hideDestroyPrompt
       @param {Y.EventFacade} evt The click event.
     */
-    hideDestroyServicePrompt: function(evt) {
+    hideDestroyPrompt: function(evt) {
       evt.container.one('.destroy-service-prompt').addClass('closed');
     },
 
     initiateServiceDestroy: function(evt) {
-      this.hideDestroyServicePrompt(evt);
+      evt.halt();
+      this.closeInspector(evt);
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var model = dataSource.get('model');
+      var env = dataSource.get('env');
+      if (model.name === 'service') {
+        env.destroy_service(
+            model.get('id'), Y.bind(this._destroyCallback, this));
+      } else if (model.name === 'charm') {
+          app.db.services.remove(this.options.ghostService);
+          app.db.fire('update');
+      } else {
+        throw new Error('Unexpected model type: ' + model.name);
+      }
+    },
+
+    _destroyCallback: function(ev) {
+      // TODO stuff
     },
 
     /**

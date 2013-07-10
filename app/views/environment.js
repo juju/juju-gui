@@ -185,10 +185,8 @@ YUI.add('juju-view-environment', function(Y) {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
-                '.destroy-service-icon': {
-                  'click': 'showDestroyServicePrompt'
-                },
-                '.cancel-destroy': {'click': 'hideDestroyServicePrompt'},
+                '.destroy-service-icon': {'click': 'showDestroyPrompt'},
+                '.cancel-destroy': {'click': 'hideDestroyPrompt'},
                 '.initiate-destroy': {'click': 'initiateServiceDestroy'}
               },
               viewletList: ['overview', 'units', 'config'],
@@ -210,7 +208,10 @@ YUI.add('juju-view-environment', function(Y) {
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
-                'input[name=service-name]': { valuechange: 'updateGhostName' }
+                'input[name=service-name]': { valuechange: 'updateGhostName' },
+                '.destroy-service-icon': {'click': 'showDestroyPrompt'},
+                '.cancel-destroy': {'click': 'hideDestroyPrompt'},
+                '.initiate-destroy': {'click': 'initiateServiceDestroy'}
               },
               // the configuration for the view container template
               templateConfig: {
