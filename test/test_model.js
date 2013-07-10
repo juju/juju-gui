@@ -274,6 +274,22 @@ describe('juju models', function() {
     db.resolveModelByName('0').should.equal(machine);
   });
 
+  it('should update service units on change', function() {
+    var db = new models.Database();
+    var mysql = new models.Service({id: 'mysql'});
+    db.services.add([mysql]);
+    assert.isUndefined(mysql.get('units'));
+    db.onDelta({data: {result: [
+      ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
+      ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
+    ]}});
+    assert.equal(mysql.get('units').size(), 2);
+    db.onDelta({data: {result: [
+      ['unit', 'remove', 'mysql/1']
+    ]}});
+    assert.equal(mysql.get('units').size(), 1);
+  });
+
   it('onDelta should handle remove changes correctly',
       function() {
         var db = new models.Database();

@@ -42,17 +42,39 @@ YUI.add('juju-view-service', function(Y) {
    */
   var manageUnitsMixin = {
     // Mixin attributes
+    // XXX Makyo - this will need to be removed when the serviceInspector flag
+    // goes away.
     events: {
-      '#num-service-units': {
+      '.num-units-control': {
         keydown: 'modifyUnits',
         blur: 'resetUnits'
       }
     },
 
+    /*
+     * XXX Makyo - all instances of testing for the flag will go away once
+     * the inspector becomes the default, rather than internal pages.
+     */
+    /**
+     * No-Op function to replace getModelURL for the time being.
+     * XXX Makyo - remove when inspector becomes the default.
+     *
+     * @method noop
+     * @return {undefined} Nothing.
+     */
+    noop: function() { return; },
+
     resetUnits: function() {
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
-      field.set('value', this.get('model').get('unit_count'));
+      var container, model, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+        model = this.inspector.get('model');
+      } else {
+        container = this.get('container');
+        model = this.get('model');
+      }
+      var field = container.one('.num-units-control');
+      field.set('value', model.get('unit_count'));
       field.set('disabled', false);
     },
 
@@ -60,8 +82,13 @@ YUI.add('juju-view-service', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
+      var container, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+      } else {
+        container = this.get('container');
+      }
+      var field = container.one('.num-units-control');
 
       if (ev.keyCode === ESC) {
         this.resetUnits();
@@ -79,10 +106,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _modifyUnits: function(requested_unit_count) {
-      var service = this.get('model'),
-          unit_count = service.get('unit_count'),
-          field = this.get('container').one('#num-service-units'),
-          env = this.get('env');
+      var container, env, flags = window.flags;
+      if (flags.serviceInspector) {
+        container = this.inspector.get('container');
+        env = this.inspector.get('env');
+      } else {
+        container = this.get('container');
+        env = this.get('env');
+      }
+      var service = this.model || this.get('model');
+      var unit_count = service.get('unit_count');
+      var field = container.one('.num-units-control');
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -98,7 +132,13 @@ YUI.add('juju-view-service', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var units = this.get('db').units.get_units_for_service(service),
+        var db;
+        if (flags.serviceInspector) {
+          db = this.inspector.get('db');
+        } else {
+          db = this.get('db');
+        }
+        var units = db.units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
         for (var i = units.length - 1;
@@ -115,10 +155,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _addUnitCallback: function(ev) {
-      var service = this.get('model'),
-          getModelURL = this.get('getModelURL'),
-          db = this.get('db'),
-          unit_names = ev.result || [];
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
+        service = this.inspector.get('model');
+        getModelURL = this.noop;
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -143,10 +190,17 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _removeUnitCallback: function(ev) {
-      var service = this.get('model'),
-          getModelURL = this.get('getModelURL'),
-          db = this.get('db'),
-          unit_names = ev.unit_names;
+      var service, getModelURL, db, flags = window.flags;
+      if (flags.serviceInspector) {
+        service = this.inspector.get('model');
+        getModelURL = this.noop;
+        db = this.inspector.get('db');
+      } else {
+        service = this.get('model');
+        getModelURL = this.get('getModelURL');
+        db = this.get('db');
+      }
+      var unit_names = ev.unit_names;
 
       if (ev.err) {
         db.notifications.add(
@@ -268,8 +322,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     unexposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -313,8 +369,10 @@ YUI.add('juju-view-service', function(Y) {
      * @return {undefined} Nothing.
      */
     exposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.inspector : this;
+      var service = dataSource.get('model'),
+          env = dataSource.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },
@@ -1043,7 +1101,7 @@ YUI.add('juju-view-service', function(Y) {
       return this.inspector.getName();
     },
     'bind': function(model, viewlet) {
-      this.bindingEngine.bind(model, viewlet);
+      this.inspector.bindingEngine.bind(model, viewlet);
       return this;
     },
     'render': function() {
@@ -1069,6 +1127,27 @@ YUI.add('juju-view-service', function(Y) {
         button.setHTML('Show settings help');
         descriptions.hide();
       }
+    },
+
+    /**
+      Handles exposing the service.
+
+      @method toggleExpose
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    toggleExpose: function(e) {
+      var service = this.inspector.get('model');
+      var env = this.inspector.get('db').environment;
+      var exposed;
+      if (service.get('exposed')) {
+        this.unexposeService();
+        exposed = false;
+      } else {
+        this.exposeService();
+        exposed = true;
+      }
+      service.set('exposed', exposed);
     },
 
     /**
@@ -1198,12 +1277,18 @@ YUI.add('juju-view-service', function(Y) {
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
-        template: Templates.serviceOverview
+        template: Templates.serviceOverview,
+        'rebind': function(model) {
+          var units = {units: model.get('units').toArray()};
+          this.container.one('.overview-unit-list')
+            .setHTML(Templates.serviceOverviewUnitList(units));
+          return model;
+        }
       },
       units: {
         name: 'units',
         template: Templates.show_units_small,
-        'rebind': function(model) {
+        'selectBindModel': function(model) {
           return model.get('units');
         },
         'update': function(modellist) {
@@ -1214,7 +1299,6 @@ YUI.add('juju-view-service', function(Y) {
       config: {
         name: 'config',
         template: Templates['service-configuration'],
-
         'render': function(service, viewContainerAttrs) {
           var settings = [];
           var db = viewContainerAttrs.db;
@@ -1230,12 +1314,34 @@ YUI.add('juju-view-service', function(Y) {
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
-              this.template({service: service, settings: settings}));
+              this.template({
+                service: service,
+                settings: settings,
+                exposed: service.get('exposed')}));
           this.container.all('textarea.config-field')
                         .plug(plugins.ResizingTextarea,
                               { max_height: 200,
                                 min_height: 18,
                                 single_line: 18});
+        },
+        bindings: {
+          exposed: {
+            'update': function(node, value) {
+              var img = node.one('img');
+              var span = node.one('span');
+              if (value) {
+                img.set('src', '/juju-ui/assets/images/slider_on.png');
+                span.set('text', 'Yes');
+                span.removeClass('off');
+                span.addClass('on');
+              } else {
+                img.set('src', '/juju-ui/assets/images/slider_off.png');
+                span.set('text', 'No');
+                span.removeClass('on');
+                span.addClass('off');
+              }
+            }
+          }
         },
         'conflict': function(node, model, viewletName, resolve) {
           /**
@@ -1320,11 +1426,16 @@ YUI.add('juju-view-service', function(Y) {
 
       options.model = model;
 
-      // Merge the various prototype objects together.
+      // Merge the various prototype objects together.  Additionally, merge in
+      // mixins that provide functionality used in the inspector's events.
       var c = Y.juju.controller;
-      [c.ghostInspector, c.serviceInspector].forEach(function(controller) {
-        controllerPrototype = Y.mix(controllerPrototype, controller);
-      });
+      [c.ghostInspector,
+        c.serviceInspector,
+        manageUnitsMixin,
+        exposeButtonMixin]
+        .forEach(function(controller) {
+            controllerPrototype = Y.mix(controllerPrototype, controller);
+          });
 
       // Bind the viewletEvents to this class.
       Y.Object.each(options.viewletEvents, function(
@@ -1340,13 +1451,6 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
-      // We create a new binding engine even if it's unlikely
-      // that the model will change.
-      this.bindingEngine = new views.BindingEngine();
-      this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
-      this.inspector.after('destroy', function() {
-        this.bindingEngine.unbind();
-      }, this);
       this.inspector.showViewlet(options.viewletList[0]);
     }
 

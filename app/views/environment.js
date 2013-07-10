@@ -119,12 +119,10 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           // If the user is trying to open the same inspector twice
-          if (this.getInspector(model.get('id'))) {
+          var serviceInspector = this.getInspector(model.get('id'));
+          if (serviceInspector) {
             return;
           }
-
-          var serviceInspector = this.getInspector(model.get('id'));
-          if (serviceInspector) { return serviceInspector; }
 
           var combinedConfig = {};
           var configs = this._generateConfigs(model);
@@ -169,6 +167,7 @@ YUI.add('juju-view-environment', function(Y) {
           var configs = {
             configBase: {
               db: this.topo.get('db'),
+              env: this.topo.get('env'),
               events: {
                 '.close': {'click': 'destroy'}
               }
@@ -177,16 +176,20 @@ YUI.add('juju-view-environment', function(Y) {
               events: {
                 '.tab': {'click': 'showViewlet'}
               },
-              viewletList: ['overview', 'units', 'config'],
-              template: Y.juju.views.Templates['view-container'],
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'}
-              }
+                '.config-file input[type=file]': { change: 'handleFileChange'},
+                '.num-units-control': {
+                  'keydown': 'modifyUnits',
+                  'blur': 'resetUnits'
+                }
+              },
+              viewletList: ['overview', 'units', 'config'],
+              template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
-              env: this.topo.get('env'),
               // controller will show the first one in this array by default
               viewletList: ['ghostConfig'],
               // the view container template

@@ -41,15 +41,21 @@ YUI.add('browser-charm-token', function(Y) {
     * Default general initializer method.
     *
     * @method initializer
-    * @param {Object} cfg the config for the widget.
+    * @param {Object} config The widget configuration options.
     * @return {undefined} Nothing.
     */
-    initializer: function(cfg) {
-      this.cfg = Y.merge(cfg);
-      // Since we later serialize the config (which contains the charm
-      // attributes) we need to remove any non-JSON-encodable bits.
-      delete this.cfg.boundingBox;
-      delete this.cfg.contentBox;
+    initializer: function(config) {
+      // Extract the charm configuration values from the jumble of widget
+      // config options.
+      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+      // @property charmData Contains the extracted charm information.
+      this.charmData = Y.aggregate({}, config, false, charmAttributes);
+      // The configuration schema comes in as "options" and has to be moved
+      // over to the charm data manually.
+      if (this.charmData.config === undefined) {
+        this.charmData.config = {};
+      }
+      this.charmData.config.options = config.options;
     },
 
     /**
@@ -80,7 +86,7 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage, clonedIcon;
+        var dragImage;
         var icon = container.one('.icon');
         evt = evt._event; // We want the real event.
         if (icon) {
@@ -90,17 +96,17 @@ YUI.add('browser-charm-token', function(Y) {
           // the icon and make sure it is visible.  We don't really want it to
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
-          clonedIcon = icon.cloneNode(true);
-          // Set a unique id on the cloned icon so we can remove it after drop
-          clonedIcon.setAttribute('id', clonedIcon.get('_yuid'));
           dragImage = Y.one('body')
             .setStyle('overflow', 'hidden')
-            .appendChild(clonedIcon)
-              .setStyle('height', icon.one('img').get('height'))
-              .setStyle('width', icon.one('img').get('width'));
+            .appendChild(icon.cloneNode(true))
+              .setStyles({
+                'height': icon.one('img').get('height'),
+                'width': icon.one('img').get('width')});
+          // Set a unique id on the cloned icon so we can remove it after drop
+          dragImage.setAttribute('id', dragImage.get('_yuid'));
           // Pass the cloned id through the drag data system.
           evt.dataTransfer.setData(
-              'clonedIconId', clonedIcon.getAttribute('id'));
+              'clonedIconId', dragImage.getAttribute('id'));
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
@@ -149,7 +155,7 @@ YUI.add('browser-charm-token', function(Y) {
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.  This passed-in config includes
       // charm attributes.
-      var charmData = Y.JSON.stringify(this.cfg);
+      var charmData = Y.JSON.stringify(this.charmData);
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
@@ -275,6 +281,7 @@ YUI.add('browser-charm-token', function(Y) {
     'base',
     'event-tracker',
     'handlebars',
+    'juju-charm-models',
     'juju-templates',
     'juju-view-utils',
     'widget',
