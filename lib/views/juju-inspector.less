@@ -1,12 +1,15 @@
+@inspector-background-color: #333;
+@inspector-region-background-color: #282828;
+
 .yui3-juju-inspector {
     position: absolute;
     width: 292px;
     min-height: 250px;
-    background-color: #333;
+    background-color: @inspector-background-color;
     color: #fff;
 
     h1, h2, h3, h4, h5, h6 {
-        background-color: #282828;
+        background-color: @inspector-region-background-color;
         padding-left: 1em;
     }
 
@@ -140,6 +143,8 @@
         width: 20px;
         height: 24px;
         padding: 0;
+        /* Make sure the destroy icon is below the close-the-inspector icon. */
+        clear: both;
         margin-bottom: 1ex;
         background-position: center;
         background-repeat: no-repeat; 
@@ -150,10 +155,12 @@
     .destroy-service-prompt {
         overflow: hidden;
         height: 95px;
-        background-color: #282828;
+        background-color: @inspector-region-background-color;
         margin-bottom: 10px;
-        transition: 2s, height 2s;
-        -webkit-transition: 2s, height 2s;
+        transition: 1s, height 1s;
+        -webkit-transition: 1s, height 1s;
+
+        /* Make sure the prompt box is below the icon. */
         clear: both;
 
         .message {
