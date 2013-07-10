@@ -1305,11 +1305,10 @@ YUI.add('juju-view-service', function(Y) {
       Handles the success or failure of setting the new config values
 
       @method _setConfigCallback
-      @param {Y.Node} container of the view-container
-      @param {Y.EventFacade} e yui event object
+      @param {Y.Node} container of the view-container.
+      @param {Y.EventFacade} e yui event object.
     */
     _setConfigCallback: function(container, e) {
-      debugger;
       container.one('.controls .confirm').removeAttribute('disabled');
       // If the user has conflicted fields and still choose to
       // save then we will be overwriting the values in Juju.
@@ -1320,10 +1319,8 @@ YUI.add('juju-view-service', function(Y) {
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service config',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: getModelURL(service) + 'config',
-              modelId: service
+              message: 'Service name: ' + e.service_name,
+              level: 'error'
             })
         );
       } else {

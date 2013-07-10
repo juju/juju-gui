@@ -151,7 +151,7 @@ YUI.add('juju-view-container', function(Y) {
 
       @method syncedFields
     */
-    syncedFields: function() {},
+    syncedFields: function() {}
 
     /**
       Used for conflict resolution. When the user changes a value on a bound
