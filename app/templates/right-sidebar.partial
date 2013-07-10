@@ -1,6 +1,6 @@
 <div class="controls yui3-skin-sam zoom-controls">
   <!-- contentBox -->
-  <span class="yui3-widget yui3-sliderbase yui-slider">
+  <span id="zoom-slider-content-box" class="yui3-widget yui3-sliderbase yui-slider">
     <!-- rail -->
     <span class="yui3-slider-rail">
       <span class="yui3-slider-rail-cap-top"></span>
