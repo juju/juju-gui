@@ -86,16 +86,16 @@ YUI.add('browser-search-widget', function(Y) {
      * @private
      *
      */
-    _setupAutocomplete: function () {
+    _setupAutocomplete: function() {
       var that = this;
       var fetchResults = function(query, callback) {
         var filters = this.get('filters');
         filters.text = query;
         this.get('autocompleteSource')(
-          filters, {
-            success: callback
-          },
-          this
+            filters, {
+              success: callback
+            },
+            this
         );
       };
       var resultFormatter = function(query, results) {
@@ -103,14 +103,14 @@ YUI.add('browser-search-widget', function(Y) {
         var charmlist = dataprocessor(Y.Array.map(results, function(res) {
           return res.raw;
         }));
-        return charmlist.map(function (charm) {
-           var container = Y.Node.create('<div class="yui3-charmtoken"/>');
-           var tokenAttrs = Y.merge(charm.getAttrs(), {
-             size: 'tiny'
-           });
-           var token = new ns.CharmToken(tokenAttrs);
-           return container.append(token.TEMPLATE(token.getAttrs()));
-       });
+        return charmlist.map(function(charm) {
+          var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+          var tokenAttrs = Y.merge(charm.getAttrs(), {
+            size: 'tiny'
+          });
+          var token = new ns.CharmToken(tokenAttrs);
+          return container.append(token.TEMPLATE(token.getAttrs()));
+        });
       };
 
       // Bind out helpers to the current objects context.
@@ -124,7 +124,7 @@ YUI.add('browser-search-widget', function(Y) {
         queryDelay: 150,
         resultFormatter: resultFormatter,
         resultListLocator: 'result',
-        resultTextLocator: function (result) {
+        'resultTextLocator': function(result) {
           return result.charm.name;
         },
         source: fetchResults
@@ -133,13 +133,14 @@ YUI.add('browser-search-widget', function(Y) {
 
       // Block the links from the charm token from taking effect.
       this.addEvent(
-        this.ac.get('boundingBox').delegate(
-            'click',
-            function(ev) {
-              ev.halt();
-            },
-           '.yui3-charmtoken a'
-      ));
+          this.ac.get('boundingBox').delegate(
+              'click',
+              function(ev) {
+                ev.halt();
+              },
+              '.yui3-charmtoken a'
+          )
+      );
       this.ac.on('select', function(ev) {
         // Make sure the input box is updated.
         var form = this.get('boundingBox').one('form');
@@ -204,6 +205,12 @@ YUI.add('browser-search-widget', function(Y) {
       this._setupAutocomplete();
     },
 
+    /**
+      Clean up instances of objects we create
+
+      @method destroy
+
+    */
     destroy: function() {
       if (this.ac) {
         this.ac.destroy();
