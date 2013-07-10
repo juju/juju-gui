@@ -206,11 +206,11 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-      Clean up instances of objects we create
-
-      @method destroy
-
-    */
+     * Clean up instances of objects we create
+     *
+     * @method destroy
+     *
+     */
     destroy: function() {
       if (this.ac) {
         this.ac.destroy();
