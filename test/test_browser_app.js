@@ -73,8 +73,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
-
-      var container = Y.one('#subapp-browser');
       view = new FullScreen({
         store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
