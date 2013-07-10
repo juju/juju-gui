@@ -51,6 +51,17 @@ YUI.add('browser-search-widget', function(Y) {
 
     TEMPLATE: templates['browser-search'],
 
+    _fetchSuggestions: function(query, callback) {
+      var filters = this.get('filters');
+      filters.text = query;
+      this.get('autocompleteSource')(
+          filters, {
+            success: callback
+          },
+          this
+      );
+    },
+
     /**
      * Halt page reload from form submit and let the app know we have a new
      * search.
@@ -79,6 +90,21 @@ YUI.add('browser-search-widget', function(Y) {
       var form = this.get('boundingBox').one('form').addClass('active');
     },
 
+    _suggestFormatter: function(query, results) {
+      var dataprocessor = this.get('autocompleteDataFormatter');
+      var charmlist = dataprocessor(Y.Array.map(results, function(res) {
+        return res.raw;
+      }));
+      return charmlist.map(function(charm) {
+        var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+        var tokenAttrs = Y.merge(charm.getAttrs(), {
+          size: 'tiny'
+        });
+        var token = new ns.CharmToken(tokenAttrs);
+        return container.append(token.TEMPLATE(token.getAttrs()));
+      });
+    },
+
     /**
      * We need to setup the autocomplete onto out input widget.
      *
@@ -87,77 +113,41 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _setupAutocomplete: function() {
-      var that = this;
-      var fetchResults = function(query, callback) {
-        var filters = this.get('filters');
-        filters.text = query;
-        this.get('autocompleteSource')(
-            filters, {
-              success: callback
-            },
-            this
-        );
-      };
-      var resultFormatter = function(query, results) {
-        var dataprocessor = this.get('autocompleteDataFormatter');
-        var charmlist = dataprocessor(Y.Array.map(results, function(res) {
-          return res.raw;
-        }));
-        return charmlist.map(function(charm) {
-          var container = Y.Node.create('<div class="yui3-charmtoken"/>');
-          var tokenAttrs = Y.merge(charm.getAttrs(), {
-            size: 'tiny'
-          });
-          var token = new ns.CharmToken(tokenAttrs);
-          return container.append(token.TEMPLATE(token.getAttrs()));
-        });
-      };
-
-      // Bind out helpers to the current objects context.
-      fetchResults = Y.bind(fetchResults, this);
-      resultFormatter = Y.bind(resultFormatter, this);
+      // Bind out helpers to the current objects context, not the auto
+      // complete widget context..
+      var fetchSuggestions = Y.bind(this._fetchSuggestions, this);
+      var suggestFormatter = Y.bind(this._suggestFormatter, this);
 
       // Create our autocomplete instance with all the config and handlers it
       // needs to function properly.
       this.ac = new Y.AutoComplete({
         inputNode: this.get('boundingBox').one('input'),
         queryDelay: 150,
-        resultFormatter: resultFormatter,
+        resultFormatter: suggestFormatter,
         resultListLocator: 'result',
         'resultTextLocator': function(result) {
           return result.charm.name;
         },
-        source: fetchResults
+        source: fetchSuggestions
       });
       this.ac.render();
+    },
 
-      // Block the links from the charm token from taking effect.
-      this.addEvent(
-          this.ac.get('boundingBox').delegate(
-              'click',
-              function(ev) {
-                ev.halt();
-              },
-              '.yui3-charmtoken a'
-          )
-      );
-      this.ac.on('select', function(ev) {
-        // Make sure the input box is updated.
-        var form = this.get('boundingBox').one('form');
-        form.one('input').set('value', ev.result.text);
+    _suggestionSelected: function(ev) {
+      // Make sure the input box is updated.
+      var form = this.get('boundingBox').one('form');
+      form.one('input').set('value', ev.result.text);
 
-        this.fire(this.EVT_SEARCH_CHANGED, {
-          newVal: ev.result.text
-        });
+      var charm = ev.itemNode.one('a');
+      var charmID = charm.getData('charmid');
+      var change = {
+        charmID: charmID
+      };
 
-        var charm = ev.itemNode.one('a');
-        var charmID = charm.getData('charmid');
-        var change = {
-          charmID: charmID
-        };
-
-        this.fire('viewNavigate', {change: change});
-      }, this);
+      this.fire(this.EVT_SEARCH_CHANGED, {
+        change: change,
+        newVal: ev.result.text
+      });
     },
 
     /**
@@ -203,6 +193,22 @@ YUI.add('browser-search-widget', function(Y) {
 
       // Make sure the UI around the autocomplete search input is setup.
       this._setupAutocomplete();
+
+      // Override a couple of autocomplete events to help perform our
+      // navigation correctly.
+      // Block the links from the charm token from taking effect.
+      this.addEvent(
+          this.ac.get('boundingBox').delegate(
+              'click',
+              function(ev) {
+                ev.halt();
+              },
+              '.yui3-charmtoken a'
+          )
+      );
+      this.addEvent(
+          this.ac.on('select', this._suggestionSelected, this)
+      );
     },
 
     /**

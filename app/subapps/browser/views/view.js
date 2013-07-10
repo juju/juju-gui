@@ -147,6 +147,13 @@ YUI.add('subapp-browser-mainview', function(Y) {
           text: ev.newVal
         }
       };
+
+      // Perhaps there's more to this change than just a search change. This
+      // might come from places, such as autocomplete, which are a search
+      // change, but also want to select a charm id as well.
+      if (ev.change) {
+        change = Y.merge(change, ev.change);
+      }
       this.fire('viewNavigate', {change: change});
     },
 
