@@ -1265,7 +1265,7 @@ YUI.add('juju-view-service', function(Y) {
                .replace(Y.Node.create('<input type="file"/>'));
     },
 
-     /**
+    /**
       Handle saving the service constraints.
       Make the corresponding environment call, passing _saveConstraintsCallback
       as callback (see below).
@@ -1281,7 +1281,7 @@ YUI.add('juju-view-service', function(Y) {
       var service = inspector.get('model');
       // Retrieve constraint values.
       var constraints = utils.getElementsValuesMapping(
-        container, '.constraint-field');
+          container, '.constraint-field');
       // Disable the "Save" button while the RPC call is outstanding.
       container.one('.save-constraints').set('disabled', 'disabled');
       // Set up the set_constraints callback and execute the API call.
@@ -1289,6 +1289,15 @@ YUI.add('juju-view-service', function(Y) {
       env.set_constraints(service.get('id'), constraints, callback);
     },
 
+    /**
+      Callback for handleSaveConstraints.
+      React to responses arriving from the API server.
+
+      @method _saveConstraintsCallback
+      @param {Y.Node} container The inspector container.
+      @param {Y.EventFacade} ev An event object.
+      @return {undefined} Nothing.
+    */
     _saveConstraintsCallback: function(container, ev) {
       var inspector = this.inspector;
       var service = inspector.get('model');
@@ -1429,7 +1438,7 @@ YUI.add('juju-view-service', function(Y) {
 
         bindings: {
           'constraints': {
-            format: function(value) {
+            'format': function(value) {
               // Display undefined constraints as empty strings.
               return value || '';
             }
@@ -1438,8 +1447,8 @@ YUI.add('juju-view-service', function(Y) {
 
         'render': function(service, options) {
           var constraints = this._getConstraints(
-            service.get('constraints') || {},
-            options.env.genericConstraints);
+              service.get('constraints') || {},
+              options.env.genericConstraints);
           var contents = this.template({
             service: service,
             constraints: constraints
@@ -1510,7 +1519,8 @@ YUI.add('juju-view-service', function(Y) {
             var message = node.ancestor('.control-group').one('.conflicted');
             message.one('.newval').setHTML(newValue);
             message.show();
-            var handler = message.delegate('click', sendResolve, 'button', this);
+            var handler = message.delegate(
+                'click', sendResolve, 'button', this);
           } else {
             // Otherwise, just resolve this conflict.
             resolve(node, viewletName, newValue);

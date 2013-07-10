@@ -104,7 +104,7 @@ describe('Inspector Constraints', function() {
 
   it('renders the constraints form correctly', function() {
     assert.notEqual(
-      0, env.genericConstraints.length, 'no generic constraints found');
+        0, env.genericConstraints.length, 'no generic constraints found');
     Y.Array.each(env.genericConstraints, function(key) {
       var node = container.one('input[name=' + key + '].constraint-field');
       assert.isNotNull(node, key + ' node not found');
