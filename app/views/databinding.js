@@ -380,6 +380,8 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype.resetViewletDOMEvents = function(viewlet) {
       var events = viewlet._eventHandles;
+console.log(viewlet);
+console.log(events);
       events.forEach(function(handle) {
         handle.detach();
       });
@@ -561,7 +563,9 @@ YUI.add('juju-databinding', function(Y) {
       @param {String} viewletName viewlet name to clear the changed values.
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
-      var viewlet = this._viewlets[viewletName]
+      debugger;
+      var viewlet = this._viewlets[viewletName];
+      //var viewlet = this.getViewlet(viewletName);
       viewlet._changedValues = [];
       viewlet.syncedFields();
     };

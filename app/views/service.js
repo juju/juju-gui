@@ -1309,10 +1309,12 @@ YUI.add('juju-view-service', function(Y) {
       @param {Y.EventFacade} e yui event object
     */
     _setConfigCallback: function(container, e) {
+      debugger;
       container.one('.controls .confirm').removeAttribute('disabled');
       // If the user has conflicted fields and still choose to
       // save then we will be overwriting the values in Juju.
-      this.bindingEngine.clearChangedValues.call(this.bindingEngine, 'config');
+      var bindingEngine = this.inspector.bindingEngine;
+      bindingEngine.clearChangedValues.call(bindingEngine, 'config');
       var db = this.inspector.get('db');
       if (e.err) {
         db.notifications.add(
@@ -1459,6 +1461,7 @@ YUI.add('juju-view-service', function(Y) {
           // XXX - Jeff
           // not sure this should be done like this
           // but this will allow us to use the old template.
+
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));

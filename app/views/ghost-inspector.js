@@ -55,6 +55,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
 
+      if (charm.get('options') === undefined) {
+        charm.set('options', charm.get('config').options);
+      }
+
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);
