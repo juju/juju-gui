@@ -1101,7 +1101,7 @@ YUI.add('juju-view-service', function(Y) {
       return this.inspector.getName();
     },
     'bind': function(model, viewlet) {
-      this.bindingEngine.bind(model, viewlet);
+      this.inspector.bindingEngine.bind(model, viewlet);
       return this;
     },
     'render': function() {
@@ -1288,7 +1288,7 @@ YUI.add('juju-view-service', function(Y) {
       units: {
         name: 'units',
         template: Templates.show_units_small,
-        'rebind': function(model) {
+        'selectBindModel': function(model) {
           return model.get('units');
         },
         'update': function(modellist) {
@@ -1451,13 +1451,6 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
-      // We create a new binding engine even if it's unlikely
-      // that the model will change.
-      this.bindingEngine = new views.BindingEngine();
-      this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
-      this.inspector.after('destroy', function() {
-        this.bindingEngine.unbind();
-      }, this);
       this.inspector.showViewlet(options.viewletList[0]);
     }
 

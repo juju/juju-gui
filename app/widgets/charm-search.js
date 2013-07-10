@@ -87,8 +87,8 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _setupAutocomplete: function () {
+      var that = this;
       var fetchResults = function(query, callback) {
-        debugger;
         var filters = this.get('filters');
         // filters.autocomplete = true;
         filters.text = query;
@@ -98,22 +98,23 @@ YUI.add('browser-search-widget', function(Y) {
           },
           this
         );
-      }
+      };
       fetchResults = Y.bind(fetchResults, this);
       this.ac = new Y.AutoComplete({
         inputNode: this.get('boundingBox').one('input'),
         queryDelay: 150,
         resultFormatter: function(query, results) {
-           return Y.Array.map(results, function (result) {
-              var charm = result.raw.charm;
-
-              // Use string substitution to fill out the tweet template and
-              // return an HTML string for this result.
-              debugger;
-              return Y.Lang.sub("<div><img src='{icon}'/>{name}</div>", {
-                name: charm.name,
-                icon: charm.name
+           var dataprocessor = that.get('autocompleteDataFormatter');
+           var charmlist = dataprocessor(Y.Array.map(results, function(res) {
+             return res.raw;
+           }));
+           return charmlist.map(function (charm) {
+              var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+              var tokenAttrs = Y.merge(charm.getAttrs(), {
+                size: 'tiny'
               });
+              var token = new ns.CharmToken(tokenAttrs);
+              return container.append(token.TEMPLATE(token.getAttrs()));
           });
         },
         resultListLocator: 'result',
@@ -239,6 +240,10 @@ YUI.add('browser-search-widget', function(Y) {
 
       },
 
+      autocompleteDataFormatter: {
+
+      },
+
       /**
          @attribute filters
          @default {Object} text: ''
@@ -257,6 +262,7 @@ YUI.add('browser-search-widget', function(Y) {
   requires: [
     'autocomplete',
     'base',
+    'browser-charm-token',
     'browser-filter-widget',
     'event',
     'event-tracker',
