@@ -92,8 +92,13 @@ YUI.add('juju-topology-panzoom', function(Y) {
       }
 
       slider = new Y.Slider({
-        min: options.minSlider,
-        max: options.maxSlider,
+        // Vertical sliders normally have min at the top and max at the
+        // bottom.  Switch them in the definition for our needs.
+        min: options.maxSlider,
+        max: options.minSlider,
+        axis: 'y',
+        length: '150px',
+        //thumbUrl: '/juju-ui/assets/images/orange-dot.png',
         value: this.toSlider(currentScale)
       });
       // XXX: selection to module option

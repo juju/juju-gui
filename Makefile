@@ -218,10 +218,10 @@ $(NODE_TARGETS): package.json
 	@# in the standard Makefile way, because we need to see what
 	@# node_modules were created by this target.  Makefile variables and
 	@# substitutions, even when using $(eval...) within a target, happen
-	@# initially, before the target is run.  Therefore, if this were a
-	@# simple Makefile variable, it  would be empty after a first run, and
+	@# initially, before the target is run.	 Therefore, if this were a
+	@# simple Makefile variable, it	would be empty after a first run, and
 	@# you would always see the warning message in that case.  We have to
-	@# connect it to the "if" command with "; \" because Makefile targets
+	@# connect it to the "if" command with "; \\" because Makefile targets
 	@# are evaluated per line, with bash variables discarded between them.
 	@# We compare the result with EXPECTED_NODE_TARGETS and not simply the
 	@# NODE_TARGETS because this gives us normalization, particularly of the
@@ -310,6 +310,12 @@ $(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
 	mkdir -p build-shared/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
 		build-shared/juju-ui/assets/combined-css/rail-x.png
+	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-y.png" \
+		build-shared/juju-ui/assets/combined-css/rail-y.png
+	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-x.png" \
+		build-shared/juju-ui/assets/combined-css/thumb-x.png
+	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-y.png" \
+		build-shared/juju-ui/assets/combined-css/thumb-y.png
 	bin/merge-files
 	mv *.js.map build-shared/juju-ui/assets/
 
@@ -330,6 +336,9 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/sprite.css \
 	build-$(1)/juju-ui/assets/sprite.png \
 	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
+	build-$(1)/juju-ui/assets/combined-css/rail-y.png \
+	build-$(1)/juju-ui/assets/combined-css/thumb-x.png \
+	build-$(1)/juju-ui/assets/combined-css/thumb-y.png \
 	build-$(1)/juju-ui/assets/all-yui.js
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
@@ -358,6 +367,12 @@ define link-files
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
 		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
+		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-y.png" \
+		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-x.png" \
+		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-y.png" \
 		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" build-$(1)/juju-ui/assets/
@@ -502,7 +517,7 @@ build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
 
 # This really depends on CHANGES.yaml, the bzr revno changing, and the build
-# /juju-ui directory existing.  We are vaguely trying to approximate the second
+# /juju-ui directory existing.	We are vaguely trying to approximate the second
 # one by connecting it to our pertinent versioned files.  The first target
 # creates the directory, and directories are a bit tricky with Makefiles so we
 # are OK with that.  The ULTIMATE_VERSION is used here because we always want

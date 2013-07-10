@@ -80,6 +80,17 @@
             no-repeat right top;
     background-color: @background-color;
 }
+/*
+ * Rotation transform.  Call with numerical value and units, e.g.
+ * .rotate(-90deg);
+ */
+.rotate(@angle) {
+    -webkit-transform: rotate(@angle);
+    -moz-transform: rotate(@angle);
+    -ms-transform: rotate(@angle);
+    -o-transform: rotate(@angle);
+    transform: rotate(@angle);
+}
 .border-box {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -865,7 +876,7 @@ g.unit {
  * Feedback box
  */
 #feedback-box {
-    position: fixed;
+    position: absolute;
     right: -40px;
     bottom: 100px;
     a {
@@ -886,11 +897,7 @@ g.unit {
         -webkit-transition: all 0.15s ease-in-out;
         -moz-transition: all 0.15s ease-in-out;
         transition: all 0.15s ease-in-out;
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        -ms-transform: rotate(-90deg);
-        -o-transform: rotate(-90deg);
-        transform: rotate(-90deg);
+        .rotate(-90deg);
         &:hover {
             text-decoration: none;
             background-color: #df6920;
@@ -916,6 +923,26 @@ g.unit {
         position: absolute;
         top: 1px;
         left: 11px;
+    }
+}
+.right-sidebar {
+    position: absolute;
+    right: 30px;
+    top: 0px;
+    //.zoom-controls {
+    //  .rotate(-90deg);
+    //}
+    #zoom-in-btn {
+        //position: relative;
+        //right: 33px;
+        //top: -100px;
+    }
+    #zoom-out-btn {
+        //position: relative;
+        //right: -20px;
+        //bottom: 0px;
+    }
+    #slider-parent {
     }
 }
 .create-picker(@width, @top, @listtop, @listbottom) {
