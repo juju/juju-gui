@@ -279,10 +279,13 @@ YUI.add('juju-charm-panel', function(Y) {
             });
             // If we have been given coordinates at which the ghost should be
             // created, respect them.
-            var ghostXY = this.get('ghostXY');
-            if (ghostXY !== undefined) {
-              ghostService.set('x', ghostXY[0]);
-              ghostService.set('y', ghostXY[1]);
+            var ghostAttributes = this.get('ghostAttributes');
+            if (ghostAttributes !== undefined) {
+              if (ghostAttributes.coordinates !== undefined) {
+                ghostService.set('x', ghostAttributes.coordinates[0]);
+                ghostService.set('y', ghostAttributes.coordinates[1]);
+              }
+              ghostService.set('icon', ghostAttributes.icon);
               // Set the dragged attribute to true so that the x/y coords are
               // stored in annotations as well as on the service box.
               ghostService.set('hasBeenPositioned', true);
@@ -772,7 +775,7 @@ YUI.add('juju-charm-panel', function(Y) {
       newPanel.set('height', calculatePanelPosition().height -
                    panelHeightOffset[activePanelName] - 1);
       if (config.charmId) {
-        newPanel.set('ghostXY', config.ghostXY);
+        newPanel.set('ghostAttributes', config.ghostAttributes);
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
         if (charm.loaded) {
@@ -855,7 +858,7 @@ YUI.add('juju-charm-panel', function(Y) {
      * @param {String} charmUrl The URL of the charm to configure/deploy.
      * @return {undefined} Nothing.
      */
-    function deploy(charm, ghostXY, _setPanel) {
+    function deploy(charm, ghostAttributes, _setPanel) {
       _setPanel = _setPanel || setPanel; // Injection point for tests.
       // Any passed-in charm is fully loaded but the caller doesn't know about
       // the charm panel's internal detail of marking loaded charms, so we will
@@ -863,13 +866,15 @@ YUI.add('juju-charm-panel', function(Y) {
       charm.loaded = true;
       // The config panel expects the config options here instead of the
       // "options" attribute. <shrug>
-      charm.set('config', {options: charm.get('options')});
+      if (charm.get('config') === undefined) {
+        charm.set('config', {options: charm.get('options')});
+      }
       charms.add(charm);
       // Show the configuration panel.
       _setPanel({
         name: 'configuration',
         charmId: charm.get('id'),
-        ghostXY: ghostXY
+        ghostAttributes: ghostAttributes
       });
       // Since we are showing the configure/deploy panel ex nihilo, we want the
       // panel to disappear when the deploy completes or is canceled, but just
