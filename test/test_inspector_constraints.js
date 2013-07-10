@@ -146,7 +146,7 @@ describe('Inspector Constraints', function() {
     });
   });
 
-  it('allows resolving conflicts', function() {
+  it('can resolve conflicts', function() {
     var newValue = 'amd64';
     var viewlet = getViewlet(inspector);
     // Change the value in the form.
@@ -162,7 +162,7 @@ describe('Inspector Constraints', function() {
     assert.strictEqual(newValue, node.get('value'));
   });
 
-  it('allows ignoring conflicts', function() {
+  it('can ignore conflicts', function() {
     var viewlet = getViewlet(inspector);
     // Change the value in the form.
     var node = changeForm(viewlet, 'arch', 'i386');
@@ -185,7 +185,7 @@ describe('Inspector Constraints', function() {
     assert.strictEqual('', message.one('.newval').getContent());
   });
 
-  it('allows saving constraints', function() {
+  it('can save constraints', function() {
     var expected = {arch: 'amd64', cpu: 'photon', mem: '1 teraflop'};
     // Change values in the form.
     Y.Object.each(expected, function(value, key) {

@@ -1294,6 +1294,7 @@ YUI.add('juju-view-service', function(Y) {
       React to responses arriving from the API server.
 
       @method _saveConstraintsCallback
+      @private
       @param {Y.Node} container The inspector container.
       @param {Y.EventFacade} ev An event object.
       @return {undefined} Nothing.
