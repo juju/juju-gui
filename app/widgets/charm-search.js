@@ -80,6 +80,52 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
+     * We need to setup the autocomplete onto out input widget.
+     *
+     * @method _setupAutocomplete
+     * @private
+     *
+     */
+    _setupAutocomplete: function () {
+      var fetchResults = function(query, callback) {
+        debugger;
+        var filters = this.get('filters');
+        // filters.autocomplete = true;
+        filters.text = query;
+        this.get('autocompleteSource')(
+          filters, {
+            success: callback
+          },
+          this
+        );
+      }
+      fetchResults = Y.bind(fetchResults, this);
+      this.ac = new Y.AutoComplete({
+        inputNode: this.get('boundingBox').one('input'),
+        queryDelay: 150,
+        resultFormatter: function(query, results) {
+           return Y.Array.map(results, function (result) {
+              var charm = result.raw.charm;
+
+              // Use string substitution to fill out the tweet template and
+              // return an HTML string for this result.
+              debugger;
+              return Y.Lang.sub("<div><img src='{icon}'/>{name}</div>", {
+                name: charm.name,
+                icon: charm.name
+              });
+          });
+        },
+        resultListLocator: 'result',
+        resultTextLocator: function (result) {
+          return result.charm.name;
+        },
+        source: fetchResults
+      });
+      this.ac.render();
+    },
+
+    /**
      * Toggle the active state depending on the content in the search box.
      *
      * @method _toggleActive
@@ -119,6 +165,15 @@ YUI.add('browser-search-widget', function(Y) {
           container.one('input').on(
               'blur', this._toggleActive, this)
       );
+
+      // Make sure the UI around the autocomplete search input is setup.
+      this._setupAutocomplete();
+    },
+
+    destroy: function() {
+      if (this.ac) {
+        this.ac.destroy();
+      }
     },
 
     /**
@@ -175,6 +230,16 @@ YUI.add('browser-search-widget', function(Y) {
   }, {
     ATTRS: {
       /**
+        @attribute autocompleteSource
+        @default {undefined} The api point for fetching the suggestions.
+        @type {Charmworld2}
+
+      */
+      autocompleteSource: {
+
+      },
+
+      /**
          @attribute filters
          @default {Object} text: ''
          @type {Object}
@@ -190,6 +255,7 @@ YUI.add('browser-search-widget', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'autocomplete',
     'base',
     'browser-filter-widget',
     'event',

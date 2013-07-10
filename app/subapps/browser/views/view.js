@@ -114,8 +114,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
-        filters: this.get('filters'),
-        fullscreenTarget: this._fullscreenTarget
+        autocompleteSource: Y.bind(
+            this.get('store').autocomplete,
+            this.get('store')
+        ),
+        filters: this.get('filters')
       });
       this.search.render(node.one('.bws-header'));
 
