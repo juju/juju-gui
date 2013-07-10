@@ -562,7 +562,6 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
       var viewlet = this._viewlets[viewletName];
-      //var viewlet = this.getViewlet(viewletName);
       viewlet._changedValues = [];
       viewlet.syncedFields();
     };

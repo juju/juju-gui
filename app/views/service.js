@@ -1295,8 +1295,15 @@ YUI.add('juju-view-service', function(Y) {
             Y.bind(this._setConfigCallback, this, container)
         );
       } else {
-        // XXX throw errors
-        // we have no error handling story yet
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error saving service config',
+              message: 'Error saving service config',
+              level: 'error'
+            })
+        );
+        // We don't have a story for passing the full error messages
+        // through so will log to the console for now.
         console.log('Error setting config', errors);
       }
     },
