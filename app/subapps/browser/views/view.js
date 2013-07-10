@@ -98,10 +98,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
               this.controls.EVT_SIDEBAR, this._goSidebar, this)
       );
 
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
-      );
+      if (this.search) {
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
+        );
+      }
     },
 
     /**
@@ -113,15 +115,19 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _renderSearchWidget: function(node) {
-      this.search = new widgets.browser.Search({
-        autocompleteSource: Y.bind(
-            this.get('store').autocomplete,
-            this.get('store')
-        ),
-        autocompleteDataFormatter: this.get('store').resultsToCharmlist,
-        filters: this.get('filters')
-      });
-      this.search.render(node.one('.bws-header'));
+      // It only makes sense to render search if we have a store to use to
+      // search against.
+      if (this.get('store')) {
+        this.search = new widgets.browser.Search({
+          autocompleteSource: Y.bind(
+              this.get('store').autocomplete,
+              this.get('store')
+          ),
+          autocompleteDataFormatter: this.get('store').resultsToCharmlist,
+          filters: this.get('filters')
+        });
+        this.search.render(node.one('.bws-header'));
+      }
 
       this.controls = new widgets.ViewmodeControls();
       this.controls.render();
