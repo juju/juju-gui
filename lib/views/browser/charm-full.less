@@ -26,7 +26,8 @@
         h2,
         h3,
         h4 {
-            
+            .type5;
+            margin: 20px 0 10px 0;
         }
     }
     .provider-warning {
@@ -123,64 +124,46 @@
         }
     }
     .changelog {
+        padding-top: 10px;
+
         .section-title,
         .section-title a {
-            .heading-font;
+            .type5;
         }
         .section-title {
-            margin: 14px 0 5px 0;
+            margin: 0 0 5px 0;
             padding: 0;
             background: transparent;
             border: none;
+
+            a:hover {
+                background: transparent;
+            }
         }
         .remaining {
             margin-top: 10px;
         }
-        h4 {
-            color: @bws-text;
-            font-size: 9pt;
-        }
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        p {
-            margin: 0;
-        }
+        h4,
+        li,
         .maintainer {
             margin-bottom: 10px;
         }
-        .date {
-            margin-right: 3pt;
-        }
-    }
-    .summary {
-        padding-top: 12px;
-
-        h2 {
-            margin-top: 10px;
-            line-height: 20pt;
-        }
         p {
             margin: 0;
+        }
+        .date {
+            margin-right: 3pt;
         }
     }
     .intro {
         margin-top: 9px;
         margin-bottom: 26px;
     }
+    #bws-summary,
     #bws-readme {
         padding-top: 10px;
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            margin: 14px 0 2px 0;
-            font-size: 9pt;
-            line-height: 150%;
-        }
+    }
+    #bws-readme {
         ul {
             list-style-type: disc;
             padding-left: 2em;
@@ -195,8 +178,8 @@
         }
         .interfaces-heading {
             background-color: #eeeeee;
-            padding-top: 15px;
-            padding-bottom: 15px;
+            padding-top: 0;
+            padding-bottom: 10px;
         }
         .interface-list {
             .interface-row {
@@ -208,6 +191,9 @@
                     padding-bottom: 10px;
                     font-size: 10.5pt;
                 }
+                .yui3-charmtoken {
+                    width: 100%;
+                }
                 &:last-child {
                     border: none;
                 }
@@ -216,13 +202,13 @@
     }
     #bws-configuration {
         dt {
-            margin-top: 8px;
+            margin: 8px 0 10px 0;
 
             dfn,
             em {
+                .type5;
                 font-style: normal;
                 font-family: @font-family-mono;
-                font-size: 10pt;
             }
             dfn {
                 margin-right: 3px;

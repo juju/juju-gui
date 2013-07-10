@@ -88,7 +88,8 @@
                     <div class="changelog">
                         <h3 class="section-title">
                             {{#if recent_commits}}
-                                <a href="" class="expandToggle" data-state="closed">
+                                <a href="" class="expandToggle"
+                                    data-state="closed">
                             {{/if}}
                             Change log
                             {{#if recent_commits}}
@@ -127,9 +128,13 @@
                                 <ul>
                                     {{#prettyCommits.remaining}}
                                         <li>
-                                            <span class="date">{{prettyDate}}</span>
+                                            <span class="date">
+                                                {{prettyDate}}
+                                            </span>
                                             {{author.name}} {{message}} -
-                                            <a href="{{ revnoLink }}">REVNO{{revno}}</a>
+                                            <a href="{{ revnoLink }}">
+                                                REVNO{{revno}}
+                                            </a>
                                         </li>
                                     {{/prettyCommits.remaining}}
                                 </ul>
@@ -175,10 +180,10 @@
                     </p>
                     {{#if requires}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Requires</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Related charms</h3>
                             </div>
                             <div class="yui3-u-1-3">
@@ -201,10 +206,10 @@
                     {{/if}}
                     {{#if provides}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Provides</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Related charms</h3>
                             </div>
                             <div class="yui3-u-1-3">
