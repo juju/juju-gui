@@ -51,6 +51,15 @@ YUI.add('browser-search-widget', function(Y) {
 
     TEMPLATE: templates['browser-search'],
 
+    /**
+     * Fetch, from the store, suggested options for the search autocomplete
+     * widget.
+     *
+     * @method _fetchSuggestions
+     * @param {String} query the search query terms.
+     * @param {Function} callback the callback to the AC widget.
+     *
+     */
     _fetchSuggestions: function(query, callback) {
       var filters = this.get('filters');
       filters.text = query;
@@ -90,6 +99,19 @@ YUI.add('browser-search-widget', function(Y) {
       var form = this.get('boundingBox').one('form').addClass('active');
     },
 
+    /**
+     * Format the html that will be used in the AC widget results.
+     *
+     * Results need to be processed as charm tokens to get them to render
+     * correctly with the right visual logic for reviewed/icons/etc.
+     *
+     * @method _suggestFormatter
+     * @param {String} query the searched for query term.
+     * @param {Array} results the list of objects from the AC processing of
+     * the api results. Note: this is not the api json, but objects from the
+     * AC processing.
+     *
+     */
     _suggestFormatter: function(query, results) {
       var dataprocessor = this.get('autocompleteDataFormatter');
       var charmlist = dataprocessor(Y.Array.map(results, function(res) {
@@ -133,6 +155,14 @@ YUI.add('browser-search-widget', function(Y) {
       this.ac.render();
     },
 
+    /**
+     * Handle selecting an AC suggestion and firing the correct events to
+     * update the UI.
+     *
+     * @method _suggestionSelected
+     * @param {Y.Event} ev The 'select' event from the AC widget.
+     *
+     */
     _suggestionSelected: function(ev) {
       // Make sure the input box is updated.
       var form = this.get('boundingBox').one('form');
