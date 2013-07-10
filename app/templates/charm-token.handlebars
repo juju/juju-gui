@@ -38,12 +38,14 @@
         <span class="title">
             {{ name }}
         </span>
-        <span class="metadata">
-                <strong>{{ downloads }}</strong>
-                {{pluralize 'download' downloads}},
-                <strong>{{ recent_commit_count }}</strong>
-                {{pluralize 'commit' recent_commit_count}}
-        </span>
-        <span class="description">{{truncate description 110 }}</span>
+        {{#unless_eq size 'tiny'}}
+            <span class="metadata">
+                    <strong>{{ downloads }}</strong>
+                    {{pluralize 'download' downloads}},
+                    <strong>{{ recent_commit_count }}</strong>
+                    {{pluralize 'commit' recent_commit_count}}
+            </span>
+            <span class="description">{{truncate description 110 }}</span>
+        {{/unless_eq}}
     </span>
 </a>

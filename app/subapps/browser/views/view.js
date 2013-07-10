@@ -118,6 +118,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
             this.get('store').autocomplete,
             this.get('store')
         ),
+        autocompleteDataFormatter: this.get('store').resultsToCharmlist,
         filters: this.get('filters')
       });
       this.search.render(node.one('.bws-header'));
