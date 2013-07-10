@@ -1,6 +1,6 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        {{#if isFullscreen}}<a href="" class="back"></a>{{/if}}
+        {{#if isFullscreen}}<a href="" class="back">&lsaquo; Back</a>{{/if}}
         {{#if failingProviders}}
             <div class="provider-warning"><i class="sprite alert_icon2"></i>
                 <span>Currently fails on</span>
@@ -28,20 +28,20 @@
                     {{/if}}
                 {{/if}}
             </div>
-            <div class="add-reviewed">
-                {{#if is_approved}}
-                    <div>
-                        <i class="sprite approved_star"></i>
-                        Reviewed by the Juju team
-                    </div>
-                {{/if}}
-                {{! The add class is used by the deploy method in
-                    test/test_charm_running.py.  If you change this name, change
-                    the other one too! }}
-                <a href="" class="add">Add to my canvas</a>
-            </div>
             <div class="charm-details">
                 <h1>{{ name }}</h1>
+                <div class="add-reviewed">
+                    {{#if is_approved}}
+                        <div>
+                            <i class="sprite approved_star"></i>
+                            Reviewed by the Juju team
+                        </div>
+                    {{/if}}
+                    {{! The add class is used by the deploy method in
+                        test/test_charm_running.py.  If you change this name, change
+                        the other one too! }}
+                    <a href="" class="add">Add to my canvas</a>
+                </div>
                 <ul>
                     <li>
                         Recent activity: {{ downloads }}
