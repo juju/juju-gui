@@ -161,8 +161,8 @@ YUI.add('juju-view-container', function(Y) {
       @property _changedValues
       @type {Array}
       @default empty array
+      @private
     */
-    _changedValues: [],
 
     /**
      Model change events handles associated with this viewlet.
@@ -170,8 +170,8 @@ YUI.add('juju-view-container', function(Y) {
      @property _eventHandles
      @type {Array}
      @default empty array
+     @private
      */
-    _eventHandles: []
   };
 
   /**
@@ -243,7 +243,7 @@ YUI.add('juju-view-container', function(Y) {
       // Internal mapping from slot name to viewlet rendered into slot.
       this._slots = {};
 
-      this.bindingEngine = new jujuViews.BindingEngine({viewlets: this.viewlets});
+      this.bindingEngine = new jujuViews.BindingEngine();
     },
 
     /**
@@ -384,6 +384,8 @@ YUI.add('juju-view-container', function(Y) {
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
+        viewlets[key]._changedValues = [];
+        viewlets[key]._eventHandles = [];
       }, this);
 
       return viewlets;

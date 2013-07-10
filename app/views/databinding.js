@@ -192,7 +192,6 @@ YUI.add('juju-databinding', function(Y) {
       var modelEventHandles = this.resetModelChangeEvents(model);
       modelEventHandles.push(
           model.on('change', this._modelChangeHandler, this));
-
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
@@ -380,8 +379,6 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype.resetViewletDOMEvents = function(viewlet) {
       var events = viewlet._eventHandles;
-console.log(viewlet);
-console.log(events);
       events.forEach(function(handle) {
         handle.detach();
       });
@@ -431,6 +428,7 @@ console.log(events);
     BindingEngine.prototype._storeChanged = function(e, viewlet) {
       var key = e.currentTarget.getData('bind'),
           save = true;
+
       viewlet._changedValues.forEach(function(value) {
         if (value === key) {
           save = false;
@@ -563,7 +561,6 @@ console.log(events);
       @param {String} viewletName viewlet name to clear the changed values.
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
-      debugger;
       var viewlet = this._viewlets[viewletName];
       //var viewlet = this.getViewlet(viewletName);
       viewlet._changedValues = [];
