@@ -26,6 +26,10 @@
 @navbar-height: 79px;
 @navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
+@text-colour: #505050;
+
+// Imports need to be after vars.
+@import "typography.less";
 
 /* Mixins */
 .create-border-radius(@radius) {
@@ -243,20 +247,6 @@ table tr.highlighted td {
             margin: 0 20px 0 0;
             padding: 0;
             list-style: none;
-
-            li {
-                float: left;
-
-                a {
-                    display: block;
-                    padding: 25px 10px 0 10px;
-                    font-size: 12pt;
-                    color: #9b9b9b;
-                }
-            }
-        }
-        #browser-nav {
-            float: left;
 
             ul {
               margin: 0 20px 0 0;
@@ -1819,7 +1809,6 @@ g.unit {
 @import "browser/charm-container.less";
 @import "browser/charm-full.less";
 @import "browser/charm-token.less";
-@import "browser/content-sidebar.less";
 @import "browser/editorial.less";
 @import "browser/minimized.less";
 @import "browser/overlay-indicator.less";
