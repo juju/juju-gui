@@ -128,11 +128,12 @@ describe('View Container', function() {
   });
 
   it('passes model and attrs to the viewlet render method', function(done) {
-    generateViewContainer(function(model, attrs) {
+    var render = function(model, attrs) {
       assert.deepEqual(viewContainer.get('model'), model);
       assert.deepEqual(viewContainer.getAttrs(), attrs);
       done();
-    });
+    };
+    generateViewContainer({render: render});
     viewContainer.render();
   });
 

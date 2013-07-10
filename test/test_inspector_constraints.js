@@ -44,6 +44,7 @@ describe('Inspector Constraints', function() {
     var db = new models.Database();
     var service = makeService(db);
     env = juju.newEnvironment({conn: conn});
+    env.connect();
     view = new views.environment({container: container, db: db, env: env});
     view.render();
     inspector = makeInspector(view, service);
@@ -74,6 +75,16 @@ describe('Inspector Constraints', function() {
     Y.Node.create('<div id="content">').appendTo(container);
     environmentView.createServiceInspector(service, {});
     return view.getInspector(service.get('id'));
+  };
+
+  // Create a fake response from the API server.
+  var makeResponse = function(service, error) {
+    return {
+      err: error,
+      op: 'set_constraints',
+      request_id: 1,
+      service_name: service.get('id')
+    };
   };
 
   // Retrieve and return the constraints viewlet.
@@ -136,16 +147,19 @@ describe('Inspector Constraints', function() {
   });
 
   it('allows resolving conflicts', function() {
+    var newValue = 'amd64';
     var viewlet = getViewlet(inspector);
     // Change the value in the form.
     var node = changeForm(viewlet, 'arch', 'i386');
     // Change the value in the database.
-    inspector.model.set('constraints', {arch: 'amd64'});
+    inspector.model.set('constraints', {arch: newValue});
     // Accept the incoming new value.
     var message = node.ancestor('.control-group').one('.conflicted');
+    // The user is informed about the new value.
+    assert.strictEqual(newValue, message.one('.newval').getContent());
     message.one('.conflicted-confirm').simulate('click');
     // The form value is changed accordingly.
-    assert.strictEqual('amd64', node.get('value'));
+    assert.strictEqual(newValue, node.get('value'));
   });
 
   it('allows ignoring conflicts', function() {
@@ -161,8 +175,66 @@ describe('Inspector Constraints', function() {
     assert.strictEqual('i386', node.get('value'));
   });
 
-  it('allows saving constraints', function() {
+  it('avoids displaying the conflicts message if not required', function() {
+    var viewlet = getViewlet(inspector);
+    // Change the value in the form.
+    var node = changeForm(viewlet, 'arch', 'i386');
+    // Change the value in the database.
+    inspector.model.set('constraints', {arch: 'i386'});
+    var message = node.ancestor('.control-group').one('.conflicted');
+    assert.strictEqual('', message.one('.newval').getContent());
+  });
 
+  it('allows saving constraints', function() {
+    var expected = {arch: 'amd64', cpu: 'photon', mem: '1 teraflop'};
+    // Change values in the form.
+    Y.Object.each(expected, function(value, key) {
+      var node = container.one('input[name=' + key + '].constraint-field');
+      node.set('value', value);
+    });
+    // Save the changes.
+    var saveButton = container.one('button.save-constraints');
+    saveButton.simulate('click');
+    var lastMessage = env.ws.last_message();
+    // The set_constraint API method is correctly called.
+    assert.equal('set_constraints', lastMessage.op);
+    // The expected constraints are passed in the API call.
+    var obtained = Object.create(null);
+    Y.Array.each(lastMessage.constraints, function(value) {
+      var pair = value.split('=');
+      obtained[pair[0]] = pair[1];
+    });
+    assert.deepEqual(expected, obtained);
+  });
+
+  it('handles error responses from the environment', function() {
+    var saveButton = container.one('button.save-constraints');
+    saveButton.simulate('click');
+    env.ws.msg(makeResponse(inspector.model, true));
+    var db = inspector.inspector.get('db');
+    // An error response generates a notification.
+    assert.strictEqual(1, db.notifications.size());
+    var msg = db.notifications.item(0);
+    assert.strictEqual('Error setting service constraints', msg.get('title'));
+    var serviceName = inspector.model.get('id');
+    assert.strictEqual('Service name: ' + serviceName, msg.get('message'));
+  });
+
+  it('handles success responses from the environment', function() {
+    var saveButton = container.one('button.save-constraints');
+    saveButton.simulate('click');
+    env.ws.msg(makeResponse(inspector.model, false));
+    var db = inspector.inspector.get('db');
+    assert.strictEqual(0, db.notifications.size());
+  });
+
+  it('disables and re-enables the save button during the process', function() {
+    var saveButton = container.one('button.save-constraints');
+    assert.isFalse(saveButton.get('disabled'));
+    saveButton.simulate('click');
+    assert.isTrue(saveButton.get('disabled'));
+    env.ws.msg(makeResponse(inspector.model));
+    assert.isFalse(saveButton.get('disabled'));
   });
 
 });

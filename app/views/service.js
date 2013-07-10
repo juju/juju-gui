@@ -1290,33 +1290,22 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _saveConstraintsCallback: function(container, ev) {
-      console.log(this.inspector.getAttrs());
-      // var service = this.get('model'),
-      //     env = this.get('env'),
-      //     getModelURL = this.get('getModelURL'),
-      //     db = this.get('db');
-
-      // if (ev.err) {
-      //   db.notifications.add(
-      //       new models.Notification({
-      //         title: 'Error setting service constraints',
-      //         message: 'Service name: ' + ev.service_name,
-      //         level: 'error',
-      //         link: getModelURL(service) + 'constraints',
-      //         modelId: service
-      //       })
-      //   );
-      //   container.one('#save-service-constraints')
-      //     .removeAttribute('disabled');
-
-      // } else {
-      //   // The usual result of a successful request is a page refresh.
-      //   // Therefore, we need to set this delay in order to show the
-      //   // "success" message after the page page refresh.
-      //   setTimeout(function() {
-      //     utils.showSuccessMessage(container, 'Constraints updated');
-      //   }, 1000);
-      // }
+      var inspector = this.inspector;
+      var service = inspector.get('model');
+      if (ev.err) {
+        // Notify an error occurred while updating constraints.
+        var db = inspector.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service constraints',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              //link: getModelURL(service) + 'constraints',
+              modelId: service
+            })
+        );
+      }
+      container.one('.save-constraints').removeAttribute('disabled');
     }
 
   };
@@ -1509,17 +1498,23 @@ YUI.add('juju-view-service', function(Y) {
           function sendResolve(ev) {
             handler.detach();
             if (ev.currentTarget.hasClass('conflicted-confirm')) {
-              resolve(node, viewletName, newVal);
+              resolve(node, viewletName, newValue);
             }
-            // If they don't accept the new value then do nothing.
+            // If the user does not accept the new value then do nothing.
             message.hide();
           }
-
-          var message = node.ancestor('.control-group').one('.conflicted');
-          var newVal = model.get(node.getData('bind'));
-          message.one('.newval').setHTML(newVal);
-          message.show();
-          var handler = message.delegate('click', sendResolve, 'button', this);
+          var newValue = model.get(node.getData('bind'));
+          if (newValue !== node.get('value')) {
+            // If the value changed, give the user the possibility to
+            // select which value to preserve.
+            var message = node.ancestor('.control-group').one('.conflicted');
+            message.one('.newval').setHTML(newValue);
+            message.show();
+            var handler = message.delegate('click', sendResolve, 'button', this);
+          } else {
+            // Otherwise, just resolve this conflict.
+            resolve(node, viewletName, newValue);
+          }
         }
       },
       //relations: {},
