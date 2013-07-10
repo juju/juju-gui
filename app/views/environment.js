@@ -174,7 +174,7 @@ YUI.add('juju-view-environment', function(Y) {
             },
             configService: {
               events: {
-                '.tab': {'click': 'showViewlet'},
+                '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },

@@ -1155,13 +1155,13 @@ YUI.add('juju-view-service', function(Y) {
       var svcInspector = window.flags && window.flags.serviceInspector;
       var dataSource = svcInspector ? this.inspector : this;
       var model = dataSource.get('model');
-      var env = dataSource.get('env');
       if (model.name === 'service') {
-        env.destroy_service(
-            model.get('id'), Y.bind(this._destroyCallback, this));
+        var env = dataSource.get('env');
+        env.destroy_service(model.get('id'),
+            Y.bind(this._destroyCallback, this));
       } else if (model.name === 'charm') {
-          app.db.services.remove(this.options.ghostService);
-          app.db.fire('update');
+        var db = this.inspector.get('db');
+        db.services.remove(this.options.ghostService);
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }
