@@ -90,7 +90,6 @@ YUI.add('browser-search-widget', function(Y) {
       var that = this;
       var fetchResults = function(query, callback) {
         var filters = this.get('filters');
-        // filters.autocomplete = true;
         filters.text = query;
         this.get('autocompleteSource')(
           filters, {
@@ -99,24 +98,31 @@ YUI.add('browser-search-widget', function(Y) {
           this
         );
       };
+      var resultFormatter = function(query, results) {
+        var dataprocessor = this.get('autocompleteDataFormatter');
+        var charmlist = dataprocessor(Y.Array.map(results, function(res) {
+          return res.raw;
+        }));
+        return charmlist.map(function (charm) {
+           var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+           var tokenAttrs = Y.merge(charm.getAttrs(), {
+             size: 'tiny'
+           });
+           var token = new ns.CharmToken(tokenAttrs);
+           return container.append(token.TEMPLATE(token.getAttrs()));
+       });
+      };
+
+      // Bind out helpers to the current objects context.
       fetchResults = Y.bind(fetchResults, this);
+      resultFormatter = Y.bind(resultFormatter, this);
+
+      // Create our autocomplete instance with all the config and handlers it
+      // needs to function properly.
       this.ac = new Y.AutoComplete({
         inputNode: this.get('boundingBox').one('input'),
         queryDelay: 150,
-        resultFormatter: function(query, results) {
-           var dataprocessor = that.get('autocompleteDataFormatter');
-           var charmlist = dataprocessor(Y.Array.map(results, function(res) {
-             return res.raw;
-           }));
-           return charmlist.map(function (charm) {
-              var container = Y.Node.create('<div class="yui3-charmtoken"/>');
-              var tokenAttrs = Y.merge(charm.getAttrs(), {
-                size: 'tiny'
-              });
-              var token = new ns.CharmToken(tokenAttrs);
-              return container.append(token.TEMPLATE(token.getAttrs()));
-          });
-        },
+        resultFormatter: resultFormatter,
         resultListLocator: 'result',
         resultTextLocator: function (result) {
           return result.charm.name;
@@ -124,6 +130,33 @@ YUI.add('browser-search-widget', function(Y) {
         source: fetchResults
       });
       this.ac.render();
+
+      // Block the links from the charm token from taking effect.
+      this.addEvent(
+        this.ac.get('boundingBox').delegate(
+            'click',
+            function(ev) {
+              ev.halt();
+            },
+           '.yui3-charmtoken a'
+      ));
+      this.ac.on('select', function(ev) {
+        // Make sure the input box is updated.
+        var form = this.get('boundingBox').one('form');
+        form.one('input').set('value', ev.result.text);
+
+        this.fire(this.EVT_SEARCH_CHANGED, {
+          newVal: ev.result.text
+        });
+
+        var charm = ev.itemNode.one('a');
+        var charmID = charm.getData('charmid');
+        var change = {
+          charmID: charmID
+        };
+
+        this.fire('viewNavigate', {change: change});
+      }, this);
     },
 
     /**
