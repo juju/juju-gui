@@ -22,7 +22,8 @@ describe('Inspector Constraints', function() {
   var container, env, inspector, juju, models, utils, view, views, Y;
 
   before(function(done) {
-    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
+    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
+      'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -57,6 +58,7 @@ describe('Inspector Constraints', function() {
     container.remove(true);
   });
 
+  // Create a service model instance.
   var makeService = function(db) {
     var charmId = 'precise/django-42';
     db.charms.add({id: charmId, config: {}});
@@ -67,14 +69,26 @@ describe('Inspector Constraints', function() {
     return service;
   };
 
+  // Create a service inspector.
   var makeInspector = function(environmentView, service) {
     Y.Node.create('<div id="content">').appendTo(container);
     environmentView.createServiceInspector(service, {});
     return view.getInspector(service.get('id'));
   };
 
+  // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
     return inspector.inspector.viewlets.constraints;
+  };
+
+  // Change the value of the given key in the constraints form.
+  // Return the corresponding node.
+  var changeForm = function(viewlet, key, value) {
+    var selector = 'input[name=' + key + '].constraint-field';
+    var node = viewlet.container.one(selector);
+    node.set('value', value);
+    viewlet._changedValues = ['constraints.' + key];
+    return node;
   };
 
   it('renders the constraints form correctly', function() {
@@ -122,7 +136,29 @@ describe('Inspector Constraints', function() {
   });
 
   it('allows resolving conflicts', function() {
+    var viewlet = getViewlet(inspector);
+    // Change the value in the form.
+    var node = changeForm(viewlet, 'arch', 'i386');
+    // Change the value in the database.
+    inspector.model.set('constraints', {arch: 'amd64'});
+    // Accept the incoming new value.
+    var message = node.ancestor('.control-group').one('.conflicted');
+    message.one('.conflicted-confirm').simulate('click');
+    // The form value is changed accordingly.
+    assert.strictEqual('amd64', node.get('value'));
+  });
 
+  it('allows ignoring conflicts', function() {
+    var viewlet = getViewlet(inspector);
+    // Change the value in the form.
+    var node = changeForm(viewlet, 'arch', 'i386');
+    // Change the value in the database.
+    inspector.model.set('constraints', {arch: 'amd64'});
+    // Ignore the incoming new value.
+    var message = node.ancestor('.control-group').one('.conflicted');
+    message.one('.conflicted-cancel').simulate('click');
+    // The form value is preserved.
+    assert.strictEqual('i386', node.get('value'));
   });
 
   it('allows saving constraints', function() {

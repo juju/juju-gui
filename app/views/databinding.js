@@ -497,7 +497,7 @@ YUI.add('juju-databinding', function(Y) {
             conflicted = binding.target;
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, binding));
+                Y.bind(resolve, self));
           }
         });
 

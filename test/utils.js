@@ -30,9 +30,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         container.set('id', id);
       }
       container.appendTo(document.body);
-      container.setStyle('position', 'absolute');
-      container.setStyle('top', '-10000px');
-      container.setStyle('left', '-10000px');
+      // container.setStyle('position', 'absolute');
+      // container.setStyle('top', '-10000px');
+      // container.setStyle('left', '-10000px');
       return container;
     },
 

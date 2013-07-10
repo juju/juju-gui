@@ -1266,27 +1266,57 @@ YUI.add('juju-view-service', function(Y) {
     },
 
      /**
-      Handles exposing the service.
+      Handle saving the service constraints.
+      Make the corresponding environment call, passing _saveConstraintsCallback
+      as callback (see below).
 
-      @method toggleExpose
-      @param {Y.EventFacade} e An event object.
+      @method handleSaveConstraints
+      @param {Y.EventFacade} ev An event object.
       @return {undefined} Nothing.
     */
-    handleSaveConstraints: function(e) {
-      var service = this.inspector.get('model');
-      var env = this.inspector.get('env');
-      console.log('CONSTRAINTS');
-      console.log(service);
-      console.log(env);
-      // var exposed;
-      // if (service.get('exposed')) {
-      //   this.unexposeService();
-      //   exposed = false;
+    handleSaveConstraints: function(ev) {
+      var inspector = this.inspector;
+      var container = inspector.get('container');
+      var env = inspector.get('env');
+      var service = inspector.get('model');
+      // Retrieve constraint values.
+      var constraints = utils.getElementsValuesMapping(
+        container, '.constraint-field');
+      // Disable the "Save" button while the RPC call is outstanding.
+      container.one('.save-constraints').set('disabled', 'disabled');
+      // Set up the set_constraints callback and execute the API call.
+      var callback = Y.bind(this._saveConstraintsCallback, this, container);
+      env.set_constraints(service.get('id'), constraints, callback);
+    },
+
+    _saveConstraintsCallback: function(container, ev) {
+      console.log(this.inspector.getAttrs());
+      // var service = this.get('model'),
+      //     env = this.get('env'),
+      //     getModelURL = this.get('getModelURL'),
+      //     db = this.get('db');
+
+      // if (ev.err) {
+      //   db.notifications.add(
+      //       new models.Notification({
+      //         title: 'Error setting service constraints',
+      //         message: 'Service name: ' + ev.service_name,
+      //         level: 'error',
+      //         link: getModelURL(service) + 'constraints',
+      //         modelId: service
+      //       })
+      //   );
+      //   container.one('#save-service-constraints')
+      //     .removeAttribute('disabled');
+
       // } else {
-      //   this.exposeService();
-      //   exposed = true;
+      //   // The usual result of a successful request is a page refresh.
+      //   // Therefore, we need to set this delay in order to show the
+      //   // "success" message after the page page refresh.
+      //   setTimeout(function() {
+      //     utils.showSuccessMessage(container, 'Constraints updated');
+      //   }, 1000);
       // }
-      // service.set('exposed', exposed);
     }
 
   };
@@ -1479,18 +1509,16 @@ YUI.add('juju-view-service', function(Y) {
           function sendResolve(ev) {
             handler.detach();
             if (ev.currentTarget.hasClass('conflicted-confirm')) {
-              node.setStyle('borderColor', 'black');
               resolve(node, viewletName, newVal);
             }
             // If they don't accept the new value then do nothing.
-            message.setStyle('display', 'none');
+            message.hide();
           }
 
-          node.setStyle('borderColor', 'red');
-          var message = node.ancestor('.control-group').one('.conflicted'),
-              newVal = model.get(node.getData('bind'));
+          var message = node.ancestor('.control-group').one('.conflicted');
+          var newVal = model.get(node.getData('bind'));
           message.one('.newval').setHTML(newVal);
-          message.setStyle('display', 'block');
+          message.show();
           var handler = message.delegate('click', sendResolve, 'button', this);
         }
       },
