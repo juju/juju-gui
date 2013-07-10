@@ -60,75 +60,9 @@
             </div>
         </div>
 
-        <div class="summary">
-            <h2>Summary</h2>
-            <p>{{ summary }}</p>
-            <h2>Description</h2>
-            <p>
-                {{#if isFullscreen}}
-                    {{ description }}
-                {{else}}
-                    {{ truncate description 300 }}
-                {{/if}}
-            </p>
-        </div>
-
-        <div class="changelog">
-            <h3 class="section-title">
-                {{#if recent_commits}}
-                    <a href="" class="expandToggle" data-state="closed">
-                {{/if}}
-                Change log
-                {{#if recent_commits}}
-                        <span class="expand">
-                            <span class="more">
-                                <img src="/juju-ui/assets/images/expand_icon.png"
-                                    alt="Expand" />
-                            </span>
-                            <span class="less hidden">
-                                <img src="/juju-ui/assets/images/contract_icon.png"
-                                    alt="Contract" />
-                            </span>
-                        </span>
-                    </a>
-                {{/if}}
-            </h3>
-            {{#if recent_commits}}
-                <div class="first">
-                    <p>
-                        Latest change:
-                        <span class="date">
-                            {{prettyCommits.first.prettyDate}}
-                        </span>
-                        {{prettyCommits.first.author.name}}
-                        {{prettyCommits.first.message}} -
-                        <a href="{{ prettyCommits.first.revnoLink }}">
-                          REVNO{{prettyCommits.first.revno}}
-                        </a>
-                    </p>
-                </div>
-                <div class="remaining hidden">
-                    <p class="maintainer">
-                        Maintained by {{ maintainer.name }}
-                    </p>
-                    <h4>Earlier changes</h4>
-                    <ul>
-                        {{#prettyCommits.remaining}}
-                            <li>
-                                <span class="date">{{prettyDate}}</span>
-                                {{author.name}} {{message}} -
-                                <a href="{{ revnoLink }}">REVNO{{revno}}</a>
-                            </li>
-                        {{/prettyCommits.remaining}}
-                    </ul>
-                </div>
-            {{else}}
-                <p>No change history exists.</p>
-            {{/if}}
-        </div>
-
         <div class="tabs">
             <ul>
+                <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
                 <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
                 <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
                 <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
@@ -136,6 +70,74 @@
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
             </ul>
             <div>
+                <div id="bws-summary">
+                    <div class="summary">
+                        <h2>Summary</h2>
+                        <p>{{ summary }}</p>
+                        <h2>Description</h2>
+                        <p>
+                            {{#if isFullscreen}}
+                                {{ description }}
+                            {{else}}
+                                {{ truncate description 300 }}
+                            {{/if}}
+                        </p>
+                    </div>
+
+                    <div class="changelog">
+                        <h3 class="section-title">
+                            {{#if recent_commits}}
+                                <a href="" class="expandToggle" data-state="closed">
+                            {{/if}}
+                            Change log
+                            {{#if recent_commits}}
+                                    <span class="expand">
+                                        <span class="more">
+                                            <img src="/juju-ui/assets/images/expand_icon.png"
+                                                alt="Expand" />
+                                        </span>
+                                        <span class="less hidden">
+                                            <img src="/juju-ui/assets/images/contract_icon.png"
+                                                alt="Contract" />
+                                        </span>
+                                    </span>
+                                </a>
+                            {{/if}}
+                        </h3>
+                        {{#if recent_commits}}
+                            <div class="first">
+                                <p>
+                                    Latest change:
+                                    <span class="date">
+                                        {{prettyCommits.first.prettyDate}}
+                                    </span>
+                                    {{prettyCommits.first.author.name}}
+                                    {{prettyCommits.first.message}} -
+                                    <a href="{{ prettyCommits.first.revnoLink }}">
+                                      REVNO{{prettyCommits.first.revno}}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="remaining hidden">
+                                <p class="maintainer">
+                                    Maintained by {{ maintainer.name }}
+                                </p>
+                                <h4>Earlier changes</h4>
+                                <ul>
+                                    {{#prettyCommits.remaining}}
+                                        <li>
+                                            <span class="date">{{prettyDate}}</span>
+                                            {{author.name}} {{message}} -
+                                            <a href="{{ revnoLink }}">REVNO{{revno}}</a>
+                                        </li>
+                                    {{/prettyCommits.remaining}}
+                                </ul>
+                            </div>
+                        {{else}}
+                            <p>No change history exists.</p>
+                        {{/if}}
+                    </div>
+                </div>
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
