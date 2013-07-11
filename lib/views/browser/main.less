@@ -127,6 +127,7 @@
     }
     .bws-view-data {
       position: static;
+      width: 100%;
       overflow: visible;
       box-shadow: none;
     }
@@ -179,16 +180,8 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
-    right: 25%;
+    width: @bws-panel-width;
     background-color: #fff;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-  }
-}
-@media screen and (max-width: 1400px) {
-  #subapp-browser .bws-view-data {
-    min-width: 700px;
-  }
-  .content-visible .bws-icon {
-    left: @bws-sidebar-min-width + 700 !important;
   }
 }
