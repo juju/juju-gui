@@ -102,6 +102,7 @@ YUI.add('juju-view-environment', function(Y) {
           @method createServiceInspector
           @param {Y.Model} model service or charm depending on inspector type.
           @param {Object} config object of options to overwrite default config.
+          @return {Object} The created service inspector.
         */
         createServiceInspector: function(model, config) {
           config = config || {};
@@ -153,6 +154,7 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           this.setInspector(serviceInspector);
+          return serviceInspector;
         },
 
         /**
@@ -212,7 +214,7 @@ YUI.add('juju-view-environment', function(Y) {
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.destroy-service-icn': {'click': 'onDestroyIcon'},
+                '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'}
               },

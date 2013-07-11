@@ -68,21 +68,25 @@ describe('Inspector Settings', function() {
     delete window.flags;
   });
 
-  var setUpInspector = function() {
+  var setUpInspector = function(options) {
     var charmId = 'precise/mediawiki-4';
     var charm = new models.Charm({id: charmId});
     charm.setAttrs(charmConfig);
     db.charms.add(charm);
+    if (options && options.useGhost) {
+      service = db.services.ghostService(charm);
+    } else {
     service = new models.Service({
       id: 'mediawiki',
       charm: charmId,
       exposed: false});
-    db.services.add(service);
-    db.onDelta({data: {result: [
-      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
-    ]}});
+      db.services.add(service);
+      db.onDelta({data: {result: [
+        ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
+        ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
+        ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+      ]}});
+    }
     view = new jujuViews.environment({
       container: container,
       db: db,
@@ -92,8 +96,7 @@ describe('Inspector Settings', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
-    view.createServiceInspector(service, {});
-    return view.getInspector(service.get('id'));
+    return view.createServiceInspector(service, {});
   };
 
   it('toggles exposure', function() {
@@ -153,9 +156,18 @@ describe('Inspector Settings', function() {
     container.one('.initiate-destroy').simulate('click');
   });
 
-  it('wires up UI elements to event handlers', function() {
+  it('wires up UI elements to handlers for service inspector', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector();
+    var events = inspector.inspector.events;
+    assert.equal(typeof events['.destroy-service-icon'].click, 'function');
+    assert.equal(typeof events['.initiate-destroy'].click, 'function');
+    assert.equal(typeof events['.cancel-destroy'].click, 'function');
+  });
+
+  it('wires up UI elements to handlers for ghost inspector', function() {
+    // There are UI elements and they all have to be wired up to something.
+    inspector = setUpInspector({useGhost: true});
     var events = inspector.inspector.events;
     assert.equal(typeof events['.destroy-service-icon'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');

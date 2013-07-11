@@ -1158,6 +1158,8 @@ YUI.add('juju-view-service', function(Y) {
     */
     initiateServiceDestroy: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
+      // When the above flag is removed we won't need the dataSource variable
+      // any more and can refactor this accordingly.
       var dataSource = svcInspector ? this.inspector : this;
       var model = dataSource.get('model');
       var db = this.inspector.get('db');
