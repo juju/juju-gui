@@ -317,9 +317,20 @@
                 display: inline-block;
             }
         }
-        .back {
-            display: block;
-            margin: 20px;
+        .breadcrumbs {
+            position: absolute;
+            top: -50px;
+            left: 290px;
+            width: 400px;
+            overflow: hidden;
+
+            i {
+                margin-right: 7px;
+            }
+            span {
+                color: @bws-text;
+                text-decoration: underline;    
+            }
         }
         .share {
             top: 20px;
