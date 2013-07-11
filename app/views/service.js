@@ -1442,7 +1442,7 @@ YUI.add('juju-view-service', function(Y) {
           }
         }
       },
-     config: {
+      config: {
         name: 'config',
         template: Templates['service-configuration'],
         'render': function(service, viewContainerAttrs) {

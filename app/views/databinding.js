@@ -456,14 +456,14 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._modelChangeHandler = function(evt) {
       var keys = evt && Y.Object.keys(evt.changed);
       if (this._updateTimeout) {
-          this._updateTimeout.cancel();
-          this._updateTimeout = null;
+        this._updateTimeout.cancel();
+        this._updateTimeout = null;
       }
       this._updateTimeout = Y.later(
-        this.interval,
-        this,
-        this._updateDOM,
-        [keys && deltaFromChange.call(this, keys)]);
+          this.interval,
+          this,
+          this._updateDOM,
+          [keys && deltaFromChange.call(this, keys)]);
     };
 
     /**
