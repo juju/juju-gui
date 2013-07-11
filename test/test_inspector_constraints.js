@@ -57,8 +57,6 @@ describe('Inspector Constraints', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    Y.one('.navbar.test').remove(true);
-    Y.one('.navbar-bottom.test').remove(true);
   });
 
   // Create a service model instance.
