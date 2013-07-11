@@ -1435,6 +1435,10 @@ YUI.add('juju-view-service', function(Y) {
           },
           icon: {
             'update': function(node, value) {
+              // XXX: Icon is only present on services that pass through
+              // the Ghost phase of the GUI. Once we have better integration
+              // with the charm browser API services handling of icon
+              // can be improved.
               var icon = Y.one(node).one('img');
               if (!icon) {
                 icon = Y.one(node).append('<img>');
