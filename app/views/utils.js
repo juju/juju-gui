@@ -530,14 +530,12 @@ YUI.add('juju-view-utils', function(Y) {
       constraintDescriptions) {
     var constraints = [];
     var initial = Object.create(null);
-    console.log('SERVICE', serviceConstraints);
     // Exclude read-only constraints.
     Y.Object.each(serviceConstraints, function(value, key) {
       if (readOnlyConstraints.indexOf(key) === -1) {
         initial[key] = value;
       }
     });
-    console.log('INITIAL', initial);
     // Add generic constraints.
     Y.Array.each(genericConstraints, function(key) {
       if (key in initial) {
@@ -547,8 +545,6 @@ YUI.add('juju-view-utils', function(Y) {
         constraints.push({name: key, value: ''});
       }
     });
-    console.log('CONSTRAINTS', constraints);
-    console.log('MISSING INITIAL', initial);
     // Add missing initial constraints.
     Y.Object.each(initial, function(value, key) {
       constraints.push({name: key, value: value});

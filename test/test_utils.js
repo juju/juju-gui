@@ -168,8 +168,6 @@ describe('utilities', function() {
       var obtained = getConstraints(
         customConstraints, genericConstraints, ['foo'],
         constraintDescriptions);
-      console.log(expected);
-      console.log(obtained);
       assert.deepEqual(expected, obtained);
     });
 

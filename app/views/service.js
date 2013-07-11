@@ -1379,17 +1379,28 @@ YUI.add('juju-view-service', function(Y) {
     */
     _saveConstraintsCallback: function(container, ev) {
       var inspector = this.inspector;
+      var bindingEngine = inspector.bindingEngine;
+      bindingEngine.clearChangedValues('constraints');
+      var db = inspector.get('db');
       var service = inspector.get('model');
       if (ev.err) {
         // Notify an error occurred while updating constraints.
-        var db = inspector.get('db');
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service constraints',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              //link: getModelURL(service) + 'constraints',
               modelId: service
+            })
+        );
+      } else {
+        // XXX frankban: show success notification.
+        // We have no story for this yet.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Constraints saved successfully',
+              message: ev.service_name + ' constraints set successfully.',
+              level: 'info'
             })
         );
       }

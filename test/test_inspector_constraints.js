@@ -215,6 +215,7 @@ describe('Inspector Constraints', function() {
     // An error response generates a notification.
     assert.strictEqual(1, db.notifications.size());
     var msg = db.notifications.item(0);
+    assert.strictEqual('error', msg.get('level'));
     assert.strictEqual('Error setting service constraints', msg.get('title'));
     var serviceName = inspector.model.get('id');
     assert.strictEqual('Service name: ' + serviceName, msg.get('message'));
@@ -225,7 +226,11 @@ describe('Inspector Constraints', function() {
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
     var db = inspector.inspector.get('db');
-    assert.strictEqual(0, db.notifications.size());
+    // A success notification is correctly generated.
+    assert.strictEqual(1, db.notifications.size());
+    var msg = db.notifications.item(0);
+    assert.strictEqual('info', msg.get('level'));
+    assert.strictEqual('Constraints saved successfully', msg.get('title'));
   });
 
   it('disables and re-enables the save button during the process', function() {
@@ -235,6 +240,15 @@ describe('Inspector Constraints', function() {
     assert.isTrue(saveButton.get('disabled'));
     env.ws.msg(makeResponse(inspector.model));
     assert.isFalse(saveButton.get('disabled'));
+  });
+
+  it('clears changed values on save', function() {
+    var viewlet = getViewlet(inspector);
+    changeForm(viewlet, 'arch', 'i386');
+    var saveButton = container.one('button.save-constraints');
+    saveButton.simulate('click');
+    env.ws.msg(makeResponse(inspector.model, false));
+    assert.lengthOf(viewlet._changedValues, 0, 'changedValues is not empty');
   });
 
 });
