@@ -3,14 +3,21 @@
 
 .yui3-juju-inspector {
     position: absolute;
+    top: 20px;
+    right: 35px;
     width: 292px;
     min-height: 250px;
     background-color: @inspector-background-color;
     color: #fff;
+    margin: 0; /* can be removed once the old inspector styles are removed*/
 
     h1, h2, h3, h4, h5, h6 {
         background-color: @inspector-region-background-color;
         padding-left: 1em;
+    }
+
+    .viewlet-container {
+        overflow-y: auto;
     }
 
     .content {
@@ -40,7 +47,6 @@
         padding: 15px;
 
         &.settings-config {
-            height: 850px;
 
             .settings-wrapper {
                 position: relative;
@@ -220,7 +226,7 @@
         clear: both;
         margin-bottom: 1ex;
         background-position: center;
-        background-repeat: no-repeat; 
+        background-repeat: no-repeat;
         background-image:
             url("/juju-ui/assets/images/inspector-destroy-service.png");
     }
@@ -253,7 +259,7 @@
                 margin-top: 10px;
                 width: 110px;
                 float: left;
-                margin-left: 13px; 
+                margin-left: 13px;
             }
 
             a:last-of-type {
