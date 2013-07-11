@@ -79,10 +79,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       var charm,
           browserCharm = this.get('charm'),
-          attrs = browserCharm.getAttrs(),
-          // For future use.
-          oldCharmId = attrs.id;
-      // Set the id as the browser model expects it.
+          attrs = browserCharm.getAttrs();
+      // Adjust the id to meet Charm model expectations.
       attrs.id = attrs.url;
       charm = new models.Charm(attrs);
       if (this.get('isFullscreen')) {

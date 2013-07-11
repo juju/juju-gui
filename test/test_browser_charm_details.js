@@ -225,7 +225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'hooks/install'
           ],
           id: 'precise/ceph-9',
-          url: 'precise/ceph-9',
+          url: 'cs:precise/ceph-9',
           code_source: { location: 'lp:~foo' },
           options: {
             configName: 'test'
@@ -238,7 +238,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var browserCharm = view.get('charm');
         assert.notDeepEqual(charm, browserCharm);
         var madeCharm = new models.Charm(browserCharm.getAttrs());
-        assert.equal(charm.get('id'), madeCharm.get('id'));
+        assert.equal(charm.get('id'), madeCharm.get('url'));
         done();
       });
       view._addCharmEnvironment({halt: function() {}});
