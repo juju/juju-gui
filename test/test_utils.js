@@ -155,7 +155,7 @@ describe('utilities', function() {
         {name: 'arch', value: 'lcars', title: 'Architecture'}
       ];
       var obtained = getConstraints(
-        serviceConstraints, genericConstraints, [], constraintDescriptions);
+          serviceConstraints, genericConstraints, [], constraintDescriptions);
       assert.deepEqual(expected, obtained);
     });
 
@@ -166,8 +166,8 @@ describe('utilities', function() {
         {name: 'arch', value: 'amd64', title: 'Architecture'}
       ];
       var obtained = getConstraints(
-        customConstraints, genericConstraints, ['foo'],
-        constraintDescriptions);
+          customConstraints, genericConstraints, ['foo'],
+          constraintDescriptions);
       assert.deepEqual(expected, obtained);
     });
 
@@ -178,7 +178,7 @@ describe('utilities', function() {
         {name: 'arch', value: '', title: 'Architecture'}
       ];
       var obtained = getConstraints(
-        {}, genericConstraints, [], constraintDescriptions);
+          {}, genericConstraints, [], constraintDescriptions);
       assert.deepEqual(expected, obtained);
     });
 
@@ -190,7 +190,7 @@ describe('utilities', function() {
         {name: 'foo', value: 'bar', title: 'foo'}
       ];
       var obtained = getConstraints(
-        customConstraints, genericConstraints, [], constraintDescriptions);
+          customConstraints, genericConstraints, [], constraintDescriptions);
       assert.deepEqual(expected, obtained);
     });
 
