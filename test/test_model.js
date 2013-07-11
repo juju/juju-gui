@@ -736,19 +736,19 @@ describe('BrowserCharm test', function() {
     instance.get('recent_commit_count').should.equal(3);
   });
 
-  it('provides a failingProviders attr', function() {
+  it('provides a providers attr', function() {
     // The charm details needs the failing providers generated from the list
     // of tested_providers.
     data.charm.tested_providers = {
-      'ec2': 'FAILURE',
+      'ec2': 'SUCCESS',
       'local': 'FAILURE',
       'openstack': 'FAILURE'
     };
     instance = new models.BrowserCharm(data.charm);
     // Note that the hp one is added by our code. There is no hp test, it's
     // openstack on HP. If the openstack test fails, both are failing.
-    instance.get('failingProviders').should.eql(
-        ['ec2', 'local', 'openstack', 'hp']);
+    instance.get('providers').should.eql(
+        {successes: ['ec2'], failures: ['local', 'openstack', 'hp']});
   });
 
   // Testing a private method because if this test fails it'll provide a much

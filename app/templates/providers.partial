@@ -1,0 +1,25 @@
+{{#if providers}}
+    <h2>Providers</h2>
+    <div class="providers">
+        {{#if providers.successes}}
+            <ul class="successes">
+                {{#providers.successes}}
+                    <li>
+                        <i class="sprite provider_success"></i>
+                        <span>{{.}}</span>
+                    </li>
+                {{/providers.successes}}
+            </ul>
+        {{/if}}
+        {{#if providers.failures}}
+            <ul class="failures">
+                {{#providers.failures}}
+                    <li>
+                        <i class="sprite provider_failure"></i>
+                        <span>{{.}}</span>
+                    </li>
+                {{/providers.failures}}
+            </ul>
+        {{/if}}
+    </div>
+{{/if}}
