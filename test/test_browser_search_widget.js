@@ -101,6 +101,8 @@ describe('browser search widget', function() {
       // The results should be displaying now. Check for charm-token nodes.
       assert.equal(ev.results.length, 19);
       assert.isTrue(ev.results[0].display.hasClass('yui3-charmtoken'));
+      search.destroy();
+      fakeStore.destroy();
       done();
     });
 
