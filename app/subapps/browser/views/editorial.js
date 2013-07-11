@@ -47,7 +47,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
         // How many of each charm container do we show by default.
         cutoffs: {
           sidebar: {
-            featured: 2,
+            featured: 3,
             popular: 2,
             'new': 2
           },
@@ -120,14 +120,16 @@ YUI.add('subapp-browser-editorial', function(Y) {
             }
           };
 
+          var featuredCharmObjects = featuredCharms.map(function(charm) {
+                return charm.getAttrs();
+              });
+          var featuredCount = featuredCharmObjects.length
           var featuredCharmContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Featured Charms',
-                cutoff: cutoffs.featured,
-                children: featuredCharms.map(function(charm) {
-                  return charm.getAttrs();
-                })},
-              containerCfg));
+                cutoff: featuredCount,
+                children: featuredCharmObjects
+                }, containerCfg));
           featuredCharmContainer.render(featuredContainer);
 
           // Add popular charms

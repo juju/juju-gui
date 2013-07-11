@@ -28,14 +28,14 @@
 }
 #bws-sidebar #bws-editorial .categories {
     ul,
-    li {
+    a {
         border-style: solid;
         border-color: @bws-border;
     }
     ul {
         // Clear floats:
         overflow: hidden;
-        width: 300px;
+        width: 240px;
         margin: 20px 0 20px 20px;
         padding: 0;
         list-style: none;
@@ -44,23 +44,24 @@
         li {
             display: block;
             float: left;
-            border-width: 0 1px 1px 0;
 
             a {
+                .border-box;
                 display: block;
-                width: 99px;
-                height: 79px;
-                padding-top: 20px;
+                width: 80px;
+                height: 80px;
+                padding-top: 15px;
+                border-width: 0 1px 1px 0;
                 text-align: center;
 
                 img {
-                    width: 40px;
-                    height: 40px;
+                    width: 20px;
+                    height: 20px;
                 }
                 span {
                     display: block;
                     margin-top: 10px;
-                    .type11;
+                    .type12;
                 }
             }
         }
