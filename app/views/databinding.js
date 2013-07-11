@@ -111,9 +111,12 @@ YUI.add('juju-databinding', function(Y) {
      * a model and its viewlet(s).
      *
      * @class BindingEngine
+     * @param {Object} options taking:
+     *          interval: ms window to restrict multiple DOM udpates.
      */
-    function BindingEngine() {
-      this.interval = 250;
+    function BindingEngine(options) {
+      this.options = options || {};
+      this.interval = options.interval !== undefined ? options.interval: 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
@@ -455,15 +458,21 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
       var keys = evt && Y.Object.keys(evt.changed);
+      var delta = keys && deltaFromChange.call(this, keys);
+
       if (this._updateTimeout) {
-        this._updateTimeout.cancel();
-        this._updateTimeout = null;
+          this._updateTimeout.cancel();
+          this._updateTimeout = null;
       }
-      this._updateTimeout = Y.later(
+      if (this.interval) {
+        this._updateTimeout = Y.later(
           this.interval,
           this,
           this._updateDOM,
-          [keys && deltaFromChange.call(this, keys)]);
+          [delta]);
+      } else {
+        this._updateDOM(delta);
+      }
     };
 
     /**
