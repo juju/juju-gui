@@ -1,7 +1,9 @@
 <div id="category-links" class="categories">
-    <h3 class="{{#unless isFullscreen}}section-title{{/unless}}">
-        Browse by category
-    </h3>
+    {{#unless isFullscreen}}
+        <h3 class="section-title">
+            Browse by category
+        </h3>
+    {{/unless}}
     <ul>
         <li>
             <a data-link="databases" href="">

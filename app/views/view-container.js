@@ -137,6 +137,23 @@ YUI.add('juju-view-container', function(Y) {
     conflict: function(node) {},
 
     /**
+      Called by the databinding engine when fields drop out of sync with
+      the supplied model.
+
+      @method unsyncedFields
+      @param {Array} dirtyFields an array of keys representing changed fields.
+    */
+    unsyncedFields: function(dirtyFields) {},
+
+    /**
+      Called by the databinding engine when the viewlet drops out
+      off a conflicted state
+
+      @method syncedFields
+    */
+    syncedFields: function() {}
+
+    /**
       Used for conflict resolution. When the user changes a value on a bound
       viewlet we store a reference of the element key here so that we know to
       offer a conflict resolution.
@@ -144,8 +161,8 @@ YUI.add('juju-view-container', function(Y) {
       @property _changedValues
       @type {Array}
       @default empty array
+      @private
     */
-    _changedValues: [],
 
     /**
      Model change events handles associated with this viewlet.
@@ -153,8 +170,8 @@ YUI.add('juju-view-container', function(Y) {
      @property _eventHandles
      @type {Array}
      @default empty array
+     @private
      */
-    _eventHandles: []
   };
 
   /**
@@ -367,6 +384,8 @@ YUI.add('juju-view-container', function(Y) {
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
+        viewlets[key]._changedValues = [];
+        viewlets[key]._eventHandles = [];
       }, this);
 
       return viewlets;
