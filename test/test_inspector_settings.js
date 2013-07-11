@@ -76,16 +76,16 @@ describe('Inspector Settings', function() {
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);
     } else {
-    service = new models.Service({
-      id: 'mediawiki',
-      charm: charmId,
-      exposed: false});
-      db.services.add(service);
-      db.onDelta({data: {result: [
-        ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
-        ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
-        ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
-      ]}});
+      service = new models.Service({
+        id: 'mediawiki',
+        charm: charmId,
+        exposed: false});
+        db.services.add(service);
+        db.onDelta({data: {result: [
+          ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
+          ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
+          ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+        ]}});
     }
     view = new jujuViews.environment({
       container: container,
