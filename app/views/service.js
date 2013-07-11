@@ -1133,42 +1133,89 @@ YUI.add('juju-view-service', function(Y) {
       Display the "do you really want to destroy this service?" prompt.
 
       @method showDestroyPrompt
-      @param {Y.EventFacade} evt The click event.
+      @param {Y.Node} container The container of the prompt.
     */
-    showDestroyPrompt: function(evt) {
-      evt.container.one('.destroy-service-prompt').removeClass('closed');
+    showDestroyPrompt: function(container) {
+      container.one('.destroy-service-prompt').removeClass('closed');
     },
 
     /**
       Hide the "do you really want to destroy this service?" prompt.
 
       @method hideDestroyPrompt
-      @param {Y.EventFacade} evt The click event.
+      @param {Y.Node} container The container of the prompt.
     */
-    hideDestroyPrompt: function(evt) {
-      evt.container.one('.destroy-service-prompt').addClass('closed');
+    hideDestroyPrompt: function(container) {
+      container.one('.destroy-service-prompt').addClass('closed');
     },
 
-    initiateServiceDestroy: function(evt) {
-      evt.halt();
-      this.closeInspector(evt);
+    initiateServiceDestroy: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
       var dataSource = svcInspector ? this.inspector : this;
       var model = dataSource.get('model');
+      var db = this.inspector.get('db');
       if (model.name === 'service') {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
-            Y.bind(this._destroyCallback, this));
+            Y.bind(this._destroyServiceCallback, this, model, db));
       } else if (model.name === 'charm') {
-        var db = this.inspector.get('db');
         db.services.remove(this.options.ghostService);
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }
     },
 
-    _destroyCallback: function(ev) {
-      // TODO stuff
+    /**
+      React to a service being destroyed (or not).
+
+      @method _destroyServiceCallback
+      @param {Object} service The service we attempted to destroy.
+      @param {Object} db The database responsible for storing the service.
+      @param {Object} evt The event describing the destruction (or lack
+        thereof).
+    */
+    _destroyServiceCallback: function(service, db, evt) {
+      if (evt.err) {
+        // If something bad happend we need to alert the user.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error',
+              link: undefined, // XXX See note below about getModelURL.
+              modelId: service
+            })
+        );
+      } else {
+        // If the removal succeeded on the server side, we need to remove the
+        // service from the database.  (Why wouldn't we get an update from the
+        // server side that would do this for us?).
+        db.services.remove(service);
+        db.relations.remove(db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service.get('id');
+              });
+            }));
+      }
+    },
+
+    /* Event handlers for service/ghost destroy UI */
+
+    onDestroyIcon: function(evt) {
+      evt.halt();
+      this.showDestroyPrompt(evt.container);
+    },
+
+    onCancelDestroy: function(evt) {
+      evt.halt();
+      this.hideDestroyPrompt(evt.container);
+    },
+
+    onInitiateDestroy: function(evt) {
+      evt.halt();
+      this.closeInspector();
+      this.initiateServiceDestroy();
     },
 
     /**

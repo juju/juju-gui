@@ -185,9 +185,9 @@ YUI.add('juju-view-environment', function(Y) {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
-                '.destroy-service-icon': {'click': 'showDestroyPrompt'},
-                '.cancel-destroy': {'click': 'hideDestroyPrompt'},
-                '.initiate-destroy': {'click': 'initiateServiceDestroy'}
+                '.destroy-service-icon': {'click': 'onDestroyIcon'},
+                '.initiate-destroy': {'click': 'onInitiateDestroy'},
+                '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
               viewletList: ['overview', 'units', 'config'],
               template: Y.juju.views.Templates['view-container']
@@ -209,9 +209,9 @@ YUI.add('juju-view-environment', function(Y) {
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.destroy-service-icon': {'click': 'showDestroyPrompt'},
-                '.cancel-destroy': {'click': 'hideDestroyPrompt'},
-                '.initiate-destroy': {'click': 'initiateServiceDestroy'}
+                '.destroy-service-icn': {'click': 'onDestroyIcon'},
+                '.initiate-destroy': {'click': 'onInitiateDestroy'},
+                '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
               // the configuration for the view container template
               templateConfig: {
