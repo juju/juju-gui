@@ -116,7 +116,7 @@ YUI.add('juju-databinding', function(Y) {
      */
     function BindingEngine(options) {
       this.options = options || {};
-      this.interval = options.interval !== undefined ? options.interval: 250;
+      this.interval = options.interval !== undefined ? options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
@@ -461,15 +461,15 @@ YUI.add('juju-databinding', function(Y) {
       var delta = keys && deltaFromChange.call(this, keys);
 
       if (this._updateTimeout) {
-          this._updateTimeout.cancel();
-          this._updateTimeout = null;
+        this._updateTimeout.cancel();
+        this._updateTimeout = null;
       }
       if (this.interval) {
         this._updateTimeout = Y.later(
-          this.interval,
-          this,
-          this._updateDOM,
-          [delta]);
+            this.interval,
+            this,
+            this._updateDOM,
+            [delta]);
       } else {
         this._updateDOM(delta);
       }
