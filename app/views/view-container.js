@@ -386,6 +386,7 @@ YUI.add('juju-view-container', function(Y) {
       // if this is an event object or a real container element
       if (container && container.type) { container = null; }
       container = container || this.get('container');
+      var TB_SPACING = 20;
       var winHeight = container.get('winHeight'),
           header = Y.one('.navbar'),
           footer = Y.one('.bottom-navbar'),
@@ -402,9 +403,8 @@ YUI.add('juju-view-container', function(Y) {
       if (footer) { footerHeight = footer.get('clientHeight'); }
       if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
       if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
-      // 20 is the top and bottom spacing as per design.
-      // 20 is a fudge value to catch the various 'secret' margins and borders.
-      var height = winHeight - headerHeight - footerHeight - (20 * 2) - 20;
+
+      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
       // subtract the height of the header and footer of the view container.
       height = height - vcHeaderHeight - vcFooterHeight;
 
