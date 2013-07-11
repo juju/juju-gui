@@ -121,10 +121,6 @@
             }
         }
         .back.icon,
-        .share {
-            position: absolute;
-            top: 30px;
-        }
         .back.icon {
             display: block;
             right: 30px;
@@ -133,9 +129,6 @@
             background: transparent
                     url(/juju-ui/assets/images/panel_close.png)
                     left top no-repeat;
-        }
-        .share {
-            right: 70px;
         }
     }
     .changelog {
@@ -262,6 +255,16 @@
             }
         }
     }
+    #sharing {
+        float: right;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-right: 10px;
+
+        a {
+            padding-right: 5px; 
+        }
+    }
 }
 
 #bws-fullscreen .charm {
@@ -302,10 +305,6 @@
         .back {
             display: block;
             margin: 20px;
-        }
-        .share {
-            top: 20px;
-            right: 20px;
         }
     }
     .tabs {
