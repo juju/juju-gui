@@ -1622,7 +1622,7 @@ YUI.add('juju-view-service', function(Y) {
           .addClass('panel')
           .addClass('yui3-juju-inspector')
           .appendTo(Y.one('#content'));
-      var _ = new Y.DD.Drag({ node: container });
+
       var self = this;
       options.container = container;
       options.viewletContainer = '.viewlet-container';
