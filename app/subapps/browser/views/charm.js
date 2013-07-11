@@ -271,7 +271,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
       var change = {
-        charmID: charmID
+        charmID: charmID,
+        hash: undefined
       };
 
       this.fire('viewNavigate', {change: change});
