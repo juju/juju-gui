@@ -108,7 +108,10 @@ YUI.add('viewmode-controls', function(Y) {
           active.removeClass('active');
         }
         var selector = '.' + viewmode;
-        container.one(selector).addClass('active');
+        var item = container.one(selector);
+        if (item) {
+          item.addClass('active');
+        }
       }
     },
 
