@@ -354,6 +354,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
     });
 
+    it('makes autocomplete requests with the right query flag', function (done) {
+      var hostname = 'http://localhost',
+          data = [],
+          url;
+      var dummyfunc = function () {};
+      var api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      });
+
+      api._makeRequest = function(endpoint, callbacks, filters) {
+        assert.equal(filters.autocomplete, true);
+        done();
+      };
+
+      api.autocomplete(
+        {text: 'mys'}, {
+          'success': dummyfunc,
+          'failure': dummyfunc
+        }
+      );
+    });
   });
 
 })();
