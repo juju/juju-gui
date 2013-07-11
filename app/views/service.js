@@ -1433,6 +1433,15 @@ YUI.add('juju-view-service', function(Y) {
               bar.update(value);
             }
           },
+          icon: {
+            'update': function(node, value) {
+              var icon = Y.one(node).one('img');
+              if (!icon) {
+                icon = Y.one(node).append('<img>');
+              }
+              icon.set('src', value);
+            }
+          },
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
