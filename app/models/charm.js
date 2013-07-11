@@ -235,8 +235,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method geetter
-         *
+         * @method getter
          */
         getter: function() {
           // full_name
