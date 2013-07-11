@@ -225,6 +225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'hooks/install'
           ],
           id: 'precise/ceph-9',
+          url: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' },
           options: {
             configName: 'test'

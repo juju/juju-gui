@@ -605,7 +605,7 @@ YUI.add('juju-charm-panel', function(Y) {
           var serviceName = container.one('#service-name').get('value');
           var numUnits = container.one('#number-units').get('value');
           var charm = this.get('model');
-          var url = charm.get('url');
+          var url = charm.get('id');
           var config = utils.getElementsValuesMapping(container,
               '#service-config .config-field');
           var self = this;

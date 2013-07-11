@@ -155,7 +155,12 @@ YUI.add('browser-charm-token', function(Y) {
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.  This passed-in config includes
       // charm attributes.
-      var charmData = Y.JSON.stringify(this.charmData);
+      var charmData,
+          // For future use.
+          oldCharmId = this.charmData.id;
+      // Set the id as the browser model expects it.
+      this.charmData.id = this.charmData.url;
+      charmData = Y.JSON.stringify(this.charmData);
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {

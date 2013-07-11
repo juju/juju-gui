@@ -66,6 +66,7 @@ describe('charm token drag and drop', function() {
   it('makes each charm token draggable', function() {
     var cfg = {
       id: 'test',
+      url: 'test',
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,

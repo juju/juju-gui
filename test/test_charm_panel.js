@@ -104,8 +104,6 @@ describe('charm panel', function() {
       get: function(name) {
         if (name === 'id') {
           return 'cs:precise/juju-gui-7';
-        } else if (name === 'url') {
-          return 'cs:precise/juju-gui-7';
         } else if (name === 'config') {
           return undefined;
         }
@@ -136,8 +134,6 @@ describe('charm panel', function() {
       id: 'cs:precise/juju-gui-7',
       get: function(name) {
         if (name === 'id') {
-          return 'cs:precise/juju-gui-7';
-        } else if (name === 'url') {
           return 'cs:precise/juju-gui-7';
         } else if (name === 'config') {
           return {};
@@ -199,10 +195,7 @@ describe('charm panel', function() {
 
     // Start deploying a charm, without confirming.
     var startDeployment = function(ghostXY) {
-      panel.deploy(new models.Charm({
-        id: 'cs:precise/membase-6',
-        url: 'cs:precise/membase-6'
-      }), ghostXY);
+      panel.deploy(new models.Charm({id: 'cs:precise/membase-6'}), ghostXY);
     };
 
     // Cancel an unconfirmed deployment.
