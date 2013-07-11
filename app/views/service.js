@@ -1368,7 +1368,7 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
-      Callback for handleSaveConstraints.
+      Callback for saveConstraints.
       React to responses arriving from the API server.
 
       @method _saveConstraintsCallback
