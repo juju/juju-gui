@@ -1530,57 +1530,17 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         'render': function(service, options) {
-          var constraints = this._getConstraints(
+          var constraints = utils.getConstraints(
               service.get('constraints') || {},
-              options.env.genericConstraints);
+              options.env.genericConstraints,
+              this.readOnlyConstraints,
+              this.constraintDescriptions);
           var contents = this.template({
             service: service,
             constraints: constraints
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(contents);
-        },
-
-        /**
-          Prepare the constraints object to be used as part of the template
-          context.
-
-          @method _getConstraints
-          @private
-          @param {Object} serviceConstraints A key-value pairs representing
-            the current service constraints.
-          @param {Array} genericConstraints Generic constraint keys for the
-            environment in use.
-          @return {Array} The resulting constraints list, each item being
-            an object with the following fields: name, value, title, unit
-            (optional).
-        */
-        _getConstraints: function(serviceConstraints, genericConstraints) {
-          var constraints = [],
-              readOnlyConstraints = this.readOnlyConstraints,
-              constraintDescriptions = this.constraintDescriptions;
-          // Populate constraints.
-          Y.Object.each(serviceConstraints, function(value, key) {
-            if (!(key in readOnlyConstraints)) {
-              constraints.push({name: key, value: value});
-            }
-          });
-          // Add generic constraints.
-          Y.Array.each(genericConstraints, function(key) {
-            if (!(key in serviceConstraints)) {
-              constraints.push({name: key, value: ''});
-            }
-          });
-          // Add constraint descriptions.
-          return Y.Array.filter(constraints, function(item) {
-            if (item.name in constraintDescriptions) {
-              return Y.mix(item, constraintDescriptions[item.name]);
-            }
-            // If the current key is not included in the descriptions, use the
-            // name as the title to display to the user.
-            item.title = item.name;
-            return item;
-          });
         },
 
         'conflict': function(node, model, viewletName, resolve) {
