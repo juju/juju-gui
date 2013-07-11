@@ -1356,12 +1356,6 @@ YUI.add('juju-view-service', function(Y) {
       overview: {
         name: 'overview',
         template: Templates.serviceOverview,
-        'rebind': function(model) {
-          var units = {units: model.get('units').toArray()};
-          this.container.one('.overview-unit-list')
-            .setHTML(Templates.serviceOverviewUnitList(units));
-          return model;
-        },
         bindings: {
           aggregated_status: {
             'update': function(node, value) {
@@ -1372,6 +1366,13 @@ YUI.add('juju-view-service', function(Y) {
                 }).render();
               }
               bar.update(value);
+            }
+          },
+          units: {
+            depends: ['aggregated_status'],
+            'update': function(node, value) {
+              var units = {units: value.toArray()};
+              node.setHTML(Templates.serviceOverviewUnitList(units));
             }
           }
         }
