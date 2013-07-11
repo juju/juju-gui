@@ -1074,7 +1074,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!config) {
         config = {};
       }
-      // Merge new constraints in.
+      // Merge new config in.
       existing = Y.mix(existing, config, true, undefined, 0, true);
       //TODO: validate the config.
       // Reassign the attr.
@@ -1112,9 +1112,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (Y.Lang.isArray(data)) {
         Y.Array.each(data, function(i) {
           var kv = i.split('=');
-          if (kv[1]) {
-            constraints[kv[0]] = kv[1];
-          }
+          constraints[kv[0]] = kv[1];
         });
       } else if (data) {
         constraints = data;

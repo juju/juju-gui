@@ -1,5 +1,5 @@
 =========
-ANALYTICS
+Analytics
 =========
 
 In order to gauge exactly how the Juju GUI is being utilized, we are gathering
@@ -26,13 +26,12 @@ like until 12-24 hours later.  It will eventually show up under "Contents /
 Events / Overview".  The lag makes instrumenting the code slow and a bit
 frustrating.
 
-
 Unified reporting
 =================
 
 Our use of Google Analytics is a bit non-standard.  GA is intended to gather
 statistics for a single site or cooperating group of sites.  They term the
-latter "cross-domain tracking"[1] and its intended use is to provide the
+latter "cross-domain tracking" [1]_ and its intended use is to provide the
 ability to get a single set of statics for cooperating but disparate web
 resources such as example.com, blog.example.com, and
 example.shoppingcart.com.
@@ -106,7 +105,6 @@ use-analytics: true|false
 Once Juju GUI is deployed a user can change that config setting to turn off
 analytics.
 
-
 Custom events
 =============
 
@@ -134,7 +132,7 @@ unless the data actually changed.  Our goal should be to minimize the amount
 of new processing we do to support the instrumentation so as to not affect the
 performance of the actual app.
 
-The calls to _trackEvent[2] look like:
+The calls to _trackEvent [2]_ look like:
 
 _trackEvent(category, action, opt_label, opt_value, opt_noninteraction)
 
@@ -150,33 +148,32 @@ very helpful.  A unique, and possibly opaque, site identifier should be added
 to one of those specifiers.  The best way to do that remains an open
 question.
 
-=========
+A-B Testing
+===========
+
+GA can be used for A-B testing [3]_.
+
 Questions
 =========
 
 Anonymizing
-===========
+-----------
 
-Should we take advantage of the anonymizeIp feature?  Using it will report 0
+Should we take advantage of the anonymizeIp feature [4]_?  Using it will report 0
 for the last octet of an IPv4 address.  The city-level accuracy of geography
 reporting will be affected but country data should still be accurate.
 
 Site identification
-===================
+-------------------
 
 If we want to identify statistics for a particular site, what is the best way
 to do that?  We need an address or name for the location where Juju GUI is
 deployed, not the address of the client.
 
-=====
-Other
-=====
-
-GA can be used for A-B testing as described in this post[4].
-
 References
 ==========
-[1] https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingSite
-[2] https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-[3] https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gat#_gat._anonymizeIp
-[4] http://analytics.blogspot.com/2013/01/multi-armed-bandit-experiments.html
+
+.. [1] https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingSite
+.. [2] https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+.. [3] http://analytics.blogspot.com/2013/01/multi-armed-bandit-experiments.html
+.. [4] https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApi_gat#_gat._anonymizeIp

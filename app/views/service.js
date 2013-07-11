@@ -1101,7 +1101,7 @@ YUI.add('juju-view-service', function(Y) {
       return this.inspector.getName();
     },
     'bind': function(model, viewlet) {
-      this.bindingEngine.bind(model, viewlet);
+      this.inspector.bindingEngine.bind(model, viewlet);
       return this;
     },
     'render': function() {
@@ -1383,7 +1383,150 @@ YUI.add('juju-view-service', function(Y) {
       // replacement.  It actually works well in practice.
       container.one('input[type=file]')
                .replace(Y.Node.create('<input type="file"/>'));
+    },
+
+    /**
+      Pulls the content from each configuration field and sends the values
+      to the environment
+
+      @method saveConfig
+    */
+    saveConfig: function() {
+      var inspector = this.inspector,
+          env = inspector.get('env'),
+          db = inspector.get('db'),
+          service = inspector.get('model'),
+          charmUrl = service.get('charm'),
+          charm = db.charms.getById(charmUrl),
+          schema = charm.get('config').options,
+          container = inspector.get('container'),
+          button = container.one('button.confirm');
+
+      button.set('disabled', 'disabled');
+
+      var newVals = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(newVals, schema);
+
+      if (Y.Object.isEmpty(errors)) {
+        env.set_config(
+            service.get('id'),
+            newVals,
+            null,
+            Y.bind(this._setConfigCallback, this, container)
+        );
+      } else {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error saving service config',
+              message: 'Error saving service config',
+              level: 'error'
+            })
+        );
+        // We don't have a story for passing the full error messages
+        // through so will log to the console for now.
+        console.log('Error setting config', errors);
+      }
+    },
+
+    /**
+      Handles the success or failure of setting the new config values
+
+      @method _setConfigCallback
+      @param {Y.Node} container of the view-container.
+      @param {Y.EventFacade} e yui event object.
+    */
+    _setConfigCallback: function(container, e) {
+      container.one('.controls .confirm').removeAttribute('disabled');
+      // If the user has conflicted fields and still choose to
+      // save then we will be overwriting the values in Juju.
+      var bindingEngine = this.inspector.bindingEngine;
+      bindingEngine.clearChangedValues.call(bindingEngine, 'config');
+      var db = this.inspector.get('db');
+      if (e.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service config',
+              message: 'Service name: ' + e.service_name,
+              level: 'error'
+            })
+        );
+      } else {
+        // XXX show saved notification
+        // we have no story for this yet
+        db.notifications.add(
+            new models.Notification({
+              title: 'Config saved successfully ',
+              message: e.service_name + ' config set successfully.',
+              level: 'info'
+            })
+        );
+      }
+    },
+
+    /**
+      Handle saving the service constraints.
+      Make the corresponding environment call, passing _saveConstraintsCallback
+      as callback (see below).
+
+      @method saveConstraints
+      @param {Y.EventFacade} ev An event object.
+      @return {undefined} Nothing.
+    */
+    saveConstraints: function(ev) {
+      var inspector = this.inspector;
+      var container = inspector.get('container');
+      var env = inspector.get('env');
+      var service = inspector.get('model');
+      // Retrieve constraint values.
+      var constraints = utils.getElementsValuesMapping(
+          container, '.constraint-field');
+      // Disable the "Save" button while the RPC call is outstanding.
+      container.one('.save-constraints').set('disabled', 'disabled');
+      // Set up the set_constraints callback and execute the API call.
+      var callback = Y.bind(this._saveConstraintsCallback, this, container);
+      env.set_constraints(service.get('id'), constraints, callback);
+    },
+
+    /**
+      Callback for saveConstraints.
+      React to responses arriving from the API server.
+
+      @method _saveConstraintsCallback
+      @private
+      @param {Y.Node} container The inspector container.
+      @param {Y.EventFacade} ev An event object.
+      @return {undefined} Nothing.
+    */
+    _saveConstraintsCallback: function(container, ev) {
+      var inspector = this.inspector;
+      var bindingEngine = inspector.bindingEngine;
+      bindingEngine.clearChangedValues('constraints');
+      var db = inspector.get('db');
+      var service = inspector.get('model');
+      if (ev.err) {
+        // Notify an error occurred while updating constraints.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service constraints',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              modelId: service
+            })
+        );
+      } else {
+        // XXX frankban: show success notification.
+        // We have no story for this yet.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Constraints saved successfully',
+              message: ev.service_name + ' constraints set successfully.',
+              level: 'info'
+            })
+        );
+      }
+      container.one('.save-constraints').removeAttribute('disabled');
     }
+
   };
 
   /**
@@ -1408,7 +1551,7 @@ YUI.add('juju-view-service', function(Y) {
       units: {
         name: 'units',
         template: Templates.show_units_small,
-        'rebind': function(model) {
+        'selectBindModel': function(model) {
           return model.get('units');
         },
         'update': function(modellist) {
@@ -1480,17 +1623,85 @@ YUI.add('juju-view-service', function(Y) {
 
           node.setStyle('borderColor', 'red');
 
-          var message = node.ancestor('.control-group').one('.conflicted'),
+          var message = node.ancestor('.settings-wrapper').one('.conflicted'),
               newVal = model.get(node.getData('bind'));
 
           message.one('.newval').setHTML(newVal);
           message.setStyle('display', 'block');
 
           var handler = message.delegate('click', sendResolve, 'button', this);
-
+        },
+        'unsyncedFields': function(dirtyFields) {
+          this.container.one('.controls .confirm').setHTML('Overwrite');
+        },
+        'syncedFields': function() {
+          this.container.one('.controls .confirm').setHTML('Confirm');
         }
       },
-      //constraints: {},
+      // Service constraints viewlet.
+      constraints: {
+        name: 'constraints',
+        template: Templates['service-constraints-viewlet'],
+        readOnlyConstraints: ['provider-type', 'ubuntu-series'],
+        constraintDescriptions: {
+          arch: {title: 'Architecture'},
+          cpu: {title: 'CPU', unit: 'Ghz'},
+          'cpu-cores': {title: 'CPU Cores'},
+          'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+          mem: {title: 'Memory', unit: 'GB'}
+        },
+
+        bindings: {
+          'constraints': {
+            'format': function(value) {
+              // Display undefined constraints as empty strings.
+              return value || '';
+            }
+          }
+        },
+
+        'render': function(service, options) {
+          var constraints = utils.getConstraints(
+              service.get('constraints') || {},
+              options.env.genericConstraints,
+              this.readOnlyConstraints,
+              this.constraintDescriptions);
+          var contents = this.template({
+            service: service,
+            constraints: constraints
+          });
+          this.container = Y.Node.create(this.templateWrapper);
+          this.container.setHTML(contents);
+        },
+
+        'conflict': function(node, model, viewletName, resolve) {
+          /**
+            Calls the databinding resolve method.
+            @method sendResolve
+          */
+          function sendResolve(ev) {
+            handler.detach();
+            if (ev.currentTarget.hasClass('conflicted-confirm')) {
+              resolve(node, viewletName, newValue);
+            }
+            // If the user does not accept the new value then do nothing.
+            message.hide();
+          }
+          var newValue = model.get(node.getData('bind'));
+          if (newValue !== node.get('value')) {
+            // If the value changed, give the user the possibility to
+            // select which value to preserve.
+            var message = node.ancestor('.control-group').one('.conflicted');
+            message.one('.newval').setHTML(newValue);
+            message.show();
+            var handler = message.delegate(
+                'click', sendResolve, 'button', this);
+          } else {
+            // Otherwise, just resolve this conflict.
+            resolve(node, viewletName, newValue);
+          }
+        }
+      },
       //relations: {},
       ghostConfig: {
         name: 'ghostConfig',
@@ -1502,6 +1713,7 @@ YUI.add('juju-view-service', function(Y) {
           // XXX - Jeff
           // not sure this should be done like this
           // but this will allow us to use the old template.
+
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
@@ -1571,13 +1783,6 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.render();
-      // We create a new binding engine even if it's unlikely
-      // that the model will change.
-      this.bindingEngine = new views.BindingEngine();
-      this.bindingEngine.bind(model, Y.Object.values(this.inspector.viewlets));
-      this.inspector.after('destroy', function() {
-        this.bindingEngine.unbind();
-      }, this);
       this.inspector.showViewlet(options.viewletList[0]);
     }
 

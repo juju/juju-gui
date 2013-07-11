@@ -173,8 +173,10 @@ YUI.add('juju-topology-service', function(Y) {
     // Margins applied on update to Box instances.
     subordinate_margins: {
       top: 0.05, bottom: 0.1, left: 0.084848, right: 0.084848},
+    // No drop-shadow to account for, currently, so set these to just far
+    // enough in so that the corners of the relation line do not show.
     service_margins: {
-      top: 0, bottom: 0.1667, left: 0.086758, right: 0.086758},
+      top: 0.01, bottom: 0.01, left: 0.01, right: 0.01},
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
@@ -406,12 +408,13 @@ YUI.add('juju-topology-service', function(Y) {
       var translation = topo.get('translate');
       var scale = topo.get('scale');
       var dropXY = d3.mouse(this);
-      var ghostXY = [];
+      var ghostAttributes = {coordinates: []};
       // Required - causes Ubuntu FF 22.0 to refresh without.
       evt.preventDefault();
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
-        ghostXY[index] = (dropXY[index] - translation[index]) / scale;
+        ghostAttributes.coordinates[index] =
+            (dropXY[index] - translation[index]) / scale;
       });
       if (dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
@@ -419,15 +422,24 @@ YUI.add('juju-topology-service', function(Y) {
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
         // Remove the cloned drag icon.
         var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
+        var iconImage;
         if (icon) {
+          if (icon.one('img')) {
+            // Maintain the charm icon URL if it exists.
+            iconImage = icon.one('img').getAttribute('src');
+          }
           icon.remove().destroy(true);
           // Since we hacked the DOM (see _makeDragStartHandler in
           // app/widgets/charm-token.js so the drag icon would be "visible" we
           // now un-hack it.  It would be nice to find a better way to do this.
           Y.one('body').setStyle('overflow', 'auto');
         }
+        // Pass the icon image along with the coordinates in the deploy event.
+        if (iconImage) {
+          ghostAttributes.icon = iconImage;
+        }
         var charm = new models.Charm(charmData);
-        Y.fire('initiateDeploy', charm, ghostXY);
+        Y.fire('initiateDeploy', charm, ghostAttributes);
       }
     },
 
@@ -881,10 +893,17 @@ YUI.add('juju-topology-service', function(Y) {
       var status_chart = node.append('g')
         .attr('class', 'service-status');
 
-      // Add a mask svg
+      // If the service is still pending and we have a charm icon URL,
+      // add that to the center of the service block.  Otherwise, add a
+      // service health mask.
       status_chart.append('image')
-        .attr({'xlink:href': '/juju-ui/assets/svgs/service_health_mask.svg',
-            'class': 'service-health-mask'});
+        .attr('xlink:href', function(d) {
+            if (d.pending && d.model.get('icon') !== undefined) {
+              return d.model.get('icon');
+            }
+            return '/juju-ui/assets/svgs/service_health_mask.svg';
+          })
+        .attr('class', 'service-health-mask');
 
       // Add the unit counts, visible only on hover.
       status_chart.append('text')
@@ -1047,7 +1066,7 @@ YUI.add('juju-topology-service', function(Y) {
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
-              'x': function(box) {return box.w * 0.13;},
+              'x': function(box) {return box.w * 0.07;},
               'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
             });
 
@@ -1067,7 +1086,7 @@ YUI.add('juju-topology-service', function(Y) {
           name_size = 22,
           charm_label_size = 16,
           name_padding = 26,
-          charm_label_padding = 118;
+          charm_label_padding = 150;
 
       node.select('.name')
         .attr({'style': function(d) {
@@ -1168,8 +1187,8 @@ YUI.add('juju-topology-service', function(Y) {
             return 'translate(' + d.relativeCenter + ')';
           });
       node.select('.service-health-mask')
-        .attr({'width': function(d) {return d.w / 3;},
-            'height': function(d) { return d.h / 3;},
+        .attr({'width': function(d) {return d.w / 2.25;},
+            'height': function(d) { return d.h / 2.25;},
             'x': function() { return -d3.select(this).attr('width') / 2;},
             'y': function() { return -d3.select(this).attr('height') / 2;}
           });

@@ -508,6 +508,60 @@ YUI.add('juju-view-utils', function(Y) {
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
 
   /**
+    Prepare and return a constraints list to be used as part of the template
+    context.
+
+    @method getConstraints
+    @private
+    @param {Object} serviceConstraints Key-value pairs representing the
+      current service constraints.
+    @param {Array} genericConstraints Generic constraint keys for the
+      environment in use.
+    @param {Array} readOnlyConstraints Constraint keys to be excluded from
+      the resulting list.
+    @param {Object} constraintDescriptions Key-value pairs mapping constraint
+      keys to objects describing the corresponding title and optional unit.
+    @return {Array} The resulting constraints list, each item being
+      an object with the following fields: name, value, title, unit
+      (optional).
+  */
+  utils.getConstraints = function(
+      serviceConstraints, genericConstraints, readOnlyConstraints,
+      constraintDescriptions) {
+    var constraints = [];
+    var initial = Object.create(null);
+    // Exclude read-only constraints.
+    Y.Object.each(serviceConstraints, function(value, key) {
+      if (readOnlyConstraints.indexOf(key) === -1) {
+        initial[key] = value;
+      }
+    });
+    // Add generic constraints.
+    Y.Array.each(genericConstraints, function(key) {
+      if (key in initial) {
+        constraints.push({name: key, value: initial[key]});
+        delete initial[key];
+      } else {
+        constraints.push({name: key, value: ''});
+      }
+    });
+    // Add missing initial constraints.
+    Y.Object.each(initial, function(value, key) {
+      constraints.push({name: key, value: value});
+    });
+    // Add constraint descriptions.
+    return Y.Array.filter(constraints, function(item) {
+      if (item.name in constraintDescriptions) {
+        return Y.mix(item, constraintDescriptions[item.name]);
+      }
+      // If the current key is not included in the descriptions, use the
+      // name as the title to display to the user.
+      item.title = item.name;
+      return item;
+    });
+  };
+
+  /**
      Check whether or not the given relationId represents a PyJuju relation.
 
      @method isPythonRelation

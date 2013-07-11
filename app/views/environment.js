@@ -181,15 +181,18 @@ YUI.add('juju-view-environment', function(Y) {
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
+                'button.confirm': { click: 'saveConfig'},
                 '.num-units-control': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
                 '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
-                '.cancel-destroy': {'click': 'onCancelDestroy'}
+                '.cancel-destroy': {'click': 'onCancelDestroy'},
+                // Constraints viewlet events.
+                '.save-constraints': {click: 'saveConstraints'}
               },
-              viewletList: ['overview', 'units', 'config'],
+              viewletList: ['overview', 'units', 'config', 'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
