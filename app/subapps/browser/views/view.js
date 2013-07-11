@@ -119,7 +119,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
       this.search.render(node.one('.bws-header'));
 
-      this.controls = new widgets.ViewmodeControls();
+      // Make sure the controls starts out setting the correct active state
+      // based on the current viewmode for our View.
+      this.controls = new widgets.ViewmodeControls({
+        initialViewmode: this.get('viewmode')
+      });
       this.controls.render();
     },
 
@@ -274,7 +278,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * @type {String}
        *
        */
-      subpath: {}
+      subpath: {},
+
+
+      viewmode: {
+        valueFn: function() {
+          return this.name.match(/[a-z]+$/);
+        }
+      }
     }
   });
 
