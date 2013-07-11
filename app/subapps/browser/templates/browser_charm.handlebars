@@ -1,15 +1,5 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        {{#if failingProviders}}
-            <div class="provider-warning"><i class="sprite alert_icon2"></i>
-                <span>Currently fails on</span>
-                {{#failingProviders}}
-                    <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
-                        title="tests currently fail on {{.}}"/>
-                {{/failingProviders}}
-            </div>
-        {{/if}}
-
         <div class="heading">
                 {{#if isFullscreen}}<a href="" class="back">&lsaquo; Back</a>{{/if}}
                 {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
@@ -57,6 +47,10 @@
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
                     </li>
                 </ul>
+                
+                {{#if isFullscreen}}
+                    {{>providers}}
+                {{/if}}
             </div>
         </div>
 
@@ -73,6 +67,10 @@
             <div>
                 <div id="bws-summary">
                     <div class="summary">
+                        {{#unless isFullscreen}}
+                            {{>providers}}
+                            <h2>Summary</h2>
+                        {{/unless}}
                         <p>{{ summary }}</p>
                         <h2>Description</h2>
                         <p>

@@ -45,24 +45,33 @@
             margin: 20px 0 10px 0;
         }
     }
-    .provider-warning {
-        height: 20px;
-        margin-top: -1px;
-        padding: 9px;
-        border: 1px solid @charm-panel-orange;
-        color: @charm-panel-orange;
-
-        span {
-            margin: 0 8px 0 7px;
-        }
-        img {
-            height: 20px;
-            margin-left: 2px;
-        }
-    }
     .content {
         .border-box;
         display: table-cell;
+    }
+    .header li a,
+    .providers li span {
+        color: @bws-text;
+        text-decoration: underline;
+    }
+    .providers {
+        overflow: auto;
+        margin-top: 5px;
+        padding: 20px 0 10px 0;
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: @bws-border;
+
+        i {
+            margin-right: 15px;
+        }
+        ul {
+            float: left;
+            width: 50%;
+        }
+        li {
+            margin-bottom: 10px;
+        }
     }
     .heading {
         .type13;
@@ -70,11 +79,6 @@
         padding: 30px;
         background-color: @bws-background;
         border-bottom: 1px solid @bws-border;
-
-        li a {
-            color: @bws-text;
-            text-decoration: underline;
-        }
         .block-icon {
             display: inline-block;
             float: left;
@@ -116,8 +120,20 @@
                 .type2;
                 margin: -3px 0 5px 0;
             }
+            h2 {
+                .type5;
+                margin: 20px 0 15px 0;
+            }
             li {
                 line-height: 1.55;
+            }
+            .providers {
+                border-bottom: none;
+
+                ul {
+                    float: none;
+                    width: 100%;
+                }
             }
         }
         .back.icon,
@@ -158,9 +174,11 @@
         margin-top: 9px;
         margin-bottom: 26px;
     }
+    #bws-summary,
     #bws-readme {
         padding-top: 10px;
-
+    }
+    #bws-readme {
         ul {
             list-style-type: disc;
             padding-left: 2em;
