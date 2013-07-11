@@ -600,7 +600,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // If there are no overall related charms then just skip it all.
       if (relatedCharms.overall) {
         var relatedNode = this.get('container').one('.related-charms');
-        debugger;
         this.relatedCharmContainer = new widgets.browser.CharmContainer(
             Y.merge({
               name: 'Related Charms',
