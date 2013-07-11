@@ -288,7 +288,7 @@
     .heading {
         z-index: 10;
         float: left;
-        width: 25%;
+        width: @bws-sidebar-width;
         padding: 0;
         background-color: #fff;
         border: none;
@@ -338,7 +338,7 @@
         }
     }
     .tabs {
-        margin-left: 25%;
+        margin-left: @bws-sidebar-width;
         border-left: 1px solid @bws-border;
     }
     .related-charms {
@@ -367,5 +367,8 @@
                 }
             }
         }
+    }
+    #bws-summary {
+        padding-top: 30px;
     }
 }
