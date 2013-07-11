@@ -235,8 +235,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method geetter
-         *
+         * @method getter
          */
         getter: function() {
           // full_name
@@ -395,6 +394,7 @@ YUI.add('juju-charm-models', function(Y) {
         is_approved: data.is_approved,
         mainCategory: data.categories[0],
         name: data.name,
+        downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
         weight: data.weight

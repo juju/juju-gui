@@ -91,6 +91,7 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/app-cookies-extension.js',
     'app/assets/javascripts/d3-components.js',
     'app/assets/javascripts/d3.v2.min.js',
+    'app/assets/javascripts/d3.status.js',
     'app/assets/javascripts/event-tracker.js',
     'app/assets/javascripts/FileSaver.js',
     'app/assets/javascripts/gallery-ellipsis.js',

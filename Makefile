@@ -218,10 +218,10 @@ $(NODE_TARGETS): package.json
 	@# in the standard Makefile way, because we need to see what
 	@# node_modules were created by this target.  Makefile variables and
 	@# substitutions, even when using $(eval...) within a target, happen
-	@# initially, before the target is run.  Therefore, if this were a
-	@# simple Makefile variable, it  would be empty after a first run, and
+	@# initially, before the target is run.	 Therefore, if this were a
+	@# simple Makefile variable, it	would be empty after a first run, and
 	@# you would always see the warning message in that case.  We have to
-	@# connect it to the "if" command with "; \" because Makefile targets
+	@# connect it to the "if" command with "; \\" because Makefile targets
 	@# are evaluated per line, with bash variables discarded between them.
 	@# We compare the result with EXPECTED_NODE_TARGETS and not simply the
 	@# NODE_TARGETS because this gives us normalization, particularly of the
@@ -308,8 +308,18 @@ $(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
 		app/assets/javascripts/spin.min.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
-		build-shared/juju-ui/assets/combined-css/rail-x.png
+	ln -sf \
+	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
+	    build-shared/juju-ui/assets/combined-css/rail-x.png
+	ln -sf \
+	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-y.png" \
+	    build-shared/juju-ui/assets/combined-css/rail-y.png
+	ln -sf \
+	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-x.png" \
+	    build-shared/juju-ui/assets/combined-css/thumb-x.png
+	ln -sf \
+	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-y.png" \
+	    build-shared/juju-ui/assets/combined-css/thumb-y.png
 	bin/merge-files
 	mv *.js.map build-shared/juju-ui/assets/
 
@@ -330,6 +340,9 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/sprite.css \
 	build-$(1)/juju-ui/assets/sprite.png \
 	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
+	build-$(1)/juju-ui/assets/combined-css/rail-y.png \
+	build-$(1)/juju-ui/assets/combined-css/thumb-x.png \
+	build-$(1)/juju-ui/assets/combined-css/thumb-y.png \
 	build-$(1)/juju-ui/assets/all-yui.js
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
@@ -355,17 +368,31 @@ define link-files
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
-		build-$(1)/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
-		build-$(1)/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
+	ln -sf \
+	    "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
+	    build-$(1)/juju-ui/assets/combined-css/
+	ln -sf \
+	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
+	    build-$(1)/juju-ui/assets/combined-css/
+	ln -sf \
+	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-y.png" \
+	    build-$(1)/juju-ui/assets/combined-css/
+	ln -sf \
+	    "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-x.png" \
+	    build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-y.png" \
+	    build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" \
+	    build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" \
+	    build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.png" \
+	    build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
-		build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
-		build-$(1)/juju-ui/assets
+	    build-$(1)/juju-ui/assets/
+	ln -sf \
+	    "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
+	    build-$(1)/juju-ui/assets
 	# Copy each YUI module's assets to a parallel directory in the build
 	# location.  This is run in a subshell (indicated by the parenthesis)
 	# so we can change directory and have it not effect this process.  To

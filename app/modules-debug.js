@@ -68,6 +68,9 @@ var GlobalConfig = {
         },
         'd3-components': {
           fullpath: '/juju-ui/assets/javascripts/d3-components.js'
+        },
+        'd3-statusbar': {
+          fullpath: '/juju-ui/assets/javascripts/d3.status.js'
         }
       }
     },
