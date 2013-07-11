@@ -65,7 +65,6 @@ describe('D3 StatusBar', function() {
     // X and Width are under a transition and varies.  without publishing the
     // transition from the object there isn't an easy way to catch transition
     // end to inspect values.
-    console.log(rect.node());
     assert.isTrue(rect.classed('error'));
     assert.equal(rect.attr('height'), 20);
   });
