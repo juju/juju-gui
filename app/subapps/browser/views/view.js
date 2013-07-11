@@ -290,6 +290,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       viewmode: {
+        /**
+         * @method viewmode.valueFn
+         * @return {String} the current view mode.
+         *
+         */
         valueFn: function() {
           return this.name.match(/[a-z]+$/);
         }
