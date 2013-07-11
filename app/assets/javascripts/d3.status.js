@@ -18,10 +18,9 @@
 'use strict';
 
 /**
-  Provide the DataBinding library.
+  Provide the D3 StatusBarlibrary.
 
-  @module views
-  @submodule views.databinding
+  @module d3-statusbar
   */
 
 YUI.add('d3-statusbar', function(Y) {
@@ -42,9 +41,9 @@ YUI.add('d3-statusbar', function(Y) {
       target: A node to render directly into or a specific selector.
       container: A container to build the status graph into.
       width: Rendered width in pixels. Scales accordingly.
-      font_size: Label size, used to determine height of graph.
-      transition_time: How long in ms for transition effects.
-      resize: {Boolean} resize target to width/font_size derived height.
+      fontSize: Label size, used to determine height of graph.
+      transitionTime: How long in ms for transition effects.
+      resize: {Boolean} resize target to width/fontSize derived height.
       sort: {Function} comparator for dataMap results.
 
       @class StatusBar
@@ -54,8 +53,8 @@ YUI.add('d3-statusbar', function(Y) {
         container: 'body',
         target: 'svg',
         width: 250,
-        font_size: 16,
-        transition_time: 750,
+        fontSize: 16,
+        transitionTime: 750,
         resize: true,
         'sort': function(a, b) {
           return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
@@ -70,7 +69,6 @@ YUI.add('d3-statusbar', function(Y) {
       @chainable
     */
     StatusBar.prototype.render = function() {
-      var self = this;
       this.node = d3.select(this.options.target);
 
       if (this.node.empty()) {
@@ -83,8 +81,8 @@ YUI.add('d3-statusbar', function(Y) {
 
       if (this.options.resize) {
         this.node.attr({
-          width: self.options.width,
-          height: self.options.font_size + 2
+          width: this.options.width,
+          height: this.options.fontSize + 2
         });
       }
 
@@ -96,7 +94,15 @@ YUI.add('d3-statusbar', function(Y) {
 
     /**
       Map from an object of category/count to scaled
-      percentage data.
+      percentage data. For example services aggregated_status
+      property might indicate the number of units in various
+      status states as:
+
+      { 'error': 4, 'pending': 2, 'running': 1337 }
+
+      This will calculate the relative percentages reserving enough
+      space that very small percentage items still appear in the
+      output.
 
       @method mapData
       @param {Object} data described above.
@@ -168,7 +174,6 @@ YUI.add('d3-statusbar', function(Y) {
      */
     StatusBar.prototype.update = function(data) {
       var self = this;
-      var font_size = 18;
       var result = this.mapData(data);
 
       var rects = this.node.selectAll('rect')
@@ -185,12 +190,12 @@ YUI.add('d3-statusbar', function(Y) {
             node.classed(d.key, true);
           })
       .attr({
-            height: self.options.font_size + 2
+            height: self.options.fontSize + 2
           });
 
       rects
       .transition()
-      .duration(self.options.transition_time)
+      .duration(self.options.transitionTime)
       .attr({
             width: function(d, i) { return self.scale(d.percent);},
             x: function(d, i) { return self.scale(d.start);}
@@ -199,7 +204,7 @@ YUI.add('d3-statusbar', function(Y) {
       rects
       .exit()
       .transition()
-      .duration(self.options.transition_time)
+      .duration(self.options.transitionTime)
       .attr({width: 0})
       .remove();
 
@@ -209,16 +214,16 @@ YUI.add('d3-statusbar', function(Y) {
       .append('text');
 
       labels
-      .text(function(d) { return d.count;})
+      .text(function(d) { return utils.humanizeNumber(d.count);})
       .classed('label', true)
       .style({
-            'font-size': self.options.font_size
+            'font-size': self.options.fontSize
           })
       .transition()
-      .duration(self.options.transition_time)
+      .duration(self.options.transitionTime)
       .attr({
             x: function(d) {return self.scale(d.start) + 2;},
-            y: self.options.font_size - 1
+            y: self.options.fontSize - 1
           });
 
       labels
