@@ -1267,8 +1267,11 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /*
-    unless built around checking if x != y.
-    Supports an inverse so that we can use an else clause.
+    Supplies a version of 'unless' block helper that will check two specified
+    values against each other. The default unless helper is based on a single
+    truthy value.
+    Supports an inverse function so that we can use an else clause.
+
    */
   Y.Handlebars.registerHelper('unless_eq', function(x, y, options) {
     if (x !== y) {

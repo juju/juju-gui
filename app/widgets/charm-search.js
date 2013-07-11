@@ -128,7 +128,7 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-     * We need to setup the autocomplete onto out input widget.
+     * Setup an autocomplete widget around the search form's input control.
      *
      * @method _setupAutocomplete
      * @private
