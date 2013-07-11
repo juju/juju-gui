@@ -77,14 +77,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      var browserCharm = this.get('charm');
-      var charm = new models.Charm(browserCharm.getAttrs());
-      var attrs = browserCharm.getAttrs();
-      // For future use.
-      var oldCharmId = attrs.id;
+      var charm,
+          browserCharm = this.get('charm'),
+          attrs = browserCharm.getAttrs(),
+          // For future use.
+          oldCharmId = attrs.id;
       // Set the id as the browser model expects it.
       attrs.id = attrs.url;
-      var charm = new models.Charm(attrs);
+      charm = new models.Charm(attrs);
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
