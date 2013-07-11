@@ -497,7 +497,7 @@ YUI.add('juju-databinding', function(Y) {
             viewlet.unsyncedFields();
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, binding));
+                Y.bind(resolve, self));
           }
         });
 
@@ -555,7 +555,7 @@ YUI.add('juju-databinding', function(Y) {
       Clears the changed values array.
 
       This is called on 'saving' the config values as we overwrite the Juju
-      defined values with the users values.
+      defined values with the user's values.
 
       @method clearChangedValues
       @param {String} viewletName viewlet name to clear the changed values.
