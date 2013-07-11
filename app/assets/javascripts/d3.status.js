@@ -9,11 +9,11 @@
 
    This program is distributed in the hope that it will be useful, but WITHOUT
    ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-   SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-   General Public License for more details.
+   SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Affero General Public License for more details.
 
-   You should have received a copy of the GNU Affero General Public License along
-   with this program.  If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
    */
 'use strict';
 
@@ -27,12 +27,28 @@
 YUI.add('d3-statusbar', function(Y) {
 
   var views = Y.namespace('juju.views'),
-  utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils');
 
   views.StatusBar = (function() {
     var key = function(d) {return d.key;};
 
 
+    /**
+      Linear percentage graph with minimal reserve space
+      for smaller categories.
+
+      Takes a number of possible options.
+
+      target: A node to render directly into or a specific selector.
+      container: A container to build the status graph into.
+      width: Rendered width in pixels. Scales accordingly.
+      font_size: Label size, used to determine height of graph.
+      transition_time: How long in ms for transition effects.
+      resize: {Boolean} resize target to width/font_size derived height.
+      sort: {Function} comparator for dataMap results.
+
+      @class StatusBar
+    */
     function StatusBar(options) {
       this.options = Y.mix(options || {}, {
         container: 'body',
@@ -42,11 +58,17 @@ YUI.add('d3-statusbar', function(Y) {
         transition_time: 750,
         resize: true,
         'sort': function(a, b) {
-          return a.key < b.key ? -1: a.key > b.key ? 1 : 0;
+          return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
         }
       });
     }
 
+    /**
+      Render the status bar.
+
+      @method render
+      @chainable
+    */
     StatusBar.prototype.render = function() {
       var self = this;
       this.node = d3.select(this.options.target);
@@ -72,6 +94,15 @@ YUI.add('d3-statusbar', function(Y) {
       return this;
     };
 
+    /**
+      Map from an object of category/count to scaled
+      percentage data.
+
+      @method mapData
+      @param {Object} data described above.
+      @return {Array} Objects with count, key, percent and start offset
+                      attributes.
+    */
     StatusBar.prototype.mapData = function(data) {
       var total = 0;
       var max_range = 0;
@@ -102,10 +133,10 @@ YUI.add('d3-statusbar', function(Y) {
           var p = Math.max(min_reserve, v / total * 100.0);
           result.push({key: k, percent: p, count: v});
         }
+      }
 
-        if (this.options.sort) {
-          result.sort(this.options.sort);
-        }
+      if (this.options.sort) {
+        result.sort(this.options.sort);
       }
 
       result.forEach(function(d) {
@@ -129,6 +160,12 @@ YUI.add('d3-statusbar', function(Y) {
       return result;
     };
 
+    /**
+     Called to update the graph on data change
+
+     @method update
+     @chainable
+     */
     StatusBar.prototype.update = function(data) {
       var self = this;
       var font_size = 18;
@@ -144,20 +181,20 @@ YUI.add('d3-statusbar', function(Y) {
       .enter()
       .append('rect')
       .each(function(d) {
-        var node = d3.select(this);
-        node.classed(d.key, true);
-      })
+            var node = d3.select(this);
+            node.classed(d.key, true);
+          })
       .attr({
-        height: self.options.font_size + 2
-      });
+            height: self.options.font_size + 2
+          });
 
       rects
       .transition()
       .duration(self.options.transition_time)
       .attr({
-        width: function(d, i) { return self.scale(d.percent);},
-        x: function(d, i) { return self.scale(d.start);}
-      });
+            width: function(d, i) { return self.scale(d.percent);},
+            x: function(d, i) { return self.scale(d.start);}
+          });
 
       rects
       .exit()
@@ -175,14 +212,14 @@ YUI.add('d3-statusbar', function(Y) {
       .text(function(d) { return d.count;})
       .classed('label', true)
       .style({
-        'font-size': self.options.font_size
-      })
+            'font-size': self.options.font_size
+          })
       .transition()
       .duration(self.options.transition_time)
       .attr({
-        x: function(d) {return self.scale(d.start) + 2;},
-        y: self.options.font_size - 1
-      });
+            x: function(d) {return self.scale(d.start) + 2;},
+            y: self.options.font_size - 1
+          });
 
       labels
       .exit().remove();
@@ -193,5 +230,5 @@ YUI.add('d3-statusbar', function(Y) {
   })();
 
 }, '0.1.0', {
-  requires: ['juju-view-utils' ]
+  requires: ['juju-view-utils']
 });

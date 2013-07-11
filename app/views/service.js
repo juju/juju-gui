@@ -1282,11 +1282,11 @@ YUI.add('juju-view-service', function(Y) {
           var units = {units: model.get('units').toArray()};
           this.container.one('.overview-unit-list')
             .setHTML(Templates.serviceOverviewUnitList(units));
-         return model;
+          return model;
         },
         bindings: {
           aggregated_status: {
-            update:  function(node, value) {
+            'update': function(node, value) {
               var bar = this._statusbar;
               if (!bar) {
                 bar = this._statusbar = new views.StatusBar({
