@@ -129,7 +129,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 name: 'Featured Charms',
                 cutoff: featuredCount,
                 children: featuredCharmObjects
-                }, containerCfg));
+                }, {
+                additionalChildConfig: {
+                  size: this.get('isFullscreen') ? 'large' : 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
           featuredCharmContainer.render(featuredContainer);
 
           // Add popular charms
@@ -141,8 +146,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 cutoff: cutoffs.popular,
                 children: popularCharms.map(function(charm) {
                   return charm.getAttrs();
-                })},
-              containerCfg));
+                })}, {
+                additionalChildConfig: {
+                  size: 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
           popularCharmContainer.render(popularContainer);
 
           // Add in the charm tokens for the new as well.
@@ -154,8 +163,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 cutoff: cutoffs['new'],
                 children: newCharms.map(function(charm) {
                   return charm.getAttrs();
-                })},
-              containerCfg));
+                })}, {
+                additionalChildConfig: {
+                  size: 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
           newCharmContainer.render(newContainer);
 
           var container = this.get('container');
