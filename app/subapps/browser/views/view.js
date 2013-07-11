@@ -119,7 +119,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
       this.search.render(node.one('.bws-header'));
 
-      this.controls = new widgets.ViewmodeControls();
+      // Make sure the controls starts out setting the correct active state
+      // based on the current viewmode for our View.
+      this.controls = new widgets.ViewmodeControls({
+        initialViewmode: this.get('viewmode')
+      });
       this.controls.render();
     },
 
@@ -274,7 +278,22 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * @type {String}
        *
        */
-      subpath: {}
+      subpath: {},
+
+      /**
+       * The view needs to be able to tell widgets and controls what the
+       * current viewmode is. It determines this by which subclassing view is
+       * currently being rendered.
+       *
+       * @attribute viewmode
+       * @type {String}
+       *
+       */
+      viewmode: {
+        valueFn: function() {
+          return this.name.match(/[a-z]+$/);
+        }
+      }
     }
   });
 
