@@ -1291,7 +1291,7 @@ YUI.add('juju-view-service', function(Y) {
               if (!bar) {
                 bar = this._statusbar = new views.StatusBar({
                   target: node.getDOMNode()
-                });
+                }).render();
               }
               bar.update(value);
             }

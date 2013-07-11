@@ -34,8 +34,8 @@ YUI.add('d3-statusbar', function(Y) {
 
 
     function StatusBar(options) {
-      var self = this;
       this.options = Y.mix(options || {}, {
+        container: 'body',
         target: 'svg',
         width: 250,
         font_size: 16,
@@ -45,11 +45,14 @@ YUI.add('d3-statusbar', function(Y) {
           return a.key < b.key ? -1: a.key > b.key ? 1 : 0;
         }
       });
+    }
 
+    StatusBar.prototype.render = function() {
+      var self = this;
       this.node = d3.select(this.options.target);
 
       if (this.node.empty()) {
-        this.node = d3.select('body')
+        this.node = d3.select(this.options.container)
         .append(this.options.target);
 
         this.node.append('g')
@@ -65,8 +68,9 @@ YUI.add('d3-statusbar', function(Y) {
 
       this.scale = d3.scale.linear()
       .domain([0, 100])
-      .range([0, options.width]);
-    }
+      .range([0, this.options.width]);
+      return this;
+    };
 
     StatusBar.prototype.mapData = function(data) {
       var total = 0;
@@ -78,27 +82,30 @@ YUI.add('d3-statusbar', function(Y) {
       var start = 0;
 
       for (k in data) {
-        total += data[k];
-        if (data[k] > max_range) {
-          max_range = data[k];
+        if (data.hasOwnProperty(k)) {
+          total += data[k];
+          if (data[k] > max_range) {
+            max_range = data[k];
+          }
         }
       }
 
       for (k in data) {
-        var v = data[k];
-        if (v === 0) {
-          continue;
+        if (data.hasOwnProperty(k)) {
+          var v = data[k];
+          if (v === 0) {
+            continue;
+          }
+          if ((v / total * 100.0) < min_reserve) {
+            reserved += (min_reserve - ((v / total) * 100.0));
+          }
+          var p = Math.max(min_reserve, v / total * 100.0);
+          result.push({key: k, percent: p, count: v});
         }
-        if ((v / total * 100.0) < min_reserve) {
-          reserved += (min_reserve - ((v / total) * 100.0));
+
+        if (this.options.sort) {
+          result.sort(this.options.sort);
         }
-        var p = Math.max(min_reserve, v / total * 100.0);
-        result.push({key: k, percent: p, count: v});
-      }
-      // Sort result by key lexographically such that
-      // order should be [error, pending, running]
-      if (this.options.sort) {
-        result.sort(this.options.sort);
       }
 
       result.forEach(function(d) {
