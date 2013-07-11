@@ -1,18 +1,3 @@
 <div class="controls yui3-skin-sam zoom-controls">
-  <!-- contentBox -->
-  <span id="zoom-slider-content-box" class="yui3-widget yui3-sliderbase yui-slider">
-    <!-- rail -->
-    <span class="yui3-slider-rail">
-      <span class="yui3-slider-rail-cap-top"></span>
-      <span class="yui3-slider-rail-cap-bottom"></span>
-      <!-- thumb -->
-      <span class="yui3-slider-thumb">
-        <img class="yui3-slider-thumb-shadow">
-        <img class="yui3-slider-thumb-image">
-        <img id="zoom-in-btn" src="/juju-ui/assets/images/zoom_plus.png" />
-        <span id="slider-parent"></span>
-        <img id="zoom-out-btn" src="/juju-ui/assets/images/zoom_minus.png" />
-      </span>
-    </span>
-  </span>
+        <span id="slider-parent">
 </div>
