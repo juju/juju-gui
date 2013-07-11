@@ -599,6 +599,11 @@ div.state-pending {
         background-color: lighten(@pending-color, 20%);
     }
 }
+
+.overview-unit-list {
+  max-height: 11em;
+  overflow-x: scroll;
+}
 .unit (@min_height: 20px, @border_radius:3px) {
     .create-border-radius(@border_radius);
     padding: 5px;
