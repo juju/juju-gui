@@ -98,7 +98,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
         max: options.minSlider,
         axis: 'y',
         length: '150px',
-        //thumbUrl: '/juju-ui/assets/images/orange-dot.png',
         value: this.toSlider(currentScale)
       });
       // XXX: selection to module option
