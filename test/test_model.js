@@ -767,6 +767,9 @@ describe('BrowserCharm test', function() {
     assert.equal(
         providesData.downloads_in_past_30_days,
         converted.recent_download_count);
+    assert.equal(
+        providesData.downloads,
+        converted.downloads);
     assert.equal(providesData.has_icon, converted.shouldShowIcon);
     assert.equal(converted.is_approved, providesData.is_approved);
   });
