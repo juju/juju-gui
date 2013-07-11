@@ -385,7 +385,7 @@ YUI.add('juju-view-container', function(Y) {
       // Because this is also a callback we need to check to see
       // if this is an event object or a real container element
       if (container && container.type) { container = null; }
-      container = container || this.get('container'),
+      container = container || this.get('container');
       var winHeight = container.get('winHeight'),
           header = Y.one('.navbar'),
           footer = Y.one('.bottom-navbar'),
