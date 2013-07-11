@@ -1442,18 +1442,7 @@ YUI.add('juju-view-service', function(Y) {
           }
         }
       },
-      units: {
-        name: 'units',
-        template: Templates.show_units_small,
-        'selectBindModel': function(model) {
-          return model.get('units');
-        },
-        'update': function(modellist) {
-          var data = {units: modellist.toArray()};
-          this.container.setHTML(this.template(data));
-        }
-      },
-      config: {
+     config: {
         name: 'config',
         template: Templates['service-configuration'],
         'render': function(service, viewContainerAttrs) {
