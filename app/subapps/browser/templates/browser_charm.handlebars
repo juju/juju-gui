@@ -13,7 +13,6 @@
         <div class="heading">
                 {{#if isFullscreen}}<a href="" class="back">&lsaquo; Back</a>{{/if}}
                 {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
-                <a href="" class="share">Share</a>
             <div class="block-icon">
                 {{#if shouldShowIcon}}
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
@@ -70,6 +69,15 @@
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
             </ul>
             <hr />
+            <a href="http://twitter.com/home?status={{ twitter_text }}" title="Share on twitter">
+              <i class="sprite twitter-normal"></i>
+            </a>
+            <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
+              <i class="sprite google-normal"></i>
+            </a>
+            <a href="mailto:?subject={{ email_subject }}&body={{ email_text }}" title="Share with email">
+              <i class="sprite email-normal"></i>
+            </a>
             <div>
                 <div id="bws-summary">
                     <div class="summary">

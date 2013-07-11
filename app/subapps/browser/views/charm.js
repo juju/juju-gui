@@ -654,12 +654,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
-      this.shareWidget = new widgets.browser.SharingWidget({
-        link: window.location.origin + '/' + this.get('charm').get('id'),
-        button: renderTo.one('.share')
-      });
-      this.shareWidget.render(renderTo.one('.share'));
-
       this.tabview = new widgets.browser.TabView({
         render: true,
         srcNode: tplNode.one('.tabs')
