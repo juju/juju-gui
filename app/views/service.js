@@ -1149,6 +1149,13 @@ YUI.add('juju-view-service', function(Y) {
       container.one('.destroy-service-prompt').addClass('closed');
     },
 
+    /**
+      Start the process of destroying the service represented by this
+      inspector.
+
+      @method initiateServiceDestroy
+      @return {undefined} Nothing.
+    */
     initiateServiceDestroy: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
       var dataSource = svcInspector ? this.inspector : this;
@@ -1202,16 +1209,40 @@ YUI.add('juju-view-service', function(Y) {
 
     /* Event handlers for service/ghost destroy UI */
 
+    /**
+      React to the user clicking on or otherwise activating the "destroy this
+      service" icon.
+
+      @method onDestroyIcon
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
     onDestroyIcon: function(evt) {
       evt.halt();
       this.showDestroyPrompt(evt.container);
     },
 
+    /**
+      React to the user clicking on or otherwise activating the cancel button
+      on the "destroy this service" prompt.
+
+      @method onCancelDestroy
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
     onCancelDestroy: function(evt) {
       evt.halt();
       this.hideDestroyPrompt(evt.container);
     },
 
+    /**
+      React to the user clicking on or otherwise activating the "do it now"
+      button on the "destroy this service" prompt.
+
+      @method onInitiateDestroy
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
     onInitiateDestroy: function(evt) {
       evt.halt();
       this.closeInspector();
