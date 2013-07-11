@@ -379,14 +379,14 @@ YUI.add('juju-view-container', function(Y) {
       the browser is resized or by being called directly.
 
       @method recalculateHeight
-      @param {Y.Node} container A reference to the container element
+      @param {Y.Node} container A reference to the container element.
     */
     recalculateHeight: function(container) {
       // Because this is also a callback we need to check to see
       // if this is an event object or a real container element
       if (container && container.type) { container = null; }
-      var container = container || this.get('container'),
-          winHeight = container.get('winHeight'),
+      container = container || this.get('container'),
+      var winHeight = container.get('winHeight'),
           header = Y.one('.navbar'),
           footer = Y.one('.bottom-navbar'),
           // Depending on the render cycle these may or may not be in the DOM
