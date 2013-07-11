@@ -104,8 +104,8 @@ describe('charm token', function() {
     assert.equal(iconNode.hasClass('charm-app-servers-48'), true);
 
     // and the metadata should not be displayed.
-   var metadataNode = charm_container.one('.metadata');
-   assert.equal(metadataNode, undefined);
+    var metadataNode = charm_container.one('.metadata');
+    assert.equal(metadataNode, undefined);
   });
 
   it('sets an icon per the category if available', function() {

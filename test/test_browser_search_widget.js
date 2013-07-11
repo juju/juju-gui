@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('browser search widget', function() {
+describe('browser search widget', function() {
   var Y, container, Search, utils;
 
   before(function(done) {
@@ -74,16 +74,16 @@ describe.only('browser search widget', function() {
     var fakeStore = new Y.juju.Charmworld2({});
 
     fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: data
-              }]
-            }
-          });
-        }
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: data
+            }]
+          }
+        });
+      }
     });
 
     var search = new Search({
