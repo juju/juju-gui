@@ -93,10 +93,10 @@ YUI.add('viewmode-controls', function(Y) {
     },
 
     /**
-      Show or hide the details panel.
+      Update the css on the controls to mark one as 'active'.
 
       @method _updateActiveNav
-      @param {Boolean} visible set the panel to hide or show.
+      @param {String} viewmode Which is the 'active' control.
 
      */
     _updateActiveNav: function(viewmode) {

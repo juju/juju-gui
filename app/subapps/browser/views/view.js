@@ -280,7 +280,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
        */
       subpath: {},
 
-
+      /**
+       * The view needs to be able to tell widgets and controls what the
+       * current viewmode is. It determines this by which subclassing view is
+       * currently being rendered.
+       *
+       * @attribute viewmode
+       * @type {String}
+       *
+       */
       viewmode: {
         valueFn: function() {
           return this.name.match(/[a-z]+$/);
