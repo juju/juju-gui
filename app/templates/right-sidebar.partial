@@ -1,3 +1,5 @@
 <div class="controls yui3-skin-sam zoom-controls">
-        <span id="slider-parent">
+  <img id="zoom-in-btn" src="/juju-ui/assets/images/zoom_plus.png" />
+  <span id="slider-parent"></span>
+  <img id="zoom-out-btn" src="/juju-ui/assets/images/zoom_minus.png" />
 </div>
