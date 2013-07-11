@@ -1,12 +1,15 @@
+@inspector-background-color: #333;
+@inspector-region-background-color: #282828;
+
 .yui3-juju-inspector {
     position: absolute;
     width: 292px;
     min-height: 250px;
-    background-color: #333;
+    background-color: @inspector-background-color;
     color: #fff;
 
     h1, h2, h3, h4, h5, h6 {
-        background-color: #282828;
+        background-color: @inspector-region-background-color;
         padding-left: 1em;
     }
 
@@ -206,4 +209,65 @@
             background-color: #ba0000;
         }
     }
+
+    .destroy-service-icon {
+        cursor: pointer;
+        float: right;
+        width: 20px;
+        height: 24px;
+        padding: 0;
+        /* Make sure the destroy icon is below the close-the-inspector icon. */
+        clear: both;
+        margin-bottom: 1ex;
+        background-position: center;
+        background-repeat: no-repeat; 
+        background-image:
+            url("/juju-ui/assets/images/inspector-destroy-service.png");
+    }
+
+    .destroy-service-prompt {
+        overflow: hidden;
+        height: 95px;
+        background-color: @inspector-region-background-color;
+        margin-bottom: 10px;
+        transition: 1s, height 1s;
+        -webkit-transition: 1s, height 1s;
+
+        /* Make sure the prompt box is below the icon. */
+        clear: both;
+
+        .message {
+            margin: 5px 15px;
+        }
+
+        .buttons {
+            a {
+                .create-border-radius(4px);
+                .create-box-shadow(0 2px 2px -2px #777 inset);
+                box-shadow: 0 2px 2px -2px #777777 inset;
+                color: #fff;
+                background: #dd4814;
+                padding: 5px 0;
+                text-decoration: none;
+                text-align: center;
+                margin-top: 10px;
+                width: 110px;
+                float: left;
+                margin-left: 13px; 
+            }
+
+            a:last-of-type {
+                mergin-right: 0;
+            }
+
+            .grey {
+                background: #999;
+            }
+        }
+    }
+
+    .destroy-service-prompt.closed {
+        height: 0;
+    }
+
 }

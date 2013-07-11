@@ -1130,6 +1130,128 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
+      Display the "do you really want to destroy this service?" prompt.
+
+      @method showDestroyPrompt
+      @param {Y.Node} container The container of the prompt.
+    */
+    showDestroyPrompt: function(container) {
+      container.one('.destroy-service-prompt').removeClass('closed');
+    },
+
+    /**
+      Hide the "do you really want to destroy this service?" prompt.
+
+      @method hideDestroyPrompt
+      @param {Y.Node} container The container of the prompt.
+    */
+    hideDestroyPrompt: function(container) {
+      container.one('.destroy-service-prompt').addClass('closed');
+    },
+
+    /**
+      Start the process of destroying the service represented by this
+      inspector.
+
+      @method initiateServiceDestroy
+      @return {undefined} Nothing.
+    */
+    initiateServiceDestroy: function() {
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      // When the above flag is removed we won't need the dataSource variable
+      // any more and can refactor this accordingly.
+      var dataSource = svcInspector ? this.inspector : this;
+      var model = dataSource.get('model');
+      var db = this.inspector.get('db');
+      if (model.name === 'service') {
+        var env = dataSource.get('env');
+        env.destroy_service(model.get('id'),
+            Y.bind(this._destroyServiceCallback, this, model, db));
+      } else if (model.name === 'charm') {
+        db.services.remove(this.options.ghostService);
+      } else {
+        throw new Error('Unexpected model type: ' + model.name);
+      }
+    },
+
+    /**
+      React to a service being destroyed (or not).
+
+      @method _destroyServiceCallback
+      @param {Object} service The service we attempted to destroy.
+      @param {Object} db The database responsible for storing the service.
+      @param {Object} evt The event describing the destruction (or lack
+        thereof).
+    */
+    _destroyServiceCallback: function(service, db, evt) {
+      if (evt.err) {
+        // If something bad happend we need to alert the user.
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error',
+              link: undefined, // XXX See note below about getModelURL.
+              modelId: service
+            })
+        );
+      } else {
+        // If the removal succeeded on the server side, we need to remove the
+        // service from the database.  (Why wouldn't we get an update from the
+        // server side that would do this for us?).
+        db.services.remove(service);
+        db.relations.remove(db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service.get('id');
+              });
+            }));
+      }
+    },
+
+    /* Event handlers for service/ghost destroy UI */
+
+    /**
+      React to the user clicking on or otherwise activating the "destroy this
+      service" icon.
+
+      @method onDestroyIcon
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
+    onDestroyIcon: function(evt) {
+      evt.halt();
+      this.showDestroyPrompt(evt.container);
+    },
+
+    /**
+      React to the user clicking on or otherwise activating the cancel button
+      on the "destroy this service" prompt.
+
+      @method onCancelDestroy
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
+    onCancelDestroy: function(evt) {
+      evt.halt();
+      this.hideDestroyPrompt(evt.container);
+    },
+
+    /**
+      React to the user clicking on or otherwise activating the "do it now"
+      button on the "destroy this service" prompt.
+
+      @method onInitiateDestroy
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
+    */
+    onInitiateDestroy: function(evt) {
+      evt.halt();
+      this.closeInspector();
+      this.initiateServiceDestroy();
+    },
+
+    /**
       Handles exposing the service.
 
       @method toggleExpose
