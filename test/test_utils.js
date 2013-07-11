@@ -133,6 +133,70 @@ describe('utilities', function() {
   });
 
 
+  describe('getConstraints', function() {
+    var constraintDescriptions, customConstraints, genericConstraints,
+        getConstraints, serviceConstraints;
+
+    before(function() {
+      getConstraints = utils.getConstraints;
+      serviceConstraints = {arch: 'lcars', cpu: 'quantum', mem: 'teraflop'};
+      customConstraints = {foo: 'bar', arch: 'amd64', mem: '1GB'};
+      genericConstraints = ['cpu', 'mem', 'arch'];
+      constraintDescriptions = {
+        arch: {title: 'Architecture'},
+        cpu: {title: 'CPU', unit: 'Ghz'}
+      };
+    });
+
+    it('correctly returns constraints for a service', function() {
+      var expected = [
+        {name: 'cpu', value: 'quantum', title: 'CPU', unit: 'Ghz'},
+        {name: 'mem', value: 'teraflop', title: 'mem'},
+        {name: 'arch', value: 'lcars', title: 'Architecture'}
+      ];
+      var obtained = getConstraints(
+          serviceConstraints, genericConstraints, [], constraintDescriptions);
+      assert.deepEqual(expected, obtained);
+    });
+
+    it('excludes read-only constraints', function() {
+      var expected = [
+        {name: 'cpu', value: '', title: 'CPU', unit: 'Ghz'},
+        {name: 'mem', value: '1GB', title: 'mem'},
+        {name: 'arch', value: 'amd64', title: 'Architecture'}
+      ];
+      var obtained = getConstraints(
+          customConstraints, genericConstraints, ['foo'],
+          constraintDescriptions);
+      assert.deepEqual(expected, obtained);
+    });
+
+    it('handles missing service constraints', function() {
+      var expected = [
+        {name: 'cpu', value: '', title: 'CPU', unit: 'Ghz'},
+        {name: 'mem', value: '', title: 'mem'},
+        {name: 'arch', value: '', title: 'Architecture'}
+      ];
+      var obtained = getConstraints(
+          {}, genericConstraints, [], constraintDescriptions);
+      assert.deepEqual(expected, obtained);
+    });
+
+    it('includes unexpected service constraints', function() {
+      var expected = [
+        {name: 'cpu', value: '', title: 'CPU', unit: 'Ghz'},
+        {name: 'mem', value: '1GB', title: 'mem'},
+        {name: 'arch', value: 'amd64', title: 'Architecture'},
+        {name: 'foo', value: 'bar', title: 'foo'}
+      ];
+      var obtained = getConstraints(
+          customConstraints, genericConstraints, [], constraintDescriptions);
+      assert.deepEqual(expected, obtained);
+    });
+
+  });
+
+
   describe('isPythonRelation', function() {
     var isPythonRelation;
 

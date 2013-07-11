@@ -192,7 +192,6 @@ YUI.add('juju-databinding', function(Y) {
       var modelEventHandles = this.resetModelChangeEvents(model);
       modelEventHandles.push(
           model.on('change', this._modelChangeHandler, this));
-
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
@@ -429,6 +428,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._storeChanged = function(e, viewlet) {
       var key = e.currentTarget.getData('bind'),
           save = true;
+
       viewlet._changedValues.forEach(function(value) {
         if (value === key) {
           save = false;
@@ -491,13 +491,13 @@ YUI.add('juju-databinding', function(Y) {
         var dataKey = binding.target.getData('bind');
 
         // If the field has been changed while the user was editing it
-
         viewlet._changedValues.forEach(function(value) {
           if (value === dataKey) {
             conflicted = binding.target;
+            viewlet.unsyncedFields();
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, binding));
+                Y.bind(resolve, self));
           }
         });
 
@@ -528,21 +528,42 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = node.getData('bind');
+      var key = node.getData('bind'),
+          viewlet = this._viewlets[viewletName];
       var changedValues = Y.Array.filter(
-          this._viewlets[viewletName]._changedValues, function(value) {
+          viewlet._changedValues, function(value) {
             if (value !== key) {
               return true;
             }
             return false;
           });
-      this._viewlets[viewletName]._changedValues = changedValues;
+      viewlet._changedValues = changedValues;
       var elementKind = node.getDOMNode().tagName.toLowerCase();
       var field = this._fieldHandlers[elementKind];
       if (!field) {
         field = this._fieldHandlers['default'];
       }
       field.set.call(this, node, value);
+      // If there are no more changed values then tell the
+      // the viewlet to update accordingly
+      if (viewlet._changedValues.length === 0) {
+        viewlet.syncedFields();
+      }
+    };
+
+    /**
+      Clears the changed values array.
+
+      This is called on 'saving' the config values as we overwrite the Juju
+      defined values with the user's values.
+
+      @method clearChangedValues
+      @param {String} viewletName viewlet name to clear the changed values.
+    */
+    BindingEngine.prototype.clearChangedValues = function(viewletName) {
+      var viewlet = this._viewlets[viewletName];
+      viewlet._changedValues = [];
+      viewlet.syncedFields();
     };
 
     return BindingEngine;

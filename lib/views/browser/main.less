@@ -1,6 +1,5 @@
 #subapp-browser {
-  color: @bws-text;
-  font-size: 9pt;
+  .type9;
 
   a {
     color: @charm-panel-orange;
@@ -21,12 +20,6 @@
     font-family: @font-family-mono;
     font-size: 10pt;
   }
-  .badge-approved {
-    display: block;
-    position: absolute;
-    background-position: left top;
-    bacground-repeat: no-repeat;
-  }
   .reset {
     margin: auto;
     text-align: left;
@@ -40,7 +33,7 @@
   }
   .bws-header {
       padding: 20px;
-      border-bottom: 1px solid @bws-border;
+      border-bottom: 1px solid #b7b7b9;
   }
   #bws-search {
     .search-title {
@@ -104,6 +97,9 @@
     background-color: @bws-background;
     z-index: 1;
   }
+  .bws-view-data {
+    background-color: #fff;
+  }
   .bws-view-data,
   #bws-sidebar {
     bottom: @canvas-footer-nav-height;
@@ -121,16 +117,6 @@
       right: 0;
       box-shadow: none;
     }
-    .toggle-fullscreen {
-      background-position: 0 -180px;
-
-        &:hover {
-          background-position: 0 -240px;
-        }
-        &:active {
-          background-position: 0 -300px;
-        }
-    }
     #bws-search {
       .filters,
       .search-filters {
@@ -143,15 +129,15 @@
     right: auto;
     width: @bws-sidebar-width;
     min-width: @bws-sidebar-min-width;
-    border-right: 1px solid #a6a6a6;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+    border-right: 1px solid #a5a5a5;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
     .bws-searchbox {
         width: 100%;
     }
     .bws-content {
       top: @bws-sidebar-header-height;
-      border-top: 8px solid #d8d7d3;
+      border-top: 8px solid @bws-sidebar-content-top-border;
 
       .section-title {
         padding-left: 20px;
@@ -171,7 +157,8 @@
   .bws-view-data {
     left: @bws-sidebar-width;
     right: 25%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   }
 }
 @media screen and (max-width: 1400px) {

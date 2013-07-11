@@ -1,8 +1,6 @@
 .yui3-juju-browser-tabview {
-    margin-top: 25px;
-
     .vertical {
-        ul{
+        ul {
             float: left;
         }
         .yui3-juju-browser-tab {
@@ -10,34 +8,28 @@
         }
     }
     .yui3-tabview-list {
-        border-bottom: 1px solid @bws-border;
-        margin-top: 25px;
+        li {
+            margin-right: 40px;
 
-        .yui3-tab-label {
-            .three-image-button-background(
-                "tab_inactive_left.jpg",
-                "tab_inactive_right.jpg",
-                "tab_inactive_centre.jpg"
-                );
-            margin-left: 10px;
-            padding: 7px 15px 9px 15px;
-            font-size: 10.5pt;
-            line-height: 10.5pt;
-            text-decoration: none;
-            color: @bws-text;
-        }
-        .yui3-tab-selected .yui3-tab-label {
-            .three-image-button-background(
-                "tab_active_left.jpg",
-                "tab_active_right.jpg",
-                "tab_active_centre.jpg"
-                );
-            margin-bottom: -1px;
-            padding-bottom: 10px;
-            color: @bws-heading;
+            &:last-child {
+                margin-right: 0;
+            }
+            &.yui3-tab-selected .yui3-tab-label {
+                border-bottom: 2px solid @charm-panel-orange;
+                padding-bottom: 14px;
+            }
+            .yui3-tab-label {
+                display: block;
+                padding: 16px 0;
+                outline: 0;
+            }
         }
     }
+    hr {
+        margin: 0;
+        border-top: 1px solid @bws-border;
+    }
     .yui3-tab-panel {
-        padding-top: 15px;
+        padding-top: 30px;
     }
 }

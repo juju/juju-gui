@@ -21,7 +21,7 @@
                     charm-{{mainCategory}}-48
                   {{/if_eq}}
                   {{#if_eq size 'small'}}
-                    charm-{{mainCategory}}-64
+                    charm-{{mainCategory}}-50
                   {{/if_eq}}
                   {{#if_eq size 'large'}}
                     charm-{{mainCategory}}-96
@@ -39,13 +39,12 @@
             {{ name }}
         </span>
         {{#unless_eq size 'tiny'}}
-            <span class="metadata">
-                    <strong>{{ downloads }}</strong>
-                    {{pluralize 'download' downloads}},
-                    <strong>{{ recent_commit_count }}</strong>
-                    {{pluralize 'commit' recent_commit_count}}
-            </span>
-            <span class="description">{{truncate description 110 }}</span>
+          <span class="metadata">
+                  {{ downloads }} {{pluralize 'download' downloads}},
+                  {{ recent_commit_count }}
+                  {{pluralize 'commit' recent_commit_count}}
+          </span>
+          <span class="description">{{truncate description 110 }}</span>
         {{/unless_eq}}
     </span>
 </a>

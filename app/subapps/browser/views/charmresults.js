@@ -98,7 +98,8 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       }
 
       var change = {
-        charmID: charmID
+        charmID: charmID,
+        hash: undefined
       };
 
       this.fire('viewNavigate', {change: change});

@@ -122,7 +122,7 @@ describe('charm token', function() {
     var token = new CharmToken(cfg);
     token.render(charm_container);
     var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-64'), true);
+    assert.equal(iconNode.hasClass('charm-app-servers-50'), true);
   });
 
   it('sets an icon per the category respecting size', function() {
