@@ -4,9 +4,12 @@
 
     .content {
         .border-box;
+        position: relative;
+        border-top: 1px solid @bws-groove-dark;
 
         .intro {
-            margin: 20px;
+            border-top: 1px solid @bws-groove-light;
+            padding: 20px;
 
             .copy,
             .image {
@@ -70,8 +73,8 @@
 #bws-fullscreen #bws-editorial .categories {
     // Clear floats:
     position: absolute;
-    top: 18px;
-    right: 20px;
+    top: -65px;
+    right: 0;
 
     li {
         display: block;

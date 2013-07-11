@@ -104,8 +104,30 @@
     overflow-y: auto;
   }
   #bws-fullscreen {
+    .charmview {
+        background-color: #fff;
+    }
+    .bws-header,
+    #bws-editorial .content,
+    .charm {
+        width: @bws-fullscreen-width;
+        margin: 0 auto;
+    }
+    
+  .bws-header-wrapper {
+      padding: 20px;
+      border-bottom: 1px solid @bws-border;
+  }
+    .bws-header {
+        padding: 0;
+        border: none;
+    }
+    #bws-editorial {
+        margin-top: -1px;
+    }
     .bws-view-data {
       position: static;
+      overflow: visible;
       box-shadow: none;
     }
     #bws-search {
@@ -148,6 +170,9 @@
 
         .description {
             display: none;
+        }
+        &:hover {
+            background-color: #eee;
         }
       }
     }
