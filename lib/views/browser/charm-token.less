@@ -58,10 +58,16 @@
                     left top no-repeat;
             }
         }
+        .block-icon,
         .title,
         .metadata,
         .description {
             display: block;
+        }
+        .block-icon,
+        .title,
+        .metadata {
+            float: left;
         }
         .title {
             .type3;
@@ -69,6 +75,11 @@
         }
         .metadata {
             .type14;
+        }
+        .description {
+            clear: left;
+            padding-top: 17px;
+            .type13;
         }
         .badge-approved {
             display: block;

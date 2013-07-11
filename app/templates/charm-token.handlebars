@@ -2,9 +2,9 @@
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
 <a href="/{{id}}"
-    class="charm-token yui3-g {{size}}"
+    class="charm-token {{size}}"
     data-charmid="{{id}}">
-    <span class="yui3-u">
+    <span class="block-icon">
         {{#if is_approved}}
             <span class="badge-approved"
                 title="This charm has been reviewed."></span>
@@ -34,15 +34,13 @@
           {{/if}}
         {{/if}}
     </span>
-    <span class="yui3-u">
-        <span class="title">
-            {{ name }}
-        </span>
-        <span class="metadata">
-                {{ downloads }} {{pluralize 'download' downloads}},
-                {{ recent_commit_count }}
-                {{pluralize 'commit' recent_commit_count}}
-        </span>
-        <span class="description">{{truncate description 110 }}</span>
+    <span class="title">
+        {{ name }}
     </span>
+    <span class="metadata">
+            {{ downloads }} {{pluralize 'download' downloads}},
+            {{ recent_commit_count }}
+            {{pluralize 'commit' recent_commit_count}}
+    </span>
+    <span class="description">{{truncate description 110 }}</span>
 </a>
