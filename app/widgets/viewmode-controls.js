@@ -60,6 +60,7 @@ YUI.add('viewmode-controls', function(Y) {
      */
     _goFullscreen: function(ev) {
       ev.halt();
+      this._updateActiveNav('fullscreen');
       this.fire(this.EVT_FULLSCREEN);
     },
 
@@ -73,6 +74,7 @@ YUI.add('viewmode-controls', function(Y) {
      */
     _goSidebar: function(ev) {
       ev.halt();
+      this._updateActiveNav('sidebar');
       this.fire(this.EVT_SIDEBAR);
     },
 
@@ -88,6 +90,26 @@ YUI.add('viewmode-controls', function(Y) {
     _toggleViewable: function(ev) {
       ev.halt();
       this.fire(this.EVT_TOGGLE_VIEWABLE);
+    },
+
+    /**
+      Show or hide the details panel.
+
+      @method _updateActiveNav
+      @param {Boolean} visible set the panel to hide or show.
+
+     */
+    _updateActiveNav: function(viewmode) {
+      var container = this.get('boundingBox')
+
+      if (container) {
+        var active = container.one('.active');
+        if (active) {
+          active.removeClass('active');
+        }
+        var selector = '.' + viewmode;
+        container.one(selector).addClass('active');
+      }
     },
 
     /**
@@ -115,6 +137,9 @@ YUI.add('viewmode-controls', function(Y) {
           container.one('.sidebar').on(
               'click', this._goSidebar, this)
       );
+
+      // If there's not a currently active node, then we need to set an
+      // initial active control based on the viewmode.
 
     },
 
@@ -155,8 +180,11 @@ YUI.add('viewmode-controls', function(Y) {
         valueFn: function() {
           return Y.one('#browser-nav');
         }
-      }
+      },
 
+      initialViewmode: {
+        value: undefined
+      }
     }
   });
 
