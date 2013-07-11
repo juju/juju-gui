@@ -225,6 +225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'hooks/install'
           ],
           id: 'precise/ceph-9',
+          url: 'cs:precise/ceph-9',
           code_source: { location: 'lp:~foo' },
           options: {
             configName: 'test'
@@ -237,7 +238,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var browserCharm = view.get('charm');
         assert.notDeepEqual(charm, browserCharm);
         var madeCharm = new models.Charm(browserCharm.getAttrs());
-        assert.equal(charm.get('id'), madeCharm.get('id'));
+        assert.equal(charm.get('id'), madeCharm.get('url'));
         done();
       });
       view._addCharmEnvironment({halt: function() {}});
@@ -728,7 +729,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.render();
       var iconNode = view.get('container').one('.category-icon');
-      assert.equal(iconNode.hasClass('charm-app-servers-160'), true);
+      assert.equal(iconNode.hasClass('charm-app-servers-120'), true);
     });
 
     it('selects the proper tab when given one', function() {

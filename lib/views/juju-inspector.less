@@ -36,6 +36,78 @@
         overflow: auto;
         padding: 15px;
 
+        &.settings-config {
+            height: 850px;
+
+            .settings-wrapper {
+                position: relative;
+
+                label {
+                    font-size: 14px;
+                    margin: 14px 0 7px 0;
+                    font-weight: bold;
+                }
+
+                .settings-description {
+                    font-style: italic;
+                    font-size: 12px;
+
+                    /* below hyphenation code was taken from:
+                    http://www.newnet-soft.com/blog/csstypography */
+                    -ms-word-break: break-all;
+                    word-break: break-all;
+
+                    // Non standard for webkit
+                    word-break: break-word;
+
+                    -webkit-hyphens: auto;
+                    -moz-hyphens: auto;
+                    hyphens: auto;
+
+                    -webkit-hyphenate-before: 2;
+                    -webkit-hyphenate-after: 3;
+                    hyphenate-lines: 3;
+                }
+
+                .warning-message {
+                    color: red;
+                    padding: 1em;
+                }
+                .conflicted {
+                    position: absolute;
+                    border: 1px solid grey;
+                    margin-top: -140px;
+                    background-color: white;
+                }
+            }
+
+            .controls {
+                text-align: center;
+
+                button {
+                    width: 115px;
+                    height: 25px;
+                    margin: 10px 0;
+                    border: none;
+                    border-radius: 5px;
+                    color: white;
+                    font-weight: bold;
+
+                    &.cancel {
+                        background-color: #A3A3A3;
+                    }
+
+                    &.confirm {
+                        background-color: #DD4814;
+                        &:disabled {
+                            background-color: #802E0E;
+                            color: #eee;
+                        }
+                    }
+                }
+            }
+        }
+
         h2 {
             font-size: 18px;
             padding-left: 0;

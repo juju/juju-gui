@@ -8,20 +8,20 @@
     </div>
     {{#if isBool}}
       <label for="input-{{name}}">{{name}}</label>
-      <div class="controls boolean">
+      <div class="boolean">
         <input class="config-field boolean" type="checkbox" name="{{name}}"
             id="input-{{name}}" data-bind="config.{{name}}" {{value}}/>
       </div>
     {{else}}
       {{#if isNumeric}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
-        <div class="controls">
+        <div>
           <input class="config-field" type="text" name="{{name}}"
               id="input-{{name}}" value="{{value}}" data-bind="config.{{name}}"/>
         </div>
       {{else}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
-        <div class="controls">
+        <div>
           <textarea data-bind="config.{{name}}" class="config-field" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
         </div>
       {{/if}}
@@ -31,3 +31,11 @@
     </div>
   </div>
 {{/settings}}
+<div class="yui3-g controls">
+  <div class="yui3-u-1-2">
+    <button class="cancel">Cancel</button>
+  </div>
+  <div class="yui3-u-1-2">
+    <button class="confirm">Confirm</button>
+  </div>
+</div>
