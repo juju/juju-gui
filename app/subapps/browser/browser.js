@@ -63,6 +63,27 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Show or hide the details panel.
+
+      @method _updateActiveNav
+      @param {Boolean} visible set the panel to hide or show.
+
+     */
+    _updateActiveNav: function() {
+      var container = Y.one('#browser-nav'),
+          active = container.one('.active');
+      if (active) {
+          active.removeClass('active');
+      }
+      if (this._viewState.viewmode === 'sidebar') {
+          container.one('.sidebar').addClass('active');
+      }
+      else if (this._viewState.viewmode === 'fullscreen') {
+          container.one('.fullscreen').addClass('active');
+      }
+    },
+
+    /**
       Given the current subapp state, generate a url to pass up to the
       routing code to route to.
 
@@ -611,6 +632,8 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
+      // Sync the nav
+      this._updateActiveNav();
       // Sync that the state has changed.
       this._saveState();
       next();
@@ -638,6 +661,9 @@ YUI.add('subapp-browser', function(Y) {
       this._minimized.set(
           'oldViewMode',
           this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
+
+      // Sync the nav
+      this._updateActiveNav();
     },
 
     /**
@@ -703,6 +729,8 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
+      // Sync the nav
+      this._updateActiveNav();
       // Sync that the state has changed.
       this._saveState();
       next();
