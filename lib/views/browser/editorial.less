@@ -8,7 +8,10 @@
         border-top: 1px solid @bws-groove-dark;
 
         .intro {
-            border-top: 1px solid @bws-groove-light;
+            border-width: 1px 0;
+            border-style: solid;
+            border-top-color: @bws-groove-light;
+            border-bottom-color: @bws-groove-dark;
             padding: 20px;
 
             .copy,
@@ -24,6 +27,7 @@
                 }
                 p {
                     .type4;
+                    line-height: 1.5;
                 }
             }
         }
@@ -70,29 +74,49 @@
         }
     }
 }
-#bws-fullscreen #bws-editorial .categories {
-    // Clear floats:
-    position: absolute;
-    top: -65px;
-    right: 0;
+#bws-fullscreen #bws-editorial {
+    .yui3-charmtoken {
+        height: 275px;
+        border-width: 0 1px 1px 1px;
+        border-style: solid;
+        border-left-color: @bws-groove-light;
+        border-right-color: @bws-groove-dark;
+        border-bottom-color: @bws-groove-dark;
 
-    li {
-        display: block;
-        float: left;
-        margin-right: 20px;
+        &:first-child {
+            border-left: none;
+        }
+        &:nth-child(4n) {
+            border-left: none;
+        }
+        &:nth-child(3n) {
+            border-right: none;
+        }
+    }
+    .categories {
+        // Clear floats:
+        position: absolute;
+        top: -65px;
+        right: 0;
 
-        a {
+        li {
             display: block;
-            text-align: center;
+            float: left;
+            margin-right: 20px;
 
-            img {
-                width: 20px;
-                height: 20px;
-            }
-            span {
+            a {
                 display: block;
-                margin-top: 7px;
-                .type12;
+                text-align: center;
+
+                img {
+                    width: 20px;
+                    height: 20px;
+                }
+                span {
+                    display: block;
+                    margin-top: 7px;
+                    .type12;
+                }
             }
         }
     }
