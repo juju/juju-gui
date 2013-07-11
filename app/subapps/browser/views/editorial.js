@@ -113,23 +113,16 @@ YUI.add('subapp-browser-editorial', function(Y) {
             cutoffs = this.cutoffs.sidebar;
           }
 
-          var containerCfg = {
-            additionalChildConfig: {
-              size: this.get('isFullscreen') ? 'large' : 'small',
-              isDraggable: !this.get('isFullscreen')
-            }
-          };
-
           var featuredCharmObjects = featuredCharms.map(function(charm) {
                 return charm.getAttrs();
               });
-          var featuredCount = featuredCharmObjects.length
+          var featuredCount = featuredCharmObjects.length;
           var featuredCharmContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Featured Charms',
                 cutoff: featuredCount,
                 children: featuredCharmObjects
-                }, {
+              }, {
                 additionalChildConfig: {
                   size: this.get('isFullscreen') ? 'large' : 'small',
                   isDraggable: !this.get('isFullscreen')

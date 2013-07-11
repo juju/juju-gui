@@ -70,16 +70,18 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     _updateActiveNav: function() {
-      var container = Y.one('#browser-nav'),
-          active = container.one('.active');
-      if (active) {
+      var container = Y.one('#browser-nav');
+      if (container) {
+        var active = container.one('.active');
+        if (active) {
           active.removeClass('active');
-      }
-      if (this._viewState.viewmode === 'sidebar') {
+        }
+        if (this._viewState.viewmode === 'sidebar') {
           container.one('.sidebar').addClass('active');
-      }
-      else if (this._viewState.viewmode === 'fullscreen') {
+        }
+        else if (this._viewState.viewmode === 'fullscreen') {
           container.one('.fullscreen').addClass('active');
+        }
       }
     },
 
