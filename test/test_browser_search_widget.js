@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('browser search widget', function() {
+describe.only('browser search widget', function() {
   var Y, container, Search;
 
   before(function(done) {
@@ -53,6 +53,17 @@ describe('browser search widget', function() {
 
     search.updateSearch('test');
     container.one('input').get('value').should.eql('test');
+  });
+
+  it('supports an onHome event', function(done) {
+    var search = new Search();
+    search.render(container);
+
+    search.on(search.EVT_SEARCH_GOHOME, function() {
+      done();
+    });
+
+    container.one('.home').simulate('click');
   });
 
 });
