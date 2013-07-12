@@ -397,7 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe.only('browser subapp display tree', function() {
+  describe('browser subapp display tree', function() {
     var Y, browser, container, hits, ns, resetHits;
 
     before(function(done) {
@@ -985,8 +985,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       // We have a good valid search.
       assert.equal(
-        url,
-        '/search?categories=app-servers&series=precise&text=apache&type=approved');
+          url,
+          '/search?categories=app-servers&series=precise&text=apache&type=approved');
 
       // Now let's update it and force all the rest to go away.
       url = browser._getStateUrl({

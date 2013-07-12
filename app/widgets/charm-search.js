@@ -134,34 +134,35 @@ YUI.add('browser-search-widget', function(Y) {
               'blur', this._toggleActive, this)
       );
       this.addEvent(
-        container.all('a').on(
-          'click', function(ev) {
-            ev.halt();
-          }
-        )
+          container.all('a').on(
+              'click',
+              function(ev) {
+                ev.halt();
+              }
+          )
       );
       this.addEvent(
-        container.one('.home').on(
-          'click', this._onHome, this
-        )
+          container.one('.home').on(
+              'click', this._onHome, this
+          )
       );
       this.addEvent(
-        container.one('i').on(
-          'mouseenter', function(ev) {
-              // Change the icon to hover on mounseenter.
-              ev.target.removeClass('home-icon');
-              ev.target.addClass('home-icon-hover');
-          }, this
-        )
+          container.one('i').on(
+              'mouseenter',
+              function(ev) {
+                // Change the icon to hover on mounseenter.
+                ev.target.removeClass('home-icon');
+                ev.target.addClass('home-icon-hover');
+              }, this)
       );
       this.addEvent(
-        container.one('i').on(
-          'mouseleave', function(ev) {
-              // Change the icon to back on mouseleave.
-              ev.target.removeClass('home-icon-hover');
-              ev.target.addClass('home-icon');
-          }, this
-        )
+          container.one('i').on(
+              'mouseleave',
+              function(ev) {
+                // Change the icon to back on mouseleave.
+                ev.target.removeClass('home-icon-hover');
+                ev.target.addClass('home-icon');
+              }, this)
       );
 
     },
