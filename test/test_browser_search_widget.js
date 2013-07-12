@@ -63,7 +63,7 @@ describe('browser search widget', function() {
       done();
     });
 
-    container.one('i .home').simulate('click');
+    container.one('i.home').simulate('click');
   });
 
   it('clicking on the home link also works', function(done) {
@@ -74,7 +74,7 @@ describe('browser search widget', function() {
       done();
     });
 
-    container.one('a .home').simulate('click');
+    container.one('a.home').simulate('click');
   });
 
 });
