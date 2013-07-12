@@ -78,6 +78,8 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _onHome: function(ev) {
+      var form = this.get('boundingBox').one('form');
+      form.one('input').set('value', '');
       ev.halt();
       this.fire(this.EVT_SEARCH_GOHOME);
     },
