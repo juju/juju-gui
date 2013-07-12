@@ -111,8 +111,14 @@ YUI.add('juju-databinding', function(Y) {
      * a model and its viewlet(s).
      *
      * @class BindingEngine
+     * @param {Object} options taking:
+     *          interval: ms window to restrict multiple DOM udpates.250ms
+     *          default.
      */
-    function BindingEngine() {
+    function BindingEngine(options) {
+      this.options = options || {};
+      this.interval = this.options.interval !== undefined ?
+          this.options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
@@ -247,7 +253,7 @@ YUI.add('juju-databinding', function(Y) {
         }, this);
         this._setupHeirarchicalBindings();
         this._setupDependencies();
-        this._updateDOM();
+        this._modelChangeHandler();
       } else {
         // Model list
         // TODO: If this is a lazy model list then the models contained are
@@ -322,7 +328,9 @@ YUI.add('juju-databinding', function(Y) {
             if (source.dependents === undefined) {
               source.dependents = [];
             }
-            source.dependents.push(binding.name);
+            if (source.dependents.indexOf(binding.name) === -1) {
+              source.dependents.push(binding.name);
+            }
           });
         }
       });
@@ -444,12 +452,29 @@ YUI.add('juju-databinding', function(Y) {
       which bindings to change based on the change event.
       This is called automatically by the framework.
 
+      This introduces threshold of 250ms without trigger before
+      an actual update will occur.
+
       @method _modelChangeHandler
       @param {Event} evt Y.Model change event.
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
-      var keys = Y.Object.keys(evt.changed);
-      this._updateDOM(deltaFromChange.call(this, keys));
+      var keys = evt && Y.Object.keys(evt.changed);
+      var delta = keys && deltaFromChange.call(this, keys);
+
+      if (this._updateTimeout) {
+        this._updateTimeout.cancel();
+        this._updateTimeout = null;
+      }
+      if (this.interval) {
+        this._updateTimeout = Y.later(
+            this.interval,
+            this,
+            this._updateDOM,
+            [delta]);
+      } else {
+        this._updateDOM(delta);
+      }
     };
 
     /**
@@ -572,6 +597,7 @@ YUI.add('juju-databinding', function(Y) {
 }, '0.1.0', {
   requires: ['juju-view-utils',
              'juju-models',
+             'yui-later',
              'observe',
              'node']
 });

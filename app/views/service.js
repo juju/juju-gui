@@ -1527,6 +1527,15 @@ YUI.add('juju-view-service', function(Y) {
         );
       }
       container.one('.save-constraints').removeAttribute('disabled');
+    },
+
+    showUnit: function(ev) {
+      ev.halt();
+      var db = this.inspector.get('db');
+      var unitId = ev.currentTarget.getData('unit');
+      var unit = db.units.revive(db.units.getById(unitId));
+      this.inspector.showViewlet('unit', unit);
+      return;
     }
 
   };
@@ -1542,6 +1551,7 @@ YUI.add('juju-view-service', function(Y) {
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
+        slot: 'default',
         template: Templates.serviceOverview,
         bindings: {
           aggregated_status: {
@@ -1577,19 +1587,80 @@ YUI.add('juju-view-service', function(Y) {
           }
         }
       },
-      units: {
-        name: 'units',
-        template: Templates.show_units_small,
-        'selectBindModel': function(model) {
-          return model.get('units');
-        },
-        'update': function(modellist) {
-          var data = {units: modellist.toArray()};
-          this.container.setHTML(this.template(data));
+      unit: {
+        name: 'unit',
+        template: Templates['unit'],
+        slot: 'left',
+        render: function(unit, viewContainerAttrs) {
+          var db = viewContainerAttrs.db,
+              unitAttrs = unit.getAttrs(),
+              service = db.services.getById(unitAttrs.service),
+              env = db.environment.get('annotations');
+
+          if (!service.get('loaded')) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+            return this;
+          }
+
+          var charm = db.charms.getById(service.get('charm'));
+
+          if (!charm) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on charm data');
+            return this;
+          }
+
+          var ip_description_chunks = [];
+          if (unitAttrs.public_address) {
+            ip_description_chunks.push(unitAttrs.public_address);
+          }
+          if (unitAttrs.private_address) {
+            ip_description_chunks.push(unitAttrs.private_address);
+          }
+          if (unitAttrs.open_ports) {
+            ip_description_chunks.push(unitAttrs.open_ports.join());
+          }
+          var unit_ip_description;
+          if (ip_description_chunks.length) {
+            unit_ip_description = ip_description_chunks.join(' | ');
+          }
+
+          var state = utils.simplifyState(unit, true); // Ignore relations errors.
+
+          var relation_errors = unitAttrs.relation_errors || {},
+              relations = utils.getRelationDataForService(db, service),
+              querystring = {};//this.get('querystring');
+
+          Y.each(relations, function(rel) {
+            // relation_errors example: {'website': ['haproxy'], 'db': ['mysql']}
+            var match = relation_errors[rel.near.name],
+                far = rel.far || rel.near;
+            rel.has_error = !!(match && match.indexOf(far.service) > -1);
+            rel.highlight = !!(
+                querystring.rel_id && querystring.rel_id === rel.elementId);
+          });
+
+          var charmAttrs = charm.getAttrs();
+
+          return this.template({
+            charmUri: 'tmp',
+            serviceRootUri: 'tmp',
+            unit: unitAttrs,
+            unit_ip_description: unit_ip_description,
+            service: service.getAttrs(),
+            disabled_remove: service.get('unit_count') <= 1,
+            charm: charmAttrs,
+            machine: db.machines.getById(unitAttrs.machine),
+            hasErrors: state === 'error',
+            isRunning: state === 'running',
+            isPending: state === 'pending',
+            relations: relations});
         }
       },
       config: {
         name: 'config',
+        slot: 'default',
         template: Templates['service-configuration'],
         'render': function(service, viewContainerAttrs) {
           var settings = [];
@@ -1670,6 +1741,7 @@ YUI.add('juju-view-service', function(Y) {
       // Service constraints viewlet.
       constraints: {
         name: 'constraints',
+        slot: 'default',
         template: Templates['service-constraints-viewlet'],
         readOnlyConstraints: ['provider-type', 'ubuntu-series'],
         constraintDescriptions: {
@@ -1811,6 +1883,10 @@ YUI.add('juju-view-service', function(Y) {
       options.events = Y.mix(options.events, options.viewletEvents);
 
       this.inspector = new views.ViewContainer(options);
+      this.inspector.slots = {
+        'default': '.viewlet-container',
+        'left': '.left'
+      };
       this.inspector.render();
       this.inspector.showViewlet(options.viewletList[0]);
     }

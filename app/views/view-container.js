@@ -246,7 +246,8 @@ YUI.add('juju-view-container', function(Y) {
 
       this._setupEvents();
 
-      this.bindingEngine = new jujuViews.BindingEngine();
+      this.bindingEngine = new jujuViews.BindingEngine(
+          options.databinding || {});
     },
 
     /**
@@ -315,7 +316,7 @@ YUI.add('juju-view-container', function(Y) {
     showViewlet: function(viewletName, model) {
       var container = this.get('container');
       // possibly introduce some kind of switching animation here
-      container.all('.viewlet-wrapper').hide();
+      //container.all('.viewlet-wrapper').hide();
       // This method can be called directly but it is also an event handler
       // for clicking on the view container tab handles
       if (typeof viewletName !== 'string') {

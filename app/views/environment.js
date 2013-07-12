@@ -122,7 +122,7 @@ YUI.add('juju-view-environment', function(Y) {
           // If the user is trying to open the same inspector twice
           var serviceInspector = this.getInspector(model.get('id'));
           if (serviceInspector) {
-            return;
+            return serviceInspector;
           }
 
           var combinedConfig = {};
@@ -188,13 +188,14 @@ YUI.add('juju-view-environment', function(Y) {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
+                '.unit-details': { click: 'showUnit'},
                 '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'},
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'}
               },
-              viewletList: ['overview', 'units', 'config', 'constraints'],
+              viewletList: ['overview', 'units', 'unit', 'config', 'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
