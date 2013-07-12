@@ -1,18 +1,12 @@
 <div class="content">
   <div class="service-charm">
-  <div class="charm-icon">
+  <div class="charm-icon" data-bind="icon">
   </div>
   <span data-bind="displayName" class="service-name"></span><br />
   <span data-bind="charm"></span>
   </div>
   <div class="notifications"></div>
-  <div class="status running">
-    &nbsp;<span data-bind="aggregated_status.running"></span>&nbsp;
-  </div><div class="status pending">
-    &nbsp;<span data-bind="aggregated_status.pending"></span>&nbsp;
-  </div><div class="status error">
-    &nbsp;<span data-bind="aggregated_status.error"></span>&nbsp;
-  </div>
+  <svg class="statusbar" data-bind="aggregated_status"></svg>
 </div>
 <h3>Scale units</h3>
 <div class="content">
@@ -20,6 +14,6 @@
 </div>
 <h3>Units</h3>
 <div class="content">
-<ul class="overview-unit-list">
+<ul class="overview-unit-list" data-bind="units">
 </ul>
 </div>

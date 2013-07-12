@@ -102,6 +102,7 @@ YUI.add('juju-view-environment', function(Y) {
           @method createServiceInspector
           @param {Y.Model} model service or charm depending on inspector type.
           @param {Object} config object of options to overwrite default config.
+          @return {Object} The created service inspector.
         */
         createServiceInspector: function(model, config) {
           config = config || {};
@@ -153,6 +154,7 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           this.setInspector(serviceInspector);
+          return serviceInspector;
         },
 
         /**
@@ -181,12 +183,18 @@ YUI.add('juju-view-environment', function(Y) {
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
+                'button.confirm': { click: 'saveConfig'},
                 '.num-units-control': {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
-                }
+                },
+                '.destroy-service-icon': {'click': 'onDestroyIcon'},
+                '.initiate-destroy': {'click': 'onInitiateDestroy'},
+                '.cancel-destroy': {'click': 'onCancelDestroy'},
+                // Constraints viewlet events.
+                '.save-constraints': {click: 'saveConstraints'}
               },
-              viewletList: ['overview', 'units', 'config'],
+              viewletList: ['overview', 'units', 'config', 'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
@@ -205,7 +213,10 @@ YUI.add('juju-view-environment', function(Y) {
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
-                'input[name=service-name]': { valuechange: 'updateGhostName' }
+                'input[name=service-name]': { valuechange: 'updateGhostName' },
+                '.destroy-service-icon': {'click': 'onDestroyIcon'},
+                '.initiate-destroy': {'click': 'onInitiateDestroy'},
+                '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
               // the configuration for the view container template
               templateConfig: {

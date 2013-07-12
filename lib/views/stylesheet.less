@@ -26,6 +26,10 @@
 @navbar-height: 79px;
 @navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
+@text-colour: #505050;
+
+// Imports need to be after vars.
+@import "typography.less";
 
 /* Mixins */
 .create-border-radius(@radius) {
@@ -79,6 +83,17 @@
             url("/juju-ui/assets/images/@{right-image}")
             no-repeat right top;
     background-color: @background-color;
+}
+/*
+ * Rotation transform.  Call with numerical value and units, e.g.
+ * .rotate(-90deg);
+ */
+.rotate(@angle) {
+    -webkit-transform: rotate(@angle);
+    -moz-transform: rotate(@angle);
+    -ms-transform: rotate(@angle);
+    -o-transform: rotate(@angle);
+    transform: rotate(@angle);
 }
 .border-box {
     -moz-box-sizing: border-box;
@@ -244,20 +259,6 @@ table tr.highlighted td {
             padding: 0;
             list-style: none;
 
-            li {
-                float: left;
-
-                a {
-                    display: block;
-                    padding: 25px 10px 0 10px;
-                    font-size: 12pt;
-                    color: #9b9b9b;
-                }
-            }
-        }
-        #browser-nav {
-            float: left;
-
             ul {
               margin: 0 20px 0 0;
               padding: 0;
@@ -268,10 +269,24 @@ table tr.highlighted td {
                 float: left;
 
                 a {
+                    .border-box;
                     display: block;
-                    padding: 25px 10px 0 10px;
+                    height: 70px;
+                    margin-right: 30px;
+                    padding: 30px 0 0 0;
                     font-size: 12pt;
-                    color: #9b9b9b;
+                    font-weight: 300;
+                    color: #f2f2e6;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                    &.active {
+                        border-bottom: 3px solid @charm-panel-orange;
+                    }
+                    i {
+                        margin-right: 6px;
+                    }
                 }
             }
         }
@@ -544,7 +559,7 @@ charms.thumbnails.li {
     }
 }
 .relation {
-    stroke: #333333;
+    stroke: rgb(167, 167, 167);
     stroke-width: 3px;
 
     &.error {
@@ -609,6 +624,7 @@ div.state-pending {
         background-color: lighten(@pending-color, 20%);
     }
 }
+
 .unit (@min_height: 20px, @border_radius:3px) {
     .create-border-radius(@border_radius);
     padding: 5px;
@@ -731,8 +747,8 @@ g.service-status {
         &.status-pending {
             fill: #fcd305;
         }
-        &.status-good {
-            fill: #b7b7b7;
+        &.status-running {
+            fill: rgb(57, 180, 74);
         }
         &.status-error {
             fill: #c01c20;
@@ -750,6 +766,27 @@ g.unit {
     .unit-border {
         stroke-width: 2px; fill: #a0a0a0;
     }
+}
+
+/* 
+ * D3 StatusBar support 
+ */
+.statusbar {
+  .label { 
+    fill: white; 
+  }
+
+  .error { 
+    fill: rgb(224, 56, 45);
+  }
+
+  .pending { 
+    fill: rgb(236, 168, 23);
+  }
+
+  .running {
+    fill: rgb(56, 180, 74);
+  }
 }
 
 /*
@@ -865,7 +902,7 @@ g.unit {
  * Feedback box
  */
 #feedback-box {
-    position: fixed;
+    position: absolute;
     right: -40px;
     bottom: 100px;
     a {
@@ -886,11 +923,7 @@ g.unit {
         -webkit-transition: all 0.15s ease-in-out;
         -moz-transition: all 0.15s ease-in-out;
         transition: all 0.15s ease-in-out;
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        -ms-transform: rotate(-90deg);
-        -o-transform: rotate(-90deg);
-        transform: rotate(-90deg);
+        .rotate(-90deg);
         &:hover {
             text-decoration: none;
             background-color: #df6920;
@@ -918,6 +951,27 @@ g.unit {
         left: 11px;
     }
 }
+.zoom-controls {
+    position: absolute;
+    right: -20px;
+    top: 35px;
+    // The following is required to override Bootstrap styles for the slider
+    // thumb sprite.
+    img {
+        max-width: none;
+    }
+}
+#zoom-in-btn {
+    position: relative;
+    top: -90px;
+    left: 24px;
+}
+#zoom-out-btn {
+    position: relative;
+    top: 90px;
+    left: -30px;
+}
+
 .create-picker(@width, @top, @listtop, @listbottom) {
     width: @width;
 
@@ -1819,7 +1873,6 @@ g.unit {
 @import "browser/charm-container.less";
 @import "browser/charm-full.less";
 @import "browser/charm-token.less";
-@import "browser/content-sidebar.less";
 @import "browser/editorial.less";
 @import "browser/minimized.less";
 @import "browser/overlay-indicator.less";

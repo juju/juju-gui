@@ -37,7 +37,7 @@ if (/*@cc_on!@*/false) {
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,500,700,400italic,500italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:300,400,500,300italic,400italic,500italic' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
     <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
@@ -128,8 +128,18 @@ if (/*@cc_on!@*/false) {
               </div>
               <div id="browser-nav">
                 <ul>
-                  <li><a class="fullscreen" href="">Browse</a></li>
-                   <li><a class="sidebar" href="">Build</a></li>
+                  <li>
+                    <a class="fullscreen" href="">
+                    <i class="sprite fullscreen_icon"></i>
+                    Browse
+                    </a>
+                  </li>
+                  <li>
+                    <a class="sidebar" href="">
+                      <i class="sprite sidebar_icon"></i>
+                      Build
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div id="environment-switcher">

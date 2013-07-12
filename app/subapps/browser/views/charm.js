@@ -57,7 +57,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '#bws-hooks select': {
         change: '_loadHookContent'
       },
-      '.nav .back': {
+      '.charm .back': {
         click: '_handleBack'
       },
       '.charm-token': {
@@ -77,8 +77,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      var browserCharm = this.get('charm');
-      var charm = new models.Charm(browserCharm.getAttrs());
+      var charm,
+          browserCharm = this.get('charm'),
+          attrs = browserCharm.getAttrs();
+      // Adjust the id to meet Charm model expectations.
+      attrs.id = attrs.url;
+      charm = new models.Charm(attrs);
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
@@ -277,7 +281,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
       var change = {
-        charmID: charmID
+        charmID: charmID,
+        hash: undefined
       };
 
       this.fire('viewNavigate', {change: change});
@@ -692,7 +697,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
-      renderTo.one('.nav').scrollIntoView();
+      renderTo.one('.heading').scrollIntoView();
     },
 
     /**

@@ -173,8 +173,10 @@ YUI.add('juju-topology-service', function(Y) {
     // Margins applied on update to Box instances.
     subordinate_margins: {
       top: 0.05, bottom: 0.1, left: 0.084848, right: 0.084848},
+    // No drop-shadow to account for, currently, so set these to just far
+    // enough in so that the corners of the relation line do not show.
     service_margins: {
-      top: 0, bottom: 0.1667, left: 0.086758, right: 0.086758},
+      top: 0.01, bottom: 0.01, left: 0.01, right: 0.01},
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
@@ -1064,7 +1066,7 @@ YUI.add('juju-topology-service', function(Y) {
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
-              'x': function(box) {return box.w * 0.13;},
+              'x': function(box) {return box.w * 0.07;},
               'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
             });
 
@@ -1084,7 +1086,7 @@ YUI.add('juju-topology-service', function(Y) {
           name_size = 22,
           charm_label_size = 16,
           name_padding = 26,
-          charm_label_padding = 118;
+          charm_label_padding = 150;
 
       node.select('.name')
         .attr({'style': function(d) {
@@ -1185,8 +1187,8 @@ YUI.add('juju-topology-service', function(Y) {
             return 'translate(' + d.relativeCenter + ')';
           });
       node.select('.service-health-mask')
-        .attr({'width': function(d) {return d.w / 3;},
-            'height': function(d) { return d.h / 3;},
+        .attr({'width': function(d) {return d.w / 2.25;},
+            'height': function(d) { return d.h / 2.25;},
             'x': function() { return -d3.select(this).attr('width') / 2;},
             'y': function() { return -d3.select(this).attr('height') / 2;}
           });

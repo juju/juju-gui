@@ -60,6 +60,7 @@ YUI.add('viewmode-controls', function(Y) {
      */
     _goFullscreen: function(ev) {
       ev.halt();
+      this._updateActiveNav('fullscreen');
       this.fire(this.EVT_FULLSCREEN);
     },
 
@@ -73,6 +74,7 @@ YUI.add('viewmode-controls', function(Y) {
      */
     _goSidebar: function(ev) {
       ev.halt();
+      this._updateActiveNav('sidebar');
       this.fire(this.EVT_SIDEBAR);
     },
 
@@ -88,6 +90,29 @@ YUI.add('viewmode-controls', function(Y) {
     _toggleViewable: function(ev) {
       ev.halt();
       this.fire(this.EVT_TOGGLE_VIEWABLE);
+    },
+
+    /**
+      Update the css on the controls to mark one as 'active'.
+
+      @method _updateActiveNav
+      @param {String} viewmode Which is the 'active' control.
+
+     */
+    _updateActiveNav: function(viewmode) {
+      var container = this.get('boundingBox');
+
+      if (container) {
+        var active = container.one('.active');
+        if (active) {
+          active.removeClass('active');
+        }
+        var selector = '.' + viewmode;
+        var item = container.one(selector);
+        if (item) {
+          item.addClass('active');
+        }
+      }
     },
 
     /**
@@ -116,6 +141,11 @@ YUI.add('viewmode-controls', function(Y) {
               'click', this._goSidebar, this)
       );
 
+      // If there's not a currently active node, then we need to set an
+      // initial active control based on the viewmode.
+      if (!container.one('.active')) {
+        this._updateActiveNav(this.get('initialViewmode'));
+      }
     },
 
     /**
@@ -155,8 +185,11 @@ YUI.add('viewmode-controls', function(Y) {
         valueFn: function() {
           return Y.one('#browser-nav');
         }
-      }
+      },
 
+      initialViewmode: {
+        value: undefined
+      }
     }
   });
 

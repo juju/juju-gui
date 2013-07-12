@@ -1,47 +1,24 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        <div class="nav">
-            <a href="" class="back">
+        <div class="heading">
                 {{#if isFullscreen}}
-                    <img src="/juju-ui/assets/images/browser_back_button_arrow.png"
-                        alt="&lt;" />Back
-                {{else}}
-                    Close
+                    <div class="breadcrumbs">
+                        <a href="" class="back">
+                            <i class="sprite browser_home"></i>
+                            <span>Home</span>
+                        </a>
+                        | {{ name }}
+                    </div>
                 {{/if}}
-            </a>
-            {{! The add class is used by the deploy method in
-                test/test_charm_running.py.  If you change this name, change
-                the other one too! }}
-            <a href="" class="add">Add</a>
-            <a href="" class="share">
-                <img src="/juju-ui/assets/images/browser_share_button_icon.png"
-                    alt="Share" />Share
-            </a>
-        </div>
-
-        {{#if failingProviders}}
-            <div class="provider-warning"><i class="sprite alert_icon2"></i>
-                <span>Currently fails on</span>
-                {{#failingProviders}}
-                    <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
-                        title="tests currently fail on {{.}}"/>
-                {{/failingProviders}}
-            </div>
-        {{/if}}
-
-        <div class="heading yui3-g">
-            <div class="yui3-u">
-                {{#if is_approved}}
-                    <span class="badge-approved"
-                        title="This charm has been reviewed."></span>
-                {{/if}}
-
+                {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                <a href="" class="share">Share</a>
+            <div class="block-icon">
                 {{#if shouldShowIcon}}
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
                 {{else}}
                     {{#if mainCategory}}
                       <div title="category {{mainCategory}}"
-                          class="category-icon sprite charm-{{mainCategory}}-160">
+                          class="category-icon sprite charm-{{mainCategory}}-120">
                       </div>
                     {{else}}
                       <div class="charm-icon">
@@ -49,105 +26,133 @@
                     {{/if}}
                 {{/if}}
             </div>
-            <div class="charm-details yui3-u-1-2">
+            <div class="charm-details">
                 <h1>{{ name }}</h1>
-                <dl>
-                    <dt>Recent activity</dt>
-                    <dd>
-                        <strong>{{ downloads }}</strong>
-                        {{pluralize 'download' downloads}},
-                        <strong>{{ recent_commit_count }}</strong>
-                        {{pluralize 'commit' recent_commit_count}}
-                    </dd>
-                    <dt>Ubuntu series</dt>
-                    <dd>{{ distro_series }}</dd>
-                    <dt>Location</dt>
-                    <dd>{{ url }}</dd>
-                    <dt>Links</dt>
-                    <dd>
+                <div class="add-reviewed">
+                    {{#if is_approved}}
+                        <div>
+                            <i class="sprite approved_star"></i>
+                            Reviewed by the Juju team
+                        </div>
+                    {{/if}}
+                    {{! The add class is used by the deploy method in
+                        test/test_charm_running.py.  If you change this name, change
+                        the other one too! }}
+                    <a href="" class="add">Add to my canvas</a>
+                </div>
+                <ul>
+                    <li>
+                        Activity: {{ downloads }}
+                        {{pluralize 'Download' downloads}},
+                        {{ recent_commit_count }}
+                        {{pluralize 'Commit' recent_commit_count}}
+                    </li>
+                    <li>Ubuntu series: {{ distro_series }}</li>
+                    <li>Location: {{ url }}</li>
+                    <li>
+                        Links:
                         <a href="{{ sourceLink }}">Source</a>
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
-                    </dd>
-                </dl>
-            </div>
-        </div>
-
-        <div class="summary">
-            <h2>Summary</h2>
-            <p>{{ summary }}</p>
-            <h2>Description</h2>
-            <p>
+                    </li>
+                </ul>
+                
                 {{#if isFullscreen}}
-                    {{ description }}
-                {{else}}
-                    {{ truncate description 300 }}
+                    {{>providers}}
                 {{/if}}
-            </p>
-        </div>
-
-        <div class="changelog">
-            <h3 class="section-title">
-                {{#if recent_commits}}
-                    <a href="" class="expandToggle" data-state="closed">
-                {{/if}}
-                Change log
-                {{#if recent_commits}}
-                        <span class="expand">
-                            <span class="more">
-                                <img src="/juju-ui/assets/images/expand_icon.png"
-                                    alt="Expand" />
-                            </span>
-                            <span class="less hidden">
-                                <img src="/juju-ui/assets/images/contract_icon.png"
-                                    alt="Contract" />
-                            </span>
-                        </span>
-                    </a>
-                {{/if}}
-            </h3>
-            {{#if recent_commits}}
-                <div class="first">
-                    <p>
-                        Latest change:
-                        <span class="date">
-                            {{prettyCommits.first.prettyDate}}
-                        </span>
-                        {{prettyCommits.first.author.name}}
-                        {{prettyCommits.first.message}} -
-                        <a href="{{ prettyCommits.first.revnoLink }}">
-                          REVNO{{prettyCommits.first.revno}}
-                        </a>
-                    </p>
-                </div>
-                <div class="remaining hidden">
-                    <p class="maintainer">
-                        Maintained by {{ maintainer.name }}
-                    </p>
-                    <h4>Earlier changes</h4>
-                    <ul>
-                        {{#prettyCommits.remaining}}
-                            <li>
-                                <span class="date">{{prettyDate}}</span>
-                                {{author.name}} {{message}} -
-                                <a href="{{ revnoLink }}">REVNO{{revno}}</a>
-                            </li>
-                        {{/prettyCommits.remaining}}
-                    </ul>
-                </div>
-            {{else}}
-                <p>No change history exists.</p>
-            {{/if}}
+            </div>
         </div>
 
         <div class="tabs">
             <ul>
+                <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
                 <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
                 <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
                 <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
                 <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
             </ul>
+            <hr />
             <div>
+                <div id="bws-summary">
+                    <div class="summary">
+                        {{#unless isFullscreen}}
+                            {{>providers}}
+                            <h2>Summary</h2>
+                        {{/unless}}
+                        <p>{{ summary }}</p>
+                        <h2>Description</h2>
+                        <p>
+                            {{#if isFullscreen}}
+                                {{ description }}
+                            {{else}}
+                                {{ truncate description 300 }}
+                            {{/if}}
+                        </p>
+                    </div>
+
+                    <div class="changelog">
+                        <h3 class="section-title">
+                            {{#if recent_commits}}
+                                <a href="" class="expandToggle"
+                                    data-state="closed">
+                            {{/if}}
+                            Change log
+                            {{#if recent_commits}}
+                                    <span class="expand">
+                                        <span class="more">
+                                            <img src="/juju-ui/assets/images/expand_icon.png"
+                                                alt="Expand" />
+                                        </span>
+                                        <span class="less hidden">
+                                            <img src="/juju-ui/assets/images/contract_icon.png"
+                                                alt="Contract" />
+                                        </span>
+                                    </span>
+                                </a>
+                            {{/if}}
+                        </h3>
+                        {{#if recent_commits}}
+                            <div class="first">
+                                <p>
+                                    Latest change:
+                                    <span class="date">
+                                        {{prettyCommits.first.prettyDate}}
+                                    </span>
+                                    {{prettyCommits.first.author.name}}
+                                    {{prettyCommits.first.message}} -
+                                    <a href="{{ prettyCommits.first.revnoLink }}">
+                                      REVNO{{prettyCommits.first.revno}}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="remaining hidden">
+                                <p class="maintainer">
+                                    Maintained by {{ maintainer.name }}
+                                </p>
+                                <h4>Earlier changes</h4>
+                                <ul>
+                                    {{#prettyCommits.remaining}}
+                                        <li>
+                                            <span class="date">
+                                                {{prettyDate}}
+                                            </span>
+                                            {{author.name}} {{message}} -
+                                            <a href="{{ revnoLink }}">
+                                                REVNO{{revno}}
+                                            </a>
+                                        </li>
+                                    {{/prettyCommits.remaining}}
+                                </ul>
+                            </div>
+                        {{else}}
+                            <p>No change history exists.</p>
+                        {{/if}}
+                    </div>
+                    {{#if isFullscreen}}
+                        <div class="related-charms">
+                        </div>
+                    {{/if}}
+                </div>
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
@@ -184,10 +189,10 @@
                     </p>
                     {{#if requires}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Requires</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Related charms</h3>
                             </div>
                             <div class="yui3-u-1-3">
@@ -210,10 +215,10 @@
                     {{/if}}
                     {{#if provides}}
                         <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Provides</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-3">
+                            <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Related charms</h3>
                             </div>
                             <div class="yui3-u-1-3">
@@ -283,19 +288,4 @@
             </div>
         </div>
     </div>
-    {{#if isFullscreen}}
-        <div class="content-sidebar yui3-u-1-4">
-            <h3>Useful links</h3>
-            <ul class="vertical-links">
-                <li><a href="">Juju community</a></li>
-                <li><a href="">Online resources</a></li>
-                <li><a href="">Write your own Charm</a></li>
-                <li><a href="">Contribute to this Charm</a></li>
-            </ul>
-
-            <div class="related-charms">
-            </div>
-        </div>
-
-    {{/if}}
 </div>

@@ -1,18 +1,15 @@
 .yui3-charmtoken {
     .border-box;
-    padding: 10px 20px;
+    position: relative;
+    padding: 20px;
 
     .charm-token {
         display: block;
         color: @bws-text;
 
-        .badge-approved {
-            /* The badge needs to be in front of the charm icon. */
-            z-index: 10;
-        }
-
         &.tiny {
             min-width: 200px;
+
             .charm-icon,
             .category-icon,
             .icon {
@@ -26,23 +23,6 @@
                     url(/juju-ui/assets/images/charm_48.png)
                     left top no-repeat;
             }
-            .badge-approved {
-                width: 17px;
-                height: 17px;
-                margin-top: -4px;
-                margin-left: -5px;
-                background-image:
-                    url(/juju-ui/assets/images/badge_approved_17.png);
-            }
-
-            .title {
-                display: block;
-                margin-bottom: 5px;
-                color: @bws-heading;
-                font-family: @font-family;
-                font-weight: normal;
-                font-size: 11pt;
-            }
             .metadata,
             .description {
                 display: none;
@@ -52,23 +32,15 @@
             .charm-icon,
             .category-icon,
             .icon {
-                width: 64px;
-                height: 64px;
-                margin-right: 16px;
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
                 position: relative;
             }
             .charm-icon {
                 background: transparent
-                    url(/juju-ui/assets/images/charm_64.png)
+                    url(/juju-ui/assets/images/charm_48.png)
                     left top no-repeat;
-            }
-            .badge-approved {
-                width: 22px;
-                height: 22px;
-                margin-top: -6px;
-                margin-left: -6px;
-                background-image:
-                    url(/juju-ui/assets/images/badge_approved_22.png);
             }
         }
         &.large {
@@ -85,38 +57,47 @@
                     url(/juju-ui/assets/images/charm_96.png)
                     left top no-repeat;
             }
-            .badge-approved {
-                width: 40px;
-                height: 40px;
-                margin-top: -9px;
-                margin-left: -10px;
-                background-image:
-                    url(/juju-ui/assets/images/badge_approved_40.png);
-            }
         }
+        .block-icon,
         .title,
         .metadata,
         .description {
             display: block;
         }
+        .block-icon,
+        .title,
+        .metadata {
+            float: left;
+        }
         .title {
-            margin-bottom: 5px;
-            color: @bws-heading;
-            font-family: @font-family;
-            font-size: 13.5pt;
-            font-weight: normal;
+            .type3;
+            min-width: 100px;
+            margin-bottom: 2px;
         }
         .metadata {
-            font-size: 10.5pt;
+            .type14;
         }
-    }
-    &:hover {
-        background-color: #eee;
+        .description {
+            clear: left;
+            padding-top: 15px;
+            .type13;
+        }
+        .badge-approved {
+            display: block;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            background: transparent
+                url(/juju-ui/assets/images/approved_star.png) no-repeat left top;
+            z-index: 10;
+        }
     }
     &.active {
         // Adjust the left padding to account for the border.
         padding-left: 18px;
-        background-color: #d7d7d7;
+        background-color: #d5d5d5;
         border-left: 2px solid @charm-panel-orange;
     }
 }

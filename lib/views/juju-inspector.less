@@ -1,13 +1,23 @@
+@inspector-background-color: #333;
+@inspector-region-background-color: #282828;
+
 .yui3-juju-inspector {
     position: absolute;
+    top: 20px;
+    right: 35px;
     width: 292px;
     min-height: 250px;
-    background-color: #333;
+    background-color: @inspector-background-color;
     color: #fff;
+    margin: 0; /* can be removed once the old inspector styles are removed*/
 
     h1, h2, h3, h4, h5, h6 {
-        background-color: #282828;
+        background-color: @inspector-region-background-color;
         padding-left: 1em;
+    }
+
+    .viewlet-container {
+        overflow-y: auto;
     }
 
     .content {
@@ -35,6 +45,77 @@
     .view-container {
         overflow: auto;
         padding: 15px;
+
+        &.settings-config {
+
+            .settings-wrapper {
+                position: relative;
+
+                label {
+                    font-size: 14px;
+                    margin: 14px 0 7px 0;
+                    font-weight: bold;
+                }
+
+                .settings-description {
+                    font-style: italic;
+                    font-size: 12px;
+
+                    /* below hyphenation code was taken from:
+                    http://www.newnet-soft.com/blog/csstypography */
+                    -ms-word-break: break-all;
+                    word-break: break-all;
+
+                    // Non standard for webkit
+                    word-break: break-word;
+
+                    -webkit-hyphens: auto;
+                    -moz-hyphens: auto;
+                    hyphens: auto;
+
+                    -webkit-hyphenate-before: 2;
+                    -webkit-hyphenate-after: 3;
+                    hyphenate-lines: 3;
+                }
+
+                .warning-message {
+                    color: red;
+                    padding: 1em;
+                }
+                .conflicted {
+                    position: absolute;
+                    border: 1px solid grey;
+                    margin-top: -140px;
+                    background-color: white;
+                }
+            }
+
+            .controls {
+                text-align: center;
+
+                button {
+                    width: 115px;
+                    height: 25px;
+                    margin: 10px 0;
+                    border: none;
+                    border-radius: 5px;
+                    color: white;
+                    font-weight: bold;
+
+                    &.cancel {
+                        background-color: #A3A3A3;
+                    }
+
+                    &.confirm {
+                        background-color: #DD4814;
+                        &:disabled {
+                            background-color: #802E0E;
+                            color: #eee;
+                        }
+                    }
+                }
+            }
+        }
 
         h2 {
             font-size: 18px;
@@ -134,4 +215,65 @@
             background-color: #ba0000;
         }
     }
+
+    .destroy-service-icon {
+        cursor: pointer;
+        float: right;
+        width: 20px;
+        height: 24px;
+        padding: 0;
+        /* Make sure the destroy icon is below the close-the-inspector icon. */
+        clear: both;
+        margin-bottom: 1ex;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-image:
+            url("/juju-ui/assets/images/inspector-destroy-service.png");
+    }
+
+    .destroy-service-prompt {
+        overflow: hidden;
+        height: 95px;
+        background-color: @inspector-region-background-color;
+        margin-bottom: 10px;
+        transition: 1s, height 1s;
+        -webkit-transition: 1s, height 1s;
+
+        /* Make sure the prompt box is below the icon. */
+        clear: both;
+
+        .message {
+            margin: 5px 15px;
+        }
+
+        .buttons {
+            a {
+                .create-border-radius(4px);
+                .create-box-shadow(0 2px 2px -2px #777 inset);
+                box-shadow: 0 2px 2px -2px #777777 inset;
+                color: #fff;
+                background: #dd4814;
+                padding: 5px 0;
+                text-decoration: none;
+                text-align: center;
+                margin-top: 10px;
+                width: 110px;
+                float: left;
+                margin-left: 13px;
+            }
+
+            a:last-of-type {
+                mergin-right: 0;
+            }
+
+            .grey {
+                background: #999;
+            }
+        }
+    }
+
+    .destroy-service-prompt.closed {
+        height: 0;
+    }
+
 }
