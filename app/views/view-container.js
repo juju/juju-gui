@@ -246,7 +246,8 @@ YUI.add('juju-view-container', function(Y) {
 
       this._setupEvents();
 
-      this.bindingEngine = new jujuViews.BindingEngine();
+      this.bindingEngine = new jujuViews.BindingEngine(
+          options.databinding || {});
     },
 
     /**

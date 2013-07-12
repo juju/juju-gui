@@ -96,7 +96,7 @@ describe('Inspector Settings', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
-    return view.createServiceInspector(service, {});
+    return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
   it('toggles exposure', function() {

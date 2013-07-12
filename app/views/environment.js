@@ -122,7 +122,7 @@ YUI.add('juju-view-environment', function(Y) {
           // If the user is trying to open the same inspector twice
           var serviceInspector = this.getInspector(model.get('id'));
           if (serviceInspector) {
-            return;
+            return serviceInspector;
           }
 
           var combinedConfig = {};
