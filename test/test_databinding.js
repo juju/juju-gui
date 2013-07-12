@@ -39,7 +39,7 @@ describe('data binding library', function() {
       var engine;
 
       it('bind should fail on invalid DOM', function() {
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
         assert.throws(function() {engine.bind(new Y.Model(), null);},
                       'Unable to bind, invalid Viewlet');
       });
@@ -53,7 +53,7 @@ describe('data binding library', function() {
           _changedValues: [],
           _eventHandles: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
 
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'b');
@@ -68,7 +68,7 @@ describe('data binding library', function() {
           _changedValues: [],
           _eventHandles: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
 
         engine.bind(new Y.Model({a: {b: {c: {d: 'nested'}}
               }}), viewlet);
@@ -92,7 +92,7 @@ describe('data binding library', function() {
                }
              }
            };
-           engine = new BindingEngine();
+           engine = new BindingEngine({interval: 0});
 
            engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
            assert.equal(container.one('[data-bind="a.b"]').getHTML(),
@@ -117,7 +117,7 @@ describe('data binding library', function() {
                }
              }
            };
-           engine = new BindingEngine();
+           engine = new BindingEngine({interval: 0});
 
            engine.bind(new Y.Model({a: {b: 'child'}}), viewlet);
            assert.equal(container.one('[data-bind="a.b"]').getHTML(),
@@ -142,7 +142,7 @@ describe('data binding library', function() {
           },
           _changedValues: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'bFORMATTED');
       });
@@ -163,7 +163,7 @@ describe('data binding library', function() {
           _changedValues: [],
           _eventHandles: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
 
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'overide');
@@ -186,7 +186,7 @@ describe('data binding library', function() {
           _changedValues: [],
           _eventHandles: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
 
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
@@ -205,7 +205,7 @@ describe('data binding library', function() {
           _changedValues: [],
           _eventHandles: []
         };
-        engine = new BindingEngine();
+        engine = new BindingEngine({interval: 0});
       }
 
       afterEach(function() {
@@ -267,7 +267,7 @@ describe('data binding library', function() {
       var model = new TestModel({first: 'Ned', last: 'Stark'});
       container.setHTML(
           '<input data-bind="first"><input data-bind="full">');
-      engine = new BindingEngine();
+      engine = new BindingEngine({interval: 0});
       engine.bind(model, viewlet);
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Ned Stark');
@@ -291,7 +291,7 @@ describe('data binding library', function() {
   describe('modellist tests', function() {
     var engine;
     beforeEach(function(done) {
-      engine = new BindingEngine();
+      engine = new BindingEngine({interval: 0});
       done();
     });
 

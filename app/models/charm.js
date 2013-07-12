@@ -235,8 +235,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method geetter
-         *
+         * @method getter
          */
         getter: function() {
           // full_name
@@ -491,30 +490,34 @@ YUI.add('juju-charm-models', function(Y) {
       code_source: {},
       date_created: {},
       description: {},
-      'failingProviders': {
+      'providers': {
         /**
-         * @method failingProviders.valueFn
+         * @method providers.valueFn
          * @return {Array} the list of failing provider names.
          *
          */
         valueFn: function() {
-          var failing = [],
+          var failures = [],
+              successes = [],
               providers = this.get('tested_providers');
           Y.Object.each(providers, function(value, key) {
             if (value !== 'SUCCESS') {
-              failing.push(key);
+              failures.push(key);
 
               // We test openstack on HP. If it fails on openstack, it's
               // failing on HP as well so add that.
               if (key === 'openstack') {
-                failing.push('hp');
+                failures.push('hp');
               }
+            }
+            else {
+              successes.push(key);
             }
           });
 
-          if (failing.length > 0) {
+          if (failures.length > 0 || successes.length > 0) {
 
-            return failing;
+            return {successes: successes, failures: failures};
           } else {
             return null;
           }

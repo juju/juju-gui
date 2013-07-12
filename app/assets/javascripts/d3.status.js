@@ -184,7 +184,7 @@ YUI.add('d3-statusbar', function(Y) {
       // Enter/Update/Exit Bars
       rects
       .enter()
-      .append('rect')
+      .insert('rect', 'text')
       .each(function(d) {
             var node = d3.select(this);
             node.classed(d.key, true);

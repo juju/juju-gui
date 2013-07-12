@@ -23,7 +23,8 @@
             color: @bws-text-placeholder;
         }
         &.active input {
-            border-color: @charm-panel-orange;
+            // Need to overwrite the bootstrap focus border.
+            border-color: @bws-border;
             color: @bws-text;
         }
         // Need to overwrite bootstrap box shadow on focus.

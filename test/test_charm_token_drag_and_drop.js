@@ -66,6 +66,7 @@ describe('charm token drag and drop', function() {
   it('makes each charm token draggable', function() {
     var cfg = {
       id: 'test',
+      url: 'cs:test',
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,
@@ -87,7 +88,7 @@ describe('charm token drag and drop', function() {
     draggable = Y.Array.dedupe(draggable);
     assert.equal(draggable.length, 1);
     // All of the charm tokens are made draggable.
-    assert.deepEqual(draggable, ['test']);
+    assert.deepEqual(draggable, ['cs:test']);
   });
 
   it('can make an element draggable', function() {
@@ -219,6 +220,18 @@ describe('charm token drag and drop', function() {
     token.set('isDraggable', true);
     token.renderUI(container);
     assert.isTrue(dragEnabled);
+  });
+
+  it('fixes the charm id in _addDraggability', function() {
+    var cfg = {
+      id: 'test',
+      url: 'cs:test',
+      boundingBox: container
+    };
+    token = new CharmToken(cfg);
+    token._makeDraggable = function(element, charmData) {};
+    token._addDraggability();
+    assert.equal(token.charmData.id, token.charmData.url);
   });
 
 });

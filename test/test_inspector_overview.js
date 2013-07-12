@@ -88,8 +88,9 @@ describe('Inspector Overview', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
-    view.createServiceInspector(service, {});
-    return view.getInspector(service.get('id'));
+    inspector = view.createServiceInspector(service,
+        {databinding: {interval: 0}});
+    return inspector;
   };
 
   it('should start with the proper number of units shown in the text field',
