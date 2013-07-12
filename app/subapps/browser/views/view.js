@@ -278,20 +278,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * @type {Charmworld2}
        *
        */
-      store: {},
-
-      /**
-       * If this were a route that had a subpath component it's passed into
-       * the view to aid in rendering.
-       *
-       * e.g. /fullscreen/*charmid/hooks to load the hooks tab correctly.
-       *
-       * @attribute subpath
-       * @default undefined
-       * @type {String}
-       *
-       */
-      subpath: {}
+      store: {}
     }
   });
 

@@ -65,7 +65,11 @@ YUI.add('browser-search-widget', function(Y) {
       filters.text = query;
       this.get('autocompleteSource')(
           filters, {
-            success: callback
+            success: callback,
+            failure: function () {
+              // Autocomplete should not throw errors at the user or break the
+              // application. Just silently fail to find results.
+            }
           },
           this
       );
@@ -143,7 +147,7 @@ YUI.add('browser-search-widget', function(Y) {
       // Create our autocomplete instance with all the config and handlers it
       // needs to function properly.
       this.ac = new Y.AutoComplete({
-        inputNode: this.get('boundingBox').one('input'),
+        inputNode: this.get('boundingBox').one('input[name=bws-search]'),
         queryDelay: 150,
         resultFormatter: suggestFormatter,
         resultListLocator: 'result',

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('browser search widget', function() {
-  var Y, container, Search, utils;
+  var Y, container, search, Search, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
@@ -47,6 +47,9 @@ describe('browser search widget', function() {
   });
 
   afterEach(function() {
+    if (search) {
+      search.destroy();
+    }
     container.remove(true);
   });
 
@@ -55,13 +58,13 @@ describe('browser search widget', function() {
   });
 
   it('needs to render from the template', function() {
-    var search = new Search();
+    search = new Search();
     search.render(container);
     assert.isObject(container.one('.bws-searchbox'));
   });
 
   it('should support setting search string', function() {
-    var search = new Search();
+    search = new Search();
     search.render(container);
 
     search.updateSearch('test');
@@ -86,7 +89,7 @@ describe('browser search widget', function() {
       }
     });
 
-    var search = new Search({
+    search = new Search({
       autocompleteSource: Y.bind(
           fakeStore.autocomplete,
           fakeStore
@@ -94,14 +97,13 @@ describe('browser search widget', function() {
       autocompleteDataFormatter: fakeStore.resultsToCharmlist,
       filters: {}
     });
-    search.render();
+    search.render(container);
     search.ac.queryDelay = 0;
 
     search.ac.on('results', function(ev) {
       // The results should be displaying now. Check for charm-token nodes.
       assert.equal(ev.results.length, 19);
       assert.isTrue(ev.results[0].display.hasClass('yui3-charmtoken'));
-      search.destroy();
       fakeStore.destroy();
       done();
     });
@@ -112,6 +114,17 @@ describe('browser search widget', function() {
       src: 'ui'
     });
 
+  });
+
+  it('adds the search text to the suggestions api call', function(done) {
+    search = new Search({
+      autocompleteSource: function(filters, callbacks, scope) {
+        assert.equal(filters.text, 'test');
+        done();
+      },
+      filters: {}
+    });
+    search._fetchSuggestions('test', function () {});
   });
 
 });
