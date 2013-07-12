@@ -117,7 +117,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           results.map(function(charm) {
             var ct = new widgets.browser.CharmToken(Y.merge(
                 charm.getAttrs(), {
-                  size: this.get('isFullscreen') ? 'large' : 'small'
+                  size: 'small'
                 }));
             ct.render(results_container);
           }, this);

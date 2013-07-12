@@ -355,12 +355,12 @@
         border-left: 1px solid @bws-border;
     }
     .related-charms {
-        padding-bottom: 10px;
-        border-bottom: 1px solid @bws-border;
-
         .section-title {
             padding-bottom: 20px;
             border-bottom: 1px solid @bws-border;
+        }
+        .yui3-charmcontainer {
+            padding-bottom: 10px;
         }
         .yui3-charmtoken {
             width: 50%;
@@ -375,7 +375,7 @@
             }
             &:last-child,
             &:nth-last-child(2) {
-                .yui3-charmtoken-content {
+                .yui3-charmtoken-content a {
                     border-bottom: none;
                 }
             }
