@@ -142,22 +142,16 @@
                 }
             }
         }
-        .back.icon,
-        .share {
-            position: absolute;
-            top: 30px;
-        }
         .back.icon {
+            position: absolute;
             display: block;
+            top: 30px;
             right: 30px;
             width: 20px;
             height: 20px;
             background: transparent
                     url(/juju-ui/assets/images/panel_close.png)
                     left top no-repeat;
-        }
-        .share {
-            right: 70px;
         }
     }
     .changelog {
@@ -283,7 +277,25 @@
                         margin-left: 10px;
                     }
                 }
+                li.L1,
+                li.L3,
+                li.L5,
+                li.L7,
+                li.L9 {
+                    background-color: rgba(0, 0, 0, 0.03);
+                }
             }
+        }
+    }
+    #sharing {
+        float: right;
+        padding-top: 17px;
+        padding-bottom: 16px;
+        padding-right: 26px;
+        padding-left: 16px;
+
+        a {
+            padding-right: 5px; 
         }
     }
 }
@@ -338,28 +350,24 @@
                 text-decoration: underline;    
             }
         }
-        .share {
-            top: 20px;
-            right: 20px;
-        }
     }
     .tabs {
         margin-left: @bws-sidebar-width;
         border-left: 1px solid @bws-border;
     }
     .related-charms {
-        padding-bottom: 10px;
-        border-bottom: 1px solid @bws-border;
-
         .section-title {
             padding-bottom: 20px;
             border-bottom: 1px solid @bws-border;
+        }
+        .yui3-charmcontainer {
+            padding-bottom: 10px;
         }
         .yui3-charmtoken {
             width: 50%;
             padding: 0 10px;
 
-            .yui3-charmtoken-content {
+            .yui3-charmtoken-content a {
                 padding: 20px 10px;
                 border-bottom: 1px solid @bws-border;
             }
@@ -368,7 +376,7 @@
             }
             &:last-child,
             &:nth-last-child(2) {
-                .yui3-charmtoken-content {
+                .yui3-charmtoken-content a {
                     border-bottom: none;
                 }
             }

@@ -133,6 +133,7 @@
 
 /* Common classes and setup */
 body {
+    overflow: hidden;
     margin-top: @navbar-height;
     background-color: #302b28;
     font-family: @font-family;
@@ -1873,13 +1874,15 @@ g.unit {
 @import "browser/charm-container.less";
 @import "browser/charm-full.less";
 @import "browser/charm-token.less";
-@import "browser/editorial.less";
-@import "browser/minimized.less";
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
-@import "browser/sharing-widget.less";
 @import "browser/tabview.less";
 @import "juju-inspector.less";
+
+/** Views **/
+@import "browser/editorial.less";
+@import "browser/minimized.less";
+@import "browser/search.less";
 
 /** Cookies **/
 @import "cookies.less";

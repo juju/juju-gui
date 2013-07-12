@@ -94,6 +94,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('.bws-icon').simulate('click');
     });
 
+    it('routes home when it catches a gohome event', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new FullScreen();
+      view.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.search, false);
+        assert.equal(ev.change.filter.clear, true);
+        done();
+      });
+
+      view.render(container);
+      view.search._onHome({
+        halt: function() {}
+      });
+    });
+
   });
 })();
 
@@ -190,6 +205,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
+    });
+
+    it('routes home when it catches a gohome event', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+      view.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.search, false);
+        assert.equal(ev.change.filter.clear, true);
+        done();
+      });
+
+      view.render(container);
+      view.search._onHome({
+        halt: function() {}
+      });
     });
 
   });
@@ -953,6 +983,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'querystring': 'text=ceph'
       });
       assert.isTrue(browser._searchChanged());
+    });
+
+    it('permits a filter clear command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache'
+        }
+      });
+
+      // We have a good valid search.
+      assert.equal(url, '/search?series=precise&text=apache&type=approved');
+
+      // Now let's clear it and make sure it's emptied.
+      url = browser._getStateUrl({
+        'filter': {
+          clear: true
+        }
+      });
+      assert.equal(url, '/search');
+    });
+
+    it('permits a filter replace command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache',
+          categories: ['app-servers']
+        }
+      });
+      // We have a good valid search.
+      assert.equal(
+          url,
+          '/search?categories=app-servers&series=precise&text=apache&type=approved');
+
+      // Now let's update it and force all the rest to go away.
+      url = browser._getStateUrl({
+        'filter': {
+          replace: true,
+          text: 'mysql'
+        }
+      });
+      assert.equal(url, '/search?text=mysql');
     });
   });
 })();

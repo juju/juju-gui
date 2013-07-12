@@ -102,6 +102,30 @@ YUI.add('subapp-browser-mainview', function(Y) {
           this.search.on(
               this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
       );
+
+      this.addEvent(
+          this.search.on(
+              this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+      );
+
+    },
+
+    /**
+     * Force a navigate event when the search widget says "Home" was clicked.
+     *
+     * @method _goHome
+     * @param {Event} ev The event from the search widget.
+     *
+     */
+    _goHome: function(ev) {
+      var change = {
+        charmID: undefined,
+        search: false,
+        filter: {
+          clear: true
+        }
+      };
+      this.fire('viewNavigate', {change: change});
     },
 
     /**

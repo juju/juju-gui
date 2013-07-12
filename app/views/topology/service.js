@@ -429,10 +429,6 @@ YUI.add('juju-topology-service', function(Y) {
             iconImage = icon.one('img').getAttribute('src');
           }
           icon.remove().destroy(true);
-          // Since we hacked the DOM (see _makeDragStartHandler in
-          // app/widgets/charm-token.js so the drag icon would be "visible" we
-          // now un-hack it.  It would be nice to find a better way to do this.
-          Y.one('body').setStyle('overflow', 'auto');
         }
         // Pass the icon image along with the coordinates in the deploy event.
         if (iconImage) {
