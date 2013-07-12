@@ -879,16 +879,34 @@ YUI.add('juju-models', function(Y) {
       serviceList.each(function(service) {
         var units = service.units;
         var charm = self.charms.getById(service.get('charm'));
-        if (service.get('pending') === true) {return;}
+        var serviceOptions = {};
+        var charmOptions = charm.get('config.options');
+
+        if (service.get('pending') === true) {
+          return;
+        }
+
+        // Process the serivce_options removing any values
+        // that are the default value for the charm.
+        Y.each(service.get('config'), function(value, key) {
+          var optionData = charmOptions && charmOptions[key];
+          if (!optionData || (optionData && optionData['default'] &&
+              (value !== optionData['default']))) {
+            serviceOptions[key] = value;
+          }
+        });
+
         var serviceData = {
           // Using package name here so the default series
           // is picked up. This will likely have to be the full
           // path in the future.
           charm: charm.get('id'),
-          options: service.get('config'),
           // Test models or ghosts might not have a units LazyModelList.
           num_units: units && units.size() || 1
         };
+        if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
+          serviceData.options = serviceOptions;
+        }
         // Add constraints
         var constraints = service.get('constraintsStr');
         if (constraints) {
@@ -897,11 +915,11 @@ YUI.add('juju-models', function(Y) {
 
         var annotations = service.get('annotations');
         if (annotations && annotations['gui-x']) {
-          // Only expose position. Currently these are position absolute rather than
-          // relative which would make more sense in an export.
+          // Only expose position. Currently these are position absolute rather
+          // than relative which would make more sense in an export.
           serviceData.annotations = {
-          'gui-x': annotations['gui-x'],
-          'gui-y': annotations['gui-y']
+            'gui-x': annotations['gui-x'],
+            'gui-y': annotations['gui-y']
           };
         }
         result.envExport.services[service.get('id')] = serviceData;
