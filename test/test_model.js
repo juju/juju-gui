@@ -794,7 +794,7 @@ describe('BrowserCharm test', function() {
   });
 });
 
-describe.only('database export', function() {
+describe('database export', function() {
   var models;
   before(function(done) {
     YUI(GlobalConfig).use(['juju-models'], function(Y) {
