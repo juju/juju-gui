@@ -645,9 +645,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container'),
-          link = window.location.origin + '/' + this.get('charm').get('id'),
           sourceLink = this._getSourceLink();
 
+      var link;
+      if (window.locationn.origin) {
+        link = window.location.origin + '/' + this.get('charm').get('id');
+      } else {
+        link = window.location.protocol + window.location.host + '/' +
+            this.get('charm').get('id');
+      }
       tplData.isFullscreen = isFullscreen;
       tplData.sourceLink = sourceLink;
       tplData.prettyCommits = this._formatCommitsForHtml(
