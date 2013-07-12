@@ -74,7 +74,9 @@ describe('Inspector Constraints', function() {
   var makeInspector = function(environmentView, service) {
     Y.Node.create('<div id="content">').appendTo(container);
     environmentView.createServiceInspector(service, {});
-    return view.getInspector(service.get('id'));
+    var inspector = view.getInspector(service.get('id'));
+    inspector.inspector.bindingEngine.interval = 0;
+    return inspector;
   };
 
   // Create a fake response from the API server.

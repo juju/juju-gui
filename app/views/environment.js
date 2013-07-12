@@ -102,6 +102,7 @@ YUI.add('juju-view-environment', function(Y) {
           @method createServiceInspector
           @param {Y.Model} model service or charm depending on inspector type.
           @param {Object} config object of options to overwrite default config.
+          @return {ServiceInspector} Inspector with proper mixins.
         */
         createServiceInspector: function(model, config) {
           config = config || {};
@@ -121,7 +122,7 @@ YUI.add('juju-view-environment', function(Y) {
           // If the user is trying to open the same inspector twice
           var serviceInspector = this.getInspector(model.get('id'));
           if (serviceInspector) {
-            return;
+            return serviceInspector;
           }
 
           var combinedConfig = {};
@@ -153,6 +154,7 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           this.setInspector(serviceInspector);
+          return serviceInspector;
         },
 
         /**

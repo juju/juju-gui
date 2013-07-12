@@ -116,7 +116,8 @@ YUI.add('juju-databinding', function(Y) {
      */
     function BindingEngine(options) {
       this.options = options || {};
-      this.interval = options.interval !== undefined ? options.interval : 250;
+      this.interval = this.options.interval !== undefined ?
+          this.options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = {};  // {modelName: binding Object}
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;

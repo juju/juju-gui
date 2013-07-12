@@ -243,7 +243,8 @@ YUI.add('juju-view-container', function(Y) {
       // Internal mapping from slot name to viewlet rendered into slot.
       this._slots = {};
 
-      this.bindingEngine = new jujuViews.BindingEngine();
+      this.bindingEngine = new jujuViews.BindingEngine(
+          options.databinding || {});
     },
 
     /**
