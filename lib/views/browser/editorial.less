@@ -75,6 +75,13 @@
     }
 }
 #bws-fullscreen #bws-editorial {
+    .yui3-charmcontainer {
+        border-bottom: 1px solid @bws-groove-dark;
+
+        .charms {
+            margin-bottom: -1px;
+        }
+    }
     .yui3-charmtoken {
         height: 215px;
         border-width: 0 1px 1px 1px;
@@ -91,6 +98,9 @@
         }
         &:nth-child(3n) {
             border-right: none;
+        }
+        .title {
+            width: 240px;
         }
     }
     .featured {
