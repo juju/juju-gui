@@ -79,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
-    it.only('has sharing links', function() {
+    it('has sharing links', function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
