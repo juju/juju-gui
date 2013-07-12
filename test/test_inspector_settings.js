@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Inspector Settings', function() {
+describe.only('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmConfig;
@@ -98,6 +98,17 @@ describe('Inspector Settings', function() {
     ].join('')).appendTo(container);
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
+
+  it('properly renders a service without charm options', function() {
+    // Mutate charmConfig before the render.
+    delete charmConfig.config;
+    inspector = setUpInspector();
+    // Verify the viewlet rendered, previously it would raise.
+    assert.isObject(container.one('.config-file'));
+    // Restore the test global
+    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+
+  });
 
   it('toggles exposure', function() {
     inspector = setUpInspector();

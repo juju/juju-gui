@@ -1584,14 +1584,19 @@ YUI.add('juju-view-service', function(Y) {
           var settings = [];
           var db = viewContainerAttrs.db;
           var charm = db.charms.getById(service.get('charm'));
-          var charmOptions = charm.get('config').options;
-          Y.Object.each(service.get('config'), function(value, key) {
-            settings.push({
+          var charmConfig = charm.get('config');
+          var charmOptions = charmConfig && charmConfig.options;
+          Y.Object.each(charmConfig, function(value, key) {
+            var setting = {
               name: key,
-              value: value,
-              description: charmOptions[key].description,
-              'type': charmOptions[key].type
-            });
+              value: value
+            };
+            var option = charmOptions[key];
+            if (option) {
+              if (option.description) { setting.description = option.description; }
+              if (option.type) { settings.type = option.type; }
+            }
+            settings.push(setting);
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(
