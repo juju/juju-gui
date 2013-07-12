@@ -1,23 +1,24 @@
-<div id="bws-search" class="yui3-g">
-  <div class="yui3-u-1">
-    <h3 class="search-title">
-      <strong>{{ count }}</strong> {{ pluralize 'result' count }} found
-    </h3>
-  </div>
-  <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
-    {{#unless isFullscreen}}
-        <div class="filterControl">
-            <a href="" class="filterControl more">
-                Show Filters <img src="/juju-ui/assets/images/expand_icon.png" alt="expand"</img>
-            </a>
-            <a href="" class="filterControl less" style="display: none;">
-                Hide Filters <img src="/juju-ui/assets/images/contract_icon.png" alt="collapse"</img>
-            </a>
-        </div>
-    {{/unless}}
-    <div class="search-filters" {{#unless isFullscreen}}style="display: none;"{{/unless}}>
+<div id="bws-search">
+  <div class="content yui3-g">
+    <div class="yui3-u-1">
+      <h3 class="section-title">Search results</h3>
     </div>
-  </div>
-  <div class="search-results {{#if isFullscreen}}yui3-u-3-4{{/if}}">
+    <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
+      {{#unless isFullscreen}}
+      <div class="filterControl">
+        <a href="" class="filterControl more">
+          Show Filters
+          <img src="/juju-ui/assets/images/expand_icon.png" alt="expand"</img>
+        </a>
+        <a href="" class="filterControl less" style="display: none;">
+          Hide Filters
+          <img src="/juju-ui/assets/images/contract_icon.png" alt="collapse"</img>
+        </a>
+      </div>
+      {{/unless}}
+      <div class="search-filters" {{#unless isFullscreen}}style="display: none;"{{/unless}}>
+      </div>
+    </div>
+    <div class="search-results {{#if isFullscreen}}yui3-u-3-4{{/if}}"></div>
   </div>
 </div>

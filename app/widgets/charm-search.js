@@ -142,7 +142,7 @@ YUI.add('browser-search-widget', function(Y) {
           )
       );
       this.addEvent(
-          container.one('.home').on(
+          container.all('.home').on(
               'click', this._onHome, this
           )
       );
