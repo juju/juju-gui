@@ -34,6 +34,9 @@ describe('View Container', function() {
 
 
     viewContainer = new Y.juju.views.ViewContainer({
+      databinding: {
+        interval: 0
+      },
       viewlets: {
         serviceConfig: Y.merge(viewletConfig),
         constraints: Y.merge(viewletConfig)

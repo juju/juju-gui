@@ -68,21 +68,25 @@ describe('Inspector Settings', function() {
     delete window.flags;
   });
 
-  var setUpInspector = function() {
+  var setUpInspector = function(options) {
     var charmId = 'precise/mediawiki-4';
     var charm = new models.Charm({id: charmId});
     charm.setAttrs(charmConfig);
     db.charms.add(charm);
-    service = new models.Service({
-      id: 'mediawiki',
-      charm: charmId,
-      exposed: false});
-    db.services.add(service);
-    db.onDelta({data: {result: [
-      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
-    ]}});
+    if (options && options.useGhost) {
+      service = db.services.ghostService(charm);
+    } else {
+      service = new models.Service({
+        id: 'mediawiki',
+        charm: charmId,
+        exposed: false});
+      db.services.add(service);
+      db.onDelta({data: {result: [
+        ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
+        ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
+        ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+      ]}});
+    }
     view = new jujuViews.environment({
       container: container,
       db: db,
@@ -92,8 +96,7 @@ describe('Inspector Settings', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
-    view.createServiceInspector(service, {});
-    return view.getInspector(service.get('id'));
+    return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
   it('toggles exposure', function() {
@@ -111,5 +114,137 @@ describe('Inspector Settings', function() {
     assert.isTrue(unexposeCalled);
     assert.isFalse(service.get('exposed'));
   });
+
+  /**** Begin service destroy UI tests. ****/
+
+  it('has a button to destroy the service', function() {
+    inspector = setUpInspector();
+    assert.isObject(container.one('.destroy-service-icon'));
+  });
+
+  it('shows the destroy service prompt if the icon is clicked', function() {
+    inspector = setUpInspector();
+    var promptBox = container.one('.destroy-service-prompt');
+    assert.isTrue(promptBox.hasClass('closed'));
+    container.one('.destroy-service-icon').simulate('click');
+    assert.isFalse(promptBox.hasClass('closed'));
+  });
+
+  it('hides the destroy service prompt if cancel is clicked', function() {
+    inspector = setUpInspector();
+    var promptBox = container.one('.destroy-service-prompt');
+    assert.isTrue(promptBox.hasClass('closed'));
+    // First we have to open the prompt.
+    container.one('.destroy-service-icon').simulate('click');
+    assert.isFalse(promptBox.hasClass('closed'));
+    // Now we can close it.
+    container.one('.cancel-destroy').simulate('click');
+    assert.isTrue(promptBox.hasClass('closed'));
+  });
+
+  it('initiates a destroy if the "Destroy" button is clicked', function(done) {
+    inspector = setUpInspector();
+    var promptBox = container.one('.destroy-service-prompt');
+    // First we have to open the prompt.
+    container.one('.destroy-service-icon').simulate('click');
+    assert.isFalse(promptBox.hasClass('closed'));
+    // If the test times out, it failed (because the expected function call
+    // didn't happen).
+    inspector.initiateServiceDestroy = function() {
+      done();
+    };
+    container.one('.initiate-destroy').simulate('click');
+  });
+
+  it('wires up UI elements to handlers for service inspector', function() {
+    // There are UI elements and they all have to be wired up to something.
+    inspector = setUpInspector();
+    var events = inspector.inspector.events;
+    assert.equal(typeof events['.destroy-service-icon'].click, 'function');
+    assert.equal(typeof events['.initiate-destroy'].click, 'function');
+    assert.equal(typeof events['.cancel-destroy'].click, 'function');
+  });
+
+  it('wires up UI elements to handlers for ghost inspector', function() {
+    // There are UI elements and they all have to be wired up to something.
+    inspector = setUpInspector({useGhost: true});
+    var events = inspector.inspector.events;
+    assert.equal(typeof events['.destroy-service-icon'].click, 'function');
+    assert.equal(typeof events['.initiate-destroy'].click, 'function');
+    assert.equal(typeof events['.cancel-destroy'].click, 'function');
+  });
+
+  it('responds to service removal by cleaning out the DB', function() {
+    // If destroying a service succeeds, the service is removed from the
+    // database.
+    var removeServiceCalled, removeRelationsCalled;
+
+    inspector = setUpInspector();
+
+    var service = {
+      get: function(name) {
+        assert.equal(name, 'id');
+        return 'SERVICE-ID';
+      }
+    };
+    var RELATIONS = 'all of the relations of the service being removed';
+
+    var db = {
+      services: {
+        remove: function(serviceToBeRemoved) {
+          assert.deepEqual(serviceToBeRemoved, service);
+          removeServiceCalled = true;
+        }
+      },
+      relations: {
+        filter: function(predicate) {
+          return RELATIONS;
+        },
+        remove: function(relationsToBeRemoved) {
+          assert.deepEqual(relationsToBeRemoved, RELATIONS);
+          removeRelationsCalled = true;
+        }
+      }
+    };
+
+    var evt = {err: false};
+
+    inspector._destroyServiceCallback(service, db, evt);
+    assert.isTrue(removeServiceCalled);
+    assert.isTrue(removeRelationsCalled);
+  });
+
+  it('responds to service removal failure by alerting the user', function() {
+    var notificationAdded;
+
+    inspector = setUpInspector();
+
+    var SERVICE_NAME = 'the name of the service being removed';
+    var evt = {
+      err: true,
+      service_name: SERVICE_NAME
+    };
+
+    var db = {
+      notifications: {
+        add: function(notification) {
+          var attrs = notification.getAttrs();
+          // The notification has the required attributes.
+          assert.isTrue(attrs.hasOwnProperty('title'));
+          assert.isTrue(attrs.hasOwnProperty('message'));
+          // The service name is mentioned in the error message.
+          assert.notEqual(attrs.message.indexOf(SERVICE_NAME, -1));
+          assert.equal(attrs.level, 'error');
+          assert.deepEqual(attrs.modelId, ['service', 'mediawiki']);
+          notificationAdded = true;
+        }
+      }
+    };
+
+    inspector._destroyServiceCallback(service, db, evt);
+    assert.isTrue(notificationAdded);
+  });
+
+  /**** End service destroy UI tests. ****/
 
 });

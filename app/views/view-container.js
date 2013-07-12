@@ -242,8 +242,12 @@ YUI.add('juju-view-container', function(Y) {
       this.slots = {};
       // Internal mapping from slot name to viewlet rendered into slot.
       this._slots = {};
+      this._events = [];
 
-      this.bindingEngine = new jujuViews.BindingEngine();
+      this._setupEvents();
+
+      this.bindingEngine = new jujuViews.BindingEngine(
+          options.databinding || {});
     },
 
     /**
@@ -296,6 +300,8 @@ YUI.add('juju-view-container', function(Y) {
         this.bindingEngine.bind(model, viewlet);
       }, this);
 
+      this.recalculateHeight(viewletContainer);
+
       // chainable
       return this;
     },
@@ -322,6 +328,7 @@ YUI.add('juju-view-container', function(Y) {
       }
       this.fillSlot(viewlet, model);
       viewlet.container.show();
+      this.recalculateHeight();
     },
 
     /**
@@ -366,6 +373,44 @@ YUI.add('juju-view-container', function(Y) {
       } else {
         console.error('View Container Missing slot', slot);
       }
+    },
+
+    /**
+      Recalculates and sets the height of the view-container when
+      the browser is resized or by being called directly.
+
+      @method recalculateHeight
+      @param {Y.Node} container A reference to the container element.
+    */
+    recalculateHeight: function(container) {
+      // Because this is also a callback we need to check to see
+      // if this is an event object or a real container element
+      if (container && container.type) { container = null; }
+      container = container || this.get('container');
+      var TB_SPACING = 20;
+      var winHeight = container.get('winHeight'),
+          header = Y.one('.navbar'),
+          footer = Y.one('.bottom-navbar'),
+          // Depending on the render cycle these may or may not be in the DOM
+          // which is why we pull their heights separately
+          vcHeader = container.one('.view-container-navigation'),
+          vcFooter = container.one('.view-container-footer'),
+          headerHeight = 0,
+          footerHeight = 0,
+          vcHeaderHeight = 0,
+          vcFooterHeight = 0;
+
+      if (header) { headerHeight = header.get('clientHeight'); }
+      if (footer) { footerHeight = footer.get('clientHeight'); }
+      if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
+      if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
+
+      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
+      // subtract the height of the header and footer of the view container.
+      height = height - vcHeaderHeight - vcFooterHeight;
+
+      this.get('container').one(this.viewletContainer)
+                           .setStyle('maxHeight', height + 'px');
     },
 
     /**
@@ -422,11 +467,25 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
+      Attaches events which cannot be attached using the container event object
+
+      @method _setupEvents
+      @private
+    */
+    _setupEvents: function() {
+      this._events.push(
+          Y.one('window').after('resize', this.recalculateHeight, this));
+    },
+
+    /**
       Removes and destroys the container
 
       @method destructor
     */
     destructor: function() {
+      this._events.forEach(function(event) {
+        event.detach();
+      });
       this.bindingEngine.unbind();
       this.get('container').remove().destroy(true);
     }
