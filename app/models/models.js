@@ -871,7 +871,7 @@ YUI.add('juju-models', function(Y) {
           result = {
             envExport: {
               series: this.environment.get('defaultSeries'),
-              services: [],
+              services: {},
               relations: []
             }
           };
@@ -884,7 +884,7 @@ YUI.add('juju-models', function(Y) {
           // Using package name here so the default series
           // is picked up. This will likely have to be the full
           // path in the future.
-          charm: charm.get('package_name'),
+          charm: charm.get('id'),
           options: service.get('config'),
           // Test models or ghosts might not have a units LazyModelList.
           num_units: units && units.size() || 1
@@ -894,7 +894,17 @@ YUI.add('juju-models', function(Y) {
         if (constraints) {
           serviceData.constraints = constraints;
         }
-        result.envExport.services.push(serviceData);
+
+        var annotations = service.get('annotations');
+        if (annotations && annotations['gui-x']) {
+          // Only expose position. Currently these are position absolute rather than
+          // relative which would make more sense in an export.
+          serviceData.annotations = {
+          'gui-x': annotations['gui-x'],
+          'gui-y': annotations['gui-y']
+          };
+        }
+        result.envExport.services[service.get('id')] = serviceData;
       });
 
       relationList.each(function(relation) {

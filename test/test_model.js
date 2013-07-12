@@ -794,7 +794,7 @@ describe('BrowserCharm test', function() {
   });
 });
 
-describe('database export', function() {
+describe.only('database export', function() {
   var models;
   before(function(done) {
     YUI(GlobalConfig).use(['juju-models'], function(Y) {
@@ -808,7 +808,10 @@ describe('database export', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     var wordpress = db.services.add({
       id: 'wordpress',
-      charm: 'precise/wordpress-1'});
+      charm: 'precise/wordpress-1',
+      config: {debug: 'no'},
+      annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
+    });
     var rel0 = db.relations.add({
       id: 'relation-0',
       endpoints: [
@@ -825,8 +828,14 @@ describe('database export', function() {
     var relation = result.relations[0];
 
     assert.equal(result.series, 'precise');
-    assert.equal(result.services[0].charm, 'mysql');
-    assert.equal(result.services[1].charm, 'wordpress');
+    assert.equal(result.services.mysql.charm, 'precise/mysql-1');
+    assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
+
+    assert.equal(result.services.wordpress.options.debug, 'no');
+    assert.equal(result.services.wordpress.annotations['gui-x'], 100);
+    assert.equal(result.services.wordpress.annotations['gui-y'], 200);
+    // Note that ignored wasn't exported.
+    assert.equal(result.services.wordpress.annotations['ignored'], undefined);
 
     assert.equal(relation[0], 'mysql:db');
     assert.equal(relation[1], 'wordpress:app');
