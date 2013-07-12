@@ -631,17 +631,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
     },
 
-    _setupSharingData: function(tplData) {
-      var link = window.location.origin + '/' + this.get('charm').get('id');
-      tplData.link = escape(link);
-      tplData.twitterText = escape(
-          'Check out this great charm on jujucharms: ' + link);
-      tplData.emailSubject = escape(
-          'Check out this great charm on jujucharms!');
-      tplData.emailText = escape(
-          'Check out this great charm on jujucharms: ' + link);
-    },
-
     /**
      * Render the view of a single charm details page.
      *
