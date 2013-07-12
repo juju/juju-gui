@@ -1,15 +1,6 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
         <div class="heading">
-                {{#if isFullscreen}}
-                    <div class="breadcrumbs">
-                        <a href="" class="back">
-                            <i class="sprite browser_home"></i>
-                            <span>Home</span>
-                        </a>
-                        | {{ name }}
-                    </div>
-                {{/if}}
                 {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
                 <a href="" class="share">Share</a>
             <div class="block-icon">
@@ -55,7 +46,7 @@
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
                     </li>
                 </ul>
-                
+
                 {{#if isFullscreen}}
                     {{>providers}}
                 {{/if}}

@@ -158,6 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(ev.change.search);
         assert.equal(1, ev.change.filter.categories.length);
         assert.equal('databases', ev.change.filter.categories[0]);
+        assert.equal(ev.change.filter.replace, true);
         done();
       });
       view.render(results);
