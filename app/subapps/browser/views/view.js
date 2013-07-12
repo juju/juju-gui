@@ -119,6 +119,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _goHome: function(ev) {
       var change = {
+        charmID: undefined,
         search: false,
         filter: {
           clear: true
