@@ -1593,12 +1593,8 @@ YUI.add('juju-view-service', function(Y) {
             };
             var option = charmOptions[key];
             if (option) {
-              if (option.description) {
-                setting.description = option.description;
-              }
-              if (option.type) {
-                settings.type = option.type;
-              }
+              setting.description = option.description;
+              setting.type = option.type;
             }
             settings.push(setting);
           });
