@@ -283,6 +283,13 @@
                         margin-left: 10px;
                     }
                 }
+                li.L1,
+                li.L3,
+                li.L5,
+                li.L7,
+                li.L9 {
+                    background-color: rgba(0, 0, 0, 0.03);
+                }
             }
         }
     }
@@ -348,18 +355,18 @@
         border-left: 1px solid @bws-border;
     }
     .related-charms {
-        padding-bottom: 10px;
-        border-bottom: 1px solid @bws-border;
-
         .section-title {
             padding-bottom: 20px;
             border-bottom: 1px solid @bws-border;
+        }
+        .yui3-charmcontainer {
+            padding-bottom: 10px;
         }
         .yui3-charmtoken {
             width: 50%;
             padding: 0 10px;
 
-            .yui3-charmtoken-content {
+            .yui3-charmtoken-content a {
                 padding: 20px 10px;
                 border-bottom: 1px solid @bws-border;
             }
@@ -368,7 +375,7 @@
             }
             &:last-child,
             &:nth-last-child(2) {
-                .yui3-charmtoken-content {
+                .yui3-charmtoken-content a {
                     border-bottom: none;
                 }
             }

@@ -97,7 +97,6 @@ YUI.add('browser-charm-token', function(Y) {
           // be visible though, so we make sure the overflow induced by the
           // icon is hidden.
           dragImage = Y.one('body')
-            .setStyle('overflow', 'hidden')
             .appendChild(icon.cloneNode(true))
               .setStyles({
                 'height': icon.one('img').get('height'),
