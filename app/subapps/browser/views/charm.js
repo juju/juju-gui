@@ -669,8 +669,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
-      this._setupSharingData(tplData);
-
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
