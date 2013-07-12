@@ -112,7 +112,8 @@ YUI.add('juju-databinding', function(Y) {
      *
      * @class BindingEngine
      * @param {Object} options taking:
-     *          interval: ms window to restrict multiple DOM udpates.
+     *          interval: ms window to restrict multiple DOM udpates.250ms
+     *          default.
      */
     function BindingEngine(options) {
       this.options = options || {};
