@@ -65,8 +65,8 @@ YUI.add('browser-search-widget', function(Y) {
       filters.text = query;
       this.get('autocompleteSource')(
           filters, {
-            success: callback,
-            failure: function () {
+            'success': callback,
+            'failure': function() {
               // Autocomplete should not throw errors at the user or break the
               // application. Just silently fail to find results.
             }

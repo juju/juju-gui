@@ -124,7 +124,7 @@ describe('browser search widget', function() {
       },
       filters: {}
     });
-    search._fetchSuggestions('test', function () {});
+    search._fetchSuggestions('test', function() {});
   });
 
 });
