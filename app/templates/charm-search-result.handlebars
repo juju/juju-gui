@@ -29,9 +29,6 @@
           <div class="charm-div">
             <button class="btn btn-primary deploy"
              data-url="{{id}}">Deploy</button>
-            {{! It is is important that the following 'href' line not be
-             broken, or the string processed by the ellipsis module will
-             include a lot of whitespace. }}
             <a class="charm-detail"
                href="{{id}}">{{#if owner}}{{owner}}/{{/if}}{{package_name}}</a>
             <div class="charm-summary">{{summary}}</div>
