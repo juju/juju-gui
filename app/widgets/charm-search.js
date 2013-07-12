@@ -134,15 +134,11 @@ YUI.add('browser-search-widget', function(Y) {
               'blur', this._toggleActive, this)
       );
       this.addEvent(
-          container.all('a').on(
+          container.one('.browser-nav').delegate(
               'click',
-              function(ev) {
-                ev.halt();
-              }
-          )
-      );
-      this.addEvent(
-          container.delegate('click', this._onHome, '.home', this)
+              this._onHome,
+              '.home',
+              this)
       );
       this.addEvent(
           container.one('i').on(
@@ -238,6 +234,7 @@ YUI.add('browser-search-widget', function(Y) {
     'base',
     'browser-filter-widget',
     'event',
+    'event-delegate',
     'event-tracker',
     'event-mouseenter',
     'event-valuechange',
