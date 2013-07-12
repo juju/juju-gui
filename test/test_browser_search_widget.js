@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('browser search widget', function() {
+describe('browser search widget', function() {
   var Y, container, Search;
 
   before(function(done) {
