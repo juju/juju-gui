@@ -89,7 +89,7 @@ describe('Inspector Overview', function() {
       '<div id="content">'
     ].join('')).appendTo(container);
     inspector = view.createServiceInspector(service,
-                                {databinding: {interval: 0}});
+        {databinding: {interval: 0}});
     return inspector;
   };
 

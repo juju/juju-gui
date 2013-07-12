@@ -74,7 +74,7 @@ describe('Inspector Constraints', function() {
   var makeInspector = function(environmentView, service) {
     Y.Node.create('<div id="content">').appendTo(container);
     inspector = environmentView.createServiceInspector(service,
-                                                      {databinding: {interval: 0}});
+        {databinding: {interval: 0}});
     return inspector;
   };
 
