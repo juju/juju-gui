@@ -1,7 +1,7 @@
 .yui3-charmtoken {
     .border-box;
     position: relative;
-    padding: 10px 20px;
+    padding: 20px;
 
     .charm-token {
         display: block;
@@ -34,7 +34,7 @@
             .icon {
                 width: 50px;
                 height: 50px;
-                margin-right: 16px;
+                margin-right: 10px;
                 position: relative;
             }
             .charm-icon {
@@ -58,17 +58,29 @@
                     left top no-repeat;
             }
         }
+        .block-icon,
         .title,
         .metadata,
         .description {
             display: block;
         }
+        .block-icon,
+        .title,
+        .metadata {
+            float: left;
+        }
         .title {
             .type3;
+            min-width: 100px;
             margin-bottom: 2px;
         }
         .metadata {
-            .type12;
+            .type14;
+        }
+        .description {
+            clear: left;
+            padding-top: 15px;
+            .type13;
         }
         .badge-approved {
             display: block;
@@ -81,9 +93,6 @@
                 url(/juju-ui/assets/images/approved_star.png) no-repeat left top;
             z-index: 10;
         }
-    }
-    &:hover {
-        background-color: #eee;
     }
     &.active {
         // Adjust the left padding to account for the border.
