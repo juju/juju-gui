@@ -88,8 +88,8 @@ describe('Inspector Overview', function() {
     Y.Node.create([
       '<div id="content">'
     ].join('')).appendTo(container);
-    view.createServiceInspector(service, {databinding: {interval: 0}});
-    inspector = view.getInspector(service.get('id'));
+    inspector = view.createServiceInspector(service,
+                                {databinding: {interval: 0}});
     return inspector;
   };
 

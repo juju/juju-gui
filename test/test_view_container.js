@@ -34,6 +34,9 @@ describe('View Container', function() {
 
 
     viewContainer = new Y.juju.views.ViewContainer({
+      databinding: {
+        interval: 0
+      },
       viewlets: {
         serviceConfig: Y.merge(viewletConfig),
         constraints: Y.merge(viewletConfig)
@@ -204,7 +207,6 @@ describe('View Container', function() {
   it('can replace a slot, removing old bindings and installing a new model',
      function() {
        generateViewContainer();
-       viewContainer.bindingEngine.interval = 0;
        //Define a slot mapping on the container for 'left'
        viewContainer.slots = {
          left: '.left'
