@@ -63,7 +63,18 @@ describe('browser search widget', function() {
       done();
     });
 
-    container.one('.home').simulate('click');
+    container.one('i .home').simulate('click');
+  });
+
+  it('clicking on the home link also works', function(done) {
+    var search = new Search();
+    search.render(container);
+
+    search.on(search.EVT_SEARCH_GOHOME, function() {
+      done();
+    });
+
+    container.one('a .home').simulate('click');
   });
 
 });
