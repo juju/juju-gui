@@ -117,7 +117,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           results.map(function(charm) {
             var ct = new widgets.browser.CharmToken(Y.merge(
                 charm.getAttrs(), {
-                  size: this.get('isFullscreen') ? 'large' : 'small'
+                  size: 'small'
                 }));
             ct.render(results_container);
           }, this);
@@ -128,7 +128,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // should reset where the node's overflow is scrolled to, but it
           // doesn't. Se we scroll the heading into view to ensure the view
           // renders at the top of the content.
-          target.one('.search-title').scrollIntoView();
+          target.one('.section-title').scrollIntoView();
           this.hideIndicator(this.get('renderTo'));
 
           // Set the active charm if available.

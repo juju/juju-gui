@@ -1,10 +1,12 @@
 .yui3-charmtoken {
     .border-box;
     position: relative;
-    padding: 20px;
 
     .charm-token {
         display: block;
+        // Clear floats:
+        overflow: auto;
+        padding: 20px;
         color: @bws-text;
 
         &.tiny {
@@ -95,10 +97,10 @@
         }
     }
     &.active {
-        // Adjust the left padding to account for the border.
-        padding-left: 18px;
+        // Adjust the padding to account for the border.
+        padding-right: 18px;
         background-color: #d5d5d5;
-        border-left: 2px solid @charm-panel-orange;
+        border-right: 2px solid @charm-panel-orange;
     }
 }
 
