@@ -102,6 +102,22 @@ YUI.add('subapp-browser-mainview', function(Y) {
           this.search.on(
               this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
       );
+
+      this.addEvent(
+          this.search.on(
+              this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+      );
+
+    },
+
+    _goHome: function(ev) {
+      var change = {
+        search: false,
+        filter: {
+          clear: true
+        },
+      };
+      this.fire('viewNavigate', {change: change});
     },
 
     /**

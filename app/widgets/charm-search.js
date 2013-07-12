@@ -39,7 +39,8 @@ YUI.add('browser-search-widget', function(Y) {
    * @class Search
    * @extends {Y.Widget}
    * @event EV_CLEAR_SEARCH the widget requests all search reset.
-   * @event EV_SEARCH_CHANGED the widgets notifies that the search input has
+   * @event EV_SEARCH_CHANGED the widgets notifies that the search input has.
+   * @event EV_SEARCH_GOHOME Signal that the user clicked the home button.
    * changed.
    *
    */
@@ -48,6 +49,7 @@ YUI.add('browser-search-widget', function(Y) {
   ], {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_SEARCH_CHANGED: 'search_changed',
+    EVT_SEARCH_GOHOME: 'go_home',
 
     TEMPLATE: templates['browser-search'],
 
@@ -66,6 +68,18 @@ YUI.add('browser-search-widget', function(Y) {
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
       });
+    },
+
+    /**
+     * When home is selected the event needs to be fired up to listeners.
+     *
+     * @method _onHome
+     * @param {Event} ev The click event for the home button.
+     *
+     */
+    _onHome: function(ev) {
+      ev.halt();
+      this.fire(this.EVT_SEARCH_GOHOME);
     },
 
     /**
@@ -119,6 +133,37 @@ YUI.add('browser-search-widget', function(Y) {
           container.one('input').on(
               'blur', this._toggleActive, this)
       );
+      this.addEvent(
+        container.all('a').on(
+          'click', function(ev) {
+            ev.halt();
+          }
+        )
+      );
+      this.addEvent(
+        container.one('.home').on(
+          'click', this._onHome, this
+        )
+      );
+      this.addEvent(
+        container.one('i').on(
+          'mouseenter', function(ev) {
+              // Change the icon to hover on mounseenter.
+              ev.target.removeClass('home-icon');
+              ev.target.addClass('home-icon-hover');
+          }, this
+        )
+      );
+      this.addEvent(
+        container.one('i').on(
+          'mouseleave', function(ev) {
+              // Change the icon to back on mouseleave.
+              ev.target.removeClass('home-icon-hover');
+              ev.target.addClass('home-icon');
+          }, this
+        )
+      );
+
     },
 
     /**
@@ -137,6 +182,7 @@ YUI.add('browser-search-widget', function(Y) {
        *
        */
       this.publish(this.EVT_SEARCH_CHANGED);
+      this.publish(this.EVT_SEARCH_GOHOME);
     },
 
     /**
@@ -194,6 +240,7 @@ YUI.add('browser-search-widget', function(Y) {
     'browser-filter-widget',
     'event',
     'event-tracker',
+    'event-mouseenter',
     'event-valuechange',
     'juju-templates',
     'juju-views',

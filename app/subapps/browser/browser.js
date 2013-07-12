@@ -77,7 +77,21 @@ YUI.add('subapp-browser', function(Y) {
       // If there are changes to the filters, we need to update our filter
       // object first, and then generate a new query string for the state to
       // track.
-      if (change.filter) {
+      if (change.filter === null) {
+        // The filter is set deliberately to null and that's a request to
+        // clear any filters in play.
+        this._filter = new models.browser.Filter();
+        change.querystring = undefined;
+      }
+
+      // If the filter is set to anything else, update it.
+      if (change.filter && change.filter.clear) {
+        this._filter.clear();
+        change.querystring = undefined
+      }
+
+      if (change.filter && change.filter.replace) {
+        this._filter.clear();
         this._filter.update(change.filter);
         change.querystring = this._filter.genQueryString();
       }
