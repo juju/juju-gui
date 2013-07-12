@@ -648,7 +648,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           sourceLink = this._getSourceLink();
 
       var link;
-      if (window.locationn.origin) {
+      if (window.location.origin) {
         link = window.location.origin + '/' + this.get('charm').get('id');
       } else {
         link = window.location.protocol + window.location.host + '/' +
