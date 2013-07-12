@@ -397,7 +397,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, container, hits, ns, resetHits;
 
     before(function(done) {
@@ -953,6 +953,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         'querystring': 'text=ceph'
       });
       assert.isTrue(browser._searchChanged());
+    });
+
+    it('permits a filter clear command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache'
+        }
+      });
+
+      // We have a good valid search.
+      assert.equal(url, '/search?series=precise&text=apache&type=approved');
+
+      // Now let's clear it and make sure it's emptied.
+      url = browser._getStateUrl({
+        'filter': {
+          clear: true
+        }
+      });
+      assert.equal(url, '/search');
+    });
+
+    it('permits a filter replace command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache',
+          categories: ['app-servers']
+        }
+      });
+      // We have a good valid search.
+      assert.equal(
+        url,
+        '/search?categories=app-servers&series=precise&text=apache&type=approved');
+
+      // Now let's update it and force all the rest to go away.
+      url = browser._getStateUrl({
+        'filter': {
+          replace: true,
+          text: 'mysql'
+        }
+      });
+      assert.equal(url, '/search?text=mysql');
     });
   });
 })();
