@@ -886,7 +886,7 @@ YUI.add('juju-models', function(Y) {
           return;
         }
 
-        // Process the serivce_options removing any values
+        // Process the service_options removing any values
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
           var optionData = charmOptions && charmOptions[key];
@@ -897,9 +897,6 @@ YUI.add('juju-models', function(Y) {
         });
 
         var serviceData = {
-          // Using package name here so the default series
-          // is picked up. This will likely have to be the full
-          // path in the future.
           charm: charm.get('id'),
           // Test models or ghosts might not have a units LazyModelList.
           num_units: units && units.size() || 1
@@ -915,8 +912,8 @@ YUI.add('juju-models', function(Y) {
 
         var annotations = service.get('annotations');
         if (annotations && annotations['gui-x']) {
-          // Only expose position. Currently these are position absolute rather
-          // than relative which would make more sense in an export.
+          // XXX: Only expose position. Currently these are position absolute
+          // rather than relative.
           serviceData.annotations = {
             'gui-x': annotations['gui-x'],
             'gui-y': annotations['gui-y']
