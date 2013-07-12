@@ -80,13 +80,14 @@ YUI.add('subapp-browser', function(Y) {
       if (change.filter && change.filter.clear) {
         // If the filter is set to anything else, update it.
         this._filter.clear();
-        change.querystring = undefined
+        // We manually force this so that there's not even an empty query
+        // string generated to be visible to the user in the url.
+        change.querystring = undefined;
       } else if (change.filter && change.filter.replace) {
         this._filter.clear();
         this._filter.update(change.filter);
         change.querystring = this._filter.genQueryString();
       } else if (change.filter) {
-        this._filter.clear();
         this._filter.update(change.filter);
         change.querystring = this._filter.genQueryString();
       }
