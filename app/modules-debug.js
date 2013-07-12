@@ -50,9 +50,6 @@ var GlobalConfig = {
   groups: {
     gallery: {
       modules: {
-        'gallery-ellipsis': {
-          fullpath: '/juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
-        },
         'gallery-markdown': {
           fullpath: '/juju-ui/assets/javascripts/gallery-markdown-debug.js'
         },

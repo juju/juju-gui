@@ -1001,7 +1001,6 @@ YUI.add('juju-charm-panel', function(Y) {
     'overlay',
     'dom-core',
     'juju-models',
-    'event-resize',
-    'gallery-ellipsis'
+    'event-resize'
   ]
 });
