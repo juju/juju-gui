@@ -151,11 +151,14 @@ YUI.add('browser-charm-token', function(Y) {
      * @return {undefined}  Nothing; side-effects only.
     */
     _addDraggability: function() {
-      var container = this.get('boundingBox');
+      var charmData,
+          container = this.get('boundingBox');
+      // Adjust the id to meet Charm model expectations.
+      this.charmData.id = this.charmData.url;
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.  This passed-in config includes
       // charm attributes.
-      var charmData = Y.JSON.stringify(this.charmData);
+      charmData = Y.JSON.stringify(this.charmData);
       this._makeDraggable(container, charmData);
       // We need all the children to participate.
       container.all('*').each(function(element) {

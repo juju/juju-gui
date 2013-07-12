@@ -84,6 +84,17 @@
             no-repeat right top;
     background-color: @background-color;
 }
+/*
+ * Rotation transform.  Call with numerical value and units, e.g.
+ * .rotate(-90deg);
+ */
+.rotate(@angle) {
+    -webkit-transform: rotate(@angle);
+    -moz-transform: rotate(@angle);
+    -ms-transform: rotate(@angle);
+    -o-transform: rotate(@angle);
+    transform: rotate(@angle);
+}
 .border-box {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -258,10 +269,24 @@ table tr.highlighted td {
                 float: left;
 
                 a {
+                    .border-box;
                     display: block;
-                    padding: 25px 10px 0 10px;
+                    height: 70px;
+                    margin-right: 30px;
+                    padding: 30px 0 0 0;
                     font-size: 12pt;
-                    color: #9b9b9b;
+                    font-weight: 300;
+                    color: #f2f2e6;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                    &.active {
+                        border-bottom: 3px solid @charm-panel-orange;
+                    }
+                    i {
+                        margin-right: 6px;
+                    }
                 }
             }
         }
@@ -600,10 +625,6 @@ div.state-pending {
     }
 }
 
-.overview-unit-list {
-  max-height: 11em;
-  overflow-x: scroll;
-}
 .unit (@min_height: 20px, @border_radius:3px) {
     .create-border-radius(@border_radius);
     padding: 5px;
@@ -881,7 +902,7 @@ g.unit {
  * Feedback box
  */
 #feedback-box {
-    position: fixed;
+    position: absolute;
     right: -40px;
     bottom: 100px;
     a {
@@ -902,11 +923,7 @@ g.unit {
         -webkit-transition: all 0.15s ease-in-out;
         -moz-transition: all 0.15s ease-in-out;
         transition: all 0.15s ease-in-out;
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        -ms-transform: rotate(-90deg);
-        -o-transform: rotate(-90deg);
-        transform: rotate(-90deg);
+        .rotate(-90deg);
         &:hover {
             text-decoration: none;
             background-color: #df6920;
@@ -934,6 +951,27 @@ g.unit {
         left: 11px;
     }
 }
+.zoom-controls {
+    position: absolute;
+    right: -20px;
+    top: 35px;
+    // The following is required to override Bootstrap styles for the slider
+    // thumb sprite.
+    img {
+        max-width: none;
+    }
+}
+#zoom-in-btn {
+    position: relative;
+    top: -90px;
+    left: 24px;
+}
+#zoom-out-btn {
+    position: relative;
+    top: 90px;
+    left: -30px;
+}
+
 .create-picker(@width, @top, @listtop, @listbottom) {
     width: @width;
 

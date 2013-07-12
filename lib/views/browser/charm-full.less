@@ -32,9 +32,15 @@
     }
     .yui3-tabview-list,
     .yui3-tabview-panel {
-        max-width: 940px;
         margin: 0 auto;
         padding: 0 30px;
+    }
+    .yui3-tabview-list {
+        width: 590px;
+    }
+    .yui3-tabview-panel {
+        .border-box;
+        width: @bws-panel-width;
     }
     .yui3-tab-panel {
         h1,
@@ -45,24 +51,33 @@
             margin: 20px 0 10px 0;
         }
     }
-    .provider-warning {
-        height: 20px;
-        margin-top: -1px;
-        padding: 9px;
-        border: 1px solid @charm-panel-orange;
-        color: @charm-panel-orange;
-
-        span {
-            margin: 0 8px 0 7px;
-        }
-        img {
-            height: 20px;
-            margin-left: 2px;
-        }
-    }
     .content {
         .border-box;
         display: table-cell;
+    }
+    .header li a,
+    .providers li span {
+        color: @bws-text;
+        text-decoration: underline;
+    }
+    .providers {
+        overflow: auto;
+        margin-top: 5px;
+        padding: 20px 0 10px 0;
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: @bws-border;
+
+        i {
+            margin-right: 15px;
+        }
+        ul {
+            float: left;
+            width: 50%;
+        }
+        li {
+            margin-bottom: 10px;
+        }
     }
     .heading {
         .type13;
@@ -70,11 +85,6 @@
         padding: 30px;
         background-color: @bws-background;
         border-bottom: 1px solid @bws-border;
-
-        li a {
-            color: @bws-text;
-            text-decoration: underline;
-        }
         .block-icon {
             display: inline-block;
             float: left;
@@ -116,8 +126,20 @@
                 .type2;
                 margin: -3px 0 5px 0;
             }
+            h2 {
+                .type5;
+                margin: 20px 0 15px 0;
+            }
             li {
                 line-height: 1.55;
+            }
+            .providers {
+                border-bottom: none;
+
+                ul {
+                    float: none;
+                    width: 100%;
+                }
             }
         }
         .back.icon,
@@ -158,9 +180,11 @@
         margin-top: 9px;
         margin-bottom: 26px;
     }
+    #bws-summary,
     #bws-readme {
         padding-top: 10px;
-
+    }
+    #bws-readme {
         ul {
             list-style-type: disc;
             padding-left: 2em;
@@ -270,7 +294,7 @@
     .heading {
         z-index: 10;
         float: left;
-        width: 25%;
+        width: @bws-sidebar-width;
         padding: 0;
         background-color: #fff;
         border: none;
@@ -299,9 +323,20 @@
                 display: inline-block;
             }
         }
-        .back {
-            display: block;
-            margin: 20px;
+        .breadcrumbs {
+            position: absolute;
+            top: -50px;
+            left: 290px;
+            width: 400px;
+            overflow: hidden;
+
+            i {
+                margin-right: 7px;
+            }
+            span {
+                color: @bws-text;
+                text-decoration: underline;    
+            }
         }
         .share {
             top: 20px;
@@ -309,19 +344,37 @@
         }
     }
     .tabs {
-        margin-left: 25%;
+        margin-left: @bws-sidebar-width;
         border-left: 1px solid @bws-border;
     }
     .related-charms {
+        padding-bottom: 10px;
+        border-bottom: 1px solid @bws-border;
+
         .section-title {
             padding-bottom: 20px;
             border-bottom: 1px solid @bws-border;
         }
         .yui3-charmtoken {
-            border-width: 0 1px 1px 0;
-            border-style: solid;
-            border-color: @bws-border;
             width: 50%;
+            padding: 0 10px;
+
+            .yui3-charmtoken-content {
+                padding: 20px 10px;
+                border-bottom: 1px solid @bws-border;
+            }
+            &:nth-child(odd) {
+                border-right: 1px solid @bws-border;
+            }
+            &:last-child,
+            &:nth-last-child(2) {
+                .yui3-charmtoken-content {
+                    border-bottom: none;
+                }
+            }
         }
+    }
+    #bws-summary {
+        padding-top: 30px;
     }
 }
