@@ -1586,7 +1586,7 @@ YUI.add('juju-view-service', function(Y) {
           var charm = db.charms.getById(service.get('charm'));
           var charmConfig = charm.get('config');
           var charmOptions = charmConfig && charmConfig.options;
-          Y.Object.each(charmConfig, function(value, key) {
+          Y.Object.each(service.get('config'), function(value, key) {
             var setting = {
               name: key,
               value: value
