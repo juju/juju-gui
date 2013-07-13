@@ -50,9 +50,6 @@ var GlobalConfig = {
   groups: {
     gallery: {
       modules: {
-        'gallery-ellipsis': {
-          fullpath: '/juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
-        },
         'gallery-markdown': {
           fullpath: '/juju-ui/assets/javascripts/gallery-markdown-debug.js'
         },
@@ -146,10 +143,6 @@ var GlobalConfig = {
 
         'browser-overlay-indicator': {
           fullpath: '/juju-ui/widgets/overlay-indicator.js'
-        },
-
-        'browser-sharing-widget': {
-          fullpath: '/juju-ui/widgets/sharing-widget.js'
         },
 
         'browser-search-widget': {

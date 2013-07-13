@@ -808,7 +808,10 @@ describe('database export', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     var wordpress = db.services.add({
       id: 'wordpress',
-      charm: 'precise/wordpress-1'});
+      charm: 'precise/wordpress-1',
+      config: {debug: 'no', username: 'admin'},
+      annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
+    });
     var rel0 = db.relations.add({
       id: 'relation-0',
       endpoints: [
@@ -820,13 +823,40 @@ describe('database export', function() {
     db.environment.set('defaultSeries', 'precise');
 
     // Add the charms so we can resolve them in the export.
-    db.charms.add([{id: 'precise/mysql-1'}, {id: 'precise/wordpress-1'}]);
+    db.charms.add([{id: 'precise/mysql-1'},
+          {id: 'precise/wordpress-1',
+            config: {
+              options: {
+                debug: {
+                  'default': 'no'
+                },
+                username: {
+                  'default': 'root'
+                }
+              }
+            }
+          }
+        ]);
     var result = db.exportDeployer().envExport;
     var relation = result.relations[0];
 
     assert.equal(result.series, 'precise');
-    assert.equal(result.services[0].charm, 'mysql');
-    assert.equal(result.services[1].charm, 'wordpress');
+    assert.equal(result.services.mysql.charm, 'precise/mysql-1');
+    assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
+
+    // A default config value is skipped
+    assert.equal(result.services.wordpress.options.debug, undefined);
+    // A value changed from the default is exported
+    assert.equal(result.services.wordpress.options.username, 'admin');
+    // Ensure that mysql has no options object in the export as no
+    // non-default options are defined
+    assert.equal(result.services.mysql.options, undefined);
+
+    // Export position annotations.
+    assert.equal(result.services.wordpress.annotations['gui-x'], 100);
+    assert.equal(result.services.wordpress.annotations['gui-y'], 200);
+    // Note that ignored wasn't exported.
+    assert.equal(result.services.wordpress.annotations.ignored, undefined);
 
     assert.equal(relation[0], 'mysql:db');
     assert.equal(relation[1], 'wordpress:app');
