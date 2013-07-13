@@ -99,6 +99,17 @@ describe('Inspector Settings', function() {
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
+  it('properly renders a service without charm options', function() {
+    // Mutate charmConfig before the render.
+    delete charmConfig.config;
+    inspector = setUpInspector();
+    // Verify the viewlet rendered, previously it would raise.
+    assert.isObject(container.one('.config-file'));
+    // Restore the test global
+    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+
+  });
+
   it('toggles exposure', function() {
     inspector = setUpInspector();
     assert.isFalse(service.get('exposed'));
