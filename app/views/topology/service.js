@@ -420,20 +420,8 @@ YUI.add('juju-topology-service', function(Y) {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
         var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
-        // Remove the cloned drag icon.
-        var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
-        var iconImage;
-        if (icon) {
-          if (icon.one('img')) {
-            // Maintain the charm icon URL if it exists.
-            iconImage = icon.one('img').getAttribute('src');
-          }
-          icon.remove().destroy(true);
-        }
-        // Pass the icon image along with the coordinates in the deploy event.
-        if (iconImage) {
-          ghostAttributes.icon = iconImage;
-        }
+        // Add the icon url to the ghost attributes for the ghost icon
+        ghostAttributes.icon = evt.dataTransfer.getData('iconSrc');
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostAttributes);
       }

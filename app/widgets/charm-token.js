@@ -89,35 +89,19 @@ YUI.add('browser-charm-token', function(Y) {
         var dragImage;
         var icon = container.one('.icon');
         evt = evt._event; // We want the real event.
-        if (icon) {
-          // Chome creates drag images in a silly way, so CSS background
-          // tranparency doesn't work and if part of the drag image is
-          // off-screen, that part is simply white.  Therefore we have to clone
-          // the icon and make sure it is visible.  We don't really want it to
-          // be visible though, so we make sure the overflow induced by the
-          // icon is hidden.
-          dragImage = Y.one('body')
-            .appendChild(icon.cloneNode(true))
-              .setStyles({
-                'height': icon.one('img').get('height'),
-                'width': icon.one('img').get('width')});
-          // Set a unique id on the cloned icon so we can remove it after drop
-          dragImage.setAttribute('id', dragImage.get('_yuid'));
-          // Pass the cloned id through the drag data system.
-          evt.dataTransfer.setData(
-              'clonedIconId', dragImage.getAttribute('id'));
-        } else {
+        if (!icon) {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
-          dragImage =
-              container.one('.charm-icon') ||
-              container.one('.category-icon');
+          icon = container.one('.charm-icon') ||
+                 container.one('.category-icon');
         }
+        var dataTransfer = evt.dataTransfer;
+        dataTransfer.effectAllowed = 'copy';
+        dataTransfer.setData('charmData', charmData);
+        dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
+        dataTransfer.setData('iconSrc', icon.one('img').getAttribute('src'));
+        dataTransfer.setDragImage(icon.getDOMNode(), 0, 0);
 
-        evt.dataTransfer.effectAllowed = 'copy';
-        evt.dataTransfer.setData('charmData', charmData);
-        evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
         evt.stopPropagation();
