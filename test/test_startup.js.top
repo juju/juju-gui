@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         hideBrowserWarning, continueWithCurrentBrowser, go, app, juju_config,
         getDocument, appStarted, warningStyle, loadingStyle, Spinner, spinner,
         startSpinner, displayLoadingMessage, hideLoadingMessage,
-        setLoadingMessageText;
+        showGetJujuButton, setLoadingMessageText;
 
     beforeEach(function() {
       warningStyle = {display: null};

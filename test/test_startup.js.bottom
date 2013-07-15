@@ -75,6 +75,22 @@
       assert.equal(loadingStyle.display, 'block');
     });
 
+    it('shows \"Get Juju\" when showJujuButton is true', function() {
+      var mock = {};
+      showGetJujuButton(mock, true);
+      assert.equal(mock.innerHTML, 'Get Juju');
+      assert.equal(mock.href, 'https://juju.ubuntu.com/get-started/');
+      assert.equal(mock.target, '_blank');
+    });
+
+    it('shows \"Logout\" when showJujuButton is false', function() {
+      var mock = {};
+      showGetJujuButton(mock, false);
+      assert.equal(mock.innerHTML, 'Logout');
+      assert.equal(mock.href, undefined);
+      assert.equal(mock.target, undefined);
+    });
+
   });
 
 }) ();

@@ -54,5 +54,7 @@ var juju_config = {
   useAnalytics: false,
   login_help: 'For this demonstration, use the password "admin" to connect.',
   isJujucharms: false,
-  defaultViewmode: 'sidebar'
+  defaultViewmode: 'sidebar',
+  // Switches the logout button to a 'Get Juju' button
+  showGetJujuButton: false
 };
