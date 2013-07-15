@@ -903,8 +903,8 @@ YUI.add('juju-topology-service', function(Y) {
           resize: false,
           width: 160,
           target: this,
-          fontSize: 9,
-          labels: true
+          fontSize: 8,
+          labels: false
         }).render());
         });
        // Manually attach the touchstart event (see method for details)
