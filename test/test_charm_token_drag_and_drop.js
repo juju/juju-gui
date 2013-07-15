@@ -128,22 +128,8 @@ describe('charm token drag and drop', function() {
         fauxIcon.cloned = true;
         return fauxIcon;
       },
-      get: function(name) {
-        // The YUI-generated unique ID is used to keep track of the cloned
-        // icon.
-        assert.equal(name, '_yuid');
-        getCalled = true;
-        return UNIQUE_ID;
-      },
-      setAttribute: function(name, value) {
-        // A unique ID is set as the drag image ID so it can be removed from
-        // the DOM when the dragging is done.
-        assert.equal(name, 'id');
-        assert.equal(value, UNIQUE_ID);
-        setAttributeCalled = true;
-      },
       getAttribute: function(name) {
-        assert.equal(name, 'id');
+        assert.equal(name, 'src');
         return UNIQUE_ID;
       },
       getDOMNode: function() {
@@ -151,6 +137,7 @@ describe('charm token drag and drop', function() {
       },
       one: function() {
         return {
+          getAttribute: this.getAttribute,
           get: function() {}
         };
       },
@@ -173,8 +160,8 @@ describe('charm token drag and drop', function() {
     var evt = {
       _event: {
         dataTransfer: {
-          setData: function(name, value) {
-            dragDataSet.push([name, value]);
+          setData: function(type, data) {
+            dragDataSet = JSON.parse(data);
             setDataCalled = true;
           },
           setDragImage: function(providedDragImage, x, y) {
@@ -191,19 +178,16 @@ describe('charm token drag and drop', function() {
     };
     handler(evt);
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
-    assert.deepEqual(dragDataSet.splice(0, 1),
-        [['clonedIconId', 'UNIQUE ID']]);
-    assert.deepEqual(dragDataSet.splice(0, 1),
-        [['charmData', 'data']]);
-    assert.deepEqual(dragDataSet.splice(0, 1),
-        [['dataType', 'charm-token-drag-and-drop']]);
+    console.log(dragDataSet);
+    assert.deepEqual(dragDataSet, {
+      charmData: 'data',
+      dataType: 'charm-token-drag-and-drop',
+      iconSrc: 'UNIQUE ID'
+    });
     // Assure that we verified all data that was set.
-    assert.deepEqual(dragDataSet, []);
     assert.isTrue(setDataCalled);
     assert.isTrue(setDragImageCalled);
     assert.isTrue(stopPropagationCalled);
-    assert.isTrue(setAttributeCalled);
-    assert.isTrue(getCalled);
   });
 
   it('respects the isDraggable switch', function() {

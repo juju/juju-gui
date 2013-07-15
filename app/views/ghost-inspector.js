@@ -82,7 +82,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-  /*@
+  /**
     A collection of methods and properties which will be mixed into the
     prototype of the view container controller to add the functionality for
     the ghost inspector interactions
