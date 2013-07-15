@@ -128,6 +128,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      window.flags = {};
       view = new views.environment({
         container: container,
         db: db,
@@ -352,7 +353,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // There should not be any duplicate nodes within the service.
         serviceNode.all('.service-status').size().should.equal(1);
         serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.charm-label').size().should.equal(1);
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
@@ -529,7 +529,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // There should not be any duplicate nodes within the service.
         serviceNode.all('.service-status').size().should.equal(1);
         serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.charm-label').size().should.equal(1);
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
