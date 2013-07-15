@@ -112,15 +112,21 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // with-home class to the widget.
       this.after('withHomeChange', function(ev) {
         if (ev.newVal) {
+          // Let the widget know we wish it to unhide it's icon and link for
+          // showing home.
           this.search.showHome();
-          // Add the with-home class to the bws-content div so that the sidebar
-          // will move down to make room for the home button.
+
           if (!this.isFullscreen()) {
+            // In the sidebar, the left panel needs the height adjusted to
+            // make room for the home links to show up.
             this.get('container').one('.bws-content').addClass('with-home');
           }
         } else {
+          // Ask the widget to remove the home buttons from display.
           this.search.hideHome();
           if (!this.isFullscreen()) {
+            // We also need to adjust the height of the sidebar now to close
+            // up the space by the home buttons.
             this.get('container').one('.bws-content').removeClass('with-home');
           }
         }
