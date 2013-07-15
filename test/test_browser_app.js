@@ -107,7 +107,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The only way to exit the test is that we hit this callback bound to
         // the change event we trigger below.
         done();
-      }
+      };
 
       view.set('withHome', true);
     });
@@ -208,6 +208,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('must correctly render the initial browser ui', function(done) {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
+        container: container,
         store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
@@ -228,7 +229,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.get('store').set(
           'datasource',
           new Y.DataSource.Local({source: emptyData}));
-      view.render(container);
+      view.render();
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
@@ -244,7 +245,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The only way to exit the test is that we hit this callback bound to
         // the change event we trigger below.
         done();
-      }
+      };
       view.set('withHome', true);
     });
 
