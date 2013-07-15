@@ -772,6 +772,58 @@ YUI.add('juju-view-utils', function(Y) {
     return errors;
   };
 
+  /**
+    Utility method to return the best available icon
+    given a service model. This will return its
+    specific icon followed by  its category icon
+    followed by a generic icon.
+
+    In the case of a category icon a hint can be provided
+    as either a single item or a list of categories that will
+    be the known preferences in selecting which category to show.
+    If no hint is provided the first category will be selected.
+
+    @method getBestIcon
+    @param {Model} model to return icon for.
+    @param {CharmDB} charmDb to resolve charm information from.
+    @param {Array} categoryHint(s) String or array of ordered categories to prefer.
+    @return {String} Icon URL.
+    */
+   utils.getBestIcon = function(model, charmdb, categoryHint) {
+      var icon = model.get('icon');
+      /*
+       *if (!icon) {
+       *  // Category
+       *  var charm = charmdb.get(model.get('charm'));
+       *  var categories = charm.get('categories');
+       *  var category;
+       *  if (categories) {
+       *    if (typeof categoryHint === 'string') {
+       *      categoryHint = [categoryHint];
+       *    }
+       *    categoryHint && categoryHint.forEach(function(h) {
+       *      if (!icon && categories.indexOf(h) !== -1) {
+       *        icon = h;
+       *      }
+       *    });
+       *    if (!icon) {
+       *      icon = categories[0];
+       *    }
+       *  }
+       *}
+       */
+      if (!icon) {
+        // Generic
+        icon = '/juju-ui/assets/images/charm_160.svg';
+      }
+      /*
+      if (!icon !== model.get('icon')) {
+        model.set('icon', icon);
+      }
+      */
+      return icon;
+
+   };
 
   /**
    * Utility object that encapsulates Y.Models and keeps their position
