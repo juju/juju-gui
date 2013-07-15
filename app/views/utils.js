@@ -772,7 +772,7 @@ YUI.add('juju-view-utils', function(Y) {
     return errors;
   };
 
- /**
+  /**
    * Utility object that encapsulates Y.Models and keeps their position
    * state within an SVG canvas.
    *

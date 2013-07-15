@@ -883,13 +883,13 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('image')
        .classed('service-icon', true)
        .attr({
-         'xlink:href': function(d) {
-           return d.icon;
-         },
-         width: 96,
-         height: 96,
-         transform: 'translate(47, 50)'
-       });
+            'xlink:href': function(d) {
+              return d.icon;
+            },
+            width: 96,
+            height: 96,
+            transform: 'translate(47, 50)'
+          });
       node.append('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) {return d.displayName; });
@@ -903,13 +903,13 @@ YUI.add('juju-topology-service', function(Y) {
       status_graph.each(function(d) {
         if (!d.subordinate) {
           d3.select(this).property('status_bar',
-            new views.StatusBar({
-              resize: false,
-              width: 160,
-              target: this,
-              fontSize: 8,
-              labels: false
-            }).render());
+              new views.StatusBar({
+                resize: false,
+                width: 160,
+                target: this,
+                fontSize: 8,
+                labels: false
+              }).render());
         }
       });
       // Manually attach the touchstart event (see method for details)
