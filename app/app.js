@@ -575,8 +575,11 @@ YUI.add('juju-gui', function(Y) {
       }
 
       Y.one('#logout-trigger').on('click', function(e) {
-        e.halt();
-        this.logout();
+        // If this is a Get Juju link then allow it to work as normal.
+        if (!window.juju_config.showJujuButton) {
+          e.halt();
+          this.logout();
+        }
       }, this);
 
       // Attach SubApplications. The subapps should share the same db.

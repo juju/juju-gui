@@ -55,5 +55,7 @@ var juju_config = {
       'The password is the admin-secret from the Juju environment.  This can ' +
       'often be found by looking in ~/.juju/environments.yaml.'),
   isJujucharms: false,
-  defaultViewmode: 'sidebar'
+  defaultViewmode: 'sidebar',
+  // Switches the logout button to a 'Get Juju' button
+  showJujuButton: false
 };
