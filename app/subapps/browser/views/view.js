@@ -108,6 +108,29 @@ YUI.add('subapp-browser-mainview', function(Y) {
               this.search.EVT_SEARCH_GOHOME, this._goHome, this)
       );
 
+      // If the showHome attribute is changed, update our html by adding the
+      // with-home class to the widget.
+      this.after('withHomeChange', function(ev) {
+        if (ev.newVal) {
+          // Let the widget know we wish it to unhide it's icon and link for
+          // showing home.
+          this.search.showHome();
+
+          if (!this.isFullscreen()) {
+            // In the sidebar, the left panel needs the height adjusted to
+            // make room for the home links to show up.
+            this.get('container').one('.bws-content').addClass('with-home');
+          }
+        } else {
+          // Ask the widget to remove the home buttons from display.
+          this.search.hideHome();
+          if (!this.isFullscreen()) {
+            // We also need to adjust the height of the sidebar now to close
+            // up the space by the home buttons.
+            this.get('container').one('.bws-content').removeClass('with-home');
+          }
+        }
+      }, this);
     },
 
     /**
@@ -139,7 +162,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
         filters: this.get('filters'),
-        fullscreenTarget: this._fullscreenTarget
+        fullscreenTarget: this._fullscreenTarget,
+        withHome: this.get('withHome')
       });
       this.search.render(node.one('.bws-header'));
 
@@ -322,6 +346,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
         valueFn: function() {
           return this.name.match(/[a-z]+$/);
         }
+      },
+
+      withHome: {
+        value: false
       }
     }
   });

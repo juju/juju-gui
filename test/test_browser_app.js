@@ -81,6 +81,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-fullscreen')));
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
+      // The default is to now show the home buttons on the widget.
+      assert.isFalse(view.get('withHome'));
+    });
+
+    it('must show the home icons when withHome is set', function() {
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen({
+        withHome: true
+      });
+      view.render(container);
+
+      // The default is to now show the home buttons on the widget.
+      assert.isTrue(view.get('withHome'));
+    });
+
+    it('shows the home icons if the withHome is changed', function(done) {
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen();
+      view.render(container);
+
+      view.search.showHome = function() {
+        // The only way to exit the test is that we hit this callback bound to
+        // the change event we trigger below.
+        done();
+      };
+
+      view.set('withHome', true);
     });
 
     it('reroutes to minimized when toggled', function(done) {
@@ -176,9 +205,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('.bws-icon').simulate('click');
     });
 
-    it('must correctly render the initial browser ui', function() {
+    it('must correctly render the initial browser ui', function(done) {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
+        container: container,
         store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
@@ -199,12 +229,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.get('store').set(
           'datasource',
           new Y.DataSource.Local({source: emptyData}));
-      view.render(container);
+      view.render();
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
+
+      // The home buttons are not visible by default.
+      assert.isFalse(view.get('withHome'));
+      assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
+
+      // Yet changing the attribute triggers it to go.
+      view.search.showHome = function() {
+        // The only way to exit the test is that we hit this callback bound to
+        // the change event we trigger below.
+        done();
+      };
+      view.set('withHome', true);
+    });
+
+    it('shows the home icon when instructed', function() {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar({
+        store: new Y.juju.Charmworld2({
+          apiHost: 'http://localhost'
+        }),
+        withHome: true
+      });
+
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var emptyData = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
+
+      // Override the store to not call the dummy localhost address.
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: emptyData}));
+      view.render(container);
+
+      // The home buttons are not visible by default.
+      assert.isTrue(view.get('withHome'));
+      assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+
     });
 
     it('routes home when it catches a gohome event', function(done) {
