@@ -884,8 +884,8 @@ YUI.add('juju-topology-service', function(Y) {
        .classed('service-icon', true)
        .attr({
             'xlink:href': function(d) {return d.icon;},
-            width: 93,
-            height: 93,
+            width: 96,
+            height: 96,
             transform: 'translate(47, 50)'
           });
       node.append('text').append('tspan')
