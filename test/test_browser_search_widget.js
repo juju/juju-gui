@@ -46,6 +46,33 @@ describe('browser search widget', function() {
 
   it('needs to render from the template', function() {
     assert.isObject(container.one('.bws-searchbox'));
+    // The nav is hidden by default.
+    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('shows the home links when withHome is set', function() {
+    // Skip the default beforeEach Search and create our own.
+    search.destroy();
+    search = new Search({
+      withHome: true
+    });
+    search.render(container);
+    assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('shows the home on command', function() {
+    search.showHome();
+    assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('hides the home on command', function() {
+    search.destroy();
+    search = new Search({
+      withHome: true
+    });
+    search.render(container);
+    search.hideHome();
+    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
   });
 
   it('should support setting search string', function() {
