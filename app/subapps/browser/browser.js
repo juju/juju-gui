@@ -609,23 +609,24 @@ YUI.add('subapp-browser', function(Y) {
           extraCfg.withHome = true;
         }
         this.showView(
-          'fullscreen',
-          this._getViewCfg(extraCfg), {
-            callback: function (view) {
-              // Hold onto the view instance for later reference.
-              this._fullscreen = view;
+            'fullscreen',
+            this._getViewCfg(extraCfg), {
+              'callback': function(view) {
+                // Hold onto the view instance for later reference.
+                this._fullscreen = view;
+              }
             }
-          }
         );
       }
 
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
-      debugger;
-      if (this._viewState.search || this._viewState.charmID) {
-        this._fullscreen.set('withHome', true);
-      } else {
-        this._fullscreen.set('withHome', false);
+      if (this._fullscreen) {
+        if (this._viewState.search || this._viewState.charmID) {
+          this._fullscreen.set('withHome', true);
+        } else {
+          this._fullscreen.set('withHome', false);
+        }
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
@@ -683,22 +684,24 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
         this.showView(
-          'sidebar',
-          this._getViewCfg(), {
-            callback: function (view) {
-              // Hold onto the sidebar view instance for later reference.
-              this._sidebar = view;
+            'sidebar',
+            this._getViewCfg(), {
+              'callback': function(view) {
+                // Hold onto the sidebar view instance for later reference.
+                this._sidebar = view;
+              }
             }
-          }
         );
       }
 
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
-      if (this._viewState.search) {
-        this._sidebar.set('withHome', true);
-      } else {
-        this._sidebar.set('withHome', false);
+      if (this._sidebar) {
+        if (this._viewState.search) {
+          this._sidebar.set('withHome', true);
+        } else {
+          this._sidebar.set('withHome', false);
+        }
       }
 
       // Render search results if search is in the url and the viewmode or the
