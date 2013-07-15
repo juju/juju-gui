@@ -39,7 +39,7 @@
     color: @bws-text;
   }
   .bws-header {
-      padding: 20px 20px 0 20px;
+      padding: 20px 20px 20px 20px;
       border-bottom: 1px solid #b7b7b9;
   }
   #bws-sidebar .bws-content,
@@ -160,6 +160,10 @@
     .bws-content {
       top: @bws-sidebar-header-height;
       border-top: 8px solid @bws-sidebar-content-top-border;
+
+      &.with-home {
+        top: @bws-sidebar-header-height-with-home;
+      }
 
       .section-title {
         padding-left: 20px;
