@@ -160,8 +160,8 @@ describe('charm token drag and drop', function() {
     var evt = {
       _event: {
         dataTransfer: {
-          setData: function(name, value) {
-            dragDataSet.push([name, value]);
+          setData: function(type, data) {
+            dragDataSet = JSON.parse(data);
             setDataCalled = true;
           },
           setDragImage: function(providedDragImage, x, y) {
@@ -178,12 +178,13 @@ describe('charm token drag and drop', function() {
     };
     handler(evt);
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
-    assert.deepEqual(dragDataSet.splice(0, 1),
-        [['charmData', 'data']]);
-    assert.deepEqual(dragDataSet.splice(0, 1),
-        [['dataType', 'charm-token-drag-and-drop']]);
+    console.log(dragDataSet);
+    assert.deepEqual(dragDataSet, {
+      charmData: 'data',
+      dataType: 'charm-token-drag-and-drop',
+      iconSrc: 'UNIQUE ID'
+    });
     // Assure that we verified all data that was set.
-    //assert.deepEqual(dragDataSet, []);
     assert.isTrue(setDataCalled);
     assert.isTrue(setDragImageCalled);
     assert.isTrue(stopPropagationCalled);

@@ -374,20 +374,15 @@ describe('service module events', function() {
         src = '/juju-ui/assets/svgs/service_health_mask.svg';
     // this will be removed by the canvas drop handler
     localContainer.setAttribute('id', 'foo');
-    localContainer
-      .append('<img src="' + src + '" />');
+    localContainer.append('<img>').setAttribute('src', src);
     d3.event._event = {
       dataTransfer: {
         getData: function(name) {
-          if (name === 'dataType') {
-            return 'charm-token-drag-and-drop';
-          } else if (name === 'charmData') {
-            return '{"id": "cs:foo/bar-1"}';
-          } else if (name === 'clonedIconId') {
-            return 'foo';
-          } else if (name === 'iconSrc') {
-            return src;
-          }
+          return JSON.stringify({
+            charmData: '{"id": "cs:foo/bar-1"}',
+            dataType: 'charm-token-drag-and-drop',
+            iconSrc: src
+          });
         }
       },
       preventDefault: function() { return; }

@@ -403,7 +403,7 @@ YUI.add('juju-topology-service', function(Y) {
     canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
       var dataTransfer = evt.dataTransfer;
-      var dataType = dataTransfer.getData('dataType');
+      var dragData = JSON.parse(dataTransfer.getData('Text'));
       var topo = self.get('component');
       var translation = topo.get('translate');
       var scale = topo.get('scale');
@@ -416,12 +416,12 @@ YUI.add('juju-topology-service', function(Y) {
         ghostAttributes.coordinates[index] =
             (dropXY[index] - translation[index]) / scale;
       });
-      if (dataType === 'charm-token-drag-and-drop') {
+      if (dragData.dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
-        var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
+        var charmData = Y.JSON.parse(dragData.charmData);
         // Add the icon url to the ghost attributes for the ghost icon
-        ghostAttributes.icon = evt.dataTransfer.getData('iconSrc');
+        ghostAttributes.icon = dragData.iconSrc;
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostAttributes);
       }
