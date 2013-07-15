@@ -1529,13 +1529,19 @@ YUI.add('juju-view-service', function(Y) {
       container.one('.save-constraints').removeAttribute('disabled');
     },
 
+    /**
+     * Show a unit within the left-hand panel.
+     *
+     * @method showUnit
+     * @param {object} ev The click event.
+     * @return {undefined} Nothing.
+     */
     showUnit: function(ev) {
       ev.halt();
       var db = this.inspector.get('db');
       var unitId = ev.currentTarget.getData('unit');
       var unit = db.units.revive(db.units.getById(unitId));
       this.inspector.showViewlet('unit', unit);
-      return;
     }
 
   };
@@ -1591,8 +1597,16 @@ YUI.add('juju-view-service', function(Y) {
       },
       unit: {
         name: 'unit',
-        template: Templates['unitOverview'],
+        template: Templates.unitOverview,
         slot: 'left',
+        /**
+         * Render the unit to the left-hand panel.
+         *
+         * @method render
+         * @param {object} unitModel The ServiceUnitModel of the unit.
+         * @param {object} viewContainerAttrs The view container's attributes.
+         * @return {undefined} Nothing.
+         */
         render: function(unitModel, viewContainerAttrs) {
           var unit = unitModel.getAttrs(),
               db = viewContainerAttrs.db,
@@ -1614,13 +1628,13 @@ YUI.add('juju-view-service', function(Y) {
             unit_ip_description = ip_description_chunks.join(' | ');
           }
 
-          var state = utils.simplifyState(unit, true); // Ignore relations errors.
+          // Ignore relations errors.
+          var state = utils.simplifyState(unit, true);
 
           var relation_errors = unit.relation_errors || {},
               relations = utils.getRelationDataForService(db, service);
 
           Y.each(relations, function(rel) {
-            // relation_errors example: {'website': ['haproxy'], 'db': ['mysql']}
             var match = relation_errors[rel.near.name],
                 far = rel.far || rel.near;
             rel.has_error = !!(match && match.indexOf(far.service) > -1);

@@ -195,7 +195,8 @@ YUI.add('juju-view-environment', function(Y) {
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'}
               },
-              viewletList: ['overview', 'units', 'unit', 'config', 'constraints'],
+              viewletList: ['overview', 'units', 'unit', 'config',
+                'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
