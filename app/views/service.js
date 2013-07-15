@@ -1551,7 +1551,6 @@ YUI.add('juju-view-service', function(Y) {
     var DEFAULT_VIEWLETS = {
       overview: {
         name: 'overview',
-        slot: 'default',
         template: Templates.serviceOverview,
         bindings: {
           aggregated_status: {
@@ -1591,14 +1590,50 @@ YUI.add('juju-view-service', function(Y) {
         name: 'unit',
         template: Templates['unitOverview'],
         slot: 'left',
-        render: function(unit, viewContainerAttrs) {
+        render: function(unitModel, viewContainerAttrs) {
+          var unit = unitModel.getAttrs(),
+              db = viewContainerAttrs.db,
+              service = db.services.getById(unit.service),
+              env = db.environment.get('annotations');
+
+          var ip_description_chunks = [];
+          if (unit.public_address) {
+            ip_description_chunks.push(unit.public_address);
+          }
+          if (unit.private_address) {
+            ip_description_chunks.push(unit.private_address);
+          }
+          if (unit.open_ports) {
+            ip_description_chunks.push(unit.open_ports.join());
+          }
+          var unit_ip_description;
+          if (ip_description_chunks.length) {
+            unit_ip_description = ip_description_chunks.join(' | ');
+          }
+
+          var state = utils.simplifyState(unit, true); // Ignore relations errors.
+
+          var relation_errors = unit.relation_errors || {},
+              relations = utils.getRelationDataForService(db, service);
+
+          Y.each(relations, function(rel) {
+            // relation_errors example: {'website': ['haproxy'], 'db': ['mysql']}
+            var match = relation_errors[rel.near.name],
+                far = rel.far || rel.near;
+            rel.has_error = !!(match && match.indexOf(far.service) > -1);
+          });
+
+          var templateData = {
+            unit: unit,
+            unitIPDescription: unit_ip_description,
+            relations: relations
+          };
           this.container = Y.Node.create(this.templateWrapper);
-          this.container.setHTML(this.template(unit.getAttrs()));
+          this.container.setHTML(this.template(templateData));
         }
       },
       config: {
         name: 'config',
-        slot: 'default',
         template: Templates['service-configuration'],
         'render': function(service, viewContainerAttrs) {
           var settings = [];
@@ -1679,7 +1714,6 @@ YUI.add('juju-view-service', function(Y) {
       // Service constraints viewlet.
       constraints: {
         name: 'constraints',
-        slot: 'default',
         template: Templates['service-constraints-viewlet'],
         readOnlyConstraints: ['provider-type', 'ubuntu-series'],
         constraintDescriptions: {
@@ -1822,7 +1856,6 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.slots = {
-        'default': '.viewlet-container',
         'left': '.left'
       };
       this.inspector.render();
