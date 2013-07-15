@@ -575,8 +575,8 @@ YUI.add('juju-gui', function(Y) {
       }
 
       Y.one('#logout-trigger').on('click', function(e) {
-        // If this is a Get Juju link then allow it to work as normal.
-        if (!window.juju_config.showJujuButton) {
+        // If this is not a Get Juju link then allow it to work as normal.
+        if (!this.get('showGetJujuButton')) {
           e.halt();
           this.logout();
         }
