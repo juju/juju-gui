@@ -214,14 +214,24 @@ YUI.add('browser-search-widget', function(Y) {
       input.set('value', newval);
     },
 
+    /**
+     * Show the home icons to the user.
+     *
+     * @method showHome
+     *
+     */
     showHome: function() {
-      debugger;
       var homeNode = this.get('contentBox').one('.browser-nav');
       homeNode.removeClass('hidden');
     },
 
+    /**
+     * Hide the home links from the user.
+     *
+     * @method hideHome
+     *
+     */
     hideHome: function() {
-      debugger;
       var homeNode = this.get('contentBox').one('.browser-nav');
       homeNode.addClass('hidden');
     }

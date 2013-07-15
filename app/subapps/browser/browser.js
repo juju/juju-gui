@@ -609,19 +609,18 @@ YUI.add('subapp-browser', function(Y) {
           extraCfg.withHome = true;
         }
         this.showView(
-          'fullscreen',
-          this._getViewCfg(extraCfg), {
-            callback: function (view) {
-              // Hold onto the view instance for later reference.
-              this._fullscreen = view;
+            'fullscreen',
+            this._getViewCfg(extraCfg), {
+              'callback': function(view) {
+                // Hold onto the view instance for later reference.
+                this._fullscreen = view;
+              }
             }
-          }
         );
       }
 
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
-      debugger;
       if (this._viewState.search || this._viewState.charmID) {
         this._fullscreen.set('withHome', true);
       } else {
@@ -683,13 +682,13 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
         this.showView(
-          'sidebar',
-          this._getViewCfg(), {
-            callback: function (view) {
-              // Hold onto the sidebar view instance for later reference.
-              this._sidebar = view;
+            'sidebar',
+            this._getViewCfg(), {
+              'callback': function(view) {
+                // Hold onto the sidebar view instance for later reference.
+                this._sidebar = view;
+              }
             }
-          }
         );
       }
 
