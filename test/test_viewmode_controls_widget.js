@@ -51,6 +51,15 @@ describe('viewmode controls widgets', function() {
     }
   });
 
+  it('activates the correct div on init', function() {
+    var triggered = false;
+    controls = new ViewmodeControls({
+      currentViewmode: 'fullscreen'
+    });
+    controls.render();
+    assert.isTrue(container.one('.fullscreen').hasClass('active'));
+  });
+
   it('should fire a fullscreen event when expand clicked', function() {
     var triggered = false;
     controls = new ViewmodeControls();

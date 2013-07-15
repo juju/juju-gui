@@ -146,7 +146,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // Make sure the controls starts out setting the correct active state
       // based on the current viewmode for our View.
       this.controls = new widgets.ViewmodeControls({
-        initialViewmode: this.get('viewmode')
+        currentViewmode: this.get('viewmode')
       });
       this.controls.render();
     },
