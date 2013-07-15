@@ -160,7 +160,6 @@ YUI.add('browser-search-widget', function(Y) {
                 ev.target.addClass('home-icon');
               }, this)
       );
-
     },
 
     /**
@@ -213,6 +212,18 @@ YUI.add('browser-search-widget', function(Y) {
       var input = this.get('contentBox').one('input');
       input.focus();
       input.set('value', newval);
+    },
+
+    showHome: function() {
+      debugger;
+      var homeNode = this.get('contentBox').one('.browser-nav');
+      homeNode.removeClass('hidden');
+    },
+
+    hideHome: function() {
+      debugger;
+      var homeNode = this.get('contentBox').one('.browser-nav');
+      homeNode.addClass('hidden');
     }
 
   }, {
@@ -227,6 +238,16 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
+      },
+
+      /**
+       * @attribute withHome
+       * @default false
+       * @type {Boolean}
+       *
+       */
+      withHome: {
+        value: false
       }
     }
   });
