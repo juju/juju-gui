@@ -884,7 +884,7 @@ YUI.add('juju-topology-service', function(Y) {
        .classed('service-icon', true)
        .attr({
          'xlink:href': function(d) {
-           return utils.getBestIcon(d.model);
+           return d.icon;
          },
          width: 96,
          height: 96,
