@@ -883,11 +883,11 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('image')
        .classed('service-icon', true)
        .attr({
-         'xlink:href': function(d) {return d.icon;},
-         width: 93,
-         height: 93,
-         transform: 'translate(47, 50)'
-       });
+            'xlink:href': function(d) {return d.icon;},
+            width: 93,
+            height: 93,
+            transform: 'translate(47, 50)'
+          });
       node.append('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) {return d.displayName; });
@@ -906,8 +906,8 @@ YUI.add('juju-topology-service', function(Y) {
           fontSize: 8,
           labels: false
         }).render());
-        });
-       // Manually attach the touchstart event (see method for details)
+      });
+      // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
         self.attachTouchstartEvents(data, this);
       });
@@ -977,8 +977,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Size the node for drawing.
       node.attr({
-        width: function(box) { box.w = 190; return box.w;},
-        height: function(box) { box.h = 190; return box.h;}
+        'width': function(box) { box.w = 190; return box.w;},
+        'height': function(box) { box.h = 190; return box.h;}
       });
 
       node.select('.service-block-image').each(function(d) {
@@ -1149,7 +1149,7 @@ YUI.add('juju-topology-service', function(Y) {
       node.each(function(d) {
         var status_graph = d3.select(this).select('.statusbar');
         var status_bar = status_graph.property('status_bar');
-        if(status_bar) {
+        if (status_bar) {
           status_bar.update(d.aggregated_status);
         }
       });
