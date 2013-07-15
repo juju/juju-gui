@@ -621,10 +621,12 @@ YUI.add('subapp-browser', function(Y) {
 
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
-      if (this._viewState.search || this._viewState.charmID) {
-        this._fullscreen.set('withHome', true);
-      } else {
-        this._fullscreen.set('withHome', false);
+      if (this._fullscreen) {
+        if (this._viewState.search || this._viewState.charmID) {
+          this._fullscreen.set('withHome', true);
+        } else {
+          this._fullscreen.set('withHome', false);
+        }
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
@@ -694,10 +696,12 @@ YUI.add('subapp-browser', function(Y) {
 
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
-      if (this._viewState.search) {
-        this._sidebar.set('withHome', true);
-      } else {
-        this._sidebar.set('withHome', false);
+      if (this._sidebar) {
+        if (this._viewState.search) {
+          this._sidebar.set('withHome', true);
+        } else {
+          this._sidebar.set('withHome', false);
+        }
       }
 
       // Render search results if search is in the url and the viewmode or the
