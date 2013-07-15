@@ -56,6 +56,7 @@ YUI.add('d3-statusbar', function(Y) {
         fontSize: 16,
         transitionTime: 750,
         resize: true,
+        labels: true,
         'sort': function(a, b) {
           return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
         }
@@ -209,26 +210,28 @@ YUI.add('d3-statusbar', function(Y) {
       .remove();
 
       // Enter/Update/Exit labels
-      labels
-      .enter()
-      .append('text');
+      if (this.options.labels) {
+        labels
+        .enter()
+        .append('text');
 
-      labels
-      .text(function(d) { return utils.humanizeNumber(d.count);})
-      .classed('label', true)
-      .style({
-            'font-size': self.options.fontSize
-          })
-      .transition()
-      .duration(self.options.transitionTime)
-      .attr({
-            x: function(d) {return self.scale(d.start) + 2;},
-            y: self.options.fontSize - 1
-          });
+        labels
+        .text(function(d) { return utils.humanizeNumber(d.count);})
+        .classed('label', true)
+        .style({
+              'font-size': self.options.fontSize
+            })
+        .transition()
+        .duration(self.options.transitionTime)
+        .attr({
+              x: function(d) {return self.scale(d.start) + 2;},
+              y: self.options.fontSize - 1
+            });
 
-      labels
-      .exit().remove();
-      return this;
+        labels
+        .exit().remove();
+        return this;
+      }
     };
 
     return StatusBar;
