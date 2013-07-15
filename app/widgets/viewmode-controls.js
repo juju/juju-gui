@@ -141,11 +141,7 @@ YUI.add('viewmode-controls', function(Y) {
               'click', this._goSidebar, this)
       );
 
-      // If there's not a currently active node, then we need to set an
-      // initial active control based on the viewmode.
-      if (!container.one('.active')) {
-        this._updateActiveNav(this.get('initialViewmode'));
-      }
+      this._updateActiveNav(this.get('currentViewmode'));
     },
 
     /**
@@ -187,7 +183,7 @@ YUI.add('viewmode-controls', function(Y) {
         }
       },
 
-      initialViewmode: {
+      currentViewmode: {
         value: undefined
       }
     }

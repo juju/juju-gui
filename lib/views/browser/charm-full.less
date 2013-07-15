@@ -142,22 +142,16 @@
                 }
             }
         }
-        .back.icon,
-        .share {
-            position: absolute;
-            top: 30px;
-        }
         .back.icon {
+            position: absolute;
             display: block;
+            top: 30px;
             right: 30px;
             width: 20px;
             height: 20px;
             background: transparent
                     url(/juju-ui/assets/images/panel_close.png)
                     left top no-repeat;
-        }
-        .share {
-            right: 70px;
         }
     }
     .changelog {
@@ -293,6 +287,17 @@
             }
         }
     }
+    #sharing {
+        float: right;
+        padding-top: 17px;
+        padding-bottom: 16px;
+        padding-right: 26px;
+        padding-left: 16px;
+
+        a {
+            padding-right: 5px; 
+        }
+    }
 }
 
 #bws-fullscreen .charm {
@@ -344,10 +349,6 @@
                 color: @bws-text;
                 text-decoration: underline;    
             }
-        }
-        .share {
-            top: 20px;
-            right: 20px;
         }
     }
     .tabs {

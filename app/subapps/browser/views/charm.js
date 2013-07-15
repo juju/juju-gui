@@ -62,6 +62,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.charm-token': {
         click: '_handleCharmSelection'
+      },
+      '#sharing a': {
+        click: '_openShareLink'
       }
     },
 
@@ -496,6 +499,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+       Handles the links in the sharing widget to ensure they open in a new
+       window.
+
+       @method _openShareLink
+       @param {Y.EventFacade} e The click event.
+     */
+    _openShareLink: function(e) {
+      e.halt();
+      var shareLink = e.currentTarget.get('href');
+      window.open(shareLink, 'share_window');
+    },
+
+    /**
      * Clicking on the open log should toggle the list of log entries.
      *
      * @method _toggleLog
@@ -631,12 +647,26 @@ YUI.add('subapp-browser-charmview', function(Y) {
           container = this.get('container'),
           sourceLink = this._getSourceLink();
 
+      var link;
+      if (window.location.origin) {
+        link = window.location.origin + '/' + this.get('charm').get('id');
+      } else {
+        link = window.location.protocol + window.location.host + '/' +
+            this.get('charm').get('id');
+      }
       tplData.isFullscreen = isFullscreen;
       tplData.sourceLink = sourceLink;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits, sourceLink);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
+      tplData.link = escape(link);
+      tplData.twitterText = escape(
+          'Check out this great charm on jujucharms: ' + link);
+      tplData.emailSubject = escape(
+          'Check out this great charm on jujucharms!');
+      tplData.emailText = escape(
+          'Check out this great charm on jujucharms: ' + link);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
@@ -645,7 +675,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         tplData.provides = false;
       }
 
-
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
@@ -653,12 +682,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // events.
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
-
-      this.shareWidget = new widgets.browser.SharingWidget({
-        link: window.location.origin + '/' + this.get('charm').get('id'),
-        button: renderTo.one('.share')
-      });
-      this.shareWidget.render(renderTo.one('.share'));
 
       this.tabview = new widgets.browser.TabView({
         render: true,
@@ -814,7 +837,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-charm-container',
     'browser-overlay-indicator',
-    'browser-sharing-widget',
     'browser-tabview',
     'datatype-date',
     'datatype-date-format',

@@ -79,6 +79,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
+    it('has sharing links', function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: 'README content.'
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        }),
+        container: utils.makeContainer(),
+        store: fakeStore
+      });
+      view.render();
+      var links = container.all('#sharing a');
+      assert.equal(links.size(), 3);
+    });
+
     it('should be able to locate a readme file', function() {
       view = new CharmView({
         charm: new models.BrowserCharm({

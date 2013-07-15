@@ -77,7 +77,17 @@ YUI.add('subapp-browser', function(Y) {
       // If there are changes to the filters, we need to update our filter
       // object first, and then generate a new query string for the state to
       // track.
-      if (change.filter) {
+      if (change.filter && change.filter.clear) {
+        // If the filter is set to anything else, update it.
+        this._filter.clear();
+        // We manually force this so that there's not even an empty query
+        // string generated to be visible to the user in the url.
+        change.querystring = undefined;
+      } else if (change.filter && change.filter.replace) {
+        this._filter.clear();
+        this._filter.update(change.filter);
+        change.querystring = this._filter.genQueryString();
+      } else if (change.filter) {
         this._filter.update(change.filter);
         change.querystring = this._filter.genQueryString();
       }
@@ -594,7 +604,29 @@ YUI.add('subapp-browser', function(Y) {
       // We know the viewmode is already fullscreen because we're in this
       // function.
       if (this._hasStateChanged('viewmode')) {
-        this._fullscreen = this.showView('fullscreen', this._getViewCfg());
+        var extraCfg = {};
+        if (this._viewState.search || this._viewState.charmID) {
+          extraCfg.withHome = true;
+        }
+        this.showView(
+            'fullscreen',
+            this._getViewCfg(extraCfg), {
+              'callback': function(view) {
+                // Hold onto the view instance for later reference.
+                this._fullscreen = view;
+              }
+            }
+        );
+      }
+
+      // Even if we've got an existing View, check if Home should be displayed
+      // or not based on the current view state.
+      if (this._fullscreen) {
+        if (this._viewState.search || this._viewState.charmID) {
+          this._fullscreen.set('withHome', true);
+        } else {
+          this._fullscreen.set('withHome', false);
+        }
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
@@ -651,7 +683,25 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
-        this._sidebar = this.showView('sidebar', this._getViewCfg());
+        this.showView(
+            'sidebar',
+            this._getViewCfg(), {
+              'callback': function(view) {
+                // Hold onto the sidebar view instance for later reference.
+                this._sidebar = view;
+              }
+            }
+        );
+      }
+
+      // Even if we've got an existing View, check if Home should be displayed
+      // or not based on the current view state.
+      if (this._sidebar) {
+        if (this._viewState.search) {
+          this._sidebar.set('withHome', true);
+        } else {
+          this._sidebar.set('withHome', false);
+        }
       }
 
       // Render search results if search is in the url and the viewmode or the
@@ -720,7 +770,12 @@ YUI.add('subapp-browser', function(Y) {
       //XXX j.c.sackett July 2, 2013: This is a placeholder function that will
       //need some reworking when we have assets. It will probably want to render
       //to body instead of the fullscreen renderto.
-      this._jujucharms = this.showView('jujucharms', this._getViewCfg());
+      this.showView('jujucharms', this._getViewCfg(), {
+        'callback': function(view) {
+          // Hold onto the view instance for later reference.
+          this._fullscreen = view;
+        }
+      });
     },
 
     /**

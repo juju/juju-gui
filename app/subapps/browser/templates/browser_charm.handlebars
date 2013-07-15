@@ -1,17 +1,7 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
         <div class="heading">
-                {{#if isFullscreen}}
-                    <div class="breadcrumbs">
-                        <a href="" class="back">
-                            <i class="sprite browser_home"></i>
-                            <span>Home</span>
-                        </a>
-                        | {{ name }}
-                    </div>
-                {{/if}}
                 {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
-                <a href="" class="share">Share</a>
             <div class="block-icon">
                 {{#if shouldShowIcon}}
                     <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
@@ -55,7 +45,7 @@
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
                     </li>
                 </ul>
-                
+
                 {{#if isFullscreen}}
                     {{>providers}}
                 {{/if}}
@@ -72,6 +62,17 @@
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
             </ul>
             <hr />
+            <span id="sharing">
+              <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
+                <i class="sprite twitter-normal"></i>
+              </a>
+              <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
+                <i class="sprite google-normal"></i>
+              </a>
+              <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
+                <i class="sprite email-normal"></i>
+              </a>
+            </span>
             <div>
                 <div id="bws-summary">
                     <div class="summary">

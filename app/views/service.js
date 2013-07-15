@@ -1570,11 +1570,14 @@ YUI.add('juju-view-service', function(Y) {
               // the Ghost phase of the GUI. Once we have better integration
               // with the charm browser API services handling of icon
               // can be improved.
-              var icon = Y.one(node).one('img');
-              if (!icon) {
-                icon = Y.one(node).append('<img>');
+              var icon = node.one('img');
+              if (icon === null && value) {
+                node.append('<img>');
+                icon = node.one('img');
               }
-              icon.set('src', value);
+              if (value) {
+                icon.set('src', value);
+              }
             }
           },
           units: {
@@ -1639,14 +1642,21 @@ YUI.add('juju-view-service', function(Y) {
           var settings = [];
           var db = viewContainerAttrs.db;
           var charm = db.charms.getById(service.get('charm'));
-          var charmOptions = charm.get('config').options;
+          var charmConfig = charm.get('config');
+          var charmOptions = charmConfig && charmConfig.options;
           Y.Object.each(service.get('config'), function(value, key) {
-            settings.push({
+            var setting = {
               name: key,
-              value: value,
-              description: charmOptions[key].description,
-              'type': charmOptions[key].type
-            });
+              value: value
+            };
+            if (charmOptions) {
+              var option = charmOptions[key];
+              if (option) {
+                setting.description = option.description;
+                setting.type = option.type;
+              }
+            }
+            settings.push(setting);
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(

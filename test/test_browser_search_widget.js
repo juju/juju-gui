@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('browser search widget', function() {
-  var Y, container, Search;
+  var Y, container, search, Search;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
@@ -35,24 +35,65 @@ describe('browser search widget', function() {
 
   beforeEach(function() {
     container = Y.namespace('juju-tests.utils').makeContainer('container');
+    search = new Search();
+    search.render(container);
   });
 
   afterEach(function() {
+    search.destroy();
     container.remove(true);
   });
 
   it('needs to render from the template', function() {
-    var search = new Search();
-    search.render(container);
     assert.isObject(container.one('.bws-searchbox'));
+    // The nav is hidden by default.
+    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('shows the home links when withHome is set', function() {
+    // Skip the default beforeEach Search and create our own.
+    search.destroy();
+    search = new Search({
+      withHome: true
+    });
+    search.render(container);
+    assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('shows the home on command', function() {
+    search.showHome();
+    assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+  });
+
+  it('hides the home on command', function() {
+    search.destroy();
+    search = new Search({
+      withHome: true
+    });
+    search.render(container);
+    search.hideHome();
+    assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
   });
 
   it('should support setting search string', function() {
-    var search = new Search();
-    search.render(container);
-
     search.updateSearch('test');
     container.one('input').get('value').should.eql('test');
+  });
+
+  it('supports an onHome event', function(done) {
+    search.on(search.EVT_SEARCH_GOHOME, function() {
+      done();
+    });
+
+    container.one('i.home').simulate('click');
+  });
+
+  it('clicking on the home link also works', function(done) {
+    search.on(search.EVT_SEARCH_GOHOME, function() {
+      done();
+    });
+
+    container.one('a.home').simulate('click');
   });
 
 });
