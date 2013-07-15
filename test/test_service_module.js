@@ -370,11 +370,12 @@ describe('service module events', function() {
   });
 
   it('should deploy a service on charm token drop events', function(done) {
-    var localContainer = utils.makeContainer();
+    var localContainer = utils.makeContainer(),
+        src = '/juju-ui/assets/svgs/service_health_mask.svg';
     // this will be removed by the canvas drop handler
     localContainer.setAttribute('id', 'foo');
     localContainer
-      .append('<img src="/juju-ui/assets/svgs/service_health_mask.svg" />');
+      .append('<img src="' + src + '" />');
     d3.event._event = {
       dataTransfer: {
         getData: function(name) {
@@ -384,6 +385,8 @@ describe('service module events', function() {
             return '{"id": "cs:foo/bar-1"}';
           } else if (name === 'clonedIconId') {
             return 'foo';
+          } else if (name === 'iconSrc') {
+            return src;
           }
         }
       },
@@ -399,7 +402,7 @@ describe('service module events', function() {
       // transposition/scale of the canvas.
       assert.deepEqual(ghostAttributes, {
         coordinates: [155, 82],
-        icon: '/juju-ui/assets/svgs/service_health_mask.svg'
+        icon: src
       });
       done();
     });

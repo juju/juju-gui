@@ -86,22 +86,20 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
         var icon = container.one('.icon');
         evt = evt._event; // We want the real event.
+        var dataTransfer = evt.dataTransfer;
         if (!icon) {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
           icon = container.one('.charm-icon') ||
                  container.one('.category-icon');
         }
-        var dataTransfer = evt.dataTransfer;
         dataTransfer.effectAllowed = 'copy';
         dataTransfer.setData('charmData', charmData);
         dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
         dataTransfer.setData('iconSrc', icon.one('img').getAttribute('src'));
         dataTransfer.setDragImage(icon.getDOMNode(), 0, 0);
-
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
         evt.stopPropagation();
