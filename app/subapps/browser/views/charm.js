@@ -381,6 +381,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
         this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
+        this.loadedRelatedInterfaceCharms = true;
       }
     },
 
@@ -575,6 +576,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+      this.loadedRelatedCharms = false;
+      this.loadedRelatedInterfaceCharms = false;
     },
 
     /**
@@ -587,23 +590,25 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _renderRelatedInterfaceCharms: function(type, relatedCharms) {
-      this.charmTokens = [];
-      Y.Object.each(relatedCharms, function(list, iface) {
-        // we only care about the top three charms in the list.
-        var charms = list.slice(0, 3);
-        charms.forEach(function(charm) {
-          var uiID = [
-            type,
-            iface
-          ].join('-');
+      if (!this.loadedRelatedInterfaceCharms) {
+        this.charmTokens = [];
+        Y.Object.each(relatedCharms, function(list, iface) {
+          // we only care about the top three charms in the list.
+          var charms = list.slice(0, 3);
+          charms.forEach(function(charm) {
+            var uiID = [
+              type,
+              iface
+            ].join('-');
 
-          charm.size = 'tiny';
-          var ct = new widgets.browser.CharmToken(charm);
-          var node = Y.one('[data-interface="' + uiID + '"]');
-          ct.render(node);
-          this.charmTokens.push(ct);
+            charm.size = 'tiny';
+            var ct = new widgets.browser.CharmToken(charm);
+            var node = Y.one('[data-interface="' + uiID + '"]');
+            ct.render(node);
+            this.charmTokens.push(ct);
+          }, this);
         }, this);
-      }, this);
+      }
     },
 
     /**
@@ -616,18 +621,21 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     _renderRelatedCharms: function() {
-      var relatedCharms = this.get('charm').get('relatedCharms');
-      // If there are no overall related charms then just skip it all.
-      if (relatedCharms.overall) {
-        var relatedNode = this.get('container').one('.related-charms');
-        this.relatedCharmContainer = new widgets.browser.CharmContainer(
-            Y.merge({
-              name: 'Related Charms',
-              cutoff: 10,
-              children: relatedCharms.overall
-            }));
-        this.relatedCharmContainer.render(relatedNode);
-        this.hideIndicator(Y.one('.related-charms'));
+      if (!this.loadedRelatedCharms) {
+        var relatedCharms = this.get('charm').get('relatedCharms');
+        // If there are no overall related charms then just skip it all.
+        if (relatedCharms.overall) {
+          var relatedNode = this.get('container').one('.related-charms');
+          this.relatedCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Related Charms',
+                cutoff: 10,
+                children: relatedCharms.overall
+              }));
+          this.relatedCharmContainer.render(relatedNode);
+          this.hideIndicator(Y.one('.related-charms'));
+        }
+        this.loadedRelatedCharms = true;
       }
     },
 

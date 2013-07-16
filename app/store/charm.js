@@ -155,7 +155,7 @@ YUI.add('juju-charm-store', function(Y) {
 
 
   /**
-   * Api helper for the updated charmworld api v1.
+   * Api helper for the updated charmworld api v2.
    *
    * @class Charmworld2
    * @extends {Base}
