@@ -1626,13 +1626,22 @@ YUI.add('juju-view-service', function(Y) {
                                           }, function(unit) {
                                             return unit.id;
                                           });
-// D3 content update section
+
       // D3 content enter section
       unitsList.enter()
                .append('li')
                .text(function(d) {
                  return d.id;
-               });
+               })
+               .append('input')
+               .attr({'type': 'checkbox',
+                      'name': function(unit) {
+                        unit.id
+                      }});
+      // D3 content update section
+      unitsList.sort(function(a, b) {
+                      return a.number - b.number;
+                    });
 
       // D3 content exit section
       unitsList.exit().remove();
