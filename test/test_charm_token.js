@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('charm token', function() {
+describe('charm token', function() {
   var charm_container, CharmToken, cleanIconHelper, token, utils, Y;
 
   before(function(done) {

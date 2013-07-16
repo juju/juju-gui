@@ -116,9 +116,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
       // Return a cleanup function to undo this change.
       return function() {
-          helperNS.charmIconPath = undefined;
-        };
-      }
+        helperNS.charmIconPath = undefined;
+      };
+    }
   };
 
   // Split jujuTests.utils definition, so that charms can be cached
