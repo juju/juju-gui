@@ -28,6 +28,12 @@ describe('charm token drag and drop', function() {
     ],
     function(Y) {
       CharmToken = Y.juju.widgets.browser.CharmToken;
+      // Need the handlebars helper for the charm-token to render.
+      Y.Handlebars.registerHelper(
+          'charmIconPath',
+          function(charmID, file) {
+            return '/path/to/charm/' + file;
+          });
       done();
     });
 
@@ -45,6 +51,10 @@ describe('charm token drag and drop', function() {
     if (token) {
       token.destroy();
     }
+  });
+
+  after(function() {
+    Y.Handlebars.helpers.charmIconPath = undefined;
   });
 
   it('extracts charm configuration from the widget configuration', function() {

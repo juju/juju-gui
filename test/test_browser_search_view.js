@@ -37,7 +37,7 @@ describe('search view', function() {
         function(Y) {
           // Need the handlebars helper for the charm-token to render.
           Y.Handlebars.registerHelper(
-              'charmFilePath',
+              'charmIconPath',
               function(charmID, file) {
                 return '/path/to/charm/' + file;
               });
@@ -46,7 +46,7 @@ describe('search view', function() {
   });
 
   after(function(done) {
-    Y.Handlebars.helpers.charmFilePath = undefined;
+    Y.Handlebars.helpers.charmIconPath = undefined;
     done();
   });
 

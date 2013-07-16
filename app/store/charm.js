@@ -302,6 +302,14 @@ YUI.add('juju-charm-store', function(Y) {
         filename].join('/');
     },
 
+    iconpath: function(charmID) {
+      return this.get('apiHost') + [
+        this._apiRoot,
+        'charm',
+        charmID,
+        'icon.svg'].join('/');
+    },
+
     /**
      * Load the QA data for a specific charm.
      *
