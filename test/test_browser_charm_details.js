@@ -821,6 +821,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // on the browser due to many charms with the same score of 10 in the
         // sample data..
         assert(ev.change.charmID);
+        assert.isTrue(view.loadedRelatedCharms);
         testContainer.remove(true);
         done();
       });
@@ -859,6 +860,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           testContainer.all('#bws-interfaces .charm-token').size(),
           4);
+      assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 
     it('only loads the interface data once', function() {
