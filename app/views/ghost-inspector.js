@@ -54,13 +54,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // This flag is still required because it comes fully populated from the
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
-
-      // This allows us to use the old util methods for parsing the config
-      // fields while consuming the new charm model from the charm browser.
-      if (charm.get('options') === undefined) {
-        charm.set('options', charm.get('config').options);
-      }
-
+      charm.set('options', charm.get('options').options);
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);

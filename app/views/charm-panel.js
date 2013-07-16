@@ -234,9 +234,8 @@ YUI.add('juju-charm-panel', function(Y) {
         render: function() {
           var container = this.get('container'),
               charm = this.get('model'),
-              config = charm && charm.get('config'),
-              settings = config && utils.extractServiceSettings(
-                  config.options),
+              options = charm && charm.get('options'),
+              settings = options && utils.extractServiceSettings(options),
               self = this;
           if (charm && charm.loaded) {
             container.setHTML(this.template(
@@ -275,7 +274,7 @@ YUI.add('juju-charm-panel', function(Y) {
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.
               loaded: false,
-              config: config
+              config: options
             });
             // If we have been given coordinates at which the ghost should be
             // created, respect them.
