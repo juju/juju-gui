@@ -1627,7 +1627,6 @@ YUI.add('juju-view-service', function(Y) {
                                     return 'status-unit-content ' + d.category;
                                   })
                                   .style('max-height', function(d) {
-                                    console.log(d.units.length);
                                     return (d.units.length + 10) + 'em';
                                   })
                                   .append('form');

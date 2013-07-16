@@ -162,7 +162,7 @@ describe('Inspector Overview', function() {
 
     // Clear out the units added in the setUpInspector method
     db.units.reset();
-console.log('after reset');
+
     var units = new Y.LazyModelList();
 
     units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
@@ -209,7 +209,7 @@ console.log('after reset');
     overview.generateAndBindUnitHeaders(newContainer, statuses);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
-console.log(newContainer.getDOMNode());
+
     assert.equal(unitListWrappers.size(), 2);
 
     wrapper2 = unitListWrappers.item(0);
