@@ -342,7 +342,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       api.destroy();
     });
 
-    it('constructs filepaths correct', function() {
+    it('constructs filepaths correctly', function() {
       var hostname = 'http://localhost';
       var api = new Y.juju.Charmworld2({
         apiHost: hostname
@@ -352,6 +352,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           iconPath,
           'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
+    });
+
+    it('constructs iconpaths correctly', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      });
+
+      var iconPath = api.iconpath('precise/mysql-1');
+      assert.equal(
+          iconPath,
+          'http://localhost/api/2/charm/precise/mysql-1/icon.svg');
     });
 
   });

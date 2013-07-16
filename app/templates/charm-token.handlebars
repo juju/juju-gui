@@ -9,38 +9,17 @@
             <span class="badge-approved"
                 title="This charm has been reviewed."></span>
         {{/if}}
-        {{#if shouldShowIcon}}
-            <div class="icon">
-                <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon">
-            </div>
-        {{else}}
-          {{#if mainCategory}}
-            <div title="category {{mainCategory}}"
-                class="category-icon sprite
-                  {{#if_eq size 'tiny'}}
-                    charm-{{mainCategory}}-48
-                  {{/if_eq}}
-                  {{#if_eq size 'small'}}
-                    charm-{{mainCategory}}-50
-                  {{/if_eq}}
-                  {{#if_eq size 'large'}}
-                    charm-{{mainCategory}}-96
-                  {{/if_eq}}
-            ">
-            </div>
-          {{else}}
-            <div class="charm-icon">
-            </div>
-          {{/if}}
-        {{/if}}
+        <div class="icon">
+            <img src="{{charmIconPath id 'icon.svg'}}" alt="{{ name }} icon">
+        </div>
     </span>
     <span class="title">
         {{ name }}
     </span>
     <span class="metadata">
             {{ downloads }} {{pluralize 'download' downloads}},
-            {{ recent_commit_count }}
-            {{pluralize 'commit' recent_commit_count}}
+            {{ commitCount }}
+            {{pluralize 'commit' commitCount}}
     </span>
     <span class="description">{{truncate description 110 }}</span>
 </a>

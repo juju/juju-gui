@@ -23,7 +23,8 @@ describe('Inspector Settings', function() {
       inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmConfig;
 
   before(function(done) {
-    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils'];
+    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
+      'juju-charm-store', 'juju-charm-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -87,10 +88,15 @@ describe('Inspector Settings', function() {
         ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
       ]}});
     }
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
     view = new jujuViews.environment({
       container: container,
       db: db,
-      env: env
+      env: env,
+      store: fakeStore
     });
     view.render();
     Y.Node.create([

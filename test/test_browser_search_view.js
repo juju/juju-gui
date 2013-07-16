@@ -21,7 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('search view', function() {
   var apiURL,
+      cleanIconHelper,
       container,
+      utils,
       view,
       Y;
 
@@ -35,19 +37,10 @@ describe('search view', function() {
         'node-event-simulate',
         'subapp-browser-searchview',
         function(Y) {
-          // Need the handlebars helper for the charm-token to render.
-          Y.Handlebars.registerHelper(
-              'charmFilePath',
-              function(charmID, file) {
-                return '/path/to/charm/' + file;
-              });
+          utils = Y.namespace('juju-tests.utils');
+          cleanIconHelper = utils.stubCharmIconPath();
           done();
         });
-  });
-
-  after(function(done) {
-    Y.Handlebars.helpers.charmFilePath = undefined;
-    done();
   });
 
   beforeEach(function() {
@@ -92,6 +85,10 @@ describe('search view', function() {
     delete window.juju_config;
     view.destroy();
     container.remove(true);
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('exists', function() {

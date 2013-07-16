@@ -752,6 +752,11 @@ describe('BrowserCharm test', function() {
     instance.get('recent_commit_count').should.equal(3);
   });
 
+  it('tracks the total commits of the charm', function() {
+    instance = new models.BrowserCharm(data.charm);
+    assert.equal(instance.get('commitCount'), 44);
+  });
+
   it('provides a providers attr', function() {
     // The charm details needs the failing providers generated from the list
     // of tested_providers.

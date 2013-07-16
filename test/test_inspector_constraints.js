@@ -23,7 +23,7 @@ describe('Inspector Constraints', function() {
 
   before(function(done) {
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
-      'node-event-simulate'];
+      'node-event-simulate', 'juju-charm-store', 'juju-charm-models'];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -43,9 +43,18 @@ describe('Inspector Constraints', function() {
     var conn = new utils.SocketStub();
     var db = new models.Database();
     var service = makeService(db);
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
     env = juju.newEnvironment({conn: conn});
     env.connect();
-    view = new views.environment({container: container, db: db, env: env});
+    view = new views.environment({
+      container: container,
+      db: db,
+      env: env,
+      store: fakeStore
+    });
     view.render();
     inspector = makeInspector(view, service);
     done();

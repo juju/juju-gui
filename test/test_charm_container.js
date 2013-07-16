@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charm container widget', function() {
-  var container, Y, charm_container, CharmContainer;
+  var container, Y, charm_container, CharmContainer, cleanIconHelper, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -29,6 +29,8 @@ describe('charm container widget', function() {
       'browser-charm-token',
       'node-event-simulate'],
     function(Y) {
+      utils = Y.namespace('juju-tests.utils');
+      cleanIconHelper = utils.stubCharmIconPath();
       CharmContainer = Y.juju.widgets.browser.CharmContainer;
       done();
     });
@@ -43,6 +45,10 @@ describe('charm container widget', function() {
       charm_container.destroy();
     }
     container.remove().destroy(true);
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('sets up values according to children and its cutoff', function() {

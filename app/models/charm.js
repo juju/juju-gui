@@ -400,8 +400,8 @@ YUI.add('juju-charm-models', function(Y) {
         shouldShowIcon: data.has_icon && data.is_approved,
         id: data.id,
         is_approved: data.is_approved,
-        mainCategory: data.categories[0],
         name: data.name,
+        commitCount: data.commitCount,
         downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
@@ -496,6 +496,21 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       code_source: {},
+      commitCount: {
+        /**
+         * @method commitCount.valueFn
+         * @return {Integer} the revno of the branch.
+         *
+         */
+        valueFn: function() {
+          var source = this.get('code_source');
+          if (source) {
+            return this.get('code_source').revision;
+          } else {
+            return undefined;
+          }
+        }
+      },
       date_created: {},
       description: {},
       'providers': {
@@ -584,31 +599,6 @@ YUI.add('juju-charm-models', function(Y) {
             val.created = new Date(val.created * 1000);
           }
           return val;
-        }
-      },
-      /**
-        The mainCategory is a helper since we can only show one icon per
-        charm, but we permit multiple categories. An initial pass just grabs
-        the first category to use as an icon if required.
-
-        @attribute mainCategory
-        @default null
-        @type {String}
-
-       */
-      mainCategory: {
-        /**
-          @method mainCategory.valueFn
-          @return {String|Null} If a category is found its value else null.
-
-         */
-        valueFn: function() {
-          var categories = this.get('categories');
-          if (categories.length > 0) {
-            return categories[0];
-          } else {
-            return null;
-          }
         }
       },
       maintainer: {},
