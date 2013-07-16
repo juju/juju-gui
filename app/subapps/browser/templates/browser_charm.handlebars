@@ -82,13 +82,7 @@
                         {{/unless}}
                         <p>{{ summary }}</p>
                         <h2>Description</h2>
-                        <p>
-                            {{#if isFullscreen}}
-                                {{ description }}
-                            {{else}}
-                                {{ truncate description 300 }}
-                            {{/if}}
-                        </p>
+                        <p class="respect-whitespace">{{#if isFullscreen}}{{ description }}{{else}}{{ truncate description 300 }}{{/if}}</p>
                     </div>
 
                     <div class="changelog">
@@ -120,7 +114,7 @@
                                         {{prettyCommits.first.prettyDate}}
                                     </span>
                                     {{prettyCommits.first.author.name}}
-                                    {{prettyCommits.first.message}} -
+                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
                                     </a>
@@ -137,7 +131,7 @@
                                             <span class="date">
                                                 {{prettyDate}}
                                             </span>
-                                            {{author.name}} {{message}} -
+                                            {{author.name}} <span class="respect-whitespace">{{message}}</span> -
                                             <a href="{{ revnoLink }}">
                                                 REVNO{{revno}}
                                             </a>
