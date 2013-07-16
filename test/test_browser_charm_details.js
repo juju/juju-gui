@@ -247,6 +247,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.iconpath = function() {
+        return 'charm icon url';
+      };
       view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
@@ -259,14 +263,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             configName: 'test'
           }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(),
+        store: fakeStore
       });
-      view.set('deploy', function(charm) {
+      view.set('deploy', function(charm, serviceAttrs) {
         // The charm passed in is not a BrowserCharm but a charm-panel charm.
         var browserCharm = view.get('charm');
         assert.notDeepEqual(charm, browserCharm);
         var madeCharm = new models.Charm(browserCharm.getAttrs());
         assert.equal(charm.get('id'), madeCharm.get('url'));
+        assert.equal(serviceAttrs.icon, 'charm icon url');
         done();
       });
       view._addCharmEnvironment({halt: function() {}});

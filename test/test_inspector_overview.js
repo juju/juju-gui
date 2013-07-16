@@ -24,7 +24,7 @@ describe('Inspector Overview', function() {
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'event-key'];
+      'event-key', 'juju-charm-store', 'juju-charm-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           utils = Y.namespace('juju-tests.utils');
@@ -79,10 +79,15 @@ describe('Inspector Overview', function() {
       ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
       ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
     ]}});
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
     view = new jujuViews.environment({
       container: container,
       db: db,
-      env: env
+      env: env,
+      store: fakeStore
     });
     view.render();
     Y.Node.create([
