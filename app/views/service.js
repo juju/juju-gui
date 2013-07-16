@@ -1530,7 +1530,20 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     toggleUnitHeader: function(e) {
-      e.currentTarget.ancestor('.unit-list-wrapper').one('.status-unit-content').toggleClass('close-unit');
+      e.currentTarget.ancestor('.unit-list-wrapper')
+                     .one('.status-unit-content')
+                     .toggleClass('close-unit');
+    },
+
+    toggleSelectAllUnits: function(e) {
+      var currentTarget = e.currentTarget,
+          units = currentTarget.ancestor('.status-unit-content')
+                               .all('input[type=checkbox]');
+      if (currentTarget.getAttribute('checked')) {
+        units.removeAttribute('checked');
+      } else {
+        units.setAttribute('checked', 'checked');
+      }
     }
   };
 
@@ -1596,15 +1609,23 @@ YUI.add('juju-view-service', function(Y) {
                                                 return 'status-unit-header ' + d.category;
                                               });
 
-      var unitStatusContent = unitStatusWrapper.append('div')
+      var unitStatusContentForm = unitStatusWrapper.append('div')
                                                .attr('class', function(d) {
                                                  return 'status-unit-content ' + d.category;
                                                })
                                                .style('max-height', function(d) {
-                                                 return (d.units.length + 5) + 'em';
+                                                 return (d.units.length + 10) + 'em';
                                                })
-                                               .append('form')
-                                               .append('ul');
+                                               .append('form');
+      unitStatusContentForm.append('li')
+                            .append('input')
+                            .attr('type', 'checkbox')
+                            .classed('toggle-select-all', true);
+
+      var unitStatusContentList = unitStatusContentForm.append('ul');
+
+      unitStatusContentForm = unitStatusContentForm.append('div')
+                                                   .html(Templates['unit-action-buttons']());
 
       unitStatusHeader.append('span')
                       .html('&#8226;');
@@ -1617,9 +1638,9 @@ YUI.add('juju-view-service', function(Y) {
 
       // D3 header update section
       categoryWrapperNodes.select('.unit-qty')
-                   .text(function(d) {
-                     return d.units.length;
-                   });
+                          .text(function(d) {
+                            return d.units.length;
+                          });
 
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
@@ -1628,12 +1649,12 @@ YUI.add('juju-view-service', function(Y) {
                           });
 
 
-      var unitsList = unitStatusContent.selectAll('li')
-                                          .data(function(d) {
-                                            return d.units;
-                                          }, function(unit) {
-                                            return unit.id;
-                                          });
+      var unitsList = unitStatusContentList.selectAll('li')
+                                           .data(function(d) {
+                                             return d.units;
+                                           }, function(unit) {
+                                             return unit.id;
+                                           });
 
       // D3 content enter section
       var unitItem = unitsList.enter()
@@ -1642,7 +1663,7 @@ YUI.add('juju-view-service', function(Y) {
       unitItem.append('input')
                .attr({'type': 'checkbox',
                       'name': function(unit) {
-                        unit.id
+                        return unit.id;
                       }});
 
       unitItem.append('span')
