@@ -1060,7 +1060,7 @@ YUI.add('juju-view-utils', function(Y) {
         // charm URL with a protocol, which will need to be removed.  The
         // following regular expression removes everything up to the colon
         // portion of the quote and leaves behind a charm ID.
-        var charmID = service.get('charm').replace(/^.*:/, '');
+        var charmID = service.get('charm').replace(/^[^:]+:/, '');
         // Get the icon url from the store
         icon = this.store.iconpath(charmID);
         service.set('icon', icon);

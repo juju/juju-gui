@@ -50,8 +50,8 @@ describe('Inspector Constraints', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     view = new views.environment({
-      container: container, 
-      db: db, 
+      container: container,
+      db: db,
       env: env,
       store: fakeStore
     });

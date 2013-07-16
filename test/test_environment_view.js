@@ -272,7 +272,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.render();
           var service = container.one('.service');
           assert.equal(service.one('.service-icon').getAttribute('href'),
-            'charm icon url');
+         'charm icon url');
 
           done();
         }
@@ -994,7 +994,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 env: env,
                 store: fakeStore
               });
-          var service = new models.Service({ 
+          var service = new models.Service({
             id: 'service-1',
             charm: 'precise/mysql-1'
           });
