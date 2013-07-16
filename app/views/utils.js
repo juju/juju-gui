@@ -1036,23 +1036,36 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {ServiceModule} Module holding box canvas and context.
    * @param {ModelList} services Service modellist.
    * @param {Object} existing id:box mapping.
+   * @param {Object} store The charm store.
    * @return {Object} id:box mapping.
    */
-  views.toBoundingBoxes = function(module, services, existing) {
+  views.toBoundingBoxes = function(module, services, existing, store) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
       if (!Y.Lang.isValue(services.getById(key))) {
         delete result[key];
       }
     });
-    Y.each(services, function() {
+    this.store = store;
+    services.each(function() {
       var id = this.get('id');
       if (result[id] !== undefined) {
         result[id].model = this;
       } else {
         result[id] = new BoundingBox(module, this);
       }
-    });
+      if (this.get('icon') === undefined) {
+        var icon;
+        // Get the charm ID from the service.  In some cases, this will be the
+        // charm URL with a protocol, which will need to be removed.  The
+        // following regular expression removes everything up to the colon
+        // portion of the quote and leaves behind a charm ID.
+        var charmID = this.get('charm').replace(/^.*:/, '');
+        // Get the icon url from the store
+        this.set('icon', icon);
+      }
+      result[id].icon = this.get('icon');
+    }, this);
     return result;
   };
 

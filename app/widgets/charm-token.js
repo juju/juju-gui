@@ -91,15 +91,7 @@ YUI.add('browser-charm-token', function(Y) {
             iconSrc;
         evt = evt._event; // We want the real event.
         var dataTransfer = evt.dataTransfer;
-        if (icon) {
-          // There is no iconSrc if there is no custom icon.
-          iconSrc = icon.one('img').getAttribute('src');
-        } else {
-          // On chrome, if part of this drag image is not visible, that part
-          // will be transparent.
-          icon = container.one('.charm-icon') ||
-                 container.one('.category-icon');
-        }
+        iconSrc = icon.one('img').getAttribute('src');
         dataTransfer.effectAllowed = 'copy';
         var dragData = {
           charmData: charmData,
