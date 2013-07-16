@@ -90,7 +90,6 @@ describe('charm token', function() {
     var token = new CharmToken({
       size: 'tiny',
       description: 'some description',
-      mainCategory: 'app-servers',
       recent_commit_count: 1,
       downloads: 3
     });
