@@ -109,44 +109,6 @@ describe('charm token', function() {
     // and the css class should be on the token once rendered.
     token.render(charm_container);
     assert(charm_container.one('.charm-token').hasClass('tiny'));
-
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-48'), true);
-  });
-
-  it('sets an icon per the category if available', function() {
-    var cfg = {
-      id: 'test',
-      name: 'some-charm',
-      description: 'some description',
-      mainCategory: 'app-servers',
-      recent_commit_count: 1,
-      downloads: 3,
-      tested_providers: ['ec2']
-    };
-
-    var token = new CharmToken(cfg);
-    token.render(charm_container);
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-50'), true);
-  });
-
-  it('sets an icon per the category respecting size', function() {
-    var cfg = {
-      id: 'test',
-      name: 'some-charm',
-      description: 'some description',
-      mainCategory: 'app-servers',
-      recent_commit_count: 1,
-      downloads: 3,
-      size: 'large',
-      tested_providers: ['ec2']
-    };
-
-    var token = new CharmToken(cfg);
-    token.render(charm_container);
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-96'), true);
   });
 
 });
