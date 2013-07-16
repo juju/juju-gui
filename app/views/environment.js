@@ -191,6 +191,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'},
+                '.status-unit-header': {'click': 'toggleUnitHeader'},
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'}
               },
