@@ -246,16 +246,6 @@ YUI.add('browser-charm-token', function(Y) {
       is_approved: {},
 
       /**
-       * @attribute mainCategory
-       * @default null
-       * @type {String}
-       *
-       */
-      mainCategory: {
-        value: null
-      },
-
-      /**
        * @attribute name
        * @default ''
        * @type {String}
