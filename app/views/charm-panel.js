@@ -720,8 +720,7 @@ YUI.add('juju-charm-panel', function(Y) {
    */
   function createInstance(config) {
 
-    var charmStore = config.charm_store,
-        charms = new models.CharmList(),
+    var charms = new models.CharmList(),
         app = config.app,
         container = Y.Node.create('<div />').setAttribute(
             'id', 'juju-search-charm-panel'),
