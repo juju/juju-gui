@@ -35,19 +35,8 @@ describe('search view', function() {
         'node-event-simulate',
         'subapp-browser-searchview',
         function(Y) {
-          // Need the handlebars helper for the charm-token to render.
-          Y.Handlebars.registerHelper(
-              'charmIconPath',
-              function(charmID, file) {
-                return '/path/to/charm/' + file;
-              });
           done();
         });
-  });
-
-  after(function(done) {
-    Y.Handlebars.helpers.charmIconPath = undefined;
-    done();
   });
 
   beforeEach(function() {

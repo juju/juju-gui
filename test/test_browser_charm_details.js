@@ -39,12 +39,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
-            // Need the handlebars helper for the charm-token to render.
-            Y.Handlebars.registerHelper(
-                'charmIconPath',
-                function(charmID, file) {
-                  return '/path/to/charm/' + file;
-                });
             done();
           });
     });
@@ -72,11 +66,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       node.remove(true);
       delete window.juju_config;
       container.remove(true);
-    });
-
-    after(function(done) {
-      Y.Handlebars.helpers.charmIconPath = undefined;
-      done();
     });
 
     it('has sharing links', function() {
@@ -746,22 +735,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       view.render();
-    });
-
-    it('sets a category icon if available', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true);
-      // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
-      // Add a category manually to get a category icon to display.
-      data.charm.categories = ['app-servers'];
-      view = new CharmView({
-        charm: new models.BrowserCharm(data.charm),
-        container: utils.makeContainer()
-      });
-
-      view.render();
-      var iconNode = view.get('container').one('.category-icon');
-      assert.equal(iconNode.hasClass('charm-app-servers-120'), true);
     });
 
     it('selects the proper tab when given one', function() {

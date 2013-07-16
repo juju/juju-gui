@@ -27,12 +27,6 @@ describe('charm token', function() {
         ['browser-charm-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           CharmToken = Y.juju.widgets.browser.CharmToken;
-          // Need the handlebars helper for the charm-token to render.
-          Y.Handlebars.registerHelper(
-              'charmIconPath',
-              function(charmID, file) {
-                return '/path/to/charm/' + file;
-              });
           done();
         });
   });
@@ -47,10 +41,6 @@ describe('charm token', function() {
     if (token) {
       token.destory();
     }
-  });
-
-  after(function() {
-    Y.Handlebars.helpers.charmIconPath = undefined;
   });
 
   it('exists', function() {

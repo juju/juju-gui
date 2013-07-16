@@ -33,19 +33,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             views = Y.namespace('juju.browser.views');
             EditorialView = views.EditorialView;
             sampleData = Y.io('data/interesting.json', {sync: true});
-            // Need the handlebars helper for the charm-token to render.
-            Y.Handlebars.registerHelper(
-                'charmIconPath',
-                function(charmID, file) {
-                  return '/path/to/charm/' + file;
-                });
             done();
           });
-    });
-
-    after(function(done) {
-      Y.Handlebars.helpers.charmIconPath = undefined;
-      done();
     });
 
     beforeEach(function() {
