@@ -53,7 +53,7 @@ describe('charm token', function() {
       id: 'test',
       name: 'some-charm',
       description: 'some description',
-      recent_commit_count: 1,
+      commitCount: 1,
       downloads: 3,
       tested_providers: ['ec2']
     };
@@ -90,7 +90,8 @@ describe('charm token', function() {
     var token = new CharmToken({
       size: 'tiny',
       description: 'some description',
-      recent_commit_count: 1,
+      mainCategory: 'app-servers',
+      commitCount: 1,
       downloads: 3
     });
     assert.equal('tiny', token.get('size'));

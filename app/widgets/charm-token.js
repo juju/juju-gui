@@ -255,6 +255,13 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
+       * @attribute commitCount
+       * @default undefined
+       * @type {Number}
+       */
+      commitCount: {},
+
+      /**
        * @attribute recent_commit_count
        * @default undefined
        * @type {Number}
