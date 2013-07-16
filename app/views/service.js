@@ -1398,7 +1398,7 @@ YUI.add('juju-view-service', function(Y) {
           service = inspector.get('model'),
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
-          schema = charm.get('config').options,
+          schema = charm.get('options'),
           container = inspector.get('container'),
           button = container.one('button.confirm');
 
@@ -1585,8 +1585,7 @@ YUI.add('juju-view-service', function(Y) {
           var settings = [];
           var db = viewContainerAttrs.db;
           var charm = db.charms.getById(service.get('charm'));
-          var charmConfig = charm.get('config');
-          var charmOptions = charmConfig && charmConfig.options;
+          var charmOptions = charm.get('options');
           Y.Object.each(service.get('config'), function(value, key) {
             var setting = {
               name: key,

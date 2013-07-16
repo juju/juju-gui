@@ -235,7 +235,9 @@ YUI.add('juju-charm-models', function(Y) {
           ].join('/');
         }
       },
-      options: {},
+      options: {
+        setter: 'unsetIfNoValue'
+      },
       description: {},
       full_name: {
         /**
