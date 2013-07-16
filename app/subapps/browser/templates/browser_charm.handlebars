@@ -34,8 +34,8 @@
                     <li>
                         Activity: {{ downloads }}
                         {{pluralize 'Download' downloads}},
-                        {{ recent_commit_count }}
-                        {{pluralize 'Commit' recent_commit_count}}
+                        {{ commitCount }}
+                        {{pluralize 'Commit' commitCount}}
                     </li>
                     <li>Ubuntu series: {{ distro_series }}</li>
                     <li>Location: {{ url }}</li>
@@ -58,8 +58,8 @@
                 <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
                 <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
                 <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
-                <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
+                <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
             </ul>
             <hr />
             <span id="sharing">
@@ -266,7 +266,6 @@
                       <p>This charm does not expose any configuration options.</p>
                     {{/if}}
                 </div>
-                <div id="bws-qa">Quality</div>
                 <div id="bws-hooks">
                     <p class="intro">
                         Hooks are the pieces of code that comprise the charm.
@@ -286,6 +285,7 @@
                     <div class="filecontent">
                     </div>
                 </div>
+                <div id="bws-qa">Quality</div>
             </div>
         </div>
     </div>
