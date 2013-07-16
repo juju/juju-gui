@@ -1574,10 +1574,9 @@ YUI.add('juju-view-service', function(Y) {
       generateAndBuildUnitHeaders() with the data to generate the UI
 
       @method updateUnitList
-      @param {Y.Node} node To render the content in.
       @param {Object} values From the databinding update method.
     */
-    function updateUnitList(node, values) {
+    function updateUnitList(values) {
       var statuses = [],
           unitByStatus = {};
 
@@ -1593,7 +1592,7 @@ YUI.add('juju-view-service', function(Y) {
         statuses.push({category: key, units: value});
       });
 
-      generateAndBindUnitHeaders(node, statuses);
+      return statuses;
     }
 
     /**
@@ -1603,6 +1602,7 @@ YUI.add('juju-view-service', function(Y) {
       @param {Array} statuses A key value pair of categories to unit list.
     */
     function generateAndBindUnitHeaders(node, statuses) {
+      console.log(statuses);
       var categoryWrapperNodes = d3.select(node.getDOMNode())
                                    .selectAll('.unit-list-wrapper')
                                    .data(statuses, function(d) {
@@ -1627,6 +1627,7 @@ YUI.add('juju-view-service', function(Y) {
                                     return 'status-unit-content ' + d.category;
                                   })
                                   .style('max-height', function(d) {
+                                    console.log(d.units.length);
                                     return (d.units.length + 10) + 'em';
                                   })
                                   .append('form');
@@ -1636,11 +1637,10 @@ YUI.add('juju-view-service', function(Y) {
                             .attr('type', 'checkbox')
                             .classed('toggle-select-all', true);
 
-      var unitStatusContentList = unitStatusContentForm.append('ul');
+      unitStatusContentForm.append('ul');
 
-      unitStatusContentForm = unitStatusContentForm
-                                  .append('div')
-                                  .html(Templates['unit-action-buttons']());
+      unitStatusContentForm.append('div')
+                           .html(Templates['unit-action-buttons']());
 
       unitStatusHeader.append('span')
                       .html('&#8226;');
@@ -1663,7 +1663,8 @@ YUI.add('juju-view-service', function(Y) {
                                return d.category;
                              });
 
-      var unitsList = unitStatusContentList.selectAll('li')
+      var unitsList = categoryWrapperNodes.select('ul')
+                                      .selectAll('li')
                                       .data(function(d) {
                                        return d.units;
                                      }, function(unit) {
@@ -1695,7 +1696,7 @@ YUI.add('juju-view-service', function(Y) {
 
       // D3 header exit section
       categoryWrapperNodes.exit().remove();
-    }
+    };
 
     var DEFAULT_VIEWLETS = {
       overview: {
@@ -1732,10 +1733,14 @@ YUI.add('juju-view-service', function(Y) {
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
-              updateUnitList(node, value);
+              // called under the databinding context
+              var statuses = this.viewlet.updateUnitList(value);
+              this.viewlet.generateAndBindUnitHeaders(node, statuses);
             }
           }
-        }
+        },
+        updateUnitList: updateUnitList,
+        generateAndBindUnitHeaders: generateAndBindUnitHeaders
       },
       config: {
         name: 'config',
