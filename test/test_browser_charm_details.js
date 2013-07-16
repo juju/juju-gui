@@ -21,7 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_charm_view', function() {
-    var container, CharmView, models, node, utils, view, views, Y;
+    var container, CharmView, cleanIconHelper, models, node, utils, view,
+        views, Y;
+
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -39,6 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
+            cleanIconHelper = utils.stubCharmIconPath();
             done();
           });
     });
@@ -66,6 +69,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       node.remove(true);
       delete window.juju_config;
       container.remove(true);
+    });
+
+    after(function() {
+      cleanIconHelper();
     });
 
     it('has sharing links', function() {
