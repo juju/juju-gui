@@ -93,11 +93,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
       var ghostAttributes;
-      if (browserCharm.get('shouldShowIcon')) {
-        ghostAttributes = {
-          icon: this.get('store').filepath(browserCharm.get('id'), 'icon.svg')
-        };
-      }
+      ghostAttributes = {
+        icon: this.get('store').iconpath(browserCharm.get('id'))
+      };
       this.get('deploy').call(null, charm, ghostAttributes);
     },
 

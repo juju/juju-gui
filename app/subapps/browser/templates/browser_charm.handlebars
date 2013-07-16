@@ -3,18 +3,7 @@
         <div class="heading">
                 {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
             <div class="block-icon">
-                {{#if shouldShowIcon}}
-                    <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
-                {{else}}
-                    {{#if mainCategory}}
-                      <div title="category {{mainCategory}}"
-                          class="category-icon sprite charm-{{mainCategory}}-120">
-                      </div>
-                    {{else}}
-                      <div class="charm-icon">
-                      </div>
-                    {{/if}}
-                {{/if}}
+                <img src="{{charmIconPath id}}" alt="{{ name }} icon" class="icon">
             </div>
             <div class="charm-details">
                 <h1>{{ name }}</h1>

@@ -303,6 +303,24 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+      Generate the API path to a charm icon.
+      This is useful when generating links and references in HTML to the
+      charm's icon and is constructing the correct icon based on reviewed
+      status and categories on the charm.
+
+      @method iconpath
+      @param {String} charmID The id of the charm to grab the icon for.
+
+     */
+    iconpath: function(charmID) {
+      return this.get('apiHost') + [
+        this._apiRoot,
+        'charm',
+        charmID,
+        'icon.svg'].join('/');
+    },
+
+    /**
      * Load the QA data for a specific charm.
      *
      * @method qa

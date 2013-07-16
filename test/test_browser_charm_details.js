@@ -21,7 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_charm_view', function() {
-    var container, CharmView, models, node, utils, view, views, Y;
+    var container, CharmView, cleanIconHelper, models, node, utils, view,
+        views, Y;
+
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -39,12 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests.utils');
             CharmView = views.BrowserCharmView;
-            // Need the handlebars helper for the charm-token to render.
-            Y.Handlebars.registerHelper(
-                'charmFilePath',
-                function(charmID, file) {
-                  return '/path/to/charm/' + file;
-                });
+            cleanIconHelper = utils.stubCharmIconPath();
             done();
           });
     });
@@ -74,9 +71,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.remove(true);
     });
 
-    after(function(done) {
-      Y.Handlebars.helpers.charmFilePath = undefined;
-      done();
+    after(function() {
+      cleanIconHelper();
     });
 
     it('has sharing links', function() {
@@ -251,6 +247,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.iconpath = function() {
+        return 'charm icon url';
+      };
       view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
@@ -263,14 +263,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             configName: 'test'
           }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(),
+        store: fakeStore
       });
-      view.set('deploy', function(charm) {
+      view.set('deploy', function(charm, serviceAttrs) {
         // The charm passed in is not a BrowserCharm but a charm-panel charm.
         var browserCharm = view.get('charm');
         assert.notDeepEqual(charm, browserCharm);
         var madeCharm = new models.Charm(browserCharm.getAttrs());
         assert.equal(charm.get('id'), madeCharm.get('url'));
+        assert.equal(serviceAttrs.icon, 'charm icon url');
         done();
       });
       view._addCharmEnvironment({halt: function() {}});
@@ -746,22 +748,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       view.render();
-    });
-
-    it('sets a category icon if available', function() {
-      var data = utils.loadFixture('data/browsercharm.json', true);
-      // We don't want any files so we don't have to mock/load them.
-      data.charm.files = [];
-      // Add a category manually to get a category icon to display.
-      data.charm.categories = ['app-servers'];
-      view = new CharmView({
-        charm: new models.BrowserCharm(data.charm),
-        container: utils.makeContainer()
-      });
-
-      view.render();
-      var iconNode = view.get('container').one('.category-icon');
-      assert.equal(iconNode.hasClass('charm-app-servers-120'), true);
     });
 
     it('selects the proper tab when given one', function() {

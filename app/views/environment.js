@@ -274,6 +274,7 @@ YUI.add('juju-view-environment', function(Y) {
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              store: this.get('store'),
               getInspector: Y.bind(this.getInspector, this),
               setInspector: Y.bind(this.setInspector, this),
               createServiceInspector: Y.bind(this.createServiceInspector, this),
