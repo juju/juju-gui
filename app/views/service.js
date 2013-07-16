@@ -1695,7 +1695,7 @@ YUI.add('juju-view-service', function(Y) {
 
       // D3 header exit section
       categoryWrapperNodes.exit().remove();
-    };
+    }
 
     var DEFAULT_VIEWLETS = {
       overview: {
