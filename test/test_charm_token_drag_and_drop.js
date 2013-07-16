@@ -69,7 +69,7 @@ describe('charm token drag and drop', function() {
       url: 'cs:test',
       name: 'some-charm',
       description: 'some description',
-      recent_commit_count: 1,
+      commitCount: 1,
       downloads: 3,
       tested_providers: ['ec2'],
       boundingBox: container,
