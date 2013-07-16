@@ -1528,7 +1528,6 @@ YUI.add('juju-view-service', function(Y) {
       }
       container.one('.save-constraints').removeAttribute('disabled');
     }
-
   };
 
   /**
@@ -1538,6 +1537,109 @@ YUI.add('juju-view-service', function(Y) {
    */
   var ServiceInspector = (function() {
     var juju = Y.namespace('juju');
+/*
+ statuses:
+  error, pending, running
+  If there are no units in a particular status then don't show the header
+  headers need to expand/collapse content boxes
+  content boxes are a form
+  each unit needs to be a link
+  each unit needs a checkbox
+*/
+
+    /**
+
+    */
+    function updateUnitList(node, values) {
+      var statuses = [],
+          unitByStatus = {};
+
+      values.each(function(value) {
+        var category = utils.simplifyState(value);
+        if (!unitByStatus[category]) {
+          unitByStatus[category] = [];
+        }
+        unitByStatus[category].push(value);
+      });
+
+      Y.each(unitByStatus, function(value, key) {
+        statuses.push({category: key, units: value});
+      });
+
+      generateAndBindUnitHeaders(node, statuses);
+    }
+
+    /**
+      Binds the statuses data set to d3
+
+      @method generateAndBindUnitHeaders
+      @param {Array} statuses A key value pair of categories to unit list
+    */
+    function generateAndBindUnitHeaders(node, statuses) {
+      var categoryWrapperNodes = d3.select(node.getDOMNode())
+                                   .selectAll('.unit-list-wrapper')
+                                   .data(statuses, function(d) {
+                                     return d.category;
+                                   });
+
+      // D3 header enter section
+      var unitStatusWrapper = categoryWrapperNodes.enter()
+                                                  .append('div')
+                                                  .classed('unit-list-wrapper', true);
+
+      var unitStatusHeader = unitStatusWrapper.append('div')
+                                              .attr('class', function(d) {
+                                                return 'status-unit-header ' + d.category;
+                                              });
+
+      var unitStatusContent = unitStatusWrapper.append('div')
+                                               .attr('class', function(d) {
+                                                 return 'status-unit-content ' + d.category;
+                                               })
+                                               .append('form')
+                                               .append('ul');
+
+      unitStatusHeader.append('span')
+                      .html('&#8226;');
+
+      unitStatusHeader.append('span')
+                      .classed('unit-qty', true);
+
+      unitStatusHeader.append('span')
+                      .classed('category-label', true);
+
+      // D3 header update section
+      categoryWrapperNodes.select('.unit-qty')
+                   .text(function(d) {
+                     return d.units.length;
+                   });
+
+      categoryWrapperNodes.select('.category-label')
+                          .text(function(d) {
+                            return d.category;
+                          });
+
+
+      var unitsList = categoryWrapperNodes.selectAll('li')
+                                          .data(function(d) {
+                                            return d.units;
+                                          }, function(unit) {
+                                            return unit.id;
+                                          });
+// D3 content update section
+      // D3 content enter section
+      unitsList.enter()
+               .append('li')
+               .text(function(d) {
+                 return d.id;
+               });
+
+      // D3 content exit section
+      unitsList.exit().remove();
+
+      // D3 header exit section
+      categoryWrapperNodes.exit().remove();
+    }
 
     var DEFAULT_VIEWLETS = {
       overview: {
@@ -1574,8 +1676,7 @@ YUI.add('juju-view-service', function(Y) {
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
-              var units = {units: value.toArray()};
-              node.setHTML(Templates.serviceOverviewUnitList(units));
+              updateUnitList(node, value);
             }
           }
         }
