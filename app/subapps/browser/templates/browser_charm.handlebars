@@ -113,7 +113,7 @@
                                     <span class="date">
                                         {{prettyCommits.first.prettyDate}}
                                     </span>
-                                    {{prettyCommits.first.author.name}}
+                                    <strong>{{prettyCommits.first.author.name}}</strong>
                                     <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
@@ -131,7 +131,7 @@
                                             <span class="date">
                                                 {{prettyDate}}
                                             </span>
-                                            {{author.name}} <span class="respect-whitespace">{{message}}</span> -
+                                            <strong>{{author.name}}</strong> <span class="respect-whitespace">{{message}}</span> -
                                             <a href="{{ revnoLink }}">
                                                 REVNO{{revno}}
                                             </a>
