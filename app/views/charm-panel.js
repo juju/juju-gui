@@ -720,8 +720,7 @@ YUI.add('juju-charm-panel', function(Y) {
    */
   function createInstance(config) {
 
-    var charmStore = config.charm_store,
-        charms = new models.CharmList(),
+    var charms = new models.CharmList(),
         app = config.app,
         container = Y.Node.create('<div />').setAttribute(
             'id', 'juju-search-charm-panel'),
@@ -778,18 +777,9 @@ YUI.add('juju-charm-panel', function(Y) {
         newPanel.set('ghostAttributes', config.ghostAttributes);
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
-        if (charm.loaded) {
-          newPanel.set('model', charm);
-        } else {
-          charm.load(charmStore, function(err, response) {
-            if (err) {
-              console.log('error loading charm', response);
-            } else {
-              newPanel.set('model', charm);
-            }
-          });
-        }
-      } else { // This is the search panel.
+        newPanel.set('model', charm);
+      } else {
+        // This is the search panel.
         newPanel.render();
       }
     }
