@@ -86,38 +86,30 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
-        var icon = container.one('.icon');
+        var icon = container.one('.icon'),
+            iconSrc;
         evt = evt._event; // We want the real event.
+        var dataTransfer = evt.dataTransfer;
         if (icon) {
-          // Chome creates drag images in a silly way, so CSS background
-          // tranparency doesn't work and if part of the drag image is
-          // off-screen, that part is simply white.  Therefore we have to clone
-          // the icon and make sure it is visible.  We don't really want it to
-          // be visible though, so we make sure the overflow induced by the
-          // icon is hidden.
-          dragImage = Y.one('body')
-            .appendChild(icon.cloneNode(true))
-              .setStyles({
-                'height': icon.one('img').get('height'),
-                'width': icon.one('img').get('width')});
-          // Set a unique id on the cloned icon so we can remove it after drop
-          dragImage.setAttribute('id', dragImage.get('_yuid'));
-          // Pass the cloned id through the drag data system.
-          evt.dataTransfer.setData(
-              'clonedIconId', dragImage.getAttribute('id'));
+          // There is no iconSrc if there is no custom icon.
+          iconSrc = icon.one('img').getAttribute('src');
         } else {
           // On chrome, if part of this drag image is not visible, that part
           // will be transparent.
-          dragImage =
-              container.one('.charm-icon') ||
-              container.one('.category-icon');
+          icon = container.one('.charm-icon') ||
+                 container.one('.category-icon');
         }
-
-        evt.dataTransfer.effectAllowed = 'copy';
-        evt.dataTransfer.setData('charmData', charmData);
-        evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
+        dataTransfer.effectAllowed = 'copy';
+        var dragData = {
+          charmData: charmData,
+          dataType: 'charm-token-drag-and-drop',
+          iconSrc: iconSrc
+        };
+        // Must be 'Text' because IE10 doesn't treat this as key/value pair
+        dataTransfer.setData('Text', JSON.stringify(dragData));
+        if (dataTransfer.setDragImage) {
+          dataTransfer.setDragImage(icon.getDOMNode(), 0, 0);
+        }
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
         evt.stopPropagation();
@@ -244,6 +236,13 @@ YUI.add('browser-charm-token', function(Y) {
       name: {
         value: ''
       },
+
+      /**
+       * @attribute commitCount
+       * @default undefined
+       * @type {Number}
+       */
+      commitCount: {},
 
       /**
        * @attribute recent_commit_count

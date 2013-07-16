@@ -394,6 +394,7 @@ YUI.add('juju-charm-models', function(Y) {
         is_approved: data.is_approved,
         mainCategory: data.categories[0],
         name: data.name,
+        commitCount: data.commitCount,
         downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
@@ -488,6 +489,21 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       code_source: {},
+      commitCount: {
+        /**
+         * @method commitCount.valueFn
+         * @return {Integer} the revno of the branch.
+         *
+         */
+        valueFn: function() {
+          var source = this.get('code_source');
+          if (source) {
+            return this.get('code_source').revision;
+          } else {
+            return undefined;
+          }
+        }
+      },
       date_created: {},
       description: {},
       'providers': {

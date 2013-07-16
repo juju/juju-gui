@@ -407,7 +407,7 @@ YUI.add('juju-topology-service', function(Y) {
     canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
       var dataTransfer = evt.dataTransfer;
-      var dataType = dataTransfer.getData('dataType');
+      var dragData = JSON.parse(dataTransfer.getData('Text'));
       var topo = self.get('component');
       var translation = topo.get('translate');
       var scale = topo.get('scale');
@@ -420,24 +420,12 @@ YUI.add('juju-topology-service', function(Y) {
         ghostAttributes.coordinates[index] =
             (dropXY[index] - translation[index]) / scale;
       });
-      if (dataType === 'charm-token-drag-and-drop') {
+      if (dragData.dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
-        var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
-        // Remove the cloned drag icon.
-        var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
-        var iconImage;
-        if (icon) {
-          if (icon.one('img')) {
-            // Maintain the charm icon URL if it exists.
-            iconImage = icon.one('img').getAttribute('src');
-          }
-          icon.remove().destroy(true);
-        }
-        // Pass the icon image along with the coordinates in the deploy event.
-        if (iconImage) {
-          ghostAttributes.icon = iconImage;
-        }
+        var charmData = Y.JSON.parse(dragData.charmData);
+        // Add the icon url to the ghost attributes for the ghost icon
+        ghostAttributes.icon = dragData.iconSrc;
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostAttributes);
       }
@@ -883,7 +871,9 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('image')
        .classed('service-icon', true)
        .attr({
-            'xlink:href': function(d) {return d.icon;},
+            'xlink:href': function(d) {
+              return d.icon;
+            },
             width: 96,
             height: 96,
             transform: 'translate(47, 50)'
@@ -899,13 +889,16 @@ YUI.add('juju-topology-service', function(Y) {
         .classed('statusbar', true);
 
       status_graph.each(function(d) {
-        d3.select(this).property('status_bar', new views.StatusBar({
-          resize: false,
-          width: 160,
-          target: this,
-          fontSize: 8,
-          labels: false
-        }).render());
+        if (!d.subordinate) {
+          d3.select(this).property('status_bar',
+              new views.StatusBar({
+                resize: false,
+                width: 160,
+                target: this,
+                fontSize: 8,
+                labels: false
+              }).render());
+        }
       });
       // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
@@ -1149,7 +1142,7 @@ YUI.add('juju-topology-service', function(Y) {
       node.each(function(d) {
         var status_graph = d3.select(this).select('.statusbar');
         var status_bar = status_graph.property('status_bar');
-        if (status_bar) {
+        if (status_bar && !d.subordinate) {
           status_bar.update(d.aggregated_status);
         }
       });
