@@ -558,7 +558,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Create the CharmPanel instance once the app is initialized.
       this.charmPanel = views.CharmPanel.getInstance({
-        charm_store: this.charm_store,
         env: this.env,
         app: this
       });
