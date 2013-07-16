@@ -1529,12 +1529,26 @@ YUI.add('juju-view-service', function(Y) {
       container.one('.save-constraints').removeAttribute('disabled');
     },
 
+    /**
+      Toggles the close-unit class on the unit-list-wrapper which triggers
+      the css close and open animations.
+
+      @method toggleUnitHeader
+      @param {Y.EventFacade} e Click event object.
+    */
     toggleUnitHeader: function(e) {
       e.currentTarget.ancestor('.unit-list-wrapper')
                      .one('.status-unit-content')
                      .toggleClass('close-unit');
     },
 
+    /**
+      Toggles the checked status of all of the units in the unit status
+      category
+
+      @method toggleSelectAllUnits
+      @param {Y.EventFacade} e Click event object.
+    */
     toggleSelectAllUnits: function(e) {
       var currentTarget = e.currentTarget,
           units = currentTarget.ancestor('.status-unit-content')
@@ -1554,18 +1568,14 @@ YUI.add('juju-view-service', function(Y) {
    */
   var ServiceInspector = (function() {
     var juju = Y.namespace('juju');
-/*
- statuses:
-  error, pending, running
-  If there are no units in a particular status then don't show the header
-  headers need to expand/collapse content boxes
-  content boxes are a form
-  each unit needs to be a link
-  each unit needs a checkbox
-*/
 
     /**
+      Generates the unit list sorted by status category and calls
+      generateAndBuildUnitHeaders() with the data to generate the UI
 
+      @method updateUnitList
+      @param {Y.Node} node To render the content in.
+      @param {Object} values From the databinding update method.
     */
     function updateUnitList(node, values) {
       var statuses = [],
@@ -1590,33 +1600,37 @@ YUI.add('juju-view-service', function(Y) {
       Binds the statuses data set to d3
 
       @method generateAndBindUnitHeaders
-      @param {Array} statuses A key value pair of categories to unit list
+      @param {Array} statuses A key value pair of categories to unit list.
     */
     function generateAndBindUnitHeaders(node, statuses) {
       var categoryWrapperNodes = d3.select(node.getDOMNode())
                                    .selectAll('.unit-list-wrapper')
                                    .data(statuses, function(d) {
-                                     return d.category;
-                                   });
+                                       return d.category;
+                                     });
 
       // D3 header enter section
-      var unitStatusWrapper = categoryWrapperNodes.enter()
-                                                  .append('div')
-                                                  .classed('unit-list-wrapper', true);
+      var unitStatusWrapper = categoryWrapperNodes
+                                  .enter()
+                                  .append('div')
+                                  .classed('unit-list-wrapper', true);
 
-      var unitStatusHeader = unitStatusWrapper.append('div')
-                                              .attr('class', function(d) {
-                                                return 'status-unit-header ' + d.category;
-                                              });
+      var unitStatusHeader = unitStatusWrapper
+                                  .append('div')
+                                  .attr('class', function(d) {
+                                   return 'status-unit-header ' + d.category;
+                                 });
 
-      var unitStatusContentForm = unitStatusWrapper.append('div')
-                                               .attr('class', function(d) {
-                                                 return 'status-unit-content ' + d.category;
-                                               })
-                                               .style('max-height', function(d) {
-                                                 return (d.units.length + 10) + 'em';
-                                               })
-                                               .append('form');
+      var unitStatusContentForm = unitStatusWrapper
+                                  .append('div')
+                                  .attr('class', function(d) {
+                                    return 'status-unit-content ' + d.category;
+                                  })
+                                  .style('max-height', function(d) {
+                                    return (d.units.length + 10) + 'em';
+                                  })
+                                  .append('form');
+
       unitStatusContentForm.append('li')
                             .append('input')
                             .attr('type', 'checkbox')
@@ -1624,8 +1638,9 @@ YUI.add('juju-view-service', function(Y) {
 
       var unitStatusContentList = unitStatusContentForm.append('ul');
 
-      unitStatusContentForm = unitStatusContentForm.append('div')
-                                                   .html(Templates['unit-action-buttons']());
+      unitStatusContentForm = unitStatusContentForm
+                                  .append('div')
+                                  .html(Templates['unit-action-buttons']());
 
       unitStatusHeader.append('span')
                       .html('&#8226;');
@@ -1639,22 +1654,21 @@ YUI.add('juju-view-service', function(Y) {
       // D3 header update section
       categoryWrapperNodes.select('.unit-qty')
                           .text(function(d) {
-                            return d.units.length;
-                          });
+                               return d.units.length;
+                             });
 
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
                           .text(function(d) {
-                            return d.category;
-                          });
-
+                               return d.category;
+                             });
 
       var unitsList = unitStatusContentList.selectAll('li')
-                                           .data(function(d) {
-                                             return d.units;
-                                           }, function(unit) {
-                                             return unit.id;
-                                           });
+                                      .data(function(d) {
+                                       return d.units;
+                                     }, function(unit) {
+                                       return unit.id;
+                                     });
 
       // D3 content enter section
       var unitItem = unitsList.enter()
@@ -1662,19 +1676,19 @@ YUI.add('juju-view-service', function(Y) {
 
       unitItem.append('input')
                .attr({'type': 'checkbox',
-                      'name': function(unit) {
-                        return unit.id;
-                      }});
+                               'name': function(unit) {
+                                 return unit.id;
+                               }});
 
-      unitItem.append('span')
-              .text(function(d) {
-                 return d.id;
-               });
+      unitItem.append('span').text(function(d) {
+                               return d.id;
+                             });
 
       // D3 content update section
-      unitsList.sort(function(a, b) {
-                      return a.number - b.number;
-                    });
+      unitsList.sort(
+          function(a, b) {
+            return a.number - b.number;
+          });
 
       // D3 content exit section
       unitsList.exit().remove();
