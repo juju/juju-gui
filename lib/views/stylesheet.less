@@ -27,6 +27,7 @@
 @navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
 @text-colour: #505050;
+@border-radius: 3px;
 
 // Imports need to be after vars.
 @import "typography.less";
@@ -58,7 +59,7 @@
                  2px 0 3px -2px @shadow-color inset,
                  -2px 0 3px -2px @shadow-color inset;
     .create-box-shadow(@box-shadow);
-    .create-border-radius(~"6px / 7px");
+    .create-border-radius(@border-radius);
     .create-linear-gradient(@gradient-start, @gradient-end);
     border: none;
 }
@@ -101,7 +102,7 @@
     box-sizing: border-box;
 }
 .button {
-    .create-border-radius(4px);
+    .create-border-radius(@border-radius);
     .create-linear-gradient(@charm-panel-orange, #c03f11);
     color: #fff;
     text-decoration:none;
@@ -305,9 +306,11 @@ table tr.highlighted td {
                 color: #fff;
             }
             & > li {
+                .type13;
                 height: 50px;
+                margin: 0;
                 padding: 16px 10px 0 20px;
-                font-size: 10.5pt;
+                color: #fff;
 
                 & > a.button.inverse {
                     background-color: #1f1b18;
@@ -324,7 +327,7 @@ table tr.highlighted td {
                 #notifications {
                     #notify-indicator {
                         .button;
-                        margin: 2px 9px 0 0;
+                        margin: 0 9px 0 0;
                     }
                     #notify-list {
                         white-space: normal;
@@ -390,7 +393,6 @@ table tr.highlighted td {
     cursor: move;
 }
 #shortcut-help {
-    .create-border-radius('black');
     .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     position: absolute;
     left: 4%;
@@ -865,7 +867,7 @@ g.unit {
         // Using a variable here because LESS strips commas in mixin args.
         @box-shadow: 0 2px 4px lighten(@background-color, 10%),
             0 1px 2px lighten(@background-color, 20%) inset;
-        .create-border-radius(8px);
+        .create-border-radius(@border-radius);
         .create-box-shadow(@box-shadow);
         background-color: @background-color;
         margin: 6px;
@@ -1073,7 +1075,7 @@ g.unit {
         top: @top;
 
         .picker-expanded .picker-list {
-            .create-border-radius(4px);
+            .create-border-radius(@border-radius);
             .create-box-shadow(0 0 4px rgba(0,0,0,.51));
             -moz-background-clip: padding;
             -webkit-background-clip: padding-box;
@@ -1110,7 +1112,7 @@ g.unit {
     }
 }
 .yui3-panel {
-    .create-border-radius(6px);
+    .create-border-radius(@border-radius);
     .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     background: white;
     padding: 1.6em;
@@ -1353,7 +1355,7 @@ g.unit {
                     // Using a variable here because LESS strips commas in
                     // mixin args.
                     @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
-                    .create-border-radius(6px);
+                    .create-border-radius(@border-radius);
                     .create-box-shadow(@box-shadow);
                     color: @text-entry-color;
                     font-style: italic;
@@ -1705,7 +1707,7 @@ g.unit {
     }
 }
 #tooltip {
-    .create-border-radius(3px);
+    .create-border-radius(@border-radius);
     text-align: left;
     background-color: white;
     border: solid 1px black;
@@ -1864,7 +1866,6 @@ g.unit {
 /** Browser Setup **/
 @import "browser/reset.less";
 @import "browser/vars.less";
-@import "browser/mixins.less";
 
 /** SubApps **/
 @import "browser/main.less";

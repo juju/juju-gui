@@ -94,11 +94,11 @@
                 text-align: center;
 
                 button {
+                    .create-border-radius(@border-radius);
                     width: 115px;
                     height: 25px;
                     margin: 10px 0;
                     border: none;
-                    border-radius: 5px;
                     color: white;
                     font-weight: bold;
 
@@ -187,9 +187,9 @@
             }
 
             .fakebutton {
+                .create-border-radius(@border-radius);
                 font-family: @font-family-medium;
                 border: 1px solid #6B6B6B;
-                border-radius: 5px;
                 color: white;
                 font-size: 14px;
                 font-weight: bold;
@@ -248,7 +248,7 @@
 
         .buttons {
             a {
-                .create-border-radius(4px);
+                .create-border-radius(@border-radius);
                 .create-box-shadow(0 2px 2px -2px #777 inset);
                 box-shadow: 0 2px 2px -2px #777777 inset;
                 color: #fff;
