@@ -1062,7 +1062,6 @@ YUI.add('juju-view-utils', function(Y) {
         // portion of the quote and leaves behind a charm ID.
         var charmID = service.get('charm').replace(/^.*:/, '');
         // Get the icon url from the store
-        console.log(this.store);
         icon = this.store.iconpath(charmID);
         service.set('icon', icon);
       }
