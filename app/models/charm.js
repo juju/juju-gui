@@ -113,7 +113,7 @@ YUI.add('juju-charm-models', function(Y) {
    */
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
-    initializer: function() {
+    initializer: function(cfg) {
       var id = this.get('id'),
           parts = parseCharmId(id),
           self = this;
@@ -125,6 +125,12 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
+      //XXX j.c.sackett July 16 2013 This is temporary while resolving Charm and
+      //BrowserCharm; Charm still loads data from a different API which puts
+      //options inside config.
+      if (cfg && cfg.config) {
+        this.set('options', cfg.config.options);
+      }
     },
 
     sync: function(action, options, callback) {
@@ -229,7 +235,7 @@ YUI.add('juju-charm-models', function(Y) {
           ].join('/');
         }
       },
-      config: {},
+      options: {},
       description: {},
       full_name: {
         /**
