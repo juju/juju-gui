@@ -104,7 +104,21 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         response = Y.JSON.parse(response);
       }
       return response;
-    }
+    },
+
+    stubCharmIconPath: function() {
+      var helperNS = Y.namespace('Handlebars.helpers');
+      Y.Handlebars.registerHelper(
+          'charmIconPath',
+          function(charmID, file) {
+            return '/path/to/charm/' + file;
+          });
+
+      // Return a cleanup function to undo this change.
+      return function() {
+          helperNS.charmIconPath = undefined;
+        };
+      }
   };
 
   // Split jujuTests.utils definition, so that charms can be cached
@@ -148,8 +162,12 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
   });
 
+
+
+
 }, '0.1.0', {
   requires: [
+    'handlebars',
     'io',
     'node',
     'json-parse',

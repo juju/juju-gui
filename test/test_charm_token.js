@@ -19,21 +19,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('charm token', function() {
-  var charm_container, CharmToken, token, Y;
+describe.only('charm token', function() {
+  var charm_container, CharmToken, cleanIconHelper, token, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           CharmToken = Y.juju.widgets.browser.CharmToken;
+          utils = Y.namespace('juju-tests.utils');
+          cleanIconHelper = utils.stubCharmIconPath();
           done();
         });
   });
 
   beforeEach(function() {
-    charm_container = Y.namespace('juju-tests.utils')
-                       .makeContainer('charm-container');
+    charm_container = utils.makeContainer('charm-container');
   });
 
   afterEach(function() {
@@ -41,6 +42,10 @@ describe('charm token', function() {
     if (token) {
       token.destory();
     }
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('exists', function() {
