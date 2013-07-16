@@ -1047,28 +1047,28 @@ YUI.add('juju-view-utils', function(Y) {
       }
     });
     services.each(
-      function(service) {
-        var id = service.get('id');
-        if (result[id] !== undefined) {
-          result[id].model = service;
-        } else {
-          result[id] = new BoundingBox(module, service);
-        }
-        if (!service.get('icon') && service.get('charm')) {
-          var icon;
-          // Get the charm ID from the service.  In some cases, this will be
-          // the charm URL with a protocol, which will need to be removed.  The
-          // following regular expression removes everything up to the colon
-          // portion of the quote and leaves behind a charm ID.
-          var charmID = service.get('charm').replace(/^[^:]+:/, '');
-          // Get the icon url from the store
-          icon = this.store.iconpath(charmID);
-          service.set('icon', icon);
-        }
-        result[id].icon = service.get('icon');
-      },
-      // Pass 'store' into the closure through the context variable 'this'.
-      {store: store}
+        function(service) {
+          var id = service.get('id');
+          if (result[id] !== undefined) {
+            result[id].model = service;
+          } else {
+            result[id] = new BoundingBox(module, service);
+          }
+          if (!service.get('icon') && service.get('charm')) {
+            var icon;
+            // Get the charm ID from the service.  In some cases, this will be
+            // the charm URL with a protocol, which will need to be removed.
+            // The following regular expression removes everything up to the
+            // colon portion of the quote and leaves behind a charm ID.
+            var charmID = service.get('charm').replace(/^[^:]+:/, '');
+            // Get the icon url from the store
+            icon = this.store.iconpath(charmID);
+            service.set('icon', icon);
+          }
+          result[id].icon = service.get('icon');
+        },
+        // Pass 'store' into the closure through the context variable 'this'.
+        {store: store}
     );
     return result;
   };
