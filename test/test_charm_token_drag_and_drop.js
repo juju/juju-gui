@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charm token drag and drop', function() {
-  var Y, container, outerContainer, CharmToken, token;
+  var Y, container, cleanIconHelper, outerContainer, CharmToken, token, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -28,6 +28,8 @@ describe('charm token drag and drop', function() {
     ],
     function(Y) {
       CharmToken = Y.juju.widgets.browser.CharmToken;
+      utils = Y.namespace('juju-tests.utils');
+      cleanIconHelper = utils.stubCharmIconPath();
       done();
     });
 
@@ -45,6 +47,10 @@ describe('charm token drag and drop', function() {
     if (token) {
       token.destroy();
     }
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('extracts charm configuration from the widget configuration', function() {

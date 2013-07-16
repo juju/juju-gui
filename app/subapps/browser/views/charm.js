@@ -560,11 +560,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
           token.destroy();
         });
       }
-
-      if (this.mockedHelper) {
-        var helperNS = Y.namespace('Handlebars.helpers');
-        helperNS.charmIconPath = undefined;
-      }
     },
 
     /**
@@ -737,19 +732,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     render: function() {
-      // In tests the handlebars helper we use isn't setup so we set up an
-      // empty helper if it's not defined.
-      var helperNS = Y.namespace('Handlebars.helpers');
-      this.mockedHelper = false;
-      if (!helperNS.charmIconPath) {
-        Y.Handlebars.registerHelper(
-            'charmIconPath',
-            function(charmID, file) {
-              return '/path/to/charm/' + file;
-            });
-        this.mockedHelper = true;
-      }
-
       var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
 

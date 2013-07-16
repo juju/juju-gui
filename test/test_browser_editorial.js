@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_editorial', function() {
-    var container, EditorialView, fakeStore, models,
-        node, sampleData, view, views, Y;
+    var container, cleanIconHelper, EditorialView, fakeStore, models,
+        node, sampleData, utils, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -30,9 +30,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-tests-utils',
           'subapp-browser-editorial',
           function(Y) {
+            utils = Y.namespace('juju-tests.utils');
             views = Y.namespace('juju.browser.views');
             EditorialView = views.EditorialView;
             sampleData = Y.io('data/interesting.json', {sync: true});
+            cleanIconHelper = utils.stubCharmIconPath();
             done();
           });
     });
@@ -63,6 +65,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         fakeStore.destroy();
       }
       container.remove(true);
+    });
+
+    after(function() {
+      cleanIconHelper();
     });
 
     it('renders sidebar with hidden charms', function() {

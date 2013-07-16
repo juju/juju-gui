@@ -40,7 +40,7 @@ describe('service module annotations', function() {
   });
 
   beforeEach(function() {
-    viewContainer = utils.makeContainer(),
+    viewContainer = utils.makeContainer();
     db = new models.Database();
     called = false;
     location =
@@ -375,6 +375,7 @@ describe('service module events', function() {
     // this will be removed by the canvas drop handler
     localContainer.setAttribute('id', 'foo');
     localContainer.append('<img>').setAttribute('src', src);
+    d3.event = {};
     d3.event._event = {
       dataTransfer: {
         getData: function(name) {

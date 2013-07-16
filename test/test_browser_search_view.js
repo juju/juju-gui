@@ -21,7 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('search view', function() {
   var apiURL,
+      cleanIconHelper,
       container,
+      utils,
       view,
       Y;
 
@@ -35,6 +37,8 @@ describe('search view', function() {
         'node-event-simulate',
         'subapp-browser-searchview',
         function(Y) {
+          utils = Y.namespace('juju-tests.utils');
+          cleanIconHelper = utils.stubCharmIconPath();
           done();
         });
   });
@@ -81,6 +85,10 @@ describe('search view', function() {
     delete window.juju_config;
     view.destroy();
     container.remove(true);
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('exists', function() {

@@ -151,19 +151,6 @@ YUI.add('browser-charm-token', function(Y) {
     },
 
     /**
-     * Destory the charm instance.
-     *
-     * @method destroy
-     *
-     */
-    destroy: function() {
-      if (this.mockedHelper) {
-        var helperNS = Y.namespace('Handlebars.helpers');
-        helperNS.charmIconPath = undefined;
-      }
-    },
-
-    /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
      * @param {Node} container The contaner to render into.  Mainly for
@@ -171,19 +158,6 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      // In tests the handlebars helper we use isn't setup so we set up an
-      // empty helper if it's not defined.
-      var helperNS = Y.namespace('Handlebars.helpers');
-      this.mockedHelper = false;
-      if (!helperNS.charmIconPath) {
-        Y.Handlebars.registerHelper(
-            'charmIconPath',
-            function(charmID, file) {
-              return '/path/to/charm/' + file;
-            });
-        this.mockedHelper = true;
-      }
-
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
       var outerContainer = container.ancestor('.yui3-charmtoken')
