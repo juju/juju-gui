@@ -242,6 +242,7 @@ YUI.add('juju-models', function(Y) {
         charm: charm.get('id'),
         unit_count: 0,  // No units yet.
         loaded: false,
+        subordinate: charm.get('is_subordinate'),
         config: config
       });
       return ghostService;
