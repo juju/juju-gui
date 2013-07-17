@@ -38,7 +38,7 @@ describe('charm normalization', function() {
         'charms/precise/openstack-dashboard-0/json');
   });
 
-  it('can load options from both \'options\' and \'config\'', function() {
+  it('can load options from both "options" and "config"', function() {
     var options = {foo: 'bar'};
     var charm = new models.Charm({
       id: 'cs:precise/openstack-dashboard-0',
