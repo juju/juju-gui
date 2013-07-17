@@ -65,6 +65,7 @@ describe('juju application notifications', function() {
       'node-event-simulate',
       'ns-routing-app-extension'],
     function(Y) {
+      window.flags = {};
       viewContainer = Y.namespace('juju-tests.utils')
         .makeContainer('container');
       db = new models.Database();

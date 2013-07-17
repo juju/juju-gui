@@ -66,6 +66,24 @@ if (!Object.observe) {
       }
     };
 
+    var _notifiers = [], _indexes = [];
+    extend.getNotifier = function(O) {
+      var idx = _indexes.indexOf(O), notifier = idx > -1 ? _notifiers[idx] : false;
+      if (!notifier) {
+        idx = _indexes.length;
+        _indexes[idx] = O;
+        notifier = _notifiers[idx] = new Notifier(O);
+      }
+      return notifier;
+    };
+    extend.observe = function(O, callback) {
+      return new Observer(O, callback);
+    };
+    extend.unobserve = function(O, callback) {
+      validateArguments(O, callback);
+      extend.getNotifier(O).removeListener(callback);
+    };
+
     var Observer = (function() {
       var wraped = [];
       var Observer = function(O, callback) {
@@ -211,9 +229,11 @@ if (!Object.observe) {
       };
       self.deliverChangeRecords = function() {
         var i = 0, l = _listeners.length, keepRunning = true;
+        console.log("deliverChangeRecords", _listeners);
         for (i = 0; i < l && keepRunning; i++) {
           if (typeof(_listeners[i]) === 'function') {
             if (_listeners[i] === console.log) {
+              //continue;
               console.log(_updates);
             }else {
               keepRunning = !(_listeners[i](_updates));
@@ -225,22 +245,5 @@ if (!Object.observe) {
       self._checkPropertyListing(true);
     };
 
-    var _notifiers = [], _indexes = [];
-    extend.getNotifier = function(O) {
-      var idx = _indexes.indexOf(O), notifier = idx > -1 ? _notifiers[idx] : false;
-      if (!notifier) {
-        idx = _indexes.length;
-        _indexes[idx] = O;
-        notifier = _notifiers[idx] = new Notifier(O);
-      }
-      return notifier;
-    };
-    extend.observe = function(O, callback) {
-      return new Observer(O, callback);
-    };
-    extend.unobserve = function(O, callback) {
-      validateArguments(O, callback);
-      extend.getNotifier(O).removeListener(callback);
-    };
-  })(Object, this);
+      })(Object, this);
 }
