@@ -209,7 +209,6 @@ describe('data binding library', function() {
           bindings: {
             name: {
               update: function(node, value) {
-                console.log("logging al the time");
                 node.setHTML(value);
                 called = true;
               }

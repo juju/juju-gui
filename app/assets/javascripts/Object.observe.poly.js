@@ -229,7 +229,6 @@ if (!Object.observe) {
       };
       self.deliverChangeRecords = function() {
         var i = 0, l = _listeners.length, keepRunning = true;
-        console.log("deliverChangeRecords", _listeners);
         for (i = 0; i < l && keepRunning; i++) {
           if (typeof(_listeners[i]) === 'function') {
             if (_listeners[i] === console.log) {
