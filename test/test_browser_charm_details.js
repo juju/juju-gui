@@ -845,7 +845,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.all('#bws-interfaces .charm-token').size(),
-          4);
+          9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 
