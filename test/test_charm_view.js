@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('juju charm view', function() {
-    var CharmView, juju, localCharmStore, testUtils, Y, env, conn, container,
-        charmResults;
+    var CharmView, cleanIconHelper, juju, localCharmStore, testUtils, Y, env,
+        conn, container, charmResults;
 
     var charmQuery = '/charms/precise/postgresql/json';
 
@@ -33,6 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
+        cleanIconHelper = testUtils.stubCharmIconPath();
         done();
       });
     });
@@ -95,6 +96,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.remove(true);
       env.destroy();
       done();
+    });
+
+    after(function() {
+      cleanIconHelper();
     });
 
     // Ensure the charm view correctly requests a charm deploy.

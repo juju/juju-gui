@@ -168,10 +168,11 @@ YUI.add('subapp-browser', function(Y) {
      */
     _registerSubappHelpers: function() {
       var store = this.get('store');
-      // Register a file path generating helper.
-      Y.Handlebars.registerHelper('charmFilePath', function(charmID, file) {
-        return store.filepath(charmID, file);
+      // Register a helper for generating the icon urls for charms.
+      Y.Handlebars.registerHelper('charmIconPath', function(charmID) {
+        return store.iconpath(charmID);
       });
+
     },
 
     /**

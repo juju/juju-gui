@@ -42,6 +42,18 @@
         }
     }
 
+    .status-unit-content {
+        transition: 1s, max-height 1s;
+        -webkit-transition: 1s, max-height 1s;
+        overflow: hidden;
+        /* max height is being set inline in views/service.js.
+        It is calculated on the number of units in the list.  */
+
+        &.close-unit {
+            max-height: 0px !important;
+        }
+    }
+
     .view-container {
         overflow: auto;
         padding: 15px;
@@ -94,11 +106,11 @@
                 text-align: center;
 
                 button {
+                    .create-border-radius(@border-radius);
                     width: 115px;
                     height: 25px;
                     margin: 10px 0;
                     border: none;
-                    border-radius: 5px;
                     color: white;
                     font-weight: bold;
 
@@ -187,9 +199,9 @@
             }
 
             .fakebutton {
+                .create-border-radius(@border-radius);
                 font-family: @font-family-medium;
                 border: 1px solid #6B6B6B;
-                border-radius: 5px;
                 color: white;
                 font-size: 14px;
                 font-weight: bold;
@@ -248,7 +260,7 @@
 
         .buttons {
             a {
-                .create-border-radius(4px);
+                .create-border-radius(@border-radius);
                 .create-box-shadow(0 2px 2px -2px #777 inset);
                 box-shadow: 0 2px 2px -2px #777777 inset;
                 color: #fff;

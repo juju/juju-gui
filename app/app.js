@@ -558,7 +558,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Create the CharmPanel instance once the app is initialized.
       this.charmPanel = views.CharmPanel.getInstance({
-        charm_store: this.charm_store,
         env: this.env,
         app: this
       });
@@ -575,8 +574,11 @@ YUI.add('juju-gui', function(Y) {
       }
 
       Y.one('#logout-trigger').on('click', function(e) {
-        e.halt();
-        this.logout();
+        // If this is not a Get Juju link then allow it to work as normal.
+        if (!this.get('showGetJujuButton')) {
+          e.halt();
+          this.logout();
+        }
       }, this);
 
       // Attach SubApplications. The subapps should share the same db.
@@ -1175,7 +1177,8 @@ YUI.add('juju-gui', function(Y) {
             endpointsController: this.endpointsController,
             useDragDropImport: this.get('sandbox'),
             db: this.db,
-            env: this.env};
+            env: this.env,
+            store: this.get('store')};
 
       this.showView('environment', options, {
         /**
@@ -1285,6 +1288,34 @@ YUI.add('juju-gui', function(Y) {
       charm_store: {},
       charm_store_url: {},
       charmworldURL: {},
+      /**
+         @attribute store
+         @default Charmworld2
+         @type {Charmworld2}
+       */
+      store: {
+        /**
+           We keep one instance of the store and will work on caching results
+           at the app level so that routes can share api calls. However, in
+           tests there's no config for talking to the api so we have to watch
+           out in test runs and allow the store to be broken.
+
+           @method store.valueFn
+        */
+        valueFn: function() {
+          var cfg = {
+            noop: false,
+            apiHost: ''
+          };
+          if (!window.juju_config || !window.juju_config.charmworldURL) {
+            console.error('No juju config to fetch charmworld store url');
+            cfg.noop = true;
+          } else {
+            cfg.apiHost = window.juju_config.charmworldURL;
+          }
+          return new Y.juju.Charmworld2(cfg);
+        }
+      },
 
       /**
        * Routes

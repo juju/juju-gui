@@ -1545,8 +1545,37 @@ YUI.add('juju-view-service', function(Y) {
       var unitId = ev.currentTarget.getData('unit');
       var unit = db.units.revive(db.units.getById(unitId));
       this.inspector.showViewlet('unit', unit);
-    }
+    },
 
+    /**
+      Toggles the close-unit class on the unit-list-wrapper which triggers
+      the css close and open animations.
+
+      @method toggleUnitHeader
+      @param {Y.EventFacade} e Click event object.
+    */
+    toggleUnitHeader: function(e) {
+      e.currentTarget.siblings('.status-unit-content')
+                     .toggleClass('close-unit');
+    },
+
+    /**
+      Toggles the checked status of all of the units in the unit status
+      category
+
+      @method toggleSelectAllUnits
+      @param {Y.EventFacade} e Click event object.
+    */
+    toggleSelectAllUnits: function(e) {
+      var currentTarget = e.currentTarget,
+          units = currentTarget.ancestor('.status-unit-content')
+                               .all('input[type=checkbox]');
+      if (currentTarget.getAttribute('checked')) {
+        units.removeAttribute('checked');
+      } else {
+        units.setAttribute('checked', 'checked');
+      }
+    }
   };
 
   /**
@@ -1556,6 +1585,135 @@ YUI.add('juju-view-service', function(Y) {
    */
   var ServiceInspector = (function() {
     var juju = Y.namespace('juju');
+
+    /**
+      Generates the unit list sorted by status category and returns an array
+      with the data to generate the unit list UI.
+
+      @method updateUnitList
+      @param {Object} values From the databinding update method.
+      @return {Array} An array of objects with agent_state as category and an
+        array of units [{ category: 'started', units: [model, model, ...]}].
+    */
+    function updateUnitList(values) {
+      var statuses = [],
+          unitByStatus = {};
+
+      values.each(function(value) {
+        var category = utils.simplifyState(value);
+        if (!unitByStatus[category]) {
+          unitByStatus[category] = [];
+        }
+        unitByStatus[category].push(value);
+      });
+
+      Y.each(unitByStatus, function(value, key) {
+        statuses.push({category: key, units: value});
+      });
+
+      return statuses;
+    }
+
+    /**
+      Binds the statuses data set to d3
+
+      @method generateAndBindUnitHeaders
+      @param {Array} statuses A key value pair of categories to unit list.
+    */
+    function generateAndBindUnitHeaders(node, statuses) {
+      var categoryWrapperNodes = d3.select(node.getDOMNode())
+                                   .selectAll('.unit-list-wrapper')
+                                   .data(statuses, function(d) {
+                                       return d.category;
+                                     });
+
+      // D3 header enter section
+      var unitStatusWrapper = categoryWrapperNodes
+                                  .enter()
+                                  .append('div')
+                                  .classed('unit-list-wrapper', true);
+
+      var unitStatusHeader = unitStatusWrapper
+                                  .append('div')
+                                  .attr('class', function(d) {
+                                   return 'status-unit-header ' + d.category;
+                                 });
+
+      var unitStatusContentForm = unitStatusWrapper
+                                  .append('div')
+                                  .attr('class', function(d) {
+                                    return 'status-unit-content ' + d.category;
+                                  })
+                                  .style('max-height', function(d) {
+                                    return (d.units.length + 10) + 'em';
+                                  })
+                                  .append('form');
+
+      unitStatusContentForm.append('li')
+                            .append('input')
+                            .attr('type', 'checkbox')
+                            .classed('toggle-select-all', true);
+
+      unitStatusContentForm.append('ul');
+
+      unitStatusContentForm.append('div')
+                           .html(Templates['unit-action-buttons']());
+
+      unitStatusHeader.append('span')
+                      .html('&#8226;');
+
+      unitStatusHeader.append('span')
+                      .classed('unit-qty', true);
+
+      unitStatusHeader.append('span')
+                      .classed('category-label', true);
+
+      // D3 header update section
+      categoryWrapperNodes.select('.unit-qty')
+                          .text(function(d) {
+                               return d.units.length;
+                             });
+
+      // Add the category label to each heading
+      categoryWrapperNodes.select('.category-label')
+                          .text(function(d) {
+                               return d.category;
+                             });
+
+      var unitsList = categoryWrapperNodes.select('ul')
+                                      .selectAll('li')
+                                      .data(function(d) {
+                                       return d.units;
+                                     }, function(unit) {
+                                       return unit.id;
+                                     });
+
+      // D3 content enter section
+      var unitItem = unitsList.enter()
+                              .append('li');
+
+      unitItem.append('input')
+               .attr({'type': 'checkbox',
+                               'name': function(unit) {
+                                 return unit.id;
+                               }});
+
+      unitItem.append('span').text(function(d) {
+                               return d.id;
+                             });
+
+      // D3 content update section
+      unitsList.sort(
+          function(a, b) {
+            return a.number - b.number;
+          });
+
+      // D3 content exit section
+      unitsList.exit().remove();
+
+      // D3 header exit section
+      categoryWrapperNodes.exit().remove();
+    }
 
     var DEFAULT_VIEWLETS = {
       overview: {
@@ -1592,11 +1750,15 @@ YUI.add('juju-view-service', function(Y) {
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
-              var units = {units: value.toArray()};
-              node.setHTML(Templates.serviceOverviewUnitList(units));
+              // called under the databinding context
+              var statuses = this.viewlet.updateUnitList(value);
+              this.viewlet.generateAndBindUnitHeaders(node, statuses);
             }
           }
-        }
+        },
+        // These methods are exposed here to allow us access for testing.
+        updateUnitList: updateUnitList,
+        generateAndBindUnitHeaders: generateAndBindUnitHeaders
       },
       unit: {
         name: 'unit',

@@ -192,6 +192,8 @@ YUI.add('juju-view-environment', function(Y) {
                 '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'},
+                '.status-unit-header': {'click': 'toggleUnitHeader'},
+                '.toggle-select-all': {'click': 'toggleSelectAllUnits'},
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'}
               },
@@ -276,6 +278,7 @@ YUI.add('juju-view-environment', function(Y) {
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              store: this.get('store'),
               getInspector: Y.bind(this.getInspector, this),
               setInspector: Y.bind(this.setInspector, this),
               createServiceInspector: Y.bind(this.createServiceInspector, this),

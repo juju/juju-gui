@@ -32,15 +32,14 @@
     }
     .yui3-tabview-list,
     .yui3-tabview-panel {
-        margin: 0 auto;
-        padding: 0 30px;
+        padding: 0 70px 0 80px;
     }
     .yui3-tabview-list {
         width: 590px;
     }
     .yui3-tabview-panel {
         .border-box;
-        width: @bws-panel-width;
+        padding-bottom: 50px;
     }
     .yui3-tab-panel {
         h1,
@@ -48,7 +47,12 @@
         h3,
         h4 {
             .type5;
-            margin: 20px 0 10px 0;
+            margin: 30px 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid @bws-border;
+        }
+        p {
+            line-height: 20px;
         }
     }
     .content {
@@ -62,11 +66,8 @@
     }
     .providers {
         overflow: auto;
-        margin-top: 5px;
-        padding: 20px 0 10px 0;
-        border-width: 1px 0;
-        border-style: solid;
-        border-color: @bws-border;
+        padding: 0 0 10px 0;
+        border-bottom: 1px solid @bws-border;
 
         i {
             margin-right: 15px;
@@ -112,10 +113,12 @@
                 .create-box-shadow(@box-shadow);
                 .create-border-radius(@bws-corner);
                 display: block;
+                height: 40px;
                 margin-top: 17px;
-                padding: 10px 30px;
+                padding: 0 30px;
                 background-color: @charm-panel-orange;
                 color: #fff;
+                line-height: 40px;
             }
         }
         .charm-details {
@@ -174,6 +177,7 @@
         margin-top: 9px;
         margin-bottom: 26px;
     }
+    #bws-qa,
     #bws-summary,
     #bws-readme {
         padding-top: 10px;
@@ -191,15 +195,20 @@
             .border-box;
             padding: 0 20px;
         }
+        h4,
+        h3 {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
         .interfaces-heading {
-            background-color: #eeeeee;
             padding-top: 0;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid @bws-border;
         }
         .interface-list {
             .interface-row {
                 border-bottom: 1px solid @bws-border;
-                padding: 18px 0;
 
                 .interface {
                     padding-top: 10px;
@@ -208,6 +217,10 @@
                 }
                 .yui3-charmtoken {
                     width: 100%;
+
+                    .title {
+                        max-width: 150px;
+                    }
                 }
                 &:last-child {
                     border: none;
@@ -217,42 +230,36 @@
     }
     #bws-configuration {
         dt {
-            margin: 8px 0 10px 0;
+            margin: 20px 0 15px 0;
 
             dfn,
             em {
-                .type5;
+                .type9;
                 font-style: normal;
-                font-family: @font-family-mono;
             }
             dfn {
                 margin-right: 3px;
-                font-weight: bold;
+                font-weight: 400;
             }
             em {
-                font-weight: normal;
+                font-weight: 300;
+            }
+
+        }
+        dd {
+            margin-left: 1em;
+            div {
+                margin-bottom: 20px;
             }
         }
     }
     #bws-qa {
-        h3 {
-            margin: 16px 0 8px 0;
-
-            .heading-notes {
-                color: @bws-text;
-            }
-            &:first-child {
-                margin-top: 5px;
-            }
-        }
         li {
             margin-bottom: 4px;
             padding-left: 25px;
             background: transparent
                 url(/juju-ui/assets/images/quality_cross_icon.jpg)
                 left center no-repeat;
-            color: @bws-heading;
-            font-family: @font-family-medium;
 
             &.checked {
                 background-image:
@@ -289,10 +296,7 @@
     }
     #sharing {
         float: right;
-        padding-top: 17px;
-        padding-bottom: 16px;
-        padding-right: 26px;
-        padding-left: 16px;
+        padding: 17px 70px 16px 16px;
 
         a {
             padding-right: 5px; 

@@ -199,6 +199,10 @@ if (/*@cc_on!@*/false) {
         }
       };
 
+      getDocument = function() {
+        return document;
+      };
+
       setLoadingMessageText = function(newText) {
         getDocument()
           .getElementById('loading-message-text').innerHTML = newText;
@@ -207,10 +211,6 @@ if (/*@cc_on!@*/false) {
       isBrowserSupported = function(agent) {
         // At the moment Chrome and Firefox are supported.
         return (/Chrome|Firefox/.test(agent));
-      };
-
-      getDocument = function() {
-        return document;
       };
 
       displayBrowserWarning = function() {
@@ -231,6 +231,16 @@ if (/*@cc_on!@*/false) {
       hideLoadingMessage = function() {
         getDocument()
           .getElementById('loading-message').style.display = 'none';
+      };
+
+      showGetJujuButton = function(logoutTrigger, showGetJujuButton) {
+        if (showGetJujuButton) {
+          logoutTrigger.innerHTML = 'Get Juju';
+          logoutTrigger.href = 'https://juju.ubuntu.com/get-started/';
+          logoutTrigger.target = '_blank';
+        } else {
+          logoutTrigger.innerHTML = 'Logout';
+        }
       };
 
       continueWithCurrentBrowser = function() {
@@ -367,6 +377,11 @@ if (/*@cc_on!@*/false) {
             window.location.href,
             window.juju_config.flags || {}
         );
+
+        // If we are supposed to show the Get Juju button or the logout button
+        var logoutTrigger = getDocument().getElementById('logout-trigger');
+        // This config property is passed in to allow for testing.
+        showGetJujuButton(logoutTrigger, juju_config.showGetJujuButton);
 
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
