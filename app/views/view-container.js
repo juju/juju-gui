@@ -324,7 +324,17 @@ YUI.add('juju-view-container', function(Y) {
       if (!model) {
         model = this.get('model');
       }
-      this.fillSlot(viewlet, model);
+      // If the viewlet has a slot, use fillSlot to manage the slot. Otherwise,
+      // hide existing viewlets in the default slot before showing the new one.
+      if (viewlet.slot) {
+        this.fillSlot(viewlet, model);
+      } else {
+        Y.Object.each(this.viewlets, function(viewletToCheck) {
+          if (!viewletToCheck.slot) {
+            viewletToCheck.container.hide();
+          }
+        });
+      }
       viewlet.container.show();
       this.recalculateHeight();
     },
@@ -342,9 +352,6 @@ YUI.add('juju-view-container', function(Y) {
     fillSlot: function(viewlet, model) {
       var target;
       var slot = viewlet.slot;
-      if (slot === null) {
-        return;
-      }
       var existing = this._slots[slot];
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
