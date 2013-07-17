@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('data binding library', function() {
+describe('data binding library', function() {
   var Y, BindingEngine, utils, container;
 
 
