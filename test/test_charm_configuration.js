@@ -20,23 +20,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('charm configuration', function() {
   var Y, juju, db, models, views, makeView, container,
-      charmConfig =
-          { config:
-                { options:
-                      { option0:
-                            { name: 'option0',
-                              type: 'string',
-                              description: 'Option Zero'},
-                        option1:
-                            { name: 'option1',
-                              type: 'boolean',
-                              description: 'Option One'},
-                        option2:
-                            { name: 'option2',
-                              type: 'int',
-                              description: 'Option Two'} }
-                }
-          };
+      charmConfig = {
+        options: {
+          option0: {
+            name: 'option0',
+            type: 'string',
+            description: 'Option Zero'
+          },
+          option1: {
+            name: 'option1',
+            type: 'boolean',
+            description: 'Option One'
+          },
+          option2: {
+            name: 'option2',
+            type: 'int',
+            description: 'Option Two'
+          }
+        }
+      };
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -85,8 +87,6 @@ describe('charm configuration', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = makeView(charm);
     charm.loaded = true;
-    // If the charm has no config options it is still handled.
-    assert.isTrue(!Y.Lang.isValue(charm.config));
     view.render();
     var labels = container.all('div.control-label');
     labels.get('text').should.eql(['Service name', 'Number of units']);
@@ -95,10 +95,11 @@ describe('charm configuration', function() {
   it('must have inputs for items in the charm schema', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'});
     var db = new models.Database();
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          db: db});
+    var view = new views.CharmConfigurationView({
+      container: container,
+      model: charm,
+      db: db
+    });
     charm.setAttrs(charmConfig);
     charm.loaded = true;
     view.render();
@@ -134,13 +135,13 @@ describe('charm configuration', function() {
           model: charm,
           db: db});
     var modCharmConfig = Y.clone(charmConfig);
-    modCharmConfig.config.options.option3 = {
+    modCharmConfig.options.option3 = {
       name: 'option3',
       type: 'float',
       description: 'Option Three'
     };
     charm.setAttrs(modCharmConfig);
-    var options = charmConfig.config.options;
+    var options = charmConfig.options;
     // Set default values appropriate for each input type.
     options.option0['default'] = 'a single-line string';
     options.option1['default'] = 'checked';
@@ -166,7 +167,7 @@ describe('charm configuration', function() {
         { container: container,
           model: charm,
           db: db});
-    var options = charmConfig.config.options;
+    var options = charmConfig.options;
     // Set default values appropriate for each input type.
     options.option0['default'] = 'a single-line string';
     options.option1['default'] = 'checked';
@@ -197,15 +198,14 @@ describe('charm configuration', function() {
           }},
         charm = new models.Charm({id: 'cs:precise/mysql-7'}),
         view = makeView(charm, env);
-    charm.setAttrs(
-        { config:
-              { options:
-                    { option0:
-                         { name: 'option0',
-                           type: 'string'}
-                    }
-              }
-        });
+    charm.setAttrs({
+      options: {
+        option0: {
+          name: 'option0',
+          type: 'string'
+        }
+      }
+    });
     charm.loaded = true;
     view.render();
     container.one('#service-name').set('value', 'aaa');
@@ -349,16 +349,15 @@ describe('charm configuration', function() {
 
   it('must show a configuration file upload button if the charm ' +
       'has settings', function() {
-        var charm = new models.Charm({id: 'precise/mysql-7'});
-        charm.setAttrs(
-           { config:
-             { options:
-               { option0:
-                 { name: 'option0',
-                   type: 'string'}
-               }
-             }
-           });
+       var charm = new models.Charm({id: 'precise/mysql-7'});
+       charm.setAttrs({
+         options: {
+           option0: {
+             name: 'option0',
+             type: 'string'
+           }
+         }
+       });
        var db = new models.Database();
        var view = new views.CharmConfigurationView(
        { container: container,
@@ -375,15 +374,14 @@ describe('charm configuration', function() {
 
   it('must hide configuration panel when a file is uploaded', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'});
-    charm.setAttrs(
-        { config:
-              { options:
-                    { option0:
-                         { name: 'option0',
-                           type: 'string'}
-                    }
-              }
-        });
+    charm.setAttrs({
+      options: {
+        option0: {
+          name: 'option0',
+          type: 'string'
+        }
+      }
+    });
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -400,15 +398,14 @@ describe('charm configuration', function() {
 
   it('must remove configuration data when the button is pressed', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'});
-    charm.setAttrs(
-        { config:
-              { options:
-                    { option0:
-                         { name: 'option0',
-                           type: 'string'}
-                    }
-              }
-        });
+    charm.setAttrs({
+      options: {
+        option0: {
+          name: 'option0',
+          type: 'string'
+        }
+      }
+    });
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -439,15 +436,14 @@ describe('charm configuration', function() {
                 received_config_raw = config_raw;
               }},
         view = makeView(charm, env, db);
-    charm.setAttrs(
-        { config:
-              { options:
-                    { tuninglevel:
-                         { name: 'tuning-level',
-                           type: 'string'}
-                    }
-              }
-        });
+    charm.setAttrs({
+      options: {
+        tuninglevel: {
+          name: 'tuning-level',
+          type: 'string'
+        }
+      }
+    });
     charm.loaded = true;
     view.render();
     var config_raw = 'tuning-level: \n expert';

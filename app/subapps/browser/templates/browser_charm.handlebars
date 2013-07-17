@@ -1,45 +1,47 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        <div class="heading">
-                {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
-            <div class="block-icon">
-                <img src="{{charmIconPath id}}" alt="{{ name }} icon" class="icon">
-            </div>
-            <div class="charm-details">
-                <h1>{{ name }}</h1>
-                <div class="add-reviewed">
-                    {{#if is_approved}}
-                        <div>
-                            <i class="sprite approved_star"></i>
-                            Reviewed by the Juju team
-                        </div>
-                    {{/if}}
-                    {{! The add class is used by the deploy method in
-                        test/test_charm_running.py.  If you change this name, change
-                        the other one too! }}
-                    <a href="" class="add">Add to my canvas</a>
+        {{#unless forInspector}}
+            <div class="heading">
+                    {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                <div class="block-icon">
+                    <img src="{{charmIconPath id}}" alt="{{ name }} icon" class="icon">
                 </div>
-                <ul>
-                    <li>
-                        Activity: {{ downloads }}
-                        {{pluralize 'Download' downloads}},
-                        {{ commitCount }}
-                        {{pluralize 'Commit' commitCount}}
-                    </li>
-                    <li>Ubuntu series: {{ distro_series }}</li>
-                    <li>Location: {{ url }}</li>
-                    <li>
-                        Links:
-                        <a href="{{ sourceLink }}">Source</a>
-                        <a href="{{ code_source.bugs_link }}">Bugs</a>
-                    </li>
-                </ul>
+                <div class="charm-details">
+                    <h1>{{ name }}</h1>
+                    <div class="add-reviewed">
+                        {{#if is_approved}}
+                            <div>
+                                <i class="sprite approved_star"></i>
+                                Reviewed by the Juju team
+                            </div>
+                        {{/if}}
+                        {{! The add class is used by the deploy method in
+                            test/test_charm_running.py.  If you change this name, change
+                            the other one too! }}
+                        <a href="" class="add">Add to my canvas</a>
+                    </div>
+                    <ul>
+                        <li>
+                            Activity: {{ downloads }}
+                            {{pluralize 'Download' downloads}},
+                            {{ commitCount }}
+                            {{pluralize 'Commit' commitCount}}
+                        </li>
+                        <li>Ubuntu series: {{ distro_series }}</li>
+                        <li>Location: {{ url }}</li>
+                        <li>
+                            Links:
+                            <a href="{{ sourceLink }}">Source</a>
+                            <a href="{{ code_source.bugs_link }}">Bugs</a>
+                        </li>
+                    </ul>
 
-                {{#if isFullscreen}}
-                    {{>providers}}
-                {{/if}}
+                    {{#if isFullscreen}}
+                        {{>providers}}
+                    {{/if}}
+                </div>
             </div>
-        </div>
+        {{/unless}}
 
         <div class="tabs">
             <ul>
@@ -50,18 +52,20 @@
                 <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
                 <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
             </ul>
-            <hr />
-            <span id="sharing">
-              <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
-                <i class="sprite twitter-normal"></i>
-              </a>
-              <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
-                <i class="sprite google-normal"></i>
-              </a>
-              <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
-                <i class="sprite email-normal"></i>
-              </a>
-            </span>
+            {{#unless forInspector}}
+                <hr />
+                <span id="sharing">
+                  <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
+                    <i class="sprite twitter-normal"></i>
+                  </a>
+                  <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
+                    <i class="sprite google-normal"></i>
+                  </a>
+                  <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
+                    <i class="sprite email-normal"></i>
+                  </a>
+                </span>
+            {{/unless}}
             <div>
                 <div id="bws-summary">
                     <div class="summary">

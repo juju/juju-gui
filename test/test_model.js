@@ -38,6 +38,22 @@ describe('charm normalization', function() {
         'charms/precise/openstack-dashboard-0/json');
   });
 
+  it('can load options from both "options" and "config"', function() {
+    var options = {foo: 'bar'};
+    var charm = new models.Charm({
+      id: 'cs:precise/openstack-dashboard-0',
+      options: options
+    });
+    assert.equal(charm.get('options'), options);
+    charm = new models.Charm({
+      id: 'cs:precise/openstack-dashboard-0',
+      config: {
+        options: options
+      }
+    });
+    assert.equal(charm.get('options'), options);
+  });
+
   it('must convert timestamps into time objects', function() {
     var time = 1349797266.032,
         date = new Date(time),

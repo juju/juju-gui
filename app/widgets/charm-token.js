@@ -50,13 +50,7 @@ YUI.add('browser-charm-token', function(Y) {
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       // @property charmData Contains the extracted charm information.
       this.charmData = Y.aggregate({}, config, false, charmAttributes);
-      // The configuration schema comes in as "options" and has to be moved
-      // over to the charm data manually.
-      if (this.charmData.config === undefined) {
-        this.charmData.config = {};
-      }
-      this.charmData.config.options = config.options;
-
+      this.charmData.options = config.options;
     },
 
     /**

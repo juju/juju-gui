@@ -71,8 +71,8 @@ describe('Inspector Settings', function() {
 
   var setUpInspector = function(options) {
     var charmId = 'precise/mediawiki-4';
-    var charm = new models.Charm({id: charmId});
-    charm.setAttrs(charmConfig);
+    charmConfig.id = charmId;
+    var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);

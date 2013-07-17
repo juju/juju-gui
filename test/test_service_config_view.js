@@ -61,32 +61,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm(
-          { id: 'cs:precise/mysql-7',
-            description: 'A DB',
-            config:
-                { options:
-                      { option0:
-                            { description: 'The first option.',
-                              type: 'string'},
-                        option1: { description: 'The second option.',
-                          type: 'boolean'},
-                        option2:
-                            { description: 'The third option.',
-                              type: 'boolean'},
-                        intOption:
-                            { description:
-                                  'An int option with no default value.',
-                              type: 'int'},
-                        intOptionWithDefault:
-                            { description:
-                                  'An int option with no default value.',
-                              type: 'int',
-                              'default': 1},
-                        floatOption:
-                            { description:
-                                  'A float option with no default value.',
-                              type: 'float'}}}});
+      charm = new models.Charm({
+        id: 'cs:precise/mysql-7',
+        description: 'A DB',
+        options: {
+          option0: {
+            description: 'The first option.',
+            type: 'string'
+          },
+          option1: {
+            description: 'The second option.',
+            type: 'boolean'
+          },
+          option2: {
+            description: 'The third option.',
+            type: 'boolean'
+          },
+          intOption: {
+            description: 'An int option with no default value.',
+            type: 'int'
+          },
+          intOptionWithDefault: {
+            description: 'An int option with no default value.',
+            type: 'int',
+            'default': 1
+          },
+          floatOption: {
+            description: 'A float option with no default value.',
+            type: 'float'
+          }
+        }
+      });
 
       db.charms.add([charm]);
       service = new models.Service({

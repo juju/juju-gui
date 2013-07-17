@@ -842,8 +842,7 @@ YUI.add('juju-view-service', function(Y) {
           var charm = db.charms.getById(service.get('charm'));
           var config = service.get('config');
           var getModelURL = this.get('getModelURL');
-          var charm_config = charm.get('config');
-          var schema = charm_config && charm_config.options;
+          var schema = charm.get('options');
           var charm_id = service.get('charm');
           var field_def;
 
@@ -923,8 +922,7 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               charm_url = service.get('charm'),
               charm = db.charms.getById(charm_url),
-              charm_config = charm.get('config'),
-              schema = charm_config && charm_config.options,
+              schema = charm.get('options'),
               container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
@@ -1405,7 +1403,7 @@ YUI.add('juju-view-service', function(Y) {
           service = inspector.get('model'),
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
-          schema = charm.get('config').options,
+          schema = charm.get('options'),
           container = inspector.get('container'),
           button = container.one('button.confirm');
 
@@ -1580,6 +1578,21 @@ YUI.add('juju-view-service', function(Y) {
       } else {
         units.setAttribute('checked', 'checked');
       }
+    },
+
+    /**
+     Loads the charm details view for the inspector.
+
+     @method onShowCharmDetails
+     @param {Event} ev the click event from the overview viewlet.
+
+     */
+    onShowCharmDetails: function(ev) {
+      ev.halt();
+      var db = this.inspector.get('db');
+      var charmId = ev.currentTarget.getAttribute('data-charmid');
+      var charm = db.charms.getById(charmId);
+      this.inspector.showViewlet('charmDetails', charm);
     }
   };
 
@@ -1825,8 +1838,7 @@ YUI.add('juju-view-service', function(Y) {
           var settings = [];
           var db = viewContainerAttrs.db;
           var charm = db.charms.getById(service.get('charm'));
-          var charmConfig = charm.get('config');
-          var charmOptions = charmConfig && charmConfig.options;
+          var charmOptions = charm.get('options');
           Y.Object.each(service.get('config'), function(value, key) {
             var setting = {
               name: key,
@@ -1987,7 +1999,14 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
+    // Append any import viewlet configs to the DEFAULT_VIEWLETS so that it'll
+    // get constructed.
+    IMPORTED_VIEWLET_CONFIGS.forEach(function(config) {
+      DEFAULT_VIEWLETS[config.name] = config;
+    });
+
     // This variable is assigned an aggregate collection of methods and
+    //
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
     var controllerPrototype = {};
