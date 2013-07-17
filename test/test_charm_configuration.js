@@ -349,14 +349,14 @@ describe('charm configuration', function() {
 
   it('must show a configuration file upload button if the charm ' +
       'has settings', function() {
-      var charm = new models.Charm({id: 'precise/mysql-7'});
-      charm.setAttrs({
-        options: {
-          option0: {
-            name: 'option0',
-            type: 'string'
-          }
-        }
+       var charm = new models.Charm({id: 'precise/mysql-7'});
+       charm.setAttrs({
+         options: {
+           option0: {
+             name: 'option0',
+             type: 'string'
+           }
+         }
        });
        var db = new models.Database();
        var view = new views.CharmConfigurationView(
