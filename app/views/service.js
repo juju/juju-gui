@@ -1530,6 +1530,24 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
+     * Show a unit within the left-hand panel.
+     * Note that, due to the revived model below, this model can potentially
+     * be out of date, as the POJO from the LazyModelList is the one kept up
+     * to date.  This is just a first-pass and will be changed later.
+     *
+     * @method showUnit
+     * @param {object} ev The click event.
+     * @return {undefined} Nothing.
+     */
+    showUnit: function(ev) {
+      ev.halt();
+      var db = this.inspector.get('db');
+      var unitId = ev.currentTarget.getData('unit');
+      var unit = db.units.revive(db.units.getById(unitId));
+      this.inspector.showViewlet('unit', unit);
+    },
+
+    /**
       Toggles the close-unit class on the unit-list-wrapper which triggers
       the css close and open animations.
 
@@ -1741,6 +1759,55 @@ YUI.add('juju-view-service', function(Y) {
         // These methods are exposed here to allow us access for testing.
         updateUnitList: updateUnitList,
         generateAndBindUnitHeaders: generateAndBindUnitHeaders
+      },
+      unit: {
+        name: 'unit',
+        template: Templates.unitOverview,
+        slot: 'left-hand-panel',
+        'render': function(unitModel, viewContainerAttrs) {
+          // Since we're given a Model and need a POJO for the template,
+          // retrieve the attrs and use those.  This will likely change in
+          // the future with POJO databinding.
+          var unit = unitModel.getAttrs(),
+              db = viewContainerAttrs.db,
+              service = db.services.getById(unit.service),
+              env = db.environment.get('annotations');
+
+          var ip_description_chunks = [];
+          if (unit.public_address) {
+            ip_description_chunks.push(unit.public_address);
+          }
+          if (unit.private_address) {
+            ip_description_chunks.push(unit.private_address);
+          }
+          if (unit.open_ports) {
+            ip_description_chunks.push(unit.open_ports.join());
+          }
+          var unit_ip_description;
+          if (ip_description_chunks.length) {
+            unit_ip_description = ip_description_chunks.join(' | ');
+          }
+
+          // Ignore relations errors.
+          var state = utils.simplifyState(unit, true);
+
+          var relation_errors = unit.relation_errors || {},
+              relations = utils.getRelationDataForService(db, service);
+
+          Y.each(relations, function(rel) {
+            var match = relation_errors[rel.near.name],
+                far = rel.far || rel.near;
+            rel.has_error = !!(match && match.indexOf(far.service) > -1);
+          });
+
+          var templateData = {
+            unit: unit,
+            unitIPDescription: unit_ip_description,
+            relations: relations
+          };
+          this.container = Y.Node.create(this.templateWrapper);
+          this.container.setHTML(this.template(templateData));
+        }
       },
       config: {
         name: 'config',
@@ -1972,6 +2039,9 @@ YUI.add('juju-view-service', function(Y) {
       options.events = Y.mix(options.events, options.viewletEvents);
 
       this.inspector = new views.ViewContainer(options);
+      this.inspector.slots = {
+        'left-hand-panel': '.left'
+      };
       this.inspector.render();
       this.inspector.showViewlet(options.viewletList[0]);
     }
