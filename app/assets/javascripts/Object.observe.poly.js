@@ -233,7 +233,6 @@ if (!Object.observe) {
         for (i = 0; i < l && keepRunning; i++) {
           if (typeof(_listeners[i]) === 'function') {
             if (_listeners[i] === console.log) {
-              //continue;
               console.log(_updates);
             }else {
               keepRunning = !(_listeners[i](_updates));

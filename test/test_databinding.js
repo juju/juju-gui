@@ -193,6 +193,7 @@ describe('data binding library', function() {
       });
 
       it('should be able to observe pojos', function(done) {
+        consoleManager.noop();
         var pojo = {id: 'a', name: 'test'};
         container = utils.makeContainer();
         container.append('<div data-bind="name"></div>');
@@ -208,8 +209,8 @@ describe('data binding library', function() {
           bindings: {
             name: {
               update: function(node, value) {
+                console.log("logging al the time");
                 node.setHTML(value);
-                console.log(node.getDOMNode());
                 called = true;
               }
             }

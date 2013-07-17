@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('juju application notifications', function() {
+describe.skip('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
       viewContainer, views, Y, willError, nsRouter;
 
