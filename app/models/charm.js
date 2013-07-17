@@ -304,6 +304,11 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       series: {},
+      storeId: {
+        getter: function() {
+          return this.get('id').replace(/^[^:]+:/, '');
+        }
+      },
       summary: {},
       url: {}
     }

@@ -22,30 +22,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('viewlet-charm-details', function(Y) {
   var browserViews = Y.namespace('juju.browser.views'),
       ns = Y.namespace('juju.viewlets'),
-      templates = Y.namespace('juju.views').Templates;
+      templates = Y.namespace('juju.views').Templates,
+      models = Y.namespace('juju.models');
 
   ns.charmDetails = {
     name: 'charmDetails',
     slot: 'left-hand-panel',
     //templateWrapper: templates['left-breakout-panel'],
     render: function(charm, viewContainerAttrs) {
-      var tmpContainer = Y.Node.create('<div />');//this.templateWrapper());
+      //this.container = Y.Node.create('<div />');//this.templateWrapper());
 
-      var charmView = new browserViews.BrowserCharmView({
-        charm: charm,
-        container: tmpContainer,
-        forInspector: true,
-        store: viewContainerAttrs.store
-      });
-      charmView.render();
-      return tmpContainer;
-
+      var store = viewContainerAttrs.store;
+      store.charm(charm.get('storeId'), {
+        success: function(data) {
+          var storeCharm = new models.BrowserCharm(data.charm);
+          var charmView = new browserViews.BrowserCharmView({
+            charm: storeCharm,
+            forInspector: true,
+            renderTo: this.container.get('parentNode'),
+            store: store
+          });
+          charmView.render();
+        },
+        failure: function(data, request) {
+          var charmView = new browserViews.BrowserCharmView({
+            charm: charm,
+            forInspector: true,
+            renderTo: this.container.get('parentNode'),
+            store: store
+          });
+          charmView.render();
+        },
+      }, this);
+      return Y.Node.create('<div>Loading...</div>');
     }
   };
 }, '0.0.1', {
   requires: [
     'node',
     'subapp-browser-charmview',
+    'juju-charm-models',
     'juju-view'
   ]
 });
