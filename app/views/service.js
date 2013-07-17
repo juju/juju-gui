@@ -1644,9 +1644,6 @@ YUI.add('juju-view-service', function(Y) {
                                   .attr('class', function(d) {
                                     return 'status-unit-content ' + d.category;
                                   })
-                                  .style('max-height', function(d) {
-                                    return (d.units.length + 10) + 'em';
-                                  })
                                   .append('form');
 
       unitStatusContentForm.append('li')
@@ -1707,6 +1704,13 @@ YUI.add('juju-view-service', function(Y) {
           function(a, b) {
             return a.number - b.number;
           });
+
+      categoryWrapperNodes
+          .select('.status-unit-content')
+          .style('max-height', function(d) {
+            return (d.units.length + 10) + 'em';
+          });
+
 
       // D3 content exit section
       unitsList.exit().remove();
