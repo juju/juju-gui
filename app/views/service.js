@@ -1531,6 +1531,9 @@ YUI.add('juju-view-service', function(Y) {
 
     /**
      * Show a unit within the left-hand panel.
+     * Note that, due to the revived model below, this model can potentially
+     * be out of date, as the POJO from the LazyModelList is the one kept up
+     * to date.  This is just a first-pass and will be changed later.
      *
      * @method showUnit
      * @param {object} ev The click event.
@@ -1598,16 +1601,11 @@ YUI.add('juju-view-service', function(Y) {
       unit: {
         name: 'unit',
         template: Templates.unitOverview,
-        slot: 'left',
-        /**
-         * Render the unit to the left-hand panel.
-         *
-         * @method render
-         * @param {object} unitModel The ServiceUnitModel of the unit.
-         * @param {object} viewContainerAttrs The view container's attributes.
-         * @return {undefined} Nothing.
-         */
-        render: function(unitModel, viewContainerAttrs) {
+        slot: 'left-hand-panel',
+        'render': function(unitModel, viewContainerAttrs) {
+          // Since we're given a Model and need a POJO for the template,
+          // retrieve the attrs and use those.  This will likely change in
+          // the future with POJO databinding.
           var unit = unitModel.getAttrs(),
               db = viewContainerAttrs.db,
               service = db.services.getById(unit.service),
@@ -1880,7 +1878,7 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.slots = {
-        'left': '.left'
+        'left-hand-panel': '.left'
       };
       this.inspector.render();
       this.inspector.showViewlet(options.viewletList[0]);
