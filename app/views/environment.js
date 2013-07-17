@@ -170,6 +170,7 @@ YUI.add('juju-view-environment', function(Y) {
             configBase: {
               db: this.topo.get('db'),
               env: this.topo.get('env'),
+              store: this.topo.get('store'),
               events: {
                 '.close': {'click': 'destroy'}
               }

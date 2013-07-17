@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var IMPORTED_VIEWLET_CONFIGS = [];
+
 /**
  * Provide the service views and mixins.
  *
@@ -35,7 +37,10 @@ YUI.add('juju-view-service', function(Y) {
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
       plugins = Y.namespace('juju.plugins'),
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      viewletNS = Y.namespace('juju.viewlets');
+
+  IMPORTED_VIEWLET_CONFIGS.push(viewletNS.charmDetails);
 
   /**
    * @class manageUnitsMixin
@@ -2071,5 +2076,7 @@ YUI.add('juju-view-service', function(Y) {
     'event-key',
     'transition',
     'event-resize',
-    'json-stringify']
+    'json-stringify',
+    // Imported viewlets
+    'viewlet-charm-details']
 });
