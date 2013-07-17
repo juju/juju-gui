@@ -4,22 +4,388 @@
       "http": [
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Disable default site so dokuwiki is the default", 
+            "location": "lp:~charmers/charms/precise/dokuwiki/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
-          "downloads": 1, 
+          "downloads": 88, 
           "downloads_in_past_30_days": 1, 
           "has_icon": false, 
-          "id": "precise/ceph-radosgw-4", 
+          "id": "precise/dokuwiki-2", 
           "is_approved": true, 
-          "name": "ceph-radosgw", 
+          "name": "dokuwiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Removed spurious config option", 
+            "location": "lp:~charmers/charms/precise/firefox-sync/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 8, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/firefox-sync-2", 
+          "is_approved": true, 
+          "name": "firefox-sync", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added icon.svg", 
+            "location": "lp:~charmers/charms/precise/jenkins/trunk", 
+            "revision": "24", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 299, 
+          "downloads_in_past_30_days": 59, 
+          "has_icon": true, 
+          "id": "precise/jenkins-5", 
+          "is_approved": true, 
+          "name": "jenkins", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "bumping rev to get latest build", 
+            "location": "lp:~charmers/charms/precise/limesurvey/trunk", 
+            "revision": "29", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 40, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/limesurvey-4", 
+          "is_approved": true, 
+          "name": "limesurvey", 
           "weight": 10.0
         }, 
         {
           "categories": [
             "app-servers"
           ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/node-app/trunk", 
+            "revision": "35", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 112, 
+          "downloads_in_past_30_days": 14, 
+          "has_icon": false, 
+          "id": "precise/node-app-7", 
+          "is_approved": true, 
+          "name": "node-app", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Merging in Patricks changes.  MP:116936", 
+            "location": "lp:~charmers/charms/precise/openerp-web/trunk", 
+            "revision": "24", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
-          "downloads": 2, 
+          "downloads": 37, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/openerp-web-1", 
+          "is_approved": true, 
+          "name": "openerp-web", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Removed revision file", 
+            "location": "lp:~charmers/charms/precise/openvpn-as/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 5, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": true, 
+          "id": "precise/openvpn-as-2", 
+          "is_approved": true, 
+          "name": "openvpn-as", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "config typing", 
+            "location": "lp:~charmers/charms/precise/roundcube/trunk", 
+            "revision": "28", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 23, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/roundcube-0", 
+          "is_approved": true, 
+          "name": "roundcube", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Name change shelr.tv to shelrtv", 
+            "location": "lp:~charmers/charms/precise/shelrtv/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 13, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/shelrtv-0", 
+          "is_approved": true, 
+          "name": "shelrtv", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "rev++", 
+            "location": "lp:~charmers/charms/precise/spip/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 22, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/spip-0", 
+          "is_approved": true, 
+          "name": "spip", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "app-servers"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/tomcat7/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 101, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/tomcat7-2", 
+          "is_approved": true, 
+          "name": "tomcat7", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Properly indented code examples in README", 
+            "location": "lp:~charmers/charms/precise/tt-rss/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 4, 
           "downloads_in_past_30_days": 2, 
+          "has_icon": true, 
+          "id": "precise/tt-rss-0", 
+          "is_approved": true, 
+          "name": "tt-rss", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "[r=gary_poster] Add an upgrade-charm hook to support deploys of the charm and app.", 
+            "location": "lp:~juju-gui-charmers/charms/precise/juju-gui/trunk", 
+            "revision": "66", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 5, 
+          "downloads": 1067, 
+          "downloads_in_past_30_days": 254, 
+          "has_icon": true, 
+          "id": "precise/juju-gui-65", 
+          "is_approved": true, 
+          "name": "juju-gui", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Adding Ceph icon.", 
+            "location": "lp:~charmers/charms/precise/ceph-radosgw/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 28, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": true, 
+          "id": "precise/ceph-radosgw-5", 
+          "is_approved": true, 
+          "name": "ceph-radosgw", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "databases"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/hbase/trunk", 
+            "revision": "20", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 89, 
+          "downloads_in_past_30_days": 11, 
+          "has_icon": false, 
+          "id": "precise/hbase-5", 
+          "is_approved": true, 
+          "name": "hbase", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "merging lp:~clint-fewbar/charms/precise/nagios/add-monitors-2", 
+            "location": "lp:~charmers/charms/precise/nagios/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 189, 
+          "downloads_in_past_30_days": 17, 
+          "has_icon": false, 
+          "id": "precise/nagios-4", 
+          "is_approved": true, 
+          "name": "nagios", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "change maintainership", 
+            "location": "lp:~charmers/charms/precise/opentsdb/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 16, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/opentsdb-1", 
+          "is_approved": true, 
+          "name": "opentsdb", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/squid-forwardproxy/trunk", 
+            "revision": "25", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 9, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/squid-forwardproxy-1", 
+          "is_approved": true, 
+          "name": "squid-forwardproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Add categories\n", 
+            "location": "lp:~charmers/charms/precise/varnish/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 79, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/varnish-2", 
+          "is_approved": true, 
+          "name": "varnish", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Correction: Merge in Robert's edits", 
+            "location": "lp:~charmers/charms/precise/vdbench/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 11, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/vdbench-2", 
+          "is_approved": true, 
+          "name": "vdbench", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Skip the loadbalancer and talk directly to each unit on 8080", 
+            "location": "lp:~charmers/charms/precise/wordpress/trunk", 
+            "revision": "66", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3979, 
+          "downloads_in_past_30_days": 278, 
+          "has_icon": true, 
+          "id": "precise/wordpress-15", 
+          "is_approved": true, 
+          "name": "wordpress", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "app-servers"
+          ], 
+          "code_source": {
+            "last_log": "Add categories\n", 
+            "location": "lp:~charmers/charms/precise/apache2-passenger/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 46, 
+          "downloads_in_past_30_days": 9, 
           "has_icon": false, 
           "id": "precise/apache2-passenger-3", 
           "is_approved": true, 
@@ -28,9 +394,15 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Changes:\n    * fixed minor security issue - autogen password no longer\n      printed in logs and requires root permissions to access.\n    * code cleanup\n    * added hook-debug config option to make hook more verbose\n    * tidied up README\n", 
+            "location": "lp:~charmers/charms/precise/chef-server/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
-          "downloads": 3, 
-          "downloads_in_past_30_days": 3, 
+          "downloads": 42, 
+          "downloads_in_past_30_days": 1, 
           "has_icon": false, 
           "id": "precise/chef-server-2", 
           "is_approved": true, 
@@ -38,12 +410,432 @@
           "weight": 10.0
         }, 
         {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Javier P.L. 2013-05-07 Replace joomla by gitlab\n", 
+            "location": "lp:~charmers/charms/precise/gitlab/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 65, 
+          "downloads_in_past_30_days": 16, 
+          "has_icon": false, 
+          "id": "precise/gitlab-2", 
+          "is_approved": true, 
+          "name": "gitlab", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- changing ownership of configuration.php to www-data:www-data\n", 
+            "location": "lp:~charmers/charms/precise/joomla/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 44, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/joomla-1", 
+          "is_approved": true, 
+          "name": "joomla", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Reformat README to markdown\n", 
+            "location": "lp:~charmers/charms/precise/lamp/trunk", 
+            "revision": "16", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 176, 
+          "downloads_in_past_30_days": 19, 
+          "has_icon": false, 
+          "id": "precise/lamp-2", 
+          "is_approved": true, 
+          "name": "lamp", 
+          "weight": 10.0
+        }, 
+        {
           "categories": [
             "applications"
           ], 
+          "code_source": {
+            "last_log": "Added icon.svg", 
+            "location": "lp:~charmers/charms/precise/mediawiki/trunk", 
+            "revision": "70", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
-          "downloads": 22, 
-          "downloads_in_past_30_days": 22, 
+          "downloads": 1332, 
+          "downloads_in_past_30_days": 141, 
+          "has_icon": true, 
+          "id": "precise/mediawiki-8", 
+          "is_approved": true, 
+          "name": "mediawiki", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "bumping revision to get new changes", 
+            "location": "lp:~charmers/charms/precise/munin/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 88, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/munin-3", 
+          "is_approved": true, 
+          "name": "munin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "add maintainer\n", 
+            "location": "lp:~charmers/charms/precise/musica/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 48, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/musica-1", 
+          "is_approved": true, 
+          "name": "musica", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Mergin in Patrick's changes.  MP:116937", 
+            "location": "lp:~charmers/charms/precise/openerp-server/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 36, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": false, 
+          "id": "precise/openerp-server-1", 
+          "is_approved": true, 
+          "name": "openerp-server", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Merging in changes to README by jcastro. MP:144597", 
+            "location": "lp:~charmers/charms/precise/phpmyadmin/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 196, 
+          "downloads_in_past_30_days": 9, 
+          "has_icon": false, 
+          "id": "precise/phpmyadmin-3", 
+          "is_approved": true, 
+          "name": "phpmyadmin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Updated readme with more data and added markdown", 
+            "location": "lp:~charmers/charms/precise/python-moinmoin/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 43, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/python-moinmoin-2", 
+          "is_approved": true, 
+          "name": "python-moinmoin", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Fixing: https://bugs.launchpad.net/charms/+source/statusnet/+bug/1031362", 
+            "location": "lp:~charmers/charms/precise/statusnet/trunk", 
+            "revision": "14", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 63, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/statusnet-4", 
+          "is_approved": true, 
+          "name": "statusnet", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added myself as a maintainer.", 
+            "location": "lp:~charmers/charms/precise/thinkup/trunk", 
+            "revision": "21", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 36, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/thinkup-2", 
+          "is_approved": true, 
+          "name": "thinkup", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Adding maintainer field", 
+            "location": "lp:~charmers/charms/precise/tomcat6/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 39, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/tomcat6-1", 
+          "is_approved": true, 
+          "name": "tomcat6", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Switch endpoint/datasource handling to ensure that gmond's opt in to acting as a datasource", 
+            "location": "lp:~charmers/charms/precise/ganglia/trunk", 
+            "revision": "28", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 248, 
+          "downloads_in_past_30_days": 20, 
+          "has_icon": false, 
+          "id": "precise/ganglia-3", 
+          "is_approved": true, 
+          "name": "ganglia", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ", 
+            "location": "lp:~charmers/charms/precise/haproxy/trunk", 
+            "revision": "67", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 783, 
+          "downloads_in_past_30_days": 63, 
+          "has_icon": false, 
+          "id": "precise/haproxy-18", 
+          "is_approved": true, 
+          "name": "haproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added myself as a maintainer.", 
+            "location": "lp:~charmers/charms/precise/lodgeit/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 34, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/lodgeit-1", 
+          "is_approved": true, 
+          "name": "lodgeit", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "making website relation correct", 
+            "location": "lp:~charmers/charms/precise/loggerhead/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 24, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/loggerhead-1", 
+          "is_approved": true, 
+          "name": "loggerhead", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "install nginx from passenger repo, support for multiple sites", 
+            "location": "lp:~charmers/charms/precise/nginx-passenger/trunk", 
+            "revision": "3", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 34, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/nginx-passenger-1", 
+          "is_approved": true, 
+          "name": "nginx-passenger", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "* Implemented all charm review suggestions\n* Multiple project support\n- bzr and git supported\n", 
+            "location": "lp:~charmers/charms/precise/opengrok/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 27, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "precise/opengrok-0", 
+          "is_approved": true, 
+          "name": "opengrok", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "file-servers"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/owncloud/trunk", 
+            "revision": "18", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 358, 
+          "downloads_in_past_30_days": 16, 
+          "has_icon": false, 
+          "id": "precise/owncloud-7", 
+          "is_approved": true, 
+          "name": "owncloud", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "add notes on security-policy", 
+            "location": "lp:~charmers/charms/precise/rails/trunk", 
+            "revision": "44", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 67, 
+          "downloads_in_past_30_days": 6, 
+          "has_icon": false, 
+          "id": "precise/rails-0", 
+          "is_approved": true, 
+          "name": "rails", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added myself as a maintainer.", 
+            "location": "lp:~charmers/charms/precise/stackmobile/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 17, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/stackmobile-1", 
+          "is_approved": true, 
+          "name": "stackmobile", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added Maintainer Meta Data", 
+            "location": "lp:~charmers/charms/precise/subway/trunk", 
+            "revision": "14", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 68, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/subway-1", 
+          "is_approved": true, 
+          "name": "subway", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "merging lp:~mfisch/charms/precise/tracks/trunk", 
+            "location": "lp:~charmers/charms/precise/tracks/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 39, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/tracks-1", 
+          "is_approved": true, 
+          "name": "tracks", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "adding maintainer\n", 
+            "location": "lp:~lynxman/charms/precise/drupal6/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 76, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/drupal6-0", 
+          "is_approved": true, 
+          "name": "drupal", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Add a category\n", 
+            "location": "lp:~charmers/charms/precise/appflower/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 136, 
+          "downloads_in_past_30_days": 17, 
           "has_icon": false, 
           "id": "precise/appflower-1", 
           "is_approved": true, 
@@ -52,28 +844,272 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "merging lp:~dspiteri/charms/precise/etherpad-lite/pythonport as per https://code.launchpad.net/~dspiteri/charms/precise/etherpad-lite/pythonport/+merge/173636", 
+            "location": "lp:~charmers/charms/precise/etherpad-lite/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 167, 
+          "downloads_in_past_30_days": 8, 
+          "has_icon": false, 
+          "id": "precise/etherpad-lite-5", 
+          "is_approved": true, 
+          "name": "etherpad-lite", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Finished changes as per Marco's suggestions. Thanks Marco! :)\n", 
+            "location": "lp:~charmers/charms/precise/kusabax/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 34, 
+          "downloads_in_past_30_days": 8, 
+          "has_icon": false, 
+          "id": "precise/kusabax-0", 
+          "is_approved": true, 
+          "name": "kusabax", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "restore check for relation values", 
+            "location": "lp:~charmers/charms/precise/oops-tools/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 12, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/oops-tools-1", 
+          "is_approved": true, 
+          "name": "oops-tools", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "add myself as maintainer\n", 
+            "location": "lp:~charmers/charms/precise/pictor/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 28, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "precise/pictor-2", 
+          "is_approved": true, 
+          "name": "pictor", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "databases", 
+            "app-servers"
+          ], 
+          "code_source": {
+            "last_log": "merging lp:~patrick-hetu/charms/precise/python-django/python-rewrite as per lp:~patrick-hetu/charms/precise/python-django/python-rewrite", 
+            "location": "lp:~charmers/charms/precise/python-django/trunk", 
+            "revision": "25", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 70, 
+          "downloads_in_past_30_days": 4, 
+          "has_icon": true, 
+          "id": "precise/python-django-4", 
+          "is_approved": true, 
+          "name": "python-django", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "[dames] Add missing nagios_context variable, ignore revision file", 
+            "location": "lp:~charmers/charms/precise/solr-jetty/trunk", 
+            "revision": "17", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 13, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/solr-jetty-5", 
+          "is_approved": true, 
+          "name": "solr-jetty", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 11, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/squid-reverseproxy-1", 
+          "is_approved": true, 
+          "name": "squid-reverseproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "move permissions to deploy to insure proper permissions\n", 
+            "location": "lp:~nskaggs/charms/precise/vivo/trunk", 
+            "revision": "17", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
           "has_icon": false, 
-          "id": "~bcsaller/precise/juju-gui-1", 
+          "id": "~nskaggs/precise/vivo-11", 
           "is_approved": false, 
-          "name": "juju-gui", 
+          "name": "vivo", 
           "weight": 1.0
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Move lock file", 
+            "location": "lp:~robert-ayres/charms/precise/tomcat/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 51, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "~robert-ayres/precise/tomcat-3", 
+          "is_approved": false, 
+          "name": "tomcat", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Finished changes as per Marco's suggestions. Thanks Marco! :)\n", 
+            "location": "lp:~shazzner/charms/precise/kusabax/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/kusabax-5", 
+          "is_approved": false, 
+          "name": "kusabax", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "pushing as a WIP", 
+            "location": "lp:~thedac/charms/precise/squid/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~thedac/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid3", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Remove unused hooks (for now) and fix a couple bugs in the install hook.", 
+            "location": "lp:~timrchavez/charms/precise/offspring-web/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
           "has_icon": false, 
-          "id": "~bcsaller/precise/node-app-5", 
+          "id": "~timrchavez/precise/offspring-web-1", 
           "is_approved": false, 
-          "name": "node-app", 
+          "name": "offspring-web", 
           "weight": 1.0
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Removed spurious config option", 
+            "location": "lp:~utlemming/charms/precise/fsync/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~utlemming/precise/fsync-4", 
+          "is_approved": false, 
+          "name": "firefox-sync", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fix some bugs I discovered with testing", 
+            "location": "lp:~vtuson/charms/precise/lamp/trunk", 
+            "revision": "14", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/lamp-3", 
+          "is_approved": false, 
+          "name": "lamp", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": " small change", 
+            "location": "lp:~vtuson/charms/precise/your-charms-name/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~vtuson/precise/your-charms-name-0", 
+          "is_approved": false, 
+          "name": "lamp", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Correction: Merge in Robert's edits", 
+            "location": "lp:~ameetp/charms/precise/vdbench/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -85,6 +1121,46 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "legacy ppa", 
+            "location": "lp:~bcsaller/charms/precise/juju-gui/trunk", 
+            "revision": "38", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bcsaller/precise/juju-gui-1", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "trying again", 
+            "location": "lp:~bcsaller/charms/precise/node-app/trunk", 
+            "revision": "40", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 6, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~bcsaller/precise/node-app-5", 
+          "is_approved": false, 
+          "name": "node-app", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Replace PPA Nodejs with Archive", 
+            "location": "lp:~bkerensa/charms/precise/subway/trunk", 
+            "revision": "15", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -95,7 +1171,308 @@
           "weight": 1.0
         }, 
         {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "[r=gary_poster] Add an upgrade-charm hook to support deploys of the charm and app.", 
+            "location": "lp:~charmers/charms/precise/juju-gui/trunk", 
+            "revision": "66", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 5, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": true, 
+          "id": "~charmers/precise/juju-gui-13", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
           "categories": [], 
+          "code_source": {
+            "last_log": "a little bit closer", 
+            "location": "lp:~chilicuil/charms/precise/observiu/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observium-3", 
+          "is_approved": false, 
+          "name": "observium", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Initial charm", 
+            "location": "lp:~deanproctor/charms/precise/riak/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~deanproctor/precise/riak-0", 
+          "is_approved": false, 
+          "name": "riak", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "use awsjuju for elb support", 
+            "location": "lp:~hazmat/charms/precise/aws-elb/trunk", 
+            "revision": "9", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/aws-elb-5", 
+          "is_approved": false, 
+          "name": "aws-elb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Removed typos from README file.\n\nFixes LP1178301\n", 
+            "location": "lp:~hopem/charms/precise/ceph-radosgw/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/ceph-radosgw-0", 
+          "is_approved": false, 
+          "name": "ceph-radosgw", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "tidyup", 
+            "location": "lp:~hopem/charms/precise/template/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/template-5", 
+          "is_approved": false, 
+          "name": "template", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Left off bit about configuration", 
+            "location": "lp:~james-falkner/charms/precise/liferay/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 2, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~james-falkner/precise/liferay-4", 
+          "is_approved": false, 
+          "name": "liferay", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Add copyright file and an empty website-relation-changed hook\n", 
+            "location": "lp:~menesis/charms/precise/schooltool/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~menesis/precise/schooltool-2", 
+          "is_approved": false, 
+          "name": "schooltool", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "owncloud version 4.0.7 update (http://owncloud.org/changelog/)", 
+            "location": "lp:~nathwill/charms/precise/owncloud/trunk", 
+            "revision": "14", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/owncloud-17", 
+          "is_approved": false, 
+          "name": "owncloud", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Properly indented code examples in README", 
+            "location": "lp:~nextrevision/charms/precise/tt-rss/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~nextrevision/precise/tt-rss-3", 
+          "is_approved": false, 
+          "name": "tt-rss", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "sync with the latest gunicorn and memcached charm", 
+            "location": "lp:~patrick-hetu/charms/precise/python-django/trunk", 
+            "revision": "69", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~patrick-hetu/precise/python-django-5", 
+          "is_approved": false, 
+          "name": "python-django", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "some note about appsession in haproxy", 
+            "location": "lp:~pierre-amadio/charms/precise/spip/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pierre-amadio/precise/spip-8", 
+          "is_approved": false, 
+          "name": "spip", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Merge from canonical-losas, fix tests", 
+            "location": "lp:~sidnei/charms/precise/haproxy/trunk", 
+            "revision": "127", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/haproxy-28", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Move tests dir to hooks/tests", 
+            "location": "lp:~sidnei/charms/precise/squid-forwardproxy/trunk", 
+            "revision": "27", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-forwardproxy-1", 
+          "is_approved": false, 
+          "name": "squid-forwardproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "[r=bac] Update charm to reference itself as the reviewed charm.", 
+            "location": "lp:~sinzui/charms/precise/juju-gui/trunk", 
+            "revision": "62", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~sinzui/precise/juju-gui-0", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "* fixes after review", 
+            "location": "lp:~stefan-hartmann/charms/precise/chive/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~stefan-hartmann/precise/chive-1", 
+          "is_approved": false, 
+          "name": "chive", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Specify session secret on a per-machine basis.", 
+            "location": "lp:~abentley/charms/precise/charmworld/trunk", 
+            "revision": "23", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 8, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~abentley/precise/charmworld-8", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "updated maintainer field to include original author", 
+            "location": "lp:~alexlist/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -107,19 +1484,14 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Add extra debug messages", 
+            "location": "lp:~bilalakhtar/charms/precise/dokuwiki/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
-          "downloads": 0, 
-          "downloads_in_past_30_days": 0, 
-          "has_icon": false, 
-          "id": "~abentley/precise/charmworld-8", 
-          "is_approved": false, 
-          "name": "charmworld", 
-          "weight": 1.0
-        }, 
-        {
-          "categories": [], 
-          "commits_in_past_30_days": 0, 
-          "downloads": 0, 
+          "downloads": 2, 
           "downloads_in_past_30_days": 0, 
           "has_icon": false, 
           "id": "~bilalakhtar/precise/dokuwiki-1", 
@@ -129,6 +1501,12 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Don't install bzr-hg - it's broken on oneiric.", 
+            "location": "lp:~bzr/charms/precise/loggerhead/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -139,7 +1517,325 @@
           "weight": 1.0
         }, 
         {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "improve default login msg", 
+            "location": "lp:~chilicuil/charms/precise/observium/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~chilicuil/precise/observium-3", 
+          "is_approved": false, 
+          "name": "observium", 
+          "weight": 1.0
+        }, 
+        {
           "categories": [], 
+          "code_source": {
+            "last_log": "more fixes", 
+            "location": "lp:~cjohnston/charms/precise/summit/trunk", 
+            "revision": "46", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~cjohnston/precise/summit-0", 
+          "is_approved": false, 
+          "name": "summit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fix install hook chowning in the wrong order", 
+            "location": "lp:~clint-fewbar/charms/precise/mediagoblin/trunk", 
+            "revision": "17", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/mediagoblin-1", 
+          "is_approved": false, 
+          "name": "mediagoblin", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Add 'dns_v4_first on'", 
+            "location": "lp:~cloudware/charms/precise/squid-rp-mirror/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~cloudware/precise/squid-rp-mirror-0", 
+          "is_approved": false, 
+          "name": "squid-rp-mirror", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Use relation-list to build the current list of cassandra IPs.", 
+            "location": "lp:~daisy-pluckers/charms/precise/errors/trunk", 
+            "revision": "31", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~daisy-pluckers/precise/errors-27", 
+          "is_approved": false, 
+          "name": "errors", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Only restart jetty if it's already running in the config-changed hook", 
+            "location": "lp:~gnuoy/charms/precise/solr-jetty/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gnuoy/precise/solr-jetty-4", 
+          "is_approved": false, 
+          "name": "solr-jetty", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- changing ownership of configuration.php to www-data:www-data\n", 
+            "location": "lp:~helio-mota/charms/precise/joomla/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/joomla-9", 
+          "is_approved": false, 
+          "name": "joomla", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Support slow migrations via prepare-upgrade.", 
+            "location": "lp:~juju-jitsu/charms/precise/charmworld/trunk", 
+            "revision": "76", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 40, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": true, 
+          "id": "~juju-jitsu/precise/charmworld-46", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Cleanup extra variables in install hook\n", 
+            "location": "lp:~marcoceppi/charms/precise/discourse/trunk", 
+            "revision": "46", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 58, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/discourse-18", 
+          "is_approved": false, 
+          "name": "discourse", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Slave/cluster initial support", 
+            "location": "lp:~marcoceppi/charms/precise/stingray/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/stingray-4", 
+          "is_approved": false, 
+          "name": "stingray", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Update npm repository when new app code is found in cron polling in case new dependencies are introduced.\n", 
+            "location": "lp:~mariusko/charms/precise/node-app/trunk", 
+            "revision": "45", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 8, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mariusko/precise/node-app-11", 
+          "is_approved": false, 
+          "name": "node-app", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Typo in multi-unit command line", 
+            "location": "lp:~mark-mims/charms/precise/mediawiki/trunk", 
+            "revision": "67", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/mediawiki-0", 
+          "is_approved": false, 
+          "name": "mediawiki", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fixing the issue with has_many_polymorphs that prevented tracks from starting. A newer upstream fixed the problem.", 
+            "location": "lp:~mfisch/charms/precise/tracks/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mfisch/precise/tracks-4", 
+          "is_approved": false, 
+          "name": "tracks", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fixing revision", 
+            "location": "lp:~nathwill/charms/precise/varnish/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/varnish-8", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fix readme", 
+            "location": "lp:~pavel-pachkovskij/charms/precise/apache2-passenger/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pavel-pachkovskij/precise/apache2-passenger-3", 
+          "is_approved": false, 
+          "name": "apache2-passenger", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Add interface http", 
+            "location": "lp:~sidnei/charms/precise/graphite/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/graphite-0", 
+          "is_approved": false, 
+          "name": "graphite", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Initial version.", 
+            "location": "lp:~tasdomas/charms/precise/drupal/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 6, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~tasdomas/precise/drupal-0", 
+          "is_approved": false, 
+          "name": "drupal7", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Inital charm", 
+            "location": "lp:~wiz/charms/precise/gitit/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 4, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~wiz/precise/gitit-0", 
+          "is_approved": false, 
+          "name": "gitit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Fixed yaml error and install hook error", 
+            "location": "lp:~bkerensa/charms/precise/locker/trunk", 
+            "revision": "3", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -151,6 +1847,511 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Do not use explicit port for open/close port", 
+            "location": "lp:~clint-fewbar/charms/precise/haproxy/trunk", 
+            "revision": "61", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/haproxy-1", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "bumped revision", 
+            "location": "lp:~flepied/charms/precise/haproxy/trunk", 
+            "revision": "54", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Sync openstack-common code for release.", 
+            "location": "lp:~gandelman-a/charms/precise/cinder/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~gandelman-a/precise/cinder-9", 
+          "is_approved": false, 
+          "name": "cinder", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "reverted node to legacy ppa", 
+            "location": "lp:~hatch/charms/precise/juju-gui/trunk", 
+            "revision": "47", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 17, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~hatch/precise/juju-gui-14", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "incr rev just in case", 
+            "location": "lp:~hazmat/charms/precise/juju-gui/trunk", 
+            "revision": "32", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/juju-gui-3", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Create an upstart job for the service.", 
+            "location": "lp:~lifeless/charms/precise/opentsdb/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~lifeless/precise/opentsdb-2", 
+          "is_approved": false, 
+          "name": "opentsdb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Moved installation stuff around", 
+            "location": "lp:~marcoceppi/charms/precise/charmworld/trunk", 
+            "revision": "9", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 5, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~marcoceppi/precise/charmworld-7", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "enough to pass proof", 
+            "location": "lp:~mark-mims/charms/precise/promultest/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/promultest-1", 
+          "is_approved": false, 
+          "name": "promultest", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Initial commit", 
+            "location": "lp:~negronjl/charms/precise/seafile/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~negronjl/precise/seafile-0", 
+          "is_approved": false, 
+          "name": "seafile", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Fixed typo in README, added simple instruction for accessing and downloading packages/configs", 
+            "location": "lp:~nextrevision/charms/precise/openvpn-as/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 2, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~nextrevision/precise/openvpn-as-3", 
+          "is_approved": false, 
+          "name": "openvpn-as", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Initial charm", 
+            "location": "lp:~paulcz/charms/precise/auth-proxy/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~paulcz/precise/auth-proxy-0", 
+          "is_approved": false, 
+          "name": "auth-proxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fix readme", 
+            "location": "lp:~pavel-pachkovskij/charms/precise/nginx-passenger/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~pavel-pachkovskij/precise/nginx-passenger-3", 
+          "is_approved": false, 
+          "name": "nginx-passenger", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "* Implemented all charm review suggestions\n* Multiple project support\n- bzr and git supported\n", 
+            "location": "lp:~peter-petrakis/charms/precise/opengrok/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 6, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~peter-petrakis/precise/opengrok-10", 
+          "is_approved": false, 
+          "name": "opengrok", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "enough to pass proof", 
+            "location": "lp:~charmers/charms/precise/promultest/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/promultest-0", 
+          "is_approved": false, 
+          "name": "promultest", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Use relation-list to build the current list of cassandra IPs.", 
+            "location": "lp:~daisy-pluckers/charms/precise/daisy/trunk", 
+            "revision": "43", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~daisy-pluckers/precise/daisy-20", 
+          "is_approved": false, 
+          "name": "daisy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "safe_dump in case there is any unicode\n", 
+            "location": "lp:~davidpbritton/charms/precise/haproxy/trunk", 
+            "revision": "67", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~davidpbritton/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "adding juju-log", 
+            "location": "lp:~fenris/charms/precise/symfony/trunk", 
+            "revision": "8", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~fenris/precise/symfony-0", 
+          "is_approved": false, 
+          "name": "symfony", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Corrected spelling mistake in hooks/install.", 
+            "location": "lp:~george-edison55/charms/precise/discourse/trunk", 
+            "revision": "47", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": true, 
+          "id": "~george-edison55/precise/discourse-0", 
+          "is_approved": false, 
+          "name": "discourse", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "removed npm dependency", 
+            "location": "lp:~hatch/charms/precise/juju-gui-conflict/trunk", 
+            "revision": "36", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hatch/precise/juju-gui-conflict-0", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Changes:\n  * fixed minor security issue - autogen password no longer\n    printed in logs and requires root permissions to access.\n  * code cleanup\n  * added hook-debug config option to make hook more verbose\n  * tidied up README\n", 
+            "location": "lp:~hopem/charms/precise/chef-server/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hopem/precise/chef-server-9", 
+          "is_approved": false, 
+          "name": "chef-server", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "adding maintainer\n", 
+            "location": "lp:~imbrandon/charms/precise/drupal6/trunk", 
+            "revision": "13", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~imbrandon/precise/drupal6-1", 
+          "is_approved": false, 
+          "name": "drupal", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "# Changes\n\n* Add Apache2 support via engine config\n* Add VCS bash charm helper for wp-content\n* Fix defaults in configuration\n* Fix secret key scale-out\n* Add copyright headers to files\n\n# Commits\n\n  Marco Ceppi 2012-12-13 Fix for secrety key and cookies\n  Marco Ceppi 2012-12-13 Make sure apache respects the canonical name for cookies and the like\n  Marco Ceppi 2012-12-13 Preserve host\n  Marco Ceppi 2012-12-13 Set the request header to make sure assets work properly\n  Marco Ceppi 2012-12-13 [merge] proxy_http\n  Marco Ceppi 2012-12-12 proxy_http needs to be enabled\n  Marco Ceppi 2012-12-12 Include proxy_http\n  Marco Ceppi 2012-12-12 Enable proxy_balancer\n  Marco Ceppi 2012-12-12 Fix to balancermember lines and conditional for nginx only memcached configuration\n  Marco Ceppi 2012-12-12 Fix to loadbalancer conf name for apache2\n  Marco Ceppi 2012-12-11 Server lines need a ';' and when loading from cache need to strip() results\n  Marco Ceppi 2012-12-11 Use the restart hook\n  Marco Ceppi 2012-12-11 Backwards compat fix\n  Marco Ceppi 2012-12-11 Enable multiverse for the apache2 stuff\n  Marco Ceppi 2012-12-11 Make sure sed expands shell variable\n  Marco Ceppi 2012-12-11 Don't need to listen on 80\n  Marco Ceppi 2012-12-11 Final changes to make apache2 switches work properly in the charm\n  Marco Ceppi 2012-12-11 Added default apache files\n  Marco Ceppi 2012-12-11 Updates to fix linting issues, added Apache template\n  Marco Ceppi 2012-12-11 Changes to website relation\n  Marco Ceppi 2012-11-21 Updated files with copyright headers, adding in all apache stuff, new loadbalancer-rebuild sym, apache files, etc\n  Marco Ceppi 2012-11-21 Now we use charm-helper\n", 
+            "location": "lp:~jmac/charms/precise/wordpress-multi/trunk", 
+            "revision": "61", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~jmac/precise/wordpress-multi-0", 
+          "is_approved": false, 
+          "name": "wordpress", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Expose showGetJujuButton Juju GUI setting\n\nThis setting changes the \"Logout\" button to a \"Get Juju\" link; used only for the eventual jujucharms.com deployment.\n\nR=rharding, gary.poster\nCC=\nhttps://codereview.appspot.com/11301043\n", 
+            "location": "lp:~juju-gui/charms/precise/juju-gui/trunk", 
+            "revision": "71", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 430, 
+          "downloads_in_past_30_days": 33, 
+          "has_icon": true, 
+          "id": "~juju-gui/precise/juju-gui-70", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Added rest-relation-changed hook that updates the kibana config with the elasticsearch hostname.", 
+            "location": "lp:~kaaloo/charms/precise/kibana/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~kaaloo/precise/kibana-1", 
+          "is_approved": false, 
+          "name": "kibana", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "restore check for relation values", 
+            "location": "lp:~matsubara/charms/precise/oops-tools/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~matsubara/precise/oops-tools-1", 
+          "is_approved": false, 
+          "name": "oops-tools", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "clean up template", 
+            "location": "lp:~mew/charms/precise/squid/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~mew/precise/squid-9", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fixed install error", 
+            "location": "lp:~shazzner/charms/precise/phplist/trunk", 
+            "revision": "3", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~shazzner/precise/phplist-2", 
+          "is_approved": false, 
+          "name": "phplist", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Add more return values", 
+            "location": "lp:~sidnei/charms/precise/moztrap/trunk", 
+            "revision": "30", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/moztrap-0", 
+          "is_approved": false, 
+          "name": "moztrap", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Remove dupe interface", 
+            "location": "lp:~sidnei/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "95", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-reverseproxy-20", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "updated maintainer field to include original author", 
+            "location": "lp:~alexlist/charms/precise/squid-forwardproxy/trunk", 
+            "revision": "25", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -162,13 +2363,259 @@
         }, 
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "First cut of simple bzr/loggerhead charm.", 
+            "location": "lp:~andrewsomething/charms/precise/bzr-and-loggerhead/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
           "has_icon": false, 
           "id": "~andrewsomething/precise/bzr-and-loggerhead-0", 
           "is_approved": false, 
-          "name": "bzr-and-loggerhead", 
+          "name": "bzr", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Handle case of default password, which is a policy violation", 
+            "location": "lp:~clint-fewbar/charms/precise/limesurvey/trunk", 
+            "revision": "27", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/limesurvey-2", 
+          "is_approved": false, 
+          "name": "limesurvey", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "adding extraconfig for users to add their own nagios configs.", 
+            "location": "lp:~clint-fewbar/charms/precise/nagios/trunk", 
+            "revision": "38", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/nagios-11", 
+          "is_approved": false, 
+          "name": "nagios", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "pushing as a WIP", 
+            "location": "lp:~dames/charms/precise/squid/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dames/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid3", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "initial working version", 
+            "location": "lp:~flepied/charms/precise/naxsi/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/naxsi-0", 
+          "is_approved": false, 
+          "name": "naxsi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "minor beautification", 
+            "location": "lp:~hazmat/charms/precise/drupal7/trunk", 
+            "revision": "4", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/drupal7-3", 
+          "is_approved": false, 
+          "name": "drupal7", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- improved instructions on how to access gitlab once it is installed\n", 
+            "location": "lp:~helio-mota/charms/precise/gitlab/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~helio-mota/precise/gitlab-4", 
+          "is_approved": false, 
+          "name": "gitlab", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Yes, this provides a cached-website interface very much like the squid-reverseproxy charm.", 
+            "location": "lp:~hloeung/charms/precise/varnish/trunk", 
+            "revision": "18", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 2, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hloeung/precise/varnish-2", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Fix so that php5-fpm can run on t1.micro and standard.xsmall instances", 
+            "location": "lp:~marcoceppi/charms/precise/wordpress/trunk", 
+            "revision": "58", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 9, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~marcoceppi/precise/wordpress-17", 
+          "is_approved": false, 
+          "name": "wordpress", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "update todo\n", 
+            "location": "lp:~mark-mims/charms/precise/charmrunner/trunk", 
+            "revision": "12", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/charmrunner-4", 
+          "is_approved": false, 
+          "name": "charmrunner", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "split up api token gen\n", 
+            "location": "lp:~mark-mims/charms/precise/charmtester/trunk", 
+            "revision": "229", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/charmtester-6", 
+          "is_approved": false, 
+          "name": "charmtester", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "merging lp:~juju-gui/charms/precise/juju-gui/trunk per https://code.launchpad.net/~juju-gui/charms/precise/juju-gui/trunk/+merge/152429", 
+            "location": "lp:~mark-mims/charms/precise/juju-gui/trunk", 
+            "revision": "32", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/juju-gui-0", 
+          "is_approved": false, 
+          "name": "juju-gui", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "add notes on security-policy", 
+            "location": "lp:~mark-mims/charms/precise/rails/trunk", 
+            "revision": "44", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 6, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/rails-4", 
+          "is_approved": false, 
+          "name": "rails", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "adding website relation", 
+            "location": "lp:~mark-mims/charms/precise/summit/trunk", 
+            "revision": "44", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 3, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mark-mims/precise/summit-3", 
+          "is_approved": false, 
+          "name": "summit", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Add 'dns_v4_first on'", 
+            "location": "lp:~med/charms/precise/squid-rp-mirror/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~med/precise/squid-rp-mirror-0", 
+          "is_approved": false, 
+          "name": "squid-rp-mirror", 
           "weight": 1.0
         }
       ]
@@ -177,6 +2624,188 @@
       "http": [
         {
           "categories": [], 
+          "code_source": {
+            "last_log": "Bumped charm revision. [trivial]", 
+            "location": "lp:~landscape-charmers/charms/precise/landscape-client/trunk", 
+            "revision": "24", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 2, 
+          "downloads": 39, 
+          "downloads_in_past_30_days": 14, 
+          "has_icon": false, 
+          "id": "precise/landscape-client-8", 
+          "is_approved": true, 
+          "name": "landscape-client", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Add categories\n", 
+            "location": "lp:~charmers/charms/precise/varnish/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 79, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": false, 
+          "id": "precise/varnish-2", 
+          "is_approved": true, 
+          "name": "varnish", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ", 
+            "location": "lp:~charmers/charms/precise/haproxy/trunk", 
+            "revision": "67", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 783, 
+          "downloads_in_past_30_days": 63, 
+          "has_icon": false, 
+          "id": "precise/haproxy-18", 
+          "is_approved": true, 
+          "name": "haproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Add category\n", 
+            "location": "lp:~charmers/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 11, 
+          "downloads_in_past_30_days": 3, 
+          "has_icon": false, 
+          "id": "precise/squid-reverseproxy-1", 
+          "is_approved": true, 
+          "name": "squid-reverseproxy", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "pushing as a WIP", 
+            "location": "lp:~thedac/charms/precise/squid/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~thedac/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid3", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "add-landscape-relation\n", 
+            "location": "lp:~charmers/charms/precise/landscape-client/trunk", 
+            "revision": "22", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~charmers/precise/landscape-client-6", 
+          "is_approved": false, 
+          "name": "landscape-client", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "use awsjuju for elb support", 
+            "location": "lp:~hazmat/charms/precise/aws-elb/trunk", 
+            "revision": "9", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hazmat/precise/aws-elb-5", 
+          "is_approved": false, 
+          "name": "aws-elb", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "[jjo] implement per-unit rate,#conns, etc", 
+            "location": "lp:~jjo/charms/precise/httpload/trunk", 
+            "revision": "2", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 5, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~jjo/precise/httpload-2", 
+          "is_approved": false, 
+          "name": "httpload", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "A correction for charm proof\n", 
+            "location": "lp:~mreed8855/charms/precise/apachebench/trunk", 
+            "revision": "24", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mreed8855/precise/apachebench-5", 
+          "is_approved": false, 
+          "name": "apachebench", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Merge from canonical-losas, fix tests", 
+            "location": "lp:~sidnei/charms/precise/haproxy/trunk", 
+            "revision": "127", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/haproxy-28", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "updated maintainer field to include original author", 
+            "location": "lp:~alexlist/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
           "commits_in_past_30_days": 0, 
           "downloads": 0, 
           "downloads_in_past_30_days": 0, 
@@ -184,6 +2813,307 @@
           "id": "~alexlist/precise/squid-reverseproxy-4", 
           "is_approved": false, 
           "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "applications"
+          ], 
+          "code_source": {
+            "last_log": "Support slow migrations via prepare-upgrade.", 
+            "location": "lp:~juju-jitsu/charms/precise/charmworld/trunk", 
+            "revision": "76", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 3, 
+          "downloads": 40, 
+          "downloads_in_past_30_days": 5, 
+          "has_icon": true, 
+          "id": "~juju-jitsu/precise/charmworld-46", 
+          "is_approved": false, 
+          "name": "charmworld", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Slave/cluster initial support", 
+            "location": "lp:~marcoceppi/charms/precise/stingray/trunk", 
+            "revision": "6", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": true, 
+          "id": "~marcoceppi/precise/stingray-4", 
+          "is_approved": false, 
+          "name": "stingray", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "fixing revision", 
+            "location": "lp:~nathwill/charms/precise/varnish/trunk", 
+            "revision": "7", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~nathwill/precise/varnish-8", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Do not use explicit port for open/close port", 
+            "location": "lp:~clint-fewbar/charms/precise/haproxy/trunk", 
+            "revision": "61", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~clint-fewbar/precise/haproxy-1", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "bumped revision", 
+            "location": "lp:~flepied/charms/precise/haproxy/trunk", 
+            "revision": "54", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "relation rename", 
+            "location": "lp:~imbrandon/charms/precise/nginx-proxy/trunk", 
+            "revision": "5", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 7, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~imbrandon/precise/nginx-proxy-4", 
+          "is_approved": false, 
+          "name": "nginx-proxybalancer", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "safe_dump in case there is any unicode\n", 
+            "location": "lp:~davidpbritton/charms/precise/haproxy/trunk", 
+            "revision": "67", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~davidpbritton/precise/haproxy-0", 
+          "is_approved": false, 
+          "name": "haproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "clean up template", 
+            "location": "lp:~mew/charms/precise/squid/trunk", 
+            "revision": "11", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 1, 
+          "has_icon": false, 
+          "id": "~mew/precise/squid-9", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "- Remove dupe interface", 
+            "location": "lp:~sidnei/charms/precise/squid-reverseproxy/trunk", 
+            "revision": "95", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~sidnei/precise/squid-reverseproxy-20", 
+          "is_approved": false, 
+          "name": "squid-reverseproxy", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "pushing as a WIP", 
+            "location": "lp:~dames/charms/precise/squid/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 1, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dames/precise/squid-0", 
+          "is_approved": false, 
+          "name": "squid3", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Note what causes siege to start\n", 
+            "location": "lp:~dannf/charms/precise/siege/trunk", 
+            "revision": "10", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~dannf/precise/siege-4", 
+          "is_approved": false, 
+          "name": "siege", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "initial working version", 
+            "location": "lp:~flepied/charms/precise/naxsi/trunk", 
+            "revision": "1", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 2, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~flepied/precise/naxsi-0", 
+          "is_approved": false, 
+          "name": "naxsi", 
+          "weight": 1.0
+        }, 
+        {
+          "categories": [
+            "cache-proxy"
+          ], 
+          "code_source": {
+            "last_log": "Yes, this provides a cached-website interface very much like the squid-reverseproxy charm.", 
+            "location": "lp:~hloeung/charms/precise/varnish/trunk", 
+            "revision": "18", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 2, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~hloeung/precise/varnish-2", 
+          "is_approved": false, 
+          "name": "varnish", 
+          "weight": 1.0
+        }
+      ], 
+      "nrpe-external-master": [
+        {
+          "categories": [
+            "misc"
+          ], 
+          "code_source": {
+            "last_log": "Merge HA work + Python rewrite.", 
+            "location": "lp:~charmers/charms/precise/rabbitmq-server/trunk", 
+            "revision": "41", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 859, 
+          "downloads_in_past_30_days": 66, 
+          "has_icon": true, 
+          "id": "precise/rabbitmq-server-12", 
+          "is_approved": true, 
+          "name": "rabbitmq-server", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "merging lp:~gandelman-a/charms/precise/nova-compute/nrpe_interface as per https://code.launchpad.net/~gandelman-a/charms/precise/nova-compute/nrpe_interface/+merge/171211", 
+            "location": "lp:~charmers/charms/precise/nova-compute/trunk", 
+            "revision": "46", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 1, 
+          "downloads": 715, 
+          "downloads_in_past_30_days": 54, 
+          "has_icon": true, 
+          "id": "precise/nova-compute-13", 
+          "is_approved": true, 
+          "name": "nova-compute", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "[mthaddon] Remove line breaks that python doesn't like in nagios_plugin.py", 
+            "location": "lp:~charmers/charms/precise/nrpe-external-master/trunk", 
+            "revision": "23", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 12, 
+          "downloads_in_past_30_days": 2, 
+          "has_icon": false, 
+          "id": "precise/nrpe-external-master-1", 
+          "is_approved": true, 
+          "name": "nrpe-external-master", 
+          "weight": 10.0
+        }, 
+        {
+          "categories": [], 
+          "code_source": {
+            "last_log": "Update README per suggestions from mark-mimms in LP bug#1088575", 
+            "location": "lp:~mthaddon/charms/precise/nrpe-external-master/trunk", 
+            "revision": "21", 
+            "type": "bzr"
+          }, 
+          "commits_in_past_30_days": 0, 
+          "downloads": 0, 
+          "downloads_in_past_30_days": 0, 
+          "has_icon": false, 
+          "id": "~mthaddon/precise/nrpe-external-master-2", 
+          "is_approved": false, 
+          "name": "nrpe-external-master", 
           "weight": 1.0
         }
       ]
