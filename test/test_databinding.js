@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('data binding library', function() {
+describe.only('data binding library', function() {
   var Y, BindingEngine, utils, container;
 
 
@@ -192,6 +192,40 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
       });
 
+      it('should be able to observe pojos', function(done) {
+        var pojo = {id: 'a', name: 'test'};
+        container =  utils.makeContainer();
+        container.append('<div data-bind="name"></div>');
+        var called = false;
+
+        var engine = new BindingEngine({interval: 0});
+        engine.bind(pojo, {
+          get: function(m) { return m[this.name];},
+          name: 'testViewlet',
+          container: container,
+          _changedValues: [],
+          _eventHandles: [],
+          bindings: {
+            name: {
+              update: function(node, value) {
+                node.setHTML(value);
+                console.log(node.getDOMNode());
+                called = true;
+              }
+            }
+          }
+        });
+
+        called = false;
+        // Should trigger binding update
+        pojo.name = 'rising';
+        setTimeout(function() {
+          // The polyfll impl of Object.observe needs this,
+          // the browser impl shouldn't.
+          assert.equal(called, true);
+          done();
+        }, 100);
+      });
     });
 
     describe('field types', function() {
@@ -306,8 +340,8 @@ describe('data binding library', function() {
       container = utils.makeContainer();
       engine.bind(list, {
         name: 'testViewlet',
-        _eventHandles: [],
         container: container,
+        _eventHandles: [],
         update: function(modellist) {
           var data = modellist.map(function(m) {return m.getAttrs();});
           this.container.setHTML(template({modellist: data}));
@@ -324,7 +358,6 @@ describe('data binding library', function() {
       assert.deepEqual(output, ['alpha', 'beta']);
     });
 
-  });
-
+ });
 
 });
