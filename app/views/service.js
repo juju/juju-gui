@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var IMPORTED_VIEWLET_CONFIGS = [];
+
 /**
  * Provide the service views and mixins.
  *
@@ -35,7 +37,10 @@ YUI.add('juju-view-service', function(Y) {
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
       plugins = Y.namespace('juju.plugins'),
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      viewletNS = Y.namespace('juju.viewlets');
+
+  IMPORTED_VIEWLET_CONFIGS.push(viewletNS.charmDetails);
 
   /**
    * @class manageUnitsMixin
@@ -1573,6 +1578,23 @@ YUI.add('juju-view-service', function(Y) {
       } else {
         units.setAttribute('checked', 'checked');
       }
+    },
+
+    /**
+     Loads the charm details view for the inspector.
+
+     @method onShowCharmDetails
+     @param {Event} ev the click event from the overview viewlet.
+
+     */
+    onShowCharmDetails: function(ev) {
+      debugger;
+
+      ev.halt();
+      var db = this.inspector.get('db');
+      var charmId = ev.currentTarget.getAttribute('data-charmid');
+      var charm = db.charms.getById(charmId);
+      this.inspector.showViewlet('charmDetails', charm);
     }
   };
 
@@ -1979,7 +2001,14 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
+    // Append any import viewlet configs to the DEFAULT_VIEWLETS so that it'll
+    // get constructed.
+    IMPORTED_VIEWLET_CONFIGS.forEach(function(config) {
+      DEFAULT_VIEWLETS[config.name] = config;
+    });
+
     // This variable is assigned an aggregate collection of methods and
+    //
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
     var controllerPrototype = {};
@@ -2068,5 +2097,7 @@ YUI.add('juju-view-service', function(Y) {
     'event-key',
     'transition',
     'event-resize',
-    'json-stringify']
+    'json-stringify',
+    // Imported viewlets
+    'viewlet-charm-details']
 });
