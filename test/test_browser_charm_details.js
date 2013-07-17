@@ -307,14 +307,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
-      Y.one('#bws-hooks').all('select option').size().should.equal(3);
+      Y.one('#bws-source').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws-hooks').all('select option').item(2).set(
+      Y.one('#bws-source').all('select option').item(2).set(
           'selected', 'selected');
-      Y.one('#bws-hooks').one('select').simulate('change');
+      Y.one('#bws-source').one('select').simulate('change');
 
-      var content = Y.one('#bws-hooks').one('div.filecontent');
+      var content = Y.one('#bws-source').one('div.filecontent');
       content.get('text').should.eql('install hook content.');
     });
 
