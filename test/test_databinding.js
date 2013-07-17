@@ -194,7 +194,7 @@ describe.only('data binding library', function() {
 
       it('should be able to observe pojos', function(done) {
         var pojo = {id: 'a', name: 'test'};
-        container =  utils.makeContainer();
+        container = utils.makeContainer();
         container.append('<div data-bind="name"></div>');
         var called = false;
 
@@ -358,6 +358,6 @@ describe.only('data binding library', function() {
       assert.deepEqual(output, ['alpha', 'beta']);
     });
 
- });
+  });
 
 });
