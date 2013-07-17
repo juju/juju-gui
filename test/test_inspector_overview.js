@@ -224,15 +224,15 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one('.status-unit-header').hasClass('pending'), true);
     assert.equal(wrapper2.one('.unit-qty').getHTML(), 5);
     assert.equal(wrapper2.one('.category-label').getHTML(), 'pending');
-    //assert.equal(
-    //wrapper2.one('.status-unit-content').getStyle('maxHeight'), '12em');
+    assert.equal(
+      wrapper2.one('.status-unit-content').getStyle('maxHeight'), '15em');
 
     wrapper3 = unitListWrappers.item(1);
     assert.equal(wrapper3.one('.status-unit-header').hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
     assert.equal(wrapper3.one('.category-label').getHTML(), 'running');
-    //assert.equal(
-    //wrapper3.one('.status-unit-content').getStyle('maxHeight'), '11em');
+    assert.equal(
+      wrapper3.one('.status-unit-content').getStyle('maxHeight'), '11em');
 
     newContainer.remove(true);
   });
