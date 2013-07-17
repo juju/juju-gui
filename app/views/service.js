@@ -1537,8 +1537,7 @@ YUI.add('juju-view-service', function(Y) {
       @param {Y.EventFacade} e Click event object.
     */
     toggleUnitHeader: function(e) {
-      e.currentTarget.ancestor('.unit-list-wrapper')
-                     .one('.status-unit-content')
+      e.currentTarget.siblings('.status-unit-content')
                      .toggleClass('close-unit');
     },
 
@@ -1570,11 +1569,13 @@ YUI.add('juju-view-service', function(Y) {
     var juju = Y.namespace('juju');
 
     /**
-      Generates the unit list sorted by status category and calls
-      generateAndBuildUnitHeaders() with the data to generate the UI
+      Generates the unit list sorted by status category and returns an array
+      with the data to generate the unit list UI.
 
       @method updateUnitList
       @param {Object} values From the databinding update method.
+      @return {Array} An array of objects with agent_state as category and an
+        array of units [{ category: 'started', units: [model, model, ...]}].
     */
     function updateUnitList(values) {
       var statuses = [],
@@ -1602,7 +1603,6 @@ YUI.add('juju-view-service', function(Y) {
       @param {Array} statuses A key value pair of categories to unit list.
     */
     function generateAndBindUnitHeaders(node, statuses) {
-      console.log(statuses);
       var categoryWrapperNodes = d3.select(node.getDOMNode())
                                    .selectAll('.unit-list-wrapper')
                                    .data(statuses, function(d) {
@@ -1738,6 +1738,7 @@ YUI.add('juju-view-service', function(Y) {
             }
           }
         },
+        // These methods are exposed here to allow us access for testing.
         updateUnitList: updateUnitList,
         generateAndBindUnitHeaders: generateAndBindUnitHeaders
       },
