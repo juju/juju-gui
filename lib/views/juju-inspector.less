@@ -42,6 +42,18 @@
         }
     }
 
+    .status-unit-content {
+        transition: 1s, max-height 1s;
+        -webkit-transition: 1s, max-height 1s;
+        overflow: hidden;
+        /* max height is being set inline in views/service.js.
+        It is calculated on the number of units in the list.  */
+
+        &.close-unit {
+            max-height: 0px !important;
+        }
+    }
+
     .view-container {
         overflow: auto;
         padding: 15px;
