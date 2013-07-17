@@ -837,8 +837,7 @@ YUI.add('juju-view-service', function(Y) {
           var charm = db.charms.getById(service.get('charm'));
           var config = service.get('config');
           var getModelURL = this.get('getModelURL');
-          var charm_config = charm.get('config');
-          var schema = charm_config && charm_config.options;
+          var schema = charm.get('options');
           var charm_id = service.get('charm');
           var field_def;
 
@@ -918,8 +917,7 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               charm_url = service.get('charm'),
               charm = db.charms.getById(charm_url),
-              charm_config = charm.get('config'),
-              schema = charm_config && charm_config.options,
+              schema = charm.get('options'),
               container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
@@ -1400,7 +1398,7 @@ YUI.add('juju-view-service', function(Y) {
           service = inspector.get('model'),
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
-          schema = charm.get('config').options,
+          schema = charm.get('options'),
           container = inspector.get('container'),
           button = container.one('button.confirm');
 
@@ -1820,8 +1818,7 @@ YUI.add('juju-view-service', function(Y) {
           var settings = [];
           var db = viewContainerAttrs.db;
           var charm = db.charms.getById(service.get('charm'));
-          var charmConfig = charm.get('config');
-          var charmOptions = charmConfig && charmConfig.options;
+          var charmOptions = charm.get('options');
           Y.Object.each(service.get('config'), function(value, key) {
             var setting = {
               name: key,
