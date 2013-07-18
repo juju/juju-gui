@@ -1641,9 +1641,9 @@ YUI.add('juju-view-service', function(Y) {
       });
 
       Y.Object.each(unitListNameMap, function(value, key) {
-          if (unitByStatus[key]) {
-            statuses.push({category: key, units: unitByStatus[key]});
-          }
+        if (unitByStatus[key]) {
+          statuses.push({category: key, units: unitByStatus[key]});
+        }
       });
 
       return statuses;
@@ -1656,6 +1656,7 @@ YUI.add('juju-view-service', function(Y) {
       @param {Array} statuses A key value pair of categories to unit list.
     */
     function generateAndBindUnitHeaders(node, statuses) {
+      /*jshint validthis:true */
       var self = this,
           buttonHeight;
 
@@ -1694,10 +1695,10 @@ YUI.add('juju-view-service', function(Y) {
       unitStatusContentForm.append('div')
                            .classed('action-button-wrapper', true)
                            .html(function() {
-                             var tmpl = Templates['unit-action-buttons']();
-                             buttonHeight = tmpl.offsetHeight;
-                             return tmpl;
-                           });
+                               var tmpl = Templates['unit-action-buttons']();
+                               buttonHeight = tmpl.offsetHeight;
+                               return tmpl;
+                             });
 
       unitStatusHeader.append('span')
                       .html('&#8226;');
@@ -1757,7 +1758,7 @@ YUI.add('juju-view-service', function(Y) {
           .style('max-height', function(d) {
             if (!self._unitItemHeight) {
               self._unitItemHeight =
-                d3.select(this).select('li').property('offsetHeight');
+                  d3.select(this).select('li').property('offsetHeight');
             }
             return ((self._unitItemHeight *
                     (d.units.length + 1)) + buttonHeight) + 'px';
