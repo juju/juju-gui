@@ -1556,6 +1556,7 @@ YUI.add('juju-view-service', function(Y) {
     toggleUnitHeader: function(e) {
       e.currentTarget.siblings('.status-unit-content')
                      .toggleClass('close-unit');
+      e.currentTarget.toggleClass('closed-unit-list');
     },
 
     /**
@@ -1671,13 +1672,13 @@ YUI.add('juju-view-service', function(Y) {
                            .html(Templates['unit-action-buttons']());
 
       unitStatusHeader.append('span')
-                      .html('&#8226;');
-
-      unitStatusHeader.append('span')
                       .classed('unit-qty', true);
 
       unitStatusHeader.append('span')
                       .classed('category-label', true);
+                      
+      unitStatusHeader.append('span')
+                      .classed('chevron', true);
 
       // D3 header update section
       categoryWrapperNodes.select('.unit-qty')
