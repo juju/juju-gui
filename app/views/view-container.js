@@ -172,6 +172,20 @@ YUI.add('juju-view-container', function(Y) {
      @default empty array
      @private
      */
+
+    /**
+     Model Data access helper. By default this uses YUI Attribute styled
+     access but to support property styled access you can pass an
+     optional get callback such as:
+          get: function(model) {return model[this.name];}
+     This callback will be passed the model and triggered with the binding
+     as 'this'. `this.name` refers to the name of the model property the
+     binding is managing.
+
+     @property get
+     @type {Function}
+     @default Attribute access
+     */
   };
 
   /**

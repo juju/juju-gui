@@ -239,12 +239,6 @@ YUI.add('juju-databinding', function(Y) {
 
       if (checkClassImplements(viewletModel, 'modelList')) {
         // Model list
-        // TODO: If this is a lazy model list then the models contained are
-        // POJOs and won't fire attr change events. In that case we can
-        // use a Object.observe polyfill to get notice on model change.
-        // We don't do data-binding on child elements, the viewlet will be
-        // triggered to re-render its contents. All our collection views
-        // are currently read-only so this works ok.
         viewlet._eventHandles.push(
             viewletModel.after(['add', 'remove', 'change'],
                               this._modelListChange, this));
@@ -259,6 +253,9 @@ YUI.add('juju-databinding', function(Y) {
             model.on('change', this._modelChangeHandler, this));
       } else {
         // Pojo support
+        // This typically depends on an Object.observe polyfill being
+        // in place (which it is). As browsers natively support this
+        // we can one day drop the polyfill.
         modelEventHandles.push(
             Object.observe(model, Y.bind(this._modelChangeHandler, this)));
       }
