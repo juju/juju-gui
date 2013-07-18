@@ -422,6 +422,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
         if (cfg.id) {
           this.set('api_id', cfg.id);
+          this.set('id', this.get('scheme') + ":" + cfg.id);
         }
       }
     },
