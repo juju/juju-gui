@@ -172,6 +172,13 @@ YUI.add('juju-view-container', function(Y) {
      @default empty array
      @private
      */
+
+    /**
+      Removes the databinding events. This method is added to the viewlet
+      instance in the databinding class on binding.
+
+      @method remove
+    */
   };
 
   /**
@@ -315,8 +322,6 @@ YUI.add('juju-view-container', function(Y) {
     */
     showViewlet: function(viewletName, model) {
       var container = this.get('container');
-      // possibly introduce some kind of switching animation here
-      container.all('.viewlet-wrapper').hide();
       // This method can be called directly but it is also an event handler
       // for clicking on the view container tab handles
       if (typeof viewletName !== 'string') {
@@ -326,7 +331,17 @@ YUI.add('juju-view-container', function(Y) {
       if (!model) {
         model = this.get('model');
       }
-      this.fillSlot(viewlet, model);
+      // If the viewlet has a slot, use fillSlot to manage the slot. Otherwise,
+      // hide existing viewlets in the default slot before showing the new one.
+      if (viewlet.slot) {
+        this.fillSlot(viewlet, model);
+      } else {
+        Y.Object.each(this.viewlets, function(viewletToCheck) {
+          if (!viewletToCheck.slot) {
+            viewletToCheck.container.hide();
+          }
+        });
+      }
       viewlet.container.show();
       this.recalculateHeight();
     },
@@ -344,13 +359,11 @@ YUI.add('juju-view-container', function(Y) {
     fillSlot: function(viewlet, model) {
       var target;
       var slot = viewlet.slot;
-      if (slot === null) {
-        return;
-      }
       var existing = this._slots[slot];
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
+          // remove only removes the databinding but does not clear the DOM.
           existing.remove();
         }
       }
@@ -372,6 +385,23 @@ YUI.add('juju-view-container', function(Y) {
         this.bindingEngine.bind(model, viewlet);
       } else {
         console.error('View Container Missing slot', slot);
+      }
+    },
+
+    /**
+      Event callback which hides the viewlet slot which is related
+      to the close button
+
+      @method hideSlot
+      @param {Y.EventFacade} e Click event.
+    */
+    hideSlot: function(e) {
+      var existing = this._slots[e.currentTarget.getData('slot')];
+      if (existing) {
+        // unbind the databinding
+        existing.remove();
+        // remove the element from the DOM
+        existing.container.remove(true);
       }
     },
 

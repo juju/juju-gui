@@ -38,7 +38,7 @@ describe('charm normalization', function() {
         'charms/precise/openstack-dashboard-0/json');
   });
 
-  it('can load options from both \'options\' and \'config\'', function() {
+  it('can load options from both "options" and "config"', function() {
     var options = {foo: 'bar'};
     var charm = new models.Charm({
       id: 'cs:precise/openstack-dashboard-0',
@@ -803,7 +803,7 @@ describe('BrowserCharm test', function() {
     // The overall should have the default 5 max charms listed.
     assert.equal(5, relatedObject.overall.length);
     // The requires for mysql should be truncated to the max of 5 as well.
-    assert.equal(1, relatedObject.requires.http.length);
+    assert.equal(5, relatedObject.requires.http.length);
     // There's only one key in the provides section.
     assert.equal(1, Y.Object.keys(relatedObject.provides).length);
 

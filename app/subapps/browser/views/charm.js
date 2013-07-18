@@ -54,7 +54,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .add': {
         click: '_addCharmEnvironment'
       },
-      '#bws-hooks select': {
+      '#bws-source select': {
         change: '_loadHookContent'
       },
       '.charm .back': {
@@ -94,7 +94,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
       var ghostAttributes;
       ghostAttributes = {
-        icon: this.get('store').iconpath(browserCharm.get('id'))
+        icon: this.get('store').iconpath(browserCharm.get('api_id'))
       };
       this.get('deploy').call(null, charm, ghostAttributes);
     },
@@ -353,7 +353,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var index = ev.currentTarget.get('selectedIndex');
       var filename = ev.currentTarget.get('options').item(
           index).getAttribute('value'),
-          node = this.get('container').one('#bws-hooks .filecontent');
+          node = this.get('container').one('#bws-source .filecontent');
 
       // Load the file, but make sure we prettify the code.
       if (filename) {
@@ -394,7 +394,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
-          this.get('charm').get('id'), {
+          this.get('charm').get('api_id'), {
             'success': function(data) {
               data = this._buildQAData(data);
               node.setHTML(this.qatemplate(data));
@@ -414,7 +414,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _loadRelatedCharms: function(callback) {
       this.get('store').related(
-          this.get('charm').get('id'), {
+          this.get('charm').get('api_id'), {
             'success': function(data) {
               this.get('charm').buildRelatedCharms(
                   data.result.provides, data.result.requires);
@@ -464,7 +464,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(container);
 
       this.get('store').file(
-          this.get('charm').get('id'),
+          this.get('charm').get('api_id'),
           filename, {
             'success': function(data) {
               if (prettify) {
@@ -655,10 +655,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var link;
       if (window.location.origin) {
-        link = window.location.origin + '/' + this.get('charm').get('id');
+        link = window.location.origin + '/' + this.get('charm').get('api_id');
       } else {
         link = window.location.protocol + window.location.host + '/' +
-            this.get('charm').get('id');
+            this.get('charm').get('api_id');
       }
       tplData.isFullscreen = isFullscreen;
       tplData.sourceLink = sourceLink;

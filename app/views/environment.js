@@ -171,7 +171,8 @@ YUI.add('juju-view-environment', function(Y) {
               db: this.topo.get('db'),
               env: this.topo.get('env'),
               events: {
-                '.close': {'click': 'destroy'}
+                '.close': {'click': 'destroy'},
+                '.close-slot': {'click': 'hideSlot'}
               }
             },
             configService: {
@@ -188,6 +189,7 @@ YUI.add('juju-view-environment', function(Y) {
                   'keydown': 'modifyUnits',
                   'blur': 'resetUnits'
                 },
+                'a[data-unit]': { click: 'showUnitDetails'},
                 '.destroy-service-icon': {'click': 'onDestroyIcon'},
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'},
@@ -196,7 +198,8 @@ YUI.add('juju-view-environment', function(Y) {
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'}
               },
-              viewletList: ['overview', 'units', 'config', 'constraints'],
+              viewletList: ['overview', 'units', 'unit', 'config',
+                'constraints'],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
