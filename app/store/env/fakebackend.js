@@ -115,8 +115,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   FakeBackend.ATTRS = {
     authorizedUsers: {value: {'admin': 'password'}},
     authenticated: {value: false},
-    charmStore: {}, // Required.
-    store: {},
+    store: { required: true },
     defaultSeries: {value: 'precise'},
     providerType: {value: 'demonstration'}
   };
@@ -403,7 +402,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               console.warn('error loading charm: ' + e.error);
               if (callbacks.failure) {
                 callbacks.failure({error:
-                      'Error interacting with Charm store.'});
+                      'Error interacting with the charmworld api.'});
               }
             }
           }
@@ -412,13 +411,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Convert charm data as returned by the charmStore into a charm.
+    Convert charm data as returned by the API into a charm.
     The charm might be pre-existing or might need to be created, but
     after this method it will be within the db.
 
     @method _getCharmFromData
-    @param {Object} data The raw charm information as delivered by the
-      charmStore's loadByPath method.
+    @param {Object} data The raw charm data from the API
     @return {Object} A matching charm from the db.
     */
     _getCharmFromData: function(data) {

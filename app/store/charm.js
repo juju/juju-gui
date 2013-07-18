@@ -36,19 +36,6 @@ YUI.add('juju-charm-store', function(Y) {
    */
   var CharmStore = Y.Base.create('charm', Y.Base, [], {
 
-    loadByPath: function(path, options) {
-      this.get('datasource').sendRequest({
-        request: path,
-        callback: {
-          success: function(io_request) {
-            options.success(
-                Y.JSON.parse(io_request.response.results[0].responseText));
-          },
-          failure: options.failure
-        }
-      });
-    },
-
     /**
      * Convert the charm data into Charm instances, using only id and
      * relevance.  Group them into series.  The series are arranged with first

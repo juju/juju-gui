@@ -454,10 +454,7 @@ YUI.add('juju-gui', function(Y) {
         if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
-          var state = new State({
-            charmStore: this.charm_store,
-            store: this.get('store')
-          });
+          var state = new State({ store: this.get('store') });
           if (envOptions.user && envOptions.password) {
             var credentials = {};
             credentials[envOptions.user] = envOptions.password;
