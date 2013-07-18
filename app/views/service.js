@@ -31,17 +31,12 @@ YUI.add('juju-view-service', function(Y) {
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
   var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
-  // Viewlet configs defined outside of this file.
-  var IMPORTED_VIEWLET_CONFIGS = [];
-
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
       plugins = Y.namespace('juju.plugins'),
       utils = Y.namespace('juju.views.utils'),
       viewletNS = Y.namespace('juju.viewlets');
-
-  IMPORTED_VIEWLET_CONFIGS.push(viewletNS.charmDetails);
 
   /**
    * @class manageUnitsMixin
@@ -2006,14 +2001,10 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
-    // Append any import viewlet configs to the DEFAULT_VIEWLETS so that it'll
-    // get constructed.
-    IMPORTED_VIEWLET_CONFIGS.forEach(function(config) {
-      DEFAULT_VIEWLETS[config.name] = config;
-    });
+    // Add any imported viewlets into this DEFAULT_VIEWLETS from doom.
+    DEFAULT_VIEWLETS = Y.merge(DEFAULT_VIEWLETS, viewletNS);
 
     // This variable is assigned an aggregate collection of methods and
-    //
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
     var controllerPrototype = {};
