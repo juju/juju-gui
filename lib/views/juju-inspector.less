@@ -314,6 +314,7 @@
 
         .content {
             border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
             margin: 0;
             padding: 10px;
         }
@@ -340,12 +341,13 @@
 
         .status-unit-header {
             background-color: @inspector-region-background-color;
-            padding: 15px;
+            padding: 15px 15px 15px 40px;
             font-size: 16px;
             cursor: pointer;
             border-bottom: 1px solid @inspector-divider-bottom;
             border-top: 1px solid @inspector-divider-top;
-
+            background-position: 20px center;
+            background-repeat: no-repeat;
             span {
                 margin-right: 5px;
             }
@@ -353,12 +355,34 @@
             ul {
                 background: white;
             }
+            
+            .chevron {
+                display: inline-block;
+                height: 9px;
+                margin-left: 5px;
+                width: 12px;
+                background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+            }
+        }
+        
+        .closed-unit-list .chevron {
+            background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
+        }
+        
+        .status-unit-header.error {
+            background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+        }
+        .status-unit-header.running {
+            background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+        }
+        .status-unit-header.pending {
+            background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
         }
 
         .status-unit-content {
-            -moz-transition: .5s, max-height .5s;
-            -webkit-transition: .5s, max-height .5s;
-            transition: .5s, max-height .5s;
+            -moz-transition: .3s, max-height .3s;
+            -webkit-transition: .25s, max-height .3s;
+            transition: .3s, max-height .3s;
             overflow: hidden;
             background: @charm-panel-background-color;
             /* max height is being set inline in views/service.js.
@@ -386,7 +410,7 @@
             }
 
             input[type="checkbox"] {
-                margin-right: 10px;
+                margin-right: 30px;
             }
 
             button.unit-action-button,
@@ -406,6 +430,16 @@
             button.resolve {
                 margin-left: 25px;
             }
+        }
+        
+        .status-unit-content.running ul li {
+            background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
+        }
+        .status-unit-content.pending ul li {
+            background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
+        }
+        .status-unit-content.error ul li {
+            background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
         }
     }
 
