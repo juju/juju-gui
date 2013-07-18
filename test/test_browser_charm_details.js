@@ -75,6 +75,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       cleanIconHelper();
     });
 
+    it('renders for inspector mode correctly', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer(),
+        forInspector: true
+      });
+
+      view.render();
+      assert.isNull(view.get('container').one('.heading'));
+    });
+
     it('has sharing links', function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
@@ -205,6 +219,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'hooks/install',
@@ -218,12 +233,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
+
       Y.one('#bws-readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'hooks/install'
@@ -337,6 +354,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
