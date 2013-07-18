@@ -329,7 +329,7 @@ YUI.add('juju-view-container', function(Y) {
       }
       var viewlet = this.viewlets[viewletName];
       if (!viewlet) {
-        console.warn('Attempted to load a viewlet that does nto exist');
+        console.warn('Attempted to load a viewlet that does not exist');
       }
       if (!model) {
         model = this.get('model');

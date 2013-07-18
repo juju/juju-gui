@@ -18,7 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var IMPORTED_VIEWLET_CONFIGS = [];
 
 /**
  * Provide the service views and mixins.
@@ -32,6 +31,8 @@ YUI.add('juju-view-service', function(Y) {
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
   var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
+  // Viewlet configs defined outside of this file.
+  var IMPORTED_VIEWLET_CONFIGS = [];
 
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
