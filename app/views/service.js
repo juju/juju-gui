@@ -1654,8 +1654,8 @@ YUI.add('juju-view-service', function(Y) {
       unitStatusContentForm.append('div')
                            .html(Templates['unit-action-buttons']());
 
-      unitStatusHeader.append('span')
-                      .html('&#8226;');
+     /* unitStatusHeader.append('span')
+                      .html('&#8226;');*/
 
       unitStatusHeader.append('span')
                       .classed('unit-qty', true);

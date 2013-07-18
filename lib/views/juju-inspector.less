@@ -314,6 +314,7 @@
         
         .content {
             border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
             margin: 0;
             padding: 10px;
         }
@@ -340,11 +341,13 @@
         
         .status-unit-header {
             background-color: @inspector-region-background-color;
-            padding: 15px;
+            padding: 15px 15px 15px 40px;
             font-size: 16px;
             cursor: pointer;
             border-bottom: 1px solid @inspector-divider-bottom;
             border-top: 1px solid @inspector-divider-top;
+            background-position: 20px center;
+            background-repeat: no-repeat;
             
             span {
                 margin-right: 5px;
@@ -353,6 +356,16 @@
             ul {
                 background: white;
             }
+        }
+        
+        .status-unit-header.error {
+            background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+        }
+        .status-unit-header.running {
+            background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+        }
+        .status-unit-header.pending {
+            background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
         }
         
         .status-unit-content {
