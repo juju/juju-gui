@@ -51,9 +51,6 @@ YUI.add('browser-charm-token', function(Y) {
       // @property charmData Contains the extracted charm information.
       this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
       this.charmData.options = cfg.options;
-      if(!this.get('store_id') && cfg && cfg.id) {
-        this.set('store_id', cfg.id);
-      }
     },
 
     /**
