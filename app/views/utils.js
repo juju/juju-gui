@@ -1128,7 +1128,7 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Returns an array of user friendly Landscape id's that are contained
+    Returns an array of user friendly Landscape ids that are contained
     on the passed in unit.
 
     @method landscapeAnnotations

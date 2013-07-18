@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Inspector Overview', function() {
+describe.only('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, ENTER, charmConfig;
@@ -150,12 +150,20 @@ describe('Inspector Overview', function() {
     var a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
         b = units.add({ id: 'mysql/1', agent_state: 'instal-error' }),
         c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
-        d = units.add({ id: 'mysql/3', agent_state: 'started' });
+        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
+        e = units.add({
+          id: 'mysql/4',
+          agent_state: 'started',
+          annotations: {
+            'landscape-needs-reboot': 'foo'
+          }
+        });
 
     var expected = [
       { category: 'error', units: [a, b] },
       { category: 'pending', units: [c] },
-      { category: 'running', units: [d] }
+      { category: 'running', units: [d, e] },
+      { category: 'landscape-needs-reboot', units: [e]}
     ];
     assert.deepEqual(overview.updateUnitList(units), expected);
   });
