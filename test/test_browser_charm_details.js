@@ -102,6 +102,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(),
         store: fakeStore
       });
+      debugger;
       view.render();
       var links = container.all('#sharing a');
       assert.equal(links.size(), 3);
@@ -551,6 +552,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('_getInterfaceIntroFlag sets the flag for no requires, many provides',
         function() {
+          debugger;
           var charm = new models.BrowserCharm({
             files: [],
             id: 'precise/ceph-9',

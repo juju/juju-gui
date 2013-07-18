@@ -416,8 +416,13 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      if (cfg && cfg.downloads_in_past_30_days) {
-        this.set('recent_download_count', cfg.downloads_in_past_30_days);
+      if (cfg) {
+        if (cfg.downloads_in_past_30_days) {
+          this.set('recent_download_count', cfg.downloads_in_past_30_days);
+        }
+        if (cfg.id) {
+          this.set('api_id', cfg.id);
+        }
       }
     },
 
@@ -473,7 +478,14 @@ YUI.add('juju-charm-models', function(Y) {
     }
   }, {
     ATTRS: {
-      id: {
+      /**
+       * "id" for use with the charmworld store API
+       * 
+       * @attribute api_id
+       * @default Undefined
+       * @type {String}
+       */
+      api_id: {
         validator: function(val) {
           return Y.Lang.isString(val) && !!charmIdRe.exec(val);
         }
@@ -778,6 +790,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       series: {},
+
       summary: {},
       tested_providers: {},
       url: {}
