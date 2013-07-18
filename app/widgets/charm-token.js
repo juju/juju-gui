@@ -44,13 +44,16 @@ YUI.add('browser-charm-token', function(Y) {
     * @param {Object} config The widget configuration options.
     * @return {undefined} Nothing.
     */
-    initializer: function(config) {
-      // Extract the charm configuration values from the jumble of widget
-      // config options.
+    initializer: function(cfg) {
+      // Extract the charm cfguration values from the jumble of widget
+      // cfg options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       // @property charmData Contains the extracted charm information.
-      this.charmData = Y.aggregate({}, config, false, charmAttributes);
-      this.charmData.options = config.options;
+      this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
+      this.charmData.options = cfg.options;
+      if(!this.get('store_id') && cfg && cfg.id) {
+        this.set('store_id', cfg.id);
+      }
     },
 
     /**
@@ -165,6 +168,14 @@ YUI.add('browser-charm-token', function(Y) {
   }, {
     ATTRS: {
       /**
+        The id used for querying the charmworld data store.
+        @attribute id
+        @default undefined
+        @type {String}
+      */
+      store_id: {},
+
+      /**
        * @attribute description
        * @default ''
        * @type {String}
@@ -188,14 +199,6 @@ YUI.add('browser-charm-token', function(Y) {
       shouldShowIcon: {
         value: false
       },
-
-      /**
-        The id of the charm to render
-        @attribute id
-        @default undefined
-        @type {String}
-      */
-      id: {},
 
       /**
          @attribute is_approved
