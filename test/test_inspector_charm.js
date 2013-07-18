@@ -27,7 +27,7 @@ describe('Inspector Charm', function() {
       'juju-charm-store',
       'juju-tests-utils',
       'subapp-browser-views'
-      ], function(Y) {
+    ], function(Y) {
       utils = Y.namespace('juju-tests.utils');
       viewlets = Y.namespace('juju.viewlets');
       views = Y.namespace('juju.browser.views');
@@ -48,10 +48,10 @@ describe('Inspector Charm', function() {
   });
 
   it('should ensure the viewlet exists', function() {
-    assert.equal(typeof viewlets.charmDetails, "object");
+    assert.equal(typeof viewlets.charmDetails, 'object');
   });
-  
-  it('renders the viewlet with a charm', function (done) {
+
+  it('renders the viewlet with a charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', false);
     var testContainer = utils.makeContainer();
 
@@ -73,7 +73,7 @@ describe('Inspector Charm', function() {
       assert.isTrue(cfg.forInspector);
       assert.equal(typeof cfg.store, 'object');
       assert.equal(cfg.charm.get('id'), charmID);
-      return { 
+      return {
         render: function() { done(); }
       };
     };

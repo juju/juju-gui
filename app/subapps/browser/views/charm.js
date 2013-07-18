@@ -410,6 +410,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
           }, this);
     },
 
+    /**
+     * Load Readme file content into the tab.
+     *
+     * @method _loadReadmeTab
+     */
     _loadReadmeTab: function() {
       // Start loading the readme so it's ready to go.
       if (!this.loadedReadme) {
@@ -805,7 +810,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       charm: {},
 
       /**
- 
+      * @attribute forInspector
+      * @default {Boolean} false
+      * @type {Boolean}
       */
       forInspector: {
         value: false

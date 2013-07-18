@@ -190,8 +190,8 @@ YUI.add('juju-view-environment', function(Y) {
                 '.destroy-service-icon': {click: 'onDestroyIcon'},
                 '.initiate-destroy': {click: 'onInitiateDestroy'},
                 '.num-units-control': {
-                    keydown: 'modifyUnits',
-                    blur: 'resetUnits'
+                  keydown: 'modifyUnits',
+                  blur: 'resetUnits'
                 },
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'},
@@ -202,12 +202,12 @@ YUI.add('juju-view-environment', function(Y) {
                 '.unit-details': { click: 'showUnit'}
               },
               viewletList: [
-                 'overview', // Default viewlet first.
-                 'charmDetails',
-                 'config',
-                 'constraints',
-                 'unit',
-                 'units'
+                'overview', // Default viewlet first.
+                'charmDetails',
+                'config',
+                'constraints',
+                'unit',
+                'units'
               ],
               template: Y.juju.views.Templates['view-container']
             },

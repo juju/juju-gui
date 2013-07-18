@@ -29,10 +29,18 @@ YUI.add('viewlet-charm-details', function(Y) {
     name: 'charmDetails',
     slot: 'left-hand-panel',
     templateWrapper: templates['left-breakout-panel'],
+    /**
+      Render the viewlet.
+
+      @method render
+      @param {Charm} charm An old charm model.
+      @param {Object} viewContainerAttrs This comes from the view-container
+        object.
+    */
     render: function(charm, viewContainerAttrs) {
       var store = viewContainerAttrs.store;
       store.charm(charm.get('storeId'), {
-        success: function(data) {
+        'success': function(data) {
           var storeCharm = new models.BrowserCharm(data.charm);
           var charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
@@ -42,8 +50,7 @@ YUI.add('viewlet-charm-details', function(Y) {
           });
           charmView.render();
         },
-        failure: function(data, request) {
-          debugger;
+        'failure': function(data, request) {
           var charmView = new browserViews.BrowserCharmView({
             charm: charm,
             forInspector: true,
@@ -51,7 +58,7 @@ YUI.add('viewlet-charm-details', function(Y) {
             store: store
           });
           charmView.render();
-        },
+        }
       }, this);
       return this.templateWrapper({ initial: 'Loading...'});
     }
