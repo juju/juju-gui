@@ -382,7 +382,7 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Event callback which hides the viewlet slot which is realted
+      Event callback which hides the viewlet slot which is related
       to the close button
 
       @method hideSlot
