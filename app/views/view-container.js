@@ -172,6 +172,13 @@ YUI.add('juju-view-container', function(Y) {
      @default empty array
      @private
      */
+
+    /**
+      Removes the databinding events. This method is added to the viewlet
+      instance in the databinding class on binding.
+
+      @method remove
+    */
   };
 
   /**
@@ -356,6 +363,7 @@ YUI.add('juju-view-container', function(Y) {
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
+          // remove only removes the databinding but does not clear the DOM.
           existing.remove();
         }
       }
@@ -377,6 +385,23 @@ YUI.add('juju-view-container', function(Y) {
         this.bindingEngine.bind(model, viewlet);
       } else {
         console.error('View Container Missing slot', slot);
+      }
+    },
+
+    /**
+      Event callback which hides the viewlet slot which is related
+      to the close button
+
+      @method hideSlot
+      @param {Y.EventFacade} e Click event.
+    */
+    hideSlot: function(e) {
+      var existing = this._slots[e.currentTarget.getData('slot')];
+      if (existing) {
+        // unbind the databinding
+        existing.remove();
+        // remove the element from the DOM
+        existing.container.remove(true);
       }
     },
 

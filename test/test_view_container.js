@@ -56,7 +56,8 @@ describe('View Container', function() {
     YUI(GlobalConfig).use([
       'juju-view-container',
       'juju-templates',
-      'juju-tests-utils'],
+      'juju-tests-utils',
+      'node-event-simulate'],
     function(y) {
       Y = y;
       juju = y.namespace('juju');
@@ -190,7 +191,7 @@ describe('View Container', function() {
     generateViewContainer();
     //Define a slot mapping on the container for 'left'
     viewContainer.slots = {
-      left: '.left'
+      left: '.left-breakout'
     };
     // And constraints will use that slot.
     viewContainer.viewlets.constraints.slot = 'left';
@@ -201,7 +202,7 @@ describe('View Container', function() {
 
     // Now render the constraints viewlet.
     viewContainer.showViewlet('constraints');
-    assert.equal(container.one('.left .viewlet').get('text'), 'foo');
+    assert.equal(container.one('.left-breakout .viewlet').get('text'), 'foo');
   });
 
   it('can replace a slot, removing old bindings and installing a new model',
@@ -209,7 +210,7 @@ describe('View Container', function() {
        generateViewContainer();
        //Define a slot mapping on the container for 'left'
        viewContainer.slots = {
-         left: '.left'
+         left: '.left-breakout'
        };
        // And constraints will use that slot.
        viewContainer.viewlets.constraints.slot = 'left';
@@ -218,20 +219,51 @@ describe('View Container', function() {
 
        // Now render the constraints viewlet.
        viewContainer.showViewlet('constraints');
-       assert.equal(container.one('.left .viewlet').get('text'), 'foo');
+       assert.equal(
+           container.one('.left-breakout .viewlet').get('text'), 'foo');
 
        var replacementModel = new Y.Model({id: 'replacement', name: 'pie'});
        viewContainer.showViewlet('constraints', replacementModel);
-       assert.equal(container.one('.left .viewlet').get('text'), 'pie');
+       assert.equal(
+           container.one('.left-breakout .viewlet').get('text'), 'pie');
 
        // And the new databindings are working.
        replacementModel.set('name', 'ice cream');
-       assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
+       assert.equal(
+           container.one('.left-breakout .viewlet').get('text'), 'ice cream');
 
        // The old model (still associated with the viewContainer) isn't bound
        // though.
        viewContainer.get('model').set('name', 'broken');
-       assert.equal(container.one('.left .viewlet').get('text'), 'ice cream');
+       assert.equal(
+           container.one('.left-breakout .viewlet').get('text'), 'ice cream');
      });
+
+  it('can remove a slot from the dom', function() {
+    generateViewContainer();
+    //Define a slot mapping on the container for 'left'
+    viewContainer.slots = {
+      left: '.left-breakout'
+    };
+    // And constraints will use that slot.
+    viewContainer.viewlets.constraints.slot = 'left';
+    viewContainer.render();
+    viewContainer.showViewlet('serviceConfig');
+
+    // Now render the constraints viewlet.
+    var constraints = viewContainer.viewlets.constraints;
+    constraints.render = function() {
+      this.container = Y.Node.create(
+          juju.views.Templates['left-breakout-panel']());
+    };
+    viewContainer.showViewlet('constraints');
+
+    assert.equal(
+        typeof constraints.container
+                          .one('.left-breakout .close-slot'), 'object');
+
+    container.one('.left-breakout .close-slot').simulate('click');
+    assert.equal(constraints.container.one('.left-breakout .close-slot'), null);
+  });
 
 });

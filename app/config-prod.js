@@ -57,5 +57,5 @@ var juju_config = {
   isJujucharms: false,
   defaultViewmode: 'sidebar',
   // Switches the logout button to a 'Get Juju' button
-  showJujuButton: false
+  showGetJujuButton: false
 };
