@@ -102,7 +102,8 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/resizing_textarea.js',
     'app/assets/javascripts/spinner.js',
     'app/assets/javascripts/sub-app.js',
-    'app/assets/javascripts/unscaled-pack-layout.js'
+    'app/assets/javascripts/unscaled-pack-layout.js',
+    'app/assets/javascripts/Object.observe.poly.js'
   ]);
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');

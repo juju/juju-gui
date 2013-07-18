@@ -1601,13 +1601,15 @@ YUI.add('juju-view-service', function(Y) {
     var juju = Y.namespace('juju');
 
     /**
-      Generates the unit list sorted by status category and returns an array
-      with the data to generate the unit list UI.
+      Generates the unit list sorted by status category and landscape
+      annotation key and returns an array with the data to
+      generate the unit list UI.
 
       @method updateUnitList
       @param {Object} values From the databinding update method.
-      @return {Array} An array of objects with agent_state as category and an
-        array of units [{ category: 'started', units: [model, model, ...]}].
+      @return {Array} An array of objects with agent_state or landscape
+        annotation id as category and an array of units
+        [{ category: 'started', units: [model, model, ...]}].
     */
     function updateUnitList(values) {
       var statuses = [],
@@ -1619,6 +1621,16 @@ YUI.add('juju-view-service', function(Y) {
           unitByStatus[category] = [];
         }
         unitByStatus[category].push(value);
+
+        // landscape annotations
+        var lIds = utils.landscapeAnnotations(value);
+        lIds.forEach(function(annotation) {
+          if (!unitByStatus[annotation]) {
+            unitByStatus[annotation] = [];
+          }
+          unitByStatus[annotation].push(value);
+        });
+
       });
 
       Y.each(unitByStatus, function(value, key) {
