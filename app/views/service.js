@@ -1688,7 +1688,7 @@ YUI.add('juju-view-service', function(Y) {
 
       unitStatusHeader.append('span')
                       .classed('category-label', true);
-                      
+
       unitStatusHeader.append('span')
                       .classed('chevron', true);
 
