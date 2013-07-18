@@ -165,6 +165,14 @@ YUI.add('browser-charm-token', function(Y) {
   }, {
     ATTRS: {
       /**
+        The id in the charmworld API of the charm to render
+        @attribute id
+        @default undefined
+        @type {String}
+      */
+      api_id: {},
+
+      /**
        * @attribute description
        * @default ''
        * @type {String}
@@ -188,14 +196,6 @@ YUI.add('browser-charm-token', function(Y) {
       shouldShowIcon: {
         value: false
       },
-
-      /**
-        The id of the charm to render
-        @attribute id
-        @default undefined
-        @type {String}
-      */
-      id: {},
 
       /**
          @attribute is_approved
