@@ -254,7 +254,7 @@ describe('View Container', function() {
     var constraints = viewContainer.viewlets.constraints;
     constraints.render = function() {
       this.container = Y.Node.create(
-          juju.views.Templates['left-breakout-panel']());
+          juju.views.Templates['left-breakout-panel']({}));
     };
     viewContainer.showViewlet('constraints');
 
