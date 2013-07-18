@@ -28,10 +28,8 @@ YUI.add('viewlet-charm-details', function(Y) {
   ns.charmDetails = {
     name: 'charmDetails',
     slot: 'left-hand-panel',
-    //templateWrapper: templates['left-breakout-panel'],
+    templateWrapper: templates['left-breakout-panel'],
     render: function(charm, viewContainerAttrs) {
-      //this.container = Y.Node.create('<div />');//this.templateWrapper());
-
       var store = viewContainerAttrs.store;
       store.charm(charm.get('storeId'), {
         success: function(data) {
@@ -39,22 +37,23 @@ YUI.add('viewlet-charm-details', function(Y) {
           var charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
             forInspector: true,
-            renderTo: this.container.get('parentNode'),
+            renderTo: this.container.one('.content'),
             store: store
           });
           charmView.render();
         },
         failure: function(data, request) {
+          debugger;
           var charmView = new browserViews.BrowserCharmView({
             charm: charm,
             forInspector: true,
-            renderTo: this.container.get('parentNode'),
+            renderTo: this.container.one('.content'),
             store: store
           });
           charmView.render();
         },
       }, this);
-      return Y.Node.create('<div>Loading...</div>');
+      return this.templateWrapper({ initial: 'Loading...'});
     }
   };
 }, '0.0.1', {

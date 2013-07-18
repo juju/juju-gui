@@ -6,7 +6,8 @@
                 {{#providers.successes}}
                     <li>
                         <i class="sprite provider_success"></i>
-                        <span>{{.}}</span>
+                        <a href="https://jenkins.qa.ubuntu.com/job/{{../../series}}-{{.}}-charm-{{../../name}}/lastBuild"
+                        target="help">{{.}}</a>
                     </li>
                 {{/providers.successes}}
             </ul>
@@ -16,7 +17,8 @@
                 {{#providers.failures}}
                     <li>
                         <i class="sprite provider_failure"></i>
-                        <span>{{.}}</span>
+                        <a href="https://jenkins.qa.ubuntu.com/job/{{../../series}}-{{.}}-charm-{{../../name}}/lastBuild"
+                        target="help">{{.}}</a>
                     </li>
                 {{/providers.failures}}
             </ul>

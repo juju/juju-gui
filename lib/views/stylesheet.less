@@ -328,6 +328,7 @@ table tr.highlighted td {
                     #notify-indicator {
                         .button;
                         margin: 0 9px 0 0;
+                        padding: 6px 12px;
                     }
                     #notify-list {
                         white-space: normal;
@@ -1222,6 +1223,8 @@ g.unit {
         }
     }
     .charm-panel-configure-buttons {
+      background-color: #FFFFFF;
+      border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
       width: @charm-panel-width - @charm-panel-padding-left - 1px;
       float: right;
@@ -1261,6 +1264,8 @@ g.unit {
         h4 {
             color: @label-color;
             cursor: pointer;
+            border-top: 1px solid #FFFFFF;
+            border-bottom: 1px solid @charm-panel-border-color;
             font-family: @font-family-medium;
             font-weight: normal;
             padding: 8px @charm-panel-padding-left;
@@ -1317,6 +1322,7 @@ g.unit {
         }
         &.config-variant {
             font-size: 14px;
+            border-top: 1px solid @charm-panel-border-top-color;
 
             .charm-entry {
                 padding: 5px @charm-panel-padding-left;
@@ -1701,6 +1707,9 @@ g.unit {
         }
     }
 }
+.service-view+.view-container {
+    overflow-y: auto;
+}
 #tooltip {
     .create-border-radius(@border-radius);
     text-align: left;
@@ -1711,9 +1720,12 @@ g.unit {
     max-width: 400px;
 }
 .charm-panel-configure {
+    background-image: url(/juju-ui/assets/images/configure-cog.png);
+    background-repeat: no-repeat;
+    background-position: 230px 38px;
     border-left: 1px solid @charm-panel-configure-color - #333;
+    background-color: @charm-panel-configure-color;
     height: 90px;
-    background: transparent;
     width: @charm-panel-width - @charm-panel-padding-left - 1px;
     padding-left: @charm-panel-padding-left;
 

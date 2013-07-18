@@ -75,6 +75,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       cleanIconHelper();
     });
 
+    it('renders for inspector mode correctly', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer(),
+        forInspector: true
+      });
+
+      view.render();
+      assert.isNull(view.get('container').one('.heading'));
+    });
+
     it('has sharing links', function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
@@ -205,6 +219,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'hooks/install',
@@ -218,12 +233,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
+
       Y.one('#bws-readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'hooks/install'
@@ -307,14 +324,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
-      Y.one('#bws-hooks').all('select option').size().should.equal(3);
+      Y.one('#bws-source').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws-hooks').all('select option').item(2).set(
+      Y.one('#bws-source').all('select option').item(2).set(
           'selected', 'selected');
-      Y.one('#bws-hooks').one('select').simulate('change');
+      Y.one('#bws-source').one('select').simulate('change');
 
-      var content = Y.one('#bws-hooks').one('div.filecontent');
+      var content = Y.one('#bws-source').one('div.filecontent');
       content.get('text').should.eql('install hook content.');
     });
 
@@ -337,6 +354,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
+        activeTab: '#bws-readme',
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
@@ -845,7 +863,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.all('#bws-interfaces .charm-token').size(),
-          4);
+          9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 

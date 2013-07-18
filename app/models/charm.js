@@ -406,7 +406,7 @@ YUI.add('juju-charm-models', function(Y) {
         id: data.id,
         is_approved: data.is_approved,
         name: data.name,
-        commitCount: data.commitCount,
+        commitCount: data.code_source.revision,
         downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
