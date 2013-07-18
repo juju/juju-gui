@@ -50,7 +50,7 @@ YUI.add('viewlet-charm-details', function(Y) {
           });
           charmView.render();
         },
-        'failure': function(data, request) {
+        'failure': function(data) {
           var charmView = new browserViews.BrowserCharmView({
             charm: charm,
             forInspector: true,
