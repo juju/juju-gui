@@ -111,12 +111,12 @@ var GlobalConfig = {
         'FileSaver': {
           fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
         }
-      },
-      observe: {
-        modules: {
-          'observe': {
-            fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
-          }
+      }
+    },
+    observe: {
+      modules: {
+        'observe': {
+          fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
         }
       }
     },
@@ -288,6 +288,11 @@ var GlobalConfig = {
             'juju-view-charm-collection',
             'juju-landscape'
           ]
+        },
+
+        // Viewlets
+        'viewlet-charm-details': {
+          fullpath: '/juju-ui/views/viewlets/charm-details.js'
         },
 
         // Models

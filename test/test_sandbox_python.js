@@ -1330,10 +1330,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           var changes = state.nextChanges();
           // Validate the delta includes imported services.
-          assert.include(changes.services, 'wordpress');
-          assert.include(changes.services, 'mysql');
+          assert.include(Y.Object.keys(changes.services), 'wordpress');
+          assert.include(Y.Object.keys(changes.services), 'mysql');
           // validate relation was added/updated.
-          assert.include(changes.relations, 'relation-0');
+          assert.include(Y.Object.keys(changes.relations), 'relation-0');
           done();
         };
         client.send(Y.JSON.stringify({op: 'importEnvironment',
