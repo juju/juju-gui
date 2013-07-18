@@ -121,12 +121,8 @@ object.  For example::
   viewletsNS.units = {
     name: 'units',
     template: Templates['show_units_small'],
-    rebind: function(model) {
+    selectBindTarget: function(model) {
       return model.get('units');
-    },
-    update: function(modellist) {
-      var data = {units: modellist.toArray()};
-      this.container.setHTML(this.template(data));
     }
   };
   // ...
