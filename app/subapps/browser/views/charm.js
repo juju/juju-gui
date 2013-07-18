@@ -650,8 +650,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container'),
-          sourceLink = this._getSourceLink();
+          container = this.get('container');
 
       var link;
       if (window.location.origin) {
@@ -661,9 +660,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
             this.get('charm').get('id');
       }
       tplData.isFullscreen = isFullscreen;
-      tplData.sourceLink = sourceLink;
-      tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits, sourceLink);
+      tplData.forInspector = this.get('forInspector');
+      if (!tplData.forInspector) {
+        tplData.sourceLink = this._getSourceLink();
+        tplData.prettyCommits = this._formatCommitsForHtml(
+            tplData.recent_commits, sourceLink);
+      }
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
       tplData.link = escape(link);
@@ -696,6 +698,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this._dispatchTabEvents(this.tabview);
 
       // Start loading the readme so it's ready to go.
+      /* XXX Rick will remove
       var readme = this._locateReadme();
 
       if (readme) {
@@ -705,6 +708,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+      */
 
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
@@ -726,7 +730,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
-      renderTo.one('.heading').scrollIntoView();
+      if (!tplData.forInspector) {
+        renderTo.one('.heading').scrollIntoView();
+      }
     },
 
     /**
@@ -788,6 +794,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       charm: {},
+
+      /**
+ 
+      */
+      forInspector: {
+        value: false
+      },
 
       /**
          @attribute isFullscreen

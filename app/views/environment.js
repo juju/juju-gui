@@ -200,12 +200,12 @@ YUI.add('juju-view-environment', function(Y) {
                 '.unit-details': { click: 'showUnit'}
               },
               viewletList: [
+                 'overview', // Default viewlet first.
                  'charmDetails',
                  'config',
-                 'constraints'
-                 'overview',
+                 'constraints',
                  'unit',
-                 'units',
+                 'units'
               ],
               template: Y.juju.views.Templates['view-container']
             },

@@ -1588,8 +1588,6 @@ YUI.add('juju-view-service', function(Y) {
 
      */
     onShowCharmDetails: function(ev) {
-      debugger;
-
       ev.halt();
       var db = this.inspector.get('db');
       var charmId = ev.currentTarget.getAttribute('data-charmid');
