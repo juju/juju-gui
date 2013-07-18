@@ -300,8 +300,8 @@
         color: rgb(80, 80, 80);
         background-color: rgb(255, 255, 255);
     }
-    
-    
+
+
     .viewlet-wrapper{
         h3 {
             border-bottom: 1px solid @inspector-divider-bottom;
@@ -311,13 +311,13 @@
             line-height: 1.5;
             padding: 10px 20px;
         }
-        
+
         .content {
             border-bottom: 1px solid @inspector-divider-bottom;
             margin: 0;
             padding: 10px;
         }
-        
+
         .service-charm {
             span {
                 font-size: 14px;
@@ -325,7 +325,7 @@
                 line-height: 1.5;
                 color: @inspector-subtitle-color;
             }
-            
+
             .service-name {
                 font-size: 20px;
                 font-weight: 300;
@@ -334,10 +334,10 @@
             }
         }
     }
-    
+
     .overview-unit-list {
         margin-left: 0;
-        
+
         .status-unit-header {
             background-color: @inspector-region-background-color;
             padding: 15px;
@@ -345,16 +345,16 @@
             cursor: pointer;
             border-bottom: 1px solid @inspector-divider-bottom;
             border-top: 1px solid @inspector-divider-top;
-            
+
             span {
                 margin-right: 5px;
             }
-            
+
             ul {
                 background: white;
             }
         }
-        
+
         .status-unit-content {
             -moz-transition: .5s, max-height .5s;
             -webkit-transition: .5s, max-height .5s;
@@ -363,39 +363,39 @@
             background: @charm-panel-background-color;
             /* max height is being set inline in views/service.js.
             It is calculated on the number of units in the list.  */
-    
+
             &.close-unit {
                 max-height: 0px !important;
             }
-    
+
             a {
                 cursor: pointer;
                 color: @text-colour;
                 text-decoration: underline;
             }
-            
+
             ul {
                 margin-left: 0;
                 border-bottom: 1px solid @charm-panel-border-color;
             }
-            
+
             li {
                 list-style-type: none;
                 padding: 7px 0 7px 10px;
                 border-top: 1px solid @inspector-status-border-color;
             }
-            
+
             input[type="checkbox"] {
                 margin-right: 10px;
             }
-            
+
             button.unit-action-button,
             input[type="checkbox"] {
                 .create-border-radius(@border-radius);
                 .create-box-shadow(0 2px 2px -2px #777 inset);
                 background: @charm-panel-series-color;
             }
-            
+
             button.unit-action-button {
                 border: 0;
                 padding: 5px;
