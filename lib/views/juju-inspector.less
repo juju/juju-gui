@@ -3,6 +3,7 @@
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
+@inspector-subtitle-color: #555555;
 
 
 .yui3-juju-inspector {
@@ -301,8 +302,37 @@
     }
     
     
-    .viewlet-wrapper h3 {
-        border-bottom: 1px solid @inspector-divider-bottom;
+    .viewlet-wrapper{
+        h3 {
+            border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            padding: 10px 20px;
+        }
+        
+        .content {
+            border-bottom: 1px solid @inspector-divider-bottom;
+            margin: 0;
+            padding: 10px;
+        }
+        
+        .service-charm {
+            span {
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.5;
+                color: @inspector-subtitle-color;
+            }
+            
+            .service-name {
+                font-size: 20px;
+                font-weight: 300;
+                line-height: 1.2;
+                color: @charm-panel-background-color;
+            }
+        }
     }
     
     .overview-unit-list {
