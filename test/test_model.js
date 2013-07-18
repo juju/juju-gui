@@ -781,7 +781,7 @@ describe('BrowserCharm test', function() {
     instance = new models.BrowserCharm(data.charm);
     var converted = instance._convertRelatedData(providesData);
     assert.equal(providesData.name, converted.name);
-    assert.equal(providesData.store_id, converted.store_id);
+    assert.equal(providesData.id, converted.id);
     assert.equal(
         providesData.commits_in_past_30_days,
         converted.recent_commit_count);
