@@ -398,7 +398,7 @@ YUI.add('juju-charm-models', function(Y) {
         // Only show the icon if it has one and the charm has been reviewed to
         // have a safe icon.
         shouldShowIcon: data.has_icon && data.is_approved,
-        api_id: data.api_id,
+        id: data.api_id ? data.api_id : data.id,
         is_approved: data.is_approved,
         name: data.name,
         commitCount: data.code_source.revision,
