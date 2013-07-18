@@ -135,11 +135,14 @@ YUI.add('juju-databinding', function(Y) {
       var defaultBinding = {};
       defaultBinding.get = function(model) { return model.get(this.name);};
       var binding = Y.mix(defaultBinding, config);
+      if (viewlet.get) {
+        binding.get = viewlet.get;
+      }
       // Explicitly allow additional binding information to
       // be passed in the viewlet config. From this we can
       // resolve formatters and update callbacks.
       if (viewlet.bindings && viewlet.bindings[config.name]) {
-        binding = Y.mix(binding, viewlet.bindings[config.name]);
+        binding = Y.mix(binding, viewlet.bindings[config.name], true);
       }
       // Ensure 'target' is an Array.
       if (typeof binding.target === 'string') {
@@ -195,9 +198,6 @@ YUI.add('juju-databinding', function(Y) {
       @chainable
     */
     BindingEngine.prototype.bind = function(model, viewlets) {
-      var modelEventHandles = this.resetModelChangeEvents(model);
-      modelEventHandles.push(
-          model.on('change', this._modelChangeHandler, this));
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
@@ -237,37 +237,45 @@ YUI.add('juju-databinding', function(Y) {
       }
       viewlet.model = viewletModel;
 
-      // Check model or modellist?
-      if (checkClassImplements(viewletModel, 'model')) {
-        // Bind and listen for model changes.
-        viewlet.container.all('[data-bind]').each(function(node) {
-          // Add the binding for each element
-          this.addBinding({
-            name: node.getData('bind'),
-            target: node
-          }, viewlet);
-          // Add listeners for model cloning for conflict resolution
-          viewlet._eventHandles.push(
-              node.on(
-                  'valueChange', this._storeChanged, this, viewlet));
-        }, this);
-        this._setupHeirarchicalBindings();
-        this._setupDependencies();
-        this._modelChangeHandler();
-      } else {
+      if (checkClassImplements(viewletModel, 'modelList')) {
         // Model list
-        // TODO: If this is a lazy model list then the models contained are
-        // POJOs and won't fire attr change events. In that case we can
-        // use a Object.observe polyfill to get notice on model change.
-        // We don't do data-binding on child elements, the viewlet will be
-        // triggered to re-render its contents. All our collection views
-        // are currently read-only so this works ok.
         viewlet._eventHandles.push(
             viewletModel.after(['add', 'remove', 'change'],
                               this._modelListChange, this));
 
         this._modelListChange();
+        return this;
       }
+
+      var modelEventHandles = this.resetModelChangeEvents(model);
+      if (checkClassImplements(viewletModel, 'model')) {
+        modelEventHandles.push(
+            model.on('change', this._modelChangeHandler, this));
+      } else {
+        // Pojo support
+        // This typically depends on an Object.observe polyfill being
+        // in place (which it is). As browsers natively support this
+        // we can one day drop the polyfill.
+        modelEventHandles.push(
+            Object.observe(model, Y.bind(this._modelChangeHandler, this)));
+      }
+
+      // Bind and listen for model changes.
+      viewlet.container.all('[data-bind]').each(function(node) {
+        // Add the binding for each element
+        this.addBinding({
+          name: node.getData('bind'),
+          target: node
+        }, viewlet);
+        // Add listeners for model cloning for conflict resolution
+        viewlet._eventHandles.push(
+            node.on(
+            'valueChange', this._storeChanged, this, viewlet));
+      }, this);
+      this._setupHeirarchicalBindings();
+      this._setupDependencies();
+      this._modelChangeHandler();
+
       return this;
     };
 
@@ -346,7 +354,11 @@ YUI.add('juju-databinding', function(Y) {
       // Unbind each model
       Y.each(this._models, function(handles) {
         handles.forEach(function(handle) {
-          handle.detach();
+          if (handle.unobserve) {
+            handle.unobserve();
+          } else {
+            handle.detach();
+          }
         });
         handles.splice(0, handles.length);
       });
@@ -367,7 +379,7 @@ YUI.add('juju-databinding', function(Y) {
       @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
-      var mID = model.get('id');
+      var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
       modelEventHandles.forEach(function(handle) {
         handle.detach();
@@ -459,9 +471,14 @@ YUI.add('juju-databinding', function(Y) {
       @param {Event} evt Y.Model change event.
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
-      var keys = evt && Y.Object.keys(evt.changed);
-      var delta = keys && deltaFromChange.call(this, keys);
-
+      var keys, delta;
+      if (Y.Lang.isArray(evt)) {
+        // Object.observe updates
+        keys = evt.map(function(update) { return update.name; });
+      } else {
+        keys = evt && Y.Object.keys(evt.changed);
+      }
+      delta = keys && deltaFromChange.call(this, keys);
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
         this._updateTimeout = null;
@@ -489,7 +506,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var resolve = self.resolve;
-      if (delta === undefined) {
+      if (delta === undefined || (delta.length && delta.length === 0)) {
         delta = deltaFromChange.call(this);
       }
 

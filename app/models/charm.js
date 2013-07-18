@@ -304,6 +304,17 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       series: {},
+      storeId: {
+        /**
+         * Return the charm's URL minus the schema as an ID for the store.
+         *
+         * @method storeId.getter
+         * @return {string} The charm ID.
+         */
+        getter: function() {
+          return this.get('id').replace(/^[^:]+:/, '');
+        }
+      },
       summary: {},
       url: {}
     }

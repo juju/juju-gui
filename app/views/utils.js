@@ -1127,6 +1127,26 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
+  /**
+    Returns an array of user friendly Landscape ids that are contained
+    on the passed in unit.
+
+    @method landscapeAnnotations
+    @param {Object} unit A unit object.
+    @return {Array} An array of user friendly Landscape id's.
+  */
+  utils.landscapeAnnotations = function(unit) {
+    var ids = [];
+    if (!unit.annotations) { return ids; }
+    if (unit.annotations['landscape-needs-reboot']) {
+      ids.push('landscape-needs-reboot');
+    }
+    if (unit.annotations['landscape-security-upgrades']) {
+      ids.push('landscape-security-upgrades');
+    }
+    return ids;
+  };
+
   utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.

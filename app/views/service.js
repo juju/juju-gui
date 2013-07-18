@@ -18,6 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+
 /**
  * Provide the service views and mixins.
  *
@@ -30,12 +31,12 @@ YUI.add('juju-view-service', function(Y) {
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
   var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
-
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
       plugins = Y.namespace('juju.plugins'),
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      viewletNS = Y.namespace('juju.viewlets');
 
   /**
    * @class manageUnitsMixin
@@ -1573,6 +1574,21 @@ YUI.add('juju-view-service', function(Y) {
       } else {
         units.setAttribute('checked', 'checked');
       }
+    },
+
+    /**
+     Loads the charm details view for the inspector.
+
+     @method onShowCharmDetails
+     @param {Event} ev the click event from the overview viewlet.
+
+     */
+    onShowCharmDetails: function(ev) {
+      ev.halt();
+      var db = this.inspector.get('db');
+      var charmId = ev.currentTarget.getAttribute('data-charmid');
+      var charm = db.charms.getById(charmId);
+      this.inspector.showViewlet('charmDetails', charm);
     }
   };
 
@@ -1585,13 +1601,15 @@ YUI.add('juju-view-service', function(Y) {
     var juju = Y.namespace('juju');
 
     /**
-      Generates the unit list sorted by status category and returns an array
-      with the data to generate the unit list UI.
+      Generates the unit list sorted by status category and landscape
+      annotation key and returns an array with the data to
+      generate the unit list UI.
 
       @method updateUnitList
       @param {Object} values From the databinding update method.
-      @return {Array} An array of objects with agent_state as category and an
-        array of units [{ category: 'started', units: [model, model, ...]}].
+      @return {Array} An array of objects with agent_state or landscape
+        annotation id as category and an array of units
+        [{ category: 'started', units: [model, model, ...]}].
     */
     function updateUnitList(values) {
       var statuses = [],
@@ -1603,6 +1621,16 @@ YUI.add('juju-view-service', function(Y) {
           unitByStatus[category] = [];
         }
         unitByStatus[category].push(value);
+
+        // landscape annotations
+        var lIds = utils.landscapeAnnotations(value);
+        lIds.forEach(function(annotation) {
+          if (!unitByStatus[annotation]) {
+            unitByStatus[annotation] = [];
+          }
+          unitByStatus[annotation].push(value);
+        });
+
       });
 
       Y.each(unitByStatus, function(value, key) {
@@ -1812,7 +1840,7 @@ YUI.add('juju-view-service', function(Y) {
             unitIPDescription: unit_ip_description,
             relations: relations
           };
-          this.container = Y.Node.create(this.templateWrapper());
+          this.container = Y.Node.create(this.templateWrapper({}));
           this.container.one('.content').setHTML(this.template(templateData));
         }
       },
@@ -1985,6 +2013,9 @@ YUI.add('juju-view-service', function(Y) {
       }
     };
 
+    // Add any imported viewlets into this DEFAULT_VIEWLETS from doom.
+    DEFAULT_VIEWLETS = Y.merge(DEFAULT_VIEWLETS, viewletNS);
+
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
@@ -2074,5 +2105,7 @@ YUI.add('juju-view-service', function(Y) {
     'event-key',
     'transition',
     'event-resize',
-    'json-stringify']
+    'json-stringify',
+    // Imported viewlets
+    'viewlet-charm-details']
 });
