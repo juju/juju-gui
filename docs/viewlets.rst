@@ -107,28 +107,41 @@ in the `viewlets` object property and have a few configuration properties:
 While a viewlet doesn't explicitly require the `View Container`_ it was designed
 to be managed by a parent handler.
 
+It is recommended that viewlets be constructed in a separate file and wrapped
+in a YUI block.  In this way, viewlets can be kept separate and easy to add,
+and the namespace to which they belong simply be used as a `viewlets` config
+object.  These viewlets live in `app/views/viewlets`; see
+`app/views/viewlets/charm-details.js` for an example of a viewlet config
+object.  For example::
+
+  // ...
+  var viewletsNS = Y.namespace('juju.viewlets');
+
+  // This can be wrapped in a feature flag if need be.
+  viewletsNS.units = {
+    name: 'units',
+    template: Templates['show_units_small'],
+    rebind: function(model) {
+      return model.get('units');
+    },
+    update: function(modellist) {
+      var data = {units: modellist.toArray()};
+      this.container.setHTML(this.template(data));
+    }
+  };
+  // ...
+
 An example passing Viewlets into a ViewContainer is::
 
+  var viewletsNS = Y.namespace('juju.viewlets');
   new Y.juju.ViewContainer({
-    viewlets: {
-      overview: {
-        name: 'overview',
-        template: Templates.serviceOverview
-      },
-      units: {
-        name: 'units',
-        template: Templates['show_units_small'],
-        rebind: function(model) {
-          return model.get('units');
-        },
-        update: function(modellist) {
-          var data = {units: modellist.toArray()};
-          this.container.setHTML(this.template(data));
-        }
-      },
-    },
+    viewlets: viewletsNS
     ...
   });
+
+For now, the viewletsNS object is merged with a `DEFAULT_VIEWLETS` object for
+locally defined viewlet configs.
+  
 
 Databinding Engine
 ==================
