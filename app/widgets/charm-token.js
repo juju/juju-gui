@@ -51,8 +51,8 @@ YUI.add('browser-charm-token', function(Y) {
       // @property charmData Contains the extracted charm information.
       this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
       this.charmData.options = cfg.options;
-      if(!this.get('api_id') && cfg && cfg.id) {
-        this.set('api_id', cfg.id);
+      if(!this.get('store_id') && cfg && cfg.id) {
+        this.set('store_id', cfg.id);
       }
     },
 
@@ -168,12 +168,12 @@ YUI.add('browser-charm-token', function(Y) {
   }, {
     ATTRS: {
       /**
-        The id in the charmworld API of the charm to render
+        The id used for querying the charmworld data store.
         @attribute id
         @default undefined
         @type {String}
       */
-      api_id: {},
+      store_id: {},
 
       /**
        * @attribute description
