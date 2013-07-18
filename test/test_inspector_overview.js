@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Inspector Overview', function() {
+describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, ENTER, charmConfig;
