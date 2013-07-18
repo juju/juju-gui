@@ -159,7 +159,7 @@ describe('Inspector Overview', function() {
         a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
         b = units.add({ id: 'mysql/1', agent_state: 'instal-error' });
 
-    // this order is important
+    // This order is important.
     var expected = [
       { category: 'error', units: [a, b] },
       { category: 'pending', units: [c] },
