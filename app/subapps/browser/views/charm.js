@@ -54,7 +54,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .add': {
         click: '_addCharmEnvironment'
       },
-      '#bws-hooks select': {
+      '#bws-source select': {
         change: '_loadHookContent'
       },
       '.charm .back': {
@@ -177,6 +177,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
               return;
             }
 
+            if (tabContent === 'Readme') {
+              this._loadReadmeTab();
+              return;
+            }
           }, this)
       );
     },
@@ -353,7 +357,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var index = ev.currentTarget.get('selectedIndex');
       var filename = ev.currentTarget.get('options').item(
           index).getAttribute('value'),
-          node = this.get('container').one('#bws-hooks .filecontent');
+          node = this.get('container').one('#bws-source .filecontent');
 
       // Load the file, but make sure we prettify the code.
       if (filename) {
@@ -406,6 +410,27 @@ YUI.add('subapp-browser-charmview', function(Y) {
           }, this);
     },
 
+    /**
+     * Load Readme file content into the tab.
+     *
+     * @method _loadReadmeTab
+     */
+    _loadReadmeTab: function() {
+      // Start loading the readme so it's ready to go.
+      if (!this.loadedReadme) {
+        var tplNode = this.get('container');
+        var readme = this._locateReadme();
+
+        if (readme) {
+          this._loadFile(tplNode.one('#bws-readme'),
+                         readme
+          );
+        } else {
+          this._noReadme(tplNode.one('#bws-readme'));
+        }
+        this.loadedReadme = true;
+      }
+    },
     /**
       Load the related charm data into the model for use.
 
@@ -574,6 +599,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+      this.loadedReadme = false;
       this.loadedRelatedCharms = false;
       this.loadedRelatedInterfaceCharms = false;
     },
@@ -650,8 +676,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container'),
-          sourceLink = this._getSourceLink();
+          container = this.get('container');
 
       var link;
       if (window.location.origin) {
@@ -661,9 +686,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
             this.get('charm').get('id');
       }
       tplData.isFullscreen = isFullscreen;
-      tplData.sourceLink = sourceLink;
-      tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits, sourceLink);
+      tplData.forInspector = this.get('forInspector');
+      if (!tplData.forInspector) {
+        tplData.sourceLink = this._getSourceLink();
+        tplData.prettyCommits = this._formatCommitsForHtml(
+            tplData.recent_commits, tplData.sourceLink);
+      }
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
       tplData.link = escape(link);
@@ -695,16 +723,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
       this._dispatchTabEvents(this.tabview);
 
-      // Start loading the readme so it's ready to go.
-      var readme = this._locateReadme();
-
-      if (readme) {
-        this._loadFile(tplNode.one('#bws-readme'),
-                       readme
-        );
-      } else {
-        this._noReadme(tplNode.one('#bws-readme'));
-      }
 
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
@@ -726,7 +744,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
-      renderTo.one('.heading').scrollIntoView();
+      if (!tplData.forInspector) {
+        renderTo.one('.heading').scrollIntoView();
+      }
     },
 
     /**
@@ -788,6 +808,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       charm: {},
+
+      /**
+      * @attribute forInspector
+      * @default {Boolean} false
+      * @type {Boolean}
+      */
+      forInspector: {
+        value: false
+      },
 
       /**
          @attribute isFullscreen

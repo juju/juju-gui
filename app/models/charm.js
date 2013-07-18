@@ -113,7 +113,7 @@ YUI.add('juju-charm-models', function(Y) {
    */
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
-    initializer: function() {
+    initializer: function(cfg) {
       var id = this.get('id'),
           parts = parseCharmId(id),
           self = this;
@@ -125,6 +125,12 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
+      //XXX j.c.sackett July 16 2013 This is temporary while resolving Charm and
+      //BrowserCharm; Charm still loads data from a different API which puts
+      //options inside config.
+      if (cfg && cfg.config) {
+        this.set('options', cfg.config.options);
+      }
     },
 
     sync: function(action, options, callback) {
@@ -229,7 +235,9 @@ YUI.add('juju-charm-models', function(Y) {
           ].join('/');
         }
       },
-      config: {},
+      options: {
+        setter: 'unsetIfNoValue'
+      },
       description: {},
       full_name: {
         /**
@@ -296,6 +304,17 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       series: {},
+      storeId: {
+        /**
+         * Return the charm's URL minus the schema as an ID for the store.
+         *
+         * @method storeId.getter
+         * @return {string} The charm ID.
+         */
+        getter: function() {
+          return this.get('id').replace(/^[^:]+:/, '');
+        }
+      },
       summary: {},
       url: {}
     }
@@ -393,7 +412,7 @@ YUI.add('juju-charm-models', function(Y) {
         id: data.id,
         is_approved: data.is_approved,
         name: data.name,
-        commitCount: data.commitCount,
+        commitCount: data.code_source.revision,
         downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,

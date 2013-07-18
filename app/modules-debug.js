@@ -290,6 +290,11 @@ var GlobalConfig = {
           ]
         },
 
+        // Viewlets
+        'viewlet-charm-details': {
+          fullpath: '/juju-ui/views/viewlets/charm-details.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'

@@ -170,8 +170,10 @@ YUI.add('juju-view-environment', function(Y) {
             configBase: {
               db: this.topo.get('db'),
               env: this.topo.get('env'),
+              store: this.topo.get('store'),
               events: {
-                '.close': {'click': 'destroy'}
+                '.close': {'click': 'destroy'},
+                '.close-slot': {'click': 'hideSlot'}
               }
             },
             configService: {
@@ -179,26 +181,34 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
-                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
-                '.toggle-expose': { click: 'toggleExpose' },
+                'a[data-unit]': { click: 'showUnitDetails'},
+                'button.confirm': { click: 'saveConfig'},
+                '.cancel-destroy': {click: 'onCancelDestroy'},
+                '.charmURL': {click: 'onShowCharmDetails'},
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
-                'button.confirm': { click: 'saveConfig'},
+                '.destroy-service-icon': {click: 'onDestroyIcon'},
+                '.initiate-destroy': {click: 'onInitiateDestroy'},
                 '.num-units-control': {
-                  'keydown': 'modifyUnits',
-                  'blur': 'resetUnits'
+                  keydown: 'modifyUnits',
+                  blur: 'resetUnits'
                 },
-                '.unit-details': { click: 'showUnit'},
-                '.destroy-service-icon': {'click': 'onDestroyIcon'},
-                '.initiate-destroy': {'click': 'onInitiateDestroy'},
-                '.cancel-destroy': {'click': 'onCancelDestroy'},
-                '.status-unit-header': {'click': 'toggleUnitHeader'},
-                '.toggle-select-all': {'click': 'toggleSelectAllUnits'},
                 // Constraints viewlet events.
-                '.save-constraints': {click: 'saveConstraints'}
+                '.save-constraints': {click: 'saveConstraints'},
+                '.status-unit-header': {click: 'toggleUnitHeader'},
+                '.toggle-expose': { click: 'toggleExpose' },
+                '.toggle-select-all': {click: 'toggleSelectAllUnits'},
+                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.unit-details': { click: 'showUnit'}
               },
-              viewletList: ['overview', 'units', 'unit', 'config',
-                'constraints'],
+              viewletList: [
+                'overview', // Default viewlet first.
+                'charmDetails',
+                'config',
+                'constraints',
+                'unit',
+                'units'
+              ],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
