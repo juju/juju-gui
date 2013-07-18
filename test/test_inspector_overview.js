@@ -147,9 +147,7 @@ describe('Inspector Overview', function() {
 
     var units = new Y.LazyModelList();
 
-    var a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
-        b = units.add({ id: 'mysql/1', agent_state: 'instal-error' }),
-        c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
+    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
         d = units.add({ id: 'mysql/3', agent_state: 'started' }),
         e = units.add({
           id: 'mysql/4',
@@ -157,8 +155,11 @@ describe('Inspector Overview', function() {
           annotations: {
             'landscape-needs-reboot': 'foo'
           }
-        });
+        }),
+        a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
+        b = units.add({ id: 'mysql/1', agent_state: 'instal-error' });
 
+    // this order is important
     var expected = [
       { category: 'error', units: [a, b] },
       { category: 'pending', units: [c] },
@@ -193,23 +194,23 @@ describe('Inspector Overview', function() {
     var wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.one('.status-unit-header').hasClass('error'), true);
     assert.equal(wrapper1.one('.unit-qty').getHTML(), 2);
-    assert.equal(wrapper1.one('.category-label').getHTML(), 'error');
-    assert.equal(
-        wrapper1.one('.status-unit-content').getStyle('maxHeight'), '12em');
+    assert.equal(wrapper1.one('.category-label').getHTML(), 'Error');
+    assert.notEqual(
+        wrapper1.one('.status-unit-content').getStyle('maxHeight'), undefined);
 
     var wrapper2 = unitListWrappers.item(1);
     assert.equal(wrapper2.one('.status-unit-header').hasClass('pending'), true);
     assert.equal(wrapper2.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending');
-    assert.equal(
-        wrapper2.one('.status-unit-content').getStyle('maxHeight'), '11em');
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.notEqual(
+        wrapper2.one('.status-unit-content').getStyle('maxHeight'), undefined);
 
     var wrapper3 = unitListWrappers.item(2);
     assert.equal(wrapper3.one('.status-unit-header').hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'running');
-    assert.equal(
-        wrapper3.one('.status-unit-content').getStyle('maxHeight'), '11em');
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.notEqual(
+        wrapper3.one('.status-unit-content').getStyle('maxHeight'), undefined);
 
     units = new Y.LazyModelList();
 
@@ -231,16 +232,16 @@ describe('Inspector Overview', function() {
     wrapper2 = unitListWrappers.item(0);
     assert.equal(wrapper2.one('.status-unit-header').hasClass('pending'), true);
     assert.equal(wrapper2.one('.unit-qty').getHTML(), 5);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending');
-    assert.equal(
-        wrapper2.one('.status-unit-content').getStyle('maxHeight'), '15em');
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.notEqual(
+        wrapper2.one('.status-unit-content').getStyle('maxHeight'), undefined);
 
     wrapper3 = unitListWrappers.item(1);
     assert.equal(wrapper3.one('.status-unit-header').hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'running');
-    assert.equal(
-        wrapper3.one('.status-unit-content').getStyle('maxHeight'), '11em');
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.notEqual(
+        wrapper3.one('.status-unit-content').getStyle('maxHeight'), undefined);
 
     newContainer.remove(true);
   });

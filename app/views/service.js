@@ -1600,6 +1600,14 @@ YUI.add('juju-view-service', function(Y) {
   var ServiceInspector = (function() {
     var juju = Y.namespace('juju');
 
+    var unitListNameMap = {
+      error: 'Error',
+      pending: 'Pending',
+      running: 'Running',
+      'landscape-needs-reboot': 'Needs Reboot',
+      'landscape-security-upgrades': 'Security Upgrade'
+    };
+
     /**
       Generates the unit list sorted by status category and landscape
       annotation key and returns an array with the data to
@@ -1630,11 +1638,12 @@ YUI.add('juju-view-service', function(Y) {
           }
           unitByStatus[annotation].push(value);
         });
-
       });
 
-      Y.each(unitByStatus, function(value, key) {
-        statuses.push({category: key, units: value});
+      Y.Object.each(unitListNameMap, function(value, key) {
+          if (unitByStatus[key]) {
+            statuses.push({category: key, units: unitByStatus[key]});
+          }
       });
 
       return statuses;
@@ -1647,6 +1656,9 @@ YUI.add('juju-view-service', function(Y) {
       @param {Array} statuses A key value pair of categories to unit list.
     */
     function generateAndBindUnitHeaders(node, statuses) {
+      var self = this,
+          buttonHeight;
+
       var categoryWrapperNodes = d3.select(node.getDOMNode())
                                    .selectAll('.unit-list-wrapper')
                                    .data(statuses, function(d) {
@@ -1680,7 +1692,12 @@ YUI.add('juju-view-service', function(Y) {
       unitStatusContentForm.append('ul');
 
       unitStatusContentForm.append('div')
-                           .html(Templates['unit-action-buttons']());
+                           .classed('action-button-wrapper', true)
+                           .html(function() {
+                             var tmpl = Templates['unit-action-buttons']();
+                             buttonHeight = tmpl.offsetHeight;
+                             return tmpl;
+                           });
 
       unitStatusHeader.append('span')
                       .html('&#8226;');
@@ -1700,7 +1717,7 @@ YUI.add('juju-view-service', function(Y) {
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
                           .text(function(d) {
-                               return d.category;
+                               return unitListNameMap[d.category];
                              });
 
       var unitsList = categoryWrapperNodes.select('ul')
@@ -1738,7 +1755,12 @@ YUI.add('juju-view-service', function(Y) {
       categoryWrapperNodes
           .select('.status-unit-content')
           .style('max-height', function(d) {
-            return (d.units.length + 10) + 'em';
+            if (!self._unitItemHeight) {
+              self._unitItemHeight =
+                d3.select(this).select('li').property('offsetHeight');
+            }
+            return ((self._unitItemHeight *
+                    (d.units.length + 1)) + buttonHeight) + 'px';
           });
 
 
