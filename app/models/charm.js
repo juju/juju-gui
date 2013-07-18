@@ -59,6 +59,8 @@ YUI.add('juju-charm-models', function(Y) {
               result.revision ? '-' + result.revision : ''),
           'json'
         ].join('/');
+        result.store_id = result.charm_store_path.replace(
+            'charms/', '').replace('/json', '');
         return result;
       }
     }
@@ -114,6 +116,11 @@ YUI.add('juju-charm-models', function(Y) {
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
     initializer: function(cfg) {
+      //XXX j.c.sackett July 19 2013 This is temporary while resolving Charm and
+      //BrowserCharm; Charm wants a fully qualified url as it's ID.
+      if(cfg && cfg.url) {
+        this.set('id', cfg.url); 
+      }
       var id = this.get('id'),
           parts = parseCharmId(id),
           self = this;

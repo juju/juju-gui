@@ -116,6 +116,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     authorizedUsers: {value: {'admin': 'password'}},
     authenticated: {value: false},
     charmStore: {}, // Required.
+    store: {},
     defaultSeries: {value: 'precise'},
     providerType: {value: 'demonstration'}
   };
@@ -151,7 +152,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         units: {},
         relations: {}
       };
-    },
+   },
 
     /**
     Return all of the recently changed objects.
@@ -383,33 +384,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
       } else {
         // Get the charm data.
         var self = this;
-        this.get('charmStore').loadByPath(
-            charmIdParts.charm_store_path,
-            {
-              // Convert the charm data to a charm and use the success
-              // callback.
-              success: function(data) {
-                var charm = self._getCharmFromData(data);
-                if (callbacks.success) {
-                  callbacks.success(charm);
-                }
-              },
-              // Inform the caller of an error using the charm store.
-              failure: function(e) {
-                // This is most likely an IOError stemming from an
-                // invalid charm pointing to a bad URL and a read of a
-                // 404 giving an error at this level. IOError isn't user
-                // facing so we log the warning.
-                console.warn('error loading charm: ' + e.error);
-                if (callbacks.failure) {
-                  callbacks.failure({error:
-                        'Error interacting with Charm store.'});
-                }
+        this.get('store').charm(
+          charmIdParts.store_id, {
+            // Convert the charm data to a charm and use the success
+            // callback.
+            success: function(response) {
+              var charm = self._getCharmFromData(response.charm);
+              if (callbacks.success) {
+                callbacks.success(charm);
+              }
+            },
+            // Inform the caller of an error using the charm store.
+            failure: function(e) {
+              // This is most likely an IOError stemming from an
+              // invalid charm pointing to a bad URL and a read of a
+              // 404 giving an error at this level. IOError isn't user
+              // facing so we log the warning.
+              console.warn('error loading charm: ' + e.error);
+              if (callbacks.failure) {
+                callbacks.failure({error:
+                      'Error interacting with Charm store.'});
               }
             }
+          }
         );
       }
-
     },
 
     /**
