@@ -172,6 +172,13 @@ YUI.add('juju-view-container', function(Y) {
      @default empty array
      @private
      */
+
+    /**
+      Removes the databinding events. This method is added to the viewlet
+      instance in the databinding class on binding.
+
+      @method remove
+    */
   };
 
   /**
@@ -322,12 +329,22 @@ YUI.add('juju-view-container', function(Y) {
       }
       var viewlet = this.viewlets[viewletName];
       if (!viewlet) {
-        console.warn('Attempted to load a viewlet that does nto exist');
+        console.warn('Attempted to load a viewlet that does not exist');
       }
       if (!model) {
         model = this.get('model');
       }
-      this.fillSlot(viewlet, model);
+      // If the viewlet has a slot, use fillSlot to manage the slot. Otherwise,
+      // hide existing viewlets in the default slot before showing the new one.
+      if (viewlet.slot) {
+        this.fillSlot(viewlet, model);
+      } else {
+        Y.Object.each(this.viewlets, function(viewletToCheck) {
+          if (!viewletToCheck.slot) {
+            viewletToCheck.container.hide();
+          }
+        });
+      }
       viewlet.container.show();
       this.recalculateHeight();
     },
@@ -345,13 +362,11 @@ YUI.add('juju-view-container', function(Y) {
     fillSlot: function(viewlet, model) {
       var target;
       var slot = viewlet.slot;
-      if (slot === null) {
-        return;
-      }
       var existing = this._slots[slot];
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
+          // remove only removes the databinding but does not clear the DOM.
           existing.remove();
         }
       }
@@ -373,6 +388,23 @@ YUI.add('juju-view-container', function(Y) {
         this.bindingEngine.bind(model, viewlet);
       } else {
         console.error('View Container Missing slot', slot);
+      }
+    },
+
+    /**
+      Event callback which hides the viewlet slot which is related
+      to the close button
+
+      @method hideSlot
+      @param {Y.EventFacade} e Click event.
+    */
+    hideSlot: function(e) {
+      var existing = this._slots[e.currentTarget.getData('slot')];
+      if (existing) {
+        // unbind the databinding
+        existing.remove();
+        // remove the element from the DOM
+        existing.container.remove(true);
       }
     },
 

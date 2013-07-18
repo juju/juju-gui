@@ -1,99 +1,19 @@
-@inspector-background-color: #221E1B;
-@inspector-color: #eee;
-@inspector-region-background-color: #221E1B;
-@border-radius: 4px;
+@inspector-background-color: #333;
+@inspector-region-background-color: #282828;
 
 .yui3-juju-inspector {
-    .create-border-radius(@border-radius);
     position: absolute;
     top: 20px;
     right: 35px;
     width: 292px;
-    padding: 10px;
     min-height: 250px;
     background-color: @inspector-background-color;
-    color: @inspector-color;
+    color: #fff;
     margin: 0; /* can be removed once the old inspector styles are removed*/
 
     h1, h2, h3, h4, h5, h6 {
         background-color: @inspector-region-background-color;
         padding-left: 1em;
-    }
-    
-    .view-container-wrapper {
-        
-        .close {
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-image: url("/juju-ui/assets/images/inspector-close-icon.png");
-            display: block;
-            height: 24px;
-            opacity: 1;
-            padding: 0;
-            text-indent: -9999em;
-            width: 20px;
-            border: 0;
-        }
-        
-        .destroy-service-icon {
-            cursor: pointer;
-            float: right;
-            width: 20px;
-            height: 24px;
-            padding: 0;
-            /* Make sure the destroy icon is below the close-the-inspector icon. */
-            clear: both;
-            margin-bottom: 1ex;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image: url("/juju-ui/assets/images/inspector-destroy-icon.png");
-        }
-    }
-    
-    .well {
-        background-color: @inspector-background-color;
-    }
-    
-    .charm-panel-configure {
-        height: auto;
-        padding: 0;
-        
-        .title,
-        .name {
-            width: 200px;
-            float: left;
-            margin-top: 0;
-        }
-        
-        .image {
-            float: left;
-            width: 100px;
-            height: 100px;
-        }
-    }
-    
-    .charm-panel-configure-buttons {
-        
-        .btn {
-            .create-border-radius(@border-radius);
-            @box-shadow: 0 2px 2px -2px #777777 inset;
-            color: #fff;
-            background: #dd4814;
-            padding: 10px 0;
-            text-decoration: none;
-            width: 114px;
-            text-align: center;
-            font-size: 18px;
-            line-height: 1;
-            font-weight: lighter;
-            display: block;
-            float: left;
-        }
-        
-        button::-moz-focus-inner {
-            padding: 0;
-            border: 0
-        }
     }
 
     .viewlet-container {
@@ -102,6 +22,17 @@
 
     .content {
         margin: 1em;
+    }
+
+    .close-slot {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 18px;
+        cursor: pointer;
+        color: @inspector-background-color;
     }
 
     .service-charm {
@@ -131,6 +62,10 @@
 
         &.close-unit {
             max-height: 0px !important;
+        }
+
+        a {
+            cursor: pointer;
         }
     }
 
@@ -308,6 +243,21 @@
         }
     }
 
+    .destroy-service-icon {
+        cursor: pointer;
+        float: right;
+        width: 20px;
+        height: 24px;
+        padding: 0;
+        /* Make sure the destroy icon is below the close-the-inspector icon. */
+        clear: both;
+        margin-bottom: 1ex;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-image:
+            url("/juju-ui/assets/images/inspector-destroy-service.png");
+    }
+
     .destroy-service-prompt {
         overflow: hidden;
         height: 95px;
@@ -353,8 +303,9 @@
         height: 0;
     }
 
-    .left {
+    .left-breakout {
         position: absolute;
+        top: 0px;
         right: 292px;
         width: 500px;
         color: rgb(80, 80, 80);

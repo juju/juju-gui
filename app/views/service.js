@@ -18,7 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var IMPORTED_VIEWLET_CONFIGS = [];
 
 /**
  * Provide the service views and mixins.
@@ -32,6 +31,8 @@ YUI.add('juju-view-service', function(Y) {
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
   var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
+  // Viewlet configs defined outside of this file.
+  var IMPORTED_VIEWLET_CONFIGS = [];
 
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
@@ -1533,16 +1534,16 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     /**
-     * Show a unit within the left-hand panel.
-     * Note that, due to the revived model below, this model can potentially
-     * be out of date, as the POJO from the LazyModelList is the one kept up
-     * to date.  This is just a first-pass and will be changed later.
-     *
-     * @method showUnit
-     * @param {object} ev The click event.
-     * @return {undefined} Nothing.
+      Show a unit within the left-hand panel.
+      Note that, due to the revived model below, this model can potentially
+      be out of date, as the POJO from the LazyModelList is the one kept up
+      to date.  This is just a first-pass and will be changed later.
+
+      @method showUnitDetails
+      @param {object} ev The click event.
+      @return {undefined} Nothing.
      */
-    showUnit: function(ev) {
+    showUnitDetails: function(ev) {
       ev.halt();
       var db = this.inspector.get('db');
       var unitId = ev.currentTarget.getData('unit');
@@ -1713,9 +1714,13 @@ YUI.add('juju-view-service', function(Y) {
                                  return unit.id;
                                }});
 
-      unitItem.append('span').text(function(d) {
-                               return d.id;
-                             });
+      unitItem.append('a').text(
+          function(d) {
+            return d.id;
+          })
+          .attr('data-unit', function(d) {
+            return d.service + '/' + d.number;
+          });
 
       // D3 content update section
       unitsList.sort(
@@ -1784,6 +1789,7 @@ YUI.add('juju-view-service', function(Y) {
       },
       unit: {
         name: 'unit',
+        templateWrapper: Templates['left-breakout-panel'],
         template: Templates.unitOverview,
         slot: 'left-hand-panel',
         'render': function(unitModel, viewContainerAttrs) {
@@ -1827,8 +1833,8 @@ YUI.add('juju-view-service', function(Y) {
             unitIPDescription: unit_ip_description,
             relations: relations
           };
-          this.container = Y.Node.create(this.templateWrapper);
-          this.container.setHTML(this.template(templateData));
+          this.container = Y.Node.create(this.templateWrapper({}));
+          this.container.one('.content').setHTML(this.template(templateData));
         }
       },
       config: {
@@ -1854,6 +1860,7 @@ YUI.add('juju-view-service', function(Y) {
             settings.push(setting);
           });
           this.container = Y.Node.create(this.templateWrapper);
+
           this.container.setHTML(
               this.template({
                 service: service,
@@ -2068,7 +2075,7 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.slots = {
-        'left-hand-panel': '.left'
+        'left-hand-panel': '.left-breakout'
       };
       this.inspector.render();
       this.inspector.showViewlet(options.viewletList[0]);
