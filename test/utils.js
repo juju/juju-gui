@@ -153,18 +153,28 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         }
     ),
 
-    makeFakeBackendWithCharmStore: function() {
-      var fakebackend = new Y.juju.environments.FakeBackend(
-          {charmStore: new jujuTests.utils.TestCharmStore()});
+    makeFakeBackend: function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.charm = function(store_id, callbacks, bindscope) {
+        var charmName = store_id.split('/')[1];
+        charmName = charmName.split('-', 1);
+        if (charmName in jujuTests.utils._cached_charms) {
+          var response = {
+            charm: jujuTests.utils._cached_charms[charmName]
+          };
+          callbacks.success(response);
+        } else {
+          callbacks.failure(new Error('Unable to load charm ' + charmName));
+        }
+      };
+
+      var fakebackend = new Y.juju.environments.FakeBackend({
+        store: fakeStore
+      });
       fakebackend.login('admin', 'password');
       return fakebackend;
     }
-
   });
-
-
-
-
 }, '0.1.0', {
   requires: [
     'handlebars',
