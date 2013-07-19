@@ -229,15 +229,19 @@ describe('data binding library', function() {
       });
 
       it('unbind method unbinds models and pojos (unit test)', function(done) {
-        var _unobserve = Object.unobserve;
-        Object.unobserve = function() { done(); };
+        var _unobserve = Object.unobserve,
+            counter = 0;
+        Object.unobserve = function() {
+          assert(counter, 1);
+          done();
+        };
         var engine = new BindingEngine({interval: 0});
         engine._viewlets = [];
         engine._models = {
           model1: [{
             detach: function() {
               // If this is called then it's working.
-              assert(true);
+              counter = 1;
             }}],
           model2: [{}] // intentional
         };
