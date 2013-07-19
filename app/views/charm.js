@@ -65,17 +65,12 @@ YUI.add('juju-view-charm-collection', function(Y) {
     */
 
     fitToWindow: function() {
-      function getHeight(node) {
-        if (!node) {
-          return 0;
-        }
-        return node.get('clientHeight');
-      }
       var container = this.get('container'),
           viewContainer = container.one('.view-container');
       if (viewContainer) {
         Y.fire('beforePageSizeRecalculation');
-        var navbarHeight = getHeight(Y.one('.navbar')),
+        var navbar = Y.one('.navbar'),
+            navbarHeight = navbar ? navbar.get('clientHeight') : 0,
             windowHeight = container.get('winHeight'),
             size = (Math.max(windowHeight, 600) - navbarHeight - 9);
         viewContainer.set('offsetHeight', size);
