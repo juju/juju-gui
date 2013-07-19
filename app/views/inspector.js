@@ -799,8 +799,7 @@ YUI.add('juju-view-inspector', function(Y) {
     showUnitDetails: function(ev) {
       ev.halt();
       var db = this.inspector.get('db');
-      var unitId = ev.currentTarget.getData('unit');
-      var unit = db.units.revive(db.units.getById(unitId));
+      var unit = db.units.getById(ev.currentTarget.getData('unit'));
       this.inspector.showViewlet('unitDetails', unit);
     },
 

@@ -308,7 +308,6 @@ YUI.add('juju-view-container', function(Y) {
       var viewletContainer = container.one(this.viewletContainer);
 
       // render the viewlets into their containers
-      debugger;
       Y.Object.each(this.viewlets, function(viewlet, name) {
         if (!viewlet.name) {
           viewlet.name = name;
@@ -344,7 +343,6 @@ YUI.add('juju-view-container', function(Y) {
       if (typeof viewletName !== 'string') {
         viewletName = viewletName.currentTarget.getData('viewlet');
       }
-      debugger;
 
       var viewlet = this.viewlets[viewletName];
       if (!viewlet) {
