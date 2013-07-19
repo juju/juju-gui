@@ -124,6 +124,7 @@ if (!Object.observe) {
           properties[idx] = prop;
           values[idx] = object[prop];
           Object.defineProperty(object, prop, {
+            enumerable: true,
             get: function() {
               return values[idx];
             },
