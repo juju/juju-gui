@@ -433,7 +433,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
         if (cfg.id) {
           this.set('store_id', cfg.id);
-          this.set('id', this.get('scheme') + ":" + cfg.id);
+          this.set('id', this.get('scheme') + ':' + cfg.id);
         }
       }
     },
@@ -492,7 +492,7 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {
       /**
        * "id" for use with the charmworld datastore
-       * 
+       *
        * @attribute store_id
        * @default Undefined
        * @type {String}
