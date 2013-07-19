@@ -181,24 +181,25 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
+                // Viewlet wrapper viewlet.
                 'button.confirm': { click: 'saveConfig'},
                 '.charmURL': {click: 'onShowCharmDetails'},
                 '.destroy-service-icon': {click: 'onDestroyIcon'},
                 '.initiate-destroy': {click: 'onInitiateDestroy'},
                 '.cancel-destroy': {click: 'onCancelDestroy'},
-                // Overview
+                // Overview viewlet.
                 '.num-units-control': {
                   keydown: 'modifyUnits',
                   blur: 'resetUnits'
                 },
-                // Settings
+                // Settings viewlet.
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
-                // Constraints viewlet events.
+                // Constraints viewlet.
                 '.save-constraints': {click: 'saveConstraints'},
-                // Overview units
+                // Overview units viewlet.
                 '.status-unit-header': {click: 'toggleUnitHeader'},
                 '.unit-details': { click: 'showUnit'},
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
