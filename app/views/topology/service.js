@@ -82,11 +82,6 @@ YUI.add('juju-topology-service', function(Y) {
           dragover: '_ignore',
           drop: 'canvasDropHandler'
         },
-        // Menu/Controls
-        '.view-service': {
-          click: 'viewServiceClick',
-          touchstart: 'viewServiceClick'
-        },
         '.destroy-service': {
           click: 'destroyServiceClick'
         }
@@ -1216,9 +1211,9 @@ YUI.add('juju-topology-service', function(Y) {
         //   service is left of the midline, display it to the
         //   right, and vice versa.
         cp.setStyles({
-          'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
+          'top': service.y * z + tr[1] + (service_center[1] * z) - 38,
           'left': service.x * z +
-              (menu_left ? service.w * z : -(cp_width)) + tr[0]
+              (menu_left ? (service.w + 20) * z : -(cp_width)) + tr[0]
         });
       }
     },
@@ -1237,6 +1232,7 @@ YUI.add('juju-topology-service', function(Y) {
         this.hideServiceMenu();
       } else {
         this.showServiceMenu(box);
+        
       }
     },
 
