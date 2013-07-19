@@ -256,8 +256,9 @@ YUI.add('juju-databinding', function(Y) {
         // This typically depends on an Object.observe polyfill being
         // in place (which it is). As browsers natively support this
         // we can one day drop the polyfill.
-        modelEventHandles.push(
-            Object.observe(model, Y.bind(this._modelChangeHandler, this)));
+        var callback = Y.bind(this._modelChangeHandler, this);
+        Object.observe(model, callback);
+        modelEventHandles.push({model: model, callback: callback});
       }
 
       // Bind and listen for model changes.
@@ -357,7 +358,7 @@ YUI.add('juju-databinding', function(Y) {
           if (handle.detach) {
             handle.detach();
           } else {
-            Object.unobserve(handle, self._modelChangeHandler);
+            Object.unobserve(handle.model, handle.callback);
           }
         });
         handles.splice(0, handles.length);
@@ -379,10 +380,15 @@ YUI.add('juju-databinding', function(Y) {
       @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
+      var self = this;
       var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
       modelEventHandles.forEach(function(handle) {
-        handle.detach();
+        if (handle.detach) {
+          handle.detach();
+        } else {
+          Object.unobserve(handle.model, handle.callback);
+        }
       });
       // Empty the list
       modelEventHandles.splice(0, modelEventHandles.length);

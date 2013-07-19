@@ -358,12 +358,15 @@ YUI.add('juju-view-environment', function(Y) {
   views.environment = EnvironmentView;
 
 }, '0.1.0', {
-  requires: ['juju-templates',
-             'juju-view-utils',
-             'juju-models',
-             'juju-topology',
-             'base-build',
-             'handlebars-base',
-             'node',
-             'view']
+  requires: [
+    'base-build',
+    'handlebars-base',
+    'juju-models',
+    'juju-templates',
+    'juju-topology',
+    'juju-view-inspector',
+    'juju-view-utils',
+    'node',
+    'view'
+  ]
 });
