@@ -181,33 +181,35 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
-                'a[data-unit]': { click: 'showUnitDetails'},
                 'button.confirm': { click: 'saveConfig'},
-                '.cancel-destroy': {click: 'onCancelDestroy'},
                 '.charmURL': {click: 'onShowCharmDetails'},
-                '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'},
                 '.destroy-service-icon': {click: 'onDestroyIcon'},
                 '.initiate-destroy': {click: 'onInitiateDestroy'},
+                '.cancel-destroy': {click: 'onCancelDestroy'},
+                // Overview
                 '.num-units-control': {
                   keydown: 'modifyUnits',
                   blur: 'resetUnits'
                 },
+                // Settings
+                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
+                '.toggle-expose': { click: 'toggleExpose' },
+                '.config-file .fakebutton': { click: 'handleFileClick'},
+                '.config-file input[type=file]': { change: 'handleFileChange'},
                 // Constraints viewlet events.
                 '.save-constraints': {click: 'saveConstraints'},
+                // Overview units
                 '.status-unit-header': {click: 'toggleUnitHeader'},
-                '.toggle-expose': { click: 'toggleExpose' },
+                '.unit-details': { click: 'showUnit'},
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
-                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
-                '.unit-details': { click: 'showUnit'}
+                'a[data-unit]': { click: 'showUnitDetails'}
               },
               viewletList: [
                 'overview', // Default viewlet first.
                 'charmDetails',
                 'config',
                 'constraints',
-                'unit',
-                'units'
+                'unitDetails'
               ],
               template: Y.juju.views.Templates['view-container']
             },

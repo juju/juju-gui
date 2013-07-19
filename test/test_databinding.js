@@ -32,6 +32,8 @@ describe('data binding library', function() {
     });
   });
 
+
+
   describe('supports declarative bindings', function() {
     var engine, form, model;
 
@@ -224,6 +226,23 @@ describe('data binding library', function() {
           assert.equal(called, true);
           done();
         }, 125);
+      });
+
+      it('unbind method unbinds models and pojos (unit test)', function(done) {
+        var _unobserve = Object.unobserve;
+        Object.unobserve = function() { done(); };
+        var engine = new BindingEngine({interval: 0});
+        engine._viewlets = [];
+        engine._models = {
+          model1: [{
+            detach: function() {
+              // If this is called then it's working.
+              assert(true);
+            }}],
+          model2: [{}] // intentional
+        };
+        engine.unbind();
+        Object.unobserve = _unobserve;
       });
     });
 
