@@ -45,7 +45,7 @@ YUI.add('browser-charm-token', function(Y) {
     * @return {undefined} Nothing.
     */
     initializer: function(cfg) {
-      // Extract the charm cfguration values from the jumble of widget
+      // Extract the charm configuration values from the jumble of widget
       // cfg options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       // @property charmData Contains the extracted charm information.
