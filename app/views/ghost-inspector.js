@@ -142,7 +142,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method closeInspector
     */
     closeInspector: function() {
-      this.inspector.destroy();
+      this.viewletManager.destroy();
     },
 
     /**

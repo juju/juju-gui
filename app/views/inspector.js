@@ -68,8 +68,8 @@ YUI.add('juju-view-inspector', function(Y) {
     resetUnits: function() {
       var container, model, flags = window.flags;
       if (flags.serviceInspector) {
-        container = this.inspector.get('container');
-        model = this.inspector.get('model');
+        container = this.viewletManager.get('container');
+        model = this.viewletManager.get('model');
       } else {
         container = this.get('container');
         model = this.get('model');
@@ -85,7 +85,7 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       var container, flags = window.flags;
       if (flags.serviceInspector) {
-        container = this.inspector.get('container');
+        container = this.viewletManager.get('container');
       } else {
         container = this.get('container');
       }
@@ -109,8 +109,8 @@ YUI.add('juju-view-inspector', function(Y) {
     _modifyUnits: function(requested_unit_count) {
       var container, env, flags = window.flags;
       if (flags.serviceInspector) {
-        container = this.inspector.get('container');
-        env = this.inspector.get('env');
+        container = this.viewletManager.get('container');
+        env = this.viewletManager.get('env');
       } else {
         container = this.get('container');
         env = this.get('env');
@@ -135,7 +135,7 @@ YUI.add('juju-view-inspector', function(Y) {
         delta = Math.abs(delta);
         var db;
         if (flags.serviceInspector) {
-          db = this.inspector.get('db');
+          db = this.viewletManager.get('db');
         } else {
           db = this.get('db');
         }
@@ -158,9 +158,9 @@ YUI.add('juju-view-inspector', function(Y) {
     _addUnitCallback: function(ev) {
       var service, getModelURL, db, flags = window.flags;
       if (flags.serviceInspector) {
-        service = this.inspector.get('model');
+        service = this.viewletManager.get('model');
         getModelURL = this.noop;
-        db = this.inspector.get('db');
+        db = this.viewletManager.get('db');
       } else {
         service = this.get('model');
         getModelURL = this.get('getModelURL');
@@ -193,9 +193,9 @@ YUI.add('juju-view-inspector', function(Y) {
     _removeUnitCallback: function(ev) {
       var service, getModelURL, db, flags = window.flags;
       if (flags.serviceInspector) {
-        service = this.inspector.get('model');
+        service = this.viewletManager.get('model');
         getModelURL = this.noop;
-        db = this.inspector.get('db');
+        db = this.viewletManager.get('db');
       } else {
         service = this.get('model');
         getModelURL = this.get('getModelURL');
@@ -257,7 +257,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     unexposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.inspector : this;
+      var dataSource = svcInspector ? this.viewletManager : this;
       var service = dataSource.get('model'),
           env = dataSource.get('env');
       env.unexpose(service.get('id'),
@@ -304,7 +304,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     exposeService: function() {
       var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.inspector : this;
+      var dataSource = svcInspector ? this.viewletManager : this;
       var service = dataSource.get('model'),
           env = dataSource.get('env');
       env.expose(service.get('id'),
@@ -355,14 +355,14 @@ YUI.add('juju-view-inspector', function(Y) {
   */
   Y.namespace('juju.controller').serviceInspector = {
     'getName': function() {
-      return this.inspector.getName();
+      return this.viewletManager.getName();
     },
     'bind': function(model, viewlet) {
-      this.inspector.bindingEngine.bind(model, viewlet);
+      this.viewletManager.bindingEngine.bind(model, viewlet);
       return this;
     },
     'render': function() {
-      this.inspector.render();
+      this.viewletManager.render();
       return this;
     },
 
@@ -417,9 +417,9 @@ YUI.add('juju-view-inspector', function(Y) {
       var svcInspector = window.flags && window.flags.serviceInspector;
       // When the above flag is removed we won't need the dataSource variable
       // any more and can refactor this accordingly.
-      var dataSource = svcInspector ? this.inspector : this;
+      var dataSource = svcInspector ? this.viewletManager : this;
       var model = dataSource.get('model');
-      var db = this.inspector.get('db');
+      var db = this.viewletManager.get('db');
       if (model.name === 'service') {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
@@ -516,8 +516,8 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     toggleExpose: function(e) {
-      var service = this.inspector.get('model');
-      var env = this.inspector.get('db').environment;
+      var service = this.viewletManager.get('model');
+      var env = this.viewletManager.get('db').environment;
       var exposed;
       if (service.get('exposed')) {
         this.unexposeService();
@@ -586,7 +586,7 @@ YUI.add('juju-view-inspector', function(Y) {
           msg = 'An error occurred reading this file.';
       }
       if (msg) {
-        var db = this.inspector.get('db');
+        var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
               title: 'Error reading configuration file',
@@ -606,12 +606,12 @@ YUI.add('juju-view-inspector', function(Y) {
     onFileLoaded: function(e) {
       //set the fileContent on the view-container so we can have access to it
       // when the user submit their config.
-      this.inspector.fileContent = e.target.result;
-      if (!this.inspector.fileContent) {
+      this.viewletManager.fileContent = e.target.result;
+      if (!this.viewletManager.fileContent) {
         // Some file read errors do not go through the error handler as
         // expected but instead return an empty string.  Warn the user if
         // this happens.
-        var db = this.inspector.get('db');
+        var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
               title: 'Configuration file error',
@@ -620,7 +620,7 @@ YUI.add('juju-view-inspector', function(Y) {
               level: 'error'
             }));
       }
-      var container = this.inspector.get('container');
+      var container = this.viewletManager.get('container');
       container.all('.settings-wrapper').hide();
       container.one('.toggle-settings-help').hide();
     },
@@ -633,8 +633,8 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e an event object from click.
     */
     onRemoveFile: function(e) {
-      var container = this.inspector.get('container');
-      this.inspector.fileContent = null;
+      var container = this.viewletManager.get('container');
+      this.viewletManager.fileContent = null;
       container.one('.fakebutton').setHTML('Import config file...');
       container.all('.settings-wrapper').show();
       // Replace the file input node.  There does not appear to be any way
@@ -651,7 +651,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @method saveConfig
     */
     saveConfig: function() {
-      var inspector = this.inspector,
+      var inspector = this.viewletManager,
           env = inspector.get('env'),
           db = inspector.get('db'),
           service = inspector.get('model'),
@@ -698,9 +698,9 @@ YUI.add('juju-view-inspector', function(Y) {
       container.one('.controls .confirm').removeAttribute('disabled');
       // If the user has conflicted fields and still choose to
       // save then we will be overwriting the values in Juju.
-      var bindingEngine = this.inspector.bindingEngine;
+      var bindingEngine = this.viewletManager.bindingEngine;
       bindingEngine.clearChangedValues.call(bindingEngine, 'config');
-      var db = this.inspector.get('db');
+      var db = this.viewletManager.get('db');
       if (e.err) {
         db.notifications.add(
             new models.Notification({
@@ -732,7 +732,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     saveConstraints: function(ev) {
-      var inspector = this.inspector;
+      var inspector = this.viewletManager;
       var container = inspector.get('container');
       var env = inspector.get('env');
       var service = inspector.get('model');
@@ -757,7 +757,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     _saveConstraintsCallback: function(container, ev) {
-      var inspector = this.inspector;
+      var inspector = this.viewletManager;
       var bindingEngine = inspector.bindingEngine;
       bindingEngine.clearChangedValues('constraints');
       var db = inspector.get('db');
@@ -798,9 +798,9 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     showUnitDetails: function(ev) {
       ev.halt();
-      var db = this.inspector.get('db');
+      var db = this.viewletManager.get('db');
       var unit = db.units.getById(ev.currentTarget.getData('unit'));
-      this.inspector.showViewlet('unitDetails', unit);
+      this.viewletManager.showViewlet('unitDetails', unit);
     },
 
     /**
@@ -843,10 +843,10 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     onShowCharmDetails: function(ev) {
       ev.halt();
-      var db = this.inspector.get('db');
+      var db = this.viewletManager.get('db');
       var charmId = ev.currentTarget.getAttribute('data-charmid');
       var charm = db.charms.getById(charmId);
-      this.inspector.showViewlet('charmDetails', charm);
+      this.viewletManager.showViewlet('charmDetails', charm);
     }
   };
 
@@ -1309,12 +1309,12 @@ YUI.add('juju-view-inspector', function(Y) {
 
       options.events = Y.mix(options.events, options.viewletEvents);
 
-      this.inspector = new views.ViewContainer(options);
-      this.inspector.slots = {
+      this.viewletManager = new views.ViewContainer(options);
+      this.viewletManager.slots = {
         'left-hand-panel': '.left-breakout'
       };
-      this.inspector.render();
-      this.inspector.showViewlet(options.viewletList[0]);
+      this.viewletManager.render();
+      this.viewletManager.showViewlet(options.viewletList[0]);
     }
 
     ServiceInspector.prototype = controllerPrototype;
