@@ -170,7 +170,7 @@ YUI.add('browser-charm-token', function(Y) {
         @default undefined
         @type {String}
       */
-      store_id: {},
+      storeId: {},
 
       /**
        * @attribute description
