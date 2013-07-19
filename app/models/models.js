@@ -700,6 +700,7 @@ YUI.add('juju-models', function(Y) {
       this.environment = new Environment();
       this.services = new ServiceList();
       this.charms = new models.CharmList();
+      this.cachedBrowserCharms = new models.BrowserCharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
