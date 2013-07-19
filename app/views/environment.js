@@ -210,13 +210,14 @@ YUI.add('juju-view-environment', function(Y) {
                 'charmDetails',
                 'config',
                 'constraints',
-                'unitDetails'
+                'unitDetails',
+                'inspectorHeader'
               ],
               template: Y.juju.views.Templates['view-container']
             },
             configGhost: {
               // controller will show the first one in this array by default
-              viewletList: ['ghostConfig'],
+              viewletList: ['ghostConfig', 'inspectorHeader'],
               // the view container template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
               // these events are for the viewlet container

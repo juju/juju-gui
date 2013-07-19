@@ -1788,22 +1788,6 @@ YUI.add('juju-view-service', function(Y) {
               bar.update(value);
             }
           },
-          icon: {
-            'update': function(node, value) {
-              // XXX: Icon is only present on services that pass through
-              // the Ghost phase of the GUI. Once we have better integration
-              // with the charm browser API services handling of icon
-              // can be improved.
-              var icon = node.one('img');
-              if (icon === null && value) {
-                node.append('<img>');
-                icon = node.one('img');
-              }
-              if (value) {
-                icon.set('src', value);
-              }
-            }
-          },
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
@@ -2025,7 +2009,6 @@ YUI.add('juju-view-service', function(Y) {
           viewlets, options.viewlets, true, undefined, 0, true);
 
       options.model = model;
-
       // Merge the various prototype objects together.  Additionally, merge in
       // mixins that provide functionality used in the inspector's events.
       var c = Y.juju.controller;
@@ -2051,9 +2034,11 @@ YUI.add('juju-view-service', function(Y) {
 
       this.inspector = new views.ViewContainer(options);
       this.inspector.slots = {
-        'left-hand-panel': '.left-breakout'
+        'left-hand-panel': '.left-breakout',
+        'header': '.header-slot'
       };
       this.inspector.render();
+      this.inspector.showViewlet('inspectorHeader', model);
       this.inspector.showViewlet(options.viewletList[0]);
     }
 
@@ -2081,5 +2066,6 @@ YUI.add('juju-view-service', function(Y) {
     'json-stringify',
     // Imported viewlets
     'viewlet-charm-details',
-    'viewlet-unit-details']
+    'viewlet-unit-details',
+    'viewlet-inspector-header']
 });

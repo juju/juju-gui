@@ -22,7 +22,7 @@
         background-color: @inspector-region-background-color;
         padding-left: 1em;
     }
-    
+
     /* Resetting panel styles. Can be removed after old inspector styles are
        removed. */
     .charm-panel-configure {
@@ -32,7 +32,7 @@
         height: auto;
         width: auto;
         padding: 0 20px;
-        
+
         .title {
             font-size: 20px;
             font-weight: 300;
@@ -45,13 +45,13 @@
             line-height: 1.5;
         }
     }
-    
+
     .charm-entry {
         /*border-bottom: 1px solid @inspector-divider-bottom;
         border-top: 1px solid @inspector-divider-top;
         padding: 0 20px;*/
-        
-        
+
+
     }
     .control-description,
     .control-label {
@@ -69,13 +69,13 @@
         width: auto;
         padding: 0 20px 10px;
     }
-    
+
     .control-group {
         margin: 0;
         padding: 20px;
         border-bottom: 1px solid @inspector-divider-bottom;
         border-top: 1px solid @inspector-divider-top;
-        
+
         .well {
             background-color: transparent;
             border: 0;
@@ -88,7 +88,7 @@
     .viewlet-container {
         overflow-y: auto;
         border-top: 1px solid @inspector-divider-top;
-        
+
         .config-variant {
             border-top: 0;
             background: transparent;
@@ -126,6 +126,35 @@
 
         .service-name {
             font-size: 16pt;
+        }
+    }
+
+    .header-slot {
+        header {
+            background: none repeat scroll 0 0 transparent;
+            border-bottom: 1px solid #1C1817;
+            height: 55px;
+            padding: 20px;
+            .service-charm {
+                color: @charm-panel-background-color;
+                .service-name {
+                    font-size: 20px;
+                    font-weight: 300;
+                    line-height: 1.2;
+                }
+                .charm-url {
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1.5;
+                }
+                div {
+                    display: inline-block;
+                }
+                .charmURL {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
         }
     }
 
@@ -260,7 +289,7 @@
                 background-color: white;
             }
         }
-        
+
         .control-expose {
             padding: 20px;
         }
@@ -396,22 +425,6 @@
             margin: 0;
             padding: 10px;
         }
-
-        .service-charm {
-            span {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.5;
-                color: @inspector-subtitle-color;
-            }
-
-            .service-name {
-                font-size: 20px;
-                font-weight: 300;
-                line-height: 1.2;
-                color: @charm-panel-background-color;
-            }
-        }
     }
 
     .overview-unit-list {
@@ -437,7 +450,7 @@
             ul {
                 background: white;
             }
-            
+
             .chevron {
                 display: inline-block;
                 height: 9px;
@@ -446,11 +459,11 @@
                 background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
             }
         }
-        
+
         .closed-unit-list .chevron {
             background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
         }
-        
+
         .status-unit-header.error {
             background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
         }
@@ -518,7 +531,7 @@
                 margin-left: 25px;
             }
         }
-        
+
         .status-unit-content.running ul li {
             background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
         }

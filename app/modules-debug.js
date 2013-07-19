@@ -299,6 +299,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/unit-details.js'
         },
 
+        'viewlet-inspector-header': {
+          fullpath: '/juju-ui/views/viewlets/inspector-header.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
