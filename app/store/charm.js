@@ -228,7 +228,7 @@ YUI.add('juju-charm-store', function(Y) {
     /**
      * Api call to fetch a charm's details, with an optional local cache.
      *
-     * @method charm
+     * @method charmWithCache
      * @param {String} charmID the charm to fetch.
      * @param {Object} callbacks the success/failure callbacks to use.
      * @param {Object} bindScope the scope of *this* in the callbacks.
@@ -238,22 +238,24 @@ YUI.add('juju-charm-store', function(Y) {
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
       }
-      if (cache instanceof Y.juju.models.BrowserCharmList) {
+      if (cache) {
         var charm = cache.getById(charmID);
         if (charm) {
           // Defer the success callback to prevent race conditions.
-          Y.later(10, this, callbacks.success, charm);
+          Y.soon(function() {
+            callbacks.success(charm);
+          });
           return;
+        } else {
+          var successCB = callbacks.success;
+          callbacks.success = function(data) {
+            var charm = new Y.juju.models.BrowserCharm(data.charm);
+            cache.add(charm);
+            successCB(charm);
+          };
         }
       }
-      this.charm(charmID, {
-        'success': function(data) {
-          var charm = new Y.juju.models.BrowserCharm(data.charm);
-          cache.add(charm);
-          callbacks.success(charm);
-        },
-        'failure': callbacks.failure
-      }, bindScope);
+      this.charm(charmID, callbacks, bindScope);
     },
 
     /**
