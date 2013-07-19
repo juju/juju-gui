@@ -32,7 +32,7 @@ describe('Inspector Charm', function() {
       viewlets = Y.namespace('juju.viewlets');
       views = Y.namespace('juju.browser.views');
 
-      charmID = 'precise/apache2-10';
+      charmID = 'cs:precise/apache2-10';
       fakeCharm = {
         get: function() {
           return charmID;
