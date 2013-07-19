@@ -54,9 +54,9 @@ YUI.add('viewlet-inspector-header', function(Y) {
         pojoModel.ghost = true;
       }
       if (pojoModel.charm) {
-        pojoModel['charmUrl'] = pojoModel.charm;
+        pojoModel.charmUrl = pojoModel.charm;
       } else {
-        pojoModel['charmUrl'] = pojoModel.id;
+        pojoModel.charmUrl = pojoModel.id;
       }
       this.container.setHTML(this.template(pojoModel));
     }
