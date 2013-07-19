@@ -295,6 +295,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/charm-details.js'
         },
 
+        'viewlet-unit-details': {
+          fullpath: '/juju-ui/views/viewlets/unit-details.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
