@@ -50,6 +50,37 @@ YUI.add('juju-view-charm-collection', function(Y) {
           }
         }
       });
+
+      // Bind visualization resizing on window resize.
+      Y.on('windowresize', Y.bind(function() {
+        this.fitToWindow();
+      }, this));
+    },
+
+    /**
+    Fit to window.  Must be called after the container
+    has been added to the DOM.
+
+    @method fitToWindow
+    */
+
+    fitToWindow: function() {
+      function getHeight(node) {
+        if (!node) {
+          return 0;
+        }
+        return node.get('clientHeight');
+      }
+      var container = this.get('container'),
+          viewContainer = container.one('.view-container');
+      if (viewContainer) {
+        Y.fire('beforePageSizeRecalculation');
+        var navbarHeight = getHeight(Y.one('.navbar')),
+            windowHeight = container.get('winHeight'),
+            size = (Math.max(windowHeight, 600) - navbarHeight - 9);
+        viewContainer.set('offsetHeight', size);
+        Y.fire('afterPageSizeRecalculation');
+      }
     },
 
     template: Templates.charm,
@@ -82,6 +113,11 @@ YUI.add('juju-view-charm-collection', function(Y) {
       container.setHTML(this.template({
         charm: charm,
         settings: settings}));
+
+      var self = this;
+      setTimeout(function() {
+        self.fitToWindow();
+      }, 100);
 
       container.one('#charm-deploy').on(
           'click', Y.bind(this.on_charm_deploy, this));
