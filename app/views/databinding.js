@@ -248,7 +248,9 @@ YUI.add('juju-databinding', function(Y) {
       }
 
       var modelEventHandles = this.resetModelChangeEvents(model);
+      debugger;
       if (checkClassImplements(viewletModel, 'model')) {
+        debugger;
         modelEventHandles.push(
             model.on('change', this._modelChangeHandler, this));
       } else {
@@ -256,10 +258,12 @@ YUI.add('juju-databinding', function(Y) {
         // This typically depends on an Object.observe polyfill being
         // in place (which it is). As browsers natively support this
         // we can one day drop the polyfill.
+        debugger;
         modelEventHandles.push(
             Object.observe(model, Y.bind(this._modelChangeHandler, this)));
       }
 
+      debugger;
       // Bind and listen for model changes.
       viewlet.container.all('[data-bind]').each(function(node) {
         // Add the binding for each element
@@ -350,6 +354,7 @@ YUI.add('juju-databinding', function(Y) {
      @method unbind
     */
     BindingEngine.prototype.unbind = function() {
+      debugger;
       var self = this;
       // Unbind each model
       Y.each(this._models, function(handles) {
