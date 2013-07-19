@@ -953,11 +953,12 @@ YUI.add('juju-view-inspector', function(Y) {
 
       unitStatusContentForm.append('div')
                            .classed('action-button-wrapper', true)
-                           .html(function() {
-                               var tmpl = Templates['unit-action-buttons']();
-                               buttonHeight = tmpl.offsetHeight;
-                               return tmpl;
-                             });
+                           .html(
+          function() {
+                                 var tmpl = Templates['unit-action-buttons']();
+                                 buttonHeight = tmpl.offsetHeight;
+                                 return tmpl;
+          });
 
       unitStatusHeader.append('span')
                       .classed('unit-qty', true);
@@ -971,32 +972,33 @@ YUI.add('juju-view-inspector', function(Y) {
       // D3 header update section
       categoryWrapperNodes.select('.unit-qty')
                           .text(function(d) {
-                               return d.units.length;
-                             });
+                                 return d.units.length;
+                               });
 
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
                           .text(function(d) {
-                               return unitListNameMap[d.category];
-                             });
+                                 return unitListNameMap[d.category];
+                               });
 
       var unitsList = categoryWrapperNodes.select('ul')
-                                      .selectAll('li')
-                                      .data(function(d) {
-                                       return d.units;
-                                     }, function(unit) {
-                                       return unit.id;
-                                     });
+                                    .selectAll('li')
+                                    .data(function(d) {
+                                     return d.units;
+                                   }, function(unit) {
+                                     return unit.id;
+                                   });
 
       // D3 content enter section
       var unitItem = unitsList.enter()
                               .append('li');
 
       unitItem.append('input')
-               .attr({'type': 'checkbox',
-                               'name': function(unit) {
-                                 return unit.id;
-                               }});
+           .attr({
+            'type': 'checkbox',
+            'name': function(unit) {
+              return unit.id;
+            }});
 
       unitItem.append('a').text(
           function(d) {
