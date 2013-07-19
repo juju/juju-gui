@@ -39,7 +39,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackendWithCharmStore();
+      state = utils.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.GoEnvironment({conn: client});
@@ -160,7 +160,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy.', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var data = {
         Type: 'Client',
         Request: 'ServiceDeploy',
@@ -192,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can deploy (environment integration).', function() {
       env.connect();
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
         assert.equal(result.charm_url, 'cs:wordpress');
@@ -561,7 +561,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     );
 
     it('can add a relation', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       state.deploy('cs:wordpress', function() {
         state.deploy('cs:mysql', function() {
           var data = {
@@ -635,7 +635,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('throws an error if only one endpoint is supplied', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       state.deploy('cs:wordpress', function() {
         var data = {
           RequestId: 42,
@@ -658,7 +658,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('throws an error if endpoints are not relatable', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       state.deploy('cs:wordpress', function() {
         var data = {
           RequestId: 42,
@@ -680,7 +680,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can remove a relation', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var relation = ['wordpress:db', 'mysql:db'];
       state.deploy('cs:wordpress', function() {
         state.deploy('cs:mysql', function() {

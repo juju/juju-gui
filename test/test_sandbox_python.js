@@ -39,7 +39,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackendWithCharmStore();
+      state = utils.makeFakeBackend();
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});
@@ -330,7 +330,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy.', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var data = {
         op: 'deploy',
         charm_url: 'cs:wordpress',
@@ -363,7 +363,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy (environment integration).', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       env.after('defaultSeriesChange', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
