@@ -74,6 +74,7 @@ YUI.add('viewlet-unit-details', function(Y) {
   requires: [
     'node',
     'juju-charm-models',
+    'juju-templates',
     'juju-view'
   ]
 });
