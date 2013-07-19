@@ -119,7 +119,7 @@ YUI.add('juju-charm-models', function(Y) {
       //XXX j.c.sackett July 19 2013 This is temporary while resolving Charm and
       //BrowserCharm; Charm wants a fully qualified url as it's ID.
       if(cfg && cfg.url) {
-        this.set('id', cfg.url); 
+        this.set('id', cfg.url);
       }
       var id = this.get('id'),
           parts = parseCharmId(id),
@@ -161,22 +161,21 @@ YUI.add('juju-charm-models', function(Y) {
               }
             }
         );
-      } else if (Y.Lang.isValue(options.loadByPath)) {
-        // This is a charm store.
-        options.loadByPath(
-            this.get('charm_store_path'),
-            { success: function(response) {
-              callback(false, response);
-            },
-            failure: function(response) {
-              callback(true, response);
-            }
-            });
+      } else if (Y.Lang.isValue(options.charm)) {
+        // This is the charmworld API.
+        options.charm(this.get('store_id'), {
+          success: function(response) {
+            callback(false, response);
+          },
+          failure: function(response) {
+            callback(true, response);
+          }
+        });
       } else {
         throw 'You must supply a get_charm or loadByPath function.';
       }
     },
-    
+
     parse: function(response) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
@@ -501,7 +500,7 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {
       /**
        * "id" for use with the charmworld datastore
-       * 
+       *
        * @attribute store_id
        * @default Undefined
        * @type {String}
