@@ -491,7 +491,7 @@ describe('juju models', function() {
 });
 
 describe('juju charm load', function() {
-  var Y, models, conn, env, app, container, charm_store, data, juju;
+  var Y, models, conn, env, app, container, fakeStore, data, juju;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
@@ -510,8 +510,19 @@ describe('juju charm load', function() {
     conn.open();
     container = Y.Node.create('<div id="test" class="container"></div>');
     data = [];
-    charm_store = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: data})});
+    fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: data
+            }]
+          }
+        });
+      }
+    });
   });
 
   afterEach(function() {
@@ -603,13 +614,15 @@ describe('juju charm load', function() {
   });
 
   it('must handle success from the charm store', function(done) {
-    data.push(
-        { responseText: Y.JSON.stringify(
-        { summary: 'wowza', subordinate: true, store_revision: 7 })});
+    data.push(Y.JSON.stringify({
+      summary: 'wowza',
+      is_subordinate: true,
+      store_revision: 7
+    }));
 
     var charm = new models.Charm({id: 'cs:precise/foo-7'});
     charm.load(
-        charm_store,
+        fakeStore,
         function(err, data) {
           if (err) { assert.fail('should succeed!'); }
           assert(charm.loaded);
@@ -626,17 +639,21 @@ describe('juju charm load', function() {
     // datasource._defRequestFn is designed to be overridden to achieve more
     // complex behavior when a request is received.  We simply declare that
     // an error occurred.
-    var datasource = charm_store.get('datasource'),
-        original = datasource._defResponseFn,
-        list = new models.CharmList();
-    datasource._defResponseFn = function(e) {
-      e.error = true;
-      original.apply(datasource, [e]);
+    var request = {
+      response: {
+        results: [{
+          responseText: data
+        }]
+      }
     };
-    data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
+
+    fakeStore.get('datasource').sendRequest = function(params) {
+      params.callback.failure(request);
+    };
+    data.push(Y.JSON.stringify({darn_it: 'uh oh!'}));
     var charm = new models.Charm({id: 'cs:precise/foo-7'});
     charm.load(
-        charm_store,
+        fakeStore,
         function(err, data) {
           if (!err) {
             assert.fail('should fail!');
@@ -645,7 +662,6 @@ describe('juju charm load', function() {
         });
   });
 });
-
 
 describe('BrowserCharm test', function() {
   var data, instance, models, relatedData, sampleData, utils, Y;
