@@ -49,55 +49,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       datasource.get('source').should.equal('http://example.com/');
     });
 
-    it('handles loadByPath success correctly', function(done) {
-      data.push(
-          { responseText: Y.JSON.stringify(
-          { summary: 'wowza' })});
-      charmStore.loadByPath(
-          'whatever',
-          { success: function(data) {
-            data.summary.should.equal('wowza');
-            done();
-          },
-          failure: assert.fail
-          }
-      );
-    });
-
-    it('handles loadByPath failure correctly', function(done) {
-      // datasource._defRequestFn is designed to be overridden to achieve more
-      // complex behavior when a request is received.  We simply declare that
-      // an error occurred.
-      var datasource = charmStore.get('datasource'),
-          original = datasource._defResponseFn;
-      datasource._defResponseFn = function(e) {
-        e.error = true;
-        original.apply(datasource, [e]);
-      };
-      data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
-      charmStore.loadByPath(
-          'whatever',
-          { success: assert.fail,
-            failure: function(e) {
-              e.error.should.equal(true);
-              done();
-            }
-          }
-      );
-    });
-
-    it('sends a proper request for loadByPath', function() {
-      var args;
-      charmStore.set('datasource', {
-        sendRequest: function(params) {
-          args = params;
-        }
-      });
-      charmStore.loadByPath('/foo/bar', {});
-      args.request.should.equal('/foo/bar');
-    });
-  });
-
   describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
