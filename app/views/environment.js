@@ -181,33 +181,36 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
-                'a[data-unit]': { click: 'showUnitDetails'},
+                // Viewlet wrapper viewlet.
                 'button.confirm': { click: 'saveConfig'},
-                '.cancel-destroy': {click: 'onCancelDestroy'},
                 '.charmURL': {click: 'onShowCharmDetails'},
-                '.config-file .fakebutton': { click: 'handleFileClick'},
-                '.config-file input[type=file]': { change: 'handleFileChange'},
                 '.destroy-service-icon': {click: 'onDestroyIcon'},
                 '.initiate-destroy': {click: 'onInitiateDestroy'},
+                '.cancel-destroy': {click: 'onCancelDestroy'},
+                // Overview viewlet.
                 '.num-units-control': {
                   keydown: 'modifyUnits',
                   blur: 'resetUnits'
                 },
-                // Constraints viewlet events.
-                '.save-constraints': {click: 'saveConstraints'},
-                '.status-unit-header': {click: 'toggleUnitHeader'},
-                '.toggle-expose': { click: 'toggleExpose' },
-                '.toggle-select-all': {click: 'toggleSelectAllUnits'},
+                // Settings viewlet.
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
-                '.unit-details': { click: 'showUnit'}
+                '.toggle-expose': { click: 'toggleExpose' },
+                '.config-file .fakebutton': { click: 'handleFileClick'},
+                '.config-file input[type=file]': { change: 'handleFileChange'},
+                // Constraints viewlet.
+                '.save-constraints': {click: 'saveConstraints'},
+                // Overview units viewlet.
+                '.status-unit-header': {click: 'toggleUnitHeader'},
+                '.unit-details': { click: 'showUnit'},
+                '.toggle-select-all': {click: 'toggleSelectAllUnits'},
+                'a[data-unit]': { click: 'showUnitDetails'}
               },
               viewletList: [
                 'overview', // Default viewlet first.
                 'charmDetails',
                 'config',
                 'constraints',
-                'unit',
-                'units'
+                'unitDetails'
               ],
               template: Y.juju.views.Templates['view-container']
             },

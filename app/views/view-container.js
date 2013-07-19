@@ -343,6 +343,7 @@ YUI.add('juju-view-container', function(Y) {
       if (typeof viewletName !== 'string') {
         viewletName = viewletName.currentTarget.getData('viewlet');
       }
+
       var viewlet = this.viewlets[viewletName];
       if (!viewlet) {
         console.warn('Attempted to load a viewlet that does not exist');
@@ -476,6 +477,13 @@ YUI.add('juju-view-container', function(Y) {
       this._expandViewletConfig();
 
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
+        // If no viewlet config is passed in it will generate a viewlet using
+        // only the base config which causes things to fail further down the
+        // line and is difficult to debug.
+        if (viewlet === undefined) {
+          console.error('no viewlet config defined for viewlet', key);
+          return;
+        }
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
         viewlets[key]._changedValues = [];

@@ -24,14 +24,13 @@ describe('View Container', function() {
   var fakeController = function() {};
   fakeController.prototype.bind = function() { /* noop */};
 
-  var generateViewContainer = function(options) {
+  var generateViewContainer = function(options, viewletList) {
     container = utils.makeContainer();
 
     // Merging Mix.
     var viewletConfig = Y.mix({
       template: '<div class="viewlet" data-bind="name">{{name}}</div>'
     }, options || {}, false, undefined, 0, true);
-
 
     viewContainer = new Y.juju.views.ViewContainer({
       databinding: {
@@ -41,6 +40,7 @@ describe('View Container', function() {
         serviceConfig: Y.merge(viewletConfig),
         constraints: Y.merge(viewletConfig)
       },
+      viewletList: viewletList,
       template: juju.views.Templates['view-container'],
       templateConfig: {},
       container: container,
@@ -103,6 +103,14 @@ describe('View Container', function() {
     vlKeys.forEach(function(key) {
       assert.equal(typeof vl[key], 'object');
     });
+  });
+
+  it('fails silently when generating invalid viewlet configs', function() {
+    // 'foo' does not have a config defined
+    generateViewContainer({}, ['serviceConfig', 'foo']);
+    var vl = viewContainer.viewlets;
+    assert.equal(typeof vl.serviceConfig, 'object');
+    assert.equal(typeof vl.foo, 'undefined');
   });
 
   it('renders its container into the DOM', function() {
