@@ -417,7 +417,7 @@ YUI.add('juju-charm-models', function(Y) {
         // Only show the icon if it has one and the charm has been reviewed to
         // have a safe icon.
         shouldShowIcon: data.has_icon && data.is_approved,
-        store_id: data.id,
+        storeId: data.id,
         is_approved: data.is_approved,
         name: data.name,
         commitCount: parseInt(data.code_source.revision, 10),
@@ -440,7 +440,7 @@ YUI.add('juju-charm-models', function(Y) {
           this.set('recent_download_count', cfg.downloads_in_past_30_days);
         }
         if (cfg.id) {
-          this.set('store_id', cfg.id);
+          this.set('storeId', cfg.id);
           this.set('id', this.get('scheme') + ':' + cfg.id);
         }
       }
@@ -501,11 +501,11 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * "id" for use with the charmworld datastore
        *
-       * @attribute store_id
+       * @attribute storeId
        * @default Undefined
        * @type {String}
        */
-      store_id: {
+      storeId: {
         validator: function(val) {
           return Y.Lang.isString(val) && !!charmIdRe.exec(val);
         }
