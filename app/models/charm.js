@@ -135,7 +135,6 @@ YUI.add('juju-charm-models', function(Y) {
 
     sync: function(action, options, callback) {
       if (action !== 'read') {
-        debugger;
         throw (
             'Only use the "read" action; "' + action + '" not supported.');
       }
