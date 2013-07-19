@@ -379,10 +379,15 @@ YUI.add('juju-databinding', function(Y) {
       @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
+      var self = this;
       var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
       modelEventHandles.forEach(function(handle) {
-        handle.detach();
+        if (handle.detach) {
+          handle.detach();
+        } else {
+          Object.unobserve(handle, self._modelChangeHandler);
+        }
       });
       // Empty the list
       modelEventHandles.splice(0, modelEventHandles.length);
