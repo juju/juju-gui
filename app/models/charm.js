@@ -140,10 +140,12 @@ YUI.add('juju-charm-models', function(Y) {
       }
     },
 
-    parse: function() {
+    parse: function(response) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
-      data.is_subordinate = data.subordinate;
+      if (!data.is_subordinate) {
+        data.is_subordinate = data.subordinate;
+      }
       Y.each(data, function(value, key) {
         if (!value ||
             !self.attrAdded(key) ||
