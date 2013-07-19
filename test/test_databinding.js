@@ -228,25 +228,25 @@ describe('data binding library', function() {
         }, 125);
       });
 
-      it('unbind method unbinds models and pojos (unit test)', function(done) {
-        var _unobserve = Object.unobserve,
-            counter = 0;
-        Object.unobserve = function() {
-          assert(counter, 1);
-          done();
-        };
+      it('unbind method unbinds models and pojos (unit test)', function() {
+        container = utils.makeContainer();
         var engine = new BindingEngine({interval: 0});
-        engine._viewlets = [];
-        engine._models = {
-          model1: [{
-            detach: function() {
-              // If this is called then it's working.
-              counter = 1;
-            }}],
-          model2: [{}] // intentional
+        var model = {id: 'test', name: 'this'};
+        var viewlet = {
+          container: container,
+          _changedValues: [],
+          _eventHandles: []
         };
+        engine.bind(model, viewlet);
+        // Gently poke at the internals
+        // to see that we've unbound
+        var notifier = Object.getNotifier(model);
+        var listeners = notifier.listeners();
+        assert.equal(listeners.length, 1);
+
         engine.unbind();
-        Object.unobserve = _unobserve;
+       listeners = notifier.listeners();
+        assert.equal(listeners.length, 0);
       });
     });
 
