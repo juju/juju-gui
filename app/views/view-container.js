@@ -477,6 +477,9 @@ YUI.add('juju-view-container', function(Y) {
       this._expandViewletConfig();
 
       Y.Object.each(this.viewletConfig, function(viewlet, key) {
+        // If no viewlet config is passed in it will generate a viewlet using
+        // only the base config which causes things to fail further down the
+        // line and is difficult to debug.
         if (viewlet === undefined) {
           console.error('no viewlet config defined for viewlet', key);
           return;
