@@ -183,7 +183,7 @@ YUI.add('juju-view-environment', function(Y) {
               viewletEvents: {
                 // Viewlet wrapper viewlet.
                 'button.confirm': { click: 'saveConfig'},
-                '.charmURL': {click: 'onShowCharmDetails'},
+                '.charm-url': {click: 'onShowCharmDetails'},
                 '.destroy-service-icon': {click: 'onDestroyIcon'},
                 '.initiate-destroy': {click: 'onInitiateDestroy'},
                 '.cancel-destroy': {click: 'onCancelDestroy'},
@@ -217,7 +217,7 @@ YUI.add('juju-view-environment', function(Y) {
             },
             configGhost: {
               // controller will show the first one in this array by default
-              viewletList: ['ghostConfig', 'inspectorHeader'],
+              viewletList: ['ghostConfig', 'inspectorHeader', 'charmDetails'],
               // the view container template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
               // these events are for the viewlet container
@@ -228,6 +228,7 @@ YUI.add('juju-view-environment', function(Y) {
               // bound to the controllers prototype and are then mixed with the
               // containers events for final binding
               viewletEvents: {
+                '.charm-url': {click: 'onShowCharmDetails'},
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },

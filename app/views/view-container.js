@@ -393,6 +393,7 @@ YUI.add('juju-view-container', function(Y) {
       }
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
+
         target = this.get('container').one(this.slots[slot]);
         var result = viewlet.render(model, this.getAttrs());
         if (result) {
