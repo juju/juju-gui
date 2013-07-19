@@ -137,20 +137,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return charms;
     })(),
 
-    TestCharmStore: Y.Base.create('test-charm-store', Y.juju.CharmStore, [], {
-      loadByPath: function(path, options) {
-        var charmName = path.split('/')[2];
-        // Ignore version as changing across all
-        // testing artifacts is a pain.
-        charmName = charmName.split('-', 1);
-        if (charmName in jujuTests.utils._cached_charms) {
-          options.success(jujuTests.utils._cached_charms[charmName]);
-        } else {
-          options.failure(new Error('Unable to load charm ' + charmName));
-        }
-      }
-    }),
-
     makeFakeBackend: function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.charm = function(store_id, callbacks, bindscope) {
