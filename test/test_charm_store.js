@@ -48,6 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert(datasource instanceof Y.DataSource.IO);
       datasource.get('source').should.equal('http://example.com/');
     });
+  });
 
   describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
