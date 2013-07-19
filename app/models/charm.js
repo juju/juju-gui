@@ -140,6 +140,43 @@ YUI.add('juju-charm-models', function(Y) {
       }
     },
 
+    sync: function(action, options, callback) {
+      if (action !== 'read') {
+        throw (
+            'Only use the "read" action; "' + action + '" not supported.');
+      }
+      if (Y.Lang.isValue(options.get_charm)) {
+        // This is an env.
+        options.get_charm(
+            this.get('id'),
+            function(response) {
+              if (response.err) {
+                callback(true, response);
+              } else if (response.result) {
+                callback(false, response.result);
+              } else {
+                // What's going on?  This does not look like either of our
+                // expected signatures.  Declare a loading error.
+                callback(true, response);
+              }
+            }
+        );
+      } else if (Y.Lang.isValue(options.loadByPath)) {
+        // This is a charm store.
+        options.loadByPath(
+            this.get('charm_store_path'),
+            { success: function(response) {
+              callback(false, response);
+            },
+            failure: function(response) {
+              callback(true, response);
+            }
+            });
+      } else {
+        throw 'You must supply a get_charm or loadByPath function.';
+      }
+    },
+    
     parse: function(response) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
