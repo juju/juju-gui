@@ -111,51 +111,53 @@
         color: @inspector-background-color;
     }
 
-    .service-charm {
-        overflow: auto;
-        width: 100%;
-        margin: 0 0 1em 0;
-
-        .charm-icon {
-            width: 64px;
-            height: 64px;
-            float: left;
-            margin-right: 1em;
-            background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
-        }
-
-        .service-name {
-            font-size: 16pt;
-        }
-    }
-
     .header-slot {
         header {
-            background: none repeat scroll 0 0 transparent;
+            background-color: @inspector-region-background-color;
             border-bottom: 1px solid #1C1817;
-            height: 55px;
-            padding: 20px;
+            padding: 15px;
+
+            margin-bottom: 6px;
+
             .service-charm {
                 color: @charm-panel-background-color;
+                width: 100%;
+
                 .service-name {
                     font-size: 20px;
                     font-weight: 300;
                     line-height: 1.2;
                 }
+                .charm-icon {
+                    width: 64px;
+                    height: 64px;
+                    float: left;
+                    margin-right: 1em;
+                    background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
+                }
                 .charm-url {
                     font-size: 14px;
                     font-weight: 400;
-                    line-height: 1.5;
+                    line-height: 1.3;
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+                .close {
+                    /* required to overwrite bootstrap styles */
+                    text-shadow: none;
+                    color: #cbcbcb;
+                    font-weight: normal;
+                    opacity: 1;
                 }
                 div {
                     display: inline-block;
                 }
-                .charmURL {
-                    cursor: pointer;
-                    text-decoration: underline;
-                }
             }
         }
+    }
+
+    .view-container-navigation {
+        background-color: @inspector-region-background-color;
     }
 
     .view-container {
