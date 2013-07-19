@@ -1,4 +1,4 @@
-@inspector-background-color: #333;
+@inspector-background-color: #221e1c;
 @inspector-region-background-color: #282828;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
@@ -7,22 +7,93 @@
 
 
 .yui3-juju-inspector {
+    .create-border-radius(@border-radius);
     position: absolute;
     top: 20px;
     right: 35px;
     width: 292px;
     min-height: 250px;
+    border: 0;
     background-color: @inspector-background-color;
     color: #fff;
-    margin: 0; /* can be removed once the old inspector styles are removed*/
+    margin: 0; /* Can be removed once the old inspector styles are removed. */
 
     h1, h2, h3, h4, h5, h6 {
         background-color: @inspector-region-background-color;
         padding-left: 1em;
     }
+    
+    /* Resetting panel styles. Can be removed after old inspector styles are
+       removed. */
+    .charm-panel-configure {
+        background: transparent;
+        float: none;
+        border: 0;
+        height: auto;
+        width: auto;
+        padding: 0 20px;
+        
+        .title {
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 1.2;
+            margin: 0;
+        }
+        .name {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+    }
+    
+    .charm-entry {
+        /*border-bottom: 1px solid @inspector-divider-bottom;
+        border-top: 1px solid @inspector-divider-top;
+        padding: 0 20px;*/
+        
+        
+    }
+    .control-description,
+    .control-label {
+        font-size: 14px;
+        font-weight: 300;
+    }
+    .control-label {
+        margin-bottom: 10px;
+    }
+    .charm-panel-configure-buttons {
+        background: transparent;
+        border-bottom: 1px solid @inspector-divider-bottom;
+        float: none;
+        height: auto;
+        width: auto;
+        padding: 0 20px 10px;
+    }
+    
+    .control-group {
+        margin: 0;
+        padding: 20px;
+        border-bottom: 1px solid @inspector-divider-bottom;
+        border-top: 1px solid @inspector-divider-top;
+        
+        .well {
+            background-color: transparent;
+            border: 0;
+            margin-bottom: 10px;
+            min-height: 20px;
+            padding: 0;
+        }
+    }
 
     .viewlet-container {
         overflow-y: auto;
+        border-top: 1px solid @inspector-divider-top;
+        
+        .config-variant {
+            border-top: 0;
+            background: transparent;
+            float: none;
+        }
     }
 
     .content {
@@ -59,8 +130,8 @@
     }
 
     .view-container {
+        border-top: 1px solid @inspector-divider-top;
         overflow: auto;
-        padding: 15px;
 
         &.settings-config {
 
@@ -139,12 +210,12 @@
         }
 
         .toggle-settings-help {
+            padding: 0 20px 20px;
             cursor: pointer;
         }
 
         .toggle-expose {
             cursor: pointer;
-            padding-bottom: 15px;
 
             img {
                 position: relative;
@@ -189,10 +260,13 @@
                 background-color: white;
             }
         }
+        
+        .control-expose {
+            padding: 20px;
+        }
 
         .config-file {
-            margin-bottom: 20px;
-            margin-top: 20px;
+            padding: 20px;
 
             input {
                 position: absolute;
@@ -252,8 +326,9 @@
         height: 95px;
         background-color: @inspector-region-background-color;
         margin-bottom: 10px;
-        transition: 1s, height 1s;
-        -webkit-transition: 1s, height 1s;
+        -moz-transition: .3s, height .3s;
+        -webkit-transition: .25s, height .3s;
+        transition: .3s, height .3s;
 
         /* Make sure the prompt box is below the icon. */
         clear: both;
@@ -303,13 +378,16 @@
 
 
     .viewlet-wrapper{
-        h3 {
+        h3, h2, legend {
             border-bottom: 1px solid @inspector-divider-bottom;
             border-top: 1px solid @inspector-divider-top;
             font-size: 14px;
             font-weight: 400;
             line-height: 1.5;
             padding: 10px 20px;
+            color: @charm-panel-configure-title-color;
+            margin-bottom: 0;
+            width: auto;
         }
 
         .content {
@@ -346,7 +424,7 @@
         .status-unit-header {
             background-color: @inspector-region-background-color;
             padding: 15px 15px 15px 40px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             border-bottom: 1px solid @inspector-divider-bottom;
             border-top: 1px solid @inspector-divider-top;
@@ -389,6 +467,10 @@
             transition: .3s, max-height .3s;
             overflow: hidden;
             background: @charm-panel-background-color;
+            /*
+             * The height of each list is 35px so setting this to help the auto max height script.
+             */
+            font-size: 35px;
             /* max height is being set inline in views/service.js.
             It is calculated on the number of units in the list.  */
 
@@ -411,6 +493,7 @@
                 list-style-type: none;
                 padding: 7px 0 7px 10px;
                 border-top: 1px solid @inspector-status-border-color;
+                font-size: 13px;
             }
 
             input[type="checkbox"] {

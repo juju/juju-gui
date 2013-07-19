@@ -78,6 +78,40 @@ describe('Inspector Charm', function() {
       };
     };
     var viewletAttrs = {
+      db: {
+        browserCharms: new Y.juju.models.BrowserCharmList()
+      },
+      store: fakeStore
+    };
+
+    viewlets.charmDetails.container = testContainer;
+    var content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
+    testContainer.setHTML('content');
+  });
+
+  it('renders the viewlet with a cached charm', function(done) {
+    var data = utils.loadFixture('data/browsercharm.json', true);
+    var testContainer = utils.makeContainer();
+
+    var fakeStore = new Y.juju.Charmworld2({});
+    var cache = new Y.juju.models.BrowserCharmList();
+    var charm = new Y.juju.models.BrowserCharm(data.charm);
+    charm.set('cached', true);
+    cache.add(charm);
+
+    views.BrowserCharmView = function(cfg) {
+      assert.isTrue(cfg.forInspector);
+      assert.equal(typeof cfg.store, 'object');
+      assert.equal(cfg.charm.get('id'), charmID);
+      assert.isTrue(cfg.charm.get('cached'));
+      return {
+        render: function() { done(); }
+      };
+    };
+    var viewletAttrs = {
+      db: {
+        browserCharms: cache
+      },
       store: fakeStore
     };
 
