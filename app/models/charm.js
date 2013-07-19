@@ -441,7 +441,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
         if (cfg.id) {
           this.set('store_id', cfg.id);
-          this.set('id', this.get('scheme') + ":" + cfg.id);
+          this.set('id', this.get('scheme') + ':' + cfg.id);
         }
       }
     },
