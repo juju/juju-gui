@@ -58,7 +58,6 @@ if (!Object.observe) {
       }
       if (isCallable(callback) === false) {
         // Throw Error
-        console.log("va", O, callback);
         throw new TypeError('Object.observeObject: Expecting function');
       }
       if (Object.isFrozen(callback) === true) {

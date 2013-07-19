@@ -258,7 +258,7 @@ YUI.add('juju-databinding', function(Y) {
         // we can one day drop the polyfill.
         var callback = Y.bind(this._modelChangeHandler, this);
         Object.observe(model, callback);
-        modelEventHandles.push({model: model, callback: this._modelChangeHandler});
+        modelEventHandles.push({model: model, callback: callback});
       }
 
       // Bind and listen for model changes.
