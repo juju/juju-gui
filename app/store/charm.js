@@ -215,7 +215,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} bindScope the scope of *this* in the callbacks.
      *
      */
-    charm: function(charmID, callbacks, bindScope) {
+    _charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
@@ -232,9 +232,9 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {String} charmID the charm to fetch.
      * @param {Object} callbacks the success/failure callbacks to use.
      * @param {Object} bindScope the scope of *this* in the callbacks.
-     * @param {ModelList} cache the local cache of charms.
+     * @param {ModelList} cache a local cache of browser charms.
      */
-    charmWithCache: function(charmID, callbacks, bindScope, cache) {
+    charm: function(charmID, callbacks, bindScope, cache) {
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
       }
@@ -243,19 +243,22 @@ YUI.add('juju-charm-store', function(Y) {
         if (charm) {
           // Defer the success callback to prevent race conditions.
           Y.soon(function() {
-            callbacks.success(charm);
+            callbacks.success({}, charm);
           });
           return;
         } else {
           var successCB = callbacks.success;
           callbacks.success = function(data) {
             var charm = new Y.juju.models.BrowserCharm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
             cache.add(charm);
-            successCB(charm);
+            successCB(data, charm);
           };
         }
       }
-      this.charm(charmID, callbacks, bindScope);
+      this._charm(charmID, callbacks, bindScope);
     },
 
     /**
