@@ -99,7 +99,7 @@ describe('Inspector Constraints', function() {
 
   // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
-    return inspector.inspector.viewlets.constraints;
+    return inspector.viewletManager.viewlets.constraints;
   };
 
   // Change the value of the given key in the constraints form.
@@ -221,7 +221,7 @@ describe('Inspector Constraints', function() {
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, true));
-    var db = inspector.inspector.get('db');
+    var db = inspector.viewletManager.get('db');
     // An error response generates a notification.
     assert.strictEqual(1, db.notifications.size());
     var msg = db.notifications.item(0);
@@ -235,7 +235,7 @@ describe('Inspector Constraints', function() {
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    var db = inspector.inspector.get('db');
+    var db = inspector.viewletManager.get('db');
     // A success notification is correctly generated.
     assert.strictEqual(1, db.notifications.size());
     var msg = db.notifications.item(0);
