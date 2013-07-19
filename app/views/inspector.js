@@ -35,7 +35,7 @@ YUI.add('juju-view-inspector', function(Y) {
       models = Y.namespace('juju.models'),
       plugins = Y.namespace('juju.plugins'),
       utils = Y.namespace('juju.views.utils'),
-      viewletNS = Y.namespace('juju.viewlets');
+      viewletNS = Y.namespace('juju.viewlets'),
       ns = Y.namespace('juju.views.inspector');
 
   /**
@@ -856,7 +856,7 @@ YUI.add('juju-view-inspector', function(Y) {
 
     @class ServiceInspector
    */
-  var ServiceInspector = (function() {
+  views.ServiceInspector = (function() {
     var juju = Y.namespace('juju');
 
     var unitListNameMap = {
@@ -1370,8 +1370,6 @@ YUI.add('juju-view-inspector', function(Y) {
 
     return ServiceInspector;
   })();
-
-  views.ServiceInspector = ServiceInspector;
 
 
 }, '0.1.0', {

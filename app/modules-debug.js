@@ -240,6 +240,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/environment.js'
         },
 
+        'juju-view-inspector': {
+          fullpath: '/juju-ui/views/inspector.js'
+        },
+
         'juju-view-login': {
           fullpath: '/juju-ui/views/login.js'
         },
