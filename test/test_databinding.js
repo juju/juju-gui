@@ -245,7 +245,7 @@ describe('data binding library', function() {
         assert.equal(listeners.length, 1);
 
         engine.unbind();
-       listeners = notifier.listeners();
+        listeners = notifier.listeners();
         assert.equal(listeners.length, 0);
       });
     });
