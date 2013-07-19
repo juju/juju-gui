@@ -46,6 +46,19 @@ YUI.add('viewlet-inspector-header', function(Y) {
           }
         }
       }
+    },
+    'render': function(model, viewContainerAttrs) {
+      this.container = Y.Node.create(this.templateWrapper);
+      var pojoModel = model.getAttrs();
+      if (pojoModel.scheme) {
+        pojoModel.ghost = true;
+      }
+      if (pojoModel.charm) {
+        pojoModel['charmUrl'] = pojoModel.charm;
+      } else {
+        pojoModel['charmUrl'] = pojoModel.id;
+      }
+      this.container.setHTML(this.template(pojoModel));
     }
   };
 

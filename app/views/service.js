@@ -1962,7 +1962,6 @@ YUI.add('juju-view-service', function(Y) {
           // XXX - Jeff
           // not sure this should be done like this
           // but this will allow us to use the old template.
-
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
@@ -2038,6 +2037,7 @@ YUI.add('juju-view-service', function(Y) {
         'header': '.header-slot'
       };
       this.inspector.render();
+
       this.inspector.showViewlet('inspectorHeader', model);
       this.inspector.showViewlet(options.viewletList[0]);
     }

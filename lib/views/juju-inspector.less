@@ -116,7 +116,6 @@
             background-color: @inspector-region-background-color;
             border-bottom: 1px solid #1C1817;
             padding: 15px;
-
             margin-bottom: 6px;
 
             .service-charm {
@@ -128,12 +127,18 @@
                     font-weight: 300;
                     line-height: 1.2;
                 }
+                input.service-name {
+                    width: 150px;
+                }
                 .charm-icon {
                     width: 64px;
                     height: 64px;
-                    float: left;
                     margin-right: 1em;
                     background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
+                    img {
+                        /* bootstrap sets this to middle */
+                        vertical-align: baseline;
+                    }
                 }
                 .charm-url {
                     font-size: 14px;
