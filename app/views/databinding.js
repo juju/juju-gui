@@ -354,10 +354,10 @@ YUI.add('juju-databinding', function(Y) {
       // Unbind each model
       Y.each(this._models, function(handles) {
         handles.forEach(function(handle) {
-          if (handle.unobserve) {
-            handle.unobserve();
-          } else {
+          if (handle.detach) {
             handle.detach();
+          } else {
+            Object.unobserve(handle, self._modelChangeHandler);
           }
         });
         handles.splice(0, handles.length);

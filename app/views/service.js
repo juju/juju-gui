@@ -791,7 +791,6 @@ YUI.add('juju-view-service', function(Y) {
     'event-key',
     'event-resize',
     'handlebars',
-    'json-stringify',
     'juju-databinding',
     'juju-models',
     'juju-view-container',
@@ -800,6 +799,7 @@ YUI.add('juju-view-service', function(Y) {
     'node',
     'panel',
     'transition',
-    'view'
+    'view',
+    'event-resize'
   ]
 });
