@@ -412,7 +412,7 @@ YUI.add('juju-charm-models', function(Y) {
         store_id: data.id,
         is_approved: data.is_approved,
         name: data.name,
-        commitCount: data.code_source.revision,
+        commitCount: parseInt(data.code_source.revision, 10),
         downloads: data.downloads,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
@@ -529,7 +529,7 @@ YUI.add('juju-charm-models', function(Y) {
         valueFn: function() {
           var source = this.get('code_source');
           if (source) {
-            return this.get('code_source').revision;
+            return parseInt(this.get('code_source').revision, 10);
           } else {
             return undefined;
           }

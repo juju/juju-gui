@@ -20,18 +20,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('juju service config view', function() {
-    var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER, utils, testUtils, makeView;
+    var charm, conn, container, db, ENTER, env, makeView, models, service,
+        ServiceConfigView, testUtils, utils, views, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
-          'node', 'json-parse', 'juju-env', 'node-event-simulate',
-          'juju-tests-utils', 'event-key',
+      Y = YUI(GlobalConfig).use(
+          'base',
+          'event-key',
+          'json-parse',
+          'juju-env',
+          'juju-models',
+          'juju-tests-utils',
+          'juju-view-service',
+          'juju-views',
+          'node',
+          'node-event-simulate',
 
           function(Y) {
+            views = Y.namespace('juju.views');
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             models = Y.namespace('juju.models');
-            ServiceConfigView = Y.namespace('juju.views').service_config;
+            ServiceConfigView = views.service_config;
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             makeView = function() {

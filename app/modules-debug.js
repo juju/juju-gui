@@ -240,6 +240,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/environment.js'
         },
 
+        'juju-view-inspector': {
+          fullpath: '/juju-ui/views/inspector.js'
+        },
+
         'juju-view-login': {
           fullpath: '/juju-ui/views/login.js'
         },
@@ -293,6 +297,10 @@ var GlobalConfig = {
         // Viewlets
         'viewlet-charm-details': {
           fullpath: '/juju-ui/views/viewlets/charm-details.js'
+        },
+
+        'viewlet-unit-details': {
+          fullpath: '/juju-ui/views/viewlets/unit-details.js'
         },
 
         // Models
