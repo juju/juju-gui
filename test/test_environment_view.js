@@ -1186,22 +1186,63 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          boxes.mysql.exposed.should.equal(true);
        });
 
-    it('must cull removed services from the existing list',
-       function() {
-         var services = new models.ServiceList();
-         services.add([{id: 'mysql', exposed: false},
-                       {id: 'memcache'},
-                       {id: 'wordpress'}]);
-         var existing = {
-           'mysql': 1,
-           'haproxy': 2, // This entry is stale and will be removed.
-           'memcache': 3,
-           'wordpress': 4};
+    it('must cull removed services from the existing list', function() {
+      var services = new models.ServiceList();
+      services.add([{id: 'mysql', exposed: false},
+                    {id: 'memcache'},
+                    {id: 'wordpress'}]);
+      var existing = {
+        'mysql': 1,
+        'haproxy': 2, // This entry is stale and will be removed.
+        'memcache': 3,
+        'wordpress': 4};
 
-         var boxes = views.toBoundingBoxes(module, services, existing);
-         // The haproxy is removed from the results since it is no longer in
-         // the services list.
-         assert.equal(boxes.haproxy, undefined);
-       });
+      var boxes = views.toBoundingBoxes(module, services, existing);
+      // The haproxy is removed from the results since it is no longer in
+      // the services list.
+      assert.equal(boxes.haproxy, undefined);
+    });
+
+    it('sets the default icon for local charms without an icon', function() {
+      var iconFakeStore = new Y.juju.Charmworld2({
+        apiHost: 'http://localhost'
+      });
+      var services = new models.ServiceList();
+      services.add([
+        {
+          id: 'local:ceph-1',
+          charm: 'local:ceph-1'
+        },
+        {
+          id: 'cs:mysql-1',
+          charm: 'cs:mysql-1'
+        }
+      ]);
+      var existing = {
+        'local:ceph-1': {
+          id: 'local:ceph-1',
+          charm: 'local:ceph-1'
+        },
+        'cs:mysql-1': {
+          id: 'cs:mysql-1',
+          charm: 'cs:mysql-1'
+        }
+      };
+
+      var boxes = views.toBoundingBoxes(
+          module, services, existing, iconFakeStore);
+
+      // the ceph charm should have the default icon path.
+      assert.equal(
+        boxes['local:ceph-1'].icon,
+        'http://localhost/static/img/charm_160.svg'
+      );
+
+      // The mysql charm has an icon from on the server.
+      assert.equal(
+        boxes['cs:mysql-1'].icon,
+        'http://localhost/api/2/charm/mysql-1/icon.svg'
+      );
+    });
   });
 })();

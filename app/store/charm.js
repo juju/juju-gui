@@ -1,4 +1,5 @@
 /*
+ *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -215,7 +216,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} bindScope the scope of *this* in the callbacks.
      *
      */
-    charm: function(charmID, callbacks, bindScope) {
+    _charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
@@ -223,6 +224,42 @@ YUI.add('juju-charm-store', function(Y) {
       }
 
       this._makeRequest(endpoint, callbacks);
+    },
+
+    /**
+     * Api call to fetch a charm's details, with an optional local cache.
+     *
+     * @method charmWithCache
+     * @param {String} charmID the charm to fetch.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     * @param {ModelList} cache a local cache of browser charms.
+     */
+    charm: function(charmID, callbacks, bindScope, cache) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+      }
+      if (cache) {
+        var charm = cache.getById(charmID);
+        if (charm) {
+          // Defer the success callback to prevent race conditions.
+          Y.soon(function() {
+            callbacks.success({}, charm);
+          });
+          return;
+        } else {
+          var successCB = callbacks.success;
+          callbacks.success = function(data) {
+            var charm = new Y.juju.models.BrowserCharm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
+            cache.add(charm);
+            successCB(data, charm);
+          };
+        }
+      }
+      this._charm(charmID, callbacks, bindScope);
     },
 
     /**
@@ -313,11 +350,20 @@ YUI.add('juju-charm-store', function(Y) {
 
      */
     iconpath: function(charmID) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'icon.svg'].join('/');
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch it's category data or its own
+      // icon.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+          'static/img/charm_160.svg';
+
+      } else {
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
     },
 
     /**
