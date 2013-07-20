@@ -58,7 +58,7 @@ YUI.add('viewlet-charm-details', function(Y) {
           });
           charmView.render();
         }
-      }, this, viewContainerAttrs.db.browserCharms);
+      }, this, viewletManagerAttrs.db.browserCharms);
       return this.templateWrapper({ initial: 'Loading...'});
     }
   };
