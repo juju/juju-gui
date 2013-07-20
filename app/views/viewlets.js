@@ -54,9 +54,11 @@ YUI.add('juju-viewlets', function(Y) {
 
       @property templateWrapper
       @type {string | compiled Handlebars template}
-      @default '<div class="viewlet--manager-wrapper" style="display: none"></div>'
+      @default '<div class="viewlet--manager-wrapper"
+          style="display: none"></div>'
     */
-    templateWrapper: '<div class="viewlet-manager-wrapper" style="display:none"></div>',
+    templateWrapper:
+        '<div class="viewlet-manager-wrapper" style="display:none"></div>',
 
     /**
       Template of the viewlet, provided during configuration
