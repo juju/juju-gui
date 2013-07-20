@@ -1196,12 +1196,14 @@ YUI.add('juju-topology-service', function(Y) {
           z = topo.get('scale');
 
       if (service && cp) {
-        var cp_width = cp.getDOMNode().getClientRects()[0].width,
-            menu_left = (service.x * z + service.w * z / 2 <
-                         topo.get('width') * z / 2),
-            service_center = service.relativeCenter;
+        var cpRect = cp.getDOMNode().getClientRects()[0],
+            cpWidth = cpRect.width,
+            service_center = service.relativeCenter,
+            menuLeft = (service.x * z + tr[0] + service_center[0] * z <
+                        topo.get('width') / 2),
+            cpHeight = cpRect.height;
 
-        if (menu_left) {
+        if (menuLeft) {
           cp.removeClass('left')
             .addClass('right');
         } else {
@@ -1210,15 +1212,17 @@ YUI.add('juju-topology-service', function(Y) {
         }
         // Set the position of the div in the following way:
         // top: aligned to the scaled/panned service minus the
-        //   location of the tip of the arrow (68px down the menu,
-        //   via css) such that the arrow always points at the service.
+        //   location of the tip of the arrow such that the arrow always
+        //   points at the service.
         // left: aligned to the scaled/panned service; if the
         //   service is left of the midline, display it to the
         //   right, and vice versa.
         cp.setStyles({
-          'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
+          'top': (
+            service.y * z + tr[1] +
+            (service_center[1] * z) - (cpHeight / 2)),
           'left': service.x * z +
-              (menu_left ? service.w * z : -(cp_width)) + tr[0]
+              (menuLeft ? service.w * z + 16 : -(cpWidth) - 16) + tr[0]
         });
       }
     },
@@ -1254,16 +1258,20 @@ YUI.add('juju-topology-service', function(Y) {
       var landscape = topo.get('landscape');
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
+      var triangle = serviceMenu.one('.triangle');
       var securityURL, rebootURL;
       var flags = window.flags;
 
       if (flags.serviceInspector) {
         this.show_service(service);
-        return;
+      }
+
+      if (service.get('pending')) {
+        return true;
       }
 
       // Update landscape links and show/hide as needed.
-      if (landscape) {
+      if (landscape && !flags.serviceInspector) {
         rebootURL = landscape.getLandscapeURL(service, 'reboot');
         securityURL = landscape.getLandscapeURL(service, 'security');
 
@@ -1275,10 +1283,19 @@ YUI.add('juju-topology-service', function(Y) {
         }
       }
 
+      // The view option should not be used with the inspector.
+      if (flags.serviceInspector) {
+        serviceMenu.one('.view-service').hide();
+      }
+
       if (box && !serviceMenu.hasClass('active')) {
         topo.set('active_service', box);
         topo.set('active_context', box.node);
         serviceMenu.addClass('active');
+
+        var menuHeight = serviceMenu.getDOMNode().getClientRects()[0].height;
+        var triHeight = 18;
+        triangle.setStyle('top', ((menuHeight - triHeight) / 2)  + 'px');
 
         // Disable the 'Build Relation' link if the charm has not yet loaded.
         var addRelation = serviceMenu.one('.add-relation');
