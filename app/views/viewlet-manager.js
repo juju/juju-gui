@@ -20,11 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
-  Adds the ViewletManaaer constructor class and viewlet instantiable object
+  Adds the ViewletManager constructor class and viewlet instantiable object
 
   @module juju-viewlets
 */
-YUI.add('juju-viewlets', function(Y) {
+YUI.add('juju-viewlet-manager', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views');
 
@@ -37,7 +37,7 @@ YUI.add('juju-viewlets', function(Y) {
     @class ViewletBase
     @constructor
   */
-  ns.ViewletBase = {
+  var ViewletBase = {
 
     /**
       The user defined name for the viewlet. This will be inferred from the
@@ -54,9 +54,11 @@ YUI.add('juju-viewlets', function(Y) {
 
       @property templateWrapper
       @type {string | compiled Handlebars template}
-      @default '<div class="viewlet--manager-wrapper" style="display: none"></div>'
+      @default '<div class="viewlet--manager-wrapper"
+          style="display: none"></div>'
     */
-    templateWrapper: '<div class="viewlet-manager-wrapper" style="display:none"></div>',
+    templateWrapper:
+        '<div class="viewlet-wrapper" style="display:none"></div>',
 
     /**
       Template of the viewlet, provided during configuration
@@ -117,11 +119,11 @@ YUI.add('juju-viewlets', function(Y) {
       @method render
       @type {function}
       @param {Y.Model} model passed to the viewlet manager.
-      @param {Object} managerAttrs object of all of the viewlet manager
+      @param {Object} viewletManagerAttrs object of all of the viewlet manager
         attributes.
       @default {render function}
     */
-    render: function(model, managerAttrs) {
+    render: function(model, viewletManagerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       if (typeof this.template === 'string') {
@@ -208,7 +210,7 @@ YUI.add('juju-viewlets', function(Y) {
     @class ViewletManager
     @constructor
   */
-  ns.ViewletManager = new Y.Base.create('viewlets-manager', Y.View, [], {
+  ns.ViewletManager = new Y.Base.create('viewlet-manager', Y.View, [], {
 
     /**
       DOM bound events for any view container related events
@@ -487,7 +489,7 @@ YUI.add('juju-viewlets', function(Y) {
           return;
         }
         // create viewlet instances using the base and supplied config
-        viewlets[key] = Object.create(ns.ViewletBase, viewlet);
+        viewlets[key] = Object.create(ViewletBase, viewlet);
         viewlets[key]._changedValues = [];
         viewlets[key]._eventHandles = [];
       }, this);

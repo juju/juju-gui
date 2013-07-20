@@ -7,7 +7,7 @@ data-binding micro framework with four discrete components `Viewlet Manager`_,
 `Viewlets`_, `Databinding Engine`_, and `Controller`_.
 
 Viewlet Manager
-==============
+===============
 
 The Viewlet Manager is a Y.View based class which acts as a container and viewlet manager.
 
@@ -130,7 +130,7 @@ object.  For example::
 An example passing Viewlets into a ViewletManager is::
 
   var viewletsNS = Y.namespace('juju.viewlets');
-  new Y.juju.ViewletManager({
+  new viewletNS.ViewletManager({
     viewlets: viewletsNS
     ...
   });
@@ -151,4 +151,4 @@ Controller
 ==========
 
 The Controller is a 100% user created class whos responsibility is to connect
-the `View Container`_ and the `Databinding Engine`_ together.
+the `Viewlet Manager`_ and the `Databinding Engine`_ together.
