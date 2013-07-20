@@ -1219,8 +1219,8 @@ YUI.add('juju-topology-service', function(Y) {
         //   right, and vice versa.
         cp.setStyles({
           'top': (
-            service.y * z + tr[1] +
-            (service_center[1] * z) - (cpHeight / 2)),
+              service.y * z + tr[1] +
+              (service_center[1] * z) - (cpHeight / 2)),
           'left': service.x * z +
               (menuLeft ? service.w * z + 16 : -(cpWidth) - 16) + tr[0]
         });
@@ -1295,7 +1295,7 @@ YUI.add('juju-topology-service', function(Y) {
 
         var menuHeight = serviceMenu.getDOMNode().getClientRects()[0].height;
         var triHeight = 18;
-        triangle.setStyle('top', ((menuHeight - triHeight) / 2)  + 'px');
+        triangle.setStyle('top', ((menuHeight - triHeight) / 2) + 'px');
 
         // Disable the 'Build Relation' link if the charm has not yet loaded.
         var addRelation = serviceMenu.one('.add-relation');
