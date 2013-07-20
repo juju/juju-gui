@@ -34,11 +34,11 @@ YUI.add('viewlet-charm-details', function(Y) {
 
       @method render
       @param {Charm} charm An old charm model.
-      @param {Object} viewContainerAttrs This comes from the view-container
+      @param {Object} viewletManagerAttrs This comes from the view-container
         object.
     */
-    render: function(charm, viewContainerAttrs) {
-      var store = viewContainerAttrs.store;
+    render: function(charm, viewletManagerAttrs) {
+      var store = viewletManagerAttrs.store;
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           var charmView = new browserViews.BrowserCharmView({
