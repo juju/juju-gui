@@ -268,8 +268,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/templates.js'
         },
 
-        'juju-view-container': {
-          fullpath: '/juju-ui/views/view-container.js'
+        'juju-viewlets': {
+          fullpath: '/juju-ui/views/viewlets.js'
         },
 
         'juju-ghost-inspector': {

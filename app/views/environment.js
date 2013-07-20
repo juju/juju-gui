@@ -76,7 +76,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         /**
           @method setInspector
-          @param {ViewContainer} inspector instance.
+          @param {ViewletManager} inspector instance.
           @param {Boolean} remove flag to remove the instance.
           @chainable
         */
@@ -212,20 +212,20 @@ YUI.add('juju-view-environment', function(Y) {
                 'constraints',
                 'unitDetails'
               ],
-              template: Y.juju.views.Templates['view-container']
+              template: Y.juju.views.Templates['viewlet-manager']
             },
             configGhost: {
               // controller will show the first one in this array by default
               viewletList: ['ghostConfig'],
-              // the view container template
+              // the viewlet manager template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
-              // these events are for the viewlet container
+              // these events are for the viewlet manager
               events: {
                 '.cancel': { 'click': 'destroy' }
               },
               // these events are for the viewlets and have their callbacks
               // bound to the controllers prototype and are then mixed with the
-              // containers events for final binding
+              // manager's events for final binding
               viewletEvents: {
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
@@ -235,7 +235,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
-              // the configuration for the view container template
+              // the configuration for the view manager template
               templateConfig: {
                 packageName: model.get('package_name'),
                 id: model.get('id')

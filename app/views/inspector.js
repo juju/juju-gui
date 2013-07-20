@@ -346,7 +346,7 @@ YUI.add('juju-view-inspector', function(Y) {
 
   /**
     A collection of methods and properties which will be mixed into the
-    prototype of the view container controller to add the functionality for
+    prototype of the viewlet manager controller to add the functionality for
     the ghost inspector interactions.
 
     @property serviceInspector
@@ -604,7 +604,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Object} e An event object.
     */
     onFileLoaded: function(e) {
-      //set the fileContent on the view-container so we can have access to it
+      //set the fileContent on the viewlet-manager so we can have access to it
       // when the user submit their config.
       this.viewletManager.fileContent = e.target.result;
       if (!this.viewletManager.fileContent) {
@@ -691,7 +691,7 @@ YUI.add('juju-view-inspector', function(Y) {
       Handles the success or failure of setting the new config values
 
       @method _setConfigCallback
-      @param {Y.Node} container of the view-container.
+      @param {Y.Node} container of the viewlet-manager.
       @param {Y.EventFacade} e yui event object.
     */
     _setConfigCallback: function(container, e) {
@@ -851,7 +851,7 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   /**
-    Service Inspector View Container Controller
+    Service Inspector Viewlet Manager Controller
 
     @class ServiceInspector
    */
@@ -1254,7 +1254,7 @@ YUI.add('juju-view-inspector', function(Y) {
     // ServiceInspector constructor.
     var controllerPrototype = {};
     /**
-      Constructor for View Container Controller
+      Constructor for Viewlet Manager Controller
 
       @method ServiceInspector
       @constructor
@@ -1309,7 +1309,7 @@ YUI.add('juju-view-inspector', function(Y) {
 
       options.events = Y.mix(options.events, options.viewletEvents);
 
-      this.viewletManager = new views.ViewContainer(options);
+      this.viewletManager = new viewletNS.ViewletManager(options);
       this.viewletManager.slots = {
         'left-hand-panel': '.left-breakout'
       };
@@ -1334,7 +1334,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
-    'juju-view-container',
+    'juju-viewlets',
     'juju-view-service',
     'juju-view-utils',
     'node',
