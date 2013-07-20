@@ -1234,14 +1234,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // the ceph charm should have the default icon path.
       assert.equal(
-        boxes['local:ceph-1'].icon,
-        'http://localhost/static/img/charm_160.svg'
+          boxes['local:ceph-1'].icon,
+          'http://localhost/static/img/charm_160.svg'
       );
 
       // The mysql charm has an icon from on the server.
       assert.equal(
-        boxes['cs:mysql-1'].icon,
-        'http://localhost/api/2/charm/mysql-1/icon.svg'
+          boxes['cs:mysql-1'].icon,
+          'http://localhost/api/2/charm/mysql-1/icon.svg'
       );
     });
   });

@@ -355,7 +355,7 @@ YUI.add('juju-charm-store', function(Y) {
       // icon.
       if (charmID.indexOf('local:') === 0) {
         return this.get('apiHost') +
-          'static/img/charm_160.svg';
+            'static/img/charm_160.svg';
 
       } else {
         return this.get('apiHost') + [
