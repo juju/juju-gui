@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
   Adds the ViewletManager constructor class and viewlet instantiable object
 
-  @module juju-viewlets
+  @module juju-viewlet-manager
 */
 YUI.add('juju-viewlet-manager', function(Y) {
   var ns = Y.namespace('juju.viewlets'),

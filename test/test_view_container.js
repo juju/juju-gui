@@ -56,7 +56,7 @@ describe('Viewlet Manager', function() {
     YUI(GlobalConfig).use([
       'juju-templates',
       'juju-tests-utils',
-      'juju-viewlets',
+      'juju-viewlet-manager',
       'node-event-simulate'
     ],
     function(y) {

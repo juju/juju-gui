@@ -1334,7 +1334,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
-    'juju-viewlets',
+    'juju-viewlet-manager',
     'juju-view-service',
     'juju-view-utils',
     'node',
