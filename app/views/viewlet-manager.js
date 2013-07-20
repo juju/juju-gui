@@ -350,7 +350,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       var viewlet = this.viewlets[viewletName];
       if (!viewlet) {
-        console.warn('Attempted to load a viewlet that does not exist');
+        console.warn(
+            'Attempted to load a viewlet that does not exist', viewletName);
       }
       if (!model) {
         model = this.get('model');
@@ -396,6 +397,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
+
         target = this.get('container').one(this.slots[slot]);
         var result = viewlet.render(model, this.getAttrs());
         if (result) {
@@ -485,7 +487,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // only the base config which causes things to fail further down the
         // line and is difficult to debug.
         if (viewlet === undefined) {
-          console.error('no viewlet config defined for viewlet', key);
+          console.warning('no viewlet config defined for viewlet', key);
           return;
         }
         // create viewlet instances using the base and supplied config

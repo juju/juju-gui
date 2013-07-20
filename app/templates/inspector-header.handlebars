@@ -1,0 +1,17 @@
+<header>
+  <div class="service-charm">
+    <div class="charm-icon" data-bind="icon"></div>
+    <div>
+      {{#if ghost}}
+        <input type="text" class="service-name config-field" name="service-name" value="{{package_name}}"><br />
+      {{else}}
+        <span data-bind="displayName" class="service-name">{{displayName}}</span><br />
+      {{/if}}
+      <span {{#unless ghost}}data-bind="charm"{{/unless}} class="charm-url" data-charmid="{{charmUrl}}">{{charmUrl}}</span><br />
+      {{#unless ghost}}
+      <span class="charm-url" data-charmid="{{charmUrl}}">Charm details</span>
+      {{/unless}}
+    </div>
+    <div href="" class="close">&#x2A2F;</div>
+  </div>
+</header>

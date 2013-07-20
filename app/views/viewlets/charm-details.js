@@ -40,8 +40,7 @@ YUI.add('viewlet-charm-details', function(Y) {
     render: function(charm, viewletManagerAttrs) {
       var store = viewletManagerAttrs.store;
       store.charm(charm.get('storeId'), {
-        'success': function(data) {
-          var storeCharm = new models.BrowserCharm(data.charm);
+        'success': function(data, storeCharm) {
           var charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
             forInspector: true,
@@ -59,7 +58,7 @@ YUI.add('viewlet-charm-details', function(Y) {
           });
           charmView.render();
         }
-      }, this);
+      }, this, viewContainerAttrs.db.browserCharms);
       return this.templateWrapper({ initial: 'Loading...'});
     }
   };
