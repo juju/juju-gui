@@ -1,4 +1,5 @@
 /*
+ *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -349,11 +350,20 @@ YUI.add('juju-charm-store', function(Y) {
 
      */
     iconpath: function(charmID) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'icon.svg'].join('/');
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch it's category data or its own
+      // icon.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+          'static/img/charm_160.svg';
+
+      } else {
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
     },
 
     /**
