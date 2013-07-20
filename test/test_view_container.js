@@ -56,7 +56,7 @@ describe('Viewlet Manager', function() {
     YUI(GlobalConfig).use([
       'juju-templates',
       'juju-tests-utils',
-      'juju-viewlets',
+      'juju-viewlet-manager',
       'node-event-simulate'
     ],
     function(y) {
@@ -117,13 +117,13 @@ describe('Viewlet Manager', function() {
   it('renders its container into the DOM', function() {
     generateViewletManager();
     viewletManager.render();
-    assert.notEqual(container.one('.viewlet-manager-wrapper'), null);
+    assert.notEqual(container.one('.viewlet-wrapper'), null);
   });
 
   it('renders all viewlets into the DOM', function() {
     generateViewletManager();
     viewletManager.render();
-    assert.notEqual(container.one('.viewlet-manager-wrapper'), null);
+    assert.notEqual(container.one('.viewlet-wrapper'), null);
     assert.equal(container.all('.viewlet-container').size(), 1);
     assert.equal(container.all('.viewlet').size(), 2);
   });

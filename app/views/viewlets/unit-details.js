@@ -30,8 +30,8 @@ YUI.add('viewlet-unit-details', function(Y) {
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
-    'render': function(unit, managerAttrs) {
-      var db = managerAttrs.db,
+    'render': function(unit, viewletManagerAttrs) {
+      var db = viewletManagerAttrs.db,
           service = db.services.getById(unit.service);
 
       var ip_description_chunks = [];

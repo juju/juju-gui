@@ -130,7 +130,7 @@ object.  For example::
 An example passing Viewlets into a ViewletManager is::
 
   var viewletsNS = Y.namespace('juju.viewlets');
-  new Y.juju.ViewletManager({
+  new viewletNS.ViewletManager({
     viewlets: viewletsNS
     ...
   });

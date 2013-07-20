@@ -1048,22 +1048,6 @@ YUI.add('juju-view-inspector', function(Y) {
               bar.update(value);
             }
           },
-          icon: {
-            'update': function(node, value) {
-              // XXX: Icon is only present on services that pass through
-              // the Ghost phase of the GUI. Once we have better integration
-              // with the charm browser API services handling of icon
-              // can be improved.
-              var icon = node.one('img');
-              if (icon === null && value) {
-                node.append('<img>');
-                icon = node.one('img');
-              }
-              if (value) {
-                icon.set('src', value);
-              }
-            }
-          },
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
@@ -1311,9 +1295,11 @@ YUI.add('juju-view-inspector', function(Y) {
 
       this.viewletManager = new viewletNS.ViewletManager(options);
       this.viewletManager.slots = {
+        'header': '.header-slot',
         'left-hand-panel': '.left-breakout'
       };
       this.viewletManager.render();
+      this.viewletManager.showViewlet('inspectorHeader', model);
       this.viewletManager.showViewlet(options.viewletList[0]);
     }
 
@@ -1334,7 +1320,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
-    'juju-viewlets',
+    'juju-viewlet-manager',
     'juju-view-service',
     'juju-view-utils',
     'node',
@@ -1343,7 +1329,8 @@ YUI.add('juju-view-inspector', function(Y) {
     'view',
     // Imported viewlets
     'viewlet-charm-details',
-    'viewlet-unit-details'
+    'viewlet-unit-details',
+    'viewlet-inspector-header'
   ]
 });
 
