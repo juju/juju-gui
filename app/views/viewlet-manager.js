@@ -446,8 +446,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
           footer = Y.one('.bottom-navbar'),
           // Depending on the render cycle these may or may not be in the DOM
           // which is why we pull their heights separately
-          vcHeader = container.one('.view-container-navigation'),
-          vcFooter = container.one('.view-container-footer'),
+          vcHeader = container.one('.viewlet-manager-navigation'),
+          vcFooter = container.one('.viewlet-manager-footer'),
           headerHeight = 0,
           footerHeight = 0,
           vcHeaderHeight = 0,
