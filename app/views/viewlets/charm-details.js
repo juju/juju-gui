@@ -34,7 +34,7 @@ YUI.add('viewlet-charm-details', function(Y) {
 
       @method render
       @param {Charm} charm An old charm model.
-      @param {Object} viewletManagerAttrs This comes from the view-container
+      @param {Object} viewletManagerAttrs This comes from the viewlet-manager
         object.
     */
     render: function(charm, viewletManagerAttrs) {
