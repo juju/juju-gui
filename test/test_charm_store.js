@@ -169,6 +169,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'http://localhost/api/2/charm/precise/mysql-1/icon.svg');
     });
 
+    it('constructs an icon path for local charms', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      });
+
+      var iconPath = api.iconpath('local:precise/mysql-1');
+      assert.equal(
+          iconPath,
+          'http://localhost/static/img/charm_160.svg');
+    });
+
+    it('splits the charm id to remove cs: when necessary', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      });
+
+      var iconPath = api.iconpath('cs:precise/mysql-1');
+      assert.equal(
+          iconPath,
+          'http://localhost/api/2/charm/precise/mysql-1/icon.svg');
+    });
+
   });
 
 })();

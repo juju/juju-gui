@@ -1,4 +1,5 @@
 /*
+ *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -224,11 +225,28 @@ YUI.add('juju-charm-store', function(Y) {
 
      */
     iconpath: function(charmID) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'icon.svg'].join('/');
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch its category data or its own
+      // icon.
+      // XXX: #1202703 - this is a short term fix for the bug. Need longer
+      // term solution.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+            'static/img/charm_160.svg';
+
+      } else {
+        // Get the charm ID from the service.  In some cases, this will be
+        // the charm URL with a protocol, which will need to be removed.
+        // The following regular expression removes everything up to the
+        // colon portion of the quote and leaves behind a charm ID.
+        charmID = charmID.replace(/^[^:]+:/, '');
+
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
     },
 
     /**

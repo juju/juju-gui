@@ -598,6 +598,9 @@ YUI.add('juju-gui', function(Y) {
       } else {
         cfg.deploy = this.charmPanel.deploy;
       }
+
+      // Share the store instance with subapps.
+      cfg.store = this.get('store');
       this.addSubApplications(cfg);
 
       // When someone wants a charm to be deployed they fire an event and we
