@@ -29,6 +29,12 @@ YUI.add('viewlet-charm-details', function(Y) {
     name: 'charmDetails',
     slot: 'left-hand-panel',
     templateWrapper: templates['left-breakout-panel'],
+    /**
+      When destroying the viewlet make sure we clean up our css.
+
+      @method destroy
+
+     */
     destroy: function() {
       Y.one('.left-breakout').removeClass('with-charm');
       this.charmView.destroy();
