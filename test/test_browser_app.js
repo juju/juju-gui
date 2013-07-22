@@ -302,15 +302,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('browser app', function() {
-    var Y, app, browser, next;
+    var Y, app, browser, Charmworld2, next;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'app-subapp-extension',
-          'juju-views',
           'juju-browser',
+          'juju-charm-store',
+          'juju-views',
           'subapp-browser', function(Y) {
             browser = Y.namespace('juju.subapps');
+            Charmworld2 = Y.namespace('juju').Charmworld2;
             next = function() {};
             done();
           });
@@ -412,7 +414,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id routes to the default view correctly', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost'
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
@@ -426,7 +432,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id handles routes for new charms correctly', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost'
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
@@ -479,7 +489,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id router ignores other urls', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost',
+          'noop': true
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
