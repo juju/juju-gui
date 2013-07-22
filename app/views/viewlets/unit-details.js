@@ -30,8 +30,8 @@ YUI.add('viewlet-unit-details', function(Y) {
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
-    'render': function(unit, viewContainerAttrs) {
-      var db = viewContainerAttrs.db,
+    'render': function(unit, viewletManagerAttrs) {
+      var db = viewletManagerAttrs.db,
           service = db.services.getById(unit.service);
 
       var ip_description_chunks = [];
@@ -74,6 +74,7 @@ YUI.add('viewlet-unit-details', function(Y) {
   requires: [
     'node',
     'juju-charm-models',
+    'juju-templates',
     'juju-view'
   ]
 });

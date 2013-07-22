@@ -76,7 +76,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         /**
           @method setInspector
-          @param {ViewContainer} inspector instance.
+          @param {ViewletManager} inspector instance.
           @param {Boolean} remove flag to remove the instance.
           @chainable
         */
@@ -142,14 +142,14 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Because the inspector can trigger it's own destruction we need to
           // listen for the event and remove it from the list of open inspectors
-          serviceInspector.inspector.after('destroy', function(e) {
+          serviceInspector.viewletManager.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
           }, this);
 
           // Restrict to a single inspector instance
           if (Y.Object.size(this._inspectors) >= 1) {
             Y.Object.each(this._inspectors, function(inspector) {
-              inspector.inspector.destroy();
+              inspector.viewletManager.destroy();
             });
           }
 
@@ -213,20 +213,20 @@ YUI.add('juju-view-environment', function(Y) {
                 'unitDetails',
                 'inspectorHeader'
               ],
-              template: Y.juju.views.Templates['view-container']
+              template: Y.juju.views.Templates['viewlet-manager']
             },
             configGhost: {
               // controller will show the first one in this array by default
               viewletList: ['ghostConfig', 'inspectorHeader', 'charmDetails'],
-              // the view container template
+              // the viewlet manager template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
-              // these events are for the viewlet container
+              // these events are for the viewlet manager
               events: {
                 '.cancel': { 'click': 'destroy' }
               },
               // these events are for the viewlets and have their callbacks
               // bound to the controllers prototype and are then mixed with the
-              // containers events for final binding
+              // manager's events for final binding
               viewletEvents: {
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.deploy': { 'click': 'deployCharm' },
@@ -237,7 +237,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
-              // the configuration for the view container template
+              // the configuration for the view manager template
               templateConfig: {
                 packageName: model.get('package_name'),
                 id: model.get('id')

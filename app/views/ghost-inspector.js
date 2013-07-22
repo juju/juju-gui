@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-  The ghost inspector is the view-container implementation of the ghost
+  The ghost inspector is the viewlet manager implementation of the ghost
   configuration view.
 
   @module views
@@ -78,7 +78,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   /**
     A collection of methods and properties which will be mixed into the
-    prototype of the view container controller to add the functionality for
+    prototype of the viewlet manager controller to add the functionality for
     the ghost inspector interactions
 
     @property ghostInspector
@@ -142,7 +142,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method closeInspector
     */
     closeInspector: function() {
-      this.inspector.destroy();
+      this.viewletManager.destroy();
     },
 
     /**
