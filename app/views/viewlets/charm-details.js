@@ -39,7 +39,6 @@ YUI.add('viewlet-charm-details', function(Y) {
     */
     render: function(charm, viewletManagerAttrs) {
       var store = viewletManagerAttrs.store;
-      debugger;
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           var charmView = new browserViews.BrowserCharmView({
