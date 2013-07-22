@@ -976,29 +976,7 @@ YUI.add('subapp-browser', function(Y) {
          @default Charmworld2
          @type {Charmworld2}
        */
-      store: {
-        /**
-           We keep one instance of the store and will work on caching results
-           at the app level so that routes can share api calls. However, in
-           tests there's no config for talking to the api so we have to watch
-           out in test runs and allow the store to be broken.
-
-           @method store.valueFn
-        */
-        valueFn: function() {
-          var cfg = {
-            noop: false,
-            apiHost: ''
-          };
-          if (!window.juju_config || !window.juju_config.charmworldURL) {
-            console.error('No juju config to fetch charmworld store url');
-            cfg.noop = true;
-          } else {
-            cfg.apiHost = window.juju_config.charmworldURL;
-          }
-          return new Y.juju.Charmworld2(cfg);
-        }
-      },
+      store: {},
 
       /**
          @attribute routes
