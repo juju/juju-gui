@@ -1198,10 +1198,11 @@ YUI.add('juju-topology-service', function(Y) {
       if (service && cp) {
         var cpRect = cp.getDOMNode().getClientRects()[0],
             cpWidth = cpRect.width,
-            service_center = service.relativeCenter,
-            menuLeft = (service.x * z + tr[0] + service_center[0] * z <
+            serviceCenter = service.relativeCenter,
+            menuLeft = (service.x * z + tr[0] + serviceCenter[0] * z <
                         topo.get('width') / 2),
-            cpHeight = cpRect.height;
+            cpHeight = cpRect.height,
+            arrowWidth = 16; // Hard coded for now for simplicity.
 
         if (menuLeft) {
           cp.removeClass('left')
@@ -1220,9 +1221,13 @@ YUI.add('juju-topology-service', function(Y) {
         cp.setStyles({
           'top': (
               service.y * z + tr[1] +
-              (service_center[1] * z) - (cpHeight / 2)),
-          'left': service.x * z +
-              (menuLeft ? service.w * z + 16 : -(cpWidth) - 16) + tr[0]
+              (serviceCenter[1] * z) - (cpHeight / 2)),
+          'left': (
+              service.x * z +
+              (menuLeft ?
+               service.w * z + arrowWidth :
+               -(cpWidth) - arrowWidth) +
+              tr[0])
         });
       }
     },

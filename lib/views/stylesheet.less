@@ -28,8 +28,8 @@
 @navbar-divider-colour: #333;
 @text-colour: #505050;
 @border-radius: 3px;
-@enviroment-menu-background-color: #ffffff;
-@enviroment-menu-hover-background: #f2f2f2;
+@environment-menu-background-color: #ffffff;
+@environment-menu-hover-background: #f2f2f2;
 
 // Imports need to be after vars.
 @import "typography.less";
@@ -462,7 +462,7 @@ table tr.highlighted td {
 }
 .environment-menu {
     @border_radius: 20px;
-    @background_color: @enviroment-menu-background-color;
+    @background_color: @environment-menu-background-color;
     .create-border-radius(@border-radius);
     .create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
     display: none;
@@ -539,7 +539,7 @@ table tr.highlighted td {
                 border-bottom: none;
             }
             &:hover {
-                background-color: @enviroment-menu-hover-background;
+                background-color: @environment-menu-hover-background;
             }
             &.disabled {
                 color: gray;
