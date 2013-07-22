@@ -34,12 +34,12 @@ YUI.add('viewlet-charm-details', function(Y) {
 
       @method render
       @param {Charm} charm An old charm model.
-      @param {Object} viewContainerAttrs This comes from the view-container
+      @param {Object} viewletManagerAttrs This comes from the viewlet-manager
         object.
     */
-    render: function(charm, viewContainerAttrs) {
-      var store = viewContainerAttrs.store;
-      store.charm(charm.get('id'), {
+    render: function(charm, viewletManagerAttrs) {
+      var store = viewletManagerAttrs.store;
+      store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           var charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
@@ -58,7 +58,7 @@ YUI.add('viewlet-charm-details', function(Y) {
           });
           charmView.render();
         }
-      }, this, viewContainerAttrs.db.browserCharms);
+      }, this, viewletManagerAttrs.db.browserCharms);
       return this.templateWrapper({ initial: 'Loading...'});
     }
   };

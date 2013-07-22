@@ -140,7 +140,7 @@ describe('Inspector Overview', function() {
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
-        overview = inspector.inspector.viewlets.overview;
+        overview = inspector.viewletManager.viewlets.overview;
 
     // Clear out the units added in the setUpInspector method
     db.units.reset();
@@ -171,7 +171,7 @@ describe('Inspector Overview', function() {
 
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.inspector.viewlets.overview,
+        overview = inspector.viewletManager.viewlets.overview,
         newContainer = utils.makeContainer();
 
     // Clear out the units added in the setUpInspector method
