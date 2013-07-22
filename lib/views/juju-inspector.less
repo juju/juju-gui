@@ -7,169 +7,284 @@
 
 
 .yui3-juju-inspector {
-    .create-border-radius(@border-radius);
-    position: absolute;
-    top: 20px;
-    right: 35px;
-    width: 292px;
-    min-height: 250px;
-    border: 0;
-    background-color: @inspector-background-color;
-    color: #fff;
-    margin: 0; /* Can be removed once the old inspector styles are removed. */
 
-    h1, h2, h3, h4, h5, h6 {
-        background-color: @inspector-region-background-color;
-        padding-left: 1em;
-    }
+    .left-breakout {
+        position: absolute;
+        top: 20px;
+        right: 325px;
+        width: 500px;
+        color: rgb(80, 80, 80);
+        background-color: rgb(255, 255, 255);
 
-    /* Resetting panel styles. Can be removed after old inspector styles are
-       removed. */
-    .charm-panel-configure {
-        background: transparent;
-        float: none;
-        border: 0;
-        height: auto;
-        width: auto;
-        padding: 0 20px;
+        &.with-charm {
+            width: 750px;
+        }
 
-        .title {
+        .close-slot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             font-size: 20px;
-            font-weight: 300;
-            line-height: 1.2;
-            margin: 0;
-        }
-        .name {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.5;
+            font-weight: bold;
+            line-height: 18px;
+            cursor: pointer;
+            color: @inspector-background-color;
+            z-index: 10;
         }
     }
 
-    .charm-entry {
-        /*border-bottom: 1px solid @inspector-divider-bottom;
-        border-top: 1px solid @inspector-divider-top;
-        padding: 0 20px;*/
+    .juju-inspector {
+        .create-border-radius(@border-radius);
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        width: 292px;
+        min-height: 250px;
+        border: 0;
+        background-color: @inspector-background-color;
+        color: #fff;
+        margin: 0; /* Can be removed once the old inspector styles are removed. */
 
-
-    }
-    .control-description,
-    .control-label {
-        font-size: 14px;
-        font-weight: 300;
-    }
-    .control-label {
-        margin-bottom: 10px;
-    }
-    .charm-panel-configure-buttons {
-        background: transparent;
-        border-bottom: 1px solid @inspector-divider-bottom;
-        float: none;
-        height: auto;
-        width: auto;
-        padding: 0 20px 10px;
-    }
-
-    .control-group {
-        margin: 0;
-        padding: 20px;
-        border-bottom: 1px solid @inspector-divider-bottom;
-        border-top: 1px solid @inspector-divider-top;
-
-        .well {
-            background-color: transparent;
-            border: 0;
-            margin-bottom: 10px;
-            min-height: 20px;
-            padding: 0;
+        h1, h2, h3, h4, h5, h6 {
+            background-color: @inspector-region-background-color;
+            padding-left: 1em;
         }
-    }
 
-    .viewlet-container {
-        overflow-y: auto;
-        border-top: 1px solid @inspector-divider-top;
-
-        .config-variant {
-            border-top: 0;
+        /* Resetting panel styles. Can be removed after old inspector styles are
+           removed. */
+        .charm-panel-configure {
             background: transparent;
             float: none;
+            border: 0;
+            height: auto;
+            width: auto;
+            padding: 0 20px;
+
+            .title {
+                font-size: 20px;
+                font-weight: 300;
+                line-height: 1.2;
+                margin: 0;
+            }
+            .name {
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.5;
+            }
         }
-    }
 
-    .content {
-        margin: 1em;
-    }
+        .charm-entry {
+            /*border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
+            padding: 0 20px;*/
 
-    .close-slot {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        font-weight: bold;
-        line-height: 18px;
-        cursor: pointer;
-        color: @inspector-background-color;
-    }
 
-    .header-slot {
-        header {
-            background-color: @inspector-region-background-color;
-            border-bottom: 1px solid #1C1817;
-            padding: 15px;
-            margin-bottom: 6px;
+        }
+        .control-description,
+        .control-label {
+            font-size: 14px;
+            font-weight: 300;
+        }
+        .control-label {
+            margin-bottom: 10px;
+        }
+        .charm-panel-configure-buttons {
+            background: transparent;
+            border-bottom: 1px solid @inspector-divider-bottom;
+            float: none;
+            height: auto;
+            width: auto;
+            padding: 0 20px 10px;
+        }
 
-            .service-charm {
-                color: @charm-panel-background-color;
-                width: 100%;
+        .control-group {
+            margin: 0;
+            padding: 20px;
+            border-bottom: 1px solid @inspector-divider-bottom;
+            border-top: 1px solid @inspector-divider-top;
 
-                .service-name {
-                    font-size: 20px;
-                    font-weight: 300;
-                    line-height: 1.2;
-                }
-                input.service-name {
-                    width: 150px;
-                }
-                .charm-icon {
-                    width: 64px;
-                    height: 64px;
-                    margin-right: 1em;
-                    background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
-                    img {
-                        /* bootstrap sets this to middle */
-                        vertical-align: baseline;
+            .well {
+                background-color: transparent;
+                border: 0;
+                margin-bottom: 10px;
+                min-height: 20px;
+                padding: 0;
+            }
+        }
+
+        .viewlet-container {
+            overflow-y: auto;
+            border-top: 1px solid @inspector-divider-top;
+
+            .config-variant {
+                border-top: 0;
+                background: transparent;
+                float: none;
+            }
+        }
+
+        .content {
+            margin: 1em;
+        }
+
+        .header-slot {
+            header {
+                background-color: @inspector-region-background-color;
+                border-bottom: 1px solid #1C1817;
+                padding: 15px;
+                margin-bottom: 6px;
+
+                .service-charm {
+                    color: @charm-panel-background-color;
+                    width: 100%;
+
+                    .service-name {
+                        font-size: 20px;
+                        font-weight: 300;
+                        line-height: 1.2;
                     }
-                }
-                .charm-url {
-                    font-size: 14px;
-                    font-weight: 400;
-                    line-height: 1.3;
-                    cursor: pointer;
-                    text-decoration: underline;
-                }
-                .close {
-                    /* required to overwrite bootstrap styles */
-                    text-shadow: none;
-                    color: #cbcbcb;
-                    font-weight: normal;
-                    opacity: 1;
-                }
-                div {
-                    display: inline-block;
+                    input.service-name {
+                        width: 150px;
+                    }
+                    .charm-icon {
+                        width: 64px;
+                        height: 64px;
+                        margin-right: 1em;
+                        background: transparent url(/juju-ui/assets/images/charm_64.png) left top no-repeat;
+                        img {
+                            /* bootstrap sets this to middle */
+                            vertical-align: baseline;
+                        }
+                    }
+                    .charm-url {
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.3;
+                        cursor: pointer;
+                        text-decoration: underline;
+                    }
+                    .close {
+                        /* required to overwrite bootstrap styles */
+                        text-shadow: none;
+                        color: #cbcbcb;
+                        font-weight: normal;
+                        opacity: 1;
+                    }
+                    div {
+                        display: inline-block;
+                    }
                 }
             }
         }
-    }
 
-    .viewlet-manager {
-        background-color: @inspector-region-background-color;
-    }
+        .viewlet-manager {
+            background-color: @inspector-region-background-color;
+        }
 
-    .viewlet-manager {
-        border-top: 1px solid @inspector-divider-top;
-        overflow: auto;
+        .viewlet-manager {
+            border-top: 1px solid @inspector-divider-top;
+            overflow: auto;
 
-        &.settings-config {
+            &.settings-config {
+
+                .settings-wrapper {
+                    position: relative;
+
+                    label {
+                        font-size: 14px;
+                        margin: 14px 0 7px 0;
+                        font-weight: bold;
+                    }
+
+                    .settings-description {
+                        font-style: italic;
+                        font-size: 12px;
+
+                        /* below hyphenation code was taken from:
+                        http://www.newnet-soft.com/blog/csstypography */
+                        -ms-word-break: break-all;
+                        word-break: break-all;
+
+                        // Non standard for webkit
+                        word-break: break-word;
+
+                        -webkit-hyphens: auto;
+                        -moz-hyphens: auto;
+                        hyphens: auto;
+
+                        -webkit-hyphenate-before: 2;
+                        -webkit-hyphenate-after: 3;
+                        hyphenate-lines: 3;
+                    }
+
+                    .warning-message {
+                        color: red;
+                        padding: 1em;
+                    }
+                    .conflicted {
+                        position: absolute;
+                        border: 1px solid grey;
+                        margin-top: -140px;
+                        background-color: white;
+                    }
+                }
+
+                .controls {
+                    text-align: center;
+
+                    button {
+                        .create-border-radius(@border-radius);
+                        width: 115px;
+                        height: 25px;
+                        margin: 10px 0;
+                        border: none;
+                        color: white;
+                        font-weight: bold;
+
+                        &.cancel {
+                            background-color: #A3A3A3;
+                        }
+
+                        &.confirm {
+                            background-color: #DD4814;
+                            &:disabled {
+                                background-color: #802E0E;
+                                color: #eee;
+                            }
+                        }
+                    }
+                }
+            }
+
+            h2 {
+                font-size: 18px;
+                padding-left: 0;
+            }
+
+            .toggle-settings-help {
+                padding: 0 20px 20px;
+                cursor: pointer;
+            }
+
+            .toggle-expose {
+                cursor: pointer;
+
+                img {
+                    position: relative;
+                    margin-left: 70px;
+                }
+                .on {
+                    font-size: 12px;
+                    position: absolute;
+                    right: 40px;
+                }
+                .off {
+                    font-size: 12px;
+                    color: black;
+                    position: absolute;
+                    right: 60px;
+                }
+            }
 
             .settings-wrapper {
                 position: relative;
@@ -183,22 +298,7 @@
                 .settings-description {
                     font-style: italic;
                     font-size: 12px;
-
-                    /* below hyphenation code was taken from:
-                    http://www.newnet-soft.com/blog/csstypography */
-                    -ms-word-break: break-all;
-                    word-break: break-all;
-
-                    // Non standard for webkit
-                    word-break: break-word;
-
-                    -webkit-hyphens: auto;
-                    -moz-hyphens: auto;
-                    hyphens: auto;
-
-                    -webkit-hyphenate-before: 2;
-                    -webkit-hyphenate-after: 3;
-                    hyphenate-lines: 3;
+                    text-align: justify;
                 }
 
                 .warning-message {
@@ -213,341 +313,251 @@
                 }
             }
 
-            .controls {
-                text-align: center;
+            .control-expose {
+                padding: 20px;
+            }
 
-                button {
+            .config-file {
+                padding: 20px;
+
+                input {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    visibility: hidden;
+                    z-index: 0;
+                }
+
+                .fakebutton {
                     .create-border-radius(@border-radius);
-                    width: 115px;
-                    height: 25px;
-                    margin: 10px 0;
-                    border: none;
+                    font-family: @font-family-medium;
+                    border: 1px solid #6B6B6B;
                     color: white;
+                    font-size: 14px;
                     font-weight: bold;
-
-                    &.cancel {
-                        background-color: #A3A3A3;
-                    }
-
-                    &.confirm {
-                        background-color: #DD4814;
-                        &:disabled {
-                            background-color: #802E0E;
-                            color: #eee;
-                        }
-                    }
+                    padding: 5px;
+                    z-index: 2;
+                    cursor: pointer;
                 }
             }
         }
 
-        h2 {
-            font-size: 18px;
-            padding-left: 0;
+
+        .status {
+            display: inline-block;
+            width: 33%;
+            text-align: center;
+            &.running {
+                background-color: #00b711;
+            }
+            &.pending {
+                background-color: #ede837;
+            }
+            &.error {
+                background-color: #ba0000;
+            }
         }
 
-        .toggle-settings-help {
-            padding: 0 20px 20px;
+        .destroy-service-icon {
             cursor: pointer;
-        }
-
-        .toggle-expose {
-            cursor: pointer;
-
-            img {
-                position: relative;
-                margin-left: 70px;
-            }
-            .on {
-                font-size: 12px;
-                position: absolute;
-                right: 40px;
-            }
-            .off {
-                font-size: 12px;
-                color: black;
-                position: absolute;
-                right: 60px;
-            }
-        }
-
-        .settings-wrapper {
-            position: relative;
-
-            label {
-                font-size: 14px;
-                margin: 14px 0 7px 0;
-                font-weight: bold;
-            }
-
-            .settings-description {
-                font-style: italic;
-                font-size: 12px;
-                text-align: justify;
-            }
-
-            .warning-message {
-                color: red;
-                padding: 1em;
-            }
-            .conflicted {
-                position: absolute;
-                border: 1px solid grey;
-                margin-top: -140px;
-                background-color: white;
-            }
-        }
-
-        .control-expose {
-            padding: 20px;
-        }
-
-        .config-file {
-            padding: 20px;
-
-            input {
-                position: absolute;
-                top: 0;
-                left: 0;
-                visibility: hidden;
-                z-index: 0;
-            }
-
-            .fakebutton {
-                .create-border-radius(@border-radius);
-                font-family: @font-family-medium;
-                border: 1px solid #6B6B6B;
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
-                z-index: 2;
-                cursor: pointer;
-            }
-        }
-    }
-
-
-    .status {
-        display: inline-block;
-        width: 33%;
-        text-align: center;
-        &.running {
-            background-color: #00b711;
-        }
-        &.pending {
-            background-color: #ede837;
-        }
-        &.error {
-            background-color: #ba0000;
-        }
-    }
-
-    .destroy-service-icon {
-        cursor: pointer;
-        float: right;
-        width: 20px;
-        height: 24px;
-        padding: 0;
-        /* Make sure the destroy icon is below the close-the-inspector icon. */
-        clear: both;
-        margin-bottom: 1ex;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-image:
-            url("/juju-ui/assets/images/inspector-destroy-service.png");
-    }
-
-    .destroy-service-prompt {
-        overflow: hidden;
-        height: 95px;
-        background-color: @inspector-region-background-color;
-        margin-bottom: 10px;
-        -moz-transition: .3s, height .3s;
-        -webkit-transition: .25s, height .3s;
-        transition: .3s, height .3s;
-
-        /* Make sure the prompt box is below the icon. */
-        clear: both;
-
-        .message {
-            margin: 5px 15px;
-        }
-
-        .buttons {
-            a {
-                .create-border-radius(@border-radius);
-                .create-box-shadow(0 2px 2px -2px #777 inset);
-                box-shadow: 0 2px 2px -2px #777777 inset;
-                color: #fff;
-                background: #dd4814;
-                padding: 5px 0;
-                text-decoration: none;
-                text-align: center;
-                margin-top: 10px;
-                width: 110px;
-                float: left;
-                margin-left: 13px;
-            }
-
-            a:last-of-type {
-                mergin-right: 0;
-            }
-
-            .grey {
-                background: #999;
-            }
-        }
-    }
-
-    .destroy-service-prompt.closed {
-        height: 0;
-    }
-
-    .left-breakout {
-        position: absolute;
-        top: 0px;
-        right: 292px;
-        width: 500px;
-        color: rgb(80, 80, 80);
-        background-color: rgb(255, 255, 255);
-    }
-
-
-    .viewlet-wrapper{
-        h3, h2, legend {
-            border-bottom: 1px solid @inspector-divider-bottom;
-            border-top: 1px solid @inspector-divider-top;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.5;
-            padding: 10px 20px;
-            color: @charm-panel-configure-title-color;
-            margin-bottom: 0;
-            width: auto;
-        }
-
-        .content {
-            border-bottom: 1px solid @inspector-divider-bottom;
-            border-top: 1px solid @inspector-divider-top;
-            margin: 0;
-            padding: 10px;
-        }
-    }
-
-    .overview-unit-list {
-        margin-left: 0;
-
-        .action-button-wrapper {
-            height: 50px;
-        }
-
-        .status-unit-header {
-            background-color: @inspector-region-background-color;
-            padding: 15px 15px 15px 40px;
-            font-size: 14px;
-            cursor: pointer;
-            border-bottom: 1px solid @inspector-divider-bottom;
-            border-top: 1px solid @inspector-divider-top;
-            background-position: 20px center;
+            float: right;
+            width: 20px;
+            height: 24px;
+            padding: 0;
+            /* Make sure the destroy icon is below the close-the-inspector icon. */
+            clear: both;
+            margin-bottom: 1ex;
+            background-position: center;
             background-repeat: no-repeat;
-            span {
-                margin-right: 5px;
-            }
-
-            ul {
-                background: white;
-            }
-
-            .chevron {
-                display: inline-block;
-                height: 9px;
-                margin-left: 5px;
-                width: 12px;
-                background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
-            }
+            background-image:
+                url("/juju-ui/assets/images/inspector-destroy-service.png");
         }
 
-        .closed-unit-list .chevron {
-            background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
-        }
-
-        .status-unit-header.error {
-            background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
-        }
-        .status-unit-header.running {
-            background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
-        }
-        .status-unit-header.pending {
-            background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
-        }
-
-        .status-unit-content {
-            -moz-transition: .3s, max-height .3s;
-            -webkit-transition: .25s, max-height .3s;
-            transition: .3s, max-height .3s;
+        .destroy-service-prompt {
             overflow: hidden;
-            background: @charm-panel-background-color;
-            /*
-             * The height of each list is 35px so setting this to help the auto max height script.
-             */
-            font-size: 35px;
-            /* max height is being set inline in views/service.js.
-            It is calculated on the number of units in the list.  */
+            height: 95px;
+            background-color: @inspector-region-background-color;
+            margin-bottom: 10px;
+            -moz-transition: .3s, height .3s;
+            -webkit-transition: .25s, height .3s;
+            transition: .3s, height .3s;
 
-            &.close-unit {
-                max-height: 0px !important;
+            /* Make sure the prompt box is below the icon. */
+            clear: both;
+
+            .message {
+                margin: 5px 15px;
             }
 
-            a {
+            .buttons {
+                a {
+                    .create-border-radius(@border-radius);
+                    .create-box-shadow(0 2px 2px -2px #777 inset);
+                    box-shadow: 0 2px 2px -2px #777777 inset;
+                    color: #fff;
+                    background: #dd4814;
+                    padding: 5px 0;
+                    text-decoration: none;
+                    text-align: center;
+                    margin-top: 10px;
+                    width: 110px;
+                    float: left;
+                    margin-left: 13px;
+                }
+
+                a:last-of-type {
+                    mergin-right: 0;
+                }
+
+                .grey {
+                    background: #999;
+                }
+            }
+        }
+
+        .destroy-service-prompt.closed {
+            height: 0;
+        }
+
+
+
+        .viewlet-wrapper{
+            h3, h2, legend {
+                border-bottom: 1px solid @inspector-divider-bottom;
+                border-top: 1px solid @inspector-divider-top;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.5;
+                padding: 10px 20px;
+                color: @charm-panel-configure-title-color;
+                margin-bottom: 0;
+                width: auto;
+            }
+
+            .content {
+                border-bottom: 1px solid @inspector-divider-bottom;
+                border-top: 1px solid @inspector-divider-top;
+                margin: 0;
+                padding: 10px;
+            }
+        }
+
+        .overview-unit-list {
+            margin-left: 0;
+
+            .action-button-wrapper {
+                height: 50px;
+            }
+
+            .status-unit-header {
+                background-color: @inspector-region-background-color;
+                padding: 15px 15px 15px 40px;
+                font-size: 14px;
                 cursor: pointer;
-                color: @text-colour;
-                text-decoration: underline;
+                border-bottom: 1px solid @inspector-divider-bottom;
+                border-top: 1px solid @inspector-divider-top;
+                background-position: 20px center;
+                background-repeat: no-repeat;
+                span {
+                    margin-right: 5px;
+                }
+
+                ul {
+                    background: white;
+                }
+
+                .chevron {
+                    display: inline-block;
+                    height: 9px;
+                    margin-left: 5px;
+                    width: 12px;
+                    background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+                }
             }
 
-            ul {
-                margin-left: 0;
-                border-bottom: 1px solid @charm-panel-border-color;
+            .closed-unit-list .chevron {
+                background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
             }
 
-            li {
-                list-style-type: none;
-                padding: 7px 0 7px 10px;
-                border-top: 1px solid @inspector-status-border-color;
-                font-size: 13px;
+            .status-unit-header.error {
+                background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+            }
+            .status-unit-header.running {
+                background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+            }
+            .status-unit-header.pending {
+                background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
             }
 
-            input[type="checkbox"] {
-                margin-right: 30px;
+            .status-unit-content {
+                -moz-transition: .3s, max-height .3s;
+                -webkit-transition: .25s, max-height .3s;
+                transition: .3s, max-height .3s;
+                overflow: hidden;
+                background: @charm-panel-background-color;
+                /*
+                 * The height of each list is 35px so setting this to help the auto max height script.
+                 */
+                font-size: 35px;
+                /* max height is being set inline in views/service.js.
+                It is calculated on the number of units in the list.  */
+
+                &.close-unit {
+                    max-height: 0px !important;
+                }
+
+                a {
+                    cursor: pointer;
+                    color: @text-colour;
+                    text-decoration: underline;
+                }
+
+                ul {
+                    margin-left: 0;
+                    border-bottom: 1px solid @charm-panel-border-color;
+                }
+
+                li {
+                    list-style-type: none;
+                    padding: 7px 0 7px 10px;
+                    border-top: 1px solid @inspector-status-border-color;
+                    font-size: 13px;
+                }
+
+                input[type="checkbox"] {
+                    margin-right: 30px;
+                }
+
+                button.unit-action-button,
+                input[type="checkbox"] {
+                    .create-border-radius(@border-radius);
+                    .create-box-shadow(0 2px 2px -2px #777 inset);
+                    background: @charm-panel-series-color;
+                }
+
+                button.unit-action-button {
+                    border: 0;
+                    padding: 5px;
+                    width: 70px;
+                    text-align: center;
+                    margin: 20px 3px 0;
+                }
+                button.resolve {
+                    margin-left: 25px;
+                }
             }
 
-            button.unit-action-button,
-            input[type="checkbox"] {
-                .create-border-radius(@border-radius);
-                .create-box-shadow(0 2px 2px -2px #777 inset);
-                background: @charm-panel-series-color;
+            .status-unit-content.running ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
             }
-
-            button.unit-action-button {
-                border: 0;
-                padding: 5px;
-                width: 70px;
-                text-align: center;
-                margin: 20px 3px 0;
+            .status-unit-content.pending ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
             }
-            button.resolve {
-                margin-left: 25px;
+            .status-unit-content.error ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
             }
         }
 
-        .status-unit-content.running ul li {
-            background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
-        }
-        .status-unit-content.pending ul li {
-            background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
-        }
-        .status-unit-content.error ul li {
-            background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
-        }
     }
 
 }
