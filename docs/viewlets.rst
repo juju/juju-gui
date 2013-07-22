@@ -9,7 +9,8 @@ data-binding micro framework with four discrete components `Viewlet Manager`_,
 Viewlet Manager
 ===============
 
-The Viewlet Manager is a Y.View based class which acts as a container and viewlet manager.
+The Viewlet Manager is a Y.View based class which acts as a container and
+viewlet manager.
 
 How it works
 ------------
@@ -104,8 +105,8 @@ in the `viewlets` object property and have a few configuration properties:
   once to set up the template however this could also be called by the update
   method.
 
-While a viewlet doesn't explicitly require the `Viewlet Manager`_ it was designed
-to be managed by a parent handler.
+While a viewlet doesn't explicitly require the `Viewlet Manager`_ it was
+designed to be managed by a parent handler.
 
 It is recommended that viewlets be constructed in a separate file and wrapped
 in a YUI block.  In this way, viewlets can be kept separate and easy to add,

@@ -54,8 +54,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       @property templateWrapper
       @type {string | compiled Handlebars template}
-      @default '<div class="viewlet--manager-wrapper"
-          style="display: none"></div>'
     */
     templateWrapper:
         '<div class="viewlet-wrapper" style="display:none"></div>',
@@ -65,7 +63,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       @property template
       @type {string | compiled Handlebars template}
-      @default '{{viewlet}}'
     */
     template: '{{viewlet}}', // compiled handlebars template
 
