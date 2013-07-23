@@ -61,7 +61,10 @@ if (/*@cc_on!@*/false) {
       _gaq.push(['_setAllowLinker', true]);
       _gaq.push(['_trackPageview']);
     </script>
-
+    <!-- Make sure the config is loaded before other JS for use in the page
+         below.
+    -->
+    <script src="/juju-ui/assets/config.js"></script>
   </head>
 
   <body>
@@ -374,10 +377,9 @@ if (/*@cc_on!@*/false) {
       useless is http://www.html5rocks.com/en/tutorials/speed/script-loading/
 
     -->
-    <script defer src="/juju-ui/assets/all-yui.js"></script>
-    <script defer src="/juju-ui/assets/modules.js"></script>
-    <script defer src="/juju-ui/assets/config.js"></script>
-    <script defer>
+    <script src="/juju-ui/assets/all-yui.js"></script>
+    <script src="/juju-ui/assets/modules.js"></script>
+    <script>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will
       // start.
