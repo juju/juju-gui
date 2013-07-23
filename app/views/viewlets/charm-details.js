@@ -33,7 +33,7 @@ YUI.add('viewlet-charm-details', function(Y) {
       When destroying the viewlet make sure we clean up our css.
 
       @method destroy
-
+      @return {undefined} nothing.
      */
     destroy: function() {
       Y.one('.left-breakout').removeClass('with-charm');

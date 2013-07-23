@@ -142,7 +142,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       A destroy callback called when removing a viewlet for cleanup.
 
       @method destroy
-
+      @return {undefined} nothing.
      */
     destroy: function() {},
 
@@ -550,6 +550,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       Removes and destroys the container
 
       @method destructor
+      @return {undefined} nothing.
     */
     destructor: function() {
       Y.Object.each(this.viewlets, function(viewlet, name) {
