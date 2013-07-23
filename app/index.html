@@ -42,6 +42,10 @@ if (/*@cc_on!@*/false) {
     <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
     <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
     <link rel="stylesheet" href="/juju-ui/assets/sprite.css">
+    <!-- Make sure the config is loaded before other JS for use in the page
+         below.
+    -->
+    <script src="/juju-ui/assets/config.js"></script>
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -61,7 +65,6 @@ if (/*@cc_on!@*/false) {
       _gaq.push(['_setAllowLinker', true]);
       _gaq.push(['_trackPageview']);
     </script>
-
   </head>
 
   <body>
@@ -362,22 +365,10 @@ if (/*@cc_on!@*/false) {
       Load the (potentially slow to download) core of the app.  We do this here
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
-
-      We add defer in the hopes that we can download the files fast in an
-      async fashion, yet make sure that they're not executed out of the order
-      they're listed here.
-
-      This is tested using
-      http://stevesouders.com/cuzillion/?c0=hj1hfft1_0_f&c1=hj1hfft3_1_f&c2=hj1hfft2_1_f&c3=hb0hfft0_1_f&t=1374600345467
-
-      and for some reading on why this *might* help, but might be completely
-      useless is http://www.html5rocks.com/en/tutorials/speed/script-loading/
-
     -->
-    <script defer src="/juju-ui/assets/all-yui.js"></script>
-    <script defer src="/juju-ui/assets/modules.js"></script>
-    <script defer src="/juju-ui/assets/config.js"></script>
-    <script defer>
+    <script src="/juju-ui/assets/all-yui.js"></script>
+    <script src="/juju-ui/assets/modules.js"></script>
+    <script>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will
       // start.
