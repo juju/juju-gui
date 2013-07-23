@@ -363,10 +363,10 @@ if (/*@cc_on!@*/false) {
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
     -->
-    <script src="/juju-ui/assets/all-yui.js"></script>
-    <script src="/juju-ui/assets/modules.js"></script>
-    <script src="/juju-ui/assets/config.js"></script>
-    <script>
+    <script defer src="/juju-ui/assets/all-yui.js"></script>
+    <script defer src="/juju-ui/assets/modules.js"></script>
+    <script defer src="/juju-ui/assets/config.js"></script>
+    <script defer>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will
       // start.
@@ -397,7 +397,7 @@ if (/*@cc_on!@*/false) {
       };
     </script>
 
-    <script type="text/javascript">
+    <script async type="text/javascript">
       (function() {
       var ga = document.createElement('script');
       ga.type = 'text/javascript'; ga.async = true;
