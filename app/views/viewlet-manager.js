@@ -139,6 +139,14 @@ YUI.add('juju-viewlet-manager', function(Y) {
     conflict: function(node) {},
 
     /**
+      A destroy callback called when removing a viewlet for cleanup.
+
+      @method destroy
+      @return {undefined} nothing.
+     */
+    destroy: function() {},
+
+    /**
       Called by the databinding engine when fields drop out of sync with
       the supplied model.
 
@@ -296,7 +304,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
     render: function() {
       var attrs = this.getAttrs(),
-          managerContainer = attrs.container,
+          managerContainer = attrs.container.one('.juju-inspector'),
           model = attrs.model,
           viewletTemplate;
 
@@ -385,6 +393,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
+          existing.destroy();
           // remove only removes the databinding but does not clear the DOM.
           existing.remove();
         }
@@ -464,6 +473,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       this.get('container').one(this.viewletContainer)
                            .setStyle('maxHeight', height + 'px');
+      // Since the left-breakout isn't part of the viewletContainer it also
+      // needs to be set.
+      var left_breakout = this.get('container').one('.left-breakout');
+      if (left_breakout) {
+        left_breakout.setStyle('max-height', height + TB_SPACING + 'px');
+      }
     },
 
     /**
@@ -541,8 +556,14 @@ YUI.add('juju-viewlet-manager', function(Y) {
       Removes and destroys the container
 
       @method destructor
+      @return {undefined} nothing.
     */
     destructor: function() {
+      Y.Object.each(this.viewlets, function(viewlet, name) {
+        if (!viewlet.slot) {
+          viewlet.destroy();
+        }
+      });
       this._events.forEach(function(event) {
         event.detach();
       });
