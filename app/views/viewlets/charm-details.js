@@ -51,7 +51,6 @@ YUI.add('viewlet-charm-details', function(Y) {
       var store = viewletManagerAttrs.store;
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
-          debugger;
           Y.one('.left-breakout').addClass('with-charm');
 
           this.charmView = new browserViews.BrowserCharmView({
