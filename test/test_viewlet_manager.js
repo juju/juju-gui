@@ -26,6 +26,11 @@ describe('Viewlet Manager', function() {
 
   var generateViewletManager = function(options, viewletList) {
     container = utils.makeContainer();
+    container.setHTML([
+      '<div class="yui3-juju-inspector">',
+      '<div class="panel juju-inspector"></div>',
+      '<div class="left-breakout"></div>',
+      '</div>'].join(''));
 
     // Merging Mix.
     var viewletConfig = Y.mix({

@@ -1250,10 +1250,8 @@ YUI.add('juju-view-inspector', function(Y) {
       options.viewlets = {};
       options.templateConfig = options.templateConfig || {};
 
-      var container = Y.Node.create('<div>')
-          .addClass('panel')
-          .addClass('yui3-juju-inspector')
-          .appendTo(Y.one('#content'));
+      var container = Y.Node.create(Templates['service-inspector']());
+      container.appendTo(Y.one('#content'));
 
       var self = this;
       options.container = container;
