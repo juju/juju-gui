@@ -365,17 +365,6 @@ if (/*@cc_on!@*/false) {
       Load the (potentially slow to download) core of the app.  We do this here
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
-
-      We add defer in the hopes that we can download the files fast in an
-      async fashion, yet make sure that they're not executed out of the order
-      they're listed here.
-
-      This is tested using
-      http://stevesouders.com/cuzillion/?c0=hj1hfft1_0_f&c1=hj1hfft3_1_f&c2=hj1hfft2_1_f&c3=hb0hfft0_1_f&t=1374600345467
-
-      and for some reading on why this *might* help, but might be completely
-      useless is http://www.html5rocks.com/en/tutorials/speed/script-loading/
-
     -->
     <script src="/juju-ui/assets/all-yui.js"></script>
     <script src="/juju-ui/assets/modules.js"></script>
