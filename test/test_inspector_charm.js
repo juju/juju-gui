@@ -18,9 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('Inspector Charm', function() {
-  var charmID, container, content,  fakeCharm, fakeStore, testContainer,
-    utils, viewlets, views, Y;
+describe('Inspector Charm', function() {
+  var charmID, container, content, fakeCharm, fakeStore, testContainer,
+      utils, viewlets, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
