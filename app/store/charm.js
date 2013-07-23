@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
- * Provide the CharmStore class.
+ * Provide the Charmworld API datastore class.
  *
  * @module store
  * @submodule store.charm

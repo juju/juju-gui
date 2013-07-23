@@ -129,7 +129,7 @@ describe('charm panel', function() {
         }
       };
       // Mock the charm store.
-      store = new juju.CharmStore({
+      store = new juju.Charmworld2({
         datasource: {
           sendRequest: function(params) {
             params.callback.success({

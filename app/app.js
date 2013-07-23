@@ -411,14 +411,6 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
-      // Create a charm store.
-      if (this.get('charm_store')) {
-        // This path is for tests.
-        this.charm_store = this.get('charm_store');
-      } else {
-        this.charm_store = new juju.CharmStore({
-          datasource: this.get('charm_store_url')});
-      }
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -651,7 +643,7 @@ YUI.add('juju-gui', function(Y) {
         this._simulator.stop();
       }
       Y.each(
-          [this.env, this.db, this.charm_store, this.notifications,
+          [this.env, this.db, this.notifications,
            this.landscape, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
@@ -869,23 +861,13 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * @method show_charm_collection
-     */
-    show_charm_collection: function(req) {
-      this.showView('charm_collection', {
-        query: req.query.q,
-        charm_store: this.charm_store
-      });
-    },
-
-    /**
      * @method show_charm
      */
     show_charm: function(req) {
       var charm_url = req.params.charm_store_path;
       this.showView('charm', {
         charm_data_url: charm_url,
-        charm_store: this.charm_store,
+        store: this.get('store'),
         env: this.env
       });
     },
@@ -1288,8 +1270,6 @@ YUI.add('juju-gui', function(Y) {
   }, {
     ATTRS: {
       html5: true,
-      charm_store: {},
-      charm_store_url: {},
       charmworldURL: {},
       /**
          @attribute store

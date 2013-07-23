@@ -41,15 +41,13 @@ YUI.add('juju-view-charm-collection', function(Y) {
     initializer: function() {
       this.set('charm', null);
       console.log('Loading charm view', this.get('charm_data_url'));
-      this.get('charm_store').get('datasource').sendRequest({
-        request: this.get('charm_data_url'),
-        callback: {
+      this.get('store').charm(
+        this.get('storeId'),
+        {
           'success': Y.bind(this.on_charm_data, this),
-          'failure': function er(e) {
-            console.error(e.error);
-          }
+          'failure': function er(e) { console.error(e.error); }
         }
-      });
+      );
 
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
@@ -95,6 +93,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
         return;
       }
       // Convert time stamp TODO: should be in db layer
+      debugger;
       var last_modified = charm.last_change.created;
       if (last_modified) {
         charm.last_change.created = new Date(last_modified * 1000);
@@ -119,9 +118,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
       return this;
     },
 
-    on_charm_data: function(io_request) {
-      var charm = Y.JSON.parse(
-          io_request.response.results[0].responseText);
+    on_charm_data: function(data) {
+      var charm = data.charm;
       this.set('charm', charm);
       this.render();
     },
