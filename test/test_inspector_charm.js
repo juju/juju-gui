@@ -65,11 +65,7 @@ describe('Inspector Charm', function() {
   it('renders the viewlet with a charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', false);
     testContainer = utils.makeContainer();
-    testContainer.setHTML([
-      '<div class="yui3-juju-inspector">',
-      '<div class="panel juju-inspector"></div>',
-      '<div class="left-breakout"></div>',
-      '</div>'].join(''));
+    testContainer.setHTML('<div class="left-breakout"></div>');
 
     fakeStore = new Y.juju.Charmworld2({});
     fakeStore.set('datasource', {
@@ -110,11 +106,7 @@ describe('Inspector Charm', function() {
   it('renders the viewlet with a cached charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', true);
     testContainer = utils.makeContainer();
-    testContainer.setHTML([
-      '<div class="yui3-juju-inspector">',
-      '<div class="panel juju-inspector"></div>',
-      '<div class="left-breakout"></div>',
-      '</div>'].join(''));
+    testContainer.setHTML('<div class="left-breakout"></div>');
 
     fakeStore = new Y.juju.Charmworld2({});
     var cache = new Y.juju.models.BrowserCharmList();
