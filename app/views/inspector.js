@@ -898,10 +898,13 @@ YUI.add('juju-view-inspector', function(Y) {
         });
       });
 
+      // This will generate a list with all categories.
       Y.Object.each(unitListNameMap, function(value, key) {
+        var unit = {};
         if (unitByStatus[key]) {
-          statuses.push({category: key, units: unitByStatus[key]});
+          unit = unitByStatus[key];
         }
+        statuses.push({category: key, units: unit});
       });
 
       return statuses;
@@ -928,18 +931,18 @@ YUI.add('juju-view-inspector', function(Y) {
       var unitStatusWrapper = categoryWrapperNodes
                                   .enter()
                                   .append('div')
-                                  .classed('unit-list-wrapper', true);
+                                  .classed('unit-list-wrapper hidden', true);
 
       var unitStatusHeader = unitStatusWrapper
                                   .append('div')
                                   .attr('class', function(d) {
-                                   return 'status-unit-header ' + d.category;
+                                   return 'status-unit-header closed-unit-list ' + d.category;
                                  });
 
       var unitStatusContentForm = unitStatusWrapper
                                   .append('div')
                                   .attr('class', function(d) {
-                                    return 'status-unit-content ' + d.category;
+                                    return 'status-unit-content close-unit ' + d.category;
                                   })
                                   .append('form');
 
@@ -973,6 +976,17 @@ YUI.add('juju-view-inspector', function(Y) {
                           .text(function(d) {
                                  return d.units.length;
                                });
+
+      // Toggles the sections visible or hidden based on
+      // whether there are units in their list.
+      categoryWrapperNodes.filter(function(d) { return d.units.length > 0 })
+                          .classed('hidden', false);
+
+      categoryWrapperNodes.filter(
+                          function(d) {
+                            return d.units.length === undefined
+                          })
+                          .classed('hidden', true);
 
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
