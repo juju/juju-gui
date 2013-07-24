@@ -686,6 +686,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             this.get('charm').get('storeId');
       }
       tplData.isFullscreen = isFullscreen;
+      tplData.isLocal = tplData.scheme === 'local';
       tplData.forInspector = this.get('forInspector');
       if (!tplData.forInspector) {
         tplData.sourceLink = this._getSourceLink();

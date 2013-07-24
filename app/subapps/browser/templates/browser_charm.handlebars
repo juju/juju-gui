@@ -46,11 +46,15 @@
         <div class="tabs">
             <ul>
                 <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
-                <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
+                {{#unless isLocal}}
+                    <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
+                {{/unless}}
                 <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
-                <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
-                <li><a href="#bws-source" class="bws-source">Source</a></li>
-                <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
+                {{#unless isLocal}}
+                    <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
+                    <li><a href="#bws-source" class="bws-source">Source</a></li>
+                    <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
+                {{/unless}}
             </ul>
             {{#unless forInspector}}
                 <hr />
@@ -141,7 +145,9 @@
                         </div>
                     {{/if}}
                 </div>
-                <div id="bws-readme">Readme</div>
+                {{#unless isLocal}}
+                    <div id="bws-readme">Readme</div>
+                {{/unless}}
                 <div id="bws-interfaces">
                     <p class="intro">
                         Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
@@ -180,9 +186,11 @@
                             <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Requires</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-2">
-                                <h3>Related charms</h3>
-                            </div>
+                            {{#unless isLocal}}
+                                <div class="interfaces-heading yui3-u-1-2">
+                                    <h3>Related charms</h3>
+                                </div>
+                            {{/unless}}
                             <div class="yui3-u-1-3">
                             </div>
 
@@ -206,9 +214,11 @@
                             <div class="interfaces-heading yui3-u-1-2">
                                 <h3>Provides</h3>
                             </div>
-                            <div class="interfaces-heading yui3-u-1-2">
-                                <h3>Related charms</h3>
-                            </div>
+                            {{#unless isLocal}}
+                                <div class="interfaces-heading yui3-u-1-2">
+                                    <h3>Related charms</h3>
+                                </div>
+                            {{/unless}}
                             <div class="yui3-u-1-3">
                             </div>
                         </div>
@@ -229,53 +239,55 @@
                         </ul>
                     {{/if}}
                 </div>
-                <div id="bws-configuration">
-                    <p class="intro">
-                        These are the ways in which you can configure this
-                        charm to best suit your deployment. You can change the
-                        default configuration settings either before or after
-                        you have deployed the charm, if necessary.
-                    </p>
-                    {{#if options}}
-                        <dl>
-                            {{#arrayObject options}}
-                                <dt>
-                                    <dfn>{{key}}</dfn>
-                                    <em>{{value.type}}</em>
-                                </dt>
-                                <dd>
-                                    <div>Default: {{value.default}}</div>
-                                    <p>{{value.description}}</p>
-                                </dd>
-                            {{/arrayObject}}
-                        </dl>
-                    {{else}}
-                      <p>This charm does not expose any configuration options.</p>
-                    {{/if}}
-                </div>
-                <div id="bws-source">
-                    <p class="intro">
-                        The source code of the charm includes scripts, metadata,
-                        and other supporting files to describe and install a
-                        service.
-                    </p>
-                    <p class="intro">
-                        <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
-                        target="help">Please contribute to this charm!</a>
-                    </p>
-                    <p class="intro">
-                        Select a file below to view the contents.
-                    </p>
-                    <select>
-                        <option>Select --</option>
-                        {{#each files}}
-                            <option value="{{ . }}">{{ . }}</option>
-                        {{/each}}
-                    </select>
-                    <div class="filecontent">
+                {{#unless isLocal}}
+                    <div id="bws-configuration">
+                        <p class="intro">
+                            These are the ways in which you can configure this
+                            charm to best suit your deployment. You can change the
+                            default configuration settings either before or after
+                            you have deployed the charm, if necessary.
+                        </p>
+                        {{#if options}}
+                            <dl>
+                                {{#arrayObject options}}
+                                    <dt>
+                                        <dfn>{{key}}</dfn>
+                                        <em>{{value.type}}</em>
+                                    </dt>
+                                    <dd>
+                                        <div>Default: {{value.default}}</div>
+                                        <p>{{value.description}}</p>
+                                    </dd>
+                                {{/arrayObject}}
+                            </dl>
+                        {{else}}
+                          <p>This charm does not expose any configuration options.</p>
+                        {{/if}}
                     </div>
-                </div>
-                <div id="bws-qa">Quality</div>
+                    <div id="bws-source">
+                        <p class="intro">
+                            The source code of the charm includes scripts, metadata,
+                            and other supporting files to describe and install a
+                            service.
+                        </p>
+                        <p class="intro">
+                            <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
+                            target="help">Please contribute to this charm!</a>
+                        </p>
+                        <p class="intro">
+                            Select a file below to view the contents.
+                        </p>
+                        <select>
+                            <option>Select --</option>
+                            {{#each files}}
+                                <option value="{{ . }}">{{ . }}</option>
+                            {{/each}}
+                        </select>
+                        <div class="filecontent">
+                        </div>
+                    </div>
+                    <div id="bws-qa">Quality</div>
+                {{/unless}}
             </div>
         </div>
     </div>
