@@ -37,7 +37,7 @@ describe('browser search widget', function() {
           function(charmID, file) {
             return '/path/to/charm/' + file;
           });
-
+      window.flags.ac = true;
       done();
     });
   });
@@ -59,6 +59,7 @@ describe('browser search widget', function() {
 
   after(function() {
     Y.Handlebars.helpers.charmFilePath = undefined;
+    delete window.flags.ac;
   });
 
   it('needs to render from the template', function() {
