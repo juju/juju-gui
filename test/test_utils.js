@@ -995,6 +995,33 @@ describe('utilities', function() {
       });
     });
 
+    describe('unless_eq tests', function() {
+
+      it('outputs success when not equal', function() {
+        var tpl = '{{#unless_eq x y}}success{{/unless_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 4});
+
+        assert.strictEqual('success', html);
+      });
+
+      it('output fails when equal', function() {
+        var tpl = 'fails{{#unless_eq x y}}success{{/unless_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 3});
+
+        assert.strictEqual('fails', html);
+      });
+
+      it('outputs the else clause when equal', function() {
+        var tpl = '{{#unless_eq x y}}success{{else}}fails{{/unless_eq}}';
+        var template = Y.Handlebars.compile(tpl);
+        var html = template({x: 3, y: 3});
+
+        assert.strictEqual('fails', html);
+      });
+    });
+
   });
 })();
 
