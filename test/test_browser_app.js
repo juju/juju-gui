@@ -106,9 +106,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('must show the home icons when withHome is set', function() {
-      var container = Y.one('#subapp-browser');
+      var container = Y.one('#subapp-browser'),
+          fakeStore = new Y.juju.Charmworld2({});
 
       view = new FullScreen({
+        store: fakeStore,
         withHome: true
       });
       view.render(container);
@@ -118,9 +120,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('shows the home icons if the withHome is changed', function(done) {
-      var container = Y.one('#subapp-browser');
+      var container = Y.one('#subapp-browser'),
+          fakeStore = new Y.juju.Charmworld2({});
 
-      view = new FullScreen();
+      view = new FullScreen({
+        store: fakeStore
+      });
       view.render(container);
 
       view.search.showHome = function() {
@@ -144,8 +149,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('routes home when it catches a gohome event', function(done) {
-      var container = Y.one('#subapp-browser');
-      view = new FullScreen();
+      var container = Y.one('#subapp-browser'),
+          fakeStore = new Y.juju.Charmworld2({});
+      view = new FullScreen({
+        store: fakeStore
+      });
       view.on('viewNavigate', function(ev) {
         assert.equal(ev.change.search, false);
         assert.equal(ev.change.filter.clear, true);
@@ -302,8 +310,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('routes home when it catches a gohome event', function(done) {
-      var container = Y.one('#subapp-browser');
-      view = new Sidebar();
+      var container = Y.one('#subapp-browser'),
+          fakeStore = new Y.juju.Charmworld2({});
+      view = new Sidebar({
+        store: fakeStore
+      });
       view.on('viewNavigate', function(ev) {
         assert.equal(ev.change.search, false);
         assert.equal(ev.change.filter.clear, true);

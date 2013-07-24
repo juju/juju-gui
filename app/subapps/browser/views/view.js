@@ -105,34 +105,37 @@ YUI.add('subapp-browser-mainview', function(Y) {
         );
       }
 
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_SEARCH_GOHOME, this._goHome, this)
-      );
 
-      // If the showHome attribute is changed, update our html by adding the
-      // with-home class to the widget.
-      this.after('withHomeChange', function(ev) {
-        if (ev.newVal) {
-          // Let the widget know we wish it to unhide it's icon and link for
-          // showing home.
-          this.search.showHome();
+      if (this.search) {
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+        );
 
-          if (!this.isFullscreen()) {
-            // In the sidebar, the left panel needs the height adjusted to
-            // make room for the home links to show up.
-            this.get('container').one('.bws-content').addClass('with-home');
+        // If the showHome attribute is changed, update our html by adding the
+        // with-home class to the widget.
+        this.after('withHomeChange', function(ev) {
+          if (ev.newVal) {
+            // Let the widget know we wish it to unhide it's icon and link for
+            // showing home.
+            this.search.showHome();
+
+            if (!this.isFullscreen()) {
+              // In the sidebar, the left panel needs the height adjusted to
+              // make room for the home links to show up.
+              this.get('container').one('.bws-content').addClass('with-home');
+            }
+          } else {
+            // Ask the widget to remove the home buttons from display.
+            this.search.hideHome();
+            if (!this.isFullscreen()) {
+              // We also need to adjust the height of the sidebar now to close
+              // up the space by the home buttons.
+              this.get('container').one('.bws-content').removeClass('with-home');
+            }
           }
-        } else {
-          // Ask the widget to remove the home buttons from display.
-          this.search.hideHome();
-          if (!this.isFullscreen()) {
-            // We also need to adjust the height of the sidebar now to close
-            // up the space by the home buttons.
-            this.get('container').one('.bws-content').removeClass('with-home');
-          }
-        }
-      }, this);
+        }, this);
+      }
     },
 
     /**
@@ -176,7 +179,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
         });
         this.search.render(node.one('.bws-header'));
       }
-      this.search.render(node.one('.bws-header'));
 
       // Make sure the controls starts out setting the correct active state
       // based on the current viewmode for our View.
