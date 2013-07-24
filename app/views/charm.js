@@ -18,13 +18,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// Both of these views should probably either be deleted or converted to only
-// show environment charms.  My (GP) favorite option is to convert CharmView
-// into a service tab (viewing the environment's charm) and delete
-// CharmCollectionView.
+//XXX jcsackett Jul 24 2013 This whole file and associated bits can probably be
+//axed once the new service inspector is no longer flagged.
 
 /**
- * Provide the CharmView and CharmCollectionView classes.
+ * Provide the CharmView class.
  *
  * @module views
  * @submodule views.charm
@@ -86,7 +84,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
         // This avoids a console error caused by out of order rendering
         return;
       }
-      CharmCollectionView.superclass.render.apply(this, arguments);
+      CharmView.superclass.render.apply(this, arguments);
       if (!charm) {
         container.setHTML('<div class="alert">Loading...</div>');
         return;
@@ -121,17 +119,9 @@ YUI.add('juju-view-charm-collection', function(Y) {
     },
 
     on_charm_deploy: function(evt) {
-      var charm = this.get('charm'),
+      var charmId = this.get('charm').get('id'),
           container = this.get('container'),
-          charmUrl = charm.get('series') + '/' + charm.get('name'),
           env = this.get('env');
-      // Generating charm url: see http://jujucharms.com/tools/store-missing
-      // for examples of charm addresses.
-      var owner = charm.get('owner');
-      if (owner !== 'charmers') {
-        charmUrl = '~' +  owner + '/' + charmUrl;
-      }
-      charmUrl = 'cs:' + charmUrl;
 
       // Gather the configuration values from the form.
       var serviceName = container.one('#service-name').get('value'),
@@ -142,8 +132,11 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
       this.fire('navigateTo', {url: '/:gui:/'});
-      env.deploy(charmUrl, serviceName, config,
-          Y.bind(this._deployCallback, this)
+      env.deploy(
+        charmId,
+        serviceName,
+        config,
+        Y.bind(this._deployCallback, this)
       );
     },
 
@@ -162,69 +155,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
       console.log(ev.charm_url + ' deployed');
     }
   });
-
-  var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
-
-    initializer: function() {
-      this.set('charms', []);
-      this.set('current_request', null);
-    },
-
-    template: Templates['charm-collection'],
-
-    render: function() {
-      var container = this.get('container'),
-          charm = this.get('charm'),
-          self = this;
-
-      CharmCollectionView.superclass.render.apply(this, arguments);
-      container.setHTML(this.template({charms: this.get('charms')}));
-
-      // TODO: Use view.events structure to attach this
-      container.all('div.thumbnail').each(function(el) {
-        el.on('click', function(evt) {
-          self.fire('navigateTo',
-              {url: '/charms/' + this.getData('charm-url')});
-        });
-      });
-
-      return this;
-    },
-
-    on_search_change: function(evt) {
-      if (evt) {
-        evt.preventDefault();
-        evt.stopImmediatePropagation();
-      }
-
-      var query = Y.one('#charm-search').get('value');
-      if (query) {
-        this.set('query', query);
-      } else {
-        query = this.get('query');
-      }
-
-      // The handling in datasources-plugins is an example of doing this a bit
-      // better ie. io cancellation outstanding requests, it does seem to
-      // cause some interference with various datasource plugins though.
-      this.get('charm_store').get('datasource').sendRequest({
-        request: 'search/json?search_text=' + query,
-        callback: {
-          'success': Y.bind(this.on_results_change, this),
-          'failure': function er(e) { console.error(e.error); }
-        }});
-    },
-
-    on_results_change: function(io_request) {
-      var result_set = Y.JSON.parse(
-          io_request.response.results[0].responseText);
-      this.set('charms', result_set.results);
-      this.render();
-    }
-
-  });
-
-  views.charm_collection = CharmCollectionView;
   views.charm = CharmView;
 
 }, '0.1.0', {

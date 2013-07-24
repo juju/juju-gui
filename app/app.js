@@ -115,16 +115,9 @@ YUI.add('juju-gui', function(Y) {
         parent: 'service'
       },
 
-      charm_collection: {
-        type: 'juju.views.charm_collection',
-        preserve: false,
-        parent: 'environment'
-      },
-
       charm: {
         type: 'juju.views.charm',
         preserve: false,
-        parent: 'charm_collection'
       },
 
       notifications: {
@@ -869,16 +862,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * @method show_charm_collection
-     */
-    show_charm_collection: function(req) {
-      this.showView('charm_collection', {
-        query: req.query.q,
-        charm_store: this.charm_store
-      });
-    },
-
-    /**
      * @method show_charm
      */
     show_charm: function(req) {
@@ -1356,9 +1339,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
-          { path: '/charms/',
-            callbacks: 'show_charm_collection',
-            namespace: 'gui'},
           { path: '/charms/*charm_store_path/',
             callbacks: 'show_charm',
             model: 'charm',
