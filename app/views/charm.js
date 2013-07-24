@@ -47,9 +47,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
           console.error(e.error);
         }
       });
-      this.get('charm_store').get('datasource').sendRequest({
-        request: this.get('charm_data_url'),
-      });
 
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
@@ -101,7 +98,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
         settings = utils.extractServiceSettings(options);
       }
 
-      debugger;
       container.setHTML(this.template({
         charm: charm.getAttrs(),
         settings: settings}));
