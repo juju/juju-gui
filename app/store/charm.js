@@ -1,5 +1,4 @@
 /*
- *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -205,6 +204,27 @@ YUI.add('juju-charm-store', function(Y) {
           }
         }
       });
+    },
+
+    /**
+     * Api call to fetch autocomplete suggestions based on the current term.
+     *
+     * @method autocomplete
+     * @param {Object} query the filters data object for search.
+     * @param {Object} filters the filters data object for search.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     */
+    autocomplete: function(filters, callbacks, bindScope) {
+      var endpoint = 'charms';
+      // Force that this is an autocomplete call to perform matching on the
+      // start of names vs a fulltext search.
+      filters.autocomplete = 'true';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks, filters);
     },
 
     /**

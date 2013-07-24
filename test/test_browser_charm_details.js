@@ -89,6 +89,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(view.get('container').one('.heading'));
     });
 
+    it('renders local charms for inspector mode correctly', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      data.charm.url = 'local:precise/apache2-10';
+      var charm = new models.BrowserCharm(data.charm);
+      charm.set('scheme', 'local');
+      view = new CharmView({
+        charm: charm,
+        container: utils.makeContainer(),
+        forInspector: true
+      });
+
+      view.render();
+      assert.isNull(view.get('container').one('.heading'));
+      assert.isNull(view.get('container').one('#bws-readme'));
+      assert.isNull(view.get('container').one('#bws-configuration'));
+      assert.isNull(view.get('container').one('#bws-source'));
+      assert.isNull(view.get('container').one('#bws-qa'));
+    });
+
     it('has sharing links', function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.set('datasource', {
