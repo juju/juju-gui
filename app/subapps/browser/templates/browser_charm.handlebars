@@ -78,6 +78,9 @@
                             <h2>Summary</h2>
                         {{/unless}}
                         <p>{{ summary }}</p>
+                        {{#if isLocal}}
+                            <p><em>This is a local charm; only limited information will be available</em></p>
+                        {{/if}}
                         <h2>Description</h2>
                         <p class="respect-whitespace">{{#if isFullscreen}}{{ description }}{{else}}{{ truncate description 300 }}{{/if}}</p>
                     </div>
