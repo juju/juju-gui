@@ -26,6 +26,9 @@
           </div>
         </div>
       </div>
+      {{#if is_subordinate}}
+        <input type="hidden" id="number-units" value="0" />
+      {{else}}
       <div class="charm-entry">
         <div class="control-group">
           <div class="well control-description">
@@ -38,6 +41,7 @@
           </div>
         </div>
       </div>
+      {{/if}}
       {{/with}}
 
       {{#if settings}}

@@ -629,11 +629,11 @@ YUI.add('juju-charm-panel', function(Y) {
           if (this.configFileContent) {
             config = null;
           }
-          numUnits = parseInt(numUnits, 10);
+          numUnits = charm.get('is_subordinate') ? 0 : parseInt(numUnits, 10);
           env.deploy(url, serviceName, config, this.configFileContent,
               numUnits, function(ev) {
                 if (ev.err) {
-                  console.log(url + ' deployment failed');
+                  console.log(url + ' deployment failed', ev.err);
                   db.notifications.add(
                       new models.Notification({
                         title: 'Error deploying ' + serviceName,

@@ -168,7 +168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isUndefined(charm.get('is_subordinate'));
       // The _set forces a change to a writeOnly attribute.
       charm._set('is_subordinate', true);
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:wordpress', callback, {unitCount: 0});
       assert.isUndefined(result.error);
       assert.strictEqual(
           fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
