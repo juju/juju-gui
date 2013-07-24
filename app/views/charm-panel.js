@@ -234,9 +234,8 @@ YUI.add('juju-charm-panel', function(Y) {
         render: function() {
           var container = this.get('container'),
               charm = this.get('model'),
-              config = charm && charm.get('config'),
-              settings = config && utils.extractServiceSettings(
-                  config.options),
+              options = charm && charm.get('options'),
+              settings = options && utils.extractServiceSettings(options),
               self = this;
           if (charm && charm.loaded) {
             container.setHTML(this.template(
@@ -275,7 +274,7 @@ YUI.add('juju-charm-panel', function(Y) {
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.
               loaded: false,
-              config: config
+              config: options
             });
             // If we have been given coordinates at which the ghost should be
             // created, respect them.
@@ -720,8 +719,7 @@ YUI.add('juju-charm-panel', function(Y) {
    */
   function createInstance(config) {
 
-    var charmStore = config.charm_store,
-        charms = new models.CharmList(),
+    var charms = new models.CharmList(),
         app = config.app,
         container = Y.Node.create('<div />').setAttribute(
             'id', 'juju-search-charm-panel'),
@@ -778,18 +776,9 @@ YUI.add('juju-charm-panel', function(Y) {
         newPanel.set('ghostAttributes', config.ghostAttributes);
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
-        if (charm.loaded) {
-          newPanel.set('model', charm);
-        } else {
-          charm.load(charmStore, function(err, response) {
-            if (err) {
-              console.log('error loading charm', response);
-            } else {
-              newPanel.set('model', charm);
-            }
-          });
-        }
-      } else { // This is the search panel.
+        newPanel.set('model', charm);
+      } else {
+        // This is the search panel.
         newPanel.render();
       }
     }
@@ -864,11 +853,6 @@ YUI.add('juju-charm-panel', function(Y) {
       // the charm panel's internal detail of marking loaded charms, so we will
       // do the marking here.
       charm.loaded = true;
-      // The config panel expects the config options here instead of the
-      // "options" attribute. <shrug>
-      if (charm.get('config') === undefined) {
-        charm.set('config', {options: charm.get('options')});
-      }
       charms.add(charm);
       // Show the configuration panel.
       _setPanel({
@@ -1001,7 +985,6 @@ YUI.add('juju-charm-panel', function(Y) {
     'overlay',
     'dom-core',
     'juju-models',
-    'event-resize',
-    'gallery-ellipsis'
+    'event-resize'
   ]
 });

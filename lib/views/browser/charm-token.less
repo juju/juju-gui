@@ -15,10 +15,17 @@
             .charm-icon,
             .category-icon,
             .icon {
-                width: 48px;
-                height: 48px;
                 margin-right: 12px;
                 position: relative;
+            }
+            .charm-icon,
+            .charm-icon img,
+            .category-icon,
+            .category-icon img,
+            .icon,
+            .icon img {
+                width: 48px;
+                height: 48px;
             }
             .charm-icon {
                 background: transparent
@@ -34,25 +41,45 @@
             .charm-icon,
             .category-icon,
             .icon {
-                width: 50px;
-                height: 50px;
                 margin-right: 10px;
                 position: relative;
+            }
+            .charm-icon,
+            .charm-icon img,
+            .category-icon,
+            .category-icon img,
+            .icon,
+            .icon img {
+                width: 50px;
+                height: 50px;
             }
             .charm-icon {
                 background: transparent
                     url(/juju-ui/assets/images/charm_48.png)
                     left top no-repeat;
             }
+            .metadata {
+                text-overflow: ellipsis;
+                max-width: 173px;
+                white-space: nowrap;
+                overflow: hidden;
+            }
         }
         &.large {
             .charm-icon,
             .category-icon,
             .icon {
-                width: 96px;
-                height: 96px;
                 margin-right: 16px;
                 position: relative;
+            }
+            .charm-icon,
+            .charm-icon img,
+            .category-icon,
+            .category-icon img,
+            .icon,
+            .icon img {
+                width: 96px;
+                height: 96px;
             }
             .charm-icon {
                 background: transparent
@@ -75,6 +102,9 @@
             .type3;
             min-width: 100px;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .metadata {
             .type14;
@@ -97,8 +127,6 @@
         }
     }
     &.active {
-        // Adjust the padding to account for the border.
-        padding-right: 18px;
         background-color: #d5d5d5;
         border-right: 2px solid @charm-panel-orange;
     }

@@ -48,7 +48,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      var tpl = this.template(),
+      var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl);
 
       this._renderSearchWidget(tplNode);

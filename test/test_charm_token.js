@@ -20,20 +20,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('charm token', function() {
-  var charm_container, CharmToken, token, Y;
+  var charm_container, CharmToken, cleanIconHelper, token, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           CharmToken = Y.juju.widgets.browser.CharmToken;
+          utils = Y.namespace('juju-tests.utils');
+          cleanIconHelper = utils.stubCharmIconPath();
           done();
         });
   });
 
   beforeEach(function() {
-    charm_container = Y.namespace('juju-tests.utils')
-                       .makeContainer('charm-container');
+    charm_container = utils.makeContainer('charm-container');
   });
 
   afterEach(function() {
@@ -41,6 +42,10 @@ describe('charm token', function() {
     if (token) {
       token.destory();
     }
+  });
+
+  after(function() {
+    cleanIconHelper();
   });
 
   it('exists', function() {
@@ -53,7 +58,7 @@ describe('charm token', function() {
       id: 'test',
       name: 'some-charm',
       description: 'some description',
-      recent_commit_count: 1,
+      commitCount: 1,
       downloads: 3,
       tested_providers: ['ec2']
     };
@@ -91,7 +96,7 @@ describe('charm token', function() {
       size: 'tiny',
       description: 'some description',
       mainCategory: 'app-servers',
-      recent_commit_count: 1,
+      commitCount: 1,
       downloads: 3
     });
     assert.equal('tiny', token.get('size'));
@@ -99,48 +104,6 @@ describe('charm token', function() {
     // and the css class should be on the token once rendered.
     token.render(charm_container);
     assert(charm_container.one('.charm-token').hasClass('tiny'));
-
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-48'), true);
-
-    // and the metadata should not be displayed.
-    var metadataNode = charm_container.one('.metadata');
-    assert.equal(metadataNode, undefined);
-  });
-
-  it('sets an icon per the category if available', function() {
-    var cfg = {
-      id: 'test',
-      name: 'some-charm',
-      description: 'some description',
-      mainCategory: 'app-servers',
-      recent_commit_count: 1,
-      downloads: 3,
-      tested_providers: ['ec2']
-    };
-
-    var token = new CharmToken(cfg);
-    token.render(charm_container);
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-50'), true);
-  });
-
-  it('sets an icon per the category respecting size', function() {
-    var cfg = {
-      id: 'test',
-      name: 'some-charm',
-      description: 'some description',
-      mainCategory: 'app-servers',
-      recent_commit_count: 1,
-      downloads: 3,
-      size: 'large',
-      tested_providers: ['ec2']
-    };
-
-    var token = new CharmToken(cfg);
-    token.render(charm_container);
-    var iconNode = charm_container.one('.category-icon');
-    assert.equal(iconNode.hasClass('charm-app-servers-96'), true);
   });
 
 });

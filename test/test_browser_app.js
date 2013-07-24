@@ -101,6 +101,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
 
+      // The default is to now show the home buttons on the widget.
+      assert.isFalse(view.get('withHome'));
+    });
+
+    it('must show the home icons when withHome is set', function() {
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen({
+        withHome: true
+      });
+      view.render(container);
+
+      // The default is to now show the home buttons on the widget.
+      assert.isTrue(view.get('withHome'));
+    });
+
+    it('shows the home icons if the withHome is changed', function(done) {
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen();
+      view.render(container);
+
+      view.search.showHome = function() {
+        // The only way to exit the test is that we hit this callback bound to
+        // the change event we trigger below.
+        done();
+      };
+
+      view.set('withHome', true);
     });
 
     it('reroutes to minimized when toggled', function(done) {
@@ -112,6 +141,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.render(container);
       container.one('.bws-icon').simulate('click');
+    });
+
+    it('routes home when it catches a gohome event', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new FullScreen();
+      view.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.search, false);
+        assert.equal(ev.change.filter.clear, true);
+        done();
+      });
+
+      view.render(container);
+      view.search._onHome({
+        halt: function() {}
+      });
     });
 
   });
@@ -181,9 +225,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('.bws-icon').simulate('click');
     });
 
-    it('must correctly render the initial browser ui', function() {
+    it('must correctly render the initial browser ui', function(done) {
       var container = Y.one('#subapp-browser');
       view = new Sidebar({
+        container: container,
         store: new Y.juju.Charmworld2({
           apiHost: 'http://localhost'
         })
@@ -204,12 +249,71 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.get('store').set(
           'datasource',
           new Y.DataSource.Local({source: emptyData}));
-      view.render(container);
+      view.render();
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
+
+      // The home buttons are not visible by default.
+      assert.isFalse(view.get('withHome'));
+      assert.isTrue(container.one('.browser-nav').hasClass('hidden'));
+
+      // Yet changing the attribute triggers it to go.
+      view.search.showHome = function() {
+        // The only way to exit the test is that we hit this callback bound to
+        // the change event we trigger below.
+        done();
+      };
+      view.set('withHome', true);
+    });
+
+    it('shows the home icon when instructed', function() {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar({
+        store: new Y.juju.Charmworld2({
+          apiHost: 'http://localhost'
+        }),
+        withHome: true
+      });
+
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var emptyData = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
+
+      // Override the store to not call the dummy localhost address.
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: emptyData}));
+      view.render(container);
+
+      // The home buttons are not visible by default.
+      assert.isTrue(view.get('withHome'));
+      assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
+
+    });
+
+    it('routes home when it catches a gohome event', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+      view.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.search, false);
+        assert.equal(ev.change.filter.clear, true);
+        done();
+      });
+
+      view.render(container);
+      view.search._onHome({
+        halt: function() {}
+      });
     });
 
   });
@@ -218,15 +322,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
   describe('browser app', function() {
-    var Y, app, browser, next;
+    var Y, app, browser, Charmworld2, next;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'app-subapp-extension',
-          'juju-views',
           'juju-browser',
+          'juju-charm-store',
+          'juju-views',
           'subapp-browser', function(Y) {
             browser = Y.namespace('juju.subapps');
+            Charmworld2 = Y.namespace('juju').Charmworld2;
             next = function() {};
             done();
           });
@@ -328,7 +434,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id routes to the default view correctly', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost'
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
@@ -342,7 +452,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id handles routes for new charms correctly', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost'
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
@@ -395,7 +509,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('/charm/id router ignores other urls', function() {
-      app = new browser.Browser();
+      app = new browser.Browser({
+        store: new Charmworld2({
+          'apiHost': 'http://localhost',
+          'noop': true
+        })
+      });
       // Stub out the sidebar so we don't render anything.
       app.sidebar = function() {};
       var req = {
@@ -975,5 +1094,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(browser._searchChanged());
     });
 
+    it('permits a filter clear command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache'
+        }
+      });
+
+      // We have a good valid search.
+      assert.equal(url, '/search?series=precise&text=apache&type=approved');
+
+      // Now let's clear it and make sure it's emptied.
+      url = browser._getStateUrl({
+        'filter': {
+          clear: true
+        }
+      });
+      assert.equal(url, '/search');
+    });
+
+    it('permits a filter replace command', function() {
+      var url = browser._getStateUrl({
+        'search': true,
+        'filter': {
+          text: 'apache',
+          categories: ['app-servers']
+        }
+      });
+      // We have a good valid search.
+      assert.equal(
+          url,
+          '/search?categories=app-servers&series=precise&text=apache&type=approved');
+
+      // Now let's update it and force all the rest to go away.
+      url = browser._getStateUrl({
+        'filter': {
+          replace: true,
+          text: 'mysql'
+        }
+      });
+      assert.equal(url, '/search?text=mysql');
+    });
   });
 })();

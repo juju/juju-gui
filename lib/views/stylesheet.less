@@ -27,6 +27,9 @@
 @navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
 @text-colour: #505050;
+@border-radius: 3px;
+@environment-menu-background-color: #ffffff;
+@environment-menu-hover-background: #f2f2f2;
 
 // Imports need to be after vars.
 @import "typography.less";
@@ -58,7 +61,7 @@
                  2px 0 3px -2px @shadow-color inset,
                  -2px 0 3px -2px @shadow-color inset;
     .create-box-shadow(@box-shadow);
-    .create-border-radius(~"6px / 7px");
+    .create-border-radius(@border-radius);
     .create-linear-gradient(@gradient-start, @gradient-end);
     border: none;
 }
@@ -101,7 +104,7 @@
     box-sizing: border-box;
 }
 .button {
-    .create-border-radius(4px);
+    .create-border-radius(@border-radius);
     .create-linear-gradient(@charm-panel-orange, #c03f11);
     color: #fff;
     text-decoration:none;
@@ -305,9 +308,11 @@ table tr.highlighted td {
                 color: #fff;
             }
             & > li {
+                .type13;
                 height: 50px;
+                margin: 0;
                 padding: 16px 10px 0 20px;
-                font-size: 10.5pt;
+                color: #fff;
 
                 & > a.button.inverse {
                     background-color: #1f1b18;
@@ -324,7 +329,8 @@ table tr.highlighted td {
                 #notifications {
                     #notify-indicator {
                         .button;
-                        margin: 2px 9px 0 0;
+                        margin: 0 9px 0 0;
+                        padding: 6px 12px;
                     }
                     #notify-list {
                         white-space: normal;
@@ -390,7 +396,6 @@ table tr.highlighted td {
     cursor: move;
 }
 #shortcut-help {
-    .create-border-radius('black');
     .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     position: absolute;
     left: 4%;
@@ -457,12 +462,12 @@ table tr.highlighted td {
 }
 .environment-menu {
     @border_radius: 20px;
-    @background_color: #282421;
-    .create-border-radius(@border_radius);
-    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
+    @background_color: @environment-menu-background-color;
+    .create-border-radius(@border-radius);
+    .create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
     display: none;
     background-color: @background_color;
-    color: #fdf6e3;
+    color: @text-colour;
     top: 0;
     left: 0;
     position: absolute;
@@ -472,18 +477,21 @@ table tr.highlighted td {
     }
     .triangle {
         position: absolute;
-        top: 62px;
-        width: 12px;
-        line-height: 21px;
-        background-repeat: no-repeat;
-    }
-    &.left .triangle {
-        right: -12px;
-        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle_right.png);
+        top: 22px;
+        width: 0px;
+        height: 0px;
+        border-style: solid;
     }
     &.right .triangle {
-        left: -12px;
-        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
+        left: -16px;
+        border-width: 10px 17.3px 10px 0;
+        border-color: transparent #ffffff transparent transparent;
+    }
+    &.left .triangle {
+        right: -16px;
+        border-width: 10px 0 10px 17.3px;
+        border-color: transparent transparent transparent #ffffff;
+
     }
     .menu-title {
         margin: 10px;
@@ -493,22 +501,21 @@ table tr.highlighted td {
         float: right;
     }
     ul {
-        margin: 10px;
+        margin: 0;
         list-style-type: none;
 
         li {
-            .create-border-radius(@border_radius);
-            background-position: 5px center;
+            background-position: 10px center;
             background-repeat: no-repeat;
-            border-bottom: 1px #5f594f solid;
             cursor: pointer;
             line-height: 32px;
-            padding: 5px 5px 5px 5px;
+            padding: 0 15px;
+            white-space: nowrap;
 
             a {
               text-decoration: none;
-              font-size: 75%;
-              color: #fdf6e3;
+              font-size: 13px;
+              color: @text-colour;
             }
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
@@ -532,7 +539,7 @@ table tr.highlighted td {
                 border-bottom: none;
             }
             &:hover {
-                background-color: lighten(@background_color, 10%);
+                background-color: @environment-menu-hover-background;
             }
             &.disabled {
                 color: gray;
@@ -545,7 +552,7 @@ table tr.highlighted td {
         }
     }
     &#service-menu ul li {
-        padding-left: 42px;
+        padding-left: 36px;
     }
 
 }
@@ -689,7 +696,8 @@ g.service {
         fill: #4c4c4c;
     }
     .name {
-        fill: #4c4c4c;
+      fill: rgb(80, 80, 80);
+      font-size: 14px;
     }
    .unit-count {
         stroke-width: 0;
@@ -864,7 +872,7 @@ g.unit {
         // Using a variable here because LESS strips commas in mixin args.
         @box-shadow: 0 2px 4px lighten(@background-color, 10%),
             0 1px 2px lighten(@background-color, 20%) inset;
-        .create-border-radius(8px);
+        .create-border-radius(@border-radius);
         .create-box-shadow(@box-shadow);
         background-color: @background-color;
         margin: 6px;
@@ -1072,7 +1080,7 @@ g.unit {
         top: @top;
 
         .picker-expanded .picker-list {
-            .create-border-radius(4px);
+            .create-border-radius(@border-radius);
             .create-box-shadow(0 0 4px rgba(0,0,0,.51));
             -moz-background-clip: padding;
             -webkit-background-clip: padding-box;
@@ -1109,7 +1117,7 @@ g.unit {
     }
 }
 .yui3-panel {
-    .create-border-radius(6px);
+    .create-border-radius(@border-radius);
     .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     background: white;
     padding: 1.6em;
@@ -1163,7 +1171,7 @@ g.unit {
 }
 
 #juju-search-charm-panel,
-.yui3-juju-inspector {
+.juju-inspector {
     .create-box-shadow(inset 0 -1px 0 lightgray);
     .customize-scrollbar;
     display: block;
@@ -1352,7 +1360,7 @@ g.unit {
                     // Using a variable here because LESS strips commas in
                     // mixin args.
                     @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
-                    .create-border-radius(6px);
+                    .create-border-radius(@border-radius);
                     .create-box-shadow(@box-shadow);
                     color: @text-entry-color;
                     font-style: italic;
@@ -1703,8 +1711,11 @@ g.unit {
         }
     }
 }
+.service-view+.viewlet-manager {
+    overflow-y: auto;
+}
 #tooltip {
-    .create-border-radius(3px);
+    .create-border-radius(@border-radius);
     text-align: left;
     background-color: white;
     border: solid 1px black;
@@ -1860,10 +1871,15 @@ g.unit {
   }
 }
 
+/* Old charm view */
+/* Delete after inspector is released. */
+.old-charm-view {
+    overflow: auto;
+}
+
 /** Browser Setup **/
 @import "browser/reset.less";
 @import "browser/vars.less";
-@import "browser/mixins.less";
 
 /** SubApps **/
 @import "browser/main.less";
@@ -1876,7 +1892,6 @@ g.unit {
 @import "browser/charm-token.less";
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
-@import "browser/sharing-widget.less";
 @import "browser/tabview.less";
 @import "juju-inspector.less";
 

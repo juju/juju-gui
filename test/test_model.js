@@ -38,6 +38,22 @@ describe('charm normalization', function() {
         'charms/precise/openstack-dashboard-0/json');
   });
 
+  it('can load options from both "options" and "config"', function() {
+    var options = {foo: 'bar'};
+    var charm = new models.Charm({
+      id: 'cs:precise/openstack-dashboard-0',
+      options: options
+    });
+    assert.equal(charm.get('options'), options);
+    charm = new models.Charm({
+      id: 'cs:precise/openstack-dashboard-0',
+      config: {
+        options: options
+      }
+    });
+    assert.equal(charm.get('options'), options);
+  });
+
   it('must convert timestamps into time objects', function() {
     var time = 1349797266.032,
         date = new Date(time),
@@ -736,6 +752,11 @@ describe('BrowserCharm test', function() {
     instance.get('recent_commit_count').should.equal(3);
   });
 
+  it('tracks the total commits of the charm', function() {
+    instance = new models.BrowserCharm(data.charm);
+    assert.equal(instance.get('commitCount'), 44);
+  });
+
   it('provides a providers attr', function() {
     // The charm details needs the failing providers generated from the list
     // of tested_providers.
@@ -760,7 +781,7 @@ describe('BrowserCharm test', function() {
     instance = new models.BrowserCharm(data.charm);
     var converted = instance._convertRelatedData(providesData);
     assert.equal(providesData.name, converted.name);
-    assert.equal(providesData.id, converted.id);
+    assert.equal(providesData.id, converted.storeId);
     assert.equal(
         providesData.commits_in_past_30_days,
         converted.recent_commit_count);
@@ -782,7 +803,7 @@ describe('BrowserCharm test', function() {
     // The overall should have the default 5 max charms listed.
     assert.equal(5, relatedObject.overall.length);
     // The requires for mysql should be truncated to the max of 5 as well.
-    assert.equal(1, relatedObject.requires.http.length);
+    assert.equal(5, relatedObject.requires.http.length);
     // There's only one key in the provides section.
     assert.equal(1, Y.Object.keys(relatedObject.provides).length);
 
@@ -808,7 +829,10 @@ describe('database export', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     var wordpress = db.services.add({
       id: 'wordpress',
-      charm: 'precise/wordpress-1'});
+      charm: 'precise/wordpress-1',
+      config: {debug: 'no', username: 'admin'},
+      annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
+    });
     var rel0 = db.relations.add({
       id: 'relation-0',
       endpoints: [
@@ -820,13 +844,40 @@ describe('database export', function() {
     db.environment.set('defaultSeries', 'precise');
 
     // Add the charms so we can resolve them in the export.
-    db.charms.add([{id: 'precise/mysql-1'}, {id: 'precise/wordpress-1'}]);
+    db.charms.add([{id: 'precise/mysql-1'},
+          {id: 'precise/wordpress-1',
+            config: {
+              options: {
+                debug: {
+                  'default': 'no'
+                },
+                username: {
+                  'default': 'root'
+                }
+              }
+            }
+          }
+        ]);
     var result = db.exportDeployer().envExport;
     var relation = result.relations[0];
 
     assert.equal(result.series, 'precise');
-    assert.equal(result.services[0].charm, 'mysql');
-    assert.equal(result.services[1].charm, 'wordpress');
+    assert.equal(result.services.mysql.charm, 'precise/mysql-1');
+    assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
+
+    // A default config value is skipped
+    assert.equal(result.services.wordpress.options.debug, undefined);
+    // A value changed from the default is exported
+    assert.equal(result.services.wordpress.options.username, 'admin');
+    // Ensure that mysql has no options object in the export as no
+    // non-default options are defined
+    assert.equal(result.services.mysql.options, undefined);
+
+    // Export position annotations.
+    assert.equal(result.services.wordpress.annotations['gui-x'], 100);
+    assert.equal(result.services.wordpress.annotations['gui-y'], 200);
+    // Note that ignored wasn't exported.
+    assert.equal(result.services.wordpress.annotations.ignored, undefined);
 
     assert.equal(relation[0], 'mysql:db');
     assert.equal(relation[1], 'wordpress:app');

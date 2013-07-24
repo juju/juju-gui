@@ -1,4 +1,5 @@
 /*
+ *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -155,7 +156,7 @@ YUI.add('juju-charm-store', function(Y) {
 
 
   /**
-   * Api helper for the updated charmworld api v1.
+   * Api helper for the updated charmworld api v2.
    *
    * @class Charmworld2
    * @extends {Base}
@@ -236,7 +237,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} bindScope the scope of *this* in the callbacks.
      *
      */
-    charm: function(charmID, callbacks, bindScope) {
+    _charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
@@ -244,6 +245,42 @@ YUI.add('juju-charm-store', function(Y) {
       }
 
       this._makeRequest(endpoint, callbacks);
+    },
+
+    /**
+     * Api call to fetch a charm's details, with an optional local cache.
+     *
+     * @method charmWithCache
+     * @param {String} charmID the charm to fetch.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     * @param {ModelList} cache a local cache of browser charms.
+     */
+    charm: function(charmID, callbacks, bindScope, cache) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+      }
+      if (cache) {
+        var charm = cache.getById(charmID);
+        if (charm) {
+          // Defer the success callback to prevent race conditions.
+          Y.soon(function() {
+            callbacks.success({}, charm);
+          });
+          return;
+        } else {
+          var successCB = callbacks.success;
+          callbacks.success = function(data) {
+            var charm = new Y.juju.models.BrowserCharm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
+            cache.add(charm);
+            successCB(data, charm);
+          };
+        }
+      }
+      this._charm(charmID, callbacks, bindScope);
     },
 
     /**
@@ -321,6 +358,41 @@ YUI.add('juju-charm-store', function(Y) {
         charmID,
         'file',
         filename].join('/');
+    },
+
+    /**
+      Generate the API path to a charm icon.
+      This is useful when generating links and references in HTML to the
+      charm's icon and is constructing the correct icon based on reviewed
+      status and categories on the charm.
+
+      @method iconpath
+      @param {String} charmID The id of the charm to grab the icon for.
+
+     */
+    iconpath: function(charmID) {
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch its category data or its own
+      // icon.
+      // XXX: #1202703 - this is a short term fix for the bug. Need longer
+      // term solution.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+            'static/img/charm_160.svg';
+
+      } else {
+        // Get the charm ID from the service.  In some cases, this will be
+        // the charm URL with a protocol, which will need to be removed.
+        // The following regular expression removes everything up to the
+        // colon portion of the quote and leaves behind a charm ID.
+        charmID = charmID.replace(/^[^:]+:/, '');
+
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
     },
 
     /**

@@ -1,0 +1,59 @@
+<div class="unit-overview">
+    <h2><span class="">&bull;</span> {{ unit.displayName }}</h2>
+    <div class="unit-stats content">
+        IP Address: {{ unit.private_address }}<br />
+        Status: {{ unit.agent_state }}<br />
+        Public Address: {{ unitIPDescription }}
+    </div>
+    <div class="unit-info-tabs content">
+        <div class="unit-info-relations">
+            <strong>Relations</strong>
+            {{#if relations}}
+            <table>
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>endpoint</th>
+                  <th>name</th>
+                  <th>role</th>
+                  <th>scope</th>
+                  <th>status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#relations}}
+                  <tr>
+                    <td class="relation-ident">{{ident}}</td>
+                    <td class="relation-endpoint">
+                      {{#if far}}
+                      {{far.service}}
+                      {{else}}
+                      (self)
+                      {{/if}}
+                    </td>
+                    <td class="relation-name">{{near.name}}</td>
+                    <td class="relation-role">{{near.role}}</td>
+                    <td class="relation-scope">{{scope}}</td>
+                    <td class="relation-status">
+                      {{#if has_error}}
+                      <span class="error">&#x2b1b;</span> error
+                      <div class="unit-button-palette">
+                        <form id="{{near.name}}">
+                        <button type="button" class="btn resolved-relation-button"
+                          value="{{relation_id}}">Resolved</button>
+                        <button type="button" class="btn retry-relation-button"
+                          value="{{relation_id}}">Retry</button>
+                        </form>
+                      </div>
+                      {{/if}}
+                    </td>
+                  </tr>
+                {{/relations}}
+              </tbody>
+            </table>
+            {{else}}
+            Unit has no relations
+            {{/if}}
+        </div>
+    </div>
+</div>

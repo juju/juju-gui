@@ -1024,3 +1024,32 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('utils.landscapeAnnotations', function() {
+
+    var Y, utils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('returns an empty array if there are no unit annotations', function() {
+      assert.equal(Y.Lang.isArray(utils.landscapeAnnotations({})), true);
+    });
+
+    it('returns lp reboot and upgrade annotations in an array', function() {
+      var annotations = utils.landscapeAnnotations({
+        annotations: {
+          'landscape-needs-reboot': 'foo',
+          'landscape-security-upgrades': 'bar'
+        }
+      });
+      assert.equal(annotations[0], 'landscape-needs-reboot');
+      assert.equal(annotations[1], 'landscape-security-upgrades');
+    });
+  });
+})();

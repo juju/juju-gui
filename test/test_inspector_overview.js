@@ -24,7 +24,7 @@ describe('Inspector Overview', function() {
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'event-key'];
+      'event-key', 'juju-charm-store', 'juju-charm-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           utils = Y.namespace('juju-tests.utils');
@@ -66,8 +66,8 @@ describe('Inspector Overview', function() {
 
   var setUpInspector = function() {
     var charmId = 'precise/mediawiki-4';
-    var charm = new models.Charm({id: charmId});
-    charm.setAttrs(charmConfig);
+    charmConfig.id = charmId;
+    var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     service = new models.Service({
       id: 'mediawiki',
@@ -79,10 +79,15 @@ describe('Inspector Overview', function() {
       ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
       ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
     ]}});
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
     view = new jujuViews.environment({
       container: container,
       db: db,
-      env: env
+      env: env,
+      store: fakeStore
     });
     view.render();
     Y.Node.create([
@@ -132,4 +137,112 @@ describe('Inspector Overview', function() {
        message.service_name.should.equal('mediawiki');
        message.num_units.should.equal(4);
      });
+
+  it('generates a proper statuses object', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview;
+
+    // Clear out the units added in the setUpInspector method
+    db.units.reset();
+
+    var units = new Y.LazyModelList();
+
+    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
+        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
+        e = units.add({
+          id: 'mysql/4',
+          agent_state: 'started',
+          annotations: {
+            'landscape-needs-reboot': 'foo'
+          }
+        }),
+        a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
+        b = units.add({ id: 'mysql/1', agent_state: 'instal-error' });
+
+    // This order is important.
+    var expected = [
+      { category: 'error', units: [a, b] },
+      { category: 'pending', units: [c] },
+      { category: 'running', units: [d, e] },
+      { category: 'landscape-needs-reboot', units: [e]}
+    ];
+    assert.deepEqual(overview.updateUnitList(units), expected);
+  });
+
+  it('generates the unit list data bound elements', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview,
+        newContainer = utils.makeContainer();
+
+    // Clear out the units added in the setUpInspector method
+    db.units.reset();
+
+    var units = new Y.LazyModelList();
+
+    units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
+    units.add({ id: 'mysql/1', agent_state: 'instal-error' }),
+    units.add({ id: 'mysql/2', agent_state: 'pending' }),
+    units.add({ id: 'mysql/3', agent_state: 'started' });
+
+    var statuses = overview.updateUnitList(units);
+
+    overview.generateAndBindUnitHeaders(newContainer, statuses);
+
+    var unitListWrappers = newContainer.all('.unit-list-wrapper');
+
+    assert.equal(unitListWrappers.size(), 3);
+    var wrapper1 = unitListWrappers.item(0);
+    assert.equal(wrapper1.one('.status-unit-header').hasClass('error'), true);
+    assert.equal(wrapper1.one('.unit-qty').getHTML(), 2);
+    assert.equal(wrapper1.one('.category-label').getHTML(), 'Error');
+    assert.notEqual(
+        wrapper1.one('.status-unit-content').getStyle('maxHeight'), undefined);
+
+    var wrapper2 = unitListWrappers.item(1);
+    assert.equal(wrapper2.one('.status-unit-header').hasClass('pending'), true);
+    assert.equal(wrapper2.one('.unit-qty').getHTML(), 1);
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.notEqual(
+        wrapper2.one('.status-unit-content').getStyle('maxHeight'), undefined);
+
+    var wrapper3 = unitListWrappers.item(2);
+    assert.equal(wrapper3.one('.status-unit-header').hasClass('running'), true);
+    assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.notEqual(
+        wrapper3.one('.status-unit-content').getStyle('maxHeight'), undefined);
+
+    units = new Y.LazyModelList();
+
+    units.add({ id: 'mysql/0', agent_state: 'started' });
+    units.add({ id: 'mysql/1', agent_state: 'pending' });
+    units.add({ id: 'mysql/2', agent_state: 'pending' });
+    units.add({ id: 'mysql/3', agent_state: 'pending' });
+    units.add({ id: 'mysql/4', agent_state: 'pending' });
+    units.add({ id: 'mysql/5', agent_state: 'pending' });
+
+    statuses = overview.updateUnitList(units);
+
+    overview.generateAndBindUnitHeaders(newContainer, statuses);
+
+    unitListWrappers = newContainer.all('.unit-list-wrapper');
+
+    assert.equal(unitListWrappers.size(), 2);
+
+    wrapper2 = unitListWrappers.item(0);
+    assert.equal(wrapper2.one('.status-unit-header').hasClass('pending'), true);
+    assert.equal(wrapper2.one('.unit-qty').getHTML(), 5);
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.notEqual(
+        wrapper2.one('.status-unit-content').getStyle('maxHeight'), undefined);
+
+    wrapper3 = unitListWrappers.item(1);
+    assert.equal(wrapper3.one('.status-unit-header').hasClass('running'), true);
+    assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.notEqual(
+        wrapper3.one('.status-unit-content').getStyle('maxHeight'), undefined);
+
+    newContainer.remove(true);
+  });
 });

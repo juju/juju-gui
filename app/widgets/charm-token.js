@@ -44,18 +44,13 @@ YUI.add('browser-charm-token', function(Y) {
     * @param {Object} config The widget configuration options.
     * @return {undefined} Nothing.
     */
-    initializer: function(config) {
+    initializer: function(cfg) {
       // Extract the charm configuration values from the jumble of widget
-      // config options.
+      // cfg options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       // @property charmData Contains the extracted charm information.
-      this.charmData = Y.aggregate({}, config, false, charmAttributes);
-      // The configuration schema comes in as "options" and has to be moved
-      // over to the charm data manually.
-      if (this.charmData.config === undefined) {
-        this.charmData.config = {};
-      }
-      this.charmData.config.options = config.options;
+      this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
+      this.charmData.options = cfg.options;
     },
 
     /**
@@ -86,38 +81,22 @@ YUI.add('browser-charm-token', function(Y) {
     _makeDragStartHandler: function(charmData) {
       var container = this.get('boundingBox');
       return function(evt) {
-        var dragImage;
-        var icon = container.one('.icon');
+        var icon = container.one('.icon'),
+            iconSrc;
         evt = evt._event; // We want the real event.
-        if (icon) {
-          // Chome creates drag images in a silly way, so CSS background
-          // tranparency doesn't work and if part of the drag image is
-          // off-screen, that part is simply white.  Therefore we have to clone
-          // the icon and make sure it is visible.  We don't really want it to
-          // be visible though, so we make sure the overflow induced by the
-          // icon is hidden.
-          dragImage = Y.one('body')
-            .appendChild(icon.cloneNode(true))
-              .setStyles({
-                'height': icon.one('img').get('height'),
-                'width': icon.one('img').get('width')});
-          // Set a unique id on the cloned icon so we can remove it after drop
-          dragImage.setAttribute('id', dragImage.get('_yuid'));
-          // Pass the cloned id through the drag data system.
-          evt.dataTransfer.setData(
-              'clonedIconId', dragImage.getAttribute('id'));
-        } else {
-          // On chrome, if part of this drag image is not visible, that part
-          // will be transparent.
-          dragImage =
-              container.one('.charm-icon') ||
-              container.one('.category-icon');
+        var dataTransfer = evt.dataTransfer;
+        iconSrc = icon.one('img').getAttribute('src');
+        dataTransfer.effectAllowed = 'copy';
+        var dragData = {
+          charmData: charmData,
+          dataType: 'charm-token-drag-and-drop',
+          iconSrc: iconSrc
+        };
+        // Must be 'Text' because IE10 doesn't treat this as key/value pair
+        dataTransfer.setData('Text', JSON.stringify(dragData));
+        if (dataTransfer.setDragImage) {
+          dataTransfer.setDragImage(icon.getDOMNode(), 0, 0);
         }
-
-        evt.dataTransfer.effectAllowed = 'copy';
-        evt.dataTransfer.setData('charmData', charmData);
-        evt.dataTransfer.setData('dataType', 'charm-token-drag-and-drop');
-        evt.dataTransfer.setDragImage(dragImage.getDOMNode(), 0, 0);
         // This event is registered on many nested elements, but we only have
         // to handle the drag start once, so stop now.
         evt.stopPropagation();
@@ -186,6 +165,14 @@ YUI.add('browser-charm-token', function(Y) {
   }, {
     ATTRS: {
       /**
+        The id used for querying the charmworld data store.
+        @attribute id
+        @default undefined
+        @type {String}
+      */
+      storeId: {},
+
+      /**
        * @attribute description
        * @default ''
        * @type {String}
@@ -211,30 +198,12 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-        The id of the charm to render
-        @attribute id
-        @default undefined
-        @type {String}
-      */
-      id: {},
-
-      /**
          @attribute is_approved
          @default undefined
          @type {Boolean}
 
        */
       is_approved: {},
-
-      /**
-       * @attribute mainCategory
-       * @default null
-       * @type {String}
-       *
-       */
-      mainCategory: {
-        value: null
-      },
 
       /**
        * @attribute name
@@ -244,6 +213,13 @@ YUI.add('browser-charm-token', function(Y) {
       name: {
         value: ''
       },
+
+      /**
+       * @attribute commitCount
+       * @default undefined
+       * @type {Number}
+       */
+      commitCount: {},
 
       /**
        * @attribute recent_commit_count

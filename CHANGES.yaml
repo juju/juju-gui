@@ -22,6 +22,27 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
+- 0.8.0:
+    - Update charm browser styling.
+    - Add home link in charm browser.
+    - Add provider test result data and links
+    - >
+      Update service block design. Use icons for service blocks and stop 
+      making block size dependent on unit count. Switch service block status
+      summary from pie chart to bar chart.
+    - Charm browser shows lifetime downloads and commit counts.
+    - jujucharms.com can change logout button to "get juju" button.
+    - >
+      Fix deployment issues encountered for some charms, e.g. Marco Ceppi's
+      discource charm.
+    - Fix Juju deployer export.
+    - More drag and drop deployment refinement and fixes.
+    - >
+      Many other small bugfixes.
+    - >
+      Incremental progress on service inspector behind
+      serviceInspector feature flag.
+    - Begin unifying old and new charm models.
 - 0.7.2:
     - Easier Charm browser control with browse/build toggle.
     - UI tweaks and fixes.

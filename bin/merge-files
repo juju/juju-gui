@@ -77,7 +77,6 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('parallel');
   reqs.push('app-transitions-native');
   reqs.push('gallery-markdown');
-  reqs.push('gallery-ellipsis');
   reqs.push('gallery-timer');
   reqs.push('loader-base');
   reqs.push('tabview');
@@ -94,7 +93,6 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/d3.status.js',
     'app/assets/javascripts/event-tracker.js',
     'app/assets/javascripts/FileSaver.js',
-    'app/assets/javascripts/gallery-ellipsis.js',
     'app/assets/javascripts/gallery-markdown.js',
     'app/assets/javascripts/gallery-timer.js',
     'app/assets/javascripts/js-yaml.min.js',
@@ -104,7 +102,8 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/resizing_textarea.js',
     'app/assets/javascripts/spinner.js',
     'app/assets/javascripts/sub-app.js',
-    'app/assets/javascripts/unscaled-pack-layout.js'
+    'app/assets/javascripts/unscaled-pack-layout.js',
+    'app/assets/javascripts/Object.observe.poly.js'
   ]);
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');

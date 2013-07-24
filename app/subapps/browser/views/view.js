@@ -104,6 +104,53 @@ YUI.add('subapp-browser-mainview', function(Y) {
                 this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
         );
       }
+
+      this.addEvent(
+          this.search.on(
+              this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+      );
+
+      // If the showHome attribute is changed, update our html by adding the
+      // with-home class to the widget.
+      this.after('withHomeChange', function(ev) {
+        if (ev.newVal) {
+          // Let the widget know we wish it to unhide it's icon and link for
+          // showing home.
+          this.search.showHome();
+
+          if (!this.isFullscreen()) {
+            // In the sidebar, the left panel needs the height adjusted to
+            // make room for the home links to show up.
+            this.get('container').one('.bws-content').addClass('with-home');
+          }
+        } else {
+          // Ask the widget to remove the home buttons from display.
+          this.search.hideHome();
+          if (!this.isFullscreen()) {
+            // We also need to adjust the height of the sidebar now to close
+            // up the space by the home buttons.
+            this.get('container').one('.bws-content').removeClass('with-home');
+          }
+        }
+      }, this);
+    },
+
+    /**
+     * Force a navigate event when the search widget says "Home" was clicked.
+     *
+     * @method _goHome
+     * @param {Event} ev The event from the search widget.
+     *
+     */
+    _goHome: function(ev) {
+      var change = {
+        charmID: undefined,
+        search: false,
+        filter: {
+          clear: true
+        }
+      };
+      this.fire('viewNavigate', {change: change});
     },
 
     /**
@@ -124,15 +171,17 @@ YUI.add('subapp-browser-mainview', function(Y) {
               this.get('store')
           ),
           autocompleteDataFormatter: this.get('store').resultsToCharmlist,
-          filters: this.get('filters')
+          filters: this.get('filters'),
+          withHome: this.get('withHome')
         });
         this.search.render(node.one('.bws-header'));
       }
+      this.search.render(node.one('.bws-header'));
 
       // Make sure the controls starts out setting the correct active state
       // based on the current viewmode for our View.
       this.controls = new widgets.ViewmodeControls({
-        initialViewmode: this.get('viewmode')
+        currentViewmode: this.get('viewmode')
       });
       this.controls.render();
     },
@@ -302,6 +351,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
         valueFn: function() {
           return this.name.match(/[a-z]+$/);
         }
+      },
+
+      withHome: {
+        value: false
       }
     }
   });

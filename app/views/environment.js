@@ -76,7 +76,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         /**
           @method setInspector
-          @param {ViewContainer} inspector instance.
+          @param {ViewletManager} inspector instance.
           @param {Boolean} remove flag to remove the instance.
           @chainable
         */
@@ -142,14 +142,14 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Because the inspector can trigger it's own destruction we need to
           // listen for the event and remove it from the list of open inspectors
-          serviceInspector.inspector.after('destroy', function(e) {
+          serviceInspector.viewletManager.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
           }, this);
 
           // Restrict to a single inspector instance
           if (Y.Object.size(this._inspectors) >= 1) {
             Y.Object.each(this._inspectors, function(inspector) {
-              inspector.inspector.destroy();
+              inspector.viewletManager.destroy();
             });
           }
 
@@ -170,8 +170,10 @@ YUI.add('juju-view-environment', function(Y) {
             configBase: {
               db: this.topo.get('db'),
               env: this.topo.get('env'),
+              store: this.topo.get('store'),
               events: {
-                '.close': {'click': 'destroy'}
+                '.close': {'click': 'destroy'},
+                '.close-slot': {'click': 'hideSlot'}
               }
             },
             configService: {
@@ -179,37 +181,54 @@ YUI.add('juju-view-environment', function(Y) {
                 '.tab': {'click': 'showViewlet'}
               },
               viewletEvents: {
+                // Viewlet wrapper viewlet.
+                'button.confirm': { click: 'saveConfig'},
+                '.charm-url': {click: 'onShowCharmDetails'},
+                '.destroy-service-icon': {click: 'onDestroyIcon'},
+                '.initiate-destroy': {click: 'onInitiateDestroy'},
+                '.cancel-destroy': {click: 'onCancelDestroy'},
+                // Overview viewlet.
+                '.num-units-control': {
+                  keydown: 'modifyUnits',
+                  blur: 'resetUnits'
+                },
+                // Settings viewlet.
                 '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
-                'button.confirm': { click: 'saveConfig'},
-                '.num-units-control': {
-                  'keydown': 'modifyUnits',
-                  'blur': 'resetUnits'
-                },
-                '.destroy-service-icon': {'click': 'onDestroyIcon'},
-                '.initiate-destroy': {'click': 'onInitiateDestroy'},
-                '.cancel-destroy': {'click': 'onCancelDestroy'},
-                // Constraints viewlet events.
-                '.save-constraints': {click: 'saveConstraints'}
+                // Constraints viewlet.
+                '.save-constraints': {click: 'saveConstraints'},
+                // Overview units viewlet.
+                '.status-unit-header': {click: 'toggleUnitHeader'},
+                '.unit-details': { click: 'showUnit'},
+                '.toggle-select-all': {click: 'toggleSelectAllUnits'},
+                'a[data-unit]': { click: 'showUnitDetails'}
               },
-              viewletList: ['overview', 'units', 'config', 'constraints'],
-              template: Y.juju.views.Templates['view-container']
+              viewletList: [
+                'overview', // Default viewlet first.
+                'charmDetails',
+                'config',
+                'constraints',
+                'unitDetails',
+                'inspectorHeader'
+              ],
+              template: Y.juju.views.Templates['viewlet-manager']
             },
             configGhost: {
               // controller will show the first one in this array by default
-              viewletList: ['ghostConfig'],
-              // the view container template
+              viewletList: ['ghostConfig', 'inspectorHeader', 'charmDetails'],
+              // the viewlet manager template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
-              // these events are for the viewlet container
+              // these events are for the viewlet manager
               events: {
                 '.cancel': { 'click': 'destroy' }
               },
               // these events are for the viewlets and have their callbacks
               // bound to the controllers prototype and are then mixed with the
-              // containers events for final binding
+              // manager's events for final binding
               viewletEvents: {
+                '.charm-url': {click: 'onShowCharmDetails'},
                 '.deploy': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
@@ -218,7 +237,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.initiate-destroy': {'click': 'onInitiateDestroy'},
                 '.cancel-destroy': {'click': 'onCancelDestroy'}
               },
-              // the configuration for the view container template
+              // the configuration for the view manager template
               templateConfig: {
                 packageName: model.get('package_name'),
                 id: model.get('id')
@@ -274,6 +293,7 @@ YUI.add('juju-view-environment', function(Y) {
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              store: this.get('store'),
               getInspector: Y.bind(this.getInspector, this),
               setInspector: Y.bind(this.setInspector, this),
               createServiceInspector: Y.bind(this.createServiceInspector, this),
@@ -339,12 +359,15 @@ YUI.add('juju-view-environment', function(Y) {
   views.environment = EnvironmentView;
 
 }, '0.1.0', {
-  requires: ['juju-templates',
-             'juju-view-utils',
-             'juju-models',
-             'juju-topology',
-             'base-build',
-             'handlebars-base',
-             'node',
-             'view']
+  requires: [
+    'base-build',
+    'handlebars-base',
+    'juju-models',
+    'juju-templates',
+    'juju-topology',
+    'juju-view-inspector',
+    'juju-view-utils',
+    'node',
+    'view'
+  ]
 });

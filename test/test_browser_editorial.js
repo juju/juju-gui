@@ -21,8 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('browser_editorial', function() {
-    var container, EditorialView, fakeStore, models,
-        node, sampleData, view, views, Y;
+    var container, cleanIconHelper, EditorialView, fakeStore, models,
+        node, sampleData, utils, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -30,22 +30,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-tests-utils',
           'subapp-browser-editorial',
           function(Y) {
+            utils = Y.namespace('juju-tests.utils');
             views = Y.namespace('juju.browser.views');
             EditorialView = views.EditorialView;
             sampleData = Y.io('data/interesting.json', {sync: true});
-            // Need the handlebars helper for the charm-token to render.
-            Y.Handlebars.registerHelper(
-                'charmFilePath',
-                function(charmID, file) {
-                  return '/path/to/charm/' + file;
-                });
+            cleanIconHelper = utils.stubCharmIconPath();
             done();
           });
-    });
-
-    after(function(done) {
-      Y.Handlebars.helpers.charmFilePath = undefined;
-      done();
     });
 
     beforeEach(function() {
@@ -74,6 +65,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         fakeStore.destroy();
       }
       container.remove(true);
+    });
+
+    after(function() {
+      cleanIconHelper();
     });
 
     it('renders sidebar with hidden charms', function() {
@@ -158,6 +153,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(ev.change.search);
         assert.equal(1, ev.change.filter.categories.length);
         assert.equal('databases', ev.change.filter.categories[0]);
+        assert.equal(ev.change.filter.replace, true);
         done();
       });
       view.render(results);

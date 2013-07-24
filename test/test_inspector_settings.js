@@ -23,7 +23,8 @@ describe('Inspector Settings', function() {
       inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmConfig;
 
   before(function(done) {
-    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils'];
+    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
+      'juju-charm-store', 'juju-charm-models'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -70,8 +71,8 @@ describe('Inspector Settings', function() {
 
   var setUpInspector = function(options) {
     var charmId = 'precise/mediawiki-4';
-    var charm = new models.Charm({id: charmId});
-    charm.setAttrs(charmConfig);
+    charmConfig.id = charmId;
+    var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);
@@ -87,10 +88,15 @@ describe('Inspector Settings', function() {
         ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
       ]}});
     }
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
     view = new jujuViews.environment({
       container: container,
       db: db,
-      env: env
+      env: env,
+      store: fakeStore
     });
     view.render();
     Y.Node.create([
@@ -98,6 +104,17 @@ describe('Inspector Settings', function() {
     ].join('')).appendTo(container);
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
+
+  it('properly renders a service without charm options', function() {
+    // Mutate charmConfig before the render.
+    delete charmConfig.config;
+    inspector = setUpInspector();
+    // Verify the viewlet rendered, previously it would raise.
+    assert.isObject(container.one('.config-file'));
+    // Restore the test global
+    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+
+  });
 
   it('toggles exposure', function() {
     inspector = setUpInspector();
@@ -159,7 +176,7 @@ describe('Inspector Settings', function() {
   it('wires up UI elements to handlers for service inspector', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector();
-    var events = inspector.inspector.events;
+    var events = inspector.viewletManager.events;
     assert.equal(typeof events['.destroy-service-icon'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
@@ -168,7 +185,7 @@ describe('Inspector Settings', function() {
   it('wires up UI elements to handlers for ghost inspector', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector({useGhost: true});
-    var events = inspector.inspector.events;
+    var events = inspector.viewletManager.events;
     assert.equal(typeof events['.destroy-service-icon'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');

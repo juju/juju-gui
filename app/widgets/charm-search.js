@@ -40,7 +40,8 @@ YUI.add('browser-search-widget', function(Y) {
    * @extends {Y.Widget}
    * @event EV_CLEAR_SEARCH the widget requests all search reset.
    * @event EV_SEARCH_CHANGED the widgets notifies that the search input has
-   * changed.
+    changed.
+   * @event EV_SEARCH_GOHOME Signal that the user clicked the home button.
    *
    */
   ns.Search = Y.Base.create('search-widget', Y.Widget, [
@@ -48,6 +49,7 @@ YUI.add('browser-search-widget', function(Y) {
   ], {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_SEARCH_CHANGED: 'search_changed',
+    EVT_SEARCH_GOHOME: 'go_home',
 
     TEMPLATE: templates['browser-search'],
 
@@ -90,6 +92,20 @@ YUI.add('browser-search-widget', function(Y) {
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
       });
+    },
+
+    /**
+     * When home is selected the event needs to be fired up to listeners.
+     *
+     * @method _onHome
+     * @param {Event} ev The click event for the home button.
+     *
+     */
+    _onHome: function(ev) {
+      var form = this.get('boundingBox').one('form');
+      form.one('input').set('value', '');
+      ev.halt();
+      this.fire(this.EVT_SEARCH_GOHOME);
     },
 
     /**
@@ -225,6 +241,32 @@ YUI.add('browser-search-widget', function(Y) {
               'blur', this._toggleActive, this)
       );
 
+      this.addEvent(
+          container.one('.browser-nav').delegate(
+              'click',
+              this._onHome,
+              '.home',
+              this)
+      );
+      this.addEvent(
+          container.one('i').on(
+              'mouseenter',
+              function(ev) {
+                // Change the icon to hover on mounseenter.
+                ev.target.removeClass('home-icon');
+                ev.target.addClass('home-icon-hover');
+              }, this)
+      );
+      this.addEvent(
+          container.one('i').on(
+              'mouseleave',
+              function(ev) {
+                // Change the icon to back on mouseleave.
+                ev.target.removeClass('home-icon-hover');
+                ev.target.addClass('home-icon');
+              }, this)
+      );
+
       // Make sure the UI around the autocomplete search input is setup.
       this._setupAutocomplete();
 
@@ -243,6 +285,7 @@ YUI.add('browser-search-widget', function(Y) {
       this.addEvent(
           this.ac.on('select', this._suggestionSelected, this)
       );
+
     },
 
     /**
@@ -273,6 +316,7 @@ YUI.add('browser-search-widget', function(Y) {
        *
        */
       this.publish(this.EVT_SEARCH_CHANGED);
+      this.publish(this.EVT_SEARCH_GOHOME);
     },
 
     /**
@@ -306,6 +350,28 @@ YUI.add('browser-search-widget', function(Y) {
       var input = this.get('contentBox').one('input');
       input.focus();
       input.set('value', newval);
+    },
+
+    /**
+     * Show the home icons to the user.
+     *
+     * @method showHome
+     *
+     */
+    showHome: function() {
+      var homeNode = this.get('contentBox').one('.browser-nav');
+      homeNode.removeClass('hidden');
+    },
+
+    /**
+     * Hide the home links from the user.
+     *
+     * @method hideHome
+     *
+     */
+    hideHome: function() {
+      var homeNode = this.get('contentBox').one('.browser-nav');
+      homeNode.addClass('hidden');
     }
 
   }, {
@@ -334,6 +400,16 @@ YUI.add('browser-search-widget', function(Y) {
         value: {
           text: ''
         }
+      },
+
+      /**
+       * @attribute withHome
+       * @default false
+       * @type {Boolean}
+       *
+       */
+      withHome: {
+        value: false
       }
     }
   });
@@ -345,7 +421,9 @@ YUI.add('browser-search-widget', function(Y) {
     'browser-charm-token',
     'browser-filter-widget',
     'event',
+    'event-delegate',
     'event-tracker',
+    'event-mouseenter',
     'event-valuechange',
     'juju-templates',
     'juju-views',

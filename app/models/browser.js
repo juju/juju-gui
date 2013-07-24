@@ -91,7 +91,7 @@ YUI.add('juju-browser-models', function(Y) {
        @method _clear
        @private
      */
-    _clear: function() {
+    clear: function() {
       this.setAttrs({
         categories: [],
         provider: [],
@@ -107,7 +107,7 @@ YUI.add('juju-browser-models', function(Y) {
        @method reset
      */
     reset: function() {
-      this._clear();
+      this.clear();
       this._setDefaults();
     },
     /**

@@ -54,7 +54,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .add': {
         click: '_addCharmEnvironment'
       },
-      '#bws-hooks select': {
+      '#bws-source select': {
         change: '_loadHookContent'
       },
       '.charm .back': {
@@ -62,6 +62,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.charm-token': {
         click: '_handleCharmSelection'
+      },
+      '#sharing a': {
+        click: '_openShareLink'
       }
     },
 
@@ -90,11 +93,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
       var ghostAttributes;
-      if (browserCharm.get('shouldShowIcon')) {
-        ghostAttributes = {
-          icon: this.get('store').filepath(browserCharm.get('id'), 'icon.svg')
-        };
-      }
+      ghostAttributes = {
+        icon: this.get('store').iconpath(browserCharm.get('storeId'))
+      };
       this.get('deploy').call(null, charm, ghostAttributes);
     },
 
@@ -176,6 +177,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
               return;
             }
 
+            if (tabContent === 'Readme') {
+              this._loadReadmeTab();
+              return;
+            }
           }, this)
       );
     },
@@ -352,7 +357,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var index = ev.currentTarget.get('selectedIndex');
       var filename = ev.currentTarget.get('options').item(
           index).getAttribute('value'),
-          node = this.get('container').one('#bws-hooks .filecontent');
+          node = this.get('container').one('#bws-source .filecontent');
 
       // Load the file, but make sure we prettify the code.
       if (filename) {
@@ -378,6 +383,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._renderRelatedInterfaceCharms('requires', relatedCharms.requires);
         this._renderRelatedInterfaceCharms('provides', relatedCharms.provides);
+        this.loadedRelatedInterfaceCharms = true;
       }
     },
 
@@ -392,7 +398,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
-          this.get('charm').get('id'), {
+          this.get('charm').get('storeId'), {
             'success': function(data) {
               data = this._buildQAData(data);
               node.setHTML(this.qatemplate(data));
@@ -405,6 +411,27 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Load Readme file content into the tab.
+     *
+     * @method _loadReadmeTab
+     */
+    _loadReadmeTab: function() {
+      // Start loading the readme so it's ready to go.
+      if (!this.loadedReadme) {
+        var tplNode = this.get('container');
+        var readme = this._locateReadme();
+
+        if (readme) {
+          this._loadFile(tplNode.one('#bws-readme'),
+                         readme
+          );
+        } else {
+          this._noReadme(tplNode.one('#bws-readme'));
+        }
+        this.loadedReadme = true;
+      }
+    },
+    /**
       Load the related charm data into the model for use.
 
       @method _loadRelatedCharms
@@ -412,7 +439,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _loadRelatedCharms: function(callback) {
       this.get('store').related(
-          this.get('charm').get('id'), {
+          this.get('charm').get('storeId'), {
             'success': function(data) {
               this.get('charm').buildRelatedCharms(
                   data.result.provides, data.result.requires);
@@ -462,7 +489,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(container);
 
       this.get('store').file(
-          this.get('charm').get('id'),
+          this.get('charm').get('storeId'),
           filename, {
             'success': function(data) {
               if (prettify) {
@@ -493,6 +520,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _noReadme: function(container) {
       container.setHTML('<h3>Charm has no README</h3>');
+    },
+
+    /**
+       Handles the links in the sharing widget to ensure they open in a new
+       window.
+
+       @method _openShareLink
+       @param {Y.EventFacade} e The click event.
+     */
+    _openShareLink: function(e) {
+      e.halt();
+      var shareLink = e.currentTarget.get('href');
+      window.open(shareLink, 'share_window');
     },
 
     /**
@@ -559,6 +599,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+      this.loadedReadme = false;
+      this.loadedRelatedCharms = false;
+      this.loadedRelatedInterfaceCharms = false;
     },
 
     /**
@@ -571,23 +614,25 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _renderRelatedInterfaceCharms: function(type, relatedCharms) {
-      this.charmTokens = [];
-      Y.Object.each(relatedCharms, function(list, iface) {
-        // we only care about the top three charms in the list.
-        var charms = list.slice(0, 3);
-        charms.forEach(function(charm) {
-          var uiID = [
-            type,
-            iface
-          ].join('-');
+      if (!this.loadedRelatedInterfaceCharms) {
+        this.charmTokens = [];
+        Y.Object.each(relatedCharms, function(list, iface) {
+          // we only care about the top three charms in the list.
+          var charms = list.slice(0, 3);
+          charms.forEach(function(charm) {
+            var uiID = [
+              type,
+              iface
+            ].join('-');
 
-          charm.size = 'tiny';
-          var ct = new widgets.browser.CharmToken(charm);
-          var node = Y.one('[data-interface="' + uiID + '"]');
-          ct.render(node);
-          this.charmTokens.push(ct);
+            charm.size = 'tiny';
+            var ct = new widgets.browser.CharmToken(charm);
+            var node = Y.one('[data-interface="' + uiID + '"]');
+            ct.render(node);
+            this.charmTokens.push(ct);
+          }, this);
         }, this);
-      }, this);
+      }
     },
 
     /**
@@ -600,18 +645,21 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     _renderRelatedCharms: function() {
-      var relatedCharms = this.get('charm').get('relatedCharms');
-      // If there are no overall related charms then just skip it all.
-      if (relatedCharms.overall) {
-        var relatedNode = this.get('container').one('.related-charms');
-        this.relatedCharmContainer = new widgets.browser.CharmContainer(
-            Y.merge({
-              name: 'Related Charms',
-              cutoff: 10,
-              children: relatedCharms.overall
-            }));
-        this.relatedCharmContainer.render(relatedNode);
-        this.hideIndicator(Y.one('.related-charms'));
+      if (!this.loadedRelatedCharms) {
+        var relatedCharms = this.get('charm').get('relatedCharms');
+        // If there are no overall related charms then just skip it all.
+        if (relatedCharms.overall) {
+          var relatedNode = this.get('container').one('.related-charms');
+          this.relatedCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Related Charms',
+                cutoff: 10,
+                children: relatedCharms.overall
+              }));
+          this.relatedCharmContainer.render(relatedNode);
+          this.hideIndicator(Y.one('.related-charms'));
+        }
+        this.loadedRelatedCharms = true;
       }
     },
 
@@ -628,15 +676,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container'),
-          sourceLink = this._getSourceLink();
+          container = this.get('container');
 
+      var link;
+      if (window.location.origin) {
+        link = window.location.origin + '/' + this.get('charm').get('storeId');
+      } else {
+        link = window.location.protocol + window.location.host + '/' +
+            this.get('charm').get('storeId');
+      }
       tplData.isFullscreen = isFullscreen;
-      tplData.sourceLink = sourceLink;
-      tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits, sourceLink);
+      tplData.forInspector = this.get('forInspector');
+      if (!tplData.forInspector) {
+        tplData.sourceLink = this._getSourceLink();
+        tplData.prettyCommits = this._formatCommitsForHtml(
+            tplData.recent_commits, tplData.sourceLink);
+      }
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
+      tplData.link = escape(link);
+      tplData.twitterText = escape(
+          'Check out this great charm on jujucharms: ' + link);
+      tplData.emailSubject = escape(
+          'Check out this great charm on jujucharms!');
+      tplData.emailText = escape(
+          'Check out this great charm on jujucharms: ' + link);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
@@ -644,7 +708,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (Y.Object.isEmpty(tplData.provides)) {
         tplData.provides = false;
       }
-
 
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
@@ -654,28 +717,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var renderTo = this.get('renderTo');
       renderTo.setHTML(tplNode);
 
-      this.shareWidget = new widgets.browser.SharingWidget({
-        link: window.location.origin + '/' + this.get('charm').get('id'),
-        button: renderTo.one('.share')
-      });
-      this.shareWidget.render(renderTo.one('.share'));
-
       this.tabview = new widgets.browser.TabView({
         render: true,
         srcNode: tplNode.one('.tabs')
       });
       this._dispatchTabEvents(this.tabview);
 
-      // Start loading the readme so it's ready to go.
-      var readme = this._locateReadme();
-
-      if (readme) {
-        this._loadFile(tplNode.one('#bws-readme'),
-                       readme
-        );
-      } else {
-        this._noReadme(tplNode.one('#bws-readme'));
-      }
 
       if (isFullscreen) {
         if (!this.get('charm').get('relatedCharms')) {
@@ -697,7 +744,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
-      renderTo.one('.heading').scrollIntoView();
+      if (!tplData.forInspector) {
+        renderTo.one('.heading').scrollIntoView();
+      }
     },
 
     /**
@@ -761,6 +810,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
       charm: {},
 
       /**
+      * @attribute forInspector
+      * @default {Boolean} false
+      * @type {Boolean}
+      */
+      forInspector: {
+        value: false
+      },
+
+      /**
          @attribute isFullscreen
          @default false
          @type {Boolean}
@@ -814,7 +872,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-charm-container',
     'browser-overlay-indicator',
-    'browser-sharing-widget',
     'browser-tabview',
     'datatype-date',
     'datatype-date-format',

@@ -29,7 +29,7 @@ var juju_config = {
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
-  charm_store_url: 'http://jujucharms.com/',
+  charm_store_url: 'https://manage.jujucharms.com/',
   charmworldURL: 'https://manage.jujucharms.com/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
@@ -55,5 +55,7 @@ var juju_config = {
       'The password is the admin-secret from the Juju environment.  This can ' +
       'often be found by looking in ~/.juju/environments.yaml.'),
   isJujucharms: false,
-  defaultViewmode: 'sidebar'
+  defaultViewmode: 'sidebar',
+  // Switches the logout button to a 'Get Juju' button
+  showGetJujuButton: false
 };

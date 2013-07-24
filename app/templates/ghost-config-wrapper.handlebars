@@ -1,28 +1,10 @@
-<div class="view-container-wrapper" draggable="true">
-  <!-- XXX Remove these ugly inline styles when doing the real layout-->
-  <div class="close" style="float: right; border: 1px solid black; padding: 3px;">X</div>
-  {{>service-destroy}}
-  <div class="view-container-navigation" style="clear: both;">
-    <div class="charm-panel-configure">
-      <div class="title">{{packageName}}</div>
-      <div class="name">{{id}}</div>
-    </div>
+<div class="viewlet-manager-wrapper">
+  <div class="header-slot"></div>
+  <div class="viewlet-manager-navigation" style="clear: both;">
     <div class="charm-panel-configure-buttons">
       <button class="btn cancel">Cancel</button>
       <input value="Confirm" type="submit"
              class="btn btn-primary deploy">
-    </div>
-    <div class="charm-entry">
-      <div class="control-group">
-        <div class="well control-description">
-          Name of the service to be deployed.  Must be unique.
-        </div>
-        <div class="control-label" for="service-name">Service name</div>
-        <div class="controls">
-          <input class="config-field" type="text" name="service-name"
-              value="{{packageName}}"/>
-        </div>
-      </div>
     </div>
     <div class="charm-entry">
       <div class="control-group">
@@ -38,5 +20,5 @@
     </div>
   </div>
   <div class="viewlet-container"></div>
-  <div class="view-container-footer"></div>
+  <div class="viewlet-manager-footer"></div>
 </div>

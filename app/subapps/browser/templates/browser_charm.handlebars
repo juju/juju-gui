@@ -1,66 +1,47 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}3-4{{else}}1{{/if}}">
-        <div class="heading">
-                {{#if isFullscreen}}
-                    <div class="breadcrumbs">
-                        <a href="" class="back">
-                            <i class="sprite browser_home"></i>
-                            <span>Home</span>
-                        </a>
-                        | {{ name }}
-                    </div>
-                {{/if}}
-                {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
-                <a href="" class="share">Share</a>
-            <div class="block-icon">
-                {{#if shouldShowIcon}}
-                    <img src="{{charmFilePath id 'icon.svg'}}" alt="{{ name }} icon" class="icon">
-                {{else}}
-                    {{#if mainCategory}}
-                      <div title="category {{mainCategory}}"
-                          class="category-icon sprite charm-{{mainCategory}}-120">
-                      </div>
-                    {{else}}
-                      <div class="charm-icon">
-                      </div>
-                    {{/if}}
-                {{/if}}
-            </div>
-            <div class="charm-details">
-                <h1>{{ name }}</h1>
-                <div class="add-reviewed">
-                    {{#if is_approved}}
-                        <div>
-                            <i class="sprite approved_star"></i>
-                            Reviewed by the Juju team
-                        </div>
-                    {{/if}}
-                    {{! The add class is used by the deploy method in
-                        test/test_charm_running.py.  If you change this name, change
-                        the other one too! }}
-                    <a href="" class="add">Add to my canvas</a>
+        {{#unless forInspector}}
+            <div class="heading">
+                    {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                <div class="block-icon">
+                    <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
                 </div>
-                <ul>
-                    <li>
-                        Activity: {{ downloads }}
-                        {{pluralize 'Download' downloads}},
-                        {{ recent_commit_count }}
-                        {{pluralize 'Commit' recent_commit_count}}
-                    </li>
-                    <li>Ubuntu series: {{ distro_series }}</li>
-                    <li>Location: {{ url }}</li>
-                    <li>
-                        Links:
-                        <a href="{{ sourceLink }}">Source</a>
-                        <a href="{{ code_source.bugs_link }}">Bugs</a>
-                    </li>
-                </ul>
-                
-                {{#if isFullscreen}}
-                    {{>providers}}
-                {{/if}}
+                <div class="charm-details">
+                    <h1>{{ name }}</h1>
+                    <div class="add-reviewed">
+                        {{#if is_approved}}
+                            <div>
+                                <i class="sprite approved_star"></i>
+                                Reviewed by the Juju team
+                            </div>
+                        {{/if}}
+                        {{! The add class is used by the deploy method in
+                            test/test_charm_running.py.  If you change this name, change
+                            the other one too! }}
+                        <a href="" class="add">Add to my canvas</a>
+                    </div>
+                    <ul>
+                        <li>
+                            Activity: {{ downloads }}
+                            {{pluralize 'Download' downloads}},
+                            {{ commitCount }}
+                            {{pluralize 'Commit' commitCount}}
+                        </li>
+                        <li>Ubuntu series: {{ distro_series }}</li>
+                        <li>Location: {{ url }}</li>
+                        <li>
+                            Links:
+                            <a href="{{ sourceLink }}">Source</a>
+                            <a href="{{ code_source.bugs_link }}">Bugs</a>
+                        </li>
+                    </ul>
+
+                    {{#if isFullscreen}}
+                        {{>providers}}
+                    {{/if}}
+                </div>
             </div>
-        </div>
+        {{/unless}}
 
         <div class="tabs">
             <ul>
@@ -68,10 +49,23 @@
                 <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
                 <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
                 <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
+                <li><a href="#bws-source" class="bws-source">Source</a></li>
                 <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
-                <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
             </ul>
-            <hr />
+            {{#unless forInspector}}
+                <hr />
+                <span id="sharing">
+                  <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
+                    <i class="sprite twitter-normal"></i>
+                  </a>
+                  <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
+                    <i class="sprite google-normal"></i>
+                  </a>
+                  <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
+                    <i class="sprite email-normal"></i>
+                  </a>
+                </span>
+            {{/unless}}
             <div>
                 <div id="bws-summary">
                     <div class="summary">
@@ -81,13 +75,7 @@
                         {{/unless}}
                         <p>{{ summary }}</p>
                         <h2>Description</h2>
-                        <p>
-                            {{#if isFullscreen}}
-                                {{ description }}
-                            {{else}}
-                                {{ truncate description 300 }}
-                            {{/if}}
-                        </p>
+                        <p class="respect-whitespace">{{#if isFullscreen}}{{ description }}{{else}}{{ truncate description 300 }}{{/if}}</p>
                     </div>
 
                     <div class="changelog">
@@ -118,8 +106,8 @@
                                     <span class="date">
                                         {{prettyCommits.first.prettyDate}}
                                     </span>
-                                    {{prettyCommits.first.author.name}}
-                                    {{prettyCommits.first.message}} -
+                                    <strong>{{prettyCommits.first.author.name}}</strong>
+                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
                                     </a>
@@ -136,7 +124,7 @@
                                             <span class="date">
                                                 {{prettyDate}}
                                             </span>
-                                            {{author.name}} {{message}} -
+                                            <strong>{{author.name}}</strong> <span class="respect-whitespace">{{message}}</span> -
                                             <a href="{{ revnoLink }}">
                                                 REVNO{{revno}}
                                             </a>
@@ -265,16 +253,18 @@
                       <p>This charm does not expose any configuration options.</p>
                     {{/if}}
                 </div>
-                <div id="bws-qa">Quality</div>
-                <div id="bws-hooks">
+                <div id="bws-source">
                     <p class="intro">
-                        Hooks are the pieces of code that comprise the charm.
-                        A particular hook responds to specific events that Juju
-                        gives the charm, e.g. when there’s a change in the
-                        environment or an administrator has made a change to
-                        its configuration. Hooks are of interest mainly to
-                        charm authors and advanced users. Select a hook below
-                        to view its code.
+                        The source code of the charm includes scripts, metadata,
+                        and other supporting files to describe and install a
+                        service.
+                    </p>
+                    <p class="intro">
+                        <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
+                        target="help">Please contribute to this charm!</a>
+                    </p>
+                    <p class="intro">
+                        Select a file below to view the contents.
                     </p>
                     <select>
                         <option>Select --</option>
@@ -285,6 +275,7 @@
                     <div class="filecontent">
                     </div>
                 </div>
+                <div id="bws-qa">Quality</div>
             </div>
         </div>
     </div>

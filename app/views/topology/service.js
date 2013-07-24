@@ -373,13 +373,17 @@ YUI.add('juju-topology-service', function(Y) {
     serviceStatusMouseOver: function(box, context) {
       d3.select(this)
         .select('.unit-count')
-        .attr('class', 'unit-count show-count');
+        .classed('unit-count', true)
+        .classed('hide-count', false)
+        .classed('show-count', true);
     },
 
     serviceStatusMouseOut: function(box, context) {
       d3.select(this)
         .select('.unit-count')
-        .attr('class', 'unit-count hide-count');
+         .classed('unit-count', true)
+         .classed('show-count', false)
+         .classed('hide-count', true);
     },
 
     /**
@@ -403,7 +407,7 @@ YUI.add('juju-topology-service', function(Y) {
     canvasDropHandler: function(_, self) {
       var evt = d3.event._event;  // So well hidden.
       var dataTransfer = evt.dataTransfer;
-      var dataType = dataTransfer.getData('dataType');
+      var dragData = JSON.parse(dataTransfer.getData('Text'));
       var topo = self.get('component');
       var translation = topo.get('translate');
       var scale = topo.get('scale');
@@ -416,24 +420,12 @@ YUI.add('juju-topology-service', function(Y) {
         ghostAttributes.coordinates[index] =
             (dropXY[index] - translation[index]) / scale;
       });
-      if (dataType === 'charm-token-drag-and-drop') {
+      if (dragData.dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
-        var charmData = Y.JSON.parse(evt.dataTransfer.getData('charmData'));
-        // Remove the cloned drag icon.
-        var icon = Y.one('#' + dataTransfer.getData('clonedIconId'));
-        var iconImage;
-        if (icon) {
-          if (icon.one('img')) {
-            // Maintain the charm icon URL if it exists.
-            iconImage = icon.one('img').getAttribute('src');
-          }
-          icon.remove().destroy(true);
-        }
-        // Pass the icon image along with the coordinates in the deploy event.
-        if (iconImage) {
-          ghostAttributes.icon = iconImage;
-        }
+        var charmData = Y.JSON.parse(dragData.charmData);
+        // Add the icon url to the ghost attributes for the ghost icon
+        ghostAttributes.icon = dragData.iconSrc;
         var charm = new models.Charm(charmData);
         Y.fire('initiateDeploy', charm, ghostAttributes);
       }
@@ -549,9 +541,10 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var vis = topo.vis;
       var db = topo.get('db');
+      var store = topo.get('store');
 
       var visibleServices = db.services.visible();
-      views.toBoundingBoxes(this, visibleServices, topo.service_boxes);
+      views.toBoundingBoxes(this, visibleServices, topo.service_boxes, store);
       // Break a reference cycle that results in uncollectable objects leaking.
       visibleServices.reset();
 
@@ -874,37 +867,40 @@ YUI.add('juju-topology-service', function(Y) {
      */
     createServiceNode: function(node, self) {
       node.append('image')
-        .attr('class', 'service-block-image');
+      .classed('service-block-image', true);
 
+      node.append('image')
+       .classed('service-icon', true)
+       .attr({
+            'xlink:href': function(d) {
+              return d.icon;
+            },
+            width: 96,
+            height: 96,
+            transform: 'translate(47, 50)'
+          });
       node.append('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) {return d.displayName; });
 
-      node.append('text').append('tspan')
-        .attr({'class': 'charm-label',
-            'dy': '3em'})
-        .text(function(d) { return d.charm; });
-
       // Append status charts to service nodes.
-      var status_chart = node.append('g')
-        .attr('class', 'service-status');
+      var status_graph = node.append('g')
+        .attr('transform', 'translate(15, 152)')
+        .classed('service-status', true)
+        .classed('statusbar', true);
 
-      // If the service is still pending and we have a charm icon URL,
-      // add that to the center of the service block.  Otherwise, add a
-      // service health mask.
-      status_chart.append('image')
-        .attr('xlink:href', function(d) {
-            if (d.pending && d.model.get('icon') !== undefined) {
-              return d.model.get('icon');
-            }
-            return '/juju-ui/assets/svgs/service_health_mask.svg';
-          })
-        .attr('class', 'service-health-mask');
-
-      // Add the unit counts, visible only on hover.
-      status_chart.append('text')
-        .attr('class', 'unit-count hide-count');
-
+      status_graph.each(function(d) {
+        if (!d.subordinate) {
+          d3.select(this).property('status_bar',
+              new views.StatusBar({
+                resize: false,
+                width: 160,
+                target: this,
+                fontSize: 8,
+                labels: false
+              }).render());
+        }
+      });
       // Manually attach the touchstart event (see method for details)
       node.each(function(data) {
         self.attachTouchstartEvents(data, this);
@@ -920,6 +916,9 @@ YUI.add('juju-topology-service', function(Y) {
      * @method updateServiceNodes
      */
     updateServiceNodes: function(node) {
+      if (node.empty()) {
+        return;
+      }
       var self = this,
           topo = this.get('component'),
           landscape = topo.get('landscape'),
@@ -971,20 +970,11 @@ YUI.add('juju-topology-service', function(Y) {
         .classed('subordinate', true);
 
       // Size the node for drawing.
-      node.attr({'width': function(d) {
-        // NB: if a service has zero units, as is possible with
-        // subordinates, then default to 1 for proper scaling, as
-        // a value of 0 will return a scale of 0 (this does not
-        // affect the unit count, just the scale of the service).
-        var w = service_scale(d.unit_count || 1);
-        d.w = w;
-        return w;},
-      'height': function(d) {
-        var h = service_scale(d.unit_count || 1);
-        d.h = h;
-        return h;
-      }
+      node.attr({
+        'width': function(box) { box.w = 190; return box.w;},
+        'height': function(box) { box.h = 190; return box.h;}
       });
+
       node.select('.service-block-image').each(function(d) {
         var curr_node = d3.select(this);
         var curr_href = curr_node.attr('xlink:href');
@@ -1062,8 +1052,8 @@ YUI.add('juju-topology-service', function(Y) {
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
-              'x': function(box) {return box.w * 0.07;},
-              'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
+              'x': 13,
+              'y': 79
             });
 
             // Only set 'xlink:href' if not already set to the new value,
@@ -1137,8 +1127,8 @@ YUI.add('juju-topology-service', function(Y) {
         }
         existing = d3.select(this).select('.exposed-indicator')
         .attr({
-              'x': function(d) { return d.w / 10 * 7;},
-              'y': function(d) { return d.relativeCenter[1] - (32 / 2);}
+              'x': 145,
+              'y': 79
             });
       });
 
@@ -1149,77 +1139,14 @@ YUI.add('juju-topology-service', function(Y) {
                 .select('.exposed-indicator').empty();
       }).select('.exposed-indicator').remove();
 
-      // Add the relative health of a service in the form of a pie chart
-      // comprised of units styled appropriately.
-      var status_chart_arc = d3.svg.arc()
-        .innerRadius(0)
-        .outerRadius(function(d) {
-            // Make sure it's exactly as wide as the mask with a bit
-            // of leeway for the border.
-            var outerRadius = parseInt(
-                d3.select(this.parentNode)
-                  .select('.service-health-mask')
-                  .attr('width'), 10) / 2.05;
-
-            // NB: although this causes a calculation function to have
-            // side effects, it does allow us to test that the health
-            // graph was sized properly by accessing this attribute.
-            d3.select(this.parentNode)
-              .attr('data-outerradius', outerRadius);
-            return outerRadius;
-          });
-
-      var status_chart_layout = d3.layout.pie()
-        .value(function(d) { return (d.value ? d.value : 1); })
-        .sort(function(a, b) {
-            // Ensure that the service health graphs will be renders in
-            // the correct order: error - pending - running.
-            var states = {error: 0, pending: 1, running: 2};
-            return states[a.name] - states[b.name];
-          });
-
-      node.select('.service-status')
-        .attr('transform', function(d) {
-            return 'translate(' + d.relativeCenter + ')';
-          });
-      node.select('.service-health-mask')
-        .attr({'width': function(d) {return d.w / 2.25;},
-            'height': function(d) { return d.h / 2.25;},
-            'x': function() { return -d3.select(this).attr('width') / 2;},
-            'y': function() { return -d3.select(this).attr('height') / 2;}
-          });
-
-      // Remove the path object as the data bound to it will cause some
-      // updates to fail because the test in enter() will not pass.
-      node.select('.service-status')
-        .selectAll('path')
-        .remove();
-
-      // Add the path after the mask image (since it requires the mask's
-      // width to set its own).
-      node.select('.service-status')
-        .selectAll('path')
-        .data(function(d) {
-            var aggregate_map = d.aggregated_status,
-                aggregate_list = [];
-            Y.Object.each(aggregate_map, function(count, state) {
-              aggregate_list.push({name: state, value: count});
-            });
-
-            return status_chart_layout(aggregate_list);
-          })
-        .enter().insert('path', 'image')
-        .attr({'d': status_chart_arc,
-            'class': function(d) { return 'status-' + d.data.name;},
-            'fill-rule': 'evenodd'})
-        .append('title').text(function(d) {
-            return d.data.name;
-          });
-
-      node.select('.unit-count')
-        .text(function(d) {
-            return utils.humanizeNumber(d.unit_count);
-          });
+      // Adds the relative health in the form of a percentage bar.
+      node.each(function(d) {
+        var status_graph = d3.select(this).select('.statusbar');
+        var status_bar = status_graph.property('status_bar');
+        if (status_bar && !d.subordinate) {
+          status_bar.update(d.aggregated_status);
+        }
+      });
     },
 
 
@@ -1269,12 +1196,15 @@ YUI.add('juju-topology-service', function(Y) {
           z = topo.get('scale');
 
       if (service && cp) {
-        var cp_width = cp.getDOMNode().getClientRects()[0].width,
-            menu_left = (service.x * z + service.w * z / 2 <
-                         topo.get('width') * z / 2),
-            service_center = service.relativeCenter;
+        var cpRect = cp.getDOMNode().getClientRects()[0],
+            cpWidth = cpRect.width,
+            serviceCenter = service.relativeCenter,
+            menuLeft = (service.x * z + tr[0] + serviceCenter[0] * z <
+                        topo.get('width') / 2),
+            cpHeight = cpRect.height,
+            arrowWidth = 16; // Hard coded for now for simplicity.
 
-        if (menu_left) {
+        if (menuLeft) {
           cp.removeClass('left')
             .addClass('right');
         } else {
@@ -1283,15 +1213,21 @@ YUI.add('juju-topology-service', function(Y) {
         }
         // Set the position of the div in the following way:
         // top: aligned to the scaled/panned service minus the
-        //   location of the tip of the arrow (68px down the menu,
-        //   via css) such that the arrow always points at the service.
+        //   location of the tip of the arrow such that the arrow always
+        //   points at the service.
         // left: aligned to the scaled/panned service; if the
         //   service is left of the midline, display it to the
         //   right, and vice versa.
         cp.setStyles({
-          'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
-          'left': service.x * z +
-              (menu_left ? service.w * z : -(cp_width)) + tr[0]
+          'top': (
+              service.y * z + tr[1] +
+              (serviceCenter[1] * z) - (cpHeight / 2)),
+          'left': (
+              service.x * z +
+              (menuLeft ?
+               service.w * z + arrowWidth :
+               -(cpWidth) - arrowWidth) +
+              tr[0])
         });
       }
     },
@@ -1327,16 +1263,20 @@ YUI.add('juju-topology-service', function(Y) {
       var landscape = topo.get('landscape');
       var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
+      var triangle = serviceMenu.one('.triangle');
       var securityURL, rebootURL;
       var flags = window.flags;
 
       if (flags.serviceInspector) {
         this.show_service(service);
-        return;
+      }
+
+      if (service.get('pending')) {
+        return true;
       }
 
       // Update landscape links and show/hide as needed.
-      if (landscape) {
+      if (landscape && !flags.serviceInspector) {
         rebootURL = landscape.getLandscapeURL(service, 'reboot');
         securityURL = landscape.getLandscapeURL(service, 'security');
 
@@ -1348,10 +1288,19 @@ YUI.add('juju-topology-service', function(Y) {
         }
       }
 
+      // The view option should not be used with the inspector.
+      if (flags.serviceInspector) {
+        serviceMenu.one('.view-service').hide();
+      }
+
       if (box && !serviceMenu.hasClass('active')) {
         topo.set('active_service', box);
         topo.set('active_context', box.node);
         serviceMenu.addClass('active');
+
+        var menuHeight = serviceMenu.getDOMNode().getClientRects()[0].height;
+        var triHeight = 18;
+        triangle.setStyle('top', ((menuHeight - triHeight) / 2) + 'px');
 
         // Disable the 'Build Relation' link if the charm has not yet loaded.
         var addRelation = serviceMenu.one('.add-relation');
@@ -1489,6 +1438,7 @@ YUI.add('juju-topology-service', function(Y) {
   requires: [
     'd3',
     'd3-components',
+    'd3-statusbar',
     'juju-view-service',
     'juju-templates',
     'juju-models',

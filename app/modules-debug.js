@@ -50,9 +50,6 @@ var GlobalConfig = {
   groups: {
     gallery: {
       modules: {
-        'gallery-ellipsis': {
-          fullpath: '/juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
-        },
         'gallery-markdown': {
           fullpath: '/juju-ui/assets/javascripts/gallery-markdown-debug.js'
         },
@@ -114,12 +111,12 @@ var GlobalConfig = {
         'FileSaver': {
           fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
         }
-      },
-      observe: {
-        modules: {
-          'observe': {
-            fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
-          }
+      }
+    },
+    observe: {
+      modules: {
+        'observe': {
+          fullpath: '/juju-ui/assets/javascripts/Object.observe.poly.js'
         }
       }
     },
@@ -146,10 +143,6 @@ var GlobalConfig = {
 
         'browser-overlay-indicator': {
           fullpath: '/juju-ui/widgets/overlay-indicator.js'
-        },
-
-        'browser-sharing-widget': {
-          fullpath: '/juju-ui/widgets/sharing-widget.js'
         },
 
         'browser-search-widget': {
@@ -247,6 +240,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/environment.js'
         },
 
+        'juju-view-inspector': {
+          fullpath: '/juju-ui/views/inspector.js'
+        },
+
         'juju-view-login': {
           fullpath: '/juju-ui/views/login.js'
         },
@@ -271,8 +268,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/templates.js'
         },
 
-        'juju-view-container': {
-          fullpath: '/juju-ui/views/view-container.js'
+        'juju-viewlet-manager': {
+          fullpath: '/juju-ui/views/viewlet-manager.js'
         },
 
         'juju-ghost-inspector': {
@@ -295,6 +292,19 @@ var GlobalConfig = {
             'juju-view-charm-collection',
             'juju-landscape'
           ]
+        },
+
+        // Viewlets
+        'viewlet-charm-details': {
+          fullpath: '/juju-ui/views/viewlets/charm-details.js'
+        },
+
+        'viewlet-unit-details': {
+          fullpath: '/juju-ui/views/viewlets/unit-details.js'
+        },
+
+        'viewlet-inspector-header': {
+          fullpath: '/juju-ui/views/viewlets/inspector-header.js'
         },
 
         // Models

@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, service, db, conn,
-        juju, env, testUtils;
+        juju, env, testUtils, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -102,7 +102,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
         'node-event-simulate', 'juju-gui', 'slider',
-        'landscape', 'dump', 'juju-view-utils'
+        'landscape', 'dump', 'juju-view-utils', 'juju-charm-store',
+        'juju-charm-models'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -112,6 +113,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = juju.newEnvironment({conn: conn});
         env.connect();
         conn.open();
+        fakeStore = new Y.juju.Charmworld2({});
+        fakeStore.iconpath = function() {
+          return 'charm icon url';
+        };
         done();
       });
     });
@@ -128,6 +133,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      window.flags = {};
       view = new views.environment({
         container: container,
         db: db,
@@ -138,7 +144,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         nsRouter: {
           url: function() { return; }
         },
-        getModelURL: function() {}
+        getModelURL: function() {},
+        store: fakeStore
       });
     });
 
@@ -203,7 +210,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var view = new views.environment({
             container: container,
             db: db,
-            env: env
+            env: env,
+            store: fakeStore
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -241,7 +249,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var view = new views.environment({
             container: container,
             db: db,
-            env: env
+            env: env,
+            store: fakeStore
           });
           view.render();
           container.all('.service').size().should.equal(4);
@@ -251,11 +260,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
     );
 
+    it('must be able to render service icons',
+        function(done) {
+          // Create an instance of EnvironmentView with custom env
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env,
+            store: fakeStore
+          });
+          view.render();
+          var service = container.one('.service');
+          assert.equal(service.one('.service-icon').getAttribute('href'),
+         'charm icon url');
+
+          done();
+        }
+    );
+
     it('must properly count subordinate relations', function() {
       var view = new views.environment({
         container: container,
         db: db,
-        env: env
+        env: env,
+        store: fakeStore
       });
       var addSubordinate = {
         result: [
@@ -321,7 +349,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = new views.environment({
         container: container,
         db: db,
-        env: env
+        env: env,
+        store: fakeStore
       });
       var tmp_data = {
         result: [
@@ -352,7 +381,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // There should not be any duplicate nodes within the service.
         serviceNode.all('.service-status').size().should.equal(1);
         serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.charm-label').size().should.equal(1);
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
@@ -362,7 +390,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var view = new views.environment({
             container: container,
             db: db,
-            env: env
+            env: env,
+            store: fakeStore
           }),
               tmp_data = {
                 result: [
@@ -408,7 +437,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var view = new views.environment({
             container: container,
             db: db,
-            env: env
+            env: env,
+            store: fakeStore
           }).render();
           var tmp_data = {
            result: [
@@ -485,7 +515,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = new views.environment({
         container: container,
         db: db,
-        env: env
+        env: env,
+        store: fakeStore
       }),
           tmp_data = {
             result: [
@@ -529,7 +560,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // There should not be any duplicate nodes within the service.
         serviceNode.all('.service-status').size().should.equal(1);
         serviceNode.all('.name').size().should.equal(1);
-        serviceNode.all('.charm-label').size().should.equal(1);
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
@@ -594,7 +624,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        landscape: landscape
+        landscape: landscape,
+        store: fakeStore
       }).render();
 
       var rebootItem = container.one('.landscape-controls .restart-control');
@@ -613,7 +644,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          var rel_block = container.one('.sub-rel-count').getDOMNode();
 
@@ -629,7 +661,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = new views.environment({
         container: container,
         db: db,
-        env: env
+        env: env,
+        store: fakeStore
       }).render();
       // Attach the view to the DOM so that sizes get set properly
       // from the viewport (only available from DOM).
@@ -665,7 +698,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -695,7 +729,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
@@ -717,7 +752,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = new views.environment({
         container: container,
         db: db,
-        env: env
+        env: env,
+        store: fakeStore
       }).render();
       container.all('.service').each(function(node, i) {
         node.after('click', function() {
@@ -736,7 +772,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation');
@@ -770,7 +807,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
@@ -806,7 +844,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env
+           env: env,
+           store: fakeStore
          }).render();
          var serviceNode = container.one('.service'),
              add_rel = container.one('.add-relation'),
@@ -888,7 +927,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env}).render();
+           env: env,
+           store: fakeStore
+         }).render();
 
          var relation = container.one(
               '#' + views.utils.generateSafeDOMId('relation-0000000001') +
@@ -917,7 +958,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = new views.environment({
            container: container,
            db: db,
-           env: env}).render();
+           env: env,
+           store: fakeStore
+         }).render();
 
          // Get a subordinate relation.
          var relation = container.one(
@@ -948,8 +991,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               { container: container,
                 db: db,
                 endpointsController: fauxController,
-                env: env});
-          var service = new models.Service({ id: 'service-1'});
+                env: env,
+                store: fakeStore
+              });
+          var service = new models.Service({
+            id: 'service-1',
+            charm: 'precise/mysql-1'
+          });
 
           db.services.add([service]);
           view.render();
@@ -976,7 +1024,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         env: env,
-        getModelURL: getModelURL}).render();
+        getModelURL: getModelURL,
+        store: fakeStore
+      }).render();
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
       view.destroy();
@@ -987,7 +1037,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: container,
         db: db,
         endpointsController: 'hidy ho',
-        env: env}).render();
+        env: env,
+        store: fakeStore
+      }).render();
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
       view.destroy();
@@ -1134,22 +1186,63 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          boxes.mysql.exposed.should.equal(true);
        });
 
-    it('must cull removed services from the existing list',
-       function() {
-         var services = new models.ServiceList();
-         services.add([{id: 'mysql', exposed: false},
-                       {id: 'memcache'},
-                       {id: 'wordpress'}]);
-         var existing = {
-           'mysql': 1,
-           'haproxy': 2, // This entry is stale and will be removed.
-           'memcache': 3,
-           'wordpress': 4};
+    it('must cull removed services from the existing list', function() {
+      var services = new models.ServiceList();
+      services.add([{id: 'mysql', exposed: false},
+                    {id: 'memcache'},
+                    {id: 'wordpress'}]);
+      var existing = {
+        'mysql': 1,
+        'haproxy': 2, // This entry is stale and will be removed.
+        'memcache': 3,
+        'wordpress': 4};
 
-         var boxes = views.toBoundingBoxes(module, services, existing);
-         // The haproxy is removed from the results since it is no longer in
-         // the services list.
-         assert.equal(boxes.haproxy, undefined);
-       });
+      var boxes = views.toBoundingBoxes(module, services, existing);
+      // The haproxy is removed from the results since it is no longer in
+      // the services list.
+      assert.equal(boxes.haproxy, undefined);
+    });
+
+    it('sets the default icon for local charms without an icon', function() {
+      var iconFakeStore = new Y.juju.Charmworld2({
+        apiHost: 'http://localhost'
+      });
+      var services = new models.ServiceList();
+      services.add([
+        {
+          id: 'local:ceph-1',
+          charm: 'local:ceph-1'
+        },
+        {
+          id: 'cs:mysql-1',
+          charm: 'cs:mysql-1'
+        }
+      ]);
+      var existing = {
+        'local:ceph-1': {
+          id: 'local:ceph-1',
+          charm: 'local:ceph-1'
+        },
+        'cs:mysql-1': {
+          id: 'cs:mysql-1',
+          charm: 'cs:mysql-1'
+        }
+      };
+
+      var boxes = views.toBoundingBoxes(
+          module, services, existing, iconFakeStore);
+
+      // the ceph charm should have the default icon path.
+      assert.equal(
+          boxes['local:ceph-1'].icon,
+          'http://localhost/static/img/charm_160.svg'
+      );
+
+      // The mysql charm has an icon from on the server.
+      assert.equal(
+          boxes['cs:mysql-1'].icon,
+          'http://localhost/api/2/charm/mysql-1/icon.svg'
+      );
+    });
   });
 })();

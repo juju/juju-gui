@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-  The ghost inspector is the view-container implementation of the ghost
+  The ghost inspector is the viewlet manager implementation of the ghost
   configuration view.
 
   @module views
@@ -54,13 +54,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // This flag is still required because it comes fully populated from the
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
-
-      // This allows us to use the old util methods for parsing the config
-      // fields while consuming the new charm model from the charm browser.
-      if (charm.get('options') === undefined) {
-        charm.set('options', charm.get('config').options);
-      }
-
+      charm.set('options', charm.get('options'));
       this.db.charms.add(charm);
 
       var ghostService = this.db.services.ghostService(charm);
@@ -82,9 +76,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-  /*@
+  /**
     A collection of methods and properties which will be mixed into the
-    prototype of the view container controller to add the functionality for
+    prototype of the viewlet manager controller to add the functionality for
     the ghost inspector interactions
 
     @property ghostInspector
@@ -148,7 +142,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method closeInspector
     */
     closeInspector: function() {
-      this.inspector.destroy();
+      this.viewletManager.destroy();
     },
 
     /**
