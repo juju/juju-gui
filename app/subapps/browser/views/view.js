@@ -84,6 +84,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
+      var container = this.get('container');
       this.addEvent(
           this.controls.on(
               this.controls.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
@@ -123,7 +124,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
             if (!this.isFullscreen()) {
               // In the sidebar, the left panel needs the height adjusted to
               // make room for the home links to show up.
-              this.get('container').one('.bws-content').addClass('with-home');
+              container.one('.bws-content').addClass('with-home');
             }
           } else {
             // Ask the widget to remove the home buttons from display.
@@ -131,7 +132,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
             if (!this.isFullscreen()) {
               // We also need to adjust the height of the sidebar now to close
               // up the space by the home buttons.
-              this.get('container').one('.bws-content').removeClass('with-home');
+              container.one('.bws-content').removeClass('with-home');
             }
           }
         }, this);

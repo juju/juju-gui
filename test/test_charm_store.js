@@ -364,7 +364,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(filters.autocomplete, true);
+        assert.equal(filters.autocomplete, 'true');
         done();
       };
 
