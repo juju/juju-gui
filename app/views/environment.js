@@ -240,7 +240,8 @@ YUI.add('juju-view-environment', function(Y) {
               // the configuration for the view manager template
               templateConfig: {
                 packageName: model.get('package_name'),
-                id: model.get('id')
+                id: model.get('id'),
+                isSubordinate: model.get('is_subordinate')
               }
             }
           };

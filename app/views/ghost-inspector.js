@@ -94,9 +94,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
     deployCharm: function() {
       var options = this.options,
           container = options.container,
+          model = options.model,
           serviceName = container.one('input[name=service-name]').get('value'),
-          numUnits = parseInt(
-              container.one('input[name=number-units]').get('value'), 10),
+          isSubordinate = model.get('is_subordinate'),
+          numUnits = (
+              isSubordinate ? 0 :
+              parseInt(
+                  container.one('input[name=number-units]').get('value'), 10)),
           config;
 
       if (this.checkForExistingService(serviceName)) {
@@ -118,7 +122,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
 
       options.env.deploy(
-          this.options.model.get('id'),
+          model.get('id'),
           serviceName, config, this.configFileContent,
           numUnits, Y.bind(
               this._deployCallbackHandler, this, serviceName, config));

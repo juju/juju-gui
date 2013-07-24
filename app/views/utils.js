@@ -1427,6 +1427,16 @@ YUI.add('juju-view-utils', function(Y) {
       return options.fn(this);
     }
   });
+
+  /*
+   * Dev tool: dump to debugger in template.
+   *
+   * {{debugger}}
+   *
+   */
+  Y.Handlebars.registerHelper('debugger', function() {
+    debugger;
+  });
   /*
    * Extension for views to provide an apiFailure method.
    *
