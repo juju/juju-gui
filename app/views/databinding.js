@@ -48,6 +48,20 @@ YUI.add('juju-databinding', function(Y) {
       }
     };
 
+    function _indexBindings(bindings, keyfunc) {
+      var index = {};
+      if (!keyfunc) {
+        keyfunc = function(b) {
+          return b.name.split('.')[0];
+        };
+      }
+      bindings.forEach(function(binding) {
+        index[keyfunc(binding)] = binding;
+      });
+      console.log('index', index);
+      return index;
+    }
+
     /**
       Utility method to filter down our list of bindings
       based on optional list of bound model attributes
@@ -61,28 +75,39 @@ YUI.add('juju-databinding', function(Y) {
     function deltaFromChange(modelChangeKeys) {
       /*jshint validthis:true */
       var self = this;
-      var bindings = Y.Object.values(this._bindings);
+      var bindings = Y.mix(this._bindings);
       var result = [];
-      if (modelChangeKeys === undefined) {
-        return bindings;
+      var index;
+      if (modelChangeKeys !== undefined) {
+        bindings.filter(function(binding) {
+          // Change events don't honor nested key paths. This means
+          // we may update bindings that impact multiple DOM nodes
+          // (our granularity is too low).
+          console.log('filter', binding, binding.name.split('.')[0]);
+          return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
+        });
       }
-      bindings.filter(function(binding) {
-        // Change events don't honor nested key paths. This means
-        // we may update bindings that impact multiple DOM nodes
-        // (our granularity is too low).
-        return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
-      }).forEach(function(binding) {
+
+      index = _indexBindings(bindings);
+
+      // Handle deps
+      bindings.forEach(function(binding) {
         result.push(binding);
         if (binding.dependents) {
           binding.dependents.forEach(function(dep) {
-            var depends = self._bindings[dep];
+
+            console.log('filter', binding, binding.name.split('.')[0]);
+            var depends = index[dep];
             if (depends) {
               result.push(depends);
             }
           });
         }
       });
+      // Handle wildcards
 
+      // Handle '*' on all update runs
+      console.log("DELTA", modelChangeKeys, result);
       return result;
     }
 
@@ -120,7 +145,7 @@ YUI.add('juju-databinding', function(Y) {
       this.interval = this.options.interval !== undefined ?
           this.options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
-      this._bindings = {};  // {modelName: binding Object}
+      this._bindings = [];  // [Binding,...]
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
       this._models = {}; // {ModelName: [Event Handles]}
     }
@@ -149,7 +174,7 @@ YUI.add('juju-databinding', function(Y) {
         binding.target = [binding.target];
       }
       binding.viewlet = viewlet;
-      this._bindings[config.name] = binding;
+      this._bindings.push(binding);
       return binding;
     };
 
@@ -288,7 +313,7 @@ YUI.add('juju-databinding', function(Y) {
      @method _setupHeirarchicalBindings
     */
     BindingEngine.prototype._setupHeirarchicalBindings = function() {
-      Y.each(this._bindings, function(binding) {
+      this._bindings.forEach(function(binding) {
         if (binding.name.indexOf('.') === -1) {
           // The path isn't dotted so nothing to
           // inherit.
@@ -321,11 +346,13 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._setupDependencies = function() {
       var self = this;
-      var bindings = Y.Object.values(this._bindings);
+      var bindings = this._bindings;
+      var index = _indexBindings(bindings);
+
       bindings.forEach(function(binding) {
         if (binding.depends) {
           binding.depends.forEach(function(dep) {
-            var source = self._bindings[dep];
+            var source = index[dep];
             if (!source) {
               // This can indicate we depend on an implicit binding (one only
               // referenced in the DOM). At this point we must create a binding
@@ -484,7 +511,7 @@ YUI.add('juju-databinding', function(Y) {
       } else {
         keys = evt && Y.Object.keys(evt.changed);
       }
-      delta = keys && deltaFromChange.call(this, keys);
+      delta = deltaFromChange.call(this, keys);
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
         this._updateTimeout = null;
@@ -512,11 +539,11 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var resolve = self.resolve;
-      if (delta === undefined || (delta.length && delta.length === 0)) {
-        delta = deltaFromChange.call(this);
+      if(!delta) {
+        return;
       }
 
-      Y.each(delta, function(binding) {
+      delta.forEach(function(binding) {
         var viewlet = binding.viewlet;
         var viewletModel = viewlet.model;
         var conflicted;
@@ -536,7 +563,7 @@ YUI.add('juju-databinding', function(Y) {
         if (!field) {
           field = self._fieldHandlers['default'];
         }
-        var dataKey = binding.target.getData('bind');
+        var dataKey = binding.name;
 
         // If the field has been changed while the user was editing it
         viewlet._changedValues.forEach(function(value) {
@@ -576,7 +603,7 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = node.getData('bind'),
+      var key = this.name,
           viewlet = this._viewlets[viewletName];
       var changedValues = Y.Array.filter(
           viewlet._changedValues, function(value) {
