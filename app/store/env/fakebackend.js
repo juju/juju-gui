@@ -607,9 +607,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (Y.Lang.isUndefined(numUnits)) {
         numUnits = 1;
       }
-      if (!Y.Lang.isNumber(numUnits) || 
+      if (!Y.Lang.isNumber(numUnits) ||
           (!service.get('subordinate') && numUnits < 1 ||
-            (service.get('subordinate') && numUnits !== 0))) {
+          (service.get('subordinate') && numUnits !== 0))) {
         return {error: 'Invalid number of units.'};
       }
       if (!Y.Lang.isValue(service.unitSequence)) {
