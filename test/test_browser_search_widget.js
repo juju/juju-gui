@@ -78,7 +78,6 @@ describe('browser search widget', function() {
       withHome: true
     });
     search.render(container);
-    debugger;
     assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
   });
 
