@@ -327,6 +327,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     renderUI: function() {
       var data = this.getAttrs();
+      debugger;
       this.get('contentBox').setHTML(
           this.TEMPLATE(data)
       );

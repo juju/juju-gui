@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('browser search widget', function() {
-  var Y, container, search, Search, utils;
+  var Y, cleanIconHelper, container, search, Search, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
@@ -43,9 +43,10 @@ describe('browser search widget', function() {
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer('container');
     search = new Search();
     search.render(container);
+    cleanIconHelper = utils.stubCharmIconPath();
   });
 
   afterEach(function() {
@@ -53,6 +54,7 @@ describe('browser search widget', function() {
       search.destroy();
     }
     container.remove(true);
+    cleanIconHelper();
   });
 
   after(function() {
@@ -70,10 +72,13 @@ describe('browser search widget', function() {
   it('shows the home links when withHome is set', function() {
     // Skip the default beforeEach Search and create our own.
     search.destroy();
+    container.remove(true);
+    container = utils.makeContainer('container');
     search = new Search({
       withHome: true
     });
     search.render(container);
+    debugger;
     assert.isFalse(container.one('.browser-nav').hasClass('hidden'));
   });
 
@@ -98,6 +103,11 @@ describe('browser search widget', function() {
   });
 
   it('supports autocompletion while entering text', function(done) {
+    // Create our own search instance.
+    search.destroy();
+    container.remove(true);
+    container = utils.makeContainer('container');
+
     // We need a valid store instance to send back the data.
     var data = utils.loadFixture('data/autocomplete.json');
     var fakeStore = new Y.juju.Charmworld2({});
