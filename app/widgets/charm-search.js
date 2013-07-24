@@ -268,24 +268,26 @@ YUI.add('browser-search-widget', function(Y) {
       );
 
       // Make sure the UI around the autocomplete search input is setup.
-      this._setupAutocomplete();
+      if (window.flags.ac) {
+        this._setupAutocomplete();
 
-      // Override a couple of autocomplete events to help perform our
-      // navigation correctly.
-      // Block the links from the charm token from taking effect.
-      this.addEvent(
-          this.ac.get('boundingBox').delegate(
-              'click',
-              function(ev) {
-                ev.halt();
-              },
-              '.yui3-charmtoken a'
-          )
-      );
-      this.addEvent(
-          this.ac.on('select', this._suggestionSelected, this)
-      );
+        // Override a couple of autocomplete events to help perform our
+        // navigation correctly.
+        // Block the links from the charm token from taking effect.
+        this.addEvent(
+            this.ac.get('boundingBox').delegate(
+                'click',
+                function(ev) {
+                  ev.halt();
+                },
+                '.yui3-charmtoken a'
+            )
+        );
+        this.addEvent(
+            this.ac.on('select', this._suggestionSelected, this)
+        );
 
+      }
     },
 
     /**

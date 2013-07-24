@@ -1,5 +1,4 @@
 /*
- *
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
