@@ -859,6 +859,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'Invalid number of units.');
     });
 
+    it('returns an error for an invalid number of subordinate units', function() {
+      fakebackend.deploy('cs:puppet', callback);
+      assert.isUndefined(deployResult.error);
+      assert.equal(
+          fakebackend.addUnit('puppet', 'goyesca').error,
+          'Invalid number of units.');
+      assert.equal(
+          fakebackend.addUnit('puppet', 1).error,
+          'Invalid number of units.');
+      assert.equal(
+          fakebackend.addUnit('puppet', -1).error,
+          'Invalid number of units.');
+      // It also ignores empty requests
+      assert.isUndefined(
+          fakebackend.addUnit('puppet', 0).error);
+      assert.isUndefined(
+          fakebackend.addUnit('puppet').error);
+    });
+
     it('returns an error if the service does not exist.', function() {
       assert.equal(
           fakebackend.addUnit('foo').error,

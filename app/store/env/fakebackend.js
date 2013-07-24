@@ -604,12 +604,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
+      var is_subordinate = service.get('subordinate');
       if (Y.Lang.isUndefined(numUnits)) {
-        numUnits = 1;
+        numUnits = is_subordinate ? 0 : 1;
       }
       if (!Y.Lang.isNumber(numUnits) ||
-          (!service.get('subordinate') && numUnits < 1 ||
-          (service.get('subordinate') && numUnits !== 0))) {
+          (!is_subordinate && numUnits < 1 ||
+          (is_subordinate && numUnits !== 0))) {
         return {error: 'Invalid number of units.'};
       }
       if (!Y.Lang.isValue(service.unitSequence)) {
