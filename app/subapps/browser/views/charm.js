@@ -678,7 +678,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tplData = charm.getAttrs(),
           container = this.get('container');
 
-      var link = 'http://jujucharms.com/' + this.get('charm').get('storeId');
+      var link = 'https://jujucharms.com/' + this.get('charm').get('storeId');
       tplData.isFullscreen = isFullscreen;
       tplData.forInspector = this.get('forInspector');
       if (!tplData.forInspector) {
