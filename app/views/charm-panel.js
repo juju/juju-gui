@@ -274,7 +274,8 @@ YUI.add('juju-charm-panel', function(Y) {
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.
               loaded: false,
-              config: options
+              config: options,
+              subordinate: charm.get('is_subordinate')
             });
             // If we have been given coordinates at which the ghost should be
             // created, respect them.
