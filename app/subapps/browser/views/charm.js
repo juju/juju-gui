@@ -678,7 +678,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tplData = charm.getAttrs(),
           container = this.get('container');
 
-      var link = 'https://jujucharms.com/' + this.get('charm').get('storeId');
+      var siteDomain = 'jujucharms.com',
+          charmPath = this.get('charm').get('storeId'),
+          link = 'https://' + siteDomain + '/' + charmPath;
       tplData.isFullscreen = isFullscreen;
       tplData.forInspector = this.get('forInspector');
       if (!tplData.forInspector) {
@@ -690,11 +692,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
           tplData.requires, tplData.provides);
       tplData.link = escape(link);
       tplData.twitterText = escape(
-          'Check out this great charm on jujucharms.com: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
       tplData.emailSubject = escape(
-          'Check out this great charm on jujucharms.com!');
+          'Check out this great charm on ' + siteDomain + '!');
       tplData.emailText = escape(
-          'Check out this great charm on jujucharms.com: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
