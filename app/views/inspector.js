@@ -936,13 +936,15 @@ YUI.add('juju-view-inspector', function(Y) {
       var unitStatusHeader = unitStatusWrapper
                                   .append('div')
                                   .attr('class', function(d) {
-                                   return 'status-unit-header closed-unit-list ' + d.category;
+                                   return 'status-unit-header ' +
+                                          'closed-unit-list ' + d.category;
                                  });
 
       var unitStatusContentForm = unitStatusWrapper
                                   .append('div')
                                   .attr('class', function(d) {
-                                    return 'status-unit-content close-unit ' + d.category;
+                                    return 'status-unit-content ' +
+                                           'close-unit ' + d.category;
                                   })
                                   .append('form');
 
@@ -979,14 +981,13 @@ YUI.add('juju-view-inspector', function(Y) {
 
       // Toggles the sections visible or hidden based on
       // whether there are units in their list.
-      categoryWrapperNodes.filter(function(d) { return d.units.length > 0 })
+      categoryWrapperNodes.filter(function(d) { return d.units.length > 0; })
                           .classed('hidden', false);
 
-      categoryWrapperNodes.filter(
-                          function(d) {
-                            return d.units.length === undefined
-                          })
-                          .classed('hidden', true);
+      categoryWrapperNodes.filter(function(d) {
+                                 return d.units.length === undefined;
+                               })
+                                  .classed('hidden', true);
 
       // Add the category label to each heading
       categoryWrapperNodes.select('.category-label')
