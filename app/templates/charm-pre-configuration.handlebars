@@ -26,18 +26,22 @@
           </div>
         </div>
       </div>
-      <div class="charm-entry">
-        <div class="control-group">
-          <div class="well control-description">
-            Number of units to deploy for this service.
-          </div>
-          <div class="control-label" for="number-units">Number of units</div>
-          <div class="controls">
-            <input class="config-field" type="text" name="number-units"
-                id="number-units" value="1"/>
+      {{#if is_subordinate}}
+        <input type="hidden" id="number-units" value="0" />
+      {{else}}
+        <div class="charm-entry">
+          <div class="control-group">
+            <div class="well control-description">
+              Number of units to deploy for this service.
+            </div>
+            <div class="control-label" for="number-units">Number of units</div>
+            <div class="controls">
+              <input class="config-field" type="text" name="number-units"
+                  id="number-units" value="1"/>
+            </div>
           </div>
         </div>
-      </div>
+      {{/if}}
       {{/with}}
 
       {{#if settings}}
