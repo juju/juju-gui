@@ -600,18 +600,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      if (Y.Lang.isUndefined(numUnits)) {
-        numUnits = 1;
-      }
-      if (!Y.Lang.isNumber(numUnits) || numUnits < 1) {
-        return {error: 'Invalid number of units.'};
-      }
       var service = this.db.services.getById(serviceName);
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
-      if (service && service.get('is_subordinate')) {
-        return {error: serviceName + ' is a subordinate, cannot add unit(s).'};
+      var is_subordinate = service.get('subordinate');
+      if (Y.Lang.isUndefined(numUnits)) {
+        numUnits = is_subordinate ? 0 : 1;
+      }
+      if (!Y.Lang.isNumber(numUnits) ||
+          (!is_subordinate && numUnits < 1 ||
+          (is_subordinate && numUnits !== 0))) {
+        return {error: 'Invalid number of units.'};
       }
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
