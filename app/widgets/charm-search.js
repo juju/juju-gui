@@ -54,6 +54,30 @@ YUI.add('browser-search-widget', function(Y) {
     TEMPLATE: templates['browser-search'],
 
     /**
+     * Fetch, from the store, suggested options for the search autocomplete
+     * widget.
+     *
+     * @method _fetchSuggestions
+     * @param {String} query the search query terms.
+     * @param {Function} callback the callback to the AC widget.
+     *
+     */
+    _fetchSuggestions: function(query, callback) {
+      var filters = this.get('filters');
+      filters.text = query;
+      this.get('autocompleteSource')(
+          filters, {
+            'success': callback,
+            'failure': function() {
+              // Autocomplete should not throw errors at the user or break the
+              // application. Just silently fail to find results.
+            }
+          },
+          this
+      );
+    },
+
+    /**
      * Halt page reload from form submit and let the app know we have a new
      * search.
      *
@@ -96,6 +120,87 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
+     * Format the html that will be used in the AC widget results.
+     *
+     * Results need to be processed as charm tokens to get them to render
+     * correctly with the right visual logic for reviewed/icons/etc.
+     *
+     * @method _suggestFormatter
+     * @param {String} query the searched for query term.
+     * @param {Array} results the list of objects from the AC processing of
+     * the api results. Note: this is not the api json, but objects from the
+     * AC processing.
+     *
+     */
+    _suggestFormatter: function(query, results) {
+      var dataprocessor = this.get('autocompleteDataFormatter');
+      var charmlist = dataprocessor(Y.Array.map(results, function(res) {
+        return res.raw;
+      }));
+      return charmlist.map(function(charm) {
+        var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+        var tokenAttrs = Y.merge(charm.getAttrs(), {
+          size: 'tiny'
+        });
+        var token = new ns.CharmToken(tokenAttrs);
+        return container.append(token.TEMPLATE(token.getAttrs()));
+      });
+    },
+
+    /**
+     * Setup an autocomplete widget around the search form's input control.
+     *
+     * @method _setupAutocomplete
+     * @private
+     *
+     */
+    _setupAutocomplete: function() {
+      // Bind out helpers to the current objects context, not the auto
+      // complete widget context..
+      var fetchSuggestions = Y.bind(this._fetchSuggestions, this);
+      var suggestFormatter = Y.bind(this._suggestFormatter, this);
+
+      // Create our autocomplete instance with all the config and handlers it
+      // needs to function properly.
+      this.ac = new Y.AutoComplete({
+        inputNode: this.get('boundingBox').one('input[name=bws-search]'),
+        queryDelay: 150,
+        resultFormatter: suggestFormatter,
+        resultListLocator: 'result',
+        'resultTextLocator': function(result) {
+          return result.charm.name;
+        },
+        source: fetchSuggestions
+      });
+      this.ac.render();
+    },
+
+    /**
+     * Handle selecting an AC suggestion and firing the correct events to
+     * update the UI.
+     *
+     * @method _suggestionSelected
+     * @param {Y.Event} ev The 'select' event from the AC widget.
+     *
+     */
+    _suggestionSelected: function(ev) {
+      // Make sure the input box is updated.
+      var form = this.get('boundingBox').one('form');
+      form.one('input').set('value', ev.result.text);
+
+      var charm = ev.itemNode.one('a');
+      var charmID = charm.getData('charmid');
+      var change = {
+        charmID: charmID
+      };
+
+      this.fire(this.EVT_SEARCH_CHANGED, {
+        change: change,
+        newVal: ev.result.text
+      });
+    },
+
+    /**
      * Toggle the active state depending on the content in the search box.
      *
      * @method _toggleActive
@@ -135,6 +240,7 @@ YUI.add('browser-search-widget', function(Y) {
           container.one('input').on(
               'blur', this._toggleActive, this)
       );
+
       this.addEvent(
           container.one('.browser-nav').delegate(
               'click',
@@ -160,6 +266,38 @@ YUI.add('browser-search-widget', function(Y) {
                 ev.target.addClass('home-icon');
               }, this)
       );
+
+      // Make sure the UI around the autocomplete search input is setup.
+      this._setupAutocomplete();
+
+      // Override a couple of autocomplete events to help perform our
+      // navigation correctly.
+      // Block the links from the charm token from taking effect.
+      this.addEvent(
+          this.ac.get('boundingBox').delegate(
+              'click',
+              function(ev) {
+                ev.halt();
+              },
+              '.yui3-charmtoken a'
+          )
+      );
+      this.addEvent(
+          this.ac.on('select', this._suggestionSelected, this)
+      );
+
+    },
+
+    /**
+     * Clean up instances of objects we create
+     *
+     * @method destroy
+     *
+     */
+    destroy: function() {
+      if (this.ac) {
+        this.ac.destroy();
+      }
     },
 
     /**
@@ -239,6 +377,20 @@ YUI.add('browser-search-widget', function(Y) {
   }, {
     ATTRS: {
       /**
+        @attribute autocompleteSource
+        @default {undefined} The api point for fetching the suggestions.
+        @type {Charmworld2}
+
+      */
+      autocompleteSource: {
+
+      },
+
+      autocompleteDataFormatter: {
+
+      },
+
+      /**
          @attribute filters
          @default {Object} text: ''
          @type {Object}
@@ -264,7 +416,9 @@ YUI.add('browser-search-widget', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'autocomplete',
     'base',
+    'browser-charm-token',
     'browser-filter-widget',
     'event',
     'event-delegate',

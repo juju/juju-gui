@@ -73,14 +73,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
+      view = new FullScreen({
+        store: new Y.juju.Charmworld2({
+          apiHost: 'http://localhost'
+        })
+      });
 
-      view = new FullScreen();
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var emptyData = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
+
+      // Override the store to not call the dummy localhost address.
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: emptyData}));
       view.render(container);
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-fullscreen')));
       // Also verify that the search widget has rendered into the view code.
       assert.isTrue(Y.Lang.isObject(container.one('input')));
+
       // The default is to now show the home buttons on the widget.
       assert.isFalse(view.get('withHome'));
     });

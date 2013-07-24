@@ -1352,6 +1352,21 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /*
+    Supplies a version of 'unless' block helper that will check two specified
+    values against each other. The default unless helper is based on a single
+    truthy value.
+    Supports an inverse function so that we can use an else clause.
+
+   */
+  Y.Handlebars.registerHelper('unless_eq', function(x, y, options) {
+    if (x !== y) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  /*
     pluralize is a handlebar helper that handles pluralization of strings.
     The requirement for pluralization is based on the passed in object,
     which can be number, array, or object. If a number, it is directly

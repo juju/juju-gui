@@ -98,10 +98,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
               this.controls.EVT_SIDEBAR, this._goSidebar, this)
       );
 
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
-      );
+      if (this.search) {
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
+        );
+      }
 
       this.addEvent(
           this.search.on(
@@ -160,11 +162,20 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _renderSearchWidget: function(node) {
-      this.search = new widgets.browser.Search({
-        filters: this.get('filters'),
-        fullscreenTarget: this._fullscreenTarget,
-        withHome: this.get('withHome')
-      });
+      // It only makes sense to render search if we have a store to use to
+      // search against.
+      if (this.get('store')) {
+        this.search = new widgets.browser.Search({
+          autocompleteSource: Y.bind(
+              this.get('store').autocomplete,
+              this.get('store')
+          ),
+          autocompleteDataFormatter: this.get('store').resultsToCharmlist,
+          filters: this.get('filters'),
+          withHome: this.get('withHome')
+        });
+        this.search.render(node.one('.bws-header'));
+      }
       this.search.render(node.one('.bws-header'));
 
       // Make sure the controls starts out setting the correct active state
@@ -189,6 +200,13 @@ YUI.add('subapp-browser-mainview', function(Y) {
           text: ev.newVal
         }
       };
+
+      // Perhaps there's more to this change than just a search change. This
+      // might come from places, such as autocomplete, which are a search
+      // change, but also want to select a charm id as well.
+      if (ev.change) {
+        change = Y.merge(change, ev.change);
+      }
       this.fire('viewNavigate', {change: change});
     },
 
@@ -314,19 +332,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       store: {},
-
-      /**
-       * If this were a route that had a subpath component it's passed into
-       * the view to aid in rendering.
-       *
-       * e.g. /fullscreen/*charmid/hooks to load the hooks tab correctly.
-       *
-       * @attribute subpath
-       * @default undefined
-       * @type {String}
-       *
-       */
-      subpath: {},
 
       /**
        * The view needs to be able to tell widgets and controls what the
