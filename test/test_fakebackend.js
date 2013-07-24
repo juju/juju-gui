@@ -859,7 +859,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'Invalid number of units.');
     });
 
-    it('returns an error for an invalid number of subordinate units', function() {
+    it('returns error for invalid number of subordinate units', function() {
       fakebackend.deploy('cs:puppet', callback);
       assert.isUndefined(deployResult.error);
       assert.equal(
