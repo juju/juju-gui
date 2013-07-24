@@ -220,7 +220,7 @@ YUI.add('juju-charm-store', function(Y) {
       var endpoint = 'charms';
       // Force that this is an autocomplete call to perform matching on the
       // start of names vs a fulltext search.
-      filters.autocomplete = true;
+      filters.autocomplete = 'true';
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
