@@ -41,13 +41,10 @@ YUI.add('juju-view-charm-collection', function(Y) {
     initializer: function() {
       this.set('charm', null);
       console.log('Loading charm view', this.get('charm_data_url'));
-      this.get('store').charm(
-        this.get('storeId'),
-        {
-          'success': Y.bind(this.on_charm_data, this),
-          'failure': function er(e) { console.error(e.error); }
-        }
-      );
+      this.get('store').charm(this.get('storeId'), {
+        'success': Y.bind(this.on_charm_data, this),
+        'failure': function er(e) { console.error(e.error); }
+      });
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
         this.fitToWindow();
