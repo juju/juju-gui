@@ -53,7 +53,8 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_SERIES = {
     'quantal': '12.10 Quantal Quetzal',
-    'precise': '12.04 LTS Precise Pangolin'
+    'precise': '12.04 LTS Precise Pangolin',
+    'raring': '13.04 Raring Ringtail'
   };
 
   ns.FILTER_PROVIDERS = {

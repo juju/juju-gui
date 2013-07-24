@@ -48,7 +48,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
           'failure': function er(e) { console.error(e.error); }
         }
       );
-
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
         this.fitToWindow();
@@ -92,20 +91,15 @@ YUI.add('juju-view-charm-collection', function(Y) {
         container.setHTML('<div class="alert">Loading...</div>');
         return;
       }
-      // Convert time stamp TODO: should be in db layer
-      debugger;
-      var last_modified = charm.last_change.created;
-      if (last_modified) {
-        charm.last_change.created = new Date(last_modified * 1000);
-      }
 
-      var settings;
-      if (charm.config) {
-        settings = utils.extractServiceSettings(charm.config.options);
+      var options = charm.get('options'),
+          settings;
+      if (options) {
+        settings = utils.extractServiceSettings(options);
       }
 
       container.setHTML(this.template({
-        charm: charm,
+        charm: charm.getAttrs(),
         settings: settings}));
 
       var self = this;
@@ -119,7 +113,9 @@ YUI.add('juju-view-charm-collection', function(Y) {
     },
 
     on_charm_data: function(data) {
-      var charm = data.charm;
+      data.id = data.store_url;
+      data.is_subordinate = data.subordinate;
+      var charm = new Y.juju.models.Charm(data);
       this.set('charm', charm);
       this.render();
     },
@@ -127,12 +123,13 @@ YUI.add('juju-view-charm-collection', function(Y) {
     on_charm_deploy: function(evt) {
       var charm = this.get('charm'),
           container = this.get('container'),
-          charmUrl = charm.series + '/' + charm.name,
+          charmUrl = charm.get('series') + '/' + charm.get('name'),
           env = this.get('env');
       // Generating charm url: see http://jujucharms.com/tools/store-missing
       // for examples of charm addresses.
-      if (charm.owner !== 'charmers') {
-        charmUrl = '~' + charm.owner + '/' + charmUrl;
+      var owner = charm.get('owner');
+      if (owner !== 'charmers') {
+        charmUrl = '~' +  owner + '/' + charmUrl;
       }
       charmUrl = 'cs:' + charmUrl;
 
@@ -177,7 +174,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
     render: function() {
       var container = this.get('container'),
-          charm = this.get('charm'), // TODO change attribute name to "model"
+          charm = this.get('charm'),
           self = this;
 
       CharmCollectionView.superclass.render.apply(this, arguments);
@@ -238,5 +235,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
+    'juju-charm-models',
     'view']
 });
