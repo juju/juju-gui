@@ -48,17 +48,32 @@ YUI.add('juju-databinding', function(Y) {
       }
     };
 
-    function _indexBindings(bindings, keyfunc) {
+    function _indexBindings(bindings, keyfunc, multiple) {
       var index = {};
       if (!keyfunc) {
         keyfunc = function(b) {
+          if (b.name === '*' || b.name === '+') {
+            // Our wildcards are handled in a different path.
+            return;
+          }
           return b.name.split('.')[0];
         };
       }
+
       bindings.forEach(function(binding) {
-        index[keyfunc(binding)] = binding;
+        var key = keyfunc(binding);
+        if(!key) {
+          return;
+        }
+        if (multiple) {
+          if (!index[key]) {
+            index[key] = [];
+          }
+          index[key].push(binding);
+        } else {
+          index[key] = binding;
+        }
       });
-      console.log('index', index);
       return index;
     }
 
@@ -75,36 +90,38 @@ YUI.add('juju-databinding', function(Y) {
     function deltaFromChange(modelChangeKeys) {
       /*jshint validthis:true */
       var self = this;
-      var bindings = Y.mix(this._bindings);
-      var result = [];
+      var bindings = this._bindings;
+      var result = {bindings: [], wildcards: {}};
       var index;
       if (modelChangeKeys !== undefined) {
         bindings.filter(function(binding) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
-          console.log('filter', binding, binding.name.split('.')[0]);
           return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
         });
       }
 
       index = _indexBindings(bindings);
-
       // Handle deps
       bindings.forEach(function(binding) {
-        result.push(binding);
+        result.bindings.push(binding);
         if (binding.dependents) {
           binding.dependents.forEach(function(dep) {
-
-            console.log('filter', binding, binding.name.split('.')[0]);
             var depends = index[dep];
             if (depends) {
-              result.push(depends);
+              result.bindings.push(depends);
             }
           });
         }
       });
       // Handle wildcards
+      result.wildcards = _indexBindings(bindings, function(binding) {
+        if (binding.name !== '*' && binding,name !== '+') {
+          return;
+        }
+        return binding.name
+      }, true);
 
       // Handle '*' on all update runs
       console.log("DELTA", modelChangeKeys, result);
@@ -533,8 +550,9 @@ YUI.add('juju-databinding', function(Y) {
       we need to be able to track change/new/removed elements.
 
       @method _updateDOM
-      @param {Array} delta Those bindings which should be updated.
-                     When omitted defaults to all bindings.
+      @param {Object} delta Those bindings which should be updated.
+                     When omitted defaults to all bindings. See
+                     deltaFromChange.
      */
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
@@ -543,7 +561,26 @@ YUI.add('juju-databinding', function(Y) {
         return;
       }
 
-      delta.forEach(function(binding) {
+      // Trigger callback on binding if present
+      function optionalCallback(binding, callbackName) {
+        var callback = binding[callbackName];
+        if (callback) {
+            callback.call(binding, binding.target, value);
+            return true;
+          }
+          return false;
+      }
+
+      // Trigger callback on any bindings in collection
+      // where it is present.
+      function optionalCallbacks(bindings, callbackName) {
+        bindings.forEach(function(binding) {
+          optionalCallback(binding, callbackName);
+        });
+      }
+
+      // Iterate bindings and updating each element as needed.
+      delta.bindings.forEach(function(binding) {
         var viewlet = binding.viewlet;
         var viewletModel = viewlet.model;
         var conflicted;
@@ -566,8 +603,8 @@ YUI.add('juju-databinding', function(Y) {
         var dataKey = binding.name;
 
         // If the field has been changed while the user was editing it
-        viewlet._changedValues.forEach(function(value) {
-          if (value === dataKey) {
+        viewlet._changedValues.forEach(function(changeKey) {
+          if (changeKey === binding.name) {
             conflicted = binding.target;
             viewlet.unsyncedFields();
             binding.viewlet.conflict(
@@ -584,13 +621,28 @@ YUI.add('juju-databinding', function(Y) {
           }
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
+          optionalCallback(binding, 'beforeUpdate');
           if (binding.update) {
             binding.update.call(binding, binding.target, value);
           } else {
             field.set.call(binding, binding.target, value);
           }
+          optionalCallback(binding, 'afterUpdate');
+        }
+        // Run Per Updated binding.
+        if (delta.wildcards['+']) {
+          optionalCallbacks(delta.wildcards['+'], 'beforeUpdate');
+          optionalCallbacks(delta.wildcards['+'], 'update');
+          optionalCallbacks(delta.wildcards['+'], 'afterUpdate');
         }
       });
+
+      // Run Once, Any update.
+      if (delta.wildcards['*']) {
+          optionalCallbacks(delta.wildcards['*'], 'beforeUpdate');
+          optionalCallbacks(delta.wildcards['*'], 'update');
+          optionalCallbacks(delta.wildcards['*'], 'afterUpdate');
+      };
     };
 
     /**
