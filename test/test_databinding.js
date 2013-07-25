@@ -223,7 +223,7 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
       });
 
-      describe('wildcard support', function () {
+      describe('wildcard support', function() {
         it('supports * styled wildcard bindings', function() {
           container = utils.makeContainer();
           container.append('<div data-bind="a"></div>');
@@ -271,7 +271,7 @@ describe('data binding library', function() {
                 },
                 update: function(node, value) {
                   result.push(node.getData('bind'));
-                },
+                }
               }
             },
             _changedValues: [],

@@ -62,7 +62,7 @@ YUI.add('juju-databinding', function(Y) {
 
       bindings.forEach(function(binding) {
         var key = keyfunc(binding);
-        if(!key) {
+        if (!key) {
           return;
         }
         if (multiple) {
@@ -113,10 +113,10 @@ YUI.add('juju-databinding', function(Y) {
       // Handle deps
       bindings.forEach(function(binding) {
         if (binding.name === '*' ||
-           binding.name === '+') {
+            binding.name === '+') {
           return;
         }
-       result.bindings.push(binding);
+        result.bindings.push(binding);
         if (binding.dependents) {
           binding.dependents.forEach(function(dep) {
             var depends = index[dep];
@@ -396,7 +396,7 @@ YUI.add('juju-databinding', function(Y) {
      roll those into a consumable form.
 
      @method _setupWildcarding
-     @param {Viewlet} viewlet
+     @param {Viewlet} viewlet to setup for wildcarding.
      */
     BindingEngine.prototype._setupWildcarding = function(viewlet) {
       if (!viewlet.bindings) {
@@ -414,7 +414,7 @@ YUI.add('juju-databinding', function(Y) {
           binding.name = name;
         }
         self.addBinding(binding, viewlet);
-        });
+      });
     };
 
     /**
@@ -586,8 +586,8 @@ YUI.add('juju-databinding', function(Y) {
       var self = this;
       var resolve = self.resolve;
 
-      if(delta.bindings.length === 0 &&
-         !Object.keys(delta.wildcards).length) {
+      if (delta.bindings.length === 0 &&
+          !Object.keys(delta.wildcards).length) {
         return;
       }
 
@@ -605,13 +605,13 @@ YUI.add('juju-databinding', function(Y) {
       // where it is present.
       function optionalCallbacks(bindings, callbackName, target, value) {
         //Alias to preserve in scope.
-        var callbackName = callbackName,
-            target = target,
-            value = value;
+        var name = callbackName,
+            tgt = target,
+            val = value;
         if (!bindings) {return;}
 
         bindings.forEach(function(binding) {
-          optionalCallback(binding, callbackName, target, value);
+          optionalCallback(binding, name, tgt, val);
         });
       }
 
@@ -655,8 +655,10 @@ YUI.add('juju-databinding', function(Y) {
         }
         // Do conflict detection
         if (binding.target !== conflicted) {
-          optionalCallback(binding, 'beforeUpdate', binding.target, value);
-          optionalCallbacks(delta.wildcards['+'], 'beforeUpdate', binding.target, value);
+          optionalCallback(binding,
+                           'beforeUpdate', binding.target, value);
+          optionalCallbacks(delta.wildcards['+'],
+                            'beforeUpdate', binding.target, value);
 
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
@@ -665,9 +667,12 @@ YUI.add('juju-databinding', function(Y) {
           } else {
             field.set.call(binding, binding.target, value);
           }
-          optionalCallbacks(delta.wildcards['+'], 'update', binding.target, value);
-          optionalCallback(binding, 'afterUpdate', binding.target, value);
-          optionalCallbacks(delta.wildcards['+'], 'afterUpdate', binding.target, value);
+          optionalCallbacks(delta.wildcards['+'],
+                            'update', binding.target, value);
+          optionalCallback(binding,
+                           'afterUpdate', binding.target, value);
+          optionalCallbacks(delta.wildcards['+'],
+                            'afterUpdate', binding.target, value);
         }
       });
 
