@@ -594,7 +594,7 @@ describe('juju charm load', function() {
           assert(!err);
           // This checks to make sure the parse mechanism is working properly
           // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log.default, 'global');
+          assert.equal(charm.get('options').default_log['default'], 'global');
           done();
         });
     var response = conn.last_message();
@@ -602,9 +602,9 @@ describe('juju charm load', function() {
       config: {
         options: {
           default_log: {
-            default: "global",
-            description: "Default log",
-            type: "string"
+            'default': 'global',
+            description: 'Default log',
+            type: 'string'
           }}}};
     env.dispatch_result(response);
   });
@@ -616,16 +616,16 @@ describe('juju charm load', function() {
           assert(!err);
           // This checks to make sure the parse mechanism is working properly
           // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log.default, 'global');
+          assert.equal(charm.get('options').default_log['default'], 'global');
           done();
         });
     var response = conn.last_message();
     response.result = {
       options: {
         default_log: {
-          default: "global",
-          description: "Default log",
-          type: "string"
+          'default': 'global',
+          description: 'Default log',
+          type: 'string'
         }}};
     env.dispatch_result(response);
   });
