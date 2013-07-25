@@ -1226,6 +1226,11 @@ YUI.add('juju-view-inspector', function(Y) {
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
+          this.container.all('textarea.config-field')
+                        .plug(plugins.ResizingTextarea,
+                              { max_height: 200,
+                                min_height: 18,
+                                single_line: 18});
         }
       }
     };

@@ -53,6 +53,122 @@
             background-color: @inspector-region-background-color;
             padding-left: 1em;
         }
+        .settings-wrapper {
+            position: relative;
+            width: 268px;
+
+            label {
+                font-size: 14px;
+                margin: 14px 0 7px 0;
+                font-weight: bold;
+            }
+
+            textarea {
+                width: 260px;
+            }
+
+            .settings-description {
+                font-style: italic;
+                font-size: 12px;
+
+                /* below hyphenation code was taken from:
+                http://www.newnet-soft.com/blog/csstypography */
+                -ms-word-break: break-all;
+                word-break: break-all;
+
+                // Non standard for webkit
+                word-break: break-word;
+
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                hyphens: auto;
+
+                -webkit-hyphenate-before: 2;
+                -webkit-hyphenate-after: 3;
+                hyphenate-lines: 3;
+            }
+
+            .warning-message {
+                color: red;
+                padding: 1em;
+            }
+            .conflicted {
+                position: absolute;
+                border: 1px solid grey;
+                margin-top: -140px;
+                background-color: white;
+            }
+        }
+
+        .config-file {
+            padding: 10px 5px 10px 5px;
+
+            input {
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+                z-index: 0;
+            }
+
+            .fakebutton {
+                .create-border-radius(@border-radius);
+                font-family: @font-family-medium;
+                border: 1px solid #6B6B6B;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 5px;
+                z-index: 2;
+                cursor: pointer;
+            }
+        }
+
+        .ghost {
+            .header-slot {
+                header {
+                    margin-bottom: 0;
+                    border-bottom: none;
+                }
+            }
+            .ghost-config-header {
+                font-size: 17px;
+                height: 35px;
+                line-height: 35px;
+                padding-left: 35px;
+            }
+            .ghost-config-content {
+                padding: 15px 10px;
+                background-color: @inspector-region-background-color;
+
+                input[name=number-units] {
+                    display: inline-block;
+                    width: 120px;
+                    margin-bottom: 0;
+                }
+                label[for=number-units] {
+                    display: inline-block;
+                    margin-left: 25px;
+                    vertical-align: middle;
+                }
+
+                .default-config-toggle {
+                    font-size: 12px;
+
+                    span {
+                        display: inline-block;
+                    }
+
+                    .toggle-switch {
+                        height: 20px;
+                        width: 40px;
+                        background-color: @inspector-background-color;
+                        .create-border-radius(@border-radius);
+                        display: inline-block;
+                    }
+                }
+            }
+        }
 
         /* Resetting panel styles. Can be removed after old inspector styles are
            removed. */
@@ -116,12 +232,6 @@
                viewlet-manager.js. Important to avoid flash of incorrectly
                calculated height */
             max-height: 250px;
-
-            .config-variant {
-                border-top: 0;
-                background: transparent;
-                float: none;
-            }
         }
 
         .content {
@@ -178,57 +288,15 @@
             }
         }
 
-        .viewlet-manager {
+        .viewlet-manager-navigation {
             background-color: @inspector-region-background-color;
         }
 
-        .viewlet-manager {
+        .view-container {
             border-top: 1px solid @inspector-divider-top;
             overflow: auto;
 
             &.settings-config {
-
-                .settings-wrapper {
-                    position: relative;
-
-                    label {
-                        font-size: 14px;
-                        margin: 14px 0 7px 0;
-                        font-weight: bold;
-                    }
-
-                    .settings-description {
-                        font-style: italic;
-                        font-size: 12px;
-
-                        /* below hyphenation code was taken from:
-                        http://www.newnet-soft.com/blog/csstypography */
-                        -ms-word-break: break-all;
-                        word-break: break-all;
-
-                        // Non standard for webkit
-                        word-break: break-word;
-
-                        -webkit-hyphens: auto;
-                        -moz-hyphens: auto;
-                        hyphens: auto;
-
-                        -webkit-hyphenate-before: 2;
-                        -webkit-hyphenate-after: 3;
-                        hyphenate-lines: 3;
-                    }
-
-                    .warning-message {
-                        color: red;
-                        padding: 1em;
-                    }
-                    .conflicted {
-                        position: absolute;
-                        border: 1px solid grey;
-                        margin-top: -140px;
-                        background-color: white;
-                    }
-                }
 
                 .controls {
                     text-align: center;
@@ -318,29 +386,6 @@
                 padding: 20px;
             }
 
-            .config-file {
-                padding: 20px;
-
-                input {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    visibility: hidden;
-                    z-index: 0;
-                }
-
-                .fakebutton {
-                    .create-border-radius(@border-radius);
-                    font-family: @font-family-medium;
-                    border: 1px solid #6B6B6B;
-                    color: white;
-                    font-size: 14px;
-                    font-weight: bold;
-                    padding: 5px;
-                    z-index: 2;
-                    cursor: pointer;
-                }
-            }
         }
 
 

@@ -1,19 +1,28 @@
-<div class="charm-panel config-variant">
+<div>
+  <div class="ghost-config-wrapper">
+    <div class="ghost-config-header">Service details</div>
+    <div class="ghost-config-content">
+      <input class="config-field" type="text" name="number-units" value="1"/>
+      <label for="number-units">Minimum units</label>
+    </div>
+  </div>
   {{#if settings}}
   <!-- Service configuration form -->
-  <div class="charm-section">
-    <h4>Service Settings<i class="sprite chevron_up"></i></h4>
-    <div class="collapsible">
-      <div class="config-file-upload control-group">
-        <input class="config-file-upload" type="file">
-        <div>
-          <span class="config-file-upload">Use configuration file</span>
-          <span class="config-file-name"></span>
-        </div>
+  <div class="ghost-config-wrapper">
+    <div class="ghost-config-header">Configuration</div>
+    <div class="ghost-config-content">
+      <div class="default-config-toggle">
+        <span>Use the default configuration?</span>
+        <div class="toggle-switch"></div>
       </div>
+        <div class="config-file">
+        <input type="file">
+        <div class="fakebutton">Import config file...</div>
+      </div>
+
       <form class="charm-settings">
         <div class="service-config">
-          {{> service-config}}
+          {{> service-configuration}}
         </div>
       </form>
     </div>
