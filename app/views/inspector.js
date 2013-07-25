@@ -1237,10 +1237,10 @@ YUI.add('juju-view-inspector', function(Y) {
           this.container = Y.Node.create(this.templateWrapper);
 
           var options = model.getAttrs();
+
           // XXX - Jeff
           // not sure this should be done like this
           // but this will allow us to use the old template.
-
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
