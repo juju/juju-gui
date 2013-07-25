@@ -1066,9 +1066,12 @@ YUI.add('juju-view-inspector', function(Y) {
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
-              // called under the databinding context
-              var statuses = this.viewlet.updateUnitList(value);
-              this.viewlet.generateAndBindUnitHeaders(node, statuses);
+              // Called under the databinding context.
+              // Subordinates may not have a value.
+              if (value) {
+                var statuses = this.viewlet.updateUnitList(value);
+                this.viewlet.generateAndBindUnitHeaders(node, statuses);
+              }
             }
           }
         },
@@ -1234,13 +1237,18 @@ YUI.add('juju-view-inspector', function(Y) {
           this.container = Y.Node.create(this.templateWrapper);
 
           var options = model.getAttrs();
+
           // XXX - Jeff
           // not sure this should be done like this
           // but this will allow us to use the old template.
-
           options.settings = utils.extractServiceSettings(options.options);
 
           this.container.setHTML(this.template(options));
+          this.container.all('textarea.config-field')
+                        .plug(plugins.ResizingTextarea,
+                              { max_height: 200,
+                                min_height: 18,
+                                single_line: 18});
         }
       }
     };
