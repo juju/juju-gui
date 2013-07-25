@@ -178,9 +178,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
   requires: [
     'node',
     'handlebars',
-    'datasource-io',
-    'datasource-jsonschema',
-    'io-base',
     'json-parse',
     'juju-charm-models',
     'view']
