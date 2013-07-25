@@ -144,7 +144,7 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     /**
-     * Initializer for Charm. 
+     * Initializer for Charm.
      *
      * @method initializer
      * @param {Object} cfg The configuration object.

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('juju charm view', function() {
+  describe('juju charm view', function() {
     var CharmView, cleanIconHelper, juju, fakeStore, testUtils, Y, env,
         conn, container, charmResults;
 
@@ -149,10 +149,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should allow for the user to specify a service name', function(done) {
       var charmView = new CharmView({
-            charm_data_url: charmQuery,
-            store: fakeStore,
-            container: container,
-            env: env
+        charm_data_url: charmQuery,
+        store: fakeStore,
+        container: container,
+        env: env
       });
       //render?
       var serviceName = 'my custom service name';
