@@ -181,27 +181,14 @@ YUI.add('juju-charm-models', function(Y) {
       }
       if (Y.Lang.isValue(options.get_charm)) {
         // This is an env.
-        options.get_charm(
-            this.get('id'),
-            function(response) {
-              if (response.err) {
-                callback(true, response);
-              } else if (response.result) {
-                callback(false, response.result);
-              } else {
-                // What's going on?  This does not look like either of our
-                // expected signatures.  Declare a loading error.
-                callback(true, response);
-              }
-            }
-        );
-      } else if (Y.Lang.isValue(options.charm)) {
-        // This is the charmworld API.
-        options.charm(this.get('store_id'), {
-          success: function(response) {
-            callback(false, response);
-          },
-          failure: function(response) {
+        options.get_charm(this.get('id'), function(response) {
+          if (response.err) {
+            callback(true, response);
+          } else if (response.result) {
+            callback(false, response.result);
+          } else {
+            // What's going on?  This does not look like either of our
+            // expected signatures.  Declare a loading error.
             callback(true, response);
           }
         });
