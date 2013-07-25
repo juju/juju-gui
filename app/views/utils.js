@@ -1435,7 +1435,9 @@ YUI.add('juju-view-utils', function(Y) {
    *
    */
   Y.Handlebars.registerHelper('debugger', function() {
+    /*jshint debug:true */
     debugger;
+    /*jshint debug:false */
   });
   /*
    * Extension for views to provide an apiFailure method.
