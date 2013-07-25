@@ -868,7 +868,7 @@ YUI.add('juju-gui', function(Y) {
       var charm_url = req.params.charm_store_path;
       this.showView('charm', {
         charm_data_url: charm_url,
-        charm_store: this.charm_store,
+        store: this.get('store'),
         env: this.env
       });
     },

@@ -113,6 +113,40 @@ YUI.add('juju-charm-models', function(Y) {
    */
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
+    /**
+
+      Load the recent commits into a format we can use nicely.
+
+      @method _loadRecentCommits
+
+     */
+    _loadRecentCommits: function() {
+      var source = this.get('code_source'),
+          commits = [];
+
+      if (source && source.revisions) {
+        Y.Array.each(source.revisions, function(commit) {
+          commits.push({
+            author: {
+              name: commit.authors[0].name,
+              email: commit.authors[0].email
+            },
+            date: new Date(commit.date),
+            message: commit.message,
+            revno: commit.revno
+          });
+        });
+      }
+
+      return commits;
+    },
+
+    /**
+     * Initializer for Charm. 
+     *
+     * @method initializer
+     * @param {Object} cfg The configuration object.
+     */
     initializer: function(cfg) {
       var id = this.get('id'),
           parts = parseCharmId(id),
@@ -235,6 +269,7 @@ YUI.add('juju-charm-models', function(Y) {
           ].join('/');
         }
       },
+      code_source: {},
       options: {
         setter: 'unsetIfNoValue'
       },
@@ -256,21 +291,6 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       is_subordinate: {},
-      last_change: {
-        /**
-         * Normalize created value from float to date object.
-         *
-         * @method last_change.writeOnce.setter
-         */
-        setter: function(val) {
-          if (val && val.created) {
-            // Mutating in place should be fine since this should only
-            // come from loading over the wire.
-            val.created = new Date(val.created * 1000);
-          }
-          return val;
-        }
-      },
       maintainer: {},
       metadata: {},
       owner: {},
@@ -279,6 +299,24 @@ YUI.add('juju-charm-models', function(Y) {
       proof: {},
       provides: {},
       requires: {},
+      /**
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      'recent_commits': {
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the api.
+         *
+         * @method recent_commits.valueFn
+         *
+         */
+        valueFn: function() {
+          return this._loadRecentCommits();
+        }
+      },
       revision: {
         /**
          * Parse the revision number out of a string.
@@ -610,21 +648,6 @@ YUI.add('juju-charm-models', function(Y) {
       },
       is_approved: {},
       is_subordinate: {},
-      last_change: {
-        /**
-         * Normalize created value from float to date object.
-         *
-         * @method last_change.setter
-         */
-        setter: function(val) {
-          if (val && val.created) {
-            // Mutating in place should be fine since this should only
-            // come from loading over the wire.
-            val.created = new Date(val.created * 1000);
-          }
-          return val;
-        }
-      },
       maintainer: {},
       /*
         API related metdata information for this charm object.
