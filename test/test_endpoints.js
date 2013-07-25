@@ -393,7 +393,32 @@ describe('Endpoints map handlers', function() {
 
        var svc = app.db.services.getById(service_name);
        svc.set('pending', false);
+       destroyMe.push(svc);
      });
+
+  it('should update is_subordinate value when non-pending services are added',
+      function(done) {
+        var service_name = 'puppet';
+        var charm_id = 'cs:precise/puppet-2';
+        app.db.charms.add({id: charm_id, is_subordinate: true});
+        var charm = app.db.charms.getById(charm_id);
+        destroyMe.push(charm);
+        charm.loaded = true;
+        app.db.services.add({
+          id: service_name,
+          pending: true,
+          loaded: true,
+          charm: charm_id});
+
+        controller.on('endpointMapAdded', function() {
+          assert.isTrue(svc.get('subordinate'));
+          done();
+        });
+
+        var svc = app.db.services.getById(service_name);
+        svc.set('pending', false);
+        destroyMe.push(svc);
+      });
 
   it('should update endpoints map when a service\'s charm changes', function() {
     var service_name = 'wordpress';
