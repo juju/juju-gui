@@ -678,14 +678,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tplData = charm.getAttrs(),
           container = this.get('container');
 
-      var link;
-      if (window.location.origin) {
-        link = window.location.origin + '/' + this.get('charm').get('storeId');
-      } else {
-        link = window.location.protocol + window.location.host + '/' +
-            this.get('charm').get('storeId');
-      }
+      var siteDomain = 'jujucharms.com',
+          charmPath = this.get('charm').get('storeId'),
+          link = 'https://' + siteDomain + '/' + charmPath;
       tplData.isFullscreen = isFullscreen;
+      tplData.isLocal = tplData.scheme === 'local';
       tplData.forInspector = this.get('forInspector');
       if (!tplData.forInspector) {
         tplData.sourceLink = this._getSourceLink();
@@ -696,11 +693,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
           tplData.requires, tplData.provides);
       tplData.link = escape(link);
       tplData.twitterText = escape(
-          'Check out this great charm on jujucharms: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
       tplData.emailSubject = escape(
-          'Check out this great charm on jujucharms!');
+          'Check out this great charm on ' + siteDomain + '!');
       tplData.emailText = escape(
-          'Check out this great charm on jujucharms: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
