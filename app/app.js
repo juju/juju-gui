@@ -117,7 +117,7 @@ YUI.add('juju-gui', function(Y) {
 
       charm: {
         type: 'juju.views.charm',
-        preserve: false,
+        preserve: false
       },
 
       notifications: {
