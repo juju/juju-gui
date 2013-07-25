@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('juju charm view', function() {
+  describe.only('juju charm view', function() {
     var CharmView, cleanIconHelper, juju, fakeStore, testUtils, Y, env,
         conn, container, charmResults;
 
@@ -29,7 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate', 'juju-charm-store'
+        'node-event-simulate', 'juju-charm-store', 'json'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
@@ -41,6 +41,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function(done) {
       charmResults = {
         charm: {
+          id: 'precise/postgresql-62',
           maintainer: 'Mark Mims <mark.mims@canonical.com>',
           series: 'precise',
           owner: 'charmers',
@@ -65,20 +66,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               description: 'The third option.',
               type: 'int'
             }
-          }
-        },
-        description: 'PostgreSQL is a fully featured RDBMS.',
-        name: 'postgresql',
-        summary: 'object-relational SQL database (supported version)',
-        store_url: 'cs:precise/postgresql-24',
-        bzr_branch: 'lp:~charmers/charms/precise/postgresql/trunk',
-        last_change:
-            { committer: 'David Owen <david.owen@canonical.com>',
+          },
+          description: 'PostgreSQL is a fully featured RDBMS.',
+          name: 'postgresql',
+          summary: 'object-relational SQL database (supported version)',
+          store_url: 'cs:precise/postgresql-24',
+          bzr_branch: 'lp:~charmers/charms/precise/postgresql/trunk',
+          code_source: {
+            revisions: [{
+              authors: [{
+                email: 'david.owen@canonical.com',
+                name: 'David Owen'
+              }],
+              date: '2013-07-14T19:46:24Z',
               message: 'Only reload for pg_hba updates',
-              revno: 24,
-              created: 1340206387.539},
-        proof: {}
+              revno: 62
+            }]
+          },
+          proof: {}
+        }
       };
+
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       CharmView = juju.views.charm;
@@ -88,8 +96,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: 
-                [{responseText: Y.JSON.stringify(charmResults)}]
+              results: [{
+                responseText: Y.JSON.stringify(charmResults)
+              }]
             }
           });
         }
@@ -125,10 +134,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       var deployInput = charmView.get('container').one('#charm-deploy');
       deployInput.after('click', function() {
-        var msg = conn.last_message();
+        var msg = conn.last_message(),
+            charm = charmResults.charm,
+            expected = charm.series + '/' + charm.name;
         // Ensure the websocket received the `deploy` message.
         msg.op.should.equal('deploy');
-        var expected = charmResults.series + '/' + charmResults.name;
         msg.charm_url.should.contain(expected);
         // A click to the deploy button redirects to the root page.
         redirected.should.equal(true);
@@ -138,11 +148,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should allow for the user to specify a service name', function(done) {
-      var charmView = new CharmView(
-          { charm_data_url: charmQuery,
+      var charmView = new CharmView({
+            charm_data_url: charmQuery,
             store: fakeStore,
             container: container,
-            env: env}).render();
+            env: env
+      });
+      //render?
       var serviceName = 'my custom service name';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.
@@ -160,11 +172,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should allow for the user to specify a config', function(done) {
-      var charmView = new CharmView(
-          { charm_data_url: charmQuery,
-            store: fakeStore,
-            container: container,
-            env: env}).render();
+      var charmView = new CharmView({
+        charm_data_url: charmQuery,
+        store: fakeStore,
+        container: container,
+        env: env
+      });
       var option0Value = 'the value for option0';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.
@@ -182,21 +195,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should handle charms with no config', function(done) {
       // We appear to mutate a global here, but charmResults will be recreated
       // for the next test in beforeEach.
-      delete charmResults.config;
-      var charmStore = new juju.CharmStore(
-          { datasource: new Y.DataSource.Local(
-          { source:
-                [{responseText: Y.JSON.stringify(charmResults)}]
-          })
-          }
-          ),
-          view = new CharmView(
-          { charm_data_url: charmQuery,
-            charm_store: charmStore,
-            container: container,
-            env: env}).render(),
-          option0Value = 'the value for option0',
-          deployButton = container.one('#charm-deploy');
+      delete charmResults.options;
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: Y.JSON.stringify(charmResults)
+              }]
+            }
+          });
+        }
+      });
+      var view = new CharmView({
+        charm_data_url: charmQuery,
+        store: fakeStore,
+        container: container,
+        env: env
+      });
+      var deployButton = container.one('#charm-deploy');
       assert.equal(view.get('charm').config, null);
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
@@ -206,7 +224,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       deployButton.simulate('click');
     });
-
   });
 
 })();

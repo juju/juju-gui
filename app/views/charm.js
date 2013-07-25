@@ -36,12 +36,39 @@ YUI.add('juju-view-charm-collection', function(Y) {
       models = Y.namespace('juju.models');
 
   var CharmView = Y.Base.create('CharmView', Y.View, [], {
+    /**
+     * Formats the data of the most recent change for the charm template.
+     *
+     * @method _getLastChange
+     */
+    _getLastChange: function() {
+      var last_change = this.get('charm').get('recent_commits')[0];
+      return {
+        created: new Date(last_change.date),
+        committer: Y.Lang.sub('{name} <{email}>', last_change.author),
+        message: last_change.message
+      };
+    },
+
+    /**
+     * Initializer
+     *
+     * @method initializer
+     */
     initializer: function() {
+      var storeId = this.get('charm_data_url').replace(
+          'json', '').replace('charms', '');
       this.set('charm', null);
-      console.log('Loading charm view', this.get('charm_data_url'));
-      this.get('store').charm(this.get('storeId'), {
-        'success': Y.bind(this.on_charm_data, this),
-        'failure': function er(e) { console.error(e.error); }
+      console.log('Loading charm view', storeId);
+      this.get('store').charm(storeId, {
+        'success': Y.bind(function(data) {
+          var charm = new Y.juju.models.Charm(data.charm);
+          this.set('charm', charm);
+          this.render();
+        }, this),
+        'failure': function(e) {
+          console.error(e.error);
+        }
       });
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
@@ -55,7 +82,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
     @method fitToWindow
     */
-
     fitToWindow: function() {
       var container = this.get('container'),
           viewContainer = container.one('.view-container');
@@ -95,7 +121,9 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
       container.setHTML(this.template({
         charm: charm.getAttrs(),
-        settings: settings}));
+        last_change: this._getLastChange(),
+        settings: settings
+      }));
 
       var self = this;
       setTimeout(function() {
@@ -105,14 +133,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
       container.one('#charm-deploy').on(
           'click', Y.bind(this.on_charm_deploy, this));
       return this;
-    },
-
-    on_charm_data: function(data) {
-      data.id = data.store_url;
-      data.is_subordinate = data.subordinate;
-      var charm = new Y.juju.models.Charm(data);
-      this.set('charm', charm);
-      this.render();
     },
 
     on_charm_deploy: function(evt) {
