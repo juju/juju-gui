@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju charm view', function() {
     var CharmView, cleanIconHelper, juju, fakeStore, testUtils, Y, env,
-        conn, container, charmResults;
+        conn, container, charmResults, charmView;
 
     var charmQuery = '/charms/precise/postgresql/json';
 
@@ -113,6 +113,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     afterEach(function(done) {
       container.remove(true);
       env.destroy();
+      if (charmView) {
+        charmView.destroy();
+      }
       done();
     });
 
@@ -208,14 +211,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         }
       });
-      var view = new CharmView({
+      var charmView = new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
         container: container,
         env: env
       });
       var deployButton = container.one('#charm-deploy');
-      assert.equal(view.get('charm').config, null);
+      assert.equal(charmView.get('charm').config, null);
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
         var msg = conn.last_message();
