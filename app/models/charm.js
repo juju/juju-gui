@@ -173,9 +173,9 @@ YUI.add('juju-charm-models', function(Y) {
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
-      // TODO: verify whether is_subordinate is ever passed by pyjuju or juju
-      // core.  If not, remove the "|| data.is_subordinate" and change in the
-      // fakebackend and/or sandbox to send the expected thing there.
+      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
+      // or juju core.  If not, remove the "|| data.is_subordinate" and change
+      // in the fakebackend and/or sandbox to send the expected thing there.
       data.is_subordinate = data.subordinate || data.is_subordinate;
       Y.each(data, function(value, key) {
         if (!value ||
