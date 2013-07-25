@@ -65,6 +65,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         description: 'PostgreSQL is a fully featured RDBMS.',
         name: 'postgresql',
         summary: 'object-relational SQL database (supported version)',
+        store_url: 'cs:precise/postgresql-24',
         bzr_branch: 'lp:~charmers/charms/precise/postgresql/trunk',
         last_change:
             { committer: 'David Owen <david.owen@canonical.com>',
