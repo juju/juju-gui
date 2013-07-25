@@ -105,6 +105,12 @@ YUI.add('juju-databinding', function(Y) {
       index = _indexBindings(bindings);
       // Handle deps
       bindings.forEach(function(binding) {
+        // If the keyfunc rejected it (wildcards)
+        // we don't add it to the bindings result.
+        // This means wildcards don't compute deps either.
+        if (!index[binding.name]) {
+          return;
+        }
         result.bindings.push(binding);
         if (binding.dependents) {
           binding.dependents.forEach(function(dep) {
@@ -117,14 +123,14 @@ YUI.add('juju-databinding', function(Y) {
       });
       // Handle wildcards
       result.wildcards = _indexBindings(bindings, function(binding) {
-        if (binding.name !== '*' && binding,name !== '+') {
+        if (binding.name !== '*' && binding.name !== '+') {
           return;
         }
-        return binding.name
+        return binding.name;
       }, true);
 
-      // Handle '*' on all update runs
-      console.log("DELTA", modelChangeKeys, result);
+      console.trace();
+      console.log("DELTA", result);
       return result;
     }
 
@@ -317,6 +323,7 @@ YUI.add('juju-databinding', function(Y) {
       }, this);
       this._setupHeirarchicalBindings();
       this._setupDependencies();
+      this._setupWildcarding(viewlet);
       this._modelChangeHandler();
 
       return this;
@@ -387,6 +394,32 @@ YUI.add('juju-databinding', function(Y) {
           });
         }
       });
+    };
+
+    /**
+     Process a viewlet searching for wildcard bindings and
+     roll those into a consumable form.
+
+     @method _setupWildcarding
+     @param {Viewlet} viewlet
+     */
+    BindingEngine.prototype._setupWildcarding = function(viewlet) {
+      if (!viewlet.bindings) {
+        return;
+      }
+      var self = this;
+      Object.keys(viewlet.bindings).forEach(function(name) {
+        if (name !== '*' && name !== '+') {
+          return;
+        }
+        // This works because bindings is an array, we can
+        // register more than one wildcard.
+        var binding = viewlet.bindings[name];
+        if (!binding.name) {
+          binding.name = name;
+        }
+        self.addBinding(binding, viewlet);
+        });
     };
 
     /**
@@ -562,9 +595,10 @@ YUI.add('juju-databinding', function(Y) {
       }
 
       // Trigger callback on binding if present
-      function optionalCallback(binding, callbackName) {
+      function optionalCallback(binding, callbackName, value) {
         var callback = binding[callbackName];
         if (callback) {
+          console.log('invoking', callbackName, binding, value);
             callback.call(binding, binding.target, value);
             return true;
           }
@@ -573,9 +607,11 @@ YUI.add('juju-databinding', function(Y) {
 
       // Trigger callback on any bindings in collection
       // where it is present.
-      function optionalCallbacks(bindings, callbackName) {
+      function optionalCallbacks(bindings, callbackName, value) {
         bindings.forEach(function(binding) {
-          optionalCallback(binding, callbackName);
+          console.group(binding.name);
+          optionalCallback(binding, callbackName, value);
+          console.groupEnd();
         });
       }
 
@@ -613,31 +649,34 @@ YUI.add('juju-databinding', function(Y) {
           }
         });
 
+        var value = binding.get(viewletModel);
+        if (binding.format) {
+          value = binding.format.call(binding, value);
+        }
         // Do conflict detection
         if (binding.target !== conflicted) {
-          var value = binding.get(viewletModel);
-          if (binding.format) {
-            value = binding.format.call(binding, value);
-          }
-          // If an apply callback was provided use it to update
+                  // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
-          optionalCallback(binding, 'beforeUpdate');
+          optionalCallback(binding, 'beforeUpdate', value);
           if (binding.update) {
             binding.update.call(binding, binding.target, value);
           } else {
             field.set.call(binding, binding.target, value);
           }
-          optionalCallback(binding, 'afterUpdate');
+          optionalCallback(binding, 'afterUpdate', value);
         }
         // Run Per Updated binding.
         if (delta.wildcards['+']) {
-          optionalCallbacks(delta.wildcards['+'], 'beforeUpdate');
-          optionalCallbacks(delta.wildcards['+'], 'update');
-          optionalCallbacks(delta.wildcards['+'], 'afterUpdate');
+          optionalCallbacks(delta.wildcards['+'], 'beforeUpdate', value);
+          optionalCallbacks(delta.wildcards['+'], 'update', value);
+          optionalCallbacks(delta.wildcards['+'], 'afterUpdate', value);
         }
       });
 
       // Run Once, Any update.
+      // The design of this calling convention is strange, this is basically
+      // just an event, it doesn't have the value, though it could get it
+      // from this.viewlet.model.
       if (delta.wildcards['*']) {
           optionalCallbacks(delta.wildcards['*'], 'beforeUpdate');
           optionalCallbacks(delta.wildcards['*'], 'update');
