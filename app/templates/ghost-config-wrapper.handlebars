@@ -6,6 +6,7 @@
       <input value="Confirm" type="submit"
              class="btn btn-primary deploy">
     </div>
+    {{#unless isSubordinate}}
     <div class="charm-entry">
       <div class="control-group">
         <div class="well control-description">
@@ -18,6 +19,7 @@
         </div>
       </div>
     </div>
+    {{/unless}}
   </div>
   <div class="viewlet-container"></div>
   <div class="viewlet-manager-footer"></div>

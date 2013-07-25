@@ -1066,9 +1066,12 @@ YUI.add('juju-view-inspector', function(Y) {
           units: {
             depends: ['aggregated_status'],
             'update': function(node, value) {
-              // called under the databinding context
-              var statuses = this.viewlet.updateUnitList(value);
-              this.viewlet.generateAndBindUnitHeaders(node, statuses);
+              // Called under the databinding context.
+              // Subordinates may not have a value.
+              if (value) {
+                var statuses = this.viewlet.updateUnitList(value);
+                this.viewlet.generateAndBindUnitHeaders(node, statuses);
+              }
             }
           }
         },
