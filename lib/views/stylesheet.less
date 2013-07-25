@@ -384,6 +384,9 @@ table tr.highlighted td {
 }
 #main {
     overflow: hidden;
+    .view-container {
+        overflow-y: auto;
+    }
 }
 .crosshatch-background {
     background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
@@ -777,19 +780,19 @@ g.unit {
     }
 }
 
-/* 
- * D3 StatusBar support 
+/*
+ * D3 StatusBar support
  */
 .statusbar {
-  .label { 
-    fill: white; 
+  .label {
+    fill: white;
   }
 
-  .error { 
+  .error {
     fill: rgb(224, 56, 45);
   }
 
-  .pending { 
+  .pending {
     fill: rgb(236, 168, 23);
   }
 
