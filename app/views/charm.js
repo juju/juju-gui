@@ -133,10 +133,10 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // For this reason we need to redirect to the root page right now.
       this.fire('navigateTo', {url: '/:gui:/'});
       env.deploy(
-        charmId,
-        serviceName,
-        config,
-        Y.bind(this._deployCallback, this)
+          charmId,
+          serviceName,
+          config,
+          Y.bind(this._deployCallback, this)
       );
     },
 
