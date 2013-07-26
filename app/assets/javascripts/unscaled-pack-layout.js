@@ -1,6 +1,6 @@
 /**
  * Unscaled pack layout.
- * 
+ *
  * This code is mostly taken from D3, which explains some of the non-standard
  * coding practices used within.  The pack layout as used by D3 always scales
  * the layout to fit within the viewport, which is not what we want, as this
@@ -11,6 +11,8 @@
  *
  * @module unscaled-pack-layout
  */
+
+
 YUI.add('unscaled-pack-layout', function(Y) {
   // A method assignment helper for hierarchy subclasses.
   // Taken from d3.layout.hierarchy
