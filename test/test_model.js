@@ -560,21 +560,21 @@ describe('juju charm load', function() {
          assert.fail('Should have thrown an error');
        } catch (e) {
          e.should.equal(
-         'You must supply a get_charm or loadByPath function.');
+         'You must supply a get_charm function.');
        }
        try {
          charm.sync('read', {env: 42});
          assert.fail('Should have thrown an error');
        } catch (e) {
          e.should.equal(
-         'You must supply a get_charm or loadByPath function.');
+         'You must supply a get_charm function.');
        }
        try {
          charm.sync('read', {charm_store: 42});
          assert.fail('Should have thrown an error');
        } catch (e) {
          e.should.equal(
-         'You must supply a get_charm or loadByPath function.');
+         'You must supply a get_charm function.');
        }
      });
 
