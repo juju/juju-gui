@@ -207,12 +207,19 @@ YUI.add('juju-charm-models', function(Y) {
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
+
       // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
       // or juju core.  If not, remove the "|| data.is_subordinate" and change
       // in the fakebackend and/or sandbox to send the expected thing there.
       data.is_subordinate = data.subordinate || data.is_subordinate;
+      // Because the old and new charm models have different places for
+      // the options data, this handles the normalization.
+      if (data.config && data.config.options && ! data.options) {
+        data.options = data.config.options;
+        delete data.config;
+      }
       Y.each(data, function(value, key) {
-        if (!value ||
+        if (!Y.Lang.isValue(value) ||
             !self.attrAdded(key) ||
             Y.Lang.isValue(self.get(key))) {
           delete data[key];

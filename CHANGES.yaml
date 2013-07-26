@@ -20,14 +20,24 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-
 - unreleased:
+- 0.8.1:
+    - Fixed bug causing settings page to not scroll.
+    - >
+      Fixed bug causing the initial loading spinner to spin forever in Firefox
+      with cookies disabled.
+    - Fixed bug causing the scripts to load out of order.
+    - Fixed subordinate interactions with juju-core.
+    - Additional steps taken to remove reliance on old charm browser API.
+    - Charm browser autocomplete search development started (feature-flagged).
+    - Large steps towards feature parity for feature-flagged inspector.
+    - Adding details panel to feature-flagged inspector.
 - 0.8.0:
     - Update charm browser styling.
     - Add home link in charm browser.
     - Add provider test result data and links
     - >
-      Update service block design. Use icons for service blocks and stop 
+      Update service block design. Use icons for service blocks and stop
       making block size dependent on unit count. Switch service block status
       summary from pie chart to bar chart.
     - Charm browser shows lifetime downloads and commit counts.
