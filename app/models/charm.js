@@ -186,7 +186,7 @@ YUI.add('juju-charm-models', function(Y) {
           }
         });
       } else {
-        throw 'You must supply a get_charm or loadByPath function.';
+        throw 'You must supply a get_charm function.';
       }
     },
 
