@@ -168,7 +168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isUndefined(charm.get('is_subordinate'));
       // The _set forces a change to a writeOnly attribute.
       charm._set('is_subordinate', true);
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:wordpress', callback, {unitCount: 0});
       assert.isUndefined(result.error);
       assert.strictEqual(
           fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
@@ -857,6 +857,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           fakebackend.addUnit('wordpress', -1).error,
           'Invalid number of units.');
+    });
+
+    it('returns error for invalid number of subordinate units', function() {
+      fakebackend.deploy('cs:puppet', callback);
+      assert.isUndefined(deployResult.error);
+      assert.equal(
+          fakebackend.addUnit('puppet', 'goyesca').error,
+          'Invalid number of units.');
+      assert.equal(
+          fakebackend.addUnit('puppet', 1).error,
+          'Invalid number of units.');
+      assert.equal(
+          fakebackend.addUnit('puppet', -1).error,
+          'Invalid number of units.');
+      // It also ignores empty requests
+      assert.isUndefined(
+          fakebackend.addUnit('puppet', 0).error);
+      assert.isUndefined(
+          fakebackend.addUnit('puppet').error);
     });
 
     it('returns an error if the service does not exist.', function() {

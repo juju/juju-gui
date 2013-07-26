@@ -20,11 +20,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
-  Adds the ViewContainer constructor class and viewlet instantiable object
+  Adds the ViewletManager constructor class and viewlet instantiable object
 
-  @module juju-view-container
+  @module juju-viewlet-manager
 */
-YUI.add('juju-view-container', function(Y) {
+YUI.add('juju-viewlet-manager', function(Y) {
+  var ns = Y.namespace('juju.viewlets'),
+      views = Y.namespace('juju.views');
 
   /**
     Viewlet object class. It's expected that these properties will be
@@ -39,7 +41,7 @@ YUI.add('juju-view-container', function(Y) {
 
     /**
       The user defined name for the viewlet. This will be inferred from the
-      viewlets object on the ViewContainer when possible.
+      viewlets object on the ViewletManager when possible.
 
       @property name
       @type {String}
@@ -52,16 +54,15 @@ YUI.add('juju-view-container', function(Y) {
 
       @property templateWrapper
       @type {string | compiled Handlebars template}
-      @default '<div class="viewlet-wrapper" style="display: none"></div>'
     */
-    templateWrapper: '<div class="viewlet-wrapper" style="display:none"></div>',
+    templateWrapper:
+        '<div class="viewlet-wrapper" style="display:none"></div>',
 
     /**
       Template of the viewlet, provided during configuration
 
       @property template
       @type {string | compiled Handlebars template}
-      @default '{{viewlet}}'
     */
     template: '{{viewlet}}', // compiled handlebars template
 
@@ -84,8 +85,9 @@ YUI.add('juju-view-container', function(Y) {
     slot: null,
 
     /**
-      When defined it allows the developer to specify another model to bind the
-      Viewlet to, usually one nested in the model passed to the View Container.
+      When defined it allows the developer to specify another model to bind
+      the Viewlet to, usually one nested in the model passed to the Viewlet
+      Manager.
 
       @property selectBindModel
       @type {Function}
@@ -96,8 +98,8 @@ YUI.add('juju-view-container', function(Y) {
     /**
       User defined update method which re-renders the contents of the viewlet.
       Called by the binding engine if a modellist is updated. This is
-      accomplished by grabbing the viewlets container and setHTML() with the
-      new contents. Passed a reference to the modellist in question.
+      accomplished by grabbing the viewlets manager and setHTML() with the new
+      contents. Passed a reference to the modellist in question.
 
       @method update
       @type {function}
@@ -108,17 +110,17 @@ YUI.add('juju-view-container', function(Y) {
 
     /**
       Render method to generate the container and insert the compiled viewlet
-      template into it. It's passed reference to the model passed to the view
-      container.
+      template into it. It's passed reference to the model passed to the
+      viewlet manager.
 
       @method render
       @type {function}
-      @param {Y.Model} model passed to the view container.
-      @param {Object} viewContainerAttrs object of all of the view container
+      @param {Y.Model} model passed to the viewlet manager.
+      @param {Object} viewletManagerAttrs object of all of the viewlet manager
         attributes.
       @default {render function}
     */
-    render: function(model, viewContainerAttrs) {
+    render: function(model, viewletManagerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       if (typeof this.template === 'string') {
@@ -135,6 +137,14 @@ YUI.add('juju-view-container', function(Y) {
       @default {noop function}
     */
     conflict: function(node) {},
+
+    /**
+      A destroy callback called when removing a viewlet for cleanup.
+
+      @method destroy
+      @return {undefined} nothing.
+     */
+    destroy: function() {},
 
     /**
       Called by the databinding engine when fields drop out of sync with
@@ -198,15 +208,14 @@ YUI.add('juju-view-container', function(Y) {
   };
 
   /**
-    ViewContainer class for rendering a parent view container which manages the
+    ViewletManager class for rendering a parent view container which manages the
     display of viewlets.
 
     @namespace juju
-    @class ViewContainer
+    @class ViewletManager
     @constructor
   */
-  var jujuViews = Y.namespace('juju.views');
-  jujuViews.ViewContainer = new Y.Base.create('view-container', Y.View, [], {
+  ns.ViewletManager = new Y.Base.create('viewlet-manager', Y.View, [], {
 
     /**
       DOM bound events for any view container related events
@@ -225,17 +234,17 @@ YUI.add('juju-view-container', function(Y) {
     */
 
     /**
-      Template of the view container. Set by passing in during instantiation.
-      ex) { template: Y.juju.templates['view-container'] }
+      Template of the viewlet manager. Set by passing in during instantiation.
+      ex) { template: Y.juju.templates['viewlet-manager'] }
       Must include {{ viewlets }} to allow rendering of the viewlets.
 
       @property template,
       @type {Handlebars Template}
-      @default '<div class="view-container-wrapper">{{viewlets}}</div>'
+      @default '<div class="viewlet-manager-wrapper">{{viewlets}}</div>'
     */
 
     /**
-      Handlebars config options for the view-container template. Set by passing
+      Handlebars config options for the viewlet-manager template. Set by passing
       in during instantiation ex) { templateConfig: {} }
 
       @property templateConfig
@@ -260,7 +269,7 @@ YUI.add('juju-view-container', function(Y) {
       this.viewletContainer = options.viewletContainer;
       this.viewlets = this._generateViewlets(); // {String}: {Viewlet}
       this.events = options.events;
-      // Map from logical slot name to the CSS selector within viewContainer's
+      // Map from logical slot name to the CSS selector within ViewletManager's
       // DOM to be used to hold this slot when rendered.
       this.slots = {};
       // Internal mapping from slot name to viewlet rendered into slot.
@@ -269,7 +278,7 @@ YUI.add('juju-view-container', function(Y) {
 
       this._setupEvents();
 
-      this.bindingEngine = new jujuViews.BindingEngine(
+      this.bindingEngine = new views.BindingEngine(
           options.databinding || {});
     },
 
@@ -285,8 +294,8 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Renders the viewlets into the view container. Viewlets with a logical
-      slot name defined are not rendered by defaul and require that showViewlet
+      Renders the viewlets into the viewlet manager. Viewlets with a logical
+      slot name defined are not rendered by default and require that showViewlet
       be called for them to render. Slots are typically filled through event
       callback interactions (for example in a click handler).
 
@@ -295,7 +304,7 @@ YUI.add('juju-view-container', function(Y) {
     */
     render: function() {
       var attrs = this.getAttrs(),
-          container = attrs.container,
+          managerContainer = attrs.container.one('.juju-inspector'),
           model = attrs.model,
           viewletTemplate;
 
@@ -303,9 +312,9 @@ YUI.add('juju-view-container', function(Y) {
       if (typeof this.template === 'string') {
         this.template = Y.Handlebars.compile(this.template);
       }
-      container.setHTML(this.template(this.templateConfig));
+      managerContainer.setHTML(this.template(this.templateConfig));
 
-      var viewletContainer = container.one(this.viewletContainer);
+      var viewletContainer = managerContainer.one(this.viewletContainer);
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet, name) {
@@ -339,7 +348,7 @@ YUI.add('juju-view-container', function(Y) {
     showViewlet: function(viewletName, model) {
       var container = this.get('container');
       // This method can be called directly but it is also an event handler
-      // for clicking on the view container tab handles
+      // for clicking on the viewlet manager tab handles.
       if (typeof viewletName !== 'string') {
         viewletName = viewletName.currentTarget.getData('viewlet');
       }
@@ -384,6 +393,7 @@ YUI.add('juju-view-container', function(Y) {
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
+          existing.destroy();
           // remove only removes the databinding but does not clear the DOM.
           existing.remove();
         }
@@ -428,7 +438,7 @@ YUI.add('juju-view-container', function(Y) {
     },
 
     /**
-      Recalculates and sets the height of the view-container when
+      Recalculates and sets the height of the viewlet-manager when
       the browser is resized or by being called directly.
 
       @method recalculateHeight
@@ -445,24 +455,34 @@ YUI.add('juju-view-container', function(Y) {
           footer = Y.one('.bottom-navbar'),
           // Depending on the render cycle these may or may not be in the DOM
           // which is why we pull their heights separately
-          vcHeader = container.one('.view-container-navigation'),
-          vcFooter = container.one('.view-container-footer'),
+          vcHeader = container.one('.header-slot'),
+          vcNavigation = container.one('.viewlet-manager-navigation'),
+          vcFooter = container.one('.viewlet-manager-footer'),
           headerHeight = 0,
           footerHeight = 0,
           vcHeaderHeight = 0,
+          vcNavHeight = 0,
           vcFooterHeight = 0;
 
       if (header) { headerHeight = header.get('clientHeight'); }
       if (footer) { footerHeight = footer.get('clientHeight'); }
       if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
+      if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
       if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
-      // subtract the height of the header and footer of the view container.
+      var height = winHeight - headerHeight -
+                   vcNavHeight - footerHeight - (TB_SPACING * 3);
+      // subtract the height of the header and footer of the viewlet manager.
       height = height - vcHeaderHeight - vcFooterHeight;
 
       this.get('container').one(this.viewletContainer)
                            .setStyle('maxHeight', height + 'px');
+      // Since the left-breakout isn't part of the viewletContainer it also
+      // needs to be set.
+      var left_breakout = this.get('container').one('.left-breakout');
+      if (left_breakout) {
+        left_breakout.setStyle('max-height', height + TB_SPACING + 'px');
+      }
     },
 
     /**
@@ -540,8 +560,14 @@ YUI.add('juju-view-container', function(Y) {
       Removes and destroys the container
 
       @method destructor
+      @return {undefined} nothing.
     */
     destructor: function() {
+      Y.Object.each(this.viewlets, function(viewlet, name) {
+        if (!viewlet.slot) {
+          viewlet.destroy();
+        }
+      });
       this._events.forEach(function(event) {
         event.detach();
       });

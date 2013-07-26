@@ -84,6 +84,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
+      var container = this.get('container');
       this.addEvent(
           this.controls.on(
               this.controls.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
@@ -98,39 +99,44 @@ YUI.add('subapp-browser-mainview', function(Y) {
               this.controls.EVT_SIDEBAR, this._goSidebar, this)
       );
 
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
-      );
+      if (this.search) {
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
+        );
+      }
 
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_SEARCH_GOHOME, this._goHome, this)
-      );
 
-      // If the showHome attribute is changed, update our html by adding the
-      // with-home class to the widget.
-      this.after('withHomeChange', function(ev) {
-        if (ev.newVal) {
-          // Let the widget know we wish it to unhide it's icon and link for
-          // showing home.
-          this.search.showHome();
+      if (this.search) {
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+        );
 
-          if (!this.isFullscreen()) {
-            // In the sidebar, the left panel needs the height adjusted to
-            // make room for the home links to show up.
-            this.get('container').one('.bws-content').addClass('with-home');
+        // If the showHome attribute is changed, update our html by adding the
+        // with-home class to the widget.
+        this.after('withHomeChange', function(ev) {
+          if (ev.newVal) {
+            // Let the widget know we wish it to unhide it's icon and link for
+            // showing home.
+            this.search.showHome();
+
+            if (!this.isFullscreen()) {
+              // In the sidebar, the left panel needs the height adjusted to
+              // make room for the home links to show up.
+              container.one('.bws-content').addClass('with-home');
+            }
+          } else {
+            // Ask the widget to remove the home buttons from display.
+            this.search.hideHome();
+            if (!this.isFullscreen()) {
+              // We also need to adjust the height of the sidebar now to close
+              // up the space by the home buttons.
+              container.one('.bws-content').removeClass('with-home');
+            }
           }
-        } else {
-          // Ask the widget to remove the home buttons from display.
-          this.search.hideHome();
-          if (!this.isFullscreen()) {
-            // We also need to adjust the height of the sidebar now to close
-            // up the space by the home buttons.
-            this.get('container').one('.bws-content').removeClass('with-home');
-          }
-        }
-      }, this);
+        }, this);
+      }
     },
 
     /**
@@ -160,12 +166,20 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _renderSearchWidget: function(node) {
-      this.search = new widgets.browser.Search({
-        filters: this.get('filters'),
-        fullscreenTarget: this._fullscreenTarget,
-        withHome: this.get('withHome')
-      });
-      this.search.render(node.one('.bws-header'));
+      // It only makes sense to render search if we have a store to use to
+      // search against.
+      if (this.get('store')) {
+        this.search = new widgets.browser.Search({
+          autocompleteSource: Y.bind(
+              this.get('store').autocomplete,
+              this.get('store')
+          ),
+          autocompleteDataFormatter: this.get('store').resultsToCharmlist,
+          filters: this.get('filters'),
+          withHome: this.get('withHome')
+        });
+        this.search.render(node.one('.bws-header'));
+      }
 
       // Make sure the controls starts out setting the correct active state
       // based on the current viewmode for our View.
@@ -189,6 +203,13 @@ YUI.add('subapp-browser-mainview', function(Y) {
           text: ev.newVal
         }
       };
+
+      // Perhaps there's more to this change than just a search change. This
+      // might come from places, such as autocomplete, which are a search
+      // change, but also want to select a charm id as well.
+      if (ev.change) {
+        change = Y.merge(change, ev.change);
+      }
       this.fire('viewNavigate', {change: change});
     },
 
@@ -314,19 +335,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       store: {},
-
-      /**
-       * If this were a route that had a subpath component it's passed into
-       * the view to aid in rendering.
-       *
-       * e.g. /fullscreen/*charmid/hooks to load the hooks tab correctly.
-       *
-       * @attribute subpath
-       * @default undefined
-       * @type {String}
-       *
-       */
-      subpath: {},
 
       /**
        * The view needs to be able to tell widgets and controls what the

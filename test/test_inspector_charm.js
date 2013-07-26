@@ -19,7 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Inspector Charm', function() {
-  var charmID, container, fakeCharm, fakeStore, utils, viewlets, views, Y;
+  var charmID, container, content, fakeCharm, fakeStore, testContainer,
+      utils, viewlets, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -32,7 +33,7 @@ describe('Inspector Charm', function() {
       viewlets = Y.namespace('juju.viewlets');
       views = Y.namespace('juju.browser.views');
 
-      charmID = 'precise/apache2-10';
+      charmID = 'cs:precise/apache2-10';
       fakeCharm = {
         get: function() {
           return charmID;
@@ -41,6 +42,16 @@ describe('Inspector Charm', function() {
       window.flags = {serviceInspector: true};
       done();
     });
+  });
+
+  afterEach(function() {
+    if (fakeStore) {
+      fakeStore.destroy();
+    }
+
+    if (testContainer) {
+      testContainer.remove(true);
+    }
   });
 
   after(function() {
@@ -53,9 +64,10 @@ describe('Inspector Charm', function() {
 
   it('renders the viewlet with a charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', false);
-    var testContainer = utils.makeContainer();
+    testContainer = utils.makeContainer();
+    testContainer.setHTML('<div class="left-breakout"></div>');
 
-    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore = new Y.juju.Charmworld2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -74,7 +86,9 @@ describe('Inspector Charm', function() {
       assert.equal(typeof cfg.store, 'object');
       assert.equal(cfg.charm.get('id'), charmID);
       return {
-        render: function() { done(); }
+        render: function() {
+          done();
+        }
       };
     };
     var viewletAttrs = {
@@ -85,15 +99,16 @@ describe('Inspector Charm', function() {
     };
 
     viewlets.charmDetails.container = testContainer;
-    var content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.setHTML('content');
+    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
+    testContainer.one('.left-breakout').setHTML(content);
   });
 
   it('renders the viewlet with a cached charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', true);
-    var testContainer = utils.makeContainer();
+    testContainer = utils.makeContainer();
+    testContainer.setHTML('<div class="left-breakout"></div>');
 
-    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore = new Y.juju.Charmworld2({});
     var cache = new Y.juju.models.BrowserCharmList();
     var charm = new Y.juju.models.BrowserCharm(data.charm);
     charm.set('cached', true);
@@ -105,7 +120,9 @@ describe('Inspector Charm', function() {
       assert.equal(cfg.charm.get('id'), charmID);
       assert.isTrue(cfg.charm.get('cached'));
       return {
-        render: function() { done(); }
+        render: function() {
+          done();
+        }
       };
     };
     var viewletAttrs = {
@@ -116,7 +133,7 @@ describe('Inspector Charm', function() {
     };
 
     viewlets.charmDetails.container = testContainer;
-    var content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.setHTML('content');
+    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
+    testContainer.one('.left-breakout').setHTML(content);
   });
 });

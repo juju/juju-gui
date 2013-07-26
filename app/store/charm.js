@@ -207,6 +207,27 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+     * Api call to fetch autocomplete suggestions based on the current term.
+     *
+     * @method autocomplete
+     * @param {Object} query the filters data object for search.
+     * @param {Object} filters the filters data object for search.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     */
+    autocomplete: function(filters, callbacks, bindScope) {
+      var endpoint = 'charms';
+      // Force that this is an autocomplete call to perform matching on the
+      // start of names vs a fulltext search.
+      filters.autocomplete = 'true';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks, filters);
+    },
+
+    /**
      * Api call to fetch a charm's details.
      *
      * @method charm
@@ -349,11 +370,28 @@ YUI.add('juju-charm-store', function(Y) {
 
      */
     iconpath: function(charmID) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'icon.svg'].join('/');
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch its category data or its own
+      // icon.
+      // XXX: #1202703 - this is a short term fix for the bug. Need longer
+      // term solution.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+            'static/img/charm_160.svg';
+
+      } else {
+        // Get the charm ID from the service.  In some cases, this will be
+        // the charm URL with a protocol, which will need to be removed.
+        // The following regular expression removes everything up to the
+        // colon portion of the quote and leaves behind a charm ID.
+        charmID = charmID.replace(/^[^:]+:/, '');
+
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
     },
 
     /**

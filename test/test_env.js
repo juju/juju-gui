@@ -60,7 +60,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Base Environment', function() {
-    var requires = ['juju-env-base', 'juju-env-sandbox'];
+    var requires = ['juju-env-base', 'juju-env-sandbox', 'json-stringify'];
     var environments, juju, Y, sandboxModule, ClientConnection;
 
     before(function(done) {
@@ -83,6 +83,68 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(env.get('connected'));
     });
 
+    it('uses the module-defined sessionStorage.', function() {
+      var conn = new ClientConnection({juju: {open: function() {}}});
+      var env = new environments.BaseEnvironment({conn: conn});
+      var original = environments.sessionStorage;
+      var setItemValue;
+      environments.sessionStorage = {
+        getItem: function() {
+          return Y.JSON.stringify({user: 'foo', password: 'kumquat'});
+        },
+        setItem: function(key, value) {
+          setItemValue = {key: key, value: value};
+        }
+      };
+      env.setCredentials(null);
+      assert.deepEqual(setItemValue, {key: 'credentials', value: 'null'});
+      var creds = env.getCredentials();
+      assert.isTrue(creds.areAvailable);
+      assert.equal(creds.user, 'foo');
+      assert.equal(creds.password, 'kumquat');
+      // Clean up.
+      environments.sessionStorage = original;
+    });
+
+  });
+
+  describe('Base Environment module', function() {
+    var requires = ['juju-env-base'];
+    var Y, environments, juju;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        juju = Y.namespace('juju');
+        environments = juju.environments;
+        done();
+      });
+    });
+
+    it('has a working minimal stubSessionStorage.', function() {
+      assert.isNull(environments.stubSessionStorage.getItem('notKey'));
+      environments.stubSessionStorage.setItem('foo', 'bar');
+      assert.equal(environments.stubSessionStorage.getItem('foo'), 'bar');
+      environments.stubSessionStorage.setItem('foo', undefined);
+      assert.isNull(environments.stubSessionStorage.getItem('foo'));
+    });
+
+    it('has a working verifySessionStorage.', function() {
+      // Make sure that the module called the function already.
+      assert.isDefined(environments.sessionStorage);
+      var original = environments.sessionStorage;
+      environments.sessionStorage = {
+        getItem: function() {
+          throw 'Firefox security exception';
+        }
+      };
+      environments.verifySessionStorage();
+      // Verify that the function noticed that sessionStorage was broken and
+      // replaced it with a good one.
+      assert.strictEqual(
+          environments.sessionStorage, environments.stubSessionStorage);
+      // Clean up.
+      environments.sessionStorage = original;
+    });
   });
 
 })();

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-  The ghost inspector is the view-container implementation of the ghost
+  The ghost inspector is the viewlet manager implementation of the ghost
   configuration view.
 
   @module views
@@ -78,7 +78,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   /**
     A collection of methods and properties which will be mixed into the
-    prototype of the view container controller to add the functionality for
+    prototype of the viewlet manager controller to add the functionality for
     the ghost inspector interactions
 
     @property ghostInspector
@@ -94,9 +94,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
     deployCharm: function() {
       var options = this.options,
           container = options.container,
+          model = options.model,
           serviceName = container.one('input[name=service-name]').get('value'),
-          numUnits = parseInt(
-              container.one('input[name=number-units]').get('value'), 10),
+          isSubordinate = model.get('is_subordinate'),
+          numUnits = (
+              isSubordinate ? 0 :
+              parseInt(
+                  container.one('input[name=number-units]').get('value'), 10)),
           config;
 
       if (this.checkForExistingService(serviceName)) {
@@ -118,7 +122,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
 
       options.env.deploy(
-          this.options.model.get('id'),
+          model.get('id'),
           serviceName, config, this.configFileContent,
           numUnits, Y.bind(
               this._deployCallbackHandler, this, serviceName, config));
@@ -142,7 +146,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method closeInspector
     */
     closeInspector: function() {
-      this.inspector.destroy();
+      this.viewletManager.destroy();
     },
 
     /**

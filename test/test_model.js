@@ -582,9 +582,52 @@ describe('juju charm load', function() {
           done();
         });
     var response = conn.last_message();
-    response.result = {summary: 'wowza'};
+    response.result = { summary: 'wowza' };
     env.dispatch_result(response);
     // The test in the callback above should run.
+  });
+
+  it('parses the old charm model options location correctly', function(done) {
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(!err);
+          // This checks to make sure the parse mechanism is working properly
+          // for both the old ane new charm browser.
+          assert.equal(charm.get('options').default_log['default'], 'global');
+          done();
+        });
+    var response = conn.last_message();
+    response.result = {
+      config: {
+        options: {
+          default_log: {
+            'default': 'global',
+            description: 'Default log',
+            type: 'string'
+          }}}};
+    env.dispatch_result(response);
+  });
+
+  it('parses the new charm model options location correctly', function(done) {
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(!err);
+          // This checks to make sure the parse mechanism is working properly
+          // for both the old ane new charm browser.
+          assert.equal(charm.get('options').default_log['default'], 'global');
+          done();
+        });
+    var response = conn.last_message();
+    response.result = {
+      options: {
+        default_log: {
+          'default': 'global',
+          description: 'Default log',
+          type: 'string'
+        }}};
+    env.dispatch_result(response);
   });
 
   it('must handle failure from local charm request', function(done) {
@@ -781,7 +824,7 @@ describe('BrowserCharm test', function() {
     instance = new models.BrowserCharm(data.charm);
     var converted = instance._convertRelatedData(providesData);
     assert.equal(providesData.name, converted.name);
-    assert.equal(providesData.id, converted.id);
+    assert.equal(providesData.id, converted.storeId);
     assert.equal(
         providesData.commits_in_past_30_days,
         converted.recent_commit_count);

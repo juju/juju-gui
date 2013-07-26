@@ -141,6 +141,8 @@ YUI.add('juju-endpoints-controller', function(Y) {
 
             servicePromise.then(
                 function(data) {
+                  data.service.set(
+                      'subordinate', data.charm.get('is_subordinate'));
                   self.addServiceToEndpointsMap(
                       data.service.get('id'), data.charm);
                 },

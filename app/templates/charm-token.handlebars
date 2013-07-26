@@ -1,25 +1,25 @@
 {{! The charm-token class is used by the deploy method in
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
-<a href="/{{id}}"
-    class="charm-token {{size}}"
-    data-charmid="{{id}}">
+<a href="/{{storeId}}" class="charm-token {{size}}" data-charmid="{{storeId}}">
     <span class="block-icon">
         {{#if is_approved}}
             <span class="badge-approved"
                 title="This charm has been reviewed."></span>
         {{/if}}
         <div class="icon">
-            <img src="{{charmIconPath id 'icon.svg'}}" alt="{{ name }} icon">
+            <img src="{{charmIconPath storeId 'icon.svg'}}" alt="{{ name }} icon">
         </div>
     </span>
     <span class="title">
         {{ name }}
     </span>
-    <span class="metadata">
-            {{ downloads }} {{pluralize 'download' downloads}},
-            {{ commitCount }}
-            {{pluralize 'commit' commitCount}}
-    </span>
-    <span class="description">{{truncate description 110 }}</span>
+    {{#unless_eq size 'tiny'}}
+      <span class="metadata">
+              {{ downloads }} {{pluralize 'download' downloads}},
+              {{ commitCount }}
+              {{pluralize 'commit' commitCount}}
+      </span>
+      <span class="description">{{truncate description 110 }}</span>
+    {{/unless_eq}}
 </a>

@@ -274,7 +274,8 @@ YUI.add('juju-charm-panel', function(Y) {
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.
               loaded: false,
-              config: options
+              config: options,
+              subordinate: charm.get('is_subordinate')
             });
             // If we have been given coordinates at which the ghost should be
             // created, respect them.
@@ -629,11 +630,11 @@ YUI.add('juju-charm-panel', function(Y) {
           if (this.configFileContent) {
             config = null;
           }
-          numUnits = parseInt(numUnits, 10);
+          numUnits = charm.get('is_subordinate') ? 0 : parseInt(numUnits, 10);
           env.deploy(url, serviceName, config, this.configFileContent,
               numUnits, function(ev) {
                 if (ev.err) {
-                  console.log(url + ' deployment failed');
+                  console.log(url + ' deployment failed', ev.err);
                   db.notifications.add(
                       new models.Notification({
                         title: 'Error deploying ' + serviceName,

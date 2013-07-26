@@ -1056,12 +1056,7 @@ YUI.add('juju-view-utils', function(Y) {
           }
           if (!service.get('icon') && service.get('charm')) {
             var icon;
-            // Get the charm ID from the service.  In some cases, this will be
-            // the charm URL with a protocol, which will need to be removed.
-            // The following regular expression removes everything up to the
-            // colon portion of the quote and leaves behind a charm ID.
-            var charmID = service.get('charm').replace(/^[^:]+:/, '');
-            // Get the icon url from the store
+            var charmID = service.get('charm');
             icon = this.store.iconpath(charmID);
             service.set('icon', icon);
           }
@@ -1357,6 +1352,21 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /*
+    Supplies a version of 'unless' block helper that will check two specified
+    values against each other. The default unless helper is based on a single
+    truthy value.
+    Supports an inverse function so that we can use an else clause.
+
+   */
+  Y.Handlebars.registerHelper('unless_eq', function(x, y, options) {
+    if (x !== y) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  /*
     pluralize is a handlebar helper that handles pluralization of strings.
     The requirement for pluralization is based on the passed in object,
     which can be number, array, or object. If a number, it is directly
@@ -1416,6 +1426,18 @@ YUI.add('juju-view-utils', function(Y) {
     if (window.flags && window.flags[flag]) {
       return options.fn(this);
     }
+  });
+
+  /*
+   * Dev tool: dump to debugger in template.
+   *
+   * {{debugger}}
+   *
+   */
+  Y.Handlebars.registerHelper('debugger', function() {
+    /*jshint debug:true */
+    debugger;
+    /*jshint debug:false */
   });
   /*
    * Extension for views to provide an apiFailure method.

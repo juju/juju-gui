@@ -94,7 +94,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
       var ghostAttributes;
       ghostAttributes = {
-        icon: this.get('store').iconpath(browserCharm.get('id'))
+        icon: this.get('store').iconpath(browserCharm.get('storeId'))
       };
       this.get('deploy').call(null, charm, ghostAttributes);
     },
@@ -398,7 +398,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
-          this.get('charm').get('id'), {
+          this.get('charm').get('storeId'), {
             'success': function(data) {
               data = this._buildQAData(data);
               node.setHTML(this.qatemplate(data));
@@ -439,7 +439,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _loadRelatedCharms: function(callback) {
       this.get('store').related(
-          this.get('charm').get('id'), {
+          this.get('charm').get('storeId'), {
             'success': function(data) {
               this.get('charm').buildRelatedCharms(
                   data.result.provides, data.result.requires);
@@ -489,7 +489,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.showIndicator(container);
 
       this.get('store').file(
-          this.get('charm').get('id'),
+          this.get('charm').get('storeId'),
           filename, {
             'success': function(data) {
               if (prettify) {
@@ -678,14 +678,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tplData = charm.getAttrs(),
           container = this.get('container');
 
-      var link;
-      if (window.location.origin) {
-        link = window.location.origin + '/' + this.get('charm').get('id');
-      } else {
-        link = window.location.protocol + window.location.host + '/' +
-            this.get('charm').get('id');
-      }
+      var siteDomain = 'jujucharms.com',
+          charmPath = this.get('charm').get('storeId'),
+          link = 'https://' + siteDomain + '/' + charmPath;
       tplData.isFullscreen = isFullscreen;
+      tplData.isLocal = tplData.scheme === 'local';
       tplData.forInspector = this.get('forInspector');
       if (!tplData.forInspector) {
         tplData.sourceLink = this._getSourceLink();
@@ -696,11 +693,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
           tplData.requires, tplData.provides);
       tplData.link = escape(link);
       tplData.twitterText = escape(
-          'Check out this great charm on jujucharms: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
       tplData.emailSubject = escape(
-          'Check out this great charm on jujucharms!');
+          'Check out this great charm on ' + siteDomain + '!');
       tplData.emailText = escape(
-          'Check out this great charm on jujucharms: ' + link);
+          'Check out this great charm on ' + siteDomain + ': ' + link);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;

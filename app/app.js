@@ -115,16 +115,9 @@ YUI.add('juju-gui', function(Y) {
         parent: 'service'
       },
 
-      charm_collection: {
-        type: 'juju.views.charm_collection',
-        preserve: false,
-        parent: 'environment'
-      },
-
       charm: {
         type: 'juju.views.charm',
-        preserve: false,
-        parent: 'charm_collection'
+        preserve: false
       },
 
       notifications: {
@@ -598,6 +591,9 @@ YUI.add('juju-gui', function(Y) {
       } else {
         cfg.deploy = this.charmPanel.deploy;
       }
+
+      // Share the store instance with subapps.
+      cfg.store = this.get('store');
       this.addSubApplications(cfg);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -863,16 +859,6 @@ YUI.add('juju-gui', function(Y) {
      */
     show_service_constraints: function(req) {
       this._buildServiceView(req, 'service_constraints');
-    },
-
-    /**
-     * @method show_charm_collection
-     */
-    show_charm_collection: function(req) {
-      this.showView('charm_collection', {
-        query: req.query.q,
-        charm_store: this.charm_store
-      });
     },
 
     /**
@@ -1353,9 +1339,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
-          { path: '/charms/',
-            callbacks: 'show_charm_collection',
-            namespace: 'gui'},
           { path: '/charms/*charm_store_path/',
             callbacks: 'show_charm',
             model: 'charm',

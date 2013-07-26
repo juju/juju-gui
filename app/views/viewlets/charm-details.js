@@ -30,35 +30,47 @@ YUI.add('viewlet-charm-details', function(Y) {
     slot: 'left-hand-panel',
     templateWrapper: templates['left-breakout-panel'],
     /**
+      When destroying the viewlet make sure we clean up our css.
+
+      @method destroy
+      @return {undefined} nothing.
+     */
+    destroy: function() {
+      Y.one('.left-breakout').removeClass('with-charm');
+      this.charmView.destroy();
+    },
+    /**
       Render the viewlet.
 
       @method render
       @param {Charm} charm An old charm model.
-      @param {Object} viewContainerAttrs This comes from the view-container
+      @param {Object} viewletManagerAttrs This comes from the viewlet-manager
         object.
     */
-    render: function(charm, viewContainerAttrs) {
-      var store = viewContainerAttrs.store;
+    render: function(charm, viewletManagerAttrs) {
+      var store = viewletManagerAttrs.store;
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
-          var charmView = new browserViews.BrowserCharmView({
+          Y.one('.left-breakout').addClass('with-charm');
+
+          this.charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
             forInspector: true,
             renderTo: this.container.one('.content'),
             store: store
           });
-          charmView.render();
+          this.charmView.render();
         },
         'failure': function(data) {
-          var charmView = new browserViews.BrowserCharmView({
+          this.charmView = new browserViews.BrowserCharmView({
             charm: charm,
             forInspector: true,
             renderTo: this.container.one('.content'),
             store: store
           });
-          charmView.render();
+          this.charmView.render();
         }
-      }, this, viewContainerAttrs.db.browserCharms);
+      }, this, viewletManagerAttrs.db.browserCharms);
       return this.templateWrapper({ initial: 'Loading...'});
     }
   };
