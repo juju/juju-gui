@@ -126,6 +126,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Ensure the charm view correctly requests a charm deploy.
     it('should be able to deploy a charm', function(done) {
       // Create an instance of CharmView passing a customized env.
+      // Initializing a CharmView renders it
       var charmView = new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
@@ -151,13 +152,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should allow for the user to specify a service name', function(done) {
+      // Initializing a CharmView renders it
       var charmView = new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
         container: container,
         env: env
       });
-      //render?
       var serviceName = 'my custom service name';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.
@@ -175,6 +176,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should allow for the user to specify a config', function(done) {
+      // Initializing a CharmView renders it
       var charmView = new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
@@ -211,6 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         }
       });
+      // Initializing a CharmView renders it
       var charmView = new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
