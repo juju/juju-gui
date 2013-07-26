@@ -65,28 +65,6 @@
     .create-linear-gradient(@gradient-start, @gradient-end);
     border: none;
 }
-.three-image-button-background(@left-image, @right-image, @centre-image) {
-    background: url("/juju-ui/assets/images/@{left-image}")
-            no-repeat left top,
-            url("/juju-ui/assets/images/@{right-image}")
-            no-repeat right top,
-            url("/juju-ui/assets/images/@{centre-image}")
-            repeat-x left top;
-
-    &:hover {
-      background-position: left center, right center, left center;
-    }
-    &:active {
-      background-position: left bottom, right bottom, left bottom;
-    }
-}
-.two-image-button-background(@left-image, @right-image, @background-color) {
-    background: url("/juju-ui/assets/images/@{left-image}")
-            no-repeat left top,
-            url("/juju-ui/assets/images/@{right-image}")
-            no-repeat right top;
-    background-color: @background-color;
-}
 /*
  * Rotation transform.  Call with numerical value and units, e.g.
  * .rotate(-90deg);
@@ -143,6 +121,9 @@ body {
     height: 100%;
     font-size: 13px;
     line-height: 18px;
+}
+a {
+    color: @charm-panel-orange;
 }
 input, button, select, textarea {
     font-family: @font-family;
@@ -211,6 +192,18 @@ table tr.highlighted td {
     ::-webkit-scrollbar-thumb {
         -webkit-box-shadow: inset 4px 0 3px #D74613;
     }
+}
+pre {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #fdf6f2;
+    border: none;
+}
+pre,
+code {
+    font-family: @font-family-mono;
+    font-size: 14px;
+    color: #333;
 }
 
 /* Layout, widgets etc. */

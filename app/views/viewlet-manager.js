@@ -428,6 +428,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @param {Y.EventFacade} e Click event.
     */
     hideSlot: function(e) {
+      e.halt();
       var existing = this._slots[e.currentTarget.getData('slot')];
       if (existing) {
         // unbind the databinding
@@ -435,6 +436,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // remove the element from the DOM
         existing.container.remove(true);
       }
+      Y.one('.left-breakout').hide();
     },
 
     /**

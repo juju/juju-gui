@@ -48,10 +48,12 @@ YUI.add('viewlet-charm-details', function(Y) {
         object.
     */
     render: function(charm, viewletManagerAttrs) {
+      var panel = Y.one('.left-breakout');
+      panel.show();
       var store = viewletManagerAttrs.store;
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
-          Y.one('.left-breakout').addClass('with-charm');
+          panel.addClass('with-charm');
 
           this.charmView = new browserViews.BrowserCharmView({
             charm: storeCharm,
