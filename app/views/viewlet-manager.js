@@ -427,8 +427,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method hideSlot
       @param {Y.EventFacade} e Click event.
     */
-    hideSlot: function(e) {
-      e.halt();
+    hideSlot: function(ev) {
+      debugger;
+      ev.halt();
       var existing = this._slots[e.currentTarget.getData('slot')];
       if (existing) {
         // unbind the databinding
