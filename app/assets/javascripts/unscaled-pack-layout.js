@@ -1,3 +1,16 @@
+/**
+ * Unscaled pack layout.
+ * 
+ * This code is mostly taken from D3, which explains some of the non-standard
+ * coding practices used within.  The pack layout as used by D3 always scales
+ * the layout to fit within the viewport, which is not what we want, as this
+ * causes overlap with service nodes when there are a large number of them
+ * on the canvas.  This removes the scaling factor (by setting it to always
+ * be 1).  This is an interim fix until we come up with our own auto-layout
+ * not based on circle packing.  For now, this remains a patch.
+ *
+ * @module unscaled-pack-layout
+ */
 YUI.add('unscaled-pack-layout', function(Y) {
   // A method assignment helper for hierarchy subclasses.
   // Taken from d3.layout.hierarchy
