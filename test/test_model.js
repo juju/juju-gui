@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 'use strict';
 
 describe('charm normalization', function() {
@@ -551,7 +552,7 @@ describe('juju charm load', function() {
     }
   });
 
-  it('throws an error if you do not pass get_charm or loadByPath function',
+  it('throws an error if you do not pass get_charm',
      function() {
        var charm = new models.Charm({id: 'local:precise/foo-4'});
        try {
@@ -654,55 +655,6 @@ describe('juju charm load', function() {
     response.err = true;
     env.dispatch_result(response);
     // The test in the callback above should run.
-  });
-
-  it('must handle success from the charm store', function(done) {
-    data.push(Y.JSON.stringify({
-      summary: 'wowza',
-      is_subordinate: true,
-      store_revision: 7
-    }));
-
-    var charm = new models.Charm({id: 'cs:precise/foo-7'});
-    charm.load(
-        fakeStore,
-        function(err, data) {
-          if (err) { assert.fail('should succeed!'); }
-          assert(charm.loaded);
-          charm.get('summary').should.equal('wowza');
-          charm.get('is_subordinate').should.equal(true);
-          charm.get('scheme').should.equal('cs');
-          charm.get('revision').should.equal(7);
-          charm.get('id').should.equal('cs:precise/foo-7');
-          done();
-        });
-  });
-
-  it('must handle failure from the charm store', function(done) {
-    // datasource._defRequestFn is designed to be overridden to achieve more
-    // complex behavior when a request is received.  We simply declare that
-    // an error occurred.
-    var request = {
-      response: {
-        results: [{
-          responseText: data
-        }]
-      }
-    };
-
-    fakeStore.get('datasource').sendRequest = function(params) {
-      params.callback.failure(request);
-    };
-    data.push(Y.JSON.stringify({darn_it: 'uh oh!'}));
-    var charm = new models.Charm({id: 'cs:precise/foo-7'});
-    charm.load(
-        fakeStore,
-        function(err, data) {
-          if (!err) {
-            assert.fail('should fail!');
-          }
-          done();
-        });
   });
 });
 
