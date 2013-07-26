@@ -124,7 +124,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     // Ensure the charm view correctly requests a charm deploy.
-    it.only('should be able to deploy a charm', function(done) {
+    it('should be able to deploy a charm', function(done) {
       // Create an instance of CharmView passing a customized env.
       // Initializing a CharmView renders it
       var charmView = new CharmView({
