@@ -93,8 +93,9 @@ YUI.add('unscaled-pack-layout', function(Y) {
       // simply mix some of the computed attributes into the data object,
       // then make the node the data object, which is our bounding box.
       nodes.forEach(function(d) {
-        // Only mix attributes in if they have the _modelName attribute.
-        if (d.data._modelName) {
+        // Only mix attributes in if they have the data attribute and the
+        // _modelName attribute on data.
+        if (d.data && d.data._modelName) {
           d.data.x = d.x;
           d.data.y = d.y;
           d.data.r = d.r;
