@@ -171,6 +171,35 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').getHTML(), 'overide');
       });
 
+      it('supports before/after callbacks on binding updates', function() {
+        container = utils.makeContainer();
+        container.append('<div data-bind="a"></div>');
+
+        var viewlet = {
+          container: container,
+          bindings: {
+            a: {
+              beforeUpdate: function(node, value) {
+                node.set('text', 'a');
+              },
+              update: function(node, value) {
+                node.set('text', node.get('text') + 'b');
+              },
+              afterUpdate: function(node, value) {
+                node.set('text', node.get('text') + 'c');
+              }
+            }
+          },
+          _changedValues: [],
+          _eventHandles: []
+        };
+        engine = new BindingEngine({interval: 0});
+
+        engine.bind(new Y.Model({a: 'b'}), viewlet);
+        assert.equal(container.one('[data-bind=a]').getHTML(), 'abc');
+      });
+
+
       it('update callback uses formatted value', function() {
         container = utils.makeContainer();
         container.append('<div data-bind="a"></div>');
@@ -193,6 +222,74 @@ describe('data binding library', function() {
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'hi');
       });
+
+      describe('wildcard support', function() {
+        it('supports * styled wildcard bindings', function() {
+          container = utils.makeContainer();
+          container.append('<div data-bind="a"></div>');
+
+          var result;
+          var viewlet = {
+            container: container,
+            bindings: {
+              '*': {
+                beforeUpdate: function() {
+                  result = [];
+
+                },
+                update: function() {
+                  result.push(1);
+                },
+                afterUpdate: function() {
+                  result.push(true);
+                }
+              }
+            },
+            _changedValues: [],
+            _eventHandles: []
+          };
+          engine = new BindingEngine({interval: 0});
+          var model = new Y.Model({a: 'a'});
+          engine.bind(model, viewlet);
+          model.set('a', 'b');
+          assert.equal(result[0], 1);
+          assert.equal(result[1], true);
+        });
+
+        it('supports + styled wildcard bindings', function() {
+          container = utils.makeContainer();
+          container.append('<div data-bind="a"/>' +
+                           '<div data-bind="b"/>');
+
+          var result = [];
+          var viewlet = {
+            container: container,
+            bindings: {
+              '+': {
+                beforeUpdate: function() {
+                  result = [];
+                },
+                update: function(node, value) {
+                  result.push(node.getData('bind'));
+                }
+              }
+            },
+            _changedValues: [],
+            _eventHandles: []
+          };
+          engine = new BindingEngine({interval: 0});
+          var model = new Y.Model({a: 'a'});
+          engine.bind(model, viewlet);
+          model.set('a', 'b');
+          // The important part here is that update
+          // could have been invoked for both a and b
+          // but only a changed and so only a appears
+          // in the result set.
+          assert.equal(result[0], 'a');
+          assert.equal(result.length, 1);
+        });
+      });
+
 
       it('should be able to observe pojos', function(done) {
         var pojo = {id: 'a', name: 'test'};

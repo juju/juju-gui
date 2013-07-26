@@ -120,7 +120,6 @@ YUI.add('juju-view-inspector', function(Y) {
       var field = container.one('.num-units-control');
 
       if (requested_unit_count < 1) {
-        console.log('You must have at least one unit');
         field.set('value', unit_count);
         return;
       }
@@ -1182,6 +1181,8 @@ YUI.add('juju-view-inspector', function(Y) {
           'constraints': {
             'format': function(value) {
               // Display undefined constraints as empty strings.
+              // This method is inherited when using all nested
+              // constraints binding.
               return value || '';
             }
           }
