@@ -61,7 +61,7 @@ var GlobalConfig = {
     d3: {
       modules: {
         'd3': {
-          'fullpath': '/juju-ui/assets/javascripts/d3.v2.min.js'
+          'fullpath': '/juju-ui/assets/javascripts/d3.min.js'
         },
         'd3-components': {
           fullpath: '/juju-ui/assets/javascripts/d3-components.js'

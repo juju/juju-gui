@@ -28,7 +28,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	\) -print \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
-		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
@@ -133,8 +133,8 @@ NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
 BUILD_FILES=build-shared/juju-ui/assets/modules.js \
 	build-shared/juju-ui/assets/all-yui.js \
 	build-shared/juju-ui/assets/combined-css/all-static.css
-JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
-	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/yui
+JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.js \
+	app/assets/javascripts/d3.min.js app/assets/javascripts/yui
 DATE=$(shell date -u)
 
 # Some environments, notably sudo, do not populate the default PWD environment
@@ -248,9 +248,9 @@ $(NODE_TARGETS): package.json
 
 $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/yui
-	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
-	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
-		app/assets/javascripts/d3.v2.min.js
+	ln -sf "$(PWD)/node_modules/d3/d3.js" app/assets/javascripts/d3.js
+	ln -sf "$(PWD)/node_modules/d3/d3.min.js" \
+		app/assets/javascripts/d3.min.js
 
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \

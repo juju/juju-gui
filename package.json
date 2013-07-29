@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "cryptojs": ">= 2.5.3",
-    "d3": "<3.0.0",
+    "d3": "3.2.7",
     "yui": "3.9.1",
     "mocha": "1.8.x",
     "express": "3.x",

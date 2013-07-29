@@ -1,3 +1,18 @@
+/**
+ * Unscaled pack layout.
+ *
+ * This code is mostly taken from D3, which explains some of the non-standard
+ * coding practices used within.  The pack layout as used by D3 always scales
+ * the layout to fit within the viewport, which is not what we want, as this
+ * causes overlap with service nodes when there are a large number of them
+ * on the canvas.  This removes the scaling factor (by setting it to always
+ * be 1).  This is an interim fix until we come up with our own auto-layout
+ * not based on circle packing.  For now, this remains a patch.
+ *
+ * @module unscaled-pack-layout
+ */
+
+
 YUI.add('unscaled-pack-layout', function(Y) {
   // A method assignment helper for hierarchy subclasses.
   // Taken from d3.layout.hierarchy
@@ -93,8 +108,9 @@ YUI.add('unscaled-pack-layout', function(Y) {
       // simply mix some of the computed attributes into the data object,
       // then make the node the data object, which is our bounding box.
       nodes.forEach(function(d) {
-        // Only mix attributes in if they have the _modelName attribute.
-        if (d.data._modelName) {
+        // Only mix attributes in if they have the data attribute and the
+        // _modelName attribute on data.
+        if (d.data && d.data._modelName) {
           d.data.x = d.x;
           d.data.y = d.y;
           d.data.r = d.r;
