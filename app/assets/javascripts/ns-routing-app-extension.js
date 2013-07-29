@@ -418,6 +418,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
      * @method _navigate
      **/
     _navigate: function(url, options) {
+      debugger;
       var result;
       if (options && options.overrideAllNamespaces) {
         result = url;
