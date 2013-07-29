@@ -253,7 +253,13 @@ describe('Viewlet Manager', function() {
            container.one('.left-breakout .viewlet').get('text'), 'ice cream');
      });
 
-  it('can remove a slot from the dom', function() {
+  /**
+   * This test is a bad test and never worked. It needs to hit into the events
+   * in the viewlet-manager for .close-slot which runs hideSlot. This never
+   * happened. The precondition that *thought* it was working was checking
+   * that Y.one() returned an object, except null IS an object.
+   */
+  it.skip('can remove a slot from the dom', function() {
     generateViewletManager();
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
