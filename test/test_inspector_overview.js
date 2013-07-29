@@ -31,7 +31,7 @@ describe('Inspector Overview', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          window.flags = {serviceInspector: true};
+          window.flags.serviceInspector = true;
           charmConfig = utils
             .loadFixture('data/mediawiki-charmdata.json', true);
           done();
@@ -61,7 +61,7 @@ describe('Inspector Overview', function() {
   });
 
   after(function() {
-    delete window.flags;
+    delete window.flags.serviceInspector;
   });
 
   var setUpInspector = function() {

@@ -29,13 +29,13 @@ describe('Inspector Constraints', function() {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
-      window.flags = {serviceInspector: true};
+      window.flags.serviceInspector = true;
       done();
     });
   });
 
   after(function() {
-    delete window.flags;
+    delete window.flags.serviceInspector;
   });
 
   beforeEach(function(done) {

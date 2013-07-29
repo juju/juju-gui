@@ -55,7 +55,7 @@ describe('Inspector Charm', function() {
   });
 
   after(function() {
-    delete window.flags;
+    delete window.flags.serviceInspector;
   });
 
   it('should ensure the viewlet exists', function() {
