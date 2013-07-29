@@ -140,7 +140,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy('cs:precise/wordpress-10', callback);
       assert.isUndefined(result.error);
       // The service name is provided explicitly.
-      fakebackend.deploy('cs:precise/haproxy', callback, {name: 'wordpress'});
+      fakebackend.deploy('cs:precise/haproxy-3', callback, {name: 'wordpress'});
       assert.equal(result.error, 'A service with this name already exists.');
       // The service name is derived from charm.
       result = undefined;
@@ -567,7 +567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('loads subordinate charms properly', function(done) {
-        fakebackend.getCharm('cs:puppet', function(data) {
+        fakebackend.getCharm('cs:precise/puppet-5', function(data) {
           assert.equal(data.result.name, 'puppet');
           assert.isTrue(data.result.is_subordinate);
           done();
@@ -682,7 +682,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('removes relations when destroying a service', function(done) {
         // Add a couple of services and hook up relations.
         fakebackend.deploy('cs:precise/wordpress-10', function(data) {
-          fakebackend.deploy('cs:mysql', function() {
+          fakebackend.deploy('cs:precise/mysql-6', function() {
             var result = fakebackend.addRelation('wordpress:db', 'mysql:db');
             assert.isUndefined(result.error);
             var mysql = fakebackend.getService('mysql').result;
@@ -1126,7 +1126,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('requires the specified interfaces to match', function(done) {
       fakebackend.deploy('cs:precise/wordpress-10', function() {
-        fakebackend.deploy('cs:precise/haproxy', function() {
+        fakebackend.deploy('cs:precise/haproxy-3', function() {
           var result = fakebackend.addRelation(
               'wordpress:cache', 'haproxy:munin');
           assert.equal(result.error, 'Specified relation is unavailable.');
