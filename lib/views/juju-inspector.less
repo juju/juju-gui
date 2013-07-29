@@ -5,7 +5,6 @@
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 
-
 .yui3-juju-inspector {
     .customize-scrollbar;
 
@@ -15,14 +14,10 @@
         right: 327px;
         overflow-y: auto;
         overflow-x: hidden;
-        width: 500px;
+        width: @bws-panel-width;
         padding-top: 30px;
         background-color: #fff;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-
-        &.with-charm {
-            width: @bws-panel-width;
-        }
 
         .close-slot {
             position: absolute;

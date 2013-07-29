@@ -365,6 +365,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
       // hide existing viewlets in the default slot before showing the new one.
       if (viewlet.slot) {
         this.fillSlot(viewlet, model);
+        // Shows the slot
+        container.one(this.slots[viewlet.slot]).show();
       } else {
         Y.Object.each(this.viewlets, function(viewletToCheck) {
           if (!viewletToCheck.slot) {
@@ -403,7 +405,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
-
         target = this.get('container').one(this.slots[slot]);
         var result = viewlet.render(model, this.getAttrs());
         if (result) {
@@ -435,8 +436,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
         existing.remove();
         // remove the element from the DOM
         existing.container.remove(true);
+        this.get('container').one(this.slots[existing.slot]).hide();
       }
-      Y.one('.left-breakout').hide();
     },
 
     /**
