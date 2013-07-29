@@ -457,19 +457,23 @@ YUI.add('juju-viewlet-manager', function(Y) {
           footer = Y.one('.bottom-navbar'),
           // Depending on the render cycle these may or may not be in the DOM
           // which is why we pull their heights separately
-          vcHeader = container.one('.viewlet-manager-navigation'),
+          vcHeader = container.one('.header-slot'),
+          vcNavigation = container.one('.viewlet-manager-navigation'),
           vcFooter = container.one('.viewlet-manager-footer'),
           headerHeight = 0,
           footerHeight = 0,
           vcHeaderHeight = 0,
+          vcNavHeight = 0,
           vcFooterHeight = 0;
 
       if (header) { headerHeight = header.get('clientHeight'); }
       if (footer) { footerHeight = footer.get('clientHeight'); }
       if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
+      if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
       if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
+      var height = winHeight - headerHeight -
+                   vcNavHeight - footerHeight - (TB_SPACING * 3);
       // subtract the height of the header and footer of the viewlet manager.
       height = height - vcHeaderHeight - vcFooterHeight;
 
