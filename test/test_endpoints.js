@@ -489,44 +489,7 @@ describe('Endpoints map handlers', function() {
     app.db.services.reset();
     controller.endpointsMap.should.eql({});
   });
-
-  it('should add the service to the endpoints map when the charm is loaded',
-     function(done) {
-       var service_name = 'wordpress';
-       var charm_id = 'cs:precise/wordpress-2';
-       var charm = app.db.charms.add({id: charm_id});
-       destroyMe.push(charm);
-       controller.endpointsMap.should.eql({});
-       var data = [
-         { responseText: Y.JSON.stringify(
-         { summary: 'wowza', subordinate: true, store_revision: 7 })}];
-       var charmStore = new juju.CharmStore({
-         datasource: new Y.DataSource.Local({source: data})});
-
-       app.db.services.add({
-         id: service_name,
-         pending: false,
-         loaded: true,
-         charm: charm_id});
-
-       charm.load(charmStore, function(err, data) {
-         if (err) { assert.fail('should succeed!'); }
-         assert(charm.loaded);
-         charm.get('summary').should.equal('wowza');
-         controller.on('endpointMapAdded', function() {
-           controller.endpointsMap.should.eql({
-             'wordpress': {
-               provides: [],
-               requires: []
-             }});
-            done();
-          });
-       });
-     }
-  );
-
 });
-
 
 
 describe('Service config handlers', function() {
