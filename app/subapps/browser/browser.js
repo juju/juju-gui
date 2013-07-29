@@ -121,8 +121,6 @@ YUI.add('subapp-browser', function(Y) {
         });
       }
 
-      debugger;
-
       if (this._viewState.hash) {
         url = url + this._viewState.hash;
       }
@@ -332,7 +330,6 @@ YUI.add('subapp-browser', function(Y) {
        @param {Object} req the request payload.
      */
     _updateState: function(req) {
-      debugger;
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
