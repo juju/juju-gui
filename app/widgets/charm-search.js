@@ -65,7 +65,7 @@ YUI.add('browser-search-widget', function(Y) {
     _fetchSuggestions: function(query, callback) {
       var filters = this.get('filters');
       filters.text = query;
-      this.get('autocompleteSource')(
+      (this.get('autocompleteSource'))(
           filters, {
             'success': callback,
             'failure': function() {
