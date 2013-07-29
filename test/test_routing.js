@@ -137,10 +137,8 @@ describe('Namespaced Routing', function() {
        // argument to combine, values from the original url
        // are discarded.
        url = router.combine('/foo/bar?world=gone+away',
-                            '/:inspector:/foo/#hello?world=beater');
-       url.should.equal('/foo/bar/:inspector:/foo/#hello?world=beater');
-
-
+                            '/:inspector:/foo/?world=beater#hello');
+       url.should.equal('/foo/bar/:inspector:/foo/?world=beater#hello');
      });
 
   it('should be able to split qualified urls', function() {
@@ -200,7 +198,6 @@ describe('Namespaced Routing', function() {
     assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
   });
 
-
   it('should allow combining routes in a given namespace', function() {
     var router = juju.Router('charmstore');
     var match = router.parse('/');
@@ -225,13 +222,30 @@ describe('Namespaced Routing', function() {
     var u = router.url(match);
     assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
 
-
     // Combine works as well (note the flag, like with parse this can be an
     // object).
     u = router.combine('/:gui:/services/mysql/', ':gui:/services/mediawiki/',
                        {gui: true});
     assert.equal(u, '/:gui:/services/mysql/:gui:/services/mediawiki/');
 
+  });
+
+  it('should properly parse the QS of a given url', function() {
+    var router = juju.Router('charmstore');
+    var qs = router.getQS(
+        '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
+    assert.equal(qs, 'text=jenkins');
+  });
+
+  it('should split a url into components properly', function() {
+    var router = juju.Router('charmstore');
+    var components = router.split(
+        '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
+    assert.equal(
+        components.pathname,
+        '/fullscreen/search/precise/jenkins-5/');
+    assert.equal(components.hash, 'bws-readme');
+    assert.equal(components.search, 'text=jenkins');
   });
 
 });

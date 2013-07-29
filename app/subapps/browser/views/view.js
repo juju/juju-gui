@@ -149,6 +149,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     _goHome: function(ev) {
       var change = {
         charmID: undefined,
+        hash: undefined,
         search: false,
         filter: {
           clear: true
@@ -203,6 +204,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
           text: ev.newVal
         }
       };
+
+      // If we're in fullscreen and you did a search we clear the charmID to
+      // help make sure that we show you the search results you just asked for
+      // properly.
+      if (this.isFullscreen()) {
+        change.charmID = undefined;
+        change.hash = undefined;
+      }
 
       // Perhaps there's more to this change than just a search change. This
       // might come from places, such as autocomplete, which are a search

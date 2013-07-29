@@ -269,7 +269,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       this.fire('viewNavigate', {
         change: {
-          charmID: null
+          charmID: null,
+          hash: null
         }
       });
     },
