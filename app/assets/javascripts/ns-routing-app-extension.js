@@ -102,7 +102,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         // The query string picks up the hash due to the simple nature of this
         // generation. Remove it.
         var hashIndex = qs.indexOf('#');
-        if(hashIndex !== -1) {
+        if (hashIndex !== -1) {
           qs = qs.substr(0, hashIndex);
         }
       }

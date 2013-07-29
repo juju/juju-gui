@@ -137,10 +137,8 @@ describe('Namespaced Routing', function() {
        // argument to combine, values from the original url
        // are discarded.
        url = router.combine('/foo/bar?world=gone+away',
-                            '/:inspector:/foo/#hello?world=beater');
-       url.should.equal('/foo/bar/:inspector:/foo/#hello?world=beater');
-
-
+                            '/:inspector:/foo/?world=beater#hello');
+       url.should.equal('/foo/bar/:inspector:/foo/?world=beater#hello');
      });
 
   it('should be able to split qualified urls', function() {
