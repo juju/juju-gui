@@ -543,7 +543,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       url = app._getStateUrl({
         viewmode: 'fullscreen',
         charmID: undefined,
-        hash: 'bws-readme',
+        hash: '#bws-readme',
         search: undefined,
         filter: undefined
       });
@@ -553,7 +553,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       url = app._getStateUrl({
         viewmode: 'fullscreen',
         charmID: 'precise/jenkins-2',
-        hash: 'bws-readme',
+        hash: '#bws-readme',
         search: true,
         querystring: 'text=jenkins'
       });
