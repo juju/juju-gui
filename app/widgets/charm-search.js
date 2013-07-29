@@ -65,7 +65,10 @@ YUI.add('browser-search-widget', function(Y) {
     _fetchSuggestions: function(query, callback) {
       var filters = this.get('filters');
       filters.text = query;
-      this.get('autocompleteSource')(
+      // Assign the autocomplete function to a variable and call from there;
+      // required for IE10.
+      var autocompleteSource = this.get('autocompleteSource');
+      autocompleteSource(
           filters, {
             'success': callback,
             'failure': function() {

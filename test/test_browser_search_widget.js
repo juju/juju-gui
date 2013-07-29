@@ -37,7 +37,7 @@ describe('browser search widget', function() {
           function(charmID, file) {
             return '/path/to/charm/' + file;
           });
-      window.flags.ac = true;
+      window.flags = { ac: true };
       done();
     });
   });
