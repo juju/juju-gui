@@ -1146,7 +1146,9 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
       // Reset the view state of the subapps.
       var subapps = this.get('subApps');
-      subapps.charmstore.initState();
+      if (subapps.charmstore) {
+        subapps.charmstore.initState();
+      }
     },
 
     /**
