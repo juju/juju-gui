@@ -120,6 +120,10 @@ YUI.add('subapp-browser', function(Y) {
           qs: this._viewState.querystring
         });
       }
+
+      if (this._viewState.hash) {
+        url = url + '#' + this._viewState.hash;
+      }
       return url;
     },
 
@@ -151,8 +155,8 @@ YUI.add('subapp-browser', function(Y) {
     _initState: function() {
       this._oldState = {
         charmID: null,
-        hash: null,
         querystring: null,
+        hash: null,
         search: null,
         viewmode: null
       };
@@ -345,9 +349,9 @@ YUI.add('subapp-browser', function(Y) {
       // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
-          query = req.query,
-          hash = window.location.hash;
+          query = req.query;
 
+      var hash = window.location.hash;
       this._viewState.viewmode = params.viewmode;
 
       if (hash) {

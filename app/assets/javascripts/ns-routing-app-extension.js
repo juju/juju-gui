@@ -97,7 +97,16 @@ YUI.add('ns-routing-app-extension', function(Y) {
      * @method getQS
      **/
     getQS: function(url) {
-      return url.split('?')[1];
+      var qs = url.split('?')[1];
+      if (qs) {
+        // The query string picks up the hash due to the simple nature of this
+        // generation. Remove it.
+        var hashIndex = qs.indexOf('#');
+        if(hashIndex !== -1) {
+          qs = qs.substr(0, hashIndex);
+        }
+      }
+      return qs;
     },
 
     /**
@@ -131,8 +140,8 @@ YUI.add('ns-routing-app-extension', function(Y) {
         href: url
       };
       var origin = this._regexUrlOrigin.exec(url);
-      result.search = this.getQS(url);
       result.hash = this.getHash(url);
+      result.search = this.getQS(url);
 
       if (origin) {
         // Take the match.
@@ -144,11 +153,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
       }
 
       if (result.search) {
-        result.pathname = result.pathname.substr(
-            0,
-            (result.pathname.length - result.search.length) - 1);
+        result.pathname = result.pathname.replace('?' + result.search, '');
       }
-
+      if (result.hash) {
+        result.pathname = result.pathname.replace('#' + result.hash, '');
+      }
       return result;
     },
 
@@ -268,13 +277,11 @@ YUI.add('ns-routing-app-extension', function(Y) {
       });
 
       url = slash(url);
-
-      if (components.hash) {
-        url += '#' + components.hash;
-      }
-
       if (components.search) {
         url += '?' + components.search;
+      }
+      if (components.hash) {
+        url += '#' + components.hash;
       }
       return url;
     },
