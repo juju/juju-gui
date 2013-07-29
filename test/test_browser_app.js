@@ -157,12 +157,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.on('viewNavigate', function(ev) {
         assert.equal(ev.change.search, false);
         assert.equal(ev.change.filter.clear, true);
+        assert.equal(ev.change.hash, undefined);
         done();
       });
 
       view.render(container);
       view.search._onHome({
         halt: function() {}
+      });
+    });
+
+    it('resets charmid and hash on search', function(done) {
+      var container = Y.one('#subapp-browser'),
+          fakeStore = new Y.juju.Charmworld2({});
+      view = new FullScreen({
+        charmID: 'precise/jenkins-13'
+      });
+
+      view.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.filter.text, 'test search');
+        assert.equal(ev.change.charmID, undefined);
+        assert.equal(ev.change.hash, undefined);
+        done();
+      });
+
+      view.render(container);
+      view._searchChanged({
+        newVal: 'test search'
       });
     });
 
@@ -517,6 +538,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         filter: undefined
       });
       assert.equal(url, 'fullscreen');
+
+      // It takes into account hash.
+      url = app._getStateUrl({
+        viewmode: 'fullscreen',
+        charmID: undefined,
+        hash: 'bws-readme',
+        search: undefined,
+        filter: undefined
+      });
+      assert.equal(url, 'fullscreen#bws-readme');
+
+      // It always puts the hash last.
+      url = app._getStateUrl({
+        viewmode: 'fullscreen',
+        charmID: 'precise/jenkins-2',
+        hash: 'bws-readme',
+        search: true,
+        querystring: 'text=jenkins'
+      });
+      assert.equal(
+          url,
+          'fullscreen/search/precise/jenkins-2?text=jenkins#bws-readme');
     });
 
     it('/charm/id router ignores other urls', function() {
@@ -1147,5 +1190,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       assert.equal(url, '/search?text=mysql');
     });
+
   });
 })();

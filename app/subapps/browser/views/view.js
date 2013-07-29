@@ -209,8 +209,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // help make sure that we show you the search results you just asked for
       // properly.
       if (this.isFullscreen()) {
-        change.charmID = null;
-        change.hash = null;
+        change.charmID = undefined;
+        change.hash = undefined;
       }
 
       // Perhaps there's more to this change than just a search change. This

@@ -268,7 +268,7 @@ YUI.add('browser-search-widget', function(Y) {
       );
 
       // Make sure the UI around the autocomplete search input is setup.
-      if (window.flags.ac) {
+      if (window.flags && window.flags.ac) {
         this._setupAutocomplete();
 
         // Override a couple of autocomplete events to help perform our
