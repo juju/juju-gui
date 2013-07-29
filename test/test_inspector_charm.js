@@ -39,9 +39,12 @@ describe('Inspector Charm', function() {
           return charmID;
         }
       };
-      window.flags = {serviceInspector: true};
       done();
     });
+  });
+
+  beforeEach(function() {
+    window.flags.serviceInspector = true;
   });
 
   afterEach(function() {
@@ -52,10 +55,8 @@ describe('Inspector Charm', function() {
     if (testContainer) {
       testContainer.remove(true);
     }
-  });
 
-  after(function() {
-    delete window.flags.serviceInspector;
+    window.flags = {};
   });
 
   it('should ensure the viewlet exists', function() {

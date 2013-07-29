@@ -31,7 +31,6 @@ describe('Inspector Overview', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          window.flags.serviceInspector = true;
           charmConfig = utils
             .loadFixture('data/mediawiki-charmdata.json', true);
           done();
@@ -46,6 +45,7 @@ describe('Inspector Overview', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     conn.open();
+    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
@@ -58,10 +58,7 @@ describe('Inspector Overview', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-  });
-
-  after(function() {
-    delete window.flags.serviceInspector;
+    window.flags = {};
   });
 
   var setUpInspector = function() {
