@@ -576,4 +576,5 @@ describe('Service config handlers', function() {
     assert.equal(1, conn.messages.length);
     assert.equal('get_service', conn.last_message().op);
   });
+
 });
