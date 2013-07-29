@@ -115,7 +115,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   FakeBackend.ATTRS = {
     authorizedUsers: {value: {'admin': 'password'}},
     authenticated: {value: false},
-    charmStore: {}, // Required.
+    store: {required: true},
     defaultSeries: {value: 'precise'},
     providerType: {value: 'demonstration'}
   };
@@ -355,10 +355,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Get a charm from a URL, via charmStore and/or db.  Uses callbacks.
+    Get a charm from a URL, via the charmworld API and/or db.  Uses callbacks.
 
     @method _loadCharm
-    @param {String} charmUrl The URL of the charm.
+    @param {String} charmId The URL of the charm.
     @param {Function} callbacks An optional object with optional success and
       failure callables.  This is asynchronous because we
       often must go over the network to the charm store.  The success
@@ -383,55 +383,46 @@ YUI.add('juju-env-fakebackend', function(Y) {
       } else {
         // Get the charm data.
         var self = this;
-        this.get('charmStore').loadByPath(
-            charmIdParts.charm_store_path,
-            {
-              // Convert the charm data to a charm and use the success
-              // callback.
-              success: function(data) {
-                var charm = self._getCharmFromData(data);
-                if (callbacks.success) {
-                  callbacks.success(charm);
-                }
-              },
-              // Inform the caller of an error using the charm store.
-              failure: function(e) {
-                // This is most likely an IOError stemming from an
-                // invalid charm pointing to a bad URL and a read of a
-                // 404 giving an error at this level. IOError isn't user
-                // facing so we log the warning.
-                console.warn('error loading charm: ' + e.error);
-                if (callbacks.failure) {
-                  callbacks.failure({error:
-                        'Error interacting with Charm store.'});
-                }
-              }
+        this.get('store').charm(charmIdParts.storeId, {
+          // Convert the charm data to a charm and use the success
+          // callback.
+          success: function(data) {
+            var charm = self._getCharmFromData(data.charm);
+            if (callbacks.success) {
+              callbacks.success(charm);
             }
-        );
+          },
+          // Inform the caller of an error using the charm store.
+          failure: function(e) {
+            // This is most likely an IOError stemming from an
+            // invalid charm pointing to a bad URL and a read of a
+            // 404 giving an error at this level. IOError isn't user
+            // facing so we log the warning.
+            console.warn('error loading charm: ' + e.error);
+            if (callbacks.failure) {
+              callbacks.failure({error:
+                'Error interacting with Charm store.'});
+            }
+          }
+        });
       }
-
     },
 
     /**
-    Convert charm data as returned by the charmStore into a charm.
+    Convert charm data as returned by the charmworld API into a charm.
     The charm might be pre-existing or might need to be created, but
     after this method it will be within the db.
 
     @method _getCharmFromData
-    @param {Object} data The raw charm information as delivered by the
-      charmStore's loadByPath method.
+    @param {Object} charmData The raw charm information as delivered by the
+      charmworld API.
     @return {Object} A matching charm from the db.
     */
-    _getCharmFromData: function(data) {
-      var charm = this.db.charms.getById(data.store_url);
+    _getCharmFromData: function(charmData) {
+      var charm = this.db.charms.getById(charmData.url);
       if (!charm) {
-        delete data.store_revision;
-        delete data.bzr_branch;
-        delete data.last_change;
-        data.id = data.store_url;
-        data.is_subordinate = data.subordinate;
-        delete data.subordinate;
-        charm = this.db.charms.add(data);
+        charmData.id = charmData.url;
+        charm = this.db.charms.add(charmData);
       }
       return charm;
     },

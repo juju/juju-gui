@@ -50,15 +50,17 @@ YUI.add('juju-charm-models', function(Y) {
         }
       }
       if (parts) {
-        var result = {};
+        var result = {},
+            storeId;
         Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
-        result.charm_store_path = [
-          (result.owner ? '~' + result.owner : 'charms'),
+        storeId = [
           result.series,
-          result.package_name + (
-              result.revision ? '-' + result.revision : ''),
-          'json'
-        ].join('/');
+          result.package_name + (result.revision ? '-' + result.revision : ''),
+        ];
+        if (result.owner) {
+          storeId.unshift('~' + result.owner);
+        }
+        result.storeId = storeId.join('/');
         return result;
       }
     }
@@ -159,11 +161,22 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
-      //XXX j.c.sackett July 16 2013 This is temporary while resolving Charm and
-      //BrowserCharm; Charm still loads data from a different API which puts
-      //options inside config.
-      if (cfg && cfg.config) {
-        this.set('options', cfg.config.options);
+      // XXX j.c.sackett July 16 2013 There are a raft of bits and bobs of
+      // differences between the two charm models that need to be resolved for
+      // the new API to work with the old model. These will no longer be needed
+      // when we switch over to BrowserCharm everywhere.
+      if (cfg) {
+        if (cfg.config) {
+          this.set('options', cfg.config.options);
+        }
+        if (cfg.relations) {
+          if(!this.get('provides') && cfg.relations.provides) {
+            this.set('provides', cfg.relations.provides);
+          }
+          if(!this.get('requires')) {
+            this.set('requires', cfg.relations.requires);
+          }
+        }
       }
     },
 
