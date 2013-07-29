@@ -50,7 +50,8 @@ describe('Viewlet Manager', function() {
       templateConfig: {},
       container: container,
       events: {
-        '.tab': {'click': function() {}}
+        '.tab': { click: function() {} },
+        '.close-slot': { click: 'hideSlot' }
       },
       viewletContainer: '.viewlet-container',
       model: new Y.Model({id: 'test', name: 'foo'})
@@ -253,20 +254,14 @@ describe('Viewlet Manager', function() {
            container.one('.left-breakout .viewlet').get('text'), 'ice cream');
      });
 
-  /**
-   * This test is a bad test and never worked. It needs to hit into the events
-   * in the viewlet-manager for .close-slot which runs hideSlot. This never
-   * happened. The precondition that *thought* it was working was checking
-   * that Y.one() returned an object, except null IS an object.
-   */
-  it.skip('can remove a slot from the dom', function() {
+  it('can remove a slot from the dom', function() {
     generateViewletManager();
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
-      left: '.left-breakout'
+      'left-hand-panel': '.left-breakout'
     };
     // And constraints will use that slot.
-    viewletManager.viewlets.constraints.slot = 'left';
+    viewletManager.viewlets.constraints.slot = 'left-hand-panel';
     viewletManager.render();
     viewletManager.showViewlet('serviceConfig');
 
@@ -279,11 +274,11 @@ describe('Viewlet Manager', function() {
     viewletManager.showViewlet('constraints');
 
     assert.equal(
-        typeof constraints.container
-                          .one('.left-breakout .close-slot'), 'object');
+        constraints.container.one('a.close-slot') instanceof Y.Node, true);
 
-    container.one('.left-breakout .close-slot').simulate('click');
-    assert.equal(constraints.container.one('.left-breakout .close-slot'), null);
+    constraints.container.one('.close-slot').simulate('click');
+
+    assert.equal(constraints.container.one('a.close-slot'), null);
   });
 
 });
