@@ -182,10 +182,6 @@ YUI.add('ns-routing-app-extension', function(Y) {
       result.hash = parts.hash;
       result.search = parts.search;
 
-      // If there was a hash we need to split it off url
-      if (result.hash) {
-        url = url.slice(0, url.indexOf('#'));
-      }
       parts = url.split(this._fragment);
       // Example output
       // '/foo/bar'.split(this._fragment)
