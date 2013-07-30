@@ -1,0 +1,183 @@
+{
+  "charm": {
+    "categories": [], 
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/puppet", 
+      "last_log": "John Patterson 2013-05-22 Moved README to Markdown and added a bit more description\n", 
+      "location": "lp:~charmers/charms/precise/puppet/trunk", 
+      "revision": "14", 
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-05-23T01:50:06Z", 
+          "message": "John Patterson 2013-05-22 Moved README to Markdown and added a bit more description\n", 
+          "revno": 14
+        }, 
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2013-03-29T15:20:52Z", 
+          "message": "maintainer change", 
+          "revno": 13
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-05-22T22:19:12Z", 
+          "message": "setting maintainer", 
+          "revno": 12
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-05-12T14:53:40Z", 
+          "message": "bumping revision to enable upgrades", 
+          "revno": 11
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-05-12T14:53:21Z", 
+          "message": "fixing start/stop hooks", 
+          "revno": 10
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-05-12T14:50:37Z", 
+          "message": "make config-changed executable", 
+          "revno": 9
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-04-16T17:17:46Z", 
+          "message": "adding a copyright file", 
+          "revno": 8
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-04-16T17:13:08Z", 
+          "message": "make it ok for puppet --test to fail since classes may come later", 
+          "revno": 7
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-04-16T17:10:00Z", 
+          "message": "adding a README", 
+          "revno": 6
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-04-16T17:00:03Z", 
+          "message": "handle un-relating a puppetmaster better", 
+          "revno": 5
+        }
+      ], 
+      "type": "bzr"
+    }, 
+    "date_created": "2012-05-09T23:20:51Z", 
+    "description": "This charm deploys the startup script and compatbility scripts for\nthe puppet agent, which is the process responsible for configuring the\nlocal node.  Puppet lets you centrally manage every important aspect\nof your system using a cross-platform specification language that\nmanages all the separate elements normally aggregated in different\nfiles, like users, cron jobs, and hosts, along with obviously discrete\nelements like packages, services, and files.  Puppet's simple\ndeclarative specification language provides powerful classing\nabilities for drawing out the similarities between hosts while\nallowing them to be as specific as necessary, and it handles\ndependency and prerequisite relationships between objects clearly and\nexplicitly.\n", 
+    "distro_series": "precise", 
+    "downloads": 99, 
+    "downloads_in_past_30_days": 6, 
+    "files": [
+      "hooks/puppetmaster-relation-joined", 
+      "hooks/stop", 
+      "hooks/juju-info-relation-joined", 
+      "README.md", 
+      "hooks/start", 
+      "hooks/config-changed", 
+      "hooks/install", 
+      "metadata.yaml", 
+      "hooks/puppetmaster-relation-departed", 
+      "hooks/puppetmaster-relation-changed", 
+      "config.yaml", 
+      "hooks/puppetmaster-relation-broken", 
+      "revision"
+    ], 
+    "id": "precise/puppet-4", 
+    "is_approved": true, 
+    "is_subordinate": true, 
+    "maintainer": {
+      "email": "mark.mims@ubuntu.com", 
+      "name": "Mark Mims"
+    }, 
+    "name": "puppet", 
+    "options": {
+      "external-puppetmaster": {
+        "default": "", 
+        "description": "This will be the external puppet master server string. If a\npuppet master is related, this will be ignored.\n", 
+        "type": "string"
+      }
+    }, 
+    "owner": "charmers", 
+    "rating_denominator": 0, 
+    "rating_numerator": 0, 
+    "relations": {
+      "provides": {}, 
+      "requires": {
+        "juju-info": {
+          "interface": "juju-info", 
+          "scope": "container"
+        }, 
+        "puppetmaster": {
+          "interface": "puppet"
+        }
+      }
+    }, 
+    "revision": 7, 
+    "summary": "puppet agent for system policy", 
+    "tested_providers": {
+      "ec2": "UNSTABLE", 
+      "local": "SUCCESS", 
+      "openstack": "SUCCESS"
+    }, 
+    "url": "cs:precise/puppet-4"
+  }, 
+  "metadata": {}
+}
