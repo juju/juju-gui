@@ -184,9 +184,9 @@ YUI.add('juju-view-environment', function(Y) {
                 // Viewlet wrapper viewlet.
                 'button.confirm': { click: 'saveConfig'},
                 '.charm-url': {click: 'onShowCharmDetails'},
-                '.destroy-service-icon': {click: 'onDestroyIcon'},
-                '.initiate-destroy': {click: 'onInitiateDestroy'},
-                '.cancel-destroy': {click: 'onCancelDestroy'},
+                '.destroy-service-trigger span': {click: '_onDestroyClick'},
+                '.initiate-destroy': {click: '_onInitiateDestroy'},
+                '.cancel-destroy': {click: '_onCancelDestroy'},
                 // Overview viewlet.
                 '.num-units-control': {
                   keydown: 'modifyUnits',
@@ -233,9 +233,9 @@ YUI.add('juju-view-environment', function(Y) {
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.destroy-service-icon': {'click': 'onDestroyIcon'},
-                '.initiate-destroy': {'click': 'onInitiateDestroy'},
-                '.cancel-destroy': {'click': 'onCancelDestroy'}
+                '.initiate-destroy': {'click': '_onInitiateDestroy'},
+                '.cancel-destroy': {'click': '_onCancelDestroy'},
+                '.destroy-service-trigger span': {'click': '_onDestroyClick'}
               },
               // the configuration for the view manager template
               templateConfig: {

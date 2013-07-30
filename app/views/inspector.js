@@ -471,11 +471,11 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "destroy this
       service" icon.
 
-      @method onDestroyIcon
+      @method _onDestroyClick
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onDestroyIcon: function(evt) {
+    _onDestroyClick: function(evt) {
       evt.halt();
       this.showDestroyPrompt(evt.container);
     },
@@ -484,11 +484,11 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the cancel button
       on the "destroy this service" prompt.
 
-      @method onCancelDestroy
+      @method _onCancelDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onCancelDestroy: function(evt) {
+    _onCancelDestroy: function(evt) {
       evt.halt();
       this.hideDestroyPrompt(evt.container);
     },
@@ -497,14 +497,15 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "do it now"
       button on the "destroy this service" prompt.
 
-      @method onInitiateDestroy
+      @method _onInitiateDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onInitiateDestroy: function(evt) {
+    _onInitiateDestroy: function(evt) {
       evt.halt();
       this.closeInspector();
       this.initiateServiceDestroy();
+      app.views.environment.instance.topo.fire('clearState');
     },
 
     /**
