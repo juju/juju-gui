@@ -94,9 +94,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
-      var charm = new models.BrowserCharm(data.charm);
-      charm.set('is_subordinate', is_subordinate);
-      view = new CharmView({charm: charm, container: utils.makeContainer()});
+      data.charm.is_subordinate = is_subordinate;
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
       view.render();
       var heading = view.get('container').one('.heading');
       assert.isNotNull(heading);
