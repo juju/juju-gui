@@ -29,13 +29,15 @@
                         </li>
                         <li>Ubuntu series: {{ distro_series }}</li>
                         <li>Location: {{ url }}</li>
+                        {{#if is_subordinate}}
+                            <li>Subordinate charm</li>
+                        {{/if}}
                         <li>
                             Links:
                             <a href="{{ sourceLink }}">Source</a>
                             <a href="{{ code_source.bugs_link }}">Bugs</a>
                         </li>
                     </ul>
-
                     {{#if isFullscreen}}
                         {{>providers}}
                     {{/if}}

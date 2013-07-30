@@ -89,6 +89,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(view.get('container').one('.heading'));
     });
 
+    // Return the charm heading node included in the charm detail view.
+    var makeHeading = function(is_subordinate) {
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      data.charm.is_subordinate = is_subordinate;
+      view = new CharmView({
+        charm: new models.BrowserCharm(data.charm),
+        container: utils.makeContainer()
+      });
+      view.render();
+      var heading = view.get('container').one('.heading');
+      assert.isNotNull(heading);
+      return heading;
+    };
+
+    it('avoids showing the subordinate message for non-subordinate charms',
+       function() {
+         var heading = makeHeading(false);
+         assert.notInclude(heading.getContent(), 'Subordinate charm');
+       });
+
+    it('shows the subordinate message if the charm is a subordinate',
+       function() {
+         var heading = makeHeading(true);
+         assert.include(heading.getContent(), 'Subordinate charm');
+       });
+
     it('renders local charms for inspector mode correctly', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
