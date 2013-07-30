@@ -269,7 +269,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.halt();
       this.fire('viewNavigate', {
         change: {
-          charmID: null
+          charmID: null,
+          hash: null
         }
       });
     },
@@ -602,6 +603,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.loadedReadme = false;
       this.loadedRelatedCharms = false;
       this.loadedRelatedInterfaceCharms = false;
+
+      // Load up the provider template helpers we need to output pretty
+      // template names.
+      Y.juju.models.browser.registerHelpers();
     },
 
     /**
@@ -677,7 +682,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container');
-
       var siteDomain = 'jujucharms.com',
           charmPath = this.get('charm').get('storeId'),
           link = 'https://' + siteDomain + '/' + charmPath;
@@ -876,6 +880,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'event-simulate',
     'gallery-markdown',
     'juju-charm-store',
+    'juju-browser-models',
     'juju-models',
     'juju-templates',
     'juju-views',

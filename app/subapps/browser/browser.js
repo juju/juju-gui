@@ -120,6 +120,10 @@ YUI.add('subapp-browser', function(Y) {
           qs: this._viewState.querystring
         });
       }
+
+      if (this._viewState.hash) {
+        url = url + this._viewState.hash;
+      }
       return url;
     },
 
@@ -141,22 +145,6 @@ YUI.add('subapp-browser', function(Y) {
         filters: this._filter.getFilterData(),
         store: this.get('store')
       });
-    },
-
-    /**
-       Create an initial subapp state for later url generation.
-
-       @method _initState
-     */
-    _initState: function() {
-      this._oldState = {
-        charmID: null,
-        hash: null,
-        querystring: null,
-        search: null,
-        viewmode: null
-      };
-      this._viewState = Y.merge(this._oldState, {});
     },
 
     /**
@@ -430,7 +418,7 @@ YUI.add('subapp-browser', function(Y) {
         search: null,
         interesting: null
       };
-      this._initState();
+      this.initState();
       this._filter = new models.browser.Filter();
 
       this._registerSubappHelpers();
@@ -446,6 +434,22 @@ YUI.add('subapp-browser', function(Y) {
         this.navigate(url);
       });
 
+    },
+
+    /**
+       Create an initial subapp state for later url generation.
+
+       @method initState
+     */
+    initState: function() {
+      this._oldState = {
+        charmID: null,
+        querystring: null,
+        hash: null,
+        search: null,
+        viewmode: null
+      };
+      this._viewState = Y.merge(this._oldState, {});
     },
 
     /**
