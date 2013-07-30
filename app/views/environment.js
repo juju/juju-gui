@@ -170,6 +170,7 @@ YUI.add('juju-view-environment', function(Y) {
             configBase: {
               db: this.topo.get('db'),
               env: this.topo.get('env'),
+              environment: this,
               store: this.topo.get('store'),
               events: {
                 '.close': {'click': 'destroy'},
@@ -314,6 +315,7 @@ YUI.add('juju-view-environment', function(Y) {
 
             topo.addTarget(this);
             this.topo = topo;
+            this._attachTopoEvents();
           }
           return topo;
         },
@@ -344,6 +346,27 @@ YUI.add('juju-view-environment', function(Y) {
           this.topo.fire('rendered');
           // Bind d3 events (manually).
           this.topo.bindAllD3Events();
+        },
+
+        /**
+          Loops through the inspectors and destroys them all
+
+          @method destroyInspectors
+        */
+        destroyInspectors: function() {
+          Y.Object.each(this._inspectors, function(inspector) {
+            inspector.viewletManager.destroy();
+          });
+        },
+
+        /**
+          Attaches events after the topology has been created.
+
+          @method _attachTopoEvents
+        */
+        _attachTopoEvents: function() {
+          this.topo.on(
+              '*:destroyServiceInspector', this.destroyInspectors, this);
         }
       }, {
         ATTRS: {

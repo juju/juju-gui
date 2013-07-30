@@ -470,22 +470,19 @@ YUI.add('juju-topology-service', function(Y) {
       var box = topo.get('active_service');
       context.hideServiceMenu();
       if (window.flags && window.flags.serviceInspector) {
-        context.destroyServiceInspector(context);
+        context.destroyServiceInspector();
       }
       context.destroyServiceConfirm(box);
     },
 
-    /*
+    /**
       Destroys the service inspector when it's service topo destroy
       button is clicked.
 
       @method destroyServiceInspector
     */
-    destroyServiceInspector: function(context) {
-      Y.Object.each(
-          app.views.environment.instance._inspectors, function(inspector) {
-            inspector.viewletManager.destroy();
-          });
+    destroyServiceInspector: function() {
+      this.get('component').fire('destroyServiceInspector');
     },
 
     /**

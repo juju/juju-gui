@@ -505,7 +505,7 @@ YUI.add('juju-view-inspector', function(Y) {
       evt.halt();
       this.closeInspector();
       this.initiateServiceDestroy();
-      app.views.environment.instance.topo.fire('clearState');
+      this.options.environment.topo.fire('clearState');
     },
 
     /**
