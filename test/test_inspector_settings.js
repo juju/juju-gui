@@ -133,14 +133,14 @@ describe('Inspector Settings', function() {
 
   it('has a button to destroy the service', function() {
     inspector = setUpInspector();
-    assert.isObject(container.one('.destroy-service-icon'));
+    assert.isObject(container.one('.destroy-service-trigger span'));
   });
 
-  it('shows the destroy service prompt if the icon is clicked', function() {
+  it('shows the destroy service prompt if the trigger is clicked', function() {
     inspector = setUpInspector();
     var promptBox = container.one('.destroy-service-prompt');
     assert.isTrue(promptBox.hasClass('closed'));
-    container.one('.destroy-service-icon').simulate('click');
+    container.one('.destroy-service-trigger span').simulate('click');
     assert.isFalse(promptBox.hasClass('closed'));
   });
 
@@ -149,7 +149,7 @@ describe('Inspector Settings', function() {
     var promptBox = container.one('.destroy-service-prompt');
     assert.isTrue(promptBox.hasClass('closed'));
     // First we have to open the prompt.
-    container.one('.destroy-service-icon').simulate('click');
+    container.one('.destroy-service-trigger span').simulate('click');
     assert.isFalse(promptBox.hasClass('closed'));
     // Now we can close it.
     container.one('.cancel-destroy').simulate('click');
@@ -160,7 +160,7 @@ describe('Inspector Settings', function() {
     inspector = setUpInspector();
     var promptBox = container.one('.destroy-service-prompt');
     // First we have to open the prompt.
-    container.one('.destroy-service-icon').simulate('click');
+    container.one('.destroy-service-trigger span').simulate('click');
     assert.isFalse(promptBox.hasClass('closed'));
     // If the test times out, it failed (because the expected function call
     // didn't happen).
@@ -174,7 +174,7 @@ describe('Inspector Settings', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector();
     var events = inspector.viewletManager.events;
-    assert.equal(typeof events['.destroy-service-icon'].click, 'function');
+    assert.equal(typeof events['.destroy-service-trigger span'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
@@ -183,7 +183,7 @@ describe('Inspector Settings', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector({useGhost: true});
     var events = inspector.viewletManager.events;
-    assert.equal(typeof events['.destroy-service-icon'].click, 'function');
+    assert.equal(typeof events['.destroy-service-trigger span'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
