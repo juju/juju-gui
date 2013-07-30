@@ -194,7 +194,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
-        debugger;
         assert.isUndefined(result.err);
         assert.equal(result.charm_url, 'cs:precise/wordpress-15');
         var service = state.db.services.getById('kumquat');
