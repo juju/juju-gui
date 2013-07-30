@@ -9,13 +9,13 @@
     .customize-scrollbar;
 
     .left-breakout {
+        .type9;
         position: absolute;
         top: 20px;
         right: 327px;
         overflow-y: auto;
         overflow-x: hidden;
         width: @bws-panel-width;
-        padding-top: 30px;
         background-color: #fff;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
@@ -31,6 +31,54 @@
             background: transparent
                 url(/juju-ui/assets/images/panel_close.png)
                 left top no-repeat;
+        }
+        .charm .yui3-tabview {
+            margin-top: 30px;
+        }
+        .unit-overview {
+            .header {
+                .type13;
+                padding: 30px;
+                background-color: @bws-background;
+                border-bottom: 1px solid @bws-border;
+
+                h2 {
+                    .type2;
+                    margin-bottom: 20px;
+                }
+                ul {
+                    margin: 0;
+                    list-style: none;
+
+                    li {
+                        line-height: 1.55;
+                    }
+                }
+            }
+            .unit-info-tabs {
+                padding: 30px;
+
+                h3 {
+                    .type5;
+                    margin-bottom: 20px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid @bws-border;
+                }
+                tr {
+                    border-bottom: 1px solid @bws-border;
+
+                    th,
+                    td {
+                        padding: 10px 20px;
+                    }
+                    th {
+                        .type5;
+                        text-align: left;
+                        padding-top: 0;
+                        padding-bottom: 15px;
+                    }
+                }
+            }
         }
     }
 
