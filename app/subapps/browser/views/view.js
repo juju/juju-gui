@@ -377,6 +377,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'browser-search-widget',
     'event-tracker',
     'juju-charm-store',
+    'juju-browser-models',
     'juju-models',
     'querystring-stringify',
     'view',

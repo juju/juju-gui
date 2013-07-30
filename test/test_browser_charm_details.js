@@ -792,7 +792,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
       // Basics that we have the right number of nodes.
       node.all('.providers .successes li').size().should.eql(1);
-      node.all('.providers .failures li').size().should.eql(3);
+      node.all('.providers .failures li').size().should.eql(2);
     });
 
     it('shows and hides an indicator', function(done) {
