@@ -647,7 +647,7 @@ describe('juju charm load', function() {
 });
 
 
-describe('BrowserCharm test', function() {
+describe.only('BrowserCharm test', function() {
   var data, instance, models, relatedData, sampleData, utils, Y;
 
   before(function(done) {
@@ -769,7 +769,19 @@ describe('BrowserCharm test', function() {
     // Note that the hp one is added by our code. There is no hp test, it's
     // openstack on HP. If the openstack test fails, both are failing.
     instance.get('providers').should.eql(
-        {successes: ['ec2'], failures: ['local', 'openstack', 'hp']});
+        {successes: ['ec2'], failures: ['local', 'hp']});
+  });
+
+  it('maps openstack to be hp in success as well', function() {
+    data.charm.tested_providers = {
+      'ec2': 'SUCCESS',
+      'local': 'FAILURE',
+      'openstack': 'SUCCESS'
+    };
+    instance = new models.BrowserCharm(data.charm);
+    instance.get('providers').should.eql(
+        {successes: ['ec2', 'hp'], failures: ['local']});
+
   });
 
   // Testing a private method because if this test fails it'll provide a much
