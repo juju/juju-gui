@@ -60,7 +60,7 @@ YUI.add('juju-browser-models', function(Y) {
   ns.FILTER_PROVIDERS = {
     'aws': 'AWS/EC2',
     'openstack': 'HP Cloud',
-    'lxc': 'LXC',
+    'lxc': 'LXC'
   };
 
   ns.registerHelpers = function() {
