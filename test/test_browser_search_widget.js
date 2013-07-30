@@ -37,7 +37,6 @@ describe('browser search widget', function() {
           function(charmID, file) {
             return '/path/to/charm/' + file;
           });
-      window.flags = { ac: true };
       done();
     });
   });
@@ -47,6 +46,7 @@ describe('browser search widget', function() {
     search = new Search();
     search.render(container);
     cleanIconHelper = utils.stubCharmIconPath();
+    window.flags.ac = true;
   });
 
   afterEach(function() {
@@ -55,11 +55,11 @@ describe('browser search widget', function() {
     }
     container.remove(true);
     cleanIconHelper();
+    window.flags = {};
   });
 
   after(function() {
     Y.Handlebars.helpers.charmFilePath = undefined;
-    delete window.flags.ac;
   });
 
   it('needs to render from the template', function() {

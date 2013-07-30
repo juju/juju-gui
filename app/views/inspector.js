@@ -1244,6 +1244,9 @@ YUI.add('juju-view-inspector', function(Y) {
           // but this will allow us to use the old template.
           options.settings = utils.extractServiceSettings(options.options);
 
+          // Signalling to the shared templates that this is the ghost view.
+          options.ghost = true;
+
           this.container.setHTML(this.template(options));
           this.container.all('textarea.config-field')
                         .plug(plugins.ResizingTextarea,

@@ -229,7 +229,7 @@ YUI.add('juju-view-environment', function(Y) {
               // manager's events for final binding
               viewletEvents: {
                 '.charm-url': {click: 'onShowCharmDetails'},
-                '.deploy': { 'click': 'deployCharm' },
+                '.confirm': { 'click': 'deployCharm' },
                 'input.config-file-upload': { 'change': 'handleFileUpload' },
                 'span.config-file-upload': { 'click': '_showFileDialogue' },
                 'input[name=service-name]': { valuechange: 'updateGhostName' },

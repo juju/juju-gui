@@ -32,8 +32,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
-        // A global variable required for testing.
-        window.flags = {};
         done();
       });
     });
@@ -52,10 +50,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.destroy();
       juju.destroy();
       state.destroy();
-    });
-
-    after(function() {
-      delete window.flags;
     });
 
     /**
