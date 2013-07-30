@@ -147,7 +147,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(result.error);
       // The service name is provided explicitly.
-      fakebackend.deploy('cs:precise/haproxy-18', callback, {name: 'wordpress'});
+      fakebackend.deploy(
+          'cs:precise/haproxy-18', callback, {name: 'wordpress'});
       assert.equal(result.error, 'A service with this name already exists.');
       // The service name is derived from charm.
       result = undefined;
@@ -211,7 +212,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('honors the optional service name', function() {
       assert.isUndefined(
-          fakebackend.deploy('cs:precise/wordpress-15', callback, {name: 'kumquat'}));
+          fakebackend.deploy(
+              'cs:precise/wordpress-15', callback, {name: 'kumquat'}));
       assert.equal(result.service.get('id'), 'kumquat');
     });
 
@@ -559,7 +561,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
-        fakebackend.getCharm('cs:precise/wordpress-15', ERROR('Please log in.', done));
+        fakebackend.getCharm(
+            'cs:precise/wordpress-15', ERROR('Please log in.', done));
       });
 
       it('disallows malformed charm names', function(done) {
