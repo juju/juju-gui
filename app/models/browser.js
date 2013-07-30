@@ -59,9 +59,8 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_PROVIDERS = {
     'aws': 'AWS/EC2',
-    'hp': 'HP Cloud',
+    'openstack': 'HP Cloud',
     'lxc': 'LXC',
-    'openstack': 'Openstack'
   };
 
 
