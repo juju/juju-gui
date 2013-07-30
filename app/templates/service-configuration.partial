@@ -31,6 +31,7 @@
     </div>
   </div>
 {{/settings}}
+{{#unless ghost}}
 <div class="yui3-g controls">
   <div class="yui3-u-1-2">
     <button class="cancel">Cancel</button>
@@ -39,3 +40,4 @@
     <button class="confirm">Confirm</button>
   </div>
 </div>
+{{/unless}}
