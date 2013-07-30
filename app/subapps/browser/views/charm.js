@@ -678,7 +678,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container');
-
       var siteDomain = 'jujucharms.com',
           charmPath = this.get('charm').get('storeId'),
           link = 'https://' + siteDomain + '/' + charmPath;
