@@ -137,15 +137,44 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return charms;
     })(),
 
+    //XXX j.c.sackett July 30 2013 This is terrible duplication of above, but
+    //it's very temporary--the next branch rips out *all* the leftover charm
+    //store references, and will remove this duplication.
+    _cached_api_charms: (function() {
+      var url, charms = {},
+          names = [
+            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
+            'memcached'];
+      Y.Array.each(names, function(name) {
+        url = 'data/' + name + '-api-response.json';
+        charms[name] = jujuTests.utils.loadFixture(url, true);
+      });
+      return charms;
+    })(),
+
+    TestCharmStore: Y.Base.create(
+        'test-charm-store', Y.juju.CharmStore, [], {
+          loadByPath: function(path, options) {
+            var charmName = path.split('/')[2];
+            // Ignore version as changing across all
+            // testing artifacts is a pain.
+            charmName = charmName.split('-', 1);
+            if (charmName in jujuTests.utils._cached_charms) {
+              options.success(jujuTests.utils._cached_charms[charmName]);
+            } else {
+              options.failure(new Error('Unable to load charm ' + charmName));
+            }
+          }
+        }
+    ),
+
     makeFakeBackend: function() {
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.charm = function(store_id, callbacks, bindscope) {
         var charmName = store_id.split('/')[1];
         charmName = charmName.split('-', 1);
-        if (charmName in jujuTests.utils._cached_charms) {
-          var response = {
-            charm: jujuTests.utils._cached_charms[charmName]
-          };
+        if (charmName in jujuTests.utils._cached_api_charms) {
+          var response = jujuTests.utils._cached_api_charms[charmName];
           callbacks.success(response);
         } else {
           callbacks.failure(new Error('Unable to load charm ' + charmName));

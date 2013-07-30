@@ -1,0 +1,292 @@
+{
+  "charm": {
+    "categories": [
+      "cache-proxy"
+    ], 
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/haproxy", 
+      "last_log": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ", 
+      "location": "lp:~charmers/charms/precise/haproxy/trunk", 
+      "revision": "67", 
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2013-06-03T23:13:29Z", 
+          "message": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ", 
+          "revno": 67
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-04-22T19:42:18Z", 
+          "message": "Add categories.\n", 
+          "revno": 66
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2013-02-15T04:55:15Z", 
+          "message": "When the reverseproxy relation changes, the website proxy will likely need to be updated, so trigger a config-changed to notify the other side of the relation that it will need to update.\n\nI'm not sure if this the appropriate way to handle this situation, but in practice it seems to work. Please let me know if there is a more accurate or correct way to do it.  LP:148605", 
+          "revno": 65
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2013-02-15T04:29:14Z", 
+          "message": "Merging LP:148065 Relation driven proxying or multi-service proxying", 
+          "revno": 64
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2013-01-15T02:04:19Z", 
+          "message": "Merging mthaddon's branch. Include nrpe-external-master relation, and ability to inject pre-install hooks if necessary. MP:139978", 
+          "revno": 63
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2012-11-21T16:57:10Z", 
+          "message": "When a unit of a service having a relation with haproxy is juju-removed, ha proxy was not removing the line for this unit in /etc/haproxy.cfg.", 
+          "revno": 62
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2012-10-29T21:04:13Z", 
+          "message": "No more hard coded paths", 
+          "revno": 61
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2012-10-03T14:23:30Z", 
+          "message": "Adding changes in MP:127191 by gnoy", 
+          "revno": 60
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2012-10-03T14:15:01Z", 
+          "message": "PEP8 changes", 
+          "revno": 59
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2012-09-17T16:50:34Z", 
+          "message": "Merging changes by Liam in MP:124731", 
+          "revno": 58
+        }
+      ], 
+      "type": "bzr"
+    }, 
+    "date_created": "2012-04-16T18:29:51Z", 
+    "description": "HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments. It features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways. It has request blocking capabilities and provides interface to display server status.", 
+    "distro_series": "precise", 
+    "downloads": 811, 
+    "downloads_in_past_30_days": 58, 
+    "files": [
+      "hooks/nrpe.py", 
+      "hooks/munin-relation-changed", 
+      "hooks/hooks.py", 
+      "hooks/website-relation-joined", 
+      "metadata.yaml", 
+      "hooks/stop", 
+      "hooks/test_hooks.py", 
+      "README.md", 
+      "hooks/start", 
+      "hooks/reverseproxy-relation-changed", 
+      "hooks/config-changed", 
+      "hooks/nrpe-external-master-relation-changed", 
+      "hooks/reverseproxy-relation-broken", 
+      "hooks/install", 
+      "hooks/reverseproxy-relation-departed", 
+      "hooks/website-relation-changed", 
+      "config.yaml", 
+      "revision"
+    ], 
+    "id": "precise/haproxy-18", 
+    "is_approved": true, 
+    "is_subordinate": false, 
+    "maintainer": {
+      "email": "Juan Negron <juan@ubuntu.com>Tom Haddon <tom.haddon@canonical.com>", 
+      "name": ""
+    }, 
+    "name": "haproxy", 
+    "options": {
+      "default_log": {
+        "default": "global", 
+        "description": "Default log", 
+        "type": "string"
+      }, 
+      "default_mode": {
+        "default": "http", 
+        "description": "Default mode", 
+        "type": "string"
+      }, 
+      "default_options": {
+        "default": "httplog, dontlognull", 
+        "description": "Default options", 
+        "type": "string"
+      }, 
+      "default_retries": {
+        "default": 3, 
+        "description": "Set the number of retries to perform on a server after a connection\nfailure. It is important to understand that this value applies to the\nnumber of connection attempts, not full requests. When a connection \nhas effectively been established to a server, there will be no more \nretry.\nIn order to avoid immediate reconnections to a server which is \nrestarting, a turn-around timer of 1 second is applied before a retry\noccurs.\n", 
+        "type": "int"
+      }, 
+      "default_timeouts": {
+        "default": "queue 1000, connect 1000, client 1000, server 1000", 
+        "description": "Default timeouts", 
+        "type": "string"
+      }, 
+      "enable_monitoring": {
+        "default": false, 
+        "description": "Enable monitoring", 
+        "type": "boolean"
+      }, 
+      "global_debug": {
+        "default": false, 
+        "description": "Debug or not", 
+        "type": "boolean"
+      }, 
+      "global_group": {
+        "default": "haproxy", 
+        "description": "Group", 
+        "type": "string"
+      }, 
+      "global_log": {
+        "default": "127.0.0.1 local0, 127.0.0.1 local1 notice", 
+        "description": "Global log line ( multiples ... comma separated list )", 
+        "type": "string"
+      }, 
+      "global_maxconn": {
+        "default": 4096, 
+        "description": "Sets the maximum per-process number of concurrent connections to\n<number>.\n", 
+        "type": "int"
+      }, 
+      "global_quiet": {
+        "default": false, 
+        "description": "Quiet", 
+        "type": "boolean"
+      }, 
+      "global_spread_checks": {
+        "default": 0, 
+        "descriptions": "Sometimes it is desirable to avoid sending health checks to servers at\nexact intervals, for instance when many logical servers are located on\nthe same physical server. With the help of this parameter, it becomes \npossible to add some randomness in the check interval between 0 and \n+/- 50%. A value between 2 and 5 seems to show good results.\n", 
+        "type": "int"
+      }, 
+      "global_user": {
+        "default": "haproxy", 
+        "description": "User", 
+        "type": "string"
+      }, 
+      "monitoring_allowed_cidr": {
+        "default": "127.0.0.1/32", 
+        "description": "CIDR allowed ( multiple CIDRs separated by space ) access to the\nmonitoring interface.\n", 
+        "type": "string"
+      }, 
+      "monitoring_password": {
+        "default": "changeme", 
+        "description": "Password to the monitoring interface ( if \"changeme\", a new password\nwill be generated and displayed in juju-log )\n", 
+        "type": "string"
+      }, 
+      "monitoring_port": {
+        "default": 10000, 
+        "description": "Default monitoring port", 
+        "type": "int"
+      }, 
+      "monitoring_stats_refresh": {
+        "default": 3, 
+        "description": "Monitoring interface refresh interval (in seconds)", 
+        "type": "int"
+      }, 
+      "monitoring_username": {
+        "default": "haproxy", 
+        "description": "Monitoring username", 
+        "type": "string"
+      }, 
+      "nagios_context": {
+        "default": "juju", 
+        "description": "Used by the nrpe-external-master subordinate charm.\nA string that will be prepended to instance name to set the host name\nin nagios. So for instance the hostname would be something like:\n    juju-postgresql-0\nIf you're running multiple environments with the same services in them\nthis allows you to differentiate between them.\n", 
+        "type": "string"
+      }, 
+      "services": {
+        "default": "- service_name: haproxy_service\n  service_host: \"0.0.0.0\"\n  service_port: 80\n  service_options: [balance leastconn]\n  server_options: maxconn 100\n", 
+        "description": "Services definition(s). Although the variable type is a string, this is\ninterpreted in the charm as yaml. To use multiple services within the\nsame haproxy instance, specify all of the variables (service_name,\nservice_host, service_port, service_options, server_options) with a \"-\"\nbefore the first variable, service_name, as above. Service options is a\ncomma separated list, server options will be appended as a string to\nthe individual server lines for a given listen stanza.\n", 
+        "type": "string"
+      }
+    }, 
+    "owner": "charmers", 
+    "rating_denominator": 0, 
+    "rating_numerator": 0, 
+    "relations": {
+      "provides": {
+        "munin": {
+          "interface": "munin-node"
+        }, 
+        "nrpe-external-master": {
+          "interface": "nrpe-external-master", 
+          "scope": "container"
+        }, 
+        "website": {
+          "interface": "http"
+        }
+      }, 
+      "requires": {
+        "reverseproxy": {
+          "interface": "http"
+        }
+      }
+    }, 
+    "revision": 42, 
+    "summary": "fast and reliable load balancing reverse proxy", 
+    "tested_providers": {
+      "ec2": "SUCCESS", 
+      "local": "SUCCESS", 
+      "openstack": "SUCCESS"
+    }, 
+    "url": "cs:precise/haproxy-18"
+  }, 
+  "metadata": {}
+}

@@ -1,0 +1,212 @@
+{
+  "charm": {
+    "categories": [
+      "applications"
+    ], 
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/mediawiki", 
+      "last_log": "Added icon.svg", 
+      "location": "lp:~charmers/charms/precise/mediawiki/trunk", 
+      "revision": "70", 
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-04-25T18:19:21Z", 
+          "message": "Added icon.svg", 
+          "revno": 70
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-04-22T19:36:55Z", 
+          "message": "Add a category\n", 
+          "revno": 69
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-01-24T18:26:58Z", 
+          "message": "Cleanup of PHP files according to http://www.mediawiki.org/wiki/Coding_conventions\n", 
+          "revno": 68
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2012-12-20T03:12:05Z", 
+          "message": "Typo in multi-unit command line", 
+          "revno": 67
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2012-12-19T20:23:25Z", 
+          "message": "Minor clean up and new README file\n", 
+          "revno": 66
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-06-30T14:37:14Z", 
+          "message": "Bumping revision for modernizations", 
+          "revno": 65
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@fewbar.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-06-30T14:36:55Z", 
+          "message": "cleanups and modernizing things", 
+          "revno": 64
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-06-28T00:02:47Z", 
+          "message": "removing old broken munin bits", 
+          "revno": 63
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-06-28T00:01:49Z", 
+          "message": "Bumping revision to get new features", 
+          "revno": 62
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-06-28T00:01:31Z", 
+          "message": "Adding debug config option for convenient debugging of mediawiki", 
+          "revno": 61
+        }
+      ], 
+      "type": "bzr"
+    }, 
+    "date_created": "2012-04-16T18:29:51Z", 
+    "description": "MediaWiki is a wiki engine (a program for creating a collaboratively\nedited website). It is designed to handle heavy websites containing\nlibrary-like document collections, and supports user uploads of\nimages/sounds, multilingual content, TOC autogeneration, ISBN links,\netc.\n", 
+    "distro_series": "precise", 
+    "downloads": 1393, 
+    "downloads_in_past_30_days": 142, 
+    "files": [
+      "hooks/slave-relation-departed", 
+      "hooks/combine-dbservers", 
+      "hooks/cache-relation-changed", 
+      "hooks/website-relation-joined", 
+      "icon.svg", 
+      "hooks/upgrade-charm", 
+      "README.md", 
+      "hooks/db-relation-changed", 
+      "hooks/db-relation-departed", 
+      "hooks/install", 
+      "metadata.yaml", 
+      "hooks/slave-relation-broken", 
+      "hooks/config-changed", 
+      "hooks/slave-relation-changed", 
+      "config.yaml", 
+      "revision"
+    ], 
+    "id": "precise/mediawiki-8", 
+    "is_approved": true, 
+    "is_subordinate": false, 
+    "maintainer": {
+      "email": "clint@ubuntu.com", 
+      "name": "Clint Byrum"
+    }, 
+    "name": "mediawiki", 
+    "options": {
+      "admins": {
+        "description": "Admin users to create, user:pass", 
+        "type": "string"
+      }, 
+      "debug": {
+        "default": false, 
+        "description": "turn on debugging features of mediawiki", 
+        "type": "boolean"
+      }, 
+      "logo": {
+        "description": "URL to fetch logo from", 
+        "type": "string"
+      }, 
+      "name": {
+        "default": "Please set name of wiki", 
+        "description": "The name, or Title of the Wiki", 
+        "type": "string"
+      }, 
+      "skin": {
+        "default": "vector", 
+        "description": "skin for the Wiki", 
+        "type": "string"
+      }
+    }, 
+    "owner": "charmers", 
+    "rating_denominator": 0, 
+    "rating_numerator": 0, 
+    "relations": {
+      "provides": {
+        "website": {
+          "interface": "http"
+        }
+      }, 
+      "requires": {
+        "cache": {
+          "interface": "memcache"
+        }, 
+        "db": {
+          "interface": "mysql"
+        }, 
+        "slave": {
+          "interface": "mysql"
+        }
+      }
+    }, 
+    "revision": 90, 
+    "summary": "Website engine for collaborative work", 
+    "tested_providers": {
+      "ec2": "SUCCESS", 
+      "local": "SUCCESS", 
+      "openstack": "SUCCESS"
+    }, 
+    "url": "cs:precise/mediawiki-8"
+  }, 
+  "metadata": {}
+}

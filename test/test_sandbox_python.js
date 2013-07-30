@@ -71,7 +71,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateServices(callback) {
-      state.deploy('cs:wordpress', function(service) {
+      state.deploy('cs:precise/wordpress-15', function(service) {
         var data = {
           op: 'add_unit',
           service_name: 'wordpress',
@@ -155,7 +155,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         };
         env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
       });
       env.connect();
     }
@@ -172,7 +172,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateAndExposeService(callback) {
-      state.deploy('cs:wordpress', function(data) {
+      state.deploy('cs:precise/wordpress-15', function(data) {
         var command = {
           op: 'expose',
           service_name: data.service.get('name')
@@ -205,7 +205,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         };
         env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
       });
       env.connect();
     }
@@ -333,7 +333,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       var data = {
         op: 'deploy',
-        charm_url: 'cs:wordpress',
+        charm_url: 'cs:precise/wordpress-15',
         service_name: 'kumquat',
         config_raw: 'funny: business',
         num_units: 2,
@@ -348,10 +348,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isUndefined(parsed.err);
           assert.deepEqual(parsed, data);
           assert.isObject(
-              state.db.charms.getById('cs:precise/wordpress-10'));
+              state.db.charms.getById('cs:precise/wordpress-15'));
           var service = state.db.services.getById('kumquat');
           assert.isObject(service);
-          assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+          assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
           assert.deepEqual(service.get('config'), {funny: 'business'});
           var units = state.db.units.get_units_for_service(service);
           assert.lengthOf(units, 2);
@@ -367,14 +367,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.after('defaultSeriesChange', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);
-          assert.equal(result.charm_url, 'cs:wordpress');
+          assert.equal(result.charm_url, 'cs:precise/wordpress-15');
           var service = state.db.services.getById('kumquat');
-          assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+          assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
           assert.deepEqual(service.get('config'), {llama: 'pajama'});
           done();
         };
         env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, callback);
       });
       env.connect();
     });
@@ -383,7 +383,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Create a service with the name "wordpress".
       // The charm store is synchronous in tests, so we don't need a real
       // callback.
-      state.deploy('cs:wordpress', function() {});
+      state.deploy('cs:precise/wordpress-15', function() {});
       env.after('defaultSeriesChange', function() {
         var callback = function(result) {
           assert.equal(
@@ -391,7 +391,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.deploy(
-            'cs:wordpress', undefined, undefined, undefined, 1, callback);
+            'cs:precise/wordpress-15', undefined, undefined, undefined, 1, callback);
       });
       env.connect();
     });
@@ -400,7 +400,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Create a service with the name "wordpress".
       // The charm store is synchronous in tests, so we don't need a real
       // callback.
-      state.deploy('cs:wordpress', function() {});
+      state.deploy('cs:precise/wordpress-15', function() {});
       client.onmessage = function(received) {
         // First message is the provider type and default series.  We ignore
         // it, and prepare for the next one, which will handle the delta
@@ -412,7 +412,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.lengthOf(deltas, 3);
           assert.equal(deltas[0][0], 'service');
           assert.equal(deltas[0][1], 'change');
-          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-15');
           assert.equal(deltas[1][0], 'machine');
           assert.equal(deltas[1][1], 'change');
           assert.equal(deltas[2][0], 'unit');
@@ -442,7 +442,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Create a service with the name "wordpress".
       // The charm store is synchronous in tests, so we don't need a real
       // callback.
-      state.deploy('cs:wordpress', function() {}, {unitCount: 2});
+      state.deploy('cs:precise/wordpress-15', function() {}, {unitCount: 2});
       var db = new Y.juju.models.Database();
       db.on('update', function() {
         // We want to verify that the GUI database is equivalent to the state
@@ -497,13 +497,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(parsed.op, 'delta');
           var deltas = parsed.result;
           assert.lengthOf(deltas, 3);
-          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-15');
           done();
         };
         // Create a service with the name "wordpress".
         // The charm store is synchronous in tests, so we don't need a real
         // callback.
-        state.deploy('cs:wordpress', function() {});
+        state.deploy('cs:precise/wordpress-15', function() {});
         isAsync = true;
       };
       juju.set('deltaInterval', 4);
@@ -560,7 +560,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error when adding units to an invalid service',
         function(done) {
-          state.deploy('cs:wordpress', function(service) {
+          state.deploy('cs:precise/wordpress-15', function(service) {
             var data = {
               op: 'add_unit',
               service_name: 'noservice',
@@ -727,7 +727,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // pull its data.
         var op = {
           op: 'get_charm',
-          charm_url: 'cs:wordpress',
+          charm_url: 'cs:precise/wordpress-15',
           request_id: 99
         };
         client.onmessage = function(received) {
@@ -834,7 +834,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fails with error when exposing an invalid service name',
         function(done) {
-          state.deploy('cs:wordpress', function(data) {
+          state.deploy('cs:precise/wordpress-15', function(data) {
             var command = {
               op: 'expose',
               service_name: 'foobar'
@@ -895,7 +895,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fails silently when unexposing a not exposed service',
         function(done) {
-          state.deploy('cs:wordpress', function(data) {
+          state.deploy('cs:precise/wordpress-15', function(data) {
             var command = {
               op: 'unexpose',
               service_name: data.service.get('name')
@@ -940,7 +940,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation', function(done) {
       function localCb() {
-        state.deploy('cs:mysql', function(service) {
+        state.deploy('cs:precise/mysql-26', function(service) {
           var data = {
             op: 'add_relation',
             endpoint_a: 'wordpress:db',
@@ -1012,13 +1012,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.add_relation(endpointA, endpointB, localCb);
       }
       generateIntegrationServices(function() {
-        env.deploy('cs:mysql', undefined, undefined, undefined, 1, addRelation);
+        env.deploy('cs:precise/mysql-26', undefined, undefined, undefined, 1, addRelation);
       });
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
       function localCb() {
-        state.deploy('cs:puppet', function(service) {
+        state.deploy('cs:precise/puppet-5', function(service) {
           var data = {
             op: 'add_relation',
             endpoint_a: 'wordpress:juju-info',
@@ -1089,7 +1089,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation', function(done) {
       generateAndRelateServices(
-          ['cs:wordpress', 'cs:mysql'],
+          ['cs:precise/wordpress-15', 'cs:precise/mysql-26'],
           ['wordpress:db', 'mysql:db'],
           ['wordpress:db', 'mysql:db'],
           {result: true, endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
@@ -1118,8 +1118,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
-              env.deploy('cs:mysql', null, null, null, 1, function() {
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, function() {
+              env.deploy('cs:precise/mysql-26', null, null, null, 1, function() {
                 env.add_relation(endpoints[0], endpoints[1], function() {
                   env.remove_relation(endpoints[0], endpoints[1], localCb);
                 });
@@ -1132,7 +1132,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error if the charms do not exist', function(done) {
       generateAndRelateServices(
-          ['cs:wordpress', 'cs:mysql'],
+          ['cs:precise/wordpress-15', 'cs:precise/mysql-26'],
           ['wordpress:db', 'mysql:db'],
           ['no_such', 'charms'],
           {err: 'Charm not loaded.',
@@ -1142,7 +1142,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error if the relationship does not exist', function(done) {
       generateAndRelateServices(
-          ['cs:wordpress', 'cs:mysql'],
+          ['cs:precise/wordpress-15', 'cs:precise/mysql-26'],
           null,
           ['wordpress:db', 'mysql:db'],
           {err: 'Relationship does not exist',
@@ -1303,8 +1303,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should support export', function(done) {
       client.open();
-      promise(state, 'deploy', 'cs:wordpress')
-       .then(promise(state, 'deploy', 'cs:mysql'))
+      promise(state, 'deploy', 'cs:precise/wordpress-15')
+       .then(promise(state, 'deploy', 'cs:precise/mysql-26'))
        .then(promise(state, 'addRelation', 'wordpress:db', 'mysql:db'))
        .then(function() {
             client.onmessage = function(result) {
