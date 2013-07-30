@@ -177,9 +177,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The _set forces a change to a writeOnly attribute.
       charm._set('is_subordinate', true);
       fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 0});
-      console.log('Second');
       assert.isUndefined(result.error);
-      console.log('Third');
       assert.strictEqual(
           fakebackend.db.charms.getById('cs:precise/wordpress-15'), charm);
       assert.equal(fakebackend.db.charms.size(), 1);
