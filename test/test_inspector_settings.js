@@ -174,7 +174,8 @@ describe('Inspector Settings', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector();
     var events = inspector.viewletManager.events;
-    assert.equal(typeof events['.destroy-service-trigger span'].click, 'function');
+    assert.equal(
+        typeof events['.destroy-service-trigger span'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
@@ -183,7 +184,8 @@ describe('Inspector Settings', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector({useGhost: true});
     var events = inspector.viewletManager.events;
-    assert.equal(typeof events['.destroy-service-trigger span'].click, 'function');
+    assert.equal(
+        typeof events['.destroy-service-trigger span'].click, 'function');
     assert.equal(typeof events['.initiate-destroy'].click, 'function');
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
