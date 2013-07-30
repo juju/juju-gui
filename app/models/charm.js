@@ -55,7 +55,7 @@ YUI.add('juju-charm-models', function(Y) {
         Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
         storeId = [
           result.series,
-          result.package_name + (result.revision ? '-' + result.revision : ''),
+          result.package_name + (result.revision ? '-' + result.revision : '')
         ];
         if (result.owner) {
           storeId.unshift('~' + result.owner);
