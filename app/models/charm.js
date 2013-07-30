@@ -583,22 +583,10 @@ YUI.add('juju-charm-models', function(Y) {
               providers = this.get('tested_providers');
           Y.Object.each(providers, function(value, key) {
             if (value !== 'SUCCESS') {
-              // The HP test is currently called openstack in the test data we
-              // import. Adjust the name for UX.
-              if (key === 'openstack') {
-                failures.push('hp');
-              } else {
-                failures.push(key);
-              }
+              failures.push(key);
             }
             else {
-              // The HP test is currently called openstack in the test data we
-              // import. Adjust the name for UX.
-              if (key === 'openstack') {
-                successes.push('hp');
-              } else {
-                successes.push(key);
-              }
+              successes.push(key);
             }
           });
 

@@ -20,6 +20,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
+  describe('browser model utils', function() {
+    var helperNS, ns, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use([
+        'juju-models', 'juju-browser-models'], function(Y) {
+
+        helperNS = Y.namespace('Handlebars.helpers');
+        ns = Y.namespace('juju.models.browser');
+        done();
+      });
+    });
+
+    afterEach(function() {
+      if (helperNS.prettyProvider) {
+        helperNS.prettyProvider = undefined;
+      }
+    });
+
+    it('provides a provider template helper', function () {
+      ns.registerHelpers();
+      assert.equal(typeof helperNS.prettyProvider, 'function');
+
+      var tplString = '{{prettyProvider provider}}',
+          template = Y.Handlebars.compile(tplString);
+
+      assert.equal(template({provider: 'openstack'}), 'HP Cloud');
+    });
+
+    it('handles mapping from test names to filter names', function () {
+      ns.registerHelpers();
+      var tplString = '{{prettyProvider provider}}',
+          template = Y.Handlebars.compile(tplString);
+
+      assert.equal(template({provider: 'local'}), 'LXC');
+      assert.equal(template({provider: 'ec2'}), 'AWS/EC2');
+    });
+
+
+  });
+
   describe('browser filter model', function() {
     var browser, Filter, models, Y;
 
