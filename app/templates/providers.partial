@@ -7,7 +7,7 @@
                     <li>
                         <i class="sprite provider_success"></i>
                         <a href="https://jenkins.qa.ubuntu.com/job/{{../../series}}-{{.}}-charm-{{../../name}}/lastBuild"
-                        target="help">{{.}}</a>
+                        target="help">{{prettyProvider . }}</a>
                     </li>
                 {{/providers.successes}}
             </ul>
@@ -18,7 +18,7 @@
                     <li>
                         <i class="sprite provider_failure"></i>
                         <a href="https://jenkins.qa.ubuntu.com/job/{{../../series}}-{{.}}-charm-{{../../name}}/lastBuild"
-                        target="help">{{.}}</a>
+                        target="help">{{prettyProvider . }}</a>
                     </li>
                 {{/providers.failures}}
             </ul>
