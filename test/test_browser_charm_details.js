@@ -94,7 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
-      var charm =  new models.BrowserCharm(data.charm);
+      var charm = new models.BrowserCharm(data.charm);
       charm.set('is_subordinate', is_subordinate);
       view = new CharmView({charm: charm, container: utils.makeContainer()});
       view.render();
@@ -104,16 +104,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     it('avoids showing the subordinate message for non-subordinate charms',
-      function() {
-        var heading = makeHeading(false);
-        assert.notInclude(heading.getContent(), 'Subordinate charm');
-    });
+       function() {
+         var heading = makeHeading(false);
+         assert.notInclude(heading.getContent(), 'Subordinate charm');
+       });
 
     it('shows the subordinate message if the charm is a subordinate',
-      function() {
-        var heading = makeHeading(true);
-        assert.include(heading.getContent(), 'Subordinate charm');
-    });
+       function() {
+         var heading = makeHeading(true);
+         assert.include(heading.getContent(), 'Subordinate charm');
+       });
 
     it('renders local charms for inspector mode correctly', function() {
       var data = utils.loadFixture('data/browsercharm.json', true);
