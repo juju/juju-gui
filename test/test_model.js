@@ -777,10 +777,8 @@ describe('BrowserCharm test', function() {
       'openstack': 'FAILURE'
     };
     instance = new models.BrowserCharm(data.charm);
-    // Note that the hp one is added by our code. There is no hp test, it's
-    // openstack on HP. If the openstack test fails, both are failing.
     instance.get('providers').should.eql(
-        {successes: ['ec2'], failures: ['local', 'openstack', 'hp']});
+        {successes: ['ec2'], failures: ['local', 'openstack']});
   });
 
   // Testing a private method because if this test fails it'll provide a much

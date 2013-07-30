@@ -5,34 +5,80 @@
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 
-
 .yui3-juju-inspector {
     .customize-scrollbar;
 
     .left-breakout {
+        .type9;
         position: absolute;
         top: 20px;
+        right: 327px;
         overflow-y: auto;
         overflow-x: hidden;
-        right: 327px;
-        width: 500px;
-        color: rgb(80, 80, 80);
-        background-color: rgb(255, 255, 255);
-
-        &.with-charm {
-            width: 750px;
-        }
+        width: @bws-panel-width;
+        background-color: #fff;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
         .close-slot {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            line-height: 18px;
-            cursor: pointer;
-            color: @inspector-background-color;
-            z-index: 10;
+            // Need to raise it above the content.
+            z-index: 1;
+            display: block;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: transparent
+                url(/juju-ui/assets/images/panel_close.png)
+                left top no-repeat;
+        }
+        .charm .yui3-tabview {
+            margin-top: 30px;
+        }
+        .unit-overview {
+            .header {
+                .type13;
+                padding: 30px;
+                background-color: @bws-background;
+                border-bottom: 1px solid @bws-border;
+
+                h2 {
+                    .type2;
+                    margin-bottom: 20px;
+                }
+                ul {
+                    margin: 0;
+                    list-style: none;
+
+                    li {
+                        line-height: 1.55;
+                    }
+                }
+            }
+            .unit-info-tabs {
+                padding: 30px;
+
+                h3 {
+                    .type5;
+                    margin-bottom: 20px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid @bws-border;
+                }
+                tr {
+                    border-bottom: 1px solid @bws-border;
+
+                    th,
+                    td {
+                        padding: 10px 20px;
+                    }
+                    th {
+                        .type5;
+                        text-align: left;
+                        padding-top: 0;
+                        padding-bottom: 15px;
+                    }
+                }
+            }
         }
     }
 

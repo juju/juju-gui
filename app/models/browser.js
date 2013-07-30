@@ -59,9 +59,26 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_PROVIDERS = {
     'aws': 'AWS/EC2',
-    'hp': 'HP Cloud',
-    'lxc': 'LXC',
-    'openstack': 'Openstack'
+    'openstack': 'HP Cloud',
+    'lxc': 'LXC'
+  };
+
+  ns.registerHelpers = function() {
+    /*
+     * Provide a pretty version of a provider name given the data name.
+     *
+     * {{prettyProvider 'openstack'}}
+     *
+     */
+    Y.Handlebars.registerHelper('prettyProvider', function(id, options) {
+      // Map the names in one place here.
+      if (id === 'ec2') {
+        id = 'aws';
+      } else if (id === 'local') {
+        id = 'lxc';
+      }
+      return ns.FILTER_PROVIDERS[id];
+    });
   };
 
 

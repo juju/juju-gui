@@ -602,12 +602,6 @@ YUI.add('juju-charm-models', function(Y) {
           Y.Object.each(providers, function(value, key) {
             if (value !== 'SUCCESS') {
               failures.push(key);
-
-              // We test openstack on HP. If it fails on openstack, it's
-              // failing on HP as well so add that.
-              if (key === 'openstack') {
-                failures.push('hp');
-              }
             }
             else {
               successes.push(key);
@@ -615,7 +609,6 @@ YUI.add('juju-charm-models', function(Y) {
           });
 
           if (failures.length > 0 || successes.length > 0) {
-
             return {successes: successes, failures: failures};
           } else {
             return null;

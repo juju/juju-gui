@@ -1,13 +1,15 @@
 <div class="unit-overview">
-    <h2><span class="">&bull;</span> {{ unit.displayName }}</h2>
-    <div class="unit-stats content">
-        IP Address: {{ unit.private_address }}<br />
-        Status: {{ unit.agent_state }}<br />
-        Public Address: {{ unitIPDescription }}
+    <div class="header">
+        <h2><span class="">&bull;</span> {{ unit.displayName }}</h2>
+        <ul class="unit-stats content">
+            <li>IP Address: {{ unit.private_address }}</li>
+            <li>Status: {{ unit.agent_state }}</li>
+            <li>Public Address: {{ unitIPDescription }}</li>
+        </ul>
     </div>
     <div class="unit-info-tabs content">
         <div class="unit-info-relations">
-            <strong>Relations</strong>
+            <h3>Relations</h3>
             {{#if relations}}
             <table>
               <thead>
