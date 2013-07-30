@@ -39,7 +39,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }
     });
 
-    it('provides a provider template helper', function () {
+    it('provides a provider template helper', function() {
       ns.registerHelpers();
       assert.equal(typeof helperNS.prettyProvider, 'function');
 
@@ -49,7 +49,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(template({provider: 'openstack'}), 'HP Cloud');
     });
 
-    it('handles mapping from test names to filter names', function () {
+    it('handles mapping from test names to filter names', function() {
       ns.registerHelpers();
       var tplString = '{{prettyProvider provider}}',
           template = Y.Handlebars.compile(tplString);
