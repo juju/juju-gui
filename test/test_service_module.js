@@ -115,8 +115,6 @@ describe('service module events', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       utils = Y.namespace('juju-tests.utils');
-      // A global variable required for testing.
-      window.flags = {};
       done();
     });
   });
@@ -147,10 +145,6 @@ describe('service module events', function() {
     if (viewContainer) {
       viewContainer.remove(true);
     }
-  });
-
-  after(function() {
-    delete window.flags;
   });
 
   it('should toggle the service menu',
