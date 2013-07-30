@@ -74,9 +74,7 @@ YUI.add('juju-browser-models', function(Y) {
       // Map the names in one place here.
       if (id === 'ec2') {
         id = 'aws';
-      }
-
-      if (id === 'local') {
+      } else if (id === 'local') {
         id = 'lxc';
       }
       return ns.FILTER_PROVIDERS[id];
