@@ -201,7 +201,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(service.get('config'), {llama: 'pajama'});
       };
       env.deploy(
-          'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          callback);
     });
 
     it('can communicate errors after attempting to deploy', function(done) {
@@ -301,7 +306,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          localCb);
     }
 
     /**
@@ -348,7 +358,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          localCb);
     }
 
     it('can add additional units', function(done) {

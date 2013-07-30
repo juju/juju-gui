@@ -170,10 +170,10 @@ YUI.add('juju-charm-models', function(Y) {
           this.set('options', cfg.config.options);
         }
         if (cfg.relations) {
-          if(!this.get('provides') && cfg.relations.provides) {
+          if (!this.get('provides') && cfg.relations.provides) {
             this.set('provides', cfg.relations.provides);
           }
-          if(!this.get('requires')) {
+          if (!this.get('requires')) {
             this.set('requires', cfg.relations.requires);
           }
         }

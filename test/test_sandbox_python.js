@@ -155,7 +155,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         };
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+            'cs:precise/wordpress-15',
+            'kumquat',
+            {llama: 'pajama'},
+            null,
+            1,
+            localCb);
       });
       env.connect();
     }
@@ -205,7 +210,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         };
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+            'cs:precise/wordpress-15',
+            'kumquat',
+            {llama: 'pajama'},
+            null,
+            1,
+            localCb);
       });
       env.connect();
     }
@@ -374,7 +384,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+            'cs:precise/wordpress-15',
+            'kumquat',
+            {llama: 'pajama'},
+            null,
+            1,
+            callback);
       });
       env.connect();
     });
@@ -391,7 +406,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.deploy(
-            'cs:precise/wordpress-15', undefined, undefined, undefined, 1, callback);
+            'cs:precise/wordpress-15',
+            undefined,
+            undefined,
+            undefined,
+            1,
+            callback);
       });
       env.connect();
     });
@@ -1012,7 +1032,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.add_relation(endpointA, endpointB, localCb);
       }
       generateIntegrationServices(function() {
-        env.deploy('cs:precise/mysql-26', undefined, undefined, undefined, 1, addRelation);
+        env.deploy(
+            'cs:precise/mysql-26',
+            undefined,
+            undefined,
+            undefined,
+            1,
+            addRelation);
       });
     });
 
@@ -1118,12 +1144,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, function() {
-              env.deploy('cs:precise/mysql-26', null, null, null, 1, function() {
-                env.add_relation(endpoints[0], endpoints[1], function() {
-                  env.remove_relation(endpoints[0], endpoints[1], localCb);
-                });
-              });
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1,
+            function() {
+              env.deploy('cs:precise/mysql-26', null, null, null, 1,
+                  function() {
+                    env.add_relation(endpoints[0], endpoints[1], function() {
+                      env.remove_relation(endpoints[0], endpoints[1], localCb);
+                    });
+                  });
             }
         );
       });
