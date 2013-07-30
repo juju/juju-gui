@@ -56,7 +56,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function(done) {
-      state = utils.makeFakeBackendWithCharmStore();
+      state = utils.makeFakeBackend();
       var fixture = utils.loadFixture('data/sample-improv.json', false);
       state.importEnvironment(fixture, function(result) {
         done();

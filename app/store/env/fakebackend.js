@@ -300,16 +300,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         options = {};
       }
       var self = this;
-      this._loadCharm(
-          charmId,
-          {
-            // On success deploy the successfully-obtained charm.
-            success: function(charm) {
-              self._deployFromCharm(charm, callback, options);
-            },
-            failure: callback
-          }
-      );
+      this._loadCharm(charmId, {
+        // On success deploy the successfully-obtained charm.
+        success: function(charm) {
+          self._deployFromCharm(charm, callback, options);
+        },
+        failure: callback
+      });
     },
 
     /**
@@ -341,17 +338,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback({error: 'Cannot set charm on a service with units in ' +
               'error without the force flag.'});
       }
-      this._loadCharm(
-          charmId,
-          {
-            success: function(charm) {
-              service.set('charm', charm.get('id'));
-              self.changes.services[service.get('id')] = [service, true];
-              callback({});
-            },
-            failure: callback
-          }
-      );
+      this._loadCharm(charmId, {
+        success: function(charm) {
+          service.set('charm', charm.get('id'));
+          self.changes.services[service.get('id')] = [service, true];
+          callback({});
+        },
+        failure: callback
+      });
     },
 
     /**
@@ -401,7 +395,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             console.warn('error loading charm: ' + e.error);
             if (callbacks.failure) {
               callbacks.failure({error:
-                'Error interacting with Charm store.'});
+                'Error interacting with the charmworld api.'});
             }
           }
         });
