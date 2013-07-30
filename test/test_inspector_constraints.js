@@ -29,13 +29,8 @@ describe('Inspector Constraints', function() {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
-      window.flags = {serviceInspector: true};
       done();
     });
-  });
-
-  after(function() {
-    delete window.flags;
   });
 
   beforeEach(function(done) {
@@ -57,6 +52,7 @@ describe('Inspector Constraints', function() {
     });
     view.render();
     inspector = makeInspector(view, service);
+    window.flags.serviceInspector = true;
     done();
   });
 
@@ -66,6 +62,7 @@ describe('Inspector Constraints', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
+    window.flags = {};
   });
 
   // Create a service model instance.

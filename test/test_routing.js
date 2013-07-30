@@ -24,8 +24,6 @@ describe('Namespaced Routing', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
-      // A global variable required for testing.
-      window.flags = {};
       done();
     });
   });
@@ -37,10 +35,6 @@ describe('Namespaced Routing', function() {
 
   afterEach(function() {
     app.destroy();
-  });
-
-  after(function() {
-    delete window.flags;
   });
 
   it('should support basic namespaced urls', function() {

@@ -32,7 +32,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             views = Y.namespace('juju.views');
             done();
           });
-      window.flags = {};
     });
 
     beforeEach(function(done) {

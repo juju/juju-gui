@@ -133,7 +133,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
-      window.flags = {};
       view = new views.environment({
         container: container,
         db: db,

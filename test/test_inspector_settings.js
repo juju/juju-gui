@@ -30,7 +30,6 @@ describe('Inspector Settings', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          window.flags = {serviceInspector: true};
           charmConfig = utils
             .loadFixture('data/mediawiki-charmdata.json', true);
           done();
@@ -51,6 +50,7 @@ describe('Inspector Settings', function() {
     env.unexpose = function(service) {
       unexposeCalled = true;
     };
+    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
@@ -63,10 +63,7 @@ describe('Inspector Settings', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-  });
-
-  after(function() {
-    delete window.flags;
+    window.flags = {};
   });
 
   var setUpInspector = function(options) {
