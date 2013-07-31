@@ -20,39 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-<<<<<<< TREE
-=======
-  describe('juju charm store', function() {
-    var Y, models, conn, env, app, container, charmStore, data, juju;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'datasource-local', 'json-stringify', 'juju-charm-store',
-          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
-          function(Y) {
-            juju = Y.namespace('juju');
-            models = Y.namespace('juju.models');
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      data = [];
-      charmStore = new juju.CharmStore(
-          {datasource: new Y.DataSource.Local({source: data})});
-    });
-
-    afterEach(function() {});
-
-    it('creates a remote datasource if you simply supply a uri', function() {
-      charmStore.set('datasource', 'http://example.com/');
-      var datasource = charmStore.get('datasource');
-      assert(datasource instanceof Y.DataSource.IO);
-      datasource.get('source').should.equal('http://example.com/');
-    });
-  });
-
->>>>>>> MERGE-SOURCE
   describe('juju Charmworld2 api', function() {
     var Y, models, conn, env, app, container, charmStore, data, juju;
 
