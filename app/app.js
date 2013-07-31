@@ -1334,6 +1334,9 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
+          //XXX j.c.sackett July 31 2013 This path is only needed until we turn
+          //on the service inspector. When we remove the charm view, we can (and
+          //should) remove this as well.
           { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
             model: 'charm',

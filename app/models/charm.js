@@ -265,6 +265,10 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {},
+      //XXX j.c.sackett July 31 2013 This attribute is only needed until we turn
+      //on the service inspector. It's just used by the charm view you get when
+      //insepcting a service, and should be ripped out (along with tests) when
+      //we remove that view.
       charm_path: {
         /**
          * Generate the charm store path from the attributes of the charm.
