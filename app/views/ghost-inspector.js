@@ -160,6 +160,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
           'id', '(' + e.currentTarget.get('value') + ')');
     },
 
+    setDefaultSettings: function(e) {
+      console.log(this, e);
+    },
+
     /**
       Shows the file dialogue.
 

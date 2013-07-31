@@ -236,7 +236,8 @@ YUI.add('juju-view-environment', function(Y) {
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
                 '.initiate-destroy': {'click': '_onInitiateDestroy'},
                 '.cancel-destroy': {'click': '_onCancelDestroy'},
-                '.destroy-service-trigger span': {'click': '_onDestroyClick'}
+                '.destroy-service-trigger span': {'click': '_onDestroyClick'},
+                'input#use-default-toggle': {'change': 'setDefaultSettings'}
               },
               // the configuration for the view manager template
               templateConfig: {

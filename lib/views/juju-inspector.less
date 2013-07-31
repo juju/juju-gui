@@ -4,6 +4,7 @@
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
+@confirm-button-color: #DD4814;
 
 .yui3-juju-inspector {
     .customize-scrollbar;
@@ -100,6 +101,10 @@
             padding-left: 1em;
         }
 
+        input[type=checkbox].hidden-checkbox {
+            display: none;
+        }
+
         .controls {
 
             button {
@@ -117,7 +122,7 @@
                 }
 
                 &.confirm {
-                    background-color: #DD4814;
+                    background-color: @confirm-button-color;
                     float: right;
                     margin-right: 10px;
                     &:disabled {
@@ -232,15 +237,41 @@
 
                     span {
                         display: inline-block;
+                        vertical-align: top;
+                        line-height: 30px;
                     }
 
                     .toggle-switch {
-                        height: 20px;
-                        width: 40px;
+                        display: inline-block;
+                        vertical-align: top;
+                        float: right;
+                    }
+
+                    label[for=use-default-toggle] {
+                        height: 26px;
+                        width: 50px;
                         background-color: @inspector-background-color;
                         .create-border-radius(@border-radius);
-                        display: inline-block;
+                        display: block;
+                        position: relative;
+                        margin: 0;
+
+                        .handle {
+                            height: 18px;
+                            width: 18px;
+                            background-color: @confirm-button-color;
+                            .create-border-radius(@border-radius);
+                            position: absolute;
+                            margin: 4px;
+                            cursor: pointer;
+                            text-align: center;
+                        }
                     }
+
+                    input#use-default-toggle:checked ~ label .handle {
+                        right: 0;
+                    }
+
                 }
             }
         }
