@@ -47,7 +47,7 @@ describe('SubApplication App Extension', function() {
       parentAppRoutes: [
         { path: '*', callbacks: 'check_user_credentials' },
         { path: '*', callbacks: 'show_notifications_view' },
-        { path: '/charms/*charm_store_path/', callbacks: 'show_charm' }
+        { path: '/charms/*charm_path/', callbacks: 'show_charm' }
       ]
     };
 

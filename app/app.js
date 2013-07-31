@@ -857,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
      * @method show_charm
      */
     show_charm: function(req) {
-      var charm_url = req.params.charm_store_path;
+      var charm_url = req.params.charm_path;
       this.showView('charm', {
         charm_data_url: charm_url,
         store: this.get('store'),
@@ -1334,7 +1334,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
-          { path: '/charms/*charm_store_path/',
+          { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
             model: 'charm',
             namespace: 'gui'},

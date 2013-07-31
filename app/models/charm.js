@@ -265,7 +265,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {},
-      charm_store_path: {
+      charm_path: {
         /**
          * Generate the charm store path from the attributes of the charm.
          *
@@ -273,7 +273,6 @@ YUI.add('juju-charm-models', function(Y) {
          *
          */
         getter: function() {
-          // charm_store_path
           var owner = this.get('owner');
           return [
             (owner ? '~' + owner : 'charms'),
@@ -561,7 +560,6 @@ YUI.add('juju-charm-models', function(Y) {
       changelog: {
         value: {}
       },
-      charm_store_path: {},
       /**
        * Object of data about the source for this charm including bugs link,
        * log, revisions, etc.

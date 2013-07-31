@@ -35,7 +35,7 @@ describe('charm normalization', function() {
     charm.get('scheme').should.equal('cs');
     var _ = expect(charm.get('owner')).to.not.exist;
     charm.get('full_name').should.equal('precise/openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         'charms/precise/openstack-dashboard-0/json');
   });
 
@@ -89,7 +89,7 @@ describe('juju models', function() {
     charm.get('revision').should.equal(0);
     charm.get('full_name').should.equal(
         '~alt-bac/precise/openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         '~alt-bac/precise/openstack-dashboard-0/json');
   });
 
@@ -97,7 +97,7 @@ describe('juju models', function() {
     var charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
     charm.get('full_name').should.equal('precise/openstack-dashboard');
     charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         'charms/precise/openstack-dashboard-0/json');
     charm.get('scheme').should.equal('cs');
     var _ = expect(charm.get('owner')).to.not.exist;
@@ -113,7 +113,7 @@ describe('juju models', function() {
         {id: 'cs:~marco-ceppi/precise/wordpress-17'});
     charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
     charm.get('package_name').should.equal('wordpress');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         '~marco-ceppi/precise/wordpress-17/json');
     charm.get('revision').should.equal(17);
   });
