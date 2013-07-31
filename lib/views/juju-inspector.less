@@ -265,13 +265,36 @@
                             margin: 4px;
                             cursor: pointer;
                             text-align: center;
+                            left: 0;
+                            -moz-transition: left .1s ease-in-out;
+                            -webkit-transition: left .1s ease-in-out;
+                            transition: left .1s ease-in-out;
+                            -moz-user-select: none;
+                            -webkit-user-select: none;
+                            -ms-user-select:none;
+                            user-select:none;
                         }
                     }
 
                     input#use-default-toggle:checked ~ label .handle {
-                        right: 0;
+                        left: 25px;
                     }
 
+                }
+                .service-config.use-defaults {
+                    textarea {
+                        background-color: #727272;
+                        border-color: #727272;
+                        cursor: not-allowed;
+                    }
+                    input[type=text] {
+                        background-color: #727272;
+                        border-color: #727272;
+                        cursor: not-allowed;
+                    }
+                    checkbox {
+                        /* make it look disabled */
+                    }
                 }
             }
         }

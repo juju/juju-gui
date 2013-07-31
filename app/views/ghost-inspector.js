@@ -160,8 +160,35 @@ YUI.add('juju-ghost-inspector', function(Y) {
           'id', '(' + e.currentTarget.get('value') + ')');
     },
 
+    /**
+      Toggles the settings configuration in the ghost inspector to
+      the default values.
+
+      @method setDefaultSettings
+      @param {Y.EventFacade} e change event from the checkbox
+    */
     setDefaultSettings: function(e) {
-      console.log(this, e);
+      var useDefaults = true;
+      // This allows us to call this method to set to default as
+      // well as use it as a callback.
+      if (e.type) {
+        var useDefaults = e.currentTarget.get('checked');
+      }
+
+      var container = this.viewletManager.get('container'),
+          serviceConfig = container.one('.service-config');
+
+      if (useDefaults) {
+        serviceConfig.addClass('use-defaults');
+        serviceConfig.all('textarea').setAttribute('disabled');
+        serviceConfig.all('input').setAttribute('disabled');
+      } else {
+        serviceConfig.removeClass('use-defaults');
+        serviceConfig.all('textarea').removeAttribute('disabled');
+        serviceConfig.all('input').removeAttribute('disabled');
+      }
+
+
     },
 
     /**

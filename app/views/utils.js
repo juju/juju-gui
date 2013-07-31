@@ -1434,7 +1434,7 @@ YUI.add('juju-view-utils', function(Y) {
    * {{debugger}}
    *
    */
-  Y.Handlebars.registerHelper('debugger', function() {
+  Y.Handlebars.registerHelper('debugger', function(value) {
     /*jshint debug:true */
     debugger;
     /*jshint debug:false */
