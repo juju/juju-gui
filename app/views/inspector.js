@@ -1237,7 +1237,7 @@ YUI.add('juju-view-inspector', function(Y) {
         template: Templates['ghost-config-viewlet'],
         bindings: {
           'options': {
-            update: function(node, val) {
+            'update': function(node, val) {
               var newVal = (val['default'] === undefined) ? '' : val['default'];
               node.set('value', newVal);
             }
