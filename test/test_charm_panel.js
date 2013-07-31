@@ -144,8 +144,7 @@ describe('charm panel', function() {
       db = new models.Database();
       // Mock the base application.
       app = {db: db, views: {environment: {}}, env: env};
-      panel = views.CharmPanel.getInstance({container: container,
-        charm_store: store, app: app});
+      panel = views.CharmPanel.getInstance({container: container, app: app});
       panel.setActivePanelName('configuration');
       panel.show();
     });
