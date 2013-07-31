@@ -29,7 +29,6 @@ var juju_config = {
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
-  charm_store_url: 'https://manage.jujucharms.com/',
   charmworldURL: 'https://manage.jujucharms.com/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always

@@ -70,7 +70,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
           console.error(e.error);
         }
       });
-
       // Bind visualization resizing on window resize.
       Y.on('windowresize', Y.bind(function() {
         this.fitToWindow();

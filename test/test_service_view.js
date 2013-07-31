@@ -202,7 +202,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             exposed: false});
 
       db.services.add([service]);
-      var nsRouter = Y.namespace('juju').Router('charmstore');
+      var nsRouter = Y.namespace('juju').Router('charmbrowser');
       var viewMakerMaker = function(ViewPrototype) {
         return function(querystring) {
           if (!Y.Lang.isValue(querystring)) {
