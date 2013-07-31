@@ -150,7 +150,7 @@ YUI.add('juju-charm-models', function(Y) {
     initializer: function(cfg) {
       //XXX j.c.sackett July 19 2013 This is temporary while resolving Charm and
       //BrowserCharm; Charm wants a fully qualified url as it's ID.
-      if(cfg && cfg.url) {
+      if (cfg && cfg.url) {
         this.set('id', cfg.url);
       }
       var id = this.get('id'),

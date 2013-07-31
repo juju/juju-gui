@@ -151,7 +151,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         units: {},
         relations: {}
       };
-   },
+    },
 
     /**
     Return all of the recently changed objects.
