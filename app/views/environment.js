@@ -351,9 +351,11 @@ YUI.add('juju-view-environment', function(Y) {
         /**
           Loops through the inspectors and destroys them all
 
-          @method destroyInspectors
+          @method destroyInspector
         */
-        destroyInspectors: function() {
+        destroyInspector: function() {
+          // We only have a single inspector - this will need to be
+          // expanded on when/if this changes.
           Y.Object.each(this._inspectors, function(inspector) {
             inspector.viewletManager.destroy();
           });
@@ -366,7 +368,7 @@ YUI.add('juju-view-environment', function(Y) {
         */
         _attachTopoEvents: function() {
           this.topo.on(
-              '*:destroyServiceInspector', this.destroyInspectors, this);
+              '*:destroyServiceInspector', this.destroyInspector, this);
         }
       }, {
         ATTRS: {
