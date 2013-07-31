@@ -148,8 +148,8 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      //XXX j.c.sackett July 19 2013 This is temporary while resolving Charm and
-      //BrowserCharm; Charm wants a fully qualified url as it's ID.
+      // XXX jcsackett July 19 2013 This is temporary while resolving Charm and
+      // BrowserCharm; Charm wants a fully qualified url as it's ID.
       if (cfg && cfg.url) {
         this.set('id', cfg.url);
       }
@@ -164,7 +164,7 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
-      // XXX j.c.sackett July 16 2013 There are a raft of bits and bobs of
+      // XXX jcsackett July 16 2013 There are a raft of bits and bobs of
       // differences between the two charm models that need to be resolved for
       // the new API to work with the old model. These will no longer be needed
       // when we switch over to BrowserCharm everywhere.
@@ -263,10 +263,10 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {},
-      //XXX j.c.sackett July 31 2013 This attribute is only needed until we turn
-      //on the service inspector. It's just used by the charm view you get when
-      //insepcting a service, and should be ripped out (along with tests) when
-      //we remove that view.
+      //XXX jcsackett July 31 2013 This attribute is only needed until we turn
+      // on the service inspector. It's just used by the charm view you get when
+      // inspecting a service, and should be ripped out (along with tests) when
+      // we remove that view.
       charm_path: {
         /**
          * Generate the charm store path from the attributes of the charm.

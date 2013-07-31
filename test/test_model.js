@@ -514,7 +514,6 @@ describe('juju charm load', function() {
     fakeStore = new Y.juju.Charmworld2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
-        // Stubbing the server callback value
         params.callback.success({
           response: {
             results: [{
