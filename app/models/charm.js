@@ -98,18 +98,16 @@ YUI.add('juju-charm-models', function(Y) {
    * With an id, we can instantiate a charm: typically we use
    * `db.charms.add({id: [ID]})`.  Finally, we load the charm's data over the
    * network using the standard YUI Model method `load`, providing an object
-   * with a get_charm callable, and an optional callback (see YUI docs).  Both
-   * the env and the charm store have a `get_charm` method, so, by design, it
-   * works easily: `charm.load(env, optionalCallback)` or
-   * `charm.load(charm_store, optionalCallback)`.  The `get_charm` method must
-   * either callback using the default YUI approach for this code, a boolean
-   * indicating failure, and a result; or it must return what the env version
-   * does: an object with a `result` object containing the charm data, or an
-   * object with an `err` attribute.
+   * with a get_charm callable, and an optional callback (see YUI docs). The env
+   * has a `get_charm` method, so, by design, it works easily:
+   * `charm.load(env, optionalCallback)` The `get_charm` method must either
+   * callback using the default YUI approach for this code, a boolean indicating
+   * failure, and a result; or it must return what the env version does: an
+   * object with a `result` object containing the charm data, or an object with
+   * an `err` attribute.
    *
-   * In both cases, environment charms and charm store charms, a charm's
-   * `loaded` attribute is set to true once it has all the data from its
-   * environment.
+   * A charm's `loaded` attribute is set to true once it has all the data from
+   * its environment.
    *
    * @class Charm
    */
