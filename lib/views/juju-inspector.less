@@ -5,6 +5,8 @@
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 @confirm-button-color: #DD4814;
+@disabled-input-background-color: #727272;
+@disabled-input-text-color: #252525;
 
 .yui3-juju-inspector {
     .customize-scrollbar;
@@ -271,8 +273,8 @@
                             transition: left .1s ease-in-out;
                             -moz-user-select: none;
                             -webkit-user-select: none;
-                            -ms-user-select:none;
-                            user-select:none;
+                            -ms-user-select: none;
+                            user-select: none;
                         }
                     }
 
@@ -281,21 +283,24 @@
                     }
 
                 }
-                .service-config.use-defaults {
+
+                &.use-defaults {
                     textarea {
-                        background-color: #727272;
-                        border-color: #727272;
+                        background-color: @disabled-input-background-color;
+                        border-color: @inspector-background-color;
                         cursor: not-allowed;
-                        color: #252525;
+                        color: @disabled-input-text-color;
                     }
                     input[type=text] {
-                        background-color: #727272;
-                        border-color: #727272;
+                        background-color: @disabled-input-background-color;
+                        border-color: @inspector-background-color;
                         cursor: not-allowed;
-                        color: #252525;
+                        color: @disabled-input-text-color;
                     }
-                    checkbox {
-                        /* make it look disabled */
+                    .fakebutton {
+                        color: @disabled-input-background-color;
+                        border-color: @disabled-input-background-color;
+                        cursor: default;
                     }
                 }
             }

@@ -1248,7 +1248,6 @@ YUI.add('juju-view-inspector', function(Y) {
 
           // This is to allow for data binding on the ghost settings
           // while using a shared template across both inspectors
-
           var options = model.getAttrs();
 
           // XXX - Jeff

@@ -231,8 +231,8 @@ YUI.add('juju-view-environment', function(Y) {
               viewletEvents: {
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.confirm': { 'click': 'deployCharm' },
-                'input.config-file-upload': { 'change': 'handleFileUpload' },
-                'span.config-file-upload': { 'click': '_showFileDialogue' },
+                '.config-file .fakebutton': { click: 'handleFileClick'},
+                '.config-file input[type=file]': { change: 'handleFileChange'},
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
                 '.initiate-destroy': {'click': '_onInitiateDestroy'},
                 '.cancel-destroy': {'click': '_onCancelDestroy'},
