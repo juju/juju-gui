@@ -569,13 +569,6 @@ describe('juju charm load', function() {
          e.should.equal(
          'You must supply a get_charm function.');
        }
-       try {
-         charm.sync('read', {charm_store: 42});
-         assert.fail('Should have thrown an error');
-       } catch (e) {
-         e.should.equal(
-         'You must supply a get_charm function.');
-       }
      });
 
   it('must send request to juju environment for local charms', function() {
