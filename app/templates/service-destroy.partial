@@ -1,4 +1,6 @@
-<div class="destroy-service-icon"></div>
+<div class="destroy-service-trigger">
+  <span>Destroy service</span>
+</div>
 <div class="destroy-service-prompt closed">
   <div class="message">
   Are you sure you want to destroy the service? This cannot be undone.
