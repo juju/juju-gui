@@ -37,7 +37,7 @@ describe('Sub Applications', function() {
         { path: '/', callbacks: 'showRootView' },
         { path: '/charm/:id', callbacks: 'showCharmDetailView' }
       ],
-      urlNamespace: 'charmStore'
+      urlNamespace: 'charmbrowser'
     });
 
   });

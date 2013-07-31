@@ -60,7 +60,7 @@ YUI.add('juju-gui', function(Y) {
       config: {}
     }],
 
-    defaultNamespace: 'charmstore',
+    defaultNamespace: 'charmbrowser',
     /*
       End extension properties
     */
@@ -1111,19 +1111,19 @@ YUI.add('juju-gui', function(Y) {
           match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
 
-      if (subapps && subapps.charmstore) {
-        var charmstore = subapps.charmstore;
+      if (subapps && subapps.charmbrowser) {
+        var charmbrowser = subapps.charmbrowser;
         if (url.match(match)) {
-          charmstore.hidden = true;
+          charmbrowser.hidden = true;
           // XXX At some point in the near future we will add the ability to
           // route on root namespaced paths and this check will no longer
           // be needed
           this.renderEnvironment = false;
         } else {
-          charmstore.hidden = false;
+          charmbrowser.hidden = false;
           this.renderEnvironment = true;
         }
-        charmstore.updateVisible();
+        charmbrowser.updateVisible();
       }
 
       next();
@@ -1138,8 +1138,8 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
       // Reset the view state of the subapps.
       var subapps = this.get('subApps');
-      if (subapps.charmstore) {
-        subapps.charmstore.initState();
+      if (subapps.charmbrowser) {
+        subapps.charmbrowser.initState();
       }
     },
 

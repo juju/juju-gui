@@ -97,7 +97,7 @@ describe('notifications', function() {
   });
 
   beforeEach(function() {
-    nsRouter = Y.namespace('juju').Router('charmstore');
+    nsRouter = Y.namespace('juju').Router('charmbrowser');
   });
 
   afterEach(function() {

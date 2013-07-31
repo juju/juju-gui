@@ -265,7 +265,7 @@ function injectData(app, data) {
         var req = {url: check.url};
         var next = function() {};
         app.toggleStaticViews(req, undefined, next);
-        app.get('subApps').charmstore.hidden.should.eql(check.hidden);
+        app.get('subApps').charmbrowser.hidden.should.eql(check.hidden);
       });
     });
 

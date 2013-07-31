@@ -1002,11 +1002,11 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute urlNamespace
-         @default 'charmstore'
+         @default 'charmbrowser'
          @type {String}
        */
       urlNamespace: {
-        value: 'charmstore'
+        value: 'charmbrowser'
       },
 
       /**
