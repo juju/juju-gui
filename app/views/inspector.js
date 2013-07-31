@@ -1235,8 +1235,19 @@ YUI.add('juju-view-inspector', function(Y) {
       ghostConfig: {
         name: 'ghostConfig',
         template: Templates['ghost-config-viewlet'],
+        bindings: {
+          'options': {
+            update: function(node, value) {
+              var newVal = (value.default === undefined) ? '' : value.default;
+              node.set('value', newVal);
+            }
+          }
+        },
         'render': function(model) {
           this.container = Y.Node.create(this.templateWrapper);
+
+          // This is to allow for data binding on the ghost settings
+          // while using a shared template across both inspectors
 
           var options = model.getAttrs();
 
@@ -1247,8 +1258,8 @@ YUI.add('juju-view-inspector', function(Y) {
 
           // Signalling to the shared templates that this is the ghost view.
           options.ghost = true;
-
           this.container.setHTML(this.template(options));
+
           this.container.all('textarea.config-field')
                         .plug(plugins.ResizingTextarea,
                               { max_height: 200,

@@ -182,13 +182,21 @@ YUI.add('juju-ghost-inspector', function(Y) {
         serviceConfig.addClass('use-defaults');
         serviceConfig.all('textarea').setAttribute('disabled');
         serviceConfig.all('input').setAttribute('disabled');
+
+        var viewlet = this.viewletManager.viewlets.ghostConfig,
+            viewletContainer = viewlet.container;
+        // Loop through the fields to set the values back to their defaults
+        // We can't use the data binding because setting it to it's default
+        // value doesn't trigger the databinding change events.
+        Y.Object.each(viewlet.model.getAttrs().options, function(option, key) {
+          var newVal = (option.default === undefined) ? '' : option.default;
+          viewletContainer.one('#input-' + key).set('value', newVal);
+        });
       } else {
         serviceConfig.removeClass('use-defaults');
         serviceConfig.all('textarea').removeAttribute('disabled');
         serviceConfig.all('input').removeAttribute('disabled');
       }
-
-
     },
 
     /**
