@@ -101,11 +101,10 @@
         }
 
         .controls {
-            text-align: center;
 
             button {
                 .create-border-radius(@border-radius);
-                width: 115px;
+                width: 130px;
                 height: 25px;
                 margin: 10px 0;
                 border: none;
@@ -114,10 +113,13 @@
 
                 &.cancel {
                     background-color: #A3A3A3;
+                    margin-left: 10px;
                 }
 
                 &.confirm {
                     background-color: #DD4814;
+                    float: right;
+                    margin-right: 10px;
                     &:disabled {
                         background-color: #802E0E;
                         color: #eee;
@@ -366,6 +368,10 @@
             background-color: @inspector-region-background-color;
         }
 
+        .viewlet-manager-footer {
+            position: relative;
+        }
+
         .view-container {
             border-top: 1px solid @inspector-divider-top;
             overflow: auto;
@@ -448,33 +454,26 @@
                 background-color: #ba0000;
             }
         }
+        .destroy-service-trigger{
+            padding-left: 10px;
+            height: 30px;
 
-        .destroy-service-icon {
-            cursor: pointer;
-            float: right;
-            width: 20px;
-            height: 24px;
-            padding: 0;
-            /* Make sure the destroy icon is below the close-the-inspector. */
-            clear: both;
-            margin-bottom: 1ex;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image:
-                url("/juju-ui/assets/images/inspector-destroy-service.png");
+            span {
+                font-size: 11px;
+                font-weight: bold;
+                cursor: pointer;
+            }
         }
 
         .destroy-service-prompt {
             overflow: hidden;
             height: 95px;
             background-color: @inspector-region-background-color;
-            margin-bottom: 10px;
             -moz-transition: .3s, height .3s;
             -webkit-transition: .25s, height .3s;
             transition: .3s, height .3s;
-
-            /* Make sure the prompt box is below the icon. */
-            clear: both;
+            position: absolute;
+            bottom: 0;
 
             .message {
                 margin: 5px 15px;
