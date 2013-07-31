@@ -773,7 +773,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     jujucharms: function(req, res, next) {
       // XXX jcsackett July 2, 2013: This is a placeholder function that will
-      // need some reworking when we have assets. It will probably want to 
+      // need some reworking when we have assets. It will probably want to
       // render to body instead of the fullscreen renderto.
       this.showView('jujucharms', this._getViewCfg(), {
         'callback': function(view) {
