@@ -165,23 +165,27 @@ YUI.add('juju-ghost-inspector', function(Y) {
       the default values.
 
       @method setDefaultSettings
-      @param {Y.EventFacade} e change event from the checkbox
+      @param {Y.EventFacade} e change event from the checkbox.
     */
     setDefaultSettings: function(e) {
       var useDefaults = true;
       // This allows us to call this method to set to default as
       // well as use it as a callback.
       if (e.type) {
-        var useDefaults = e.currentTarget.get('checked');
+        useDefaults = e.currentTarget.get('checked');
       }
 
       var container = this.viewletManager.get('container'),
-          serviceConfig = container.one('.service-configuration .ghost-config-content');
+          serviceConfig = container.one(
+              '.service-configuration .ghost-config-content');
+
+      var textareas = serviceConfig.all('textarea'),
+          inputs = serviceConfig.all('input');
 
       if (useDefaults) {
         serviceConfig.addClass('use-defaults');
-        serviceConfig.all('textarea').setAttribute('disabled');
-        serviceConfig.all('input').each(function(input) {
+        textareas.setAttribute('disabled');
+        inputs.each(function(input) {
           // Without this check you will disable the toggle button too
           if (input.get('id') !== 'use-default-toggle') {
             input.setAttribute('disabled');
@@ -193,14 +197,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
         // Loop through the fields to set the values back to their defaults
         // We can't use the data binding because setting it to it's default
         // value doesn't trigger the databinding change events.
-        Y.Object.each(viewlet.model.getAttrs().options, function(option, key) {
-          var newVal = (option.default === undefined) ? '' : option.default;
+        Y.Object.each(viewlet.model.getAttrs().options, function(opt, key) {
+          var newVal = (opt['default'] === undefined) ? '' : opt['default'];
           viewletContainer.one('#input-' + key).set('value', newVal);
         });
       } else {
         serviceConfig.removeClass('use-defaults');
-        serviceConfig.all('textarea').removeAttribute('disabled');
-        serviceConfig.all('input').removeAttribute('disabled');
+        textareas.removeAttribute('disabled');
+        inputs.removeAttribute('disabled');
       }
     },
 
