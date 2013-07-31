@@ -26,7 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      views = Y.namespace('juju.browser.views');
 
   /**
      Browser Sub App for the Juju Gui.
@@ -39,6 +40,13 @@ YUI.add('subapp-browser', function(Y) {
     // Mark the entire subapp has hidden.
     hidden: false,
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
+
+    _cleanOldViews: function(newViewMode) {
+      if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
+        var viewAttr = '_' + this._oldState.viewmode;
+        this[viewAttr].destroy();
+      }
+    },
 
     /**
       Show or hide the details panel.
@@ -425,6 +433,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
+        debugger;
         var url;
         if (ev.url) {
           url = ev.url;
@@ -490,7 +499,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.charm = model;
       }
 
-      this._details = new Y.juju.browser.views.BrowserCharmView(
+      this._details = new views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
@@ -533,7 +542,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      this._editorial = new Y.juju.browser.views.EditorialView(
+      this._editorial = new views.EditorialView(
           this._getViewCfg(extraCfg));
 
       this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
@@ -580,7 +589,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      this._search = new Y.juju.browser.views.BrowserSearchView(
+      this._search = new views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
       // Prepare to handle cache
@@ -613,15 +622,12 @@ YUI.add('subapp-browser', function(Y) {
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
         }
-        this.showView(
-            'fullscreen',
-            this._getViewCfg(extraCfg), {
-              'callback': function(view) {
-                // Hold onto the view instance for later reference.
-                this._fullscreen = view;
-              }
-            }
-        );
+        extraCfg.container = this.get('container');
+
+        this._fullscreen = new views.FullScreen(
+            this._getViewCfg(extraCfg));
+        this._fullscreen.render();
+        this._fullscreen.addTarget(this);
       }
 
       // Even if we've got an existing View, check if Home should be displayed
@@ -667,7 +673,7 @@ YUI.add('subapp-browser', function(Y) {
     minimized: function(req, res, next) {
       // We only need to run the view once.
       if (!this._minimized) {
-        this._minimized = new Y.juju.browser.views.MinimizedView();
+        this._minimized = new views.MinimizedView();
         this._minimized.render();
         this._minimized.addTarget(this);
       }
@@ -686,17 +692,16 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+      debugger;
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
-        this.showView(
-            'sidebar',
-            this._getViewCfg(), {
-              'callback': function(view) {
-                // Hold onto the sidebar view instance for later reference.
-                this._sidebar = view;
-              }
-            }
+        this._sidebar = new views.Sidebar(
+            this._getViewCfg({
+              container: this.get('container')
+            })
         );
+        this._sidebar.render();
+        this._sidebar.addTarget(this);
       }
 
       // Even if we've got an existing View, check if Home should be displayed
@@ -794,6 +799,7 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDefault: function(req, res, next) {
+      debugger;
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
       var viewmode = this.get('defaultViewmode');
@@ -807,6 +813,10 @@ YUI.add('subapp-browser', function(Y) {
       req.params = {
         viewmode: viewmode
       };
+
+      // Make sure we remove any old views in the process of building this
+      // one.
+      this._cleanOldViews(viewmode);
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
@@ -842,6 +852,7 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
+      debugger;
       // If we don't have a valid store we can't do any work here.
       var viewmode = this.get('defaultViewmode');
       if (!this._hasValidStore()) {
@@ -869,6 +880,10 @@ YUI.add('subapp-browser', function(Y) {
         };
       }
 
+      // Make sure we remove any old views in the process of building this
+      // one.
+      this._cleanOldViews(viewmode);
+
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -893,6 +908,7 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      debugger;
       // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
@@ -913,6 +929,10 @@ YUI.add('subapp-browser', function(Y) {
       // id in the params.
       var id = this._stripViewMode(req.params.id);
       req.params.id = id;
+
+      // Make sure we remove any old views in the process of building this
+      // one.
+      this._cleanOldViews(req.params.viewmode);
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
