@@ -276,10 +276,16 @@
                             -ms-user-select: none;
                             user-select: none;
                         }
+                        .handle:before {
+                            content: '';
+                        }
                     }
 
                     input#use-default-toggle:checked ~ label .handle {
                         left: 25px;
+                    }
+                    input#use-default-toggle:checked ~ label .handle:before {
+                        content: '\2713';
                     }
 
                 }
