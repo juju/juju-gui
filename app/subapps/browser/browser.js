@@ -41,6 +41,13 @@ YUI.add('subapp-browser', function(Y) {
     hidden: false,
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
+    /**
+     * Make sure we destroy views no long used.
+     *
+     * @method _cleanOldViews
+     * @param {String} newViewMode the new viewmode we're using.
+     *
+     */
     _cleanOldViews: function(newViewMode) {
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
@@ -421,7 +428,7 @@ YUI.add('subapp-browser', function(Y) {
       if (this._fullscreen) {
         this._fullscreen.destroy();
       }
-      if(this._details) {
+      if (this._details) {
         this._details.destroy();
       }
       this._filter.destroy();
@@ -711,8 +718,7 @@ YUI.add('subapp-browser', function(Y) {
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
               container: this.get('container')
-            })
-        );
+            }));
         this._sidebar.render();
         this._sidebar.addTarget(this);
       }
