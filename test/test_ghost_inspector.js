@@ -59,7 +59,7 @@ describe('Ghost Inspector', function() {
   });
 
   var setUpInspector = function(options) {
-    charmConfig.id = 'precise/mediawiki-4'
+    charmConfig.id = 'precise/mediawiki-4';
     var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
 
@@ -89,7 +89,7 @@ describe('Ghost Inspector', function() {
   it('updates the service name in the topology when changed in the inspector');
   it('deploys a service with the specified unit count');
   it('deploys a service with the specified configuration');
-  it('disables and resets all input fields when \'use default config\' is active');
+  it('disables and resets input fields when \'use default config\' is active');
   it('disables the file upload button when \'use default config\' is active');
   it('Saves the config when closing the inspector via \'X\' or \'Save\'');
 
