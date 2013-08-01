@@ -200,7 +200,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         Y.Object.each(viewlet.model.getAttrs().options, function(opt, key) {
           var newVal = (opt['default'] === undefined) ? '' : opt['default'];
           var input = viewletContainer.one('#input-' + key);
-console.log(input);
+
           if (input.get('type') !== 'checkbox') {
             input.set('value', newVal);
           } else {
