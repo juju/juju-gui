@@ -410,6 +410,21 @@ YUI.add('subapp-browser', function(Y) {
         this._cache.interesting.featuredCharms.destroy();
       }
       delete this._viewState;
+
+      // If we've got any views hanging around wipe them.
+      if (this._sidebar) {
+        this._sidebar.destroy();
+      }
+      if (this._minimized) {
+        this._minimized.destroy();
+      }
+      if (this._fullscreen) {
+        this._fullscreen.destroy();
+      }
+      if(this._details) {
+        this._details.destroy();
+      }
+      this._filter.destroy();
     },
 
     /**
@@ -1075,6 +1090,7 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
+    'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
     'subapp-browser-jujucharms',

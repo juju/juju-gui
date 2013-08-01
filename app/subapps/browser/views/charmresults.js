@@ -32,7 +32,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
-
   /**
      Charm results view.
 
@@ -195,8 +194,10 @@ YUI.add('subapp-browser-charmresults', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-models',
+    'base',
     'browser-overlay-indicator',
+    'event-tracker',
+    'juju-models',
     'juju-view-utils',
     'view'
   ]

@@ -64,6 +64,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
         container.remove(true);
+        debugger;
       });
 
       it('knows that it is fullscreen', function() {
@@ -225,6 +226,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
         container.remove(true);
+        debugger;
       });
 
       it('knows that it is not fullscreen', function() {
@@ -370,7 +372,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         if (app) {
           app.destroy();
         }
-
         window.juju_config = undefined;
       });
 
@@ -670,7 +671,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.juju.browser.views.Sidebar.prototype.render = sidebarRender;
         Y.juju.browser.views.FullScreen.prototype.render = fullscreenRender;
         Y.juju.browser.views.MinimizedView.prototype.render = minRender;
-
+        container.remove(true);
       });
 
       it('/ dispatches correctly', function() {
