@@ -52,6 +52,7 @@ YUI.add('subapp-browser', function(Y) {
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
         this[viewAttr].destroy();
+        delete this[viewAttr];
       }
     },
 
@@ -693,6 +694,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     minimized: function(req, res, next) {
       // We only need to run the view once.
+      debugger;
       if (!this._minimized) {
         this._minimized = new views.MinimizedView();
         this._minimized.render();
