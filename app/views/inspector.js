@@ -910,6 +910,27 @@ YUI.add('juju-view-inspector', function(Y) {
       return statuses;
     }
 
+    function generateActionButtonList(category) {
+      var showingButtons = {},
+          buttonTypes = ['resolve', 'retry', 'replace'],
+          buttons = {
+            error: ['resolve', 'retry', 'replace'],
+            pending: ['retry', 'replace'],
+            running: ['replace'],
+            'landscape-needs-reboot': ['landscape'],
+            'landscape-security-upgrades': ['landscape']
+          };
+
+      buttonTypes.forEach(function(buttonType) {
+        buttons[category].forEach(function(allowedButton) {
+          if (buttonType === allowedButton) {
+            showingButtons[buttonType] = true;
+          }
+        });
+      });
+      return showingButtons;
+    }
+
     /**
       Binds the statuses data set to d3
 
@@ -958,8 +979,9 @@ YUI.add('juju-view-inspector', function(Y) {
       unitStatusContentForm.append('div')
                            .classed('action-button-wrapper', true)
                            .html(
-          function() {
-                                 var tmpl = Templates['unit-action-buttons']();
+          function(d) {
+                                 var tmpl = Templates['unit-action-buttons'](
+                                     generateActionButtonList(d.category));
                                  buttonHeight = tmpl.offsetHeight;
                                  return tmpl;
           });
