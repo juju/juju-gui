@@ -427,10 +427,39 @@
                 }
                 .conflicted {
                     position: absolute;
-                    border: 1px solid grey;
+                    border: 1px solid #dd4814;
                     margin-top: -140px;
                     background-color: white;
                 }
+
+                .modified {
+                  border: 2px solid red;
+                  background-color: #dedede;
+                }
+
+                @keyframes conflictResolved {
+                  0% {
+                    border: 1px solid #eeeeaa;
+                  }
+
+                  100% {
+                    border: none;
+                  }
+                }
+
+                .resolved {
+                  animation-name: conflictResolved;
+                  animation-timing-function: ease-in-out;
+                  animation-iteration-count: 1;
+                  animation-duration: 0.75s;
+                }
+                .resolver {
+                  background-color: white;
+                  border: 1px solid #dedede;
+                  border-radius: 1px;
+                }
+
+
             }
 
             .control-expose {

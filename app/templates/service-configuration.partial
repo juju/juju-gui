@@ -1,11 +1,5 @@
 {{#settings}}
   <div class="settings-wrapper">
-    <div class="conflicted warning-message" style="display: none">
-      <p>This field has been changed on another system. Accept the new value?</p>
-      <p class="newval"></p>
-      <button class="conflicted-confirm">Ok</button>
-      <button class="conflicted-cancel">Cancel</button>
-    </div>
     {{#if isBool}}
       <label for="input-{{name}}">{{name}}</label>
       <div class="boolean">
@@ -26,6 +20,9 @@
         </div>
       {{/if}}
     {{/if}}
+    <div class="hidden resolver">
+      <div class="config-field" id="input-{{name}}-env"></div>
+    </div>
     <div class="settings-description">
       {{description}}
     </div>

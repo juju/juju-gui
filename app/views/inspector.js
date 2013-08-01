@@ -1133,30 +1133,39 @@ YUI.add('juju-view-inspector', function(Y) {
             }
           }
         },
+        'changed': function(node, key) {
+          node.addClass('modified');
+        },
         'conflict': function(node, model, viewletName, resolve) {
           /**
             Calls the databinding resolve method
             @method sendResolve
           */
+         var key = node.getData('bind');
+         var modelValue = model.get(key);
+         var wrapper = node.ancestor('.settings-wrapper');
+         var resolver = wrapper.one('.resolver');
+         var option = resolver.one('.config-field');
+
+         console.log("conflict", this, node, model, viewletName);
           function sendResolve(e) {
+            console.log("send resolve", this, e);
             handler.detach();
             if (e.currentTarget.hasClass('conflicted-confirm')) {
               node.setStyle('borderColor', 'black');
+              node.removeClass('modified');
+              node.addClass('resolved');
+              resolver.addClass('hidden');
               resolve(node, viewletName, newVal);
             }
-            // if they don't accept the new value then do nothing.
-            message.setStyle('display', 'none');
           }
 
-          node.setStyle('borderColor', 'red');
+          node.removeClass('modified');
+          node.addClass('conflicted');
+          resolver.removeClass('hidden');
+          option.setHTML(modelValue);
 
-          var message = node.ancestor('.settings-wrapper').one('.conflicted'),
-              newVal = model.get(node.getData('bind'));
-
-          message.one('.newval').setHTML(newVal);
-          message.setStyle('display', 'block');
-
-          var handler = message.delegate('click', sendResolve, 'button', this);
+          var handler = wrapper.delegate('click', sendResolve, 'button', this);
         },
         'unsyncedFields': function(dirtyFields) {
           this.container.one('.controls .confirm').setHTML('Overwrite');
