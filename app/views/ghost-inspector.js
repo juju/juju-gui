@@ -176,14 +176,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
 
       var container = this.viewletManager.get('container'),
-          serviceConfig = container.one(
+          ghostConfigNode = container.one(
               '.service-configuration .ghost-config-content');
 
-      var textareas = serviceConfig.all('textarea'),
-          inputs = serviceConfig.all('input');
+      var textareas = ghostConfigNode.all('textarea'),
+          inputs = ghostConfigNode.all('input');
 
       if (useDefaults) {
-        serviceConfig.addClass('use-defaults');
+        ghostConfigNode.addClass('use-defaults');
         textareas.setAttribute('disabled');
         inputs.each(function(input) {
           // Without this check you will disable the toggle button too
@@ -199,38 +199,20 @@ YUI.add('juju-ghost-inspector', function(Y) {
         // value doesn't trigger the databinding change events.
         Y.Object.each(viewlet.model.getAttrs().options, function(opt, key) {
           var newVal = (opt['default'] === undefined) ? '' : opt['default'];
-          viewletContainer.one('#input-' + key).set('value', newVal);
+          var input = viewletContainer.one('#input-' + key);
+console.log(input);
+          if (input.get('type') !== 'checkbox') {
+            input.set('value', newVal);
+          } else {
+            input.set('checked', newVal);
+          }
         });
       } else {
-        serviceConfig.removeClass('use-defaults');
+        ghostConfigNode.removeClass('use-defaults');
         textareas.removeAttribute('disabled');
         inputs.removeAttribute('disabled');
       }
     },
-
-    /**
-      Shows the file dialogue.
-
-      XXX it's a noop because we don't have a ux story for this yet.
-
-      @method _showFileDialogue
-    */
-    _showFileDialogue: function() {
-      if (this.configFileContent) {
-        var a = null; // tricking the linter
-        // intentionally left blank as we don't have a UX for this
-        // functionality yet
-      }
-    },
-
-    /**
-      Handles the file upload.
-
-      XXX It's a noop because we don't have a ux story for this yet.
-
-      @method _handleFileUpload
-    */
-    _handleFileUpload: function() {},
 
     /**
       The callback handler from the env.deploy() of the charm.
