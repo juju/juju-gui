@@ -250,7 +250,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
      */
     _goFullscreen: function(ev) {
-      debugger;
       ev.halt();
       this.fire('viewNavigate', {
         change: {
@@ -268,7 +267,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
      */
     _goSidebar: function(ev) {
-      debugger;
       ev.halt();
       this.fire('viewNavigate', {
         change: {
