@@ -9,20 +9,42 @@
     {{#if isBool}}
       <label for="input-{{name}}">{{name}}</label>
       <div class="boolean">
-        <input class="config-field boolean" type="checkbox" name="{{name}}"
-            id="input-{{name}}" data-bind="config.{{name}}" {{value}}/>
+        <input
+          class="config-field boolean"
+          type="checkbox"
+          name="{{name}}"
+          id="input-{{name}}"
+          data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
+          {{value}}
+          {{#if ../../ghost}}disabled{{/if}}
+        />
       </div>
     {{else}}
       {{#if isNumeric}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div>
-          <input class="config-field" type="text" name="{{name}}"
-              id="input-{{name}}" value="{{value}}" data-bind="config.{{name}}"/>
+          <input
+            class="config-field"
+            type="text"
+            name="{{name}}"
+            id="input-{{name}}"
+            value="{{value}}"
+            data-bind="{{#if ../../../ghost}}options{{else}}config{{/if}}.{{name}}"
+            {{#if ../../../ghost}}disabled{{/if}}
+          />
         </div>
       {{else}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div>
-          <textarea data-bind="config.{{name}}" class="config-field" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
+          <textarea
+            data-bind="{{#if ../../../ghost}}options{{else}}config{{/if}}.{{name}}"
+            class="config-field"
+            id="input-{{name}}"
+            name="{{name}}"
+            {{#if ../../../ghost}}disabled{{/if}}
+          >
+          {{value}}
+          </textarea>
         </div>
       {{/if}}
     {{/if}}

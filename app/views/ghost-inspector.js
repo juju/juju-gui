@@ -161,28 +161,58 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Shows the file dialogue.
+      Toggles the settings configuration in the ghost inspector to
+      the default values.
 
-      XXX it's a noop because we don't have a ux story for this yet.
-
-      @method _showFileDialogue
+      @method setDefaultSettings
+      @param {Y.EventFacade} e change event from the checkbox.
     */
-    _showFileDialogue: function() {
-      if (this.configFileContent) {
-        var a = null; // tricking the linter
-        // intentionally left blank as we don't have a UX for this
-        // functionality yet
+    setDefaultSettings: function(e) {
+      var useDefaults = true;
+      // This allows us to call this method to set to default as
+      // well as use it as a callback.
+      if (e.type) {
+        useDefaults = e.currentTarget.get('checked');
+      }
+
+      var container = this.viewletManager.get('container'),
+          ghostConfigNode = container.one(
+              '.service-configuration .ghost-config-content');
+
+      var textareas = ghostConfigNode.all('textarea'),
+          inputs = ghostConfigNode.all('input');
+
+      if (useDefaults) {
+        ghostConfigNode.addClass('use-defaults');
+        textareas.setAttribute('disabled');
+        inputs.each(function(input) {
+          // Without this check you will disable the toggle button too
+          if (input.get('id') !== 'use-default-toggle') {
+            input.setAttribute('disabled');
+          }
+        });
+
+        var viewlet = this.viewletManager.viewlets.ghostConfig,
+            viewletContainer = viewlet.container;
+        // Loop through the fields to set the values back to their defaults
+        // We can't use the data binding because setting it to it's default
+        // value doesn't trigger the databinding change events.
+        Y.Object.each(viewlet.model.get('options'), function(opt, key) {
+          var newVal = (opt['default'] === undefined) ? '' : opt['default'];
+          var input = viewletContainer.one('#input-' + key);
+
+          if (input.get('type') !== 'checkbox') {
+            input.set('value', newVal);
+          } else {
+            input.set('checked', newVal);
+          }
+        });
+      } else {
+        ghostConfigNode.removeClass('use-defaults');
+        textareas.removeAttribute('disabled');
+        inputs.removeAttribute('disabled');
       }
     },
-
-    /**
-      Handles the file upload.
-
-      XXX It's a noop because we don't have a ux story for this yet.
-
-      @method _handleFileUpload
-    */
-    _handleFileUpload: function() {},
 
     /**
       The callback handler from the env.deploy() of the charm.
