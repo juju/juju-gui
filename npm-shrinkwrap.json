@@ -384,6 +384,33 @@
         }
       }
     },
+    "node-sass": {
+      "version": "0.6.1",
+      "from": "node-sass@",
+      "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-0.6.1.tgz",
+      "dependencies": {
+        "mkdirp": {
+          "version": "0.3.5",
+          "from": "mkdirp@0.3.x"
+        },
+        "colors": {
+          "version": "0.6.0-1",
+          "from": "colors@0.6.0-1",
+          "resolved": "https://registry.npmjs.org/colors/-/colors-0.6.0-1.tgz"
+        },
+        "optimist": {
+          "version": "0.4.0",
+          "from": "optimist@0.4.x",
+          "resolved": "https://registry.npmjs.org/optimist/-/optimist-0.4.0.tgz",
+          "dependencies": {
+            "wordwrap": {
+              "version": "0.0.2",
+              "from": "wordwrap@~0.0.2"
+            }
+          }
+        }
+      }
+    },
     "jshint": {
       "version": "0.9.1",
       "from": "jshint@0.9.1",

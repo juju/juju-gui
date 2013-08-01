@@ -10,14 +10,19 @@
   {{/unless}}
   {{#if settings}}
   <!-- Service configuration form -->
-  <div class="ghost-config-wrapper">
+  <div class="ghost-config-wrapper service-configuration">
     <div class="ghost-config-header">Configuration</div>
-    <div class="ghost-config-content">
+    <div class="ghost-config-content use-defaults">
       <div class="default-config-toggle">
         <span>Use the default configuration?</span>
-        <div class="toggle-switch"></div>
+        <div class="toggle-switch">
+          <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
+          <label for="use-default-toggle">
+            <div class="handle"></div>
+          </label>
+        </div>
       </div>
-        <div class="config-file">
+      <div class="config-file">
         <input type="file">
         <div class="fakebutton">Import config file...</div>
       </div>

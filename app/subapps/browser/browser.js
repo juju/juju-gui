@@ -772,9 +772,9 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     jujucharms: function(req, res, next) {
-      //XXX j.c.sackett July 2, 2013: This is a placeholder function that will
-      //need some reworking when we have assets. It will probably want to render
-      //to body instead of the fullscreen renderto.
+      // XXX jcsackett July 2, 2013: This is a placeholder function that will
+      // need some reworking when we have assets. It will probably want to
+      // render to body instead of the fullscreen renderto.
       this.showView('jujucharms', this._getViewCfg(), {
         'callback': function(view) {
           // Hold onto the view instance for later reference.
@@ -1002,11 +1002,11 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute urlNamespace
-         @default 'charmstore'
+         @default 'charmbrowser'
          @type {String}
        */
       urlNamespace: {
-        value: 'charmstore'
+        value: 'charmbrowser'
       },
 
       /**

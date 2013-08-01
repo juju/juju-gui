@@ -124,7 +124,8 @@ endif
 ### End of release-specific variables ###
 TEMPLATE_TARGETS=$(shell find app -type f -regextype posix-extended -regex '.+\.(handlebars|partial)')
 
-CSS_TARGETS=$(shell find lib/views -type f -name '*.less')
+CSS_TARGETS=$(shell find lib/views -type f -name '*.less') \
+    $(shell find app/assets/css -type f -name '*.scss')
 
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \

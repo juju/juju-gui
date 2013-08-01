@@ -42,8 +42,8 @@ YUI.add('subapp-browser-jujucharms', function(Y) {
          * @method render
          */
         render: function(container) {
-          //XXX j.c.sackett July 2, 2013: This is a placeholder, it just renders
-          //a big hello world across the page.
+          // XXX jcsackett July 2, 2013: This is a placeholder, it just renders
+          // a big hello world across the page.
           var tpl = this.template(),
               tplNode = Y.Node.create(tpl);
           if (typeof container !== 'object') {

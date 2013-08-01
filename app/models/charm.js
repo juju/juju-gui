@@ -98,18 +98,16 @@ YUI.add('juju-charm-models', function(Y) {
    * With an id, we can instantiate a charm: typically we use
    * `db.charms.add({id: [ID]})`.  Finally, we load the charm's data over the
    * network using the standard YUI Model method `load`, providing an object
-   * with a get_charm callable, and an optional callback (see YUI docs).  Both
-   * the env and the charm store have a `get_charm` method, so, by design, it
-   * works easily: `charm.load(env, optionalCallback)` or
-   * `charm.load(charm_store, optionalCallback)`.  The `get_charm` method must
-   * either callback using the default YUI approach for this code, a boolean
-   * indicating failure, and a result; or it must return what the env version
-   * does: an object with a `result` object containing the charm data, or an
-   * object with an `err` attribute.
+   * with a get_charm callable, and an optional callback (see YUI docs). The env
+   * has a `get_charm` method, so, by design, it works easily:
+   * `charm.load(env, optionalCallback)` The `get_charm` method must either
+   * callback using the default YUI approach for this code, a boolean indicating
+   * failure, and a result; or it must return what the env version does: an
+   * object with a `result` object containing the charm data, or an object with
+   * an `err` attribute.
    *
-   * In both cases, environment charms and charm store charms, a charm's
-   * `loaded` attribute is set to true once it has all the data from its
-   * environment.
+   * A charm's `loaded` attribute is set to true once it has all the data from
+   * its environment.
    *
    * @class Charm
    */
@@ -150,6 +148,11 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
+      // XXX jcsackett July 19 2013 This is temporary while resolving Charm and
+      // BrowserCharm; Charm wants a fully qualified url as it's ID.
+      if (cfg && cfg.url) {
+        this.set('id', cfg.url);
+      }
       var id = this.get('id'),
           parts = parseCharmId(id),
           self = this;
@@ -161,7 +164,7 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
-      // XXX j.c.sackett July 16 2013 There are a raft of bits and bobs of
+      // XXX jcsackett July 16 2013 There are a raft of bits and bobs of
       // differences between the two charm models that need to be resolved for
       // the new API to work with the old model. These will no longer be needed
       // when we switch over to BrowserCharm everywhere.
@@ -203,7 +206,7 @@ YUI.add('juju-charm-models', function(Y) {
       }
     },
 
-    parse: function() {
+    parse: function(response) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
 
@@ -260,7 +263,11 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {},
-      charm_store_path: {
+      //XXX jcsackett July 31 2013 This attribute is only needed until we turn
+      // on the service inspector. It's just used by the charm view you get when
+      // inspecting a service, and should be ripped out (along with tests) when
+      // we remove that view.
+      charm_path: {
         /**
          * Generate the charm store path from the attributes of the charm.
          *
@@ -268,7 +275,6 @@ YUI.add('juju-charm-models', function(Y) {
          *
          */
         getter: function() {
-          // charm_store_path
           var owner = this.get('owner');
           return [
             (owner ? '~' + owner : 'charms'),
@@ -556,7 +562,6 @@ YUI.add('juju-charm-models', function(Y) {
       changelog: {
         value: {}
       },
-      charm_store_path: {},
       /**
        * Object of data about the source for this charm including bugs link,
        * log, revisions, etc.

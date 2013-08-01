@@ -265,7 +265,7 @@ function injectData(app, data) {
         var req = {url: check.url};
         var next = function() {};
         app.toggleStaticViews(req, undefined, next);
-        app.get('subApps').charmstore.hidden.should.eql(check.hidden);
+        app.get('subApps').charmbrowser.hidden.should.eql(check.hidden);
       });
     });
 
@@ -526,7 +526,7 @@ function injectData(app, data) {
             consoleEnabled: true,
             user: 'admin',
             password: 'admin',
-            charm_store: new utils.TestCharmStore()
+            store: new Y.juju.Charmworld2({})
           });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the

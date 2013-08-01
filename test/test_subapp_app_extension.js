@@ -40,14 +40,14 @@ describe('SubApplication App Extension', function() {
 
     mocks = {
       subAppRoutes: [
-        { path: '/', callbacks: 'showRootView', namespace: 'charmStore' },
+        { path: '/', callbacks: 'showRootView', namespace: 'charmbrowser' },
         { path: '/charm/:id', callbacks: 'showCharmDetailView',
-          namespace: 'charmStore' }
+          namespace: 'charmbrowser' }
       ],
       parentAppRoutes: [
         { path: '*', callbacks: 'check_user_credentials' },
         { path: '*', callbacks: 'show_notifications_view' },
-        { path: '/charms/*charm_store_path/', callbacks: 'show_charm' }
+        { path: '/charms/*charm_path/', callbacks: 'show_charm' }
       ]
     };
 
@@ -56,7 +56,7 @@ describe('SubApplication App Extension', function() {
       return mocks.subAppRoutes;
     };
     subAppMock.prototype.get = function(attribute) {
-      if (attribute === 'urlNamespace') { return 'charmStore'; }
+      if (attribute === 'urlNamespace') { return 'charmbrowser'; }
     };
     Y.mock.subapp = subAppMock;
 
@@ -112,7 +112,7 @@ describe('SubApplication App Extension', function() {
     app.set('routes', mocks.parentAppRoutes);
     app.addSubApp(mocks.subAppProperty.type, mocks.subAppProperty.config);
     var subapps = app.get('subApps');
-    assert(typeof subapps.charmStore === 'object');
+    assert(typeof subapps.charmbrowser === 'object');
   });
 
   it('should extract the routes from the subapp', function() {
