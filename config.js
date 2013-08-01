@@ -10,6 +10,9 @@ var config = {
       __dirname + '/lib/views/',
       __dirname + '/lib/views/browser'
     ],
+    'scss_dirs': [
+      __dirname + '/app/assets/css/'
+    ],
     'public_dir': __dirname + '/app'
   }
 };
