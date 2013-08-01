@@ -197,7 +197,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         // Loop through the fields to set the values back to their defaults
         // We can't use the data binding because setting it to it's default
         // value doesn't trigger the databinding change events.
-        Y.Object.each(viewlet.model.getAttrs().options, function(opt, key) {
+        Y.Object.each(viewlet.model.get('options'), function(opt, key) {
           var newVal = (opt['default'] === undefined) ? '' : opt['default'];
           var input = viewletContainer.one('#input-' + key);
 
