@@ -180,7 +180,6 @@ describe('Viewlet Manager', function() {
 
   it('removes all elements from the DOM on destroy', function() {
     generateViewletManager();
-    debugger;
     viewletManager.render();
     assert.equal(container.all('.viewlet-container').size(), 1);
     viewletManager.destroy();

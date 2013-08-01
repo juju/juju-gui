@@ -64,7 +64,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
         container.remove(true);
-        debugger;
       });
 
       it('knows that it is fullscreen', function() {
@@ -226,7 +225,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
         container.remove(true);
-        debugger;
       });
 
       it('knows that it is not fullscreen', function() {
