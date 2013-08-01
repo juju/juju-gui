@@ -433,7 +433,6 @@ YUI.add('subapp-browser', function(Y) {
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
-        debugger;
         var url;
         if (ev.url) {
           url = ev.url;
@@ -692,7 +691,6 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
-      debugger;
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
         this._sidebar = new views.Sidebar(
@@ -799,7 +797,6 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDefault: function(req, res, next) {
-      debugger;
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
       var viewmode = this.get('defaultViewmode');
@@ -852,7 +849,6 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      debugger;
       // If we don't have a valid store we can't do any work here.
       var viewmode = this.get('defaultViewmode');
       if (!this._hasValidStore()) {
@@ -908,7 +904,6 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
-      debugger;
       // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
