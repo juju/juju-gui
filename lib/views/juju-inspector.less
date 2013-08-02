@@ -365,7 +365,41 @@
         }
 
         .viewlet-manager-navigation {
+            margin: 0;
+            padding-left: 70px;
             background-color: @inspector-region-background-color;
+
+            li {
+                display: inline-block;
+                margin-right: 40px;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+                a {
+                    .border-box;
+                    display: block;
+                    height: 50px;
+                    padding-top: 13px;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                    &.active {
+                        border-bottom: 2px solid @charm-panel-orange;
+
+                        .normal {
+                            display: none;
+                        }
+                        .selected {
+                            display: inline-block;
+                        }
+                    }
+                    .selected {
+                        display: none;
+                    }
+                }
+            }
         }
 
         .viewlet-manager-footer {
@@ -408,6 +442,7 @@
 
             .settings-wrapper {
                 position: relative;
+                padding: 0 10px;
 
                 label {
                     font-size: 14px;

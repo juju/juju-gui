@@ -576,6 +576,24 @@ YUI.add('juju-viewlet-manager', function(Y) {
       });
       this.bindingEngine.unbind();
       this.get('container').remove().destroy(true);
+    },
+
+    /**
+      Switch tab viewlet.
+
+      @method _switchTab
+    */
+    switchTab: function(ev) {
+      ev.halt();
+      var container = this.get('container'),
+          target = ev.currentTarget,
+          state = target.getData('viewlet'),
+          active = container.one('.tab.active');
+      this.showViewlet(state);
+      if (active) {
+        active.removeClass('active');
+      }
+      target.addClass('active');
     }
 
   }, {

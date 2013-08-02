@@ -179,7 +179,7 @@ YUI.add('juju-view-environment', function(Y) {
             },
             configService: {
               events: {
-                '.tab': {'click': 'showViewlet'}
+                '.tab': {'click': 'switchTab'}
               },
               viewletEvents: {
                 // Viewlet wrapper viewlet.
