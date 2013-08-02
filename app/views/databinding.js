@@ -553,7 +553,9 @@ YUI.add('juju-databinding', function(Y) {
       });
       if (save) {
         viewlet._changedValues.push(key);
-        viewlet.changed(e.target, key);
+        if (viewlet.changed) {
+          viewlet.changed(e.target, key);
+        }
       }
     };
 
