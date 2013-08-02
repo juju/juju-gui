@@ -18,7 +18,6 @@
     "should": ">=1.0.0",
     "chai": ">=1.2.0",
     "less": "1.3.x",
-    "node-sass": "0.6.1",
     "jshint": "0.9.1",
     "recess": "1.1.x",
     "node-markdown": "0.1.x",
