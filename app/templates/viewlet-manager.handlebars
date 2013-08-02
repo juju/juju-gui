@@ -1,23 +1,27 @@
 <div class="viewlet-manager-wrapper">
   <div class="header-slot"></div>
-  <!-- XXX Remove these ugly inline styles when doing the real layout-->
-  <div class="viewlet-manager-navigation">
-    <!-- XXX There curently isn't UX for returning to the overview from settings -->
-    <div class="tab" data-viewlet="overview"
-      style="display: inline-block; margin: 0 10px; cursor: pointer;">&larr;</div>
+  <ul class="viewlet-manager-navigation">
+    <li>
+        <a href="" class="tab active" data-viewlet="overview">
+            <i class="sprite inspector_status normal"></i>
+            <i class="sprite inspector_status_selected selected"></i>
+        </a>
+    </li>
     <!-- Settings control -->
-    <div class="tab" data-viewlet="config"
-      style="display: inline-block; margin: 0 10px; cursor: pointer;">S</div>
+    <li>
+        <a href="" class="tab" data-viewlet="config">
+            <i class="sprite inspector_configuration normal"></i>
+            <i class="sprite inspector_configuration_selected selected"></i>
+        </a>
+    </li>
     <!-- Constraints control -->
-    <div class="tab" data-viewlet="constraints"
-      style="display: inline-block; margin: 0 10px; cursor: pointer;">C</div>
-    <!-- Expose control -->
-    <div
-      style="display: inline-block; margin: 0 10px; cursor: pointer;">E</div>
-    <!-- Destroy control -->
-    <div
-      style="display: inline-block; margin: 0 10px; cursor: pointer;">D</div>
-  </div>
+    <li>
+        <a href="" class="tab" data-viewlet="constraints">
+            <i class="sprite inspector_constraints normal"></i>
+            <i class="sprite inspector_constraints_selected selected"></i>
+        </a>
+    </li>
+  </ul>
   <div class="viewlet-container"></div>
   <div class="viewlet-manager-footer">
     {{>service-destroy}}
