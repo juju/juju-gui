@@ -443,7 +443,7 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
-        // The sandbox mode does not support the Go API (yet?).
+        // The sandbox mode does not fully support the Go API (yet?).
         if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;

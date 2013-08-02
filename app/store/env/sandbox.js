@@ -786,7 +786,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle EnvironmentView messages.
 
-    @method handleClientServiceGet
+    @method handleClientEnvironmentInfo
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
