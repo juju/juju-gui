@@ -614,6 +614,10 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
 
+        // If the service has been dragged, ignore the subsequent service
+        // click event.
+        topo.ignoreServiceClick = true;
+
         topo.get('env').update_annotations(
             box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
             function() {

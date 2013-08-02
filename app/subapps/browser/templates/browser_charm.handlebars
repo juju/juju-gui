@@ -129,13 +129,16 @@
                                 <ul>
                                     {{#prettyCommits.remaining}}
                                         <li>
-                                            <span class="date">
-                                                {{prettyDate}}
-                                            </span>
-                                            <strong>{{author.name}}</strong> <span class="respect-whitespace">{{message}}</span> -
-                                            <a href="{{ revnoLink }}">
-                                                REVNO{{revno}}
-                                            </a>
+                                            <p>
+                                                <span class="date">
+                                                    {{prettyDate}}
+                                                </span>
+                                                <strong>{{author.name}}</strong> 
+                                                <span class="respect-whitespace">{{message}}</span> -
+                                                <a href="{{ revnoLink }}">
+                                                    REVNO{{revno}}
+                                                </a>
+                                            </p>
                                         </li>
                                     {{/prettyCommits.remaining}}
                                 </ul>

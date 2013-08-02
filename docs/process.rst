@@ -265,7 +265,7 @@ In addition to this, one might want to go through the cards in the Releasable
 lane and try to break new (and old) features.  Any breakages would stop the
 release process and be worthy of a test in their own right.
 
-Using whatever branch will be used for the release, run ``make prod`` while 
+Using whatever branch will be used for the release, run ``make prod`` while
 improv is running.  Additionally, these steps may be completed with both
 ``sandbox`` and ``simulateEvents`` set to ``true``.
 
@@ -277,7 +277,8 @@ improv is running.  Additionally, these steps may be completed with both
 - Drag WordPress ghost.
 - Confirm adding WordPress.
 - Confirm it retains position.
-- Drag both services to ensure they retain position.
+- Drag both services to ensure they retain position and that the service menu
+  is not shown on drag end.
 - Add a relation between the two services.
 - Drag both services to ensure the relation line follows.
 - Add another charm.
@@ -293,7 +294,7 @@ improv is running.  Additionally, these steps may be completed with both
 - Search for apache.
 - Ensure results look sane.
 - Go between fullscreen and minimized views in the charm browser.
-- Visit the internal pages by double clicking a service, ensure 
+- Visit the internal pages by double clicking a service, ensure
   sanity (this step will go away with future designs).
 
 Making NPM Cache Files
