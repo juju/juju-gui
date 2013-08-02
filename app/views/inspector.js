@@ -912,7 +912,7 @@ YUI.add('juju-view-inspector', function(Y) {
 
     function generateActionButtonList(category) {
       var showingButtons = {},
-          buttonTypes = ['resolve', 'retry', 'replace'],
+          buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
           buttons = {
             error: ['resolve', 'retry', 'replace'],
             pending: ['retry', 'replace'],
