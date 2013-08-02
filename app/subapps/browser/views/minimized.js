@@ -57,6 +57,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
      */
     _toggleViewState: function(ev) {
       ev.halt();
+      debugger;
 
       this.get('container').hide();
       Y.one('#subapp-browser').show();
@@ -69,12 +70,23 @@ YUI.add('subapp-browser-minimized', function(Y) {
     },
 
     /**
+     * Destroy the minimized view.
+     *
+     * @method destructor
+     *
+     */
+    destructor: function() {
+      this.get('container').setHTML('');
+    },
+
+    /**
      * Render out the view to the DOM.
      *
      * @method render
      *
      */
     render: function() {
+      debugger;
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
       this.get('container').setHTML(tplNode);
