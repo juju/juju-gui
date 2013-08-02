@@ -984,6 +984,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('/sidebar to /fullscreen dispatches correctly', function() {
+        window.stop = true;
+        debugger;
         var req = {
           path: '/sidebar',
           params: {
@@ -1007,6 +1009,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
+
+        // And the sidebar view should be detached from the subapp now since
+        // it's been replaced.
+        debugger;
+        assert.equal(browser._sidebar, undefined)
       });
 
       it('changing the query string dispatches correctly', function() {

@@ -381,6 +381,10 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       this._filter.update(query);
+
+      // Make sure we remove any old views in the process of building this
+      // one.
+      this._cleanOldViews(req.params.viewmode);
     },
 
     /**
@@ -694,7 +698,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     minimized: function(req, res, next) {
       // We only need to run the view once.
-      debugger;
       if (!this._minimized) {
         this._minimized = new views.MinimizedView();
         this._minimized.render();
@@ -834,10 +837,6 @@ YUI.add('subapp-browser', function(Y) {
         viewmode: viewmode
       };
 
-      // Make sure we remove any old views in the process of building this
-      // one.
-      this._cleanOldViews(viewmode);
-
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -899,10 +898,6 @@ YUI.add('subapp-browser', function(Y) {
         };
       }
 
-      // Make sure we remove any old views in the process of building this
-      // one.
-      this._cleanOldViews(viewmode);
-
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -947,10 +942,6 @@ YUI.add('subapp-browser', function(Y) {
       // id in the params.
       var id = this._stripViewMode(req.params.id);
       req.params.id = id;
-
-      // Make sure we remove any old views in the process of building this
-      // one.
-      this._cleanOldViews(req.params.viewmode);
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
