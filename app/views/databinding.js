@@ -650,7 +650,7 @@ YUI.add('juju-databinding', function(Y) {
             viewlet.unsyncedFields();
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self));
+                Y.bind(resolve, self), binding);
           }
         });
 
@@ -700,7 +700,7 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = this.name,
+      var key = node.getData('bind'),
           viewlet = this._viewlets[viewletName];
       var changedValues = Y.Array.filter(
           viewlet._changedValues, function(value) {

@@ -488,45 +488,61 @@
                     text-align: justify;
                 }
 
-                .warning-message {
-                    color: red;
-                    padding: 1em;
-                }
-                .conflicted {
-                    position: absolute;
-                    border: 1px solid #dd4814;
-                    margin-top: -140px;
-                    background-color: white;
+                .config-field {
+                  padding-right: 18px;
+                  padding-bottom: 0px;
+                  margin-right: -16px;
+                  margin-bottom: 0px;
+                  min-height: 26px;
                 }
 
-                .modified {
-                  border: 2px solid red;
-                  background-color: #dedede;
-                }
-
-                @keyframes conflictResolved {
-                  0% {
-                    border: 1px solid #eeeeaa;
-                  }
-
-                  100% {
-                    border: none;
-                  }
-                }
-
-                .resolved {
-                  animation-name: conflictResolved;
-                  animation-timing-function: ease-in-out;
-                  animation-iteration-count: 1;
-                  animation-duration: 0.75s;
-                }
                 .resolver {
+                  color: black;
                   background-color: white;
                   border: 1px solid #dedede;
                   border-radius: 1px;
                 }
 
+                .modified {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-changed.png);
+                  background-repeat: no-repeat;
+                  background-position: right center;
+                }
+                .conflict-pending {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-conflict.png);
+                  background-repeat: no-repeat;
+                  background-position: right center;
+                }
 
+                .conflict {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-resolved.png);
+                  background-repeat: no-repeat;
+                  background-position: right center;
+                }
+
+
+                @-webkit-keyframes conflictResolved {
+                  0% {
+                    background-image: url(/juju-ui/assets/images/field-resolved.png);
+                    background-repeat: no-repeat;
+                    background-position: right center;
+                    background-color: #dedede;
+                  }
+
+                  100% {
+                    background-image: none;
+                  }
+                }
+
+                .resolved {
+                  -webkit-animation-name: conflictResolved;
+                  -webkit-animation-timing-function: ease-in-out;
+                  -webkit-animation-iteration-count: 1;
+                  -webkit-animation-duration: 1s;
+                }
             }
 
             .control-expose {

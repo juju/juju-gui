@@ -1136,36 +1136,58 @@ YUI.add('juju-view-inspector', function(Y) {
         'changed': function(node, key) {
           node.addClass('modified');
         },
-        'conflict': function(node, model, viewletName, resolve) {
+        'conflict': function(node, model, viewletName, resolve, binding) {
           /**
             Calls the databinding resolve method
             @method sendResolve
           */
          var key = node.getData('bind');
          var modelValue = model.get(key);
+         var field = binding.field;
          var wrapper = node.ancestor('.settings-wrapper');
          var resolver = wrapper.one('.resolver');
          var option = resolver.one('.config-field');
+         var handlers = [], watch = handlers.push;
 
-         console.log("conflict", this, node, model, viewletName);
           function sendResolve(e) {
-            console.log("send resolve", this, e);
-            handler.detach();
-            if (e.currentTarget.hasClass('conflicted-confirm')) {
-              node.setStyle('borderColor', 'black');
-              node.removeClass('modified');
-              node.addClass('resolved');
-              resolver.addClass('hidden');
-              resolve(node, viewletName, newVal);
+            e.halt(true);
+            var formValue = field.get(node);
+            handlers.forEach(function(h) { h.detach();});
+            node.removeClass('modified');
+            node.removeClass('conflict');
+            node.addClass('resolved');
+            resolver.addClass('hidden');
+
+            if (e.currentTarget.hasClass('conflicted-env')) {
+             resolve(node, viewletName, modelValue);
+            } else {
+              resolve(node, viewletName, formValue);
             }
+            setTimeout(function() {
+              node.removeClass('resolved');
+            }, 1000);
           }
 
-          node.removeClass('modified');
-          node.addClass('conflicted');
-          resolver.removeClass('hidden');
-          option.setHTML(modelValue);
+          function setupResolver(e) {
+            e.halt(true);
+            node.removeClass('conflict-pending');
+            node.addClass('conflict');
+            option.addClass('conflict');
+            option.setStyle('width',
+                            node.getComputedStyle('width') + 4);
+                            option.setHTML(modelValue);
+            resolver.removeClass('hidden');
+          }
 
-          var handler = wrapper.delegate('click', sendResolve, 'button', this);
+          // On conflict just indicate.
+          node.removeClass('modified');
+          node.addClass('conflict-pending');
+
+          watch(wrapper.delegate('click', setupResolver,
+                                 '.conflict-pending', this));
+
+          watch(wrapper.delegate('click', sendResolve,
+                                 '.conflict', this));
         },
         'unsyncedFields': function(dirtyFields) {
           this.container.one('.controls .confirm').setHTML('Overwrite');

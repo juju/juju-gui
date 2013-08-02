@@ -36,14 +36,12 @@
             id="input-{{name}}"
             name="{{name}}"
             {{#if ../../../ghost}}disabled{{/if}}
-          >
-          {{value}}
-          </textarea>
+          >{{value}}</textarea>
         </div>
       {{/if}}
     {{/if}}
     <div class="hidden resolver">
-      <div class="config-field" id="input-{{name}}-env"></div>
+      <div class="config-field conflicted-env" id="input-{{name}}-env"></div>
     </div>
     <div class="settings-description">
       {{description}}
