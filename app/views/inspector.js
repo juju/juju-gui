@@ -1141,13 +1141,18 @@ YUI.add('juju-view-inspector', function(Y) {
             Calls the databinding resolve method
             @method sendResolve
           */
-         var key = node.getData('bind');
-         var modelValue = model.get(key);
-         var field = binding.field;
-         var wrapper = node.ancestor('.settings-wrapper');
-         var resolver = wrapper.one('.resolver');
-         var option = resolver.one('.config-field');
-         var handlers = [], watch = handlers.push;
+          var key = node.getData('bind');
+          var modelValue = model.get(key);
+          var field = binding.field;
+          var wrapper = node.ancestor('.settings-wrapper');
+          var resolver = wrapper.one('.resolver');
+          var option = resolver.one('.config-field');
+          var handlers = [], watch = handlers.push;
+
+          /**
+           User selects one of the two conflicting values.
+           @method sendResolve
+           */
 
           function sendResolve(e) {
             e.halt(true);
@@ -1159,7 +1164,7 @@ YUI.add('juju-view-inspector', function(Y) {
             resolver.addClass('hidden');
 
             if (e.currentTarget.hasClass('conflicted-env')) {
-             resolve(node, viewletName, modelValue);
+              resolve(node, viewletName, modelValue);
             } else {
               resolve(node, viewletName, formValue);
             }
@@ -1168,6 +1173,11 @@ YUI.add('juju-view-inspector', function(Y) {
             }, 1000);
           }
 
+          /**
+            User selects a conflicting field, show the resolution UI
+
+            @method setupResolver
+          */
           function setupResolver(e) {
             e.halt(true);
             node.removeClass('conflict-pending');
@@ -1175,7 +1185,7 @@ YUI.add('juju-view-inspector', function(Y) {
             option.addClass('conflict');
             option.setStyle('width',
                             node.getComputedStyle('width') + 4);
-                            option.setHTML(modelValue);
+            option.setHTML(modelValue);
             resolver.removeClass('hidden');
           }
 

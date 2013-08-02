@@ -49,11 +49,12 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     function _getNodeHandler(node) {
-        var field = this._fieldHandlers[node.tagName.toLowerCase()];
-        if (!field) {
-          field = this._fieldHandlers['default'];
-        }
-        return field;
+      /*jshint validthis:true */
+      var field = this._fieldHandlers[node.tagName.toLowerCase()];
+      if (!field) {
+        field = this._fieldHandlers['default'];
+      }
+      return field;
     }
 
     function _indexBindings(bindings, keyfunc, multiple) {
@@ -196,12 +197,12 @@ YUI.add('juju-databinding', function(Y) {
         binding = Y.mix(binding, viewlet.bindings[config.name], true);
       }
 
-        // This could be done ahead of time, but by doing this at runtime
-        // we allow very flexible DOM mutation out of band. Revisit if
-        // this shows up on a profile.
+      // This could be done ahead of time, but by doing this at runtime
+      // we allow very flexible DOM mutation out of band. Revisit if
+      // this shows up on a profile.
       if (binding.target) {
-        binding.field = _getNodeHandler.call(this, binding.target.getDOMNode())
-     }
+        binding.field = _getNodeHandler.call(this, binding.target.getDOMNode());
+      }
 
       binding.viewlet = viewlet;
       this._bindings.push(binding);
@@ -324,12 +325,12 @@ YUI.add('juju-databinding', function(Y) {
           target: node
         }, viewlet);
         viewlet._eventHandles.push(
-          node.on('valueChange', this._storeChanged, this, viewlet)
+            node.on('valueChange', this._storeChanged, this, viewlet)
         );
 
       }, this);
 
-     this._setupHeirarchicalBindings();
+      this._setupHeirarchicalBindings();
       this._setupDependencies();
       this._setupWildcarding(viewlet);
       this._modelChangeHandler();
@@ -641,7 +642,7 @@ YUI.add('juju-databinding', function(Y) {
         if (!binding.target) {
           return;
         }
-      var dataKey = binding.name;
+        var dataKey = binding.name;
 
         // If the field has been changed while the user was editing it
         viewlet._changedValues.forEach(function(changeKey) {
