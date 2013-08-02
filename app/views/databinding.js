@@ -543,7 +543,7 @@ YUI.add('juju-databinding', function(Y) {
       @param {Object} viewlet reference.
     */
     BindingEngine.prototype._storeChanged = function(e, viewlet) {
-      var key = e.target.getData('bind'),
+      var key = e.currentTarget.getData('bind'),
           save = true;
 
       viewlet._changedValues.forEach(function(value) {

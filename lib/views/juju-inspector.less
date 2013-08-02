@@ -549,24 +549,12 @@
                 }
 
 
-                @-webkit-keyframes conflictResolved {
-                  0% {
-                    background-image: url(/juju-ui/assets/images/field-resolved.png);
-                    background-repeat: no-repeat;
-                    background-position: right center;
-                    background-color: #dedede;
-                  }
-
-                  100% {
-                    background-image: none;
-                  }
-                }
-
                 .resolved {
-                  -webkit-animation-name: conflictResolved;
-                  -webkit-animation-timing-function: ease-in-out;
-                  -webkit-animation-iteration-count: 1;
-                  -webkit-animation-duration: 1s;
+                  background-url: none;
+                  -webkit-transition: background 1s linear;
+                  -moz-transition: background 1s linear;
+                  -o-transition: background 1s linear;
+                  transition: background 1s linear;
                 }
             }
 
