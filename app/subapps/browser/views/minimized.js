@@ -69,6 +69,16 @@ YUI.add('subapp-browser-minimized', function(Y) {
     },
 
     /**
+     * Destroy the minimized view.
+     *
+     * @method destructor
+     *
+     */
+    destructor: function() {
+      this.get('container').setHTML('');
+    },
+
+    /**
      * Render out the view to the DOM.
      *
      * @method render
