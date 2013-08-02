@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 0.8.2:
     - Fixed boolean data type export.
     - Fixed unit tests in IE10.
