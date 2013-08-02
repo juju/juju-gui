@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <html>
+<!-- !IE will be true for all non-IE browsers and IE10 since it does not
+ recognize conditional flags. -->
+<!--[if !IE]><!--><script>
+if (/*@cc_on!@*/false) {
+  // Only IE10 has cc_on as false.
+  document.documentElement.className+=' ie10';
+}
+</script><!--<![endif]-->
+<head>
+    <title>Juju Admin</title>
+    <!-- Disable backwards compatible mode for IE on an intranet.
+         For an explanation see http://bit.ly/14VytlD
+         Also note this must be the first <meta> to appear. -->
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta charset="utf-8">
+<!-- The license statement comes after the charset declaration so that the
+     charset is delivered within the first 1024 characters. -->
 <!--
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -17,31 +34,15 @@ General Public License for more details.
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-<!-- !IE will be true for all non-IE browsers and IE10 since it does not
- recognize conditional flags. -->
-<!--[if !IE]><!--><script>
-if (/*@cc_on!@*/false) {
-  // Only IE10 has cc_on as false.
-  document.documentElement.className+=' ie10';
-}
-</script><!--<![endif]-->
-
-<head>
-    <title>Juju Admin</title>
-    <!-- Disable backwards compatible mode for IE on an intranet.
-         For an explanation see http://bit.ly/14VytlD
-         Also note this must be the first <meta> to appear. -->
-    <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
     <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:300,400,500,300italic,400italic,500italic' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
-    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
-    <link rel="stylesheet" href="/juju-ui/assets/sprite.css">
+    <!-- Remove the query strings below after release 0.9.0. -->
+    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css?reload=temporary">
+    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css?reload=temporary">
+    <link rel="stylesheet" href="/juju-ui/assets/sprites.css">
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
@@ -366,8 +367,9 @@ if (/*@cc_on!@*/false) {
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
     -->
-    <script src="/juju-ui/assets/all-yui.js"></script>
-    <script src="/juju-ui/assets/modules.js"></script>
+    <!-- Remove the query strings below after release 0.9.0. -->
+    <script src="/juju-ui/assets/all-yui.js?reload=temporary"></script>
+    <script src="/juju-ui/assets/modules.js?reload=temporary"></script>
     <script>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will

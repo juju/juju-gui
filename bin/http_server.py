@@ -22,13 +22,15 @@
 
 import BaseHTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-from SocketServer import TCPServer
 import os.path
+import urlparse
 
 
 class RewritingHTTPRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        fpath = self.path[1:]
+        # Remove the query part if required, and translate the URL path into a
+        # relative file system path.
+        fpath = urlparse.urlsplit(self.path).path[1:]
         # Should the directly entered URL path not map directly to a file on
         # the file system then simply return '/index.html' and keep going.
         if not os.path.exists(fpath):
