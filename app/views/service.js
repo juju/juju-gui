@@ -45,7 +45,7 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     confirmDestroy: function(ev) {
-      ev.preventDefault();
+      ev.halt();
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
       if (Y.Lang.isUndefined(this.panel)) {
