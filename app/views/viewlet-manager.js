@@ -582,14 +582,15 @@ YUI.add('juju-viewlet-manager', function(Y) {
       Switch tab viewlet.
 
       @method _switchTab
+      @param {Y.EventTarget} ev click event handler.
     */
     switchTab: function(ev) {
       ev.halt();
       var container = this.get('container'),
           target = ev.currentTarget,
-          state = target.getData('viewlet'),
+          viewletName = target.getData('viewlet'),
           active = container.one('.tab.active');
-      this.showViewlet(state);
+      this.showViewlet(viewletName);
       if (active) {
         active.removeClass('active');
       }
