@@ -73,9 +73,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       result = undefined;
-      callback = function(response) { result = response; };
+      callback = function(response) {
+        result = response;
+      };
     });
 
     afterEach(function() {
@@ -84,7 +86,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('rejects unauthenticated calls', function() {
       fakebackend.logout();
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.equal(result.error, 'Please log in.');
     });
 
@@ -96,13 +98,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('deploys a charm', function() {
       // Defaults service name to charm name; defaults unit count to 1.
       assert.isNull(
-          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
-      assert.isUndefined(fakebackend.deploy('cs:wordpress', callback));
-      assert.isUndefined(result.error);
+          fakebackend.db.charms.getById('cs:precise/wordpress-15'));
+      assert.isUndefined(
+          fakebackend.deploy('cs:precise/wordpress-15', callback),
+          'Fakebackend deploy returned something when undefined was expected.');
+      assert.isUndefined(
+          result.error,
+          'result.error was something when undefined was expected.');
       assert.isObject(
-          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
+          fakebackend.db.charms.getById('cs:precise/wordpress-15'),
+          'Fakebackend returned null when a charm was expected.');
       var service = fakebackend.db.services.getById('wordpress');
-      assert.isObject(service);
+      assert.isObject(
+          service,
+          'Null returend when a service was expected.');
       assert.strictEqual(service, result.service);
       var attrs = service.getAttrs();
       // clientId varies.
@@ -111,7 +120,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(attrs, {
         annotations: {},
         aggregated_status: undefined,
-        charm: 'cs:precise/wordpress-10',
+        charm: 'cs:precise/wordpress-15',
         config: undefined,
         constraints: {},
         constraintsStr: undefined,
@@ -135,95 +144,96 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('rejects names that duplicate an existing service', function() {
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(result.error);
       // The service name is provided explicitly.
-      fakebackend.deploy('cs:haproxy', callback, {name: 'wordpress'});
+      fakebackend.deploy(
+          'cs:precise/haproxy-18', callback, {name: 'wordpress'});
       assert.equal(result.error, 'A service with this name already exists.');
       // The service name is derived from charm.
       result = undefined;
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.equal(result.error, 'A service with this name already exists.');
     });
 
     it('reuses already-loaded charms with the same explicit id.', function() {
-      fakebackend._loadCharm('cs:wordpress');
+      fakebackend._loadCharm('cs:precise/wordpress-15');
       assert.isObject(
-          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
-      // Eliminate the charmStore to show we reuse the pre-loaded charm.
-      fakebackend.set('charmStore', undefined);
-      fakebackend.deploy('cs:precise/wordpress-10', callback);
+          fakebackend.db.charms.getById('cs:precise/wordpress-15'));
+      fakebackend.set('store', undefined);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(result.error);
       assert.isObject(result.service);
-      assert.equal(result.service.get('charm'), 'cs:precise/wordpress-10');
+      assert.equal(result.service.get('charm'), 'cs:precise/wordpress-15');
     });
 
     it('reuses already-loaded charms with the same id.', function() {
-      fakebackend._loadCharm('cs:wordpress');
-      var charm = fakebackend.db.charms.getById('cs:precise/wordpress-10');
+      fakebackend._loadCharm('cs:precise/wordpress-15');
+      var charm = fakebackend.db.charms.getById('cs:precise/wordpress-15');
       assert.equal(fakebackend.db.charms.size(), 1);
       // The charm data shows that this is not a subordinate charm.  We will
       // change this in the db, to show that the db data is used within the
       // deploy code.
-      assert.isUndefined(charm.get('is_subordinate'));
+      assert.isFalse(charm.get('is_subordinate'));
       // The _set forces a change to a writeOnly attribute.
       charm._set('is_subordinate', true);
-      fakebackend.deploy('cs:wordpress', callback, {unitCount: 0});
+      fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 0});
       assert.isUndefined(result.error);
       assert.strictEqual(
-          fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
+          fakebackend.db.charms.getById('cs:precise/wordpress-15'), charm);
       assert.equal(fakebackend.db.charms.size(), 1);
-      assert.equal(result.service.get('charm'), 'cs:precise/wordpress-10');
+      assert.equal(result.service.get('charm'), 'cs:precise/wordpress-15');
       // This is the clearest indication that we used the db version, as
-      // opposed to the charmStore version, per the comments above.
+      // opposed to the api version, per the comments above.
       assert.isTrue(result.service.get('subordinate'));
     });
 
     it('accepts a config.', function() {
       fakebackend.deploy(
-          'cs:wordpress', callback, {config: {funny: 'business'}});
+          'cs:precise/wordpress-15', callback, {config: {funny: 'business'}});
       assert.deepEqual(result.service.get('config'), {funny: 'business'});
     });
 
     it('deploys multiple units.', function() {
-      fakebackend.deploy('cs:wordpress', callback, {unitCount: 3});
+      fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 3});
       var units = fakebackend.db.units.get_units_for_service(result.service);
       assert.lengthOf(units, 3);
       assert.lengthOf(result.units, 3);
       assert.deepEqual(units, result.units);
     });
 
-    it('reports when the charm store is inaccessible.', function() {
-      fakebackend.get('charmStore').loadByPath = function(path, options) {
-        options.failure({boo: 'hiss'});
+    it('reports when the API is inaccessible.', function() {
+      fakebackend.get('store').charm = function(path, callbacks, bindscope) {
+        callbacks.failure({boo: 'hiss'});
       };
-      fakebackend.deploy('cs:wordpress', callback);
-      assert.equal(result.error, 'Error interacting with Charm store.');
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
+      assert.equal(result.error, 'Error interacting with the charmworld api.');
     });
 
     it('honors the optional service name', function() {
       assert.isUndefined(
-          fakebackend.deploy('cs:wordpress', callback, {name: 'kumquat'}));
+          fakebackend.deploy(
+              'cs:precise/wordpress-15', callback, {name: 'kumquat'}));
       assert.equal(result.service.get('id'), 'kumquat');
     });
 
     it('prefers config YAML to config.', function() {
       fakebackend.deploy(
-          'cs:wordpress',
+          'cs:precise/wordpress-15',
           callback,
           {config: {funny: 'business'}, configYAML: 'funny: girl'});
       assert.deepEqual(result.service.get('config'), {funny: 'girl'});
     });
 
     it('rejects a non-string configYAML', function() {
-      fakebackend.deploy('cs:wordpress', callback, {configYAML: {}});
+      fakebackend.deploy('cs:precise/wordpress-15', callback, {configYAML: {}});
       assert.equal(
           result.error, 'Developer error: configYAML is not a string.');
     });
 
     it('accepts a YAML config string.', function() {
       fakebackend.deploy(
-          'cs:wordpress',
+          'cs:precise/wordpress-15',
           callback,
           {configYAML:
                 Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
@@ -233,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('rejects unparseable YAML config string.', function() {
       fakebackend.deploy(
-          'cs:wordpress',
+          'cs:precise/wordpress-15',
           callback,
           {configYAML: 'auto_id: %n'});
       assert.equal(
@@ -259,10 +269,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
-      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       service = fakebackend.db.services.getById('wordpress');
     });
 
@@ -271,37 +281,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets a charm.', function() {
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', false,
           callback);
       assert.isUndefined(result.error);
-      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
     });
 
     it('fails when the service does not exist', function() {
       fakebackend.setCharm('nope', 'nuh-uh', false, callback);
       assert.equal(result.error, 'Service "nope" not found.');
-      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
     });
 
     it('fails if a service is in error without force.', function() {
       fakebackend.db.units.each(function(unit) {
         unit.agent_state = 'error';
       });
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', false,
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', false,
           callback);
       assert.equal(result.error, 'Cannot set charm on a service with units ' +
           'in error without the force flag.');
-      assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+      assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
     });
 
     it('succeeds if a service is in error with force.', function() {
       fakebackend.db.units.each(function(unit) {
         unit.agent_state = 'error';
       });
-      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-6', true,
+      fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', true,
           callback);
       assert.isUndefined(result.error);
-      assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+      assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
     });
   });
 
@@ -318,10 +328,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
-      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       service = fakebackend.db.services.getById('wordpress');
     });
 
@@ -376,10 +386,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
-      fakebackend.deploy('cs:precise/wordpress-10', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       service = fakebackend.db.services.getById('wordpress');
     });
 
@@ -435,7 +445,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
     });
 
     afterEach(function() {
@@ -467,7 +477,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('successfully exports env data', function(done) {
         createRelation(
-            ['cs:wordpress', 'cs:mysql'],
+            ['cs:precise/wordpress-15', 'cs:mysql'],
             ['wordpress:db', 'mysql:db'],
             { type: 'mysql', scope: 'global',
               endpoints:
@@ -500,7 +510,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           // Verify that the charms have been loaded.
           assert.isNotNull(fakebackend.db.charms.getById(
-              'cs:precise/wordpress-10'));
+              'cs:precise/wordpress-15'));
           done();
         });
       });
@@ -530,7 +540,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('reports invalid relations', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           var result = fakebackend.resolved('wordpress/0', 'db');
           assert.equal(result.error, 'Relation db not found for wordpress/0');
           done();
@@ -540,18 +550,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('FakeBackend.getCharm', function() {
 
-      before(function() {
-        // A global variable required for testing.
-        window.flags = {};
-      });
-
-      after(function() {
-        delete window.flags;
-      });
-
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
-        fakebackend.getCharm('cs:wordpress', ERROR('Please log in.', done));
+        fakebackend.getCharm(
+            'cs:precise/wordpress-15', ERROR('Please log in.', done));
       });
 
       it('disallows malformed charm names', function(done) {
@@ -559,14 +561,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully returns valid charms', function(done) {
-        fakebackend.getCharm('cs:wordpress', function(data) {
+        fakebackend.getCharm('cs:precise/wordpress-15', function(data) {
           assert.equal(data.result.name, 'wordpress');
           done();
         });
       });
 
       it('loads subordinate charms properly', function(done) {
-        fakebackend.getCharm('cs:puppet', function(data) {
+        fakebackend.getCharm('cs:precise/puppet-5', function(data) {
           assert.equal(data.result.name, 'puppet');
           assert.isTrue(data.result.is_subordinate);
           done();
@@ -577,7 +579,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('FakeBackend.getService', function() {
       it('rejects unauthenticated calls', function() {
         fakebackend.logout();
-        var result = fakebackend.getService('cs:wordpress');
+        var result = fakebackend.getService('cs:precise/wordpress-15');
         assert.equal(result.error, 'Please log in.');
       });
 
@@ -587,7 +589,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully returns a valid service', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           var service = fakebackend.getService('wordpress').result;
           assert.equal(service.name, 'wordpress');
           done();
@@ -608,7 +610,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully returns a valid service configuration', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.setConfig('wordpress', {
             'blog-title': 'Silence is Golden.'});
           var service = fakebackend.getService('wordpress').result;
@@ -632,7 +634,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully returns a valid constraints', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.setConstraints('wordpress', {'cpu': '4'});
           var service = fakebackend.getService('wordpress').result;
           var constraints = service.constraints;
@@ -643,7 +645,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully returns a valid constraints as array', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.setConstraints('wordpress', ['cpu=4']);
           var service = fakebackend.getService('wordpress').result;
           var constraints = service.constraints;
@@ -667,7 +669,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('successfully destroys a valid service', function(done) {
-        fakebackend.deploy('cs:wordpress', function(data) {
+        fakebackend.deploy('cs:precise/wordpress-15', function(data) {
           var result = fakebackend.destroyService('wordpress');
           assert.equal(result.result, 'wordpress');
           assert.isUndefined(result.error);
@@ -680,8 +682,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('removes relations when destroying a service', function(done) {
         // Add a couple of services and hook up relations.
-        fakebackend.deploy('cs:wordpress', function(data) {
-          fakebackend.deploy('cs:mysql', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function(data) {
+          fakebackend.deploy('cs:precise/mysql-26', function() {
             var result = fakebackend.addRelation('wordpress:db', 'mysql:db');
             assert.isUndefined(result.error);
             var mysql = fakebackend.getService('mysql').result;
@@ -702,7 +704,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('removes units when destroying a service', function(done) {
-        fakebackend.deploy('cs:wordpress', function(data) {
+        fakebackend.deploy('cs:precise/wordpress-15', function(data) {
           var service = fakebackend.db.services.getById('wordpress');
           var units = fakebackend.db.units.get_units_for_service(service);
           assert.lengthOf(units, 1);
@@ -725,7 +727,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('must get annotations from a service', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           var service = fakebackend.getService('wordpress').result;
           assert.deepEqual(service.annotations, {});
           var anno = fakebackend.getAnnotations('wordpress').result;
@@ -735,7 +737,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('must update annotations to a service', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.updateAnnotations('wordpress',
                                         {'foo': 'bar', 'gone': 'away'});
           var anno = fakebackend.getAnnotations('wordpress').result;
@@ -752,7 +754,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('must update annotations on a unit', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.updateAnnotations('wordpress/0',
                                         {'foo': 'bar', 'gone': 'away'});
           var anno = fakebackend.getAnnotations('wordpress/0').result;
@@ -793,7 +795,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('must remove annotations from a service', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.updateAnnotations('wordpress',
                                         {'foo': 'bar', 'gone': 'away'});
           var anno = fakebackend.getAnnotations('wordpress').result;
@@ -830,7 +832,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -846,7 +848,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('returns an error for an invalid number of units', function() {
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
       assert.equal(
           fakebackend.addUnit('wordpress', 'goyesca').error,
@@ -885,7 +887,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('defaults to adding just one unit', function() {
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
           fakebackend.db.units.get_units_for_service(deployResult.service), 1);
@@ -911,7 +913,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds multiple units', function() {
-      fakebackend.deploy('cs:wordpress', callback);
+      fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
           fakebackend.db.units.get_units_for_service(deployResult.service), 1);
@@ -942,7 +944,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -963,7 +965,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('reports a call to addUnit correctly.', function() {
-        fakebackend.deploy('cs:wordpress', callback);
+        fakebackend.deploy('cs:precise/wordpress-15', callback);
         assert.isUndefined(deployResult.error);
         assert.isObject(fakebackend.nextChanges());
         var result = fakebackend.addUnit('wordpress');
@@ -981,7 +983,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('reports a deploy correctly.', function() {
-        fakebackend.deploy('cs:wordpress', callback);
+        fakebackend.deploy('cs:precise/wordpress-15', callback);
         assert.isUndefined(deployResult.error);
         var changes = fakebackend.nextChanges();
         assert.lengthOf(Y.Object.keys(changes.services), 1);
@@ -998,7 +1000,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('reports a deploy of multiple units correctly.', function() {
-        fakebackend.deploy('cs:wordpress', callback, {unitCount: 5});
+        fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 5});
         assert.isUndefined(deployResult.error);
         var changes = fakebackend.nextChanges();
         assert.lengthOf(Y.Object.keys(changes.services), 1);
@@ -1009,7 +1011,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('reports no changes when no changes have occurred.',
           function() {
-            fakebackend.deploy('cs:wordpress', callback);
+            fakebackend.deploy('cs:precise/wordpress-15', callback);
             assert.isUndefined(deployResult.error);
             assert.isObject(fakebackend.nextChanges());
             assert.isNull(fakebackend.nextChanges());
@@ -1029,7 +1031,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('reports service changes correctly', function(done) {
-        fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:precise/wordpress-15', function() {
           fakebackend.updateAnnotations('wordpress',
                                         {'foo': 'bar', 'gone': 'away'});
 
@@ -1065,7 +1067,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -1124,8 +1126,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('requires the specified interfaces to match', function(done) {
-      fakebackend.deploy('cs:wordpress', function() {
-        fakebackend.deploy('cs:haproxy', function() {
+      fakebackend.deploy('cs:precise/wordpress-15', function() {
+        fakebackend.deploy('cs:precise/haproxy-18', function() {
           var result = fakebackend.addRelation(
               'wordpress:cache', 'haproxy:munin');
           assert.equal(result.error, 'Specified relation is unavailable.');
@@ -1333,7 +1335,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackendWithCharmStore();
+      fakebackend = utils.makeFakeBackend();
     });
 
     afterEach(function() {

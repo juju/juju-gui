@@ -124,11 +124,12 @@ endif
 ### End of release-specific variables ###
 TEMPLATE_TARGETS=$(shell find app -type f -regextype posix-extended -regex '.+\.(handlebars|partial)')
 
-CSS_TARGETS=$(shell find lib/views -type f -name '*.less')
+CSS_TARGETS=$(shell find lib/views -type f -name '*.less') \
+    $(shell find app/assets/css -type f -name '*.scss')
 
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
-SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
-	build-shared/juju-ui/assets/sprite.png
+SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprites.css \
+	build-shared/juju-ui/assets/sprites.png
 NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
 BUILD_FILES=build-shared/juju-ui/assets/modules.js \
 	build-shared/juju-ui/assets/all-yui.js \
@@ -337,8 +338,8 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/version.js \
 	build-$(1)/juju-ui/assets/combined-css/all-static.css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
-	build-$(1)/juju-ui/assets/sprite.css \
-	build-$(1)/juju-ui/assets/sprite.png \
+	build-$(1)/juju-ui/assets/sprites.css \
+	build-$(1)/juju-ui/assets/sprites.png \
 	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
 	build-$(1)/juju-ui/assets/combined-css/rail-y.png \
 	build-$(1)/juju-ui/assets/combined-css/thumb-x.png \
@@ -384,9 +385,9 @@ define link-files
 	    build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" \
 	    build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" \
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprites.css" \
 	    build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.png" \
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprites.png" \
 	    build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
 	    build-$(1)/juju-ui/assets/

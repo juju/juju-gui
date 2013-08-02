@@ -38,7 +38,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             env = juju.newEnvironment({conn: conn});
             env.connect();
             conn.open();
-            nsRouter = Y.namespace('juju').Router('charmstore');
+            nsRouter = Y.namespace('juju').Router('charmbrowser');
             makeView = function(querystring) {
               if (!Y.Lang.isValue(querystring)) {
                 querystring = {};

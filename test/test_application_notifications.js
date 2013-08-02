@@ -70,11 +70,10 @@ describe.skip('juju application notifications', function() {
       'node-event-simulate',
       'ns-routing-app-extension'],
     function(Y) {
-      window.flags = {};
       viewContainer = Y.namespace('juju-tests.utils')
         .makeContainer('container');
       db = new models.Database();
-      nsRouter = Y.namespace('juju').Router('charmstore');
+      nsRouter = Y.namespace('juju').Router('charmbrowser');
 
       // The notifications.js delays the notification update.
       // We are going to avoid this timeout to make it possible to test

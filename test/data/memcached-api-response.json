@@ -1,0 +1,252 @@
+{
+  "charm": {
+    "categories": [
+      "applications"
+    ], 
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/memcached", 
+      "last_log": "Added icon.svg\n", 
+      "location": "lp:~charmers/charms/precise/memcached/trunk", 
+      "revision": "54", 
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-04-27T00:13:33Z", 
+          "message": "Added icon.svg\n", 
+          "revno": 54
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-04-22T19:50:20Z", 
+          "message": "Add categories\n", 
+          "revno": 53
+        }, 
+        {
+          "authors": [
+            {
+              "email": "matthew.wedgwood@canonical.com", 
+              "name": "Matthew Wedgwood"
+            }
+          ], 
+          "date": "2013-04-18T16:23:02Z", 
+          "message": "[mthaddon] support for pre-install hook structure, support for the nrpe-external-master charm\n\nThis adds support for pre-install hook structure, as supported in a number of other charms, which allows you to do things like set timezone, install custom apt repositories, etc.. It also adds support for the nrpe-external-master charm\n", 
+          "revno": 52
+        }, 
+        {
+          "authors": [
+            {
+              "email": "nmurata@ashisuto.co.jp", 
+              "name": "Nobuto MURATA"
+            }
+          ], 
+          "date": "2012-09-20T11:43:25Z", 
+          "message": "fix sh syntax error (LP: #1053356)\n", 
+          "revno": 51
+        }, 
+        {
+          "authors": [
+            {
+              "email": "juan.negron@canonical.com", 
+              "name": "Juan L. Negron"
+            }
+          ], 
+          "date": "2012-09-14T20:14:21Z", 
+          "message": "Some fixes for things I noticed while reviewing the charm. MP:124280", 
+          "revno": 50
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2012-05-22T22:30:53Z", 
+          "message": "setting maintainer", 
+          "revno": 49
+        }, 
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2012-01-28T01:11:44Z", 
+          "message": "strong config types\n", 
+          "revno": 48
+        }, 
+        {
+          "authors": [
+            {
+              "email": "clint@ubuntu.com", 
+              "name": "Clint Byrum"
+            }
+          ], 
+          "date": "2011-12-05T22:55:46Z", 
+          "message": "Making memcached fully configurable using config.yaml", 
+          "revno": 47
+        }, 
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2011-10-11T19:17:17Z", 
+          "message": "revision split-out\n", 
+          "revno": 46
+        }, 
+        {
+          "authors": [
+            {
+              "email": "mark.mims@agiledynamics.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2011-09-30T21:12:49Z", 
+          "message": "cleanup from project rename\n", 
+          "revno": 45
+        }
+      ], 
+      "type": "bzr"
+    }, 
+    "date_created": "2012-04-16T18:29:50Z", 
+    "description": "Danga Interactive developed memcached to enhance the speed of LiveJournal.com, a site which was already doing 20 million+ dynamic page views per day for 1 million users with a bunch of webservers and a bunch of database servers. memcached dropped the database load to almost nothing, yielding faster page load times for users, better resource utilization, and faster access to the databases on a memcache miss.\nmemcached optimizes specific high-load serving applications that are designed to take advantage of its versatile no-locking memory access system. Clients are available in several different programming languages, to suit the needs of the specific application. Traditionally this has been used in mod_perl apps to avoid storing large chunks of data in Apache memory, and to share this burden across several machines.", 
+    "distro_series": "precise", 
+    "downloads": 518, 
+    "downloads_in_past_30_days": 31, 
+    "files": [
+      "hooks/cache-relation-joined", 
+      "hooks/munin-relation-changed", 
+      "hooks/nrpe-external-master-relation-changed", 
+      "icon.svg", 
+      "hooks/upgrade-charm", 
+      "hooks/stop", 
+      "hooks/start", 
+      "hooks/config-changed", 
+      "hooks/install", 
+      "metadata.yaml", 
+      "config.yaml", 
+      "revision"
+    ], 
+    "id": "precise/memcached-6", 
+    "is_approved": true, 
+    "is_subordinate": false, 
+    "maintainer": {
+      "email": "clint@ubuntu.com", 
+      "name": "Clint Byrum"
+    }, 
+    "name": "memcached", 
+    "options": {
+      "connection-limit": {
+        "default": 1024, 
+        "description": "maximum simultaneous connections (memcached option -c)", 
+        "type": "int"
+      }, 
+      "disable-auto-cleanup": {
+        "default": "no", 
+        "description": "do not remove things automatically from the cache on OOM\n(memcached option -M)\n", 
+        "type": "string"
+      }, 
+      "disable-cas": {
+        "default": "no", 
+        "description": "disable use of CAS (and reduce the per-item size by 8 bytes)", 
+        "type": "string"
+      }, 
+      "disable-large-pages": {
+        "default": "no", 
+        "description": "The charm will will try to use large pages if given more than 2GB of RAM. You may want to disable this behavior. (memcached option -L)", 
+        "type": "string"
+      }, 
+      "extra-options": {
+        "default": "", 
+        "description": "memcached has many other options documented in its man page. You may pass them here as a string which will be appended to memcached's execution.", 
+        "type": "string"
+      }, 
+      "factor": {
+        "default": -1.0, 
+        "description": "Use <factor> as the multiplier for computing the sizes of memory\nchunks that items are stored in.  A lower value  may result\nin less wasted memory depending on the total amount of memory\navailable and the distribution of item size.\n", 
+        "type": "float"
+      }, 
+      "min-item-size": {
+        "default": -1, 
+        "description": "Allocate a minimum of <size> bytes for the item key, value,\nand flags. The default  is  48.  If  you have  a  lot of small\nkeys and values, you can get a significant memory efficiency\ngain with a lower value. If you use a high chunk growth factor\n(-f option),  on  the  other  hand,  you  may  want  to\nincrease  the  size  to  allow  a  bigger percentage of your\nitems to fit in the most densely packed (smallest) chunks.\n(memcached option -n)\n", 
+        "type": "int"
+      }, 
+      "nagios_context": {
+        "default": "juju", 
+        "description": "Used by the nrpe-external-master subordinate charm. A string that will be prepended to instance name to set the host name in nagios. So for instance the hostname would be something like:\n    juju-memcached-0\nIf you're running multiple environments with the same services in them this allows you to differentiate between them.\n", 
+        "type": "string"
+      }, 
+      "request-limit": {
+        "default": -1, 
+        "description": "limit of requests a single client can make at one time\n(memcached option -R) -1 takes memcached default (20)\n", 
+        "type": "int"
+      }, 
+      "size": {
+        "default": 768, 
+        "description": "Size of memcache pool in MiB (memcached option -m)", 
+        "type": "int"
+      }, 
+      "slab-page-size": {
+        "default": -1, 
+        "description": "Override the size of each slab page in bytes. In mundane\nwords, it adjusts  the  maximum  item  size that  memcached\nwill  accept.  You can use the suffixes K and M to specify\nthe size as well, so use 2000000 or 2000K or 2M if you want\na maximum size of 2 MB per object.   It  is  not  recommended\nto raise this limit above 1 MB due just to performance reasons.\nThe default value is 1 MB. (memcached option -I) -1 takes\nthe memcached default.\n", 
+        "type": "int"
+      }, 
+      "tcp-port": {
+        "default": 11211, 
+        "description": "TCP port to listen on. (memcached option -p)", 
+        "type": "int"
+      }, 
+      "threads": {
+        "default": -1, 
+        "description": "number of threads to use. default is 4. (memcached option -t)", 
+        "type": "int"
+      }, 
+      "udp-port": {
+        "default": 0, 
+        "description": "UDP port to listen on (memcached option -U)", 
+        "type": "int"
+      }
+    }, 
+    "owner": "charmers", 
+    "rating_denominator": 0, 
+    "rating_numerator": 0, 
+    "relations": {
+      "provides": {
+        "cache": {
+          "interface": "memcache"
+        }, 
+        "munin": {
+          "interface": "munin-node"
+        }, 
+        "nrpe-external-master": {
+          "interface": "nrpe-external-master", 
+          "scope": "container"
+        }
+      }, 
+      "requires": {}
+    }, 
+    "revision": 28, 
+    "summary": "A high-performance memory object caching system", 
+    "tested_providers": {
+      "ec2": "SUCCESS", 
+      "local": "SUCCESS", 
+      "openstack": "SUCCESS"
+    }, 
+    "url": "cs:precise/memcached-6"
+  }, 
+  "metadata": {}
+}

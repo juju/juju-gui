@@ -24,8 +24,6 @@ describe('Namespaced Routing', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
-      // A global variable required for testing.
-      window.flags = {};
       done();
     });
   });
@@ -39,33 +37,29 @@ describe('Namespaced Routing', function() {
     app.destroy();
   });
 
-  after(function() {
-    delete window.flags;
-  });
-
   it('should support basic namespaced urls', function() {
-    var router = juju.Router('charmstore');
+    var router = juju.Router('charmbrowser');
 
     var match = router.parse('/');
-    assert(match.charmstore === '/');
+    assert(match.charmbrowser === '/');
     assert(match.inspector === undefined);
 
     match = router.parse('cs:mysql');
-    assert(match.charmstore === 'cs:mysql/');
+    assert(match.charmbrowser === 'cs:mysql/');
     assert(match.inspector === undefined);
 
     match = router.parse(
-        '/:inspector:/services/mysql/:charmstore:/charms/precise/mediawiki');
-    assert(match.charmstore === '/charms/precise/mediawiki/');
+        '/:inspector:/services/mysql/:charmbrowser:/charms/precise/mediawiki');
+    assert(match.charmbrowser === '/charms/precise/mediawiki/');
     assert(match.inspector === '/services/mysql/');
 
     match.pairs().should.eql(
-        [['charmstore', '/charms/precise/mediawiki/'],
+        [['charmbrowser', '/charms/precise/mediawiki/'],
           ['inspector', '/services/mysql/']]);
 
     match = router.parse(
         '/charms/precise/mediawiki/:inspector:/services/mysql/');
-    assert(match.charmstore === '/charms/precise/mediawiki/');
+    assert(match.charmbrowser === '/charms/precise/mediawiki/');
     assert(match.inspector === '/services/mysql/');
 
     var u = router.url(match);
@@ -84,12 +78,12 @@ describe('Namespaced Routing', function() {
     assert.strictEqual(u, '/:bar:/:foo:/shazam/');
 
     // Sorted keys.
-    u = router.url({charmstore: '/', gamma: 'g', a: 'alpha', b: 'beta'});
+    u = router.url({charmbrowser: '/', gamma: 'g', a: 'alpha', b: 'beta'});
     assert(u === '/:a:alpha/:b:beta/:gamma:g/');
 
-    // Sorted keys with actual charmstore [defaultNamespace] component.
+    // Sorted keys with actual charmbrowser [defaultNamespace] component.
     u = router.url({
-      charmstore: '/charms/precise/mysql',
+      charmbrowser: '/charms/precise/mysql',
       gamma: 'g', a: 'alpha', b: 'beta'});
     assert(u === '/charms/precise/mysql/:a:alpha/:b:beta/:gamma:g/');
 
@@ -108,9 +102,9 @@ describe('Namespaced Routing', function() {
   });
 
   it('should support a default namespace', function() {
-    var router = juju.Router('charmstore');
+    var router = juju.Router('charmbrowser');
     var url, parts;
-    router.defaultNamespace.should.equal('charmstore');
+    router.defaultNamespace.should.equal('charmbrowser');
 
     // Use a different namespace.
     router = juju.Router('foo');
@@ -126,7 +120,7 @@ describe('Namespaced Routing', function() {
 
   it('should be able to cleanly combine urls preserving untouched namespaces',
      function() {
-       var router = juju.Router('charmstore');
+       var router = juju.Router('charmbrowser');
        var url, parts;
        url = router.combine('/foo/bar', '/:inspector:/');
        url.should.equal('/foo/bar/');
@@ -176,9 +170,9 @@ describe('Namespaced Routing', function() {
   });
 
   it('should allow combining routes using router level flagging', function() {
-    var router = juju.Router('charmstore', {gui: true});
+    var router = juju.Router('charmbrowser', {gui: true});
     var match = router.parse('/');
-    assert(match.charmstore === '/');
+    assert(match.charmbrowser === '/');
     assert(match.inspector === undefined);
 
     match = router.parse('/:gui:/services/mysql/:gui:/services/mediawiki/');
@@ -199,9 +193,9 @@ describe('Namespaced Routing', function() {
   });
 
   it('should allow combining routes in a given namespace', function() {
-    var router = juju.Router('charmstore');
+    var router = juju.Router('charmbrowser');
     var match = router.parse('/');
-    assert(match.charmstore === '/');
+    assert(match.charmbrowser === '/');
     assert(match.inspector === undefined);
 
     // Multiple routes (no combine)
@@ -231,14 +225,14 @@ describe('Namespaced Routing', function() {
   });
 
   it('should properly parse the QS of a given url', function() {
-    var router = juju.Router('charmstore');
+    var router = juju.Router('charmbrowser');
     var qs = router.getQS(
         '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
     assert.equal(qs, 'text=jenkins');
   });
 
   it('should split a url into components properly', function() {
-    var router = juju.Router('charmstore');
+    var router = juju.Router('charmbrowser');
     var components = router.split(
         '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
     assert.equal(

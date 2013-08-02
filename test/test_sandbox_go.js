@@ -32,14 +32,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
-        // A global variable required for testing.
-        window.flags = {};
         done();
       });
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackendWithCharmStore();
+      state = utils.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.GoEnvironment({conn: client});
@@ -50,10 +48,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.destroy();
       juju.destroy();
       state.destroy();
-    });
-
-    after(function() {
-      delete window.flags;
     });
 
     it('opens successfully.', function() {
@@ -160,12 +154,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy.', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var data = {
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
-          CharmUrl: 'cs:wordpress',
+          CharmUrl: 'cs:precise/wordpress-15',
           ServiceName: 'kumquat',
           ConfigYAML: 'funny: business',
           NumUnits: 2
@@ -177,10 +171,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(receivedData.RequestId, data.RequestId);
         assert.isUndefined(receivedData.Error);
         assert.isObject(
-            state.db.charms.getById('cs:precise/wordpress-10'));
+            state.db.charms.getById('cs:precise/wordpress-15'));
         var service = state.db.services.getById('kumquat');
         assert.isObject(service);
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
         assert.deepEqual(service.get('config'), {funny: 'business'});
         var units = state.db.units.get_units_for_service(service);
         assert.lengthOf(units, 2);
@@ -192,38 +186,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can deploy (environment integration).', function() {
       env.connect();
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
-        assert.equal(result.charm_url, 'cs:wordpress');
+        assert.equal(result.charm_url, 'cs:precise/wordpress-15');
         var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
         assert.deepEqual(service.get('config'), {llama: 'pajama'});
       };
       env.deploy(
-          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          callback);
     });
 
     it('can communicate errors after attempting to deploy', function(done) {
       env.connect();
-      state.deploy('cs:wordpress', function() {});
+      state.deploy('cs:precise/wordpress-15', function() {});
       var callback = function(result) {
         assert.equal(
             result.err, 'A service with this name already exists.');
         done();
       };
-      env.deploy('cs:wordpress', undefined, undefined, undefined, 1,
+      env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined, 1,
           callback);
     });
 
     it('can set a charm.', function(done) {
-      state.deploy('cs:wordpress', function() {});
+      state.deploy('cs:precise/wordpress-15', function() {});
       var data = {
         Type: 'Client',
         Request: 'ServiceSetCharm',
         Params: {
           ServiceName: 'wordpress',
-          CharmUrl: 'cs:precise/mediawiki-6',
+          CharmUrl: 'cs:precise/mediawiki-8',
           Force: false
         },
         RequestId: 42
@@ -232,7 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         assert.isUndefined(receivedData.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
         done();
       };
       client.open();
@@ -241,14 +240,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set a charm (environment integration).', function(done) {
       env.connect();
-      state.deploy('cs:wordpress', function() {});
+      state.deploy('cs:precise/wordpress-15', function() {});
       var callback = function(result) {
         assert.isUndefined(result.err);
         var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/mediawiki-6');
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
         done();
       };
-      env.setCharm('wordpress', 'cs:precise/mediawiki-6', false, callback);
+      env.setCharm('wordpress', 'cs:precise/mediawiki-8', false, callback);
     });
 
     /**
@@ -264,7 +263,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateServices(callback) {
-      state.deploy('cs:wordpress', function(service) {
+      state.deploy('cs:precise/wordpress-15', function(service) {
         var data = {
           Type: 'Client',
           Request: 'AddServiceUnits',
@@ -301,7 +300,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          localCb);
     }
 
     /**
@@ -316,7 +320,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         been generated.
     */
     function generateAndExposeService(callback) {
-      state.deploy('cs:wordpress', function(data) {
+      state.deploy('cs:precise/wordpress-15', function(data) {
         var command = {
           Type: 'Client',
           Request: 'ServiceExpose',
@@ -348,7 +352,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.connect();
       env.deploy(
-          'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          localCb);
     }
 
     it('can add additional units', function(done) {
@@ -375,7 +384,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('throws an error when adding units to an invalid service',
         function(done) {
-          state.deploy('cs:wordpress', function(service) {
+          state.deploy('cs:precise/wordpress-15', function(service) {
             var data = {
               Type: 'Client',
               Request: 'AddServiceUnits',
@@ -459,7 +468,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('fails with error when exposing an invalid service name',
         function(done) {
-          state.deploy('cs:wordpress', function(data) {
+          state.deploy('cs:precise/wordpress-15', function(data) {
             var command = {
               Type: 'Client',
               Request: 'ServiceExpose',
@@ -519,7 +528,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails silently when unexposing a not exposed service',
         function(done) {
           var service_name = 'wordpress';
-          state.deploy('cs:wordpress', function(data) {
+          state.deploy('cs:precise/wordpress-15', function(data) {
             var command = {
               Type: 'Client',
               Request: 'ServiceUnexpose',
@@ -561,9 +570,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     );
 
     it('can add a relation', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
-      state.deploy('cs:wordpress', function() {
-        state.deploy('cs:mysql', function() {
+      // We begin logged in.  See utils.makeFakeBackend.
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.deploy('cs:precise/mysql-26', function() {
           var data = {
             RequestId: 42,
             Type: 'Client',
@@ -591,8 +600,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation (integration)', function(done) {
       env.connect();
-      env.deploy('cs:wordpress', null, null, null, 1, function() {
-        env.deploy('cs:mysql', null, null, null, 1, function() {
+      env.deploy('cs:precise/wordpress-15', null, null, null, 1, function() {
+        env.deploy('cs:precise/mysql-26', null, null, null, 1, function() {
           var endpointA = ['wordpress', {name: 'db', role: 'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
           env.add_relation(endpointA, endpointB, function(recData) {
@@ -607,8 +616,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
-      state.deploy('cs:wordpress', function() {
-        state.deploy('cs:puppet', function(service) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.deploy('cs:precise/puppet-5', function(service) {
           var data = {
             RequestId: 42,
             Type: 'Client',
@@ -635,8 +644,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('throws an error if only one endpoint is supplied', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
-      state.deploy('cs:wordpress', function() {
+      // We begin logged in.  See utils.makeFakeBackend.
+      state.deploy('cs:precise/wordpress-15', function() {
         var data = {
           RequestId: 42,
           Type: 'Client',
@@ -658,8 +667,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('throws an error if endpoints are not relatable', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
-      state.deploy('cs:wordpress', function() {
+      // We begin logged in.  See utils.makeFakeBackend.
+      state.deploy('cs:precise/wordpress-15', function() {
         var data = {
           RequestId: 42,
           Type: 'Client',
@@ -680,10 +689,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can remove a relation', function(done) {
-      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      // We begin logged in.  See utils.makeFakeBackend.
       var relation = ['wordpress:db', 'mysql:db'];
-      state.deploy('cs:wordpress', function() {
-        state.deploy('cs:mysql', function() {
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.deploy('cs:precise/mysql-26', function() {
           state.addRelation(relation[0], relation[1]);
           var data = {
             RequestId: 42,
@@ -707,8 +716,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation(integration)', function(done) {
       env.connect();
-      env.deploy('cs:wordpress', null, null, null, 1, function() {
-        env.deploy('cs:mysql', null, null, null, 1, function() {
+      env.deploy('cs:precise/wordpress-15', null, null, null, 1, function() {
+        env.deploy('cs:precise/mysql-26', null, null, null, 1, function() {
           var endpointA = ['wordpress', {name: 'db', role: 'client'}],
               endpointB = ['mysql', {name: 'db', role: 'server'}];
           env.add_relation(endpointA, endpointB, function() {

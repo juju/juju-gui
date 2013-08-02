@@ -1,0 +1,308 @@
+{
+  "charm": {
+    "categories": [
+      "databases"
+    ], 
+    "code_source": {
+      "bugs_link": "https://bugs.launchpad.net/charms/+source/mysql", 
+      "last_log": "Merge juju-core compat. fix from James Page.", 
+      "location": "lp:~charmers/charms/precise/mysql/trunk", 
+      "revision": "103", 
+      "revisions": [
+        {
+          "authors": [
+            {
+              "email": "adamg@canonical.com", 
+              "name": "Adam Gandelman"
+            }
+          ], 
+          "date": "2013-07-23T22:59:11Z", 
+          "message": "Merge juju-core compat. fix from James Page.", 
+          "revno": 103
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-07-08T13:40:01Z", 
+          "message": "Fix category.\n", 
+          "revno": 102
+        }, 
+        {
+          "authors": [
+            {
+              "email": "mark.mims@canonical.com", 
+              "name": "Mark Mims"
+            }
+          ], 
+          "date": "2013-06-07T16:38:50Z", 
+          "message": "merging lp:~dannf/charms/precise/mysql/lp1188424 as per https://code.launchpad.net/~dannf/charms/precise/mysql/lp1188424/+merge/167881", 
+          "revno": 101
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-06-06T12:32:17Z", 
+          "message": "James Page 2013-06-06 Stop using socket.getfqdn in shared-db hooks as this assumes DNS resolution between instances is functional\n", 
+          "revno": 100
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-06-05T16:02:08Z", 
+          "message": "Fixes master/slave relation", 
+          "revno": 99
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-05-30T16:03:12Z", 
+          "message": "Maintainership change lp:1178384", 
+          "revno": 98
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-05-30T16:00:48Z", 
+          "message": "ha-support: https://code.launchpad.net/~openstack-charmers/charms/precise/mysql/ha-support/+merge/165059\n", 
+          "revno": 97
+        }, 
+        {
+          "authors": [
+            {
+              "email": "marco@ceppi.net", 
+              "name": "Marco Ceppi"
+            }
+          ], 
+          "date": "2013-04-25T18:19:45Z", 
+          "message": "Added icon.svg", 
+          "revno": 96
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-04-22T15:04:35Z", 
+          "message": "Use the correct syntax\n", 
+          "revno": 95
+        }, 
+        {
+          "authors": [
+            {
+              "email": "jorge@ubuntu.com", 
+              "name": "Jorge O. Castro"
+            }
+          ], 
+          "date": "2013-04-22T15:01:57Z", 
+          "message": "Add category\n", 
+          "revno": 94
+        }
+      ], 
+      "type": "bzr"
+    }, 
+    "date_created": "2012-04-16T18:30:00Z", 
+    "description": "MySQL is a fast, stable and true multi-user, multi-threaded SQL database\nserver. SQL (Structured Query Language) is the most popular database query\nlanguage in the world. The main goals of MySQL are speed, robustness and\nease of use.\n", 
+    "distro_series": "precise", 
+    "downloads": 7982, 
+    "downloads_in_past_30_days": 600, 
+    "files": [
+      "hooks/munin-relation-joined", 
+      "hooks/monitors.common.bash", 
+      "hooks/db-relation-joined", 
+      "hooks/shared-db-relation-changed", 
+      "hooks/master-relation-departed", 
+      "hooks/monitors-relation-departed", 
+      "hooks/lib/cluster_utils.py", 
+      "hooks/master-relation-broken", 
+      "hooks/shared_db_relations.py", 
+      "hooks/slave-relation-changed", 
+      "hooks/lib/utils.py", 
+      "hooks/ha-relation-changed", 
+      "hooks/munin-relation-changed", 
+      "hooks/common.py", 
+      "hooks/start", 
+      "hooks/config-changed", 
+      "hooks/db-relation-broken", 
+      "hooks/shared-db-relation-joined", 
+      "hooks/ha_relations.py", 
+      "hooks/cluster-relation-changed", 
+      "hooks/slave-relation-departed", 
+      "hooks/lib/ceph_utils.py", 
+      "hooks/ceph-relation-changed", 
+      "metadata.yaml", 
+      "hooks/ha-relation-joined", 
+      "hooks/stop", 
+      "hooks/local-monitors-relation-joined", 
+      "hooks/db-admin-relation-joined", 
+      "config.yaml", 
+      "hooks/monitors-relation-joined", 
+      "icon.svg", 
+      "hooks/upgrade-charm", 
+      "README.md", 
+      "hooks/ceph-relation-joined", 
+      "hooks/master-relation-changed", 
+      "hooks/lib/__init__.py", 
+      "hooks/slave-relation-joined", 
+      "hooks/install", 
+      "hooks/slave-relation-broken", 
+      "revision", 
+      "hooks/monitors-relation-broken"
+    ], 
+    "id": "precise/mysql-26", 
+    "is_approved": true, 
+    "is_subordinate": false, 
+    "maintainer": {
+      "email": "marco@ceppi.net", 
+      "name": "Marco Ceppi"
+    }, 
+    "name": "mysql", 
+    "options": {
+      "binlog-format": {
+        "default": "MIXED", 
+        "description": "If binlogging is enabled, this is the format that will be used. Ignored when tuning-level == fast.", 
+        "type": "string"
+      }, 
+      "block-size": {
+        "default": 5, 
+        "description": "Default block storage size to create when setting up MySQL block storage.\nThis value should be specified in GB (e.g. 100 not 100GB).\n", 
+        "type": "int"
+      }, 
+      "dataset-size": {
+        "default": "80%", 
+        "description": "How much data do you want to keep in memory in the DB. This will be used to tune settings in the database server appropriately. Any more specific settings will override these defaults though. This currently sets innodb_buffer_pool_size or key_cache_size depending on the setting in preferred-storage-engine. If query-cache-type is set to 'ON' or 'DEMAND' 20% of this is given to query-cache-size. Suffix this value with 'K','M','G', or 'T' to get the relevant kilo/mega/etc. bytes. If suffixed with %, one will get that percentage of RAM devoted to dataset and (if enabled) query cache.", 
+        "type": "string"
+      }, 
+      "flavor": {
+        "default": "distro", 
+        "description": "Possible values are 'distro' or 'percona'", 
+        "type": "string"
+      }, 
+      "ha-bindiface": {
+        "default": "eth0", 
+        "description": "Default network interface on which HA cluster will bind to communication\nwith the other members of the HA Cluster.\n", 
+        "type": "string"
+      }, 
+      "ha-mcastport": {
+        "default": 5411, 
+        "description": "Default multicast port number that will be used to communicate between\nHA Cluster nodes.\n", 
+        "type": "int"
+      }, 
+      "max-connections": {
+        "default": -1, 
+        "description": "Maximum connections to allow. -1 means use the server's compiled in default.", 
+        "type": "int"
+      }, 
+      "preferred-storage-engine": {
+        "default": "InnoDB", 
+        "description": "Tune the server for usage of this storage engine. Other possible value is MyISAM. Comma separated will cause settings to split resources evenly among given engines.", 
+        "type": "string"
+      }, 
+      "query-cache-size": {
+        "default": -1, 
+        "description": "Override the computed version from dataset-size. Still works if query-cache-type is \"OFF\" since sessions can override the cache type setting on their own.", 
+        "type": "int"
+      }, 
+      "query-cache-type": {
+        "default": "OFF", 
+        "description": "Query cache is usually a good idea, but can hurt concurrency. Valid values are \"OFF\", \"ON\", or \"DEMAND\". http://dev.mysql.com/doc/refman/5.1/en/server-system-variables.html#sysvar_query_cache_type", 
+        "type": "string"
+      }, 
+      "rbd-name": {
+        "default": "mysql1", 
+        "description": "The name that will be used to create the Ceph's RBD image with. If the\nimage name exists in Ceph, it will be re-used and the data will be\noverwritten.\n", 
+        "type": "string"
+      }, 
+      "tuning-level": {
+        "default": "safest", 
+        "description": "Valid values are 'safest', 'fast', and 'unsafe'. If set to safest, all settings are tuned to have maximum safety at the cost of performance. Fast will turn off most controls, but may lose data on crashes. unsafe will turn off all protections.", 
+        "type": "string"
+      }, 
+      "vip": {
+        "description": "Virtual IP to use to front mysql in ha configuration", 
+        "type": "string"
+      }, 
+      "vip_cidr": {
+        "default": 24, 
+        "description": "Netmask that will be used for the Virtual IP", 
+        "type": "int"
+      }, 
+      "vip_iface": {
+        "default": "eth0", 
+        "description": "Network Interface where to place the Virtual IP", 
+        "type": "string"
+      }
+    }, 
+    "owner": "charmers", 
+    "rating_denominator": 0, 
+    "rating_numerator": 0, 
+    "relations": {
+      "provides": {
+        "db": {
+          "interface": "mysql"
+        }, 
+        "db-admin": {
+          "interface": "mysql-root"
+        }, 
+        "local-monitors": {
+          "interface": "local-monitors", 
+          "scope": "container"
+        }, 
+        "master": {
+          "interface": "mysql-oneway-replication"
+        }, 
+        "monitors": {
+          "interface": "monitors"
+        }, 
+        "munin": {
+          "interface": "munin-node"
+        }, 
+        "shared-db": {
+          "interface": "mysql-shared"
+        }
+      }, 
+      "requires": {
+        "ceph": {
+          "interface": "ceph-client"
+        }, 
+        "ha": {
+          "interface": "hacluster", 
+          "scope": "container"
+        }, 
+        "slave": {
+          "interface": "mysql-oneway-replication"
+        }
+      }
+    }, 
+    "revision": 308, 
+    "summary": "MySQL is a fast, stable and true multi-user, multi-threaded SQL database", 
+    "tested_providers": {
+      "ec2": "SUCCESS", 
+      "local": "SUCCESS", 
+      "openstack": "SUCCESS"
+    }, 
+    "url": "cs:precise/mysql-26"
+  }, 
+  "metadata": {}
+}

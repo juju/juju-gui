@@ -469,7 +469,20 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var box = topo.get('active_service');
       context.hideServiceMenu();
+      if (window.flags && window.flags.serviceInspector) {
+        context.destroyServiceInspector();
+      }
       context.destroyServiceConfirm(box);
+    },
+
+    /**
+      Destroys the service inspector when it's service topo destroy
+      button is clicked.
+
+      @method destroyServiceInspector
+    */
+    destroyServiceInspector: function() {
+      this.get('component').fire('destroyServiceInspector');
     },
 
     /**
@@ -600,6 +613,10 @@ YUI.add('juju-topology-service', function(Y) {
           box.model.set('y', box.y);
           return;
         }
+
+        // If the service has been dragged, ignore the subsequent service
+        // click event.
+        topo.ignoreServiceClick = true;
 
         topo.get('env').update_annotations(
             box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},

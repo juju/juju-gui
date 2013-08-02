@@ -471,11 +471,11 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "destroy this
       service" icon.
 
-      @method onDestroyIcon
+      @method _onDestroyClick
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onDestroyIcon: function(evt) {
+    _onDestroyClick: function(evt) {
       evt.halt();
       this.showDestroyPrompt(evt.container);
     },
@@ -484,11 +484,11 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the cancel button
       on the "destroy this service" prompt.
 
-      @method onCancelDestroy
+      @method _onCancelDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onCancelDestroy: function(evt) {
+    _onCancelDestroy: function(evt) {
       evt.halt();
       this.hideDestroyPrompt(evt.container);
     },
@@ -497,14 +497,15 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "do it now"
       button on the "destroy this service" prompt.
 
-      @method onInitiateDestroy
+      @method _onInitiateDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    onInitiateDestroy: function(evt) {
+    _onInitiateDestroy: function(evt) {
       evt.halt();
       this.closeInspector();
       this.initiateServiceDestroy();
+      this.options.environment.topo.fire('clearState');
     },
 
     /**
@@ -1234,9 +1235,19 @@ YUI.add('juju-view-inspector', function(Y) {
       ghostConfig: {
         name: 'ghostConfig',
         template: Templates['ghost-config-viewlet'],
+        bindings: {
+          'options': {
+            'update': function(node, val) {
+              var newVal = (val['default'] === undefined) ? '' : val['default'];
+              node.set('value', newVal);
+            }
+          }
+        },
         'render': function(model) {
           this.container = Y.Node.create(this.templateWrapper);
 
+          // This is to allow for data binding on the ghost settings
+          // while using a shared template across both inspectors
           var options = model.getAttrs();
 
           // XXX - Jeff
@@ -1244,7 +1255,10 @@ YUI.add('juju-view-inspector', function(Y) {
           // but this will allow us to use the old template.
           options.settings = utils.extractServiceSettings(options.options);
 
+          // Signalling to the shared templates that this is the ghost view.
+          options.ghost = true;
           this.container.setHTML(this.template(options));
+
           this.container.all('textarea.config-field')
                         .plug(plugins.ResizingTextarea,
                               { max_height: 200,

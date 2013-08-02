@@ -60,7 +60,7 @@ YUI.add('juju-gui', function(Y) {
       config: {}
     }],
 
-    defaultNamespace: 'charmstore',
+    defaultNamespace: 'charmbrowser',
     /*
       End extension properties
     */
@@ -404,14 +404,6 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
-      // Create a charm store.
-      if (this.get('charm_store')) {
-        // This path is for tests.
-        this.charm_store = this.get('charm_store');
-      } else {
-        this.charm_store = new juju.CharmStore({
-          datasource: this.get('charm_store_url')});
-      }
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -447,7 +439,7 @@ YUI.add('juju-gui', function(Y) {
         if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
-          var state = new State({charmStore: this.charm_store});
+          var state = new State({store: this.get('store')});
           if (envOptions.user && envOptions.password) {
             var credentials = {};
             credentials[envOptions.user] = envOptions.password;
@@ -644,7 +636,7 @@ YUI.add('juju-gui', function(Y) {
         this._simulator.stop();
       }
       Y.each(
-          [this.env, this.db, this.charm_store, this.notifications,
+          [this.env, this.db, this.notifications,
            this.landscape, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
@@ -865,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
      * @method show_charm
      */
     show_charm: function(req) {
-      var charm_url = req.params.charm_store_path;
+      var charm_url = req.params.charm_path;
       this.showView('charm', {
         charm_data_url: charm_url,
         store: this.get('store'),
@@ -1119,19 +1111,19 @@ YUI.add('juju-gui', function(Y) {
           match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
 
-      if (subapps && subapps.charmstore) {
-        var charmstore = subapps.charmstore;
+      if (subapps && subapps.charmbrowser) {
+        var charmbrowser = subapps.charmbrowser;
         if (url.match(match)) {
-          charmstore.hidden = true;
+          charmbrowser.hidden = true;
           // XXX At some point in the near future we will add the ability to
           // route on root namespaced paths and this check will no longer
           // be needed
           this.renderEnvironment = false;
         } else {
-          charmstore.hidden = false;
+          charmbrowser.hidden = false;
           this.renderEnvironment = true;
         }
-        charmstore.updateVisible();
+        charmbrowser.updateVisible();
       }
 
       next();
@@ -1146,8 +1138,8 @@ YUI.add('juju-gui', function(Y) {
       this._navigate('/', { overrideAllNamespaces: true });
       // Reset the view state of the subapps.
       var subapps = this.get('subApps');
-      if (subapps.charmstore) {
-        subapps.charmstore.initState();
+      if (subapps.charmbrowser) {
+        subapps.charmbrowser.initState();
       }
     },
 
@@ -1276,8 +1268,6 @@ YUI.add('juju-gui', function(Y) {
   }, {
     ATTRS: {
       html5: true,
-      charm_store: {},
-      charm_store_url: {},
       charmworldURL: {},
       /**
          @attribute store
@@ -1344,7 +1334,10 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Charms.
-          { path: '/charms/*charm_store_path/',
+          //XXX jcsackett July 31 2013 This path is only needed until we turn
+          //on the service inspector. When we remove the charm view, we can (and
+          //should) remove this as well.
+          { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
             model: 'charm',
             namespace: 'gui'},

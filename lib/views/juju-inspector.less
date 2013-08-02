@@ -4,6 +4,9 @@
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
+@confirm-button-color: #DD4814;
+@disabled-input-background-color: #727272;
+@disabled-input-text-color: #252525;
 
 .yui3-juju-inspector {
     .customize-scrollbar;
@@ -99,6 +102,39 @@
             background-color: @inspector-region-background-color;
             padding-left: 1em;
         }
+
+        input[type=checkbox].hidden-checkbox {
+            display: none;
+        }
+
+        .controls {
+
+            button {
+                .create-border-radius(@border-radius);
+                width: 130px;
+                height: 25px;
+                margin: 10px 0;
+                border: none;
+                color: white;
+                font-weight: bold;
+
+                &.cancel {
+                    background-color: #A3A3A3;
+                    margin-left: 10px;
+                }
+
+                &.confirm {
+                    background-color: @confirm-button-color;
+                    float: right;
+                    margin-right: 10px;
+                    &:disabled {
+                        background-color: #802E0E;
+                        color: #eee;
+                    }
+                }
+            }
+        }
+
         .settings-wrapper {
             position: relative;
             width: 268px;
@@ -203,14 +239,74 @@
 
                     span {
                         display: inline-block;
+                        vertical-align: top;
+                        line-height: 30px;
                     }
 
                     .toggle-switch {
-                        height: 20px;
-                        width: 40px;
+                        display: inline-block;
+                        vertical-align: top;
+                        float: right;
+                    }
+
+                    label[for=use-default-toggle] {
+                        height: 26px;
+                        width: 50px;
                         background-color: @inspector-background-color;
                         .create-border-radius(@border-radius);
-                        display: inline-block;
+                        display: block;
+                        position: relative;
+                        margin: 0;
+
+                        .handle {
+                            height: 18px;
+                            width: 18px;
+                            background-color: @confirm-button-color;
+                            .create-border-radius(@border-radius);
+                            position: absolute;
+                            margin: 4px;
+                            cursor: pointer;
+                            text-align: center;
+                            left: 0;
+                            -moz-transition: left .1s ease-in-out;
+                            -webkit-transition: left .1s ease-in-out;
+                            transition: left .1s ease-in-out;
+                            -moz-user-select: none;
+                            -webkit-user-select: none;
+                            -ms-user-select: none;
+                            user-select: none;
+                        }
+                        .handle:before {
+                            content: '\2717';
+                        }
+                    }
+
+                    input#use-default-toggle:checked ~ label .handle {
+                        left: 25px;
+                    }
+                    input#use-default-toggle:checked ~ label .handle:before {
+                        content: '\2713';
+                    }
+
+                }
+
+                &.use-defaults {
+                    textarea {
+                        background-color: @disabled-input-background-color;
+                        border-color: @inspector-background-color;
+                        cursor: not-allowed;
+                        color: @disabled-input-text-color;
+                    }
+                    input[type=text] {
+                        background-color: @disabled-input-background-color;
+                        border-color: @inspector-background-color;
+                        cursor: not-allowed;
+                        color: @disabled-input-text-color;
+                    }
+                    .fakebutton {
+                        color: @disabled-input-background-color;
+                        border-color: @disabled-input-background-color;
+                        cursor: default;
                     }
                 }
             }
@@ -246,14 +342,6 @@
         }
         .control-label {
             margin-bottom: 10px;
-        }
-        .charm-panel-configure-buttons {
-            background: transparent;
-            border-bottom: 1px solid @inspector-divider-bottom;
-            float: none;
-            height: auto;
-            width: auto;
-            padding: 0 20px 10px;
         }
 
         .control-group {
@@ -344,41 +432,50 @@
         }
 
         .viewlet-manager-navigation {
+            margin: 0;
+            padding-left: 65px;
             background-color: @inspector-region-background-color;
+
+            li {
+                display: inline-block;
+                margin-right: 40px;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+                a {
+                    .border-box;
+                    display: block;
+                    height: 50px;
+                    padding-top: 13px;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                    &.active {
+                        border-bottom: 2px solid @charm-panel-orange;
+
+                        .normal {
+                            display: none;
+                        }
+                        .selected {
+                            display: inline-block;
+                        }
+                    }
+                    .selected {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .viewlet-manager-footer {
+            position: relative;
         }
 
         .view-container {
             border-top: 1px solid @inspector-divider-top;
             overflow: auto;
-
-            &.settings-config {
-
-                .controls {
-                    text-align: center;
-
-                    button {
-                        .create-border-radius(@border-radius);
-                        width: 115px;
-                        height: 25px;
-                        margin: 10px 0;
-                        border: none;
-                        color: white;
-                        font-weight: bold;
-
-                        &.cancel {
-                            background-color: #A3A3A3;
-                        }
-
-                        &.confirm {
-                            background-color: #DD4814;
-                            &:disabled {
-                                background-color: #802E0E;
-                                color: #eee;
-                            }
-                        }
-                    }
-                }
-            }
 
             h2 {
                 font-size: 18px;
@@ -412,6 +509,7 @@
 
             .settings-wrapper {
                 position: relative;
+                padding: 0 10px;
 
                 label {
                     font-size: 14px;
@@ -458,33 +556,26 @@
                 background-color: #ba0000;
             }
         }
+        .destroy-service-trigger{
+            padding-left: 10px;
+            height: 30px;
 
-        .destroy-service-icon {
-            cursor: pointer;
-            float: right;
-            width: 20px;
-            height: 24px;
-            padding: 0;
-            /* Make sure the destroy icon is below the close-the-inspector. */
-            clear: both;
-            margin-bottom: 1ex;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image:
-                url("/juju-ui/assets/images/inspector-destroy-service.png");
+            span {
+                font-size: 11px;
+                font-weight: bold;
+                cursor: pointer;
+            }
         }
 
         .destroy-service-prompt {
             overflow: hidden;
             height: 95px;
             background-color: @inspector-region-background-color;
-            margin-bottom: 10px;
             -moz-transition: .3s, height .3s;
             -webkit-transition: .25s, height .3s;
             transition: .3s, height .3s;
-
-            /* Make sure the prompt box is below the icon. */
-            clear: both;
+            position: absolute;
+            bottom: 0;
 
             .message {
                 margin: 5px 15px;

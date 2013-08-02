@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 'use strict';
 
 describe('charm normalization', function() {
@@ -34,7 +35,7 @@ describe('charm normalization', function() {
     charm.get('scheme').should.equal('cs');
     var _ = expect(charm.get('owner')).to.not.exist;
     charm.get('full_name').should.equal('precise/openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         'charms/precise/openstack-dashboard-0/json');
   });
 
@@ -88,7 +89,7 @@ describe('juju models', function() {
     charm.get('revision').should.equal(0);
     charm.get('full_name').should.equal(
         '~alt-bac/precise/openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         '~alt-bac/precise/openstack-dashboard-0/json');
   });
 
@@ -96,7 +97,7 @@ describe('juju models', function() {
     var charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
     charm.get('full_name').should.equal('precise/openstack-dashboard');
     charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         'charms/precise/openstack-dashboard-0/json');
     charm.get('scheme').should.equal('cs');
     var _ = expect(charm.get('owner')).to.not.exist;
@@ -112,7 +113,7 @@ describe('juju models', function() {
         {id: 'cs:~marco-ceppi/precise/wordpress-17'});
     charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
     charm.get('package_name').should.equal('wordpress');
-    charm.get('charm_store_path').should.equal(
+    charm.get('charm_path').should.equal(
         '~marco-ceppi/precise/wordpress-17/json');
     charm.get('revision').should.equal(17);
   });
@@ -491,7 +492,7 @@ describe('juju models', function() {
 });
 
 describe('juju charm load', function() {
-  var Y, models, conn, env, app, container, charm_store, data, juju;
+  var Y, models, conn, env, app, container, fakeStore, data, juju;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
@@ -510,8 +511,18 @@ describe('juju charm load', function() {
     conn.open();
     container = Y.Node.create('<div id="test" class="container"></div>');
     data = [];
-    charm_store = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: data})});
+    fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: data
+            }]
+          }
+        });
+      }
+    });
   });
 
   afterEach(function() {
@@ -552,13 +563,6 @@ describe('juju charm load', function() {
        }
        try {
          charm.sync('read', {env: 42});
-         assert.fail('Should have thrown an error');
-       } catch (e) {
-         e.should.equal(
-         'You must supply a get_charm function.');
-       }
-       try {
-         charm.sync('read', {charm_store: 42});
          assert.fail('Should have thrown an error');
        } catch (e) {
          e.should.equal(
@@ -645,7 +649,6 @@ describe('juju charm load', function() {
     // The test in the callback above should run.
   });
 });
-
 
 describe('BrowserCharm test', function() {
   var data, instance, models, relatedData, sampleData, utils, Y;

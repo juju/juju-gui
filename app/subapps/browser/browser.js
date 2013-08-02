@@ -26,7 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      views = Y.namespace('juju.browser.views');
 
   /**
      Browser Sub App for the Juju Gui.
@@ -39,6 +40,21 @@ YUI.add('subapp-browser', function(Y) {
     // Mark the entire subapp has hidden.
     hidden: false,
     viewmodes: ['minimized', 'fullscreen', 'sidebar'],
+
+    /**
+     * Make sure we destroy views no long used.
+     *
+     * @method _cleanOldViews
+     * @param {String} newViewMode the new viewmode we're using.
+     *
+     */
+    _cleanOldViews: function(newViewMode) {
+      if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
+        var viewAttr = '_' + this._oldState.viewmode;
+        this[viewAttr].destroy();
+        delete this[viewAttr];
+      }
+    },
 
     /**
       Show or hide the details panel.
@@ -365,6 +381,10 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       this._filter.update(query);
+
+      // Make sure we remove any old views in the process of building this
+      // one.
+      this._cleanOldViews(req.params.viewmode);
     },
 
     /**
@@ -402,6 +422,21 @@ YUI.add('subapp-browser', function(Y) {
         this._cache.interesting.featuredCharms.destroy();
       }
       delete this._viewState;
+
+      // If we've got any views hanging around wipe them.
+      if (this._sidebar) {
+        this._sidebar.destroy();
+      }
+      if (this._minimized) {
+        this._minimized.destroy();
+      }
+      if (this._fullscreen) {
+        this._fullscreen.destroy();
+      }
+      if (this._details) {
+        this._details.destroy();
+      }
+      this._filter.destroy();
     },
 
     /**
@@ -490,7 +525,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.charm = model;
       }
 
-      this._details = new Y.juju.browser.views.BrowserCharmView(
+      this._details = new views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
@@ -533,7 +568,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      this._editorial = new Y.juju.browser.views.EditorialView(
+      this._editorial = new views.EditorialView(
           this._getViewCfg(extraCfg));
 
       this._editorial.on(this._editorial.EV_CACHE_UPDATED, function(ev) {
@@ -580,7 +615,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      this._search = new Y.juju.browser.views.BrowserSearchView(
+      this._search = new views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
       // Prepare to handle cache
@@ -613,15 +648,12 @@ YUI.add('subapp-browser', function(Y) {
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
         }
-        this.showView(
-            'fullscreen',
-            this._getViewCfg(extraCfg), {
-              'callback': function(view) {
-                // Hold onto the view instance for later reference.
-                this._fullscreen = view;
-              }
-            }
-        );
+        extraCfg.container = this.get('container');
+
+        this._fullscreen = new views.FullScreen(
+            this._getViewCfg(extraCfg));
+        this._fullscreen.render();
+        this._fullscreen.addTarget(this);
       }
 
       // Even if we've got an existing View, check if Home should be displayed
@@ -667,7 +699,7 @@ YUI.add('subapp-browser', function(Y) {
     minimized: function(req, res, next) {
       // We only need to run the view once.
       if (!this._minimized) {
-        this._minimized = new Y.juju.browser.views.MinimizedView();
+        this._minimized = new views.MinimizedView();
         this._minimized.render();
         this._minimized.addTarget(this);
       }
@@ -688,15 +720,12 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
-        this.showView(
-            'sidebar',
-            this._getViewCfg(), {
-              'callback': function(view) {
-                // Hold onto the sidebar view instance for later reference.
-                this._sidebar = view;
-              }
-            }
-        );
+        this._sidebar = new views.Sidebar(
+            this._getViewCfg({
+              container: this.get('container')
+            }));
+        this._sidebar.render();
+        this._sidebar.addTarget(this);
       }
 
       // Even if we've got an existing View, check if Home should be displayed
@@ -772,9 +801,9 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     jujucharms: function(req, res, next) {
-      //XXX j.c.sackett July 2, 2013: This is a placeholder function that will
-      //need some reworking when we have assets. It will probably want to render
-      //to body instead of the fullscreen renderto.
+      // XXX jcsackett July 2, 2013: This is a placeholder function that will
+      // need some reworking when we have assets. It will probably want to
+      // render to body instead of the fullscreen renderto.
       this.showView('jujucharms', this._getViewCfg(), {
         'callback': function(view) {
           // Hold onto the view instance for later reference.
@@ -1002,11 +1031,11 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute urlNamespace
-         @default 'charmstore'
+         @default 'charmbrowser'
          @type {String}
        */
       urlNamespace: {
-        value: 'charmstore'
+        value: 'charmbrowser'
       },
 
       /**
@@ -1060,6 +1089,7 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
+    'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
     'subapp-browser-jujucharms',

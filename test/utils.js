@@ -131,40 +131,32 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
             'memcached'];
       Y.Array.each(names, function(name) {
-        url = 'data/' + name + '-charmdata.json';
+        url = 'data/' + name + '-api-response.json';
         charms[name] = jujuTests.utils.loadFixture(url, true);
       });
       return charms;
     })(),
 
-    TestCharmStore: Y.Base.create(
-        'test-charm-store', Y.juju.CharmStore, [], {
-          loadByPath: function(path, options) {
-            var charmName = path.split('/')[2];
-            // Ignore version as changing across all
-            // testing artifacts is a pain.
-            charmName = charmName.split('-', 1);
-            if (charmName in jujuTests.utils._cached_charms) {
-              options.success(jujuTests.utils._cached_charms[charmName]);
-            } else {
-              options.failure(new Error('Unable to load charm ' + charmName));
-            }
-          }
+    makeFakeBackend: function() {
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.charm = function(store_id, callbacks, bindscope) {
+        var charmName = store_id.split('/')[1];
+        charmName = charmName.split('-', 1);
+        if (charmName in jujuTests.utils._cached_charms) {
+          var response = jujuTests.utils._cached_charms[charmName];
+          callbacks.success(response);
+        } else {
+          callbacks.failure(new Error('Unable to load charm ' + charmName));
         }
-    ),
+      };
 
-    makeFakeBackendWithCharmStore: function() {
-      var fakebackend = new Y.juju.environments.FakeBackend(
-          {charmStore: new jujuTests.utils.TestCharmStore()});
+      var fakebackend = new Y.juju.environments.FakeBackend({
+        store: fakeStore
+      });
       fakebackend.login('admin', 'password');
       return fakebackend;
     }
-
   });
-
-
-
-
 }, '0.1.0', {
   requires: [
     'handlebars',
