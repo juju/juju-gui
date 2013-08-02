@@ -48,6 +48,11 @@ YUI.add('juju-databinding', function(Y) {
       }
     };
 
+    /**
+     Get the field handler for a given node with a fallback.
+
+     @method _getFieldHandler
+     */
     function _getNodeHandler(node) {
       /*jshint validthis:true */
       var field = this._fieldHandlers[node.tagName.toLowerCase()];
