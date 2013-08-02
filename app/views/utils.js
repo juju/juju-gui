@@ -1430,11 +1430,12 @@ YUI.add('juju-view-utils', function(Y) {
 
   /*
    * Dev tool: dump to debugger in template.
-   *
-   * {{debugger}}
+   * Allows you to inspect a variable by passing it to
+   * the debugger helper
+   * {{debugger yourVar}}
    *
    */
-  Y.Handlebars.registerHelper('debugger', function() {
+  Y.Handlebars.registerHelper('debugger', function(value) {
     /*jshint debug:true */
     debugger;
     /*jshint debug:false */
