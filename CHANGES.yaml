@@ -20,7 +20,14 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.8.2:
+    - Fixed boolean data type export.
+    - Fixed unit tests in IE10.
+    - Updated providers UI in Charm Browser.
+    - Fixed multiple routing issues in the Charm Browser.
+    - Updated the included version of D3.
+    - Many improvements to the inspector panel (feature-flagged).
+    - Cleanup of the two different charm models used through the codebase.
 - 0.8.1:
     - Fixed bug causing settings page to not scroll.
     - >
