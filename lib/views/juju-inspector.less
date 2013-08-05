@@ -496,7 +496,7 @@
                 }
             }
 
-            .settings-wrapper {
+            .settings-wrapper, .control-group {
                 position: relative;
                 padding: 0 10px;
 
@@ -512,7 +512,14 @@
                     text-align: justify;
                 }
 
-                .config-field {
+                .config-field, .constraint-field {
+                  -webkit-transition: background 1s linear;
+                  -moz-transition: background 1s linear;
+                  -o-transition: background 1s linear;
+                  transition: background 1s linear;
+                  background-repeat: no-repeat;
+                  background-position: right center;
+                 background-url: none;
                   margin-bottom: 0px;
                   min-height: 26px;
                   width: 260px;
@@ -531,31 +538,16 @@
                 .modified {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
-                  background-repeat: no-repeat;
-                  background-position: right center;
                 }
                 .conflict-pending {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
-                  background-repeat: no-repeat;
-                  background-position: right center;
                 }
 
                 .conflict {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
-                  background-repeat: no-repeat;
-                  background-position: right center;
-                }
-
-
-                .resolved {
-                  background-url: none;
-                  -webkit-transition: background 1s linear;
-                  -moz-transition: background 1s linear;
-                  -o-transition: background 1s linear;
-                  transition: background 1s linear;
-                }
+                 }
             }
 
             .control-expose {

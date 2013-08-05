@@ -40,10 +40,8 @@
         </div>
       {{/if}}
     {{/if}}
-    <div class="hidden resolver">
-      <div class="config-field conflicted-env" id="input-{{name}}-env"></div>
-    </div>
-    <div class="settings-description">
+    {{>conflict-ux}}
+   <div class="settings-description">
       {{description}}
     </div>
   </div>

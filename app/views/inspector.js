@@ -850,6 +850,77 @@ YUI.add('juju-view-inspector', function(Y) {
     }
   };
 
+  var ConflictMixin = {
+     'changed': function(node, key) {
+        node.addClass('modified');
+      },
+      'conflict': function(node, model, viewletName, resolve, binding) {
+        /**
+          Calls the databinding resolve method
+          @method sendResolve
+        */
+        var key = node.getData('bind');
+        var modelValue = model.get(key);
+        var field = binding.field;
+        var wrapper = node.ancestor('.settings-wrapper');
+        var resolver = wrapper.one('.resolver');
+        var option = resolver.one('.config-field');
+        var handlers = [], watch = handlers.push;
+
+        /**
+         User selects one of the two conflicting values.
+         @method sendResolve
+         */
+
+        function sendResolve(e) {
+          e.halt(true);
+          var formValue = field.get(node);
+          handlers.forEach(function(h) { h.detach();});
+          node.removeClass('modified');
+          node.removeClass('conflict');
+          resolver.addClass('hidden');
+
+          if (e.currentTarget.hasClass('conflicted-env')) {
+            resolve(node, viewletName, modelValue);
+          } else {
+            resolve(node, viewletName, formValue);
+          }
+        }
+
+        /**
+          User selects a conflicting field, show the resolution UI
+
+          @method setupResolver
+        */
+        function setupResolver(e) {
+          e.halt(true);
+          node.removeClass('conflict-pending');
+          node.addClass('conflict');
+          option.addClass('conflict');
+          option.setStyle('width',
+                          node.getComputedStyle('width') + 4);
+          option.setHTML(modelValue);
+          resolver.removeClass('hidden');
+        }
+
+        // On conflict just indicate.
+        node.removeClass('modified');
+        node.addClass('conflict-pending');
+
+        watch(wrapper.delegate('click', setupResolver,
+                               '.conflict-pending', this));
+
+        watch(wrapper.delegate('click', sendResolve,
+                               '.conflict', this));
+      },
+      'unsyncedFields': function(dirtyFields) {
+        this.container.one('.controls .confirm').setHTML('Overwrite');
+      },
+      'syncedFields': function() {
+        this.container.one('.controls .confirm').setHTML('Confirm');
+      }
+  };
+
   /**
     Service Inspector Viewlet Manager Controller
 
@@ -1133,79 +1204,7 @@ YUI.add('juju-view-inspector', function(Y) {
             }
           }
         },
-        'changed': function(node, key) {
-          node.addClass('modified');
-        },
-        'conflict': function(node, model, viewletName, resolve, binding) {
-          /**
-            Calls the databinding resolve method
-            @method sendResolve
-          */
-          var key = node.getData('bind');
-          var modelValue = model.get(key);
-          var field = binding.field;
-          var wrapper = node.ancestor('.settings-wrapper');
-          var resolver = wrapper.one('.resolver');
-          var option = resolver.one('.config-field');
-          var handlers = [], watch = handlers.push;
-
-          /**
-           User selects one of the two conflicting values.
-           @method sendResolve
-           */
-
-          function sendResolve(e) {
-            e.halt(true);
-            var formValue = field.get(node);
-            handlers.forEach(function(h) { h.detach();});
-            node.removeClass('modified');
-            node.removeClass('conflict');
-            node.addClass('resolved');
-            resolver.addClass('hidden');
-
-            if (e.currentTarget.hasClass('conflicted-env')) {
-              resolve(node, viewletName, modelValue);
-            } else {
-              resolve(node, viewletName, formValue);
-            }
-            setTimeout(function() {
-              node.removeClass('resolved');
-            }, 1000);
-          }
-
-          /**
-            User selects a conflicting field, show the resolution UI
-
-            @method setupResolver
-          */
-          function setupResolver(e) {
-            e.halt(true);
-            node.removeClass('conflict-pending');
-            node.addClass('conflict');
-            option.addClass('conflict');
-            option.setStyle('width',
-                            node.getComputedStyle('width') + 4);
-            option.setHTML(modelValue);
-            resolver.removeClass('hidden');
-          }
-
-          // On conflict just indicate.
-          node.removeClass('modified');
-          node.addClass('conflict-pending');
-
-          watch(wrapper.delegate('click', setupResolver,
-                                 '.conflict-pending', this));
-
-          watch(wrapper.delegate('click', sendResolve,
-                                 '.conflict', this));
-        },
-        'unsyncedFields': function(dirtyFields) {
-          this.container.one('.controls .confirm').setHTML('Overwrite');
-        },
-        'syncedFields': function() {
-          this.container.one('.controls .confirm').setHTML('Confirm');
-        }
-      },
+       },
       // Service constraints viewlet.
       constraints: {
         name: 'constraints',
@@ -1243,35 +1242,7 @@ YUI.add('juju-view-inspector', function(Y) {
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(contents);
         },
-
-        'conflict': function(node, model, viewletName, resolve) {
-          /**
-            Calls the databinding resolve method.
-            @method sendResolve
-          */
-          function sendResolve(ev) {
-            handler.detach();
-            if (ev.currentTarget.hasClass('conflicted-confirm')) {
-              resolve(node, viewletName, newValue);
-            }
-            // If the user does not accept the new value then do nothing.
-            message.hide();
-          }
-          var newValue = model.get(node.getData('bind'));
-          if (newValue !== node.get('value')) {
-            // If the value changed, give the user the possibility to
-            // select which value to preserve.
-            var message = node.ancestor('.control-group').one('.conflicted');
-            message.one('.newval').setHTML(newValue);
-            message.show();
-            var handler = message.delegate(
-                'click', sendResolve, 'button', this);
-          } else {
-            // Otherwise, just resolve this conflict.
-            resolve(node, viewletName, newValue);
-          }
-        }
-      },
+     },
       //relations: {},
       ghostConfig: {
         name: 'ghostConfig',
@@ -1311,6 +1282,9 @@ YUI.add('juju-view-inspector', function(Y) {
 
     // Add any imported viewlets into this DEFAULT_VIEWLETS from doom.
     DEFAULT_VIEWLETS = Y.merge(DEFAULT_VIEWLETS, viewletNS);
+    // Mixin Conflict Handling.
+    DEFAULT_VIEWLETS.config = Y.merge(DEFAULT_VIEWLETS.config, ConflictMixin);
+    DEFAULT_VIEWLETS.constraints = Y.merge(DEFAULT_VIEWLETS.constraints, ConflictMixin);
 
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
