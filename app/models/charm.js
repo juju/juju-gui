@@ -397,10 +397,10 @@ YUI.add('juju-charm-models', function(Y) {
    * Model to represent the Charms from the Charmworld2 Api.
    *
    * @class BrowserCharm
-   * @extends {Charm}
+   * @extends {Y.Model}
    *
    */
-  models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+  models.BrowserCharm = Y.Base.create('browser-charm', Y.Model, [], {
     // Only care about at most, this number of related charms per interface.
     maxRelatedCharms: 5,
 
