@@ -989,6 +989,8 @@ YUI.add('juju-view-inspector', function(Y) {
     function generateActionButtonList(category) {
       var showingButtons = {},
           buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
+          // if you adjust this list don't forget to edit
+          // the list in the unit tests
           buttons = {
             error: ['resolve', 'retry', 'replace'],
             pending: ['retry', 'replace'],
@@ -1175,7 +1177,8 @@ YUI.add('juju-view-inspector', function(Y) {
         },
         // These methods are exposed here to allow us access for testing.
         updateUnitList: updateUnitList,
-        generateAndBindUnitHeaders: generateAndBindUnitHeaders
+        generateAndBindUnitHeaders: generateAndBindUnitHeaders,
+        generateActionButtonList: generateActionButtonList
       },
       config: {
         name: 'config',
