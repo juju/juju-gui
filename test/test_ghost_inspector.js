@@ -114,13 +114,14 @@ describe('Ghost Inspector', function() {
       assert.isObject(container.one('.destroy-service-trigger span'));
     });
 
-    it('shows the destroy service prompt if the trigger is clicked', function() {
-      inspector = setUpInspector();
-      var promptBox = container.one('.destroy-service-prompt');
-      assert.isTrue(promptBox.hasClass('closed'));
-      container.one('.destroy-service-trigger span').simulate('click');
-      assert.isFalse(promptBox.hasClass('closed'));
-    });
+    it('shows the destroy service prompt if the trigger is clicked',
+        function() {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          assert.isTrue(promptBox.hasClass('closed'));
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+        });
 
     it('hides the destroy service prompt if cancel is clicked', function() {
       inspector = setUpInspector();
@@ -134,19 +135,20 @@ describe('Ghost Inspector', function() {
       assert.isTrue(promptBox.hasClass('closed'));
     });
 
-    it('initiates a destroy if the "Destroy" button is clicked', function(done) {
-      inspector = setUpInspector();
-      var promptBox = container.one('.destroy-service-prompt');
-      // First we have to open the prompt.
-      container.one('.destroy-service-trigger span').simulate('click');
-      assert.isFalse(promptBox.hasClass('closed'));
-      // If the test times out, it failed (because the expected function call
-      // didn't happen).
-      inspector.initiateServiceDestroy = function() {
-        done();
-      };
-      container.one('.initiate-destroy').simulate('click');
-    });
+    it('initiates a destroy if the "Destroy" button is clicked',
+        function(done) {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          // First we have to open the prompt.
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+          // If the test times out, it failed (because the expected
+          // function call didn't happen).
+          inspector.initiateServiceDestroy = function() {
+            done();
+          };
+          container.one('.initiate-destroy').simulate('click');
+        });
 
     it('wires up UI elements to handlers for destroy service', function() {
       // There are UI elements and they all have to be wired up to something.

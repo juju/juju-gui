@@ -268,7 +268,7 @@ describe('Inspector Overview', function() {
       var unitId = 'mediawiki/7';
 
       db.onDelta({data: {result: [
-        ['unit', 'add', {id: unitId, agent_state: 'install-error'}],
+        ['unit', 'add', {id: unitId, agent_state: 'install-error'}]
       ]}});
 
       var mgrContainer = inspector.viewletManager.get('container');
@@ -283,8 +283,8 @@ describe('Inspector Overview', function() {
       var msg = env.ws.last_message();
 
       assert.deepEqual(msg, {
-        op: "resolved",
-        unit_name: "mediawiki/7",
+        op: 'resolved',
+        unit_name: 'mediawiki/7',
         relation_name: null,
         retry: false,
         request_id: 1
@@ -296,7 +296,7 @@ describe('Inspector Overview', function() {
       var unitId = 'mediawiki/7';
 
       db.onDelta({data: {result: [
-        ['unit', 'add', {id: unitId, agent_state: 'install-error'}],
+        ['unit', 'add', {id: unitId, agent_state: 'install-error'}]
       ]}});
 
       var mgrContainer = inspector.viewletManager.get('container');
@@ -311,8 +311,8 @@ describe('Inspector Overview', function() {
       var msg = env.ws.last_message();
 
       assert.deepEqual(msg, {
-        op: "resolved",
-        unit_name: "mediawiki/7",
+        op: 'resolved',
+        unit_name: 'mediawiki/7',
         relation_name: null,
         retry: true,
         request_id: 1
