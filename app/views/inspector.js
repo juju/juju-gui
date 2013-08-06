@@ -902,8 +902,7 @@ YUI.add('juju-view-inspector', function(Y) {
         node.removeClass('conflict-pending');
         node.addClass('conflict');
         option.addClass('conflict');
-        option.setStyle('width',
-            node.getComputedStyle('width') + 4);
+        option.setStyle('width', node.get('offsetWidth'));
         option.setHTML(modelValue);
         resolver.removeClass('hidden');
       }
