@@ -714,6 +714,17 @@
                 button.resolve {
                     margin-left: 25px;
                 }
+                &.pending {
+                    .action-button-wrapper {
+                        display: none;
+                    }
+                }
+                &.running {
+                    .resolve,
+                    .retry {
+                        display: none;
+                    }
+                }
             }
 
             .status-unit-content.running ul li {
