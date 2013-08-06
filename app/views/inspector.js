@@ -872,9 +872,16 @@ YUI.add('juju-view-inspector', function(Y) {
         }
       });
 
-      var env = this.viewletManager.get('env');
+      var env = this.viewletManager.get('env'),
+          handlerName = e.currentTarget.getData('type'),
+          handlerFn = handlers[handlerName];
 
-      handlers[e.currentTarget.getData('type')](unitNames, env);
+      if (Y.Lang.isFunction(handlerFn)) {
+        handlerFn(unitNames, env);
+      } else {
+        console.error('No handler assigned to', handlerName);
+      }
+
       return; // ignoring all other button clicks passed to this method
     },
 
