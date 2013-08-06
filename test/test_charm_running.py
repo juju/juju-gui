@@ -71,7 +71,7 @@ class TestBasics(browser.TestCase):
             try:
                 total, failures = self.wait_for(
                     tests_completed, 'Unable to complete test run.',
-                    timeout=180)
+                    timeout=300)
             except exceptions.TimeoutException:
                 browser.printerr(
                     self.driver.execute_script('return testRunner.stats;'))
