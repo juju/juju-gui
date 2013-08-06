@@ -847,6 +847,75 @@ YUI.add('juju-view-inspector', function(Y) {
       var charmId = ev.currentTarget.getAttribute('data-charmid');
       var charm = db.charms.getById(charmId);
       this.viewletManager.showViewlet('charmDetails', charm);
+    },
+
+    /**
+      Directs the unit action button click event to
+      the appropriate handler.
+
+      @method _unitActionButtonClick
+      @param {Y.EventFacade} e button click event.
+    */
+    _unitActionButtonClick: function(e) {
+      e.halt();
+      var handlers = {
+        resolve: this._sendUnitResolve,
+        retry: this._sendUnitRetry,
+        replace: this._sendUnitReplace
+      };
+
+      var units = e.currentTarget.ancestor('form').all('input[type=checkbox]');
+      var unitNames = [];
+      units.each(function(unit) {
+        if (unit.get('checked')) {
+          unitNames = unit.siblings('a').get('innerHTML');
+        }
+      });
+
+      var env = this.viewletManager.get('env');
+
+      handlers[e.currentTarget.getData('type')](unitNames, env);
+      return; // ignoring all other button clicks passed to this method
+    },
+
+    /**
+      Sends the resolve command to the env to resolve the
+      selected unit in the inspector unit list.
+
+      @method _sendUnitResolve
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitResolve: function(unitNames, env) {
+      unitNames.forEach(function(unitName) {
+        env.resolved(unitName, null);
+      });
+    },
+
+    /**
+      Sends the retry command to the env to retry the
+      selected unit in the inspector unit list.
+
+      @method _sendUnitRetry
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitRetry: function(unitNames, env) {
+      unitNames.forEach(function(unitName) {
+        env.resolved(unitName, null, true);
+      });
+    },
+
+    /**
+      Sends the required commands to the env to replace
+      the selected unit in the inspector unit list.
+
+      @method _sendUnitReplace
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitReplace: function(unitNames, env) {
+      // currently a noop until min units is setup
     }
   };
 
@@ -910,6 +979,13 @@ YUI.add('juju-view-inspector', function(Y) {
       return statuses;
     }
 
+    /**
+      Generates the list of allowable buttons for the
+      different inspector unit lists.
+
+      @method generateActionButtonList
+      @param {String} category The unit status category.
+    */
     function generateActionButtonList(category) {
       var showingButtons = {},
           buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],

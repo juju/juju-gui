@@ -204,7 +204,8 @@ YUI.add('juju-view-environment', function(Y) {
                 '.status-unit-header': {click: 'toggleUnitHeader'},
                 '.unit-details': { click: 'showUnit'},
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
-                'a[data-unit]': { click: 'showUnitDetails'}
+                'a[data-unit]': { click: 'showUnitDetails'},
+                'button.unit-action-button': { click: '_unitActionButtonClick'}
               },
               viewletList: [
                 'overview', // Default viewlet first.
