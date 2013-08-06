@@ -98,7 +98,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
         max: options.minSlider,
         axis: 'y',
         length: '300px',
-        thumbUrl : '/juju-ui/assets/images/non-sprites/zoom-handle.png',
+        thumbUrl: '/juju-ui/assets/images/non-sprites/zoom-handle.png',
         value: this.toSlider(currentScale)
       });
       // XXX: selection to module option
