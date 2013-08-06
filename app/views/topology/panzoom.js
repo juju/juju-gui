@@ -44,8 +44,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
     events: {
       scene: {
-        '#zoom-out-btn': {click: 'zoom_out'},
-        '#zoom-in-btn': {click: 'zoom_in'}
+        '#zoom-out-btn': {click: 'zoom_out', mouseover: 'add_hover_out', mouseout: 'remove_hover_out'},
+        '#zoom-in-btn': {click: 'zoom_in', mouseover: 'add_hover_in', mouseout: 'remove_hover_in'}
       },
       yui: {
         /**
@@ -153,6 +153,42 @@ YUI.add('juju-topology-panzoom', function(Y) {
       var slider = this.slider || self.slider,
           val = slider.get('value');
       slider.set('value', val + 25);
+    },
+
+    /**
+     * Mouseover event handler.
+     *
+     * @method add_hover
+     */
+    add_hover_out: function(data, self) {
+      this.className = this.className + " zoom_m_h";
+    },
+
+    /**
+     * Mouseover event handler.
+     *
+     * @method add_hover
+     */
+    add_hover_in: function(data, self) {
+      this.className = this.className + " zoom_p_h";
+    },
+
+    /**
+     * Mouseout event handler
+     *
+     * @method remove_hover
+     */
+    remove_hover_out: function(data, self) {
+      this.className = this.className.replace(' zoom_m_h','');
+    },
+
+    /**
+     * Mouseout event handler
+     *
+     * @method remove_hover
+     */
+    remove_hover_in: function(data, self) {
+      this.className = this.className.replace(' zoom_p_h','');
     },
 
     /**
