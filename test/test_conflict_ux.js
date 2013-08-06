@@ -145,31 +145,4 @@ describe('Inspector Conflict UX', function() {
     });
  });
 
- it('should indicate conflict and allow resolution of constraints', function(done) {
-   var input = container.one('#input-arch');
-   assert.equal(input.get('value'), 'foo');
-
-   modifyAndWait(input, 'form value', function() {
-     // See that it got the proper style added
-     assert.equal(input.hasClass('modified'), true);
-
-     service.set('config', {arch: 'conflicting value'});
-     assert.equal(input.hasClass('conflict-pending'), true);
-
-     // Open the conflict dialog
-     input.simulate('click');
-     var conflict_option = container.one('.conflicted-env');
-     assert.equal(conflict_option.get('text'), 'conflicting value');
-
-     // Select the models value
-     conflict_option.simulate('click');
-
-     // Verify the form is updated.
-     assert.equal(input.get('value'), 'conflicting value');
-     assert.equal(input.hasClass('modified'), false);
-     assert.equal(input.hasClass('conflict'), false);
-     done();
-   });
- });
-
 });
