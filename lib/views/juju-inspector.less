@@ -5,6 +5,7 @@
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 @confirm-button-color: #DD4814;
+@deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
@@ -15,6 +16,7 @@
         .type9;
         position: absolute;
         top: 20px;
+        bottom: @navbar-bottom-height + 20px;
         right: 327px;
         overflow-y: auto;
         overflow-x: hidden;
@@ -42,7 +44,7 @@
             .header {
                 .type13;
                 padding: 30px;
-                background-color: @bws-background;
+                background: @bws-background;
                 border-bottom: 1px solid @bws-border;
 
                 h2 {
@@ -106,7 +108,62 @@
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
+        .toggle {
+            font-size: 12px;
 
+            span {
+                display: inline-block;
+                vertical-align: top;
+                line-height: 30px;
+            }
+            .toggle-switch {
+                display: inline-block;
+                vertical-align: top;
+                float: right;
+
+                label {
+                    height: 26px;
+                    width: 50px;
+                    background-color: @inspector-background-color;
+                    .create-border-radius(@border-radius);
+                    display: block;
+                    position: relative;
+                    margin: 0;
+
+                    &.light {
+                        background-color: @inspector-region-background-color;
+                    }
+                    .handle {
+                        height: 18px;
+                        width: 18px;
+                        background-color: @deny-button-color;
+                        .create-border-radius(@border-radius);
+                        position: absolute;
+                        margin: 4px;
+                        cursor: pointer;
+                        text-align: center;
+                        left: 0;
+                        -moz-transition: left .1s ease-in-out;
+                        -webkit-transition: left .1s ease-in-out;
+                        transition: left .1s ease-in-out;
+                        -moz-user-select: none;
+                        -webkit-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                    }
+                    .handle:before {
+                        content: '\2717';
+                    }
+                }
+                input.hidden-checkbox:checked ~ label .handle {
+                    left: 25px;
+                    background-color: @confirm-button-color;
+                }
+                input.hidden-checkbox:checked ~ label .handle:before {
+                    content: '\2713';
+                }
+            }
+        }
         .controls {
 
             button {
@@ -150,7 +207,6 @@
             }
 
             .settings-description {
-                font-style: italic;
                 font-size: 12px;
 
                 /* below hyphenation code was taken from:
@@ -233,63 +289,6 @@
                     margin-left: 25px;
                     vertical-align: middle;
                 }
-
-                .default-config-toggle {
-                    font-size: 12px;
-
-                    span {
-                        display: inline-block;
-                        vertical-align: top;
-                        line-height: 30px;
-                    }
-
-                    .toggle-switch {
-                        display: inline-block;
-                        vertical-align: top;
-                        float: right;
-                    }
-
-                    label[for=use-default-toggle] {
-                        height: 26px;
-                        width: 50px;
-                        background-color: @inspector-background-color;
-                        .create-border-radius(@border-radius);
-                        display: block;
-                        position: relative;
-                        margin: 0;
-
-                        .handle {
-                            height: 18px;
-                            width: 18px;
-                            background-color: @confirm-button-color;
-                            .create-border-radius(@border-radius);
-                            position: absolute;
-                            margin: 4px;
-                            cursor: pointer;
-                            text-align: center;
-                            left: 0;
-                            -moz-transition: left .1s ease-in-out;
-                            -webkit-transition: left .1s ease-in-out;
-                            transition: left .1s ease-in-out;
-                            -moz-user-select: none;
-                            -webkit-user-select: none;
-                            -ms-user-select: none;
-                            user-select: none;
-                        }
-                        .handle:before {
-                            content: '\2717';
-                        }
-                    }
-
-                    input#use-default-toggle:checked ~ label .handle {
-                        left: 25px;
-                    }
-                    input#use-default-toggle:checked ~ label .handle:before {
-                        content: '\2713';
-                    }
-
-                }
-
                 &.use-defaults {
                     textarea {
                         background-color: @disabled-input-background-color;
@@ -473,6 +472,13 @@
             position: relative;
         }
 
+        .configuration-buttons {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
         .view-container {
             border-top: 1px solid @inspector-divider-top;
             overflow: auto;
@@ -480,31 +486,6 @@
             h2 {
                 font-size: 18px;
                 padding-left: 0;
-            }
-
-            .toggle-settings-help {
-                padding: 0 20px 20px;
-                cursor: pointer;
-            }
-
-            .toggle-expose {
-                cursor: pointer;
-
-                img {
-                    position: relative;
-                    margin-left: 70px;
-                }
-                .on {
-                    font-size: 12px;
-                    position: absolute;
-                    right: 40px;
-                }
-                .off {
-                    font-size: 12px;
-                    color: black;
-                    position: absolute;
-                    right: 60px;
-                }
             }
 
             .settings-wrapper {
@@ -518,9 +499,7 @@
                 }
 
                 .settings-description {
-                    font-style: italic;
                     font-size: 12px;
-                    text-align: justify;
                 }
 
                 .warning-message {
@@ -534,9 +513,12 @@
                     background-color: white;
                 }
             }
+            .toggle {
+                padding: 10px;
 
-            .control-expose {
-                padding: 20px;
+                label {
+                   margin: 0;
+                }
             }
 
         }
@@ -558,7 +540,7 @@
         }
         .destroy-service-trigger{
             padding-left: 10px;
-            height: 30px;
+            height: 20px;
 
             span {
                 font-size: 11px;
@@ -635,7 +617,7 @@
         }
 
         .overview-unit-list {
-            margin-left: 0;
+            margin: 0;
 
             .action-button-wrapper {
                 height: 50px;
@@ -736,6 +718,17 @@
                 }
                 button.resolve {
                     margin-left: 25px;
+                }
+                &.pending {
+                    .action-button-wrapper {
+                        display: none;
+                    }
+                }
+                &.running {
+                    .resolve,
+                    .retry {
+                        display: none;
+                    }
                 }
             }
 
