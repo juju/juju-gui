@@ -658,7 +658,7 @@ YUI.add('juju-view-inspector', function(Y) {
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
           schema = charm.get('options'),
-          container = inspector.get('container'),
+          container = this.viewletManager.viewlets.config.container,
           button = container.one('button.confirm');
 
       button.set('disabled', 'disabled');
@@ -851,8 +851,14 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   var ConflictMixin = {
-     'changed': function(node, key) {
-        node.addClass('modified');
+     'changed': function(node, key, field) {
+        var modelValue = this.model.get(key);
+        var fieldValue = field.get(node);
+        if (modelValue !== fieldValue) {
+          node.addClass('modified');
+        } else {
+          node.removeClass('modified');
+        }
       },
       'conflict': function(node, model, viewletName, resolve, binding) {
         /**

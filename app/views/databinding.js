@@ -330,9 +330,7 @@ YUI.add('juju-databinding', function(Y) {
           target: node
         }, viewlet);
         viewlet._eventHandles.push(
-            node.on('valueChange', this._storeChanged, this, viewlet)
-        );
-
+            node.on('valueChange', this._storeChanged, this, viewlet));
       }, this);
 
       this._setupHeirarchicalBindings();
@@ -553,10 +551,11 @@ YUI.add('juju-databinding', function(Y) {
       });
       if (save) {
         viewlet._changedValues.push(key);
-        if (viewlet.changed) {
-          viewlet.changed(e.target, key);
-        }
-      }
+     }
+     if (viewlet.changed) {
+       viewlet.changed(e.target, key,
+                       _getNodeHandler.call(this, e.target.getDOMNode()));
+     }
     };
 
     /**
@@ -649,7 +648,6 @@ YUI.add('juju-databinding', function(Y) {
         if (!binding.target) {
           return;
         }
-        var dataKey = binding.name;
 
         // If the field has been changed while the user was editing it
         viewlet._changedValues.forEach(function(changeKey) {
@@ -718,11 +716,7 @@ YUI.add('juju-databinding', function(Y) {
             return false;
           });
       viewlet._changedValues = changedValues;
-      var elementKind = node.getDOMNode().tagName.toLowerCase();
-      var field = this._fieldHandlers[elementKind];
-      if (!field) {
-        field = this._fieldHandlers['default'];
-      }
+      var field = _getNodeHandler.call(this, node.getDOMNode());
       field.set.call(this, node, value);
       // If there are no more changed values then tell the
       // the viewlet to update accordingly
