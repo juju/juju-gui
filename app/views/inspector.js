@@ -366,26 +366,6 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Handles showing/hiding the configuration settings descriptions.
-
-      @method toggleSettingsHelp
-      @param {Y.EventFacade} e An event object.
-    */
-    toggleSettingsHelp: function(e) {
-      var button = e.currentTarget,
-          descriptions = e.container.all('.settings-description'),
-          btnString = 'Hide settings help';
-
-      if (e.currentTarget.getHTML().indexOf('Hide') < 0) {
-        button.setHTML(btnString);
-        descriptions.show();
-      } else {
-        button.setHTML('Show settings help');
-        descriptions.hide();
-      }
-    },
-
-    /**
       Display the "do you really want to destroy this service?" prompt.
 
       @method showDestroyPrompt
@@ -622,7 +602,6 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       var container = this.viewletManager.get('container');
       container.all('.settings-wrapper').hide();
-      container.one('.toggle-settings-help').hide();
     },
 
     /**
