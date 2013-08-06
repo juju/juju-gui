@@ -118,7 +118,7 @@ describe('Inspector Settings', function() {
     assert.isFalse(service.get('exposed'));
     assert.isFalse(exposeCalled);
     assert.isFalse(unexposeCalled);
-    var expose = container.one('.toggle-expose');
+    var expose = container.one('.toggle-switch');
     expose.simulate('click');
     assert.isTrue(service.get('exposed'));
     assert.isTrue(exposeCalled);
