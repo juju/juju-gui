@@ -733,7 +733,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     saveConstraints: function(ev) {
       var inspector = this.viewletManager;
-      var container = inspector.get('container');
+      var container = inspector.viewlets.constraints.container;
       var env = inspector.get('env');
       var service = inspector.get('model');
       // Retrieve constraint values.
