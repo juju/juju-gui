@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('Inspector Constraints', function() {
+describe('Inspector Constraints', function() {
   var container, env, inspector, juju, models, utils, view, views, Y;
 
   before(function(done) {

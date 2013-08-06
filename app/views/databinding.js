@@ -551,11 +551,11 @@ YUI.add('juju-databinding', function(Y) {
       });
       if (save) {
         viewlet._changedValues.push(key);
-     }
-     if (viewlet.changed) {
-       viewlet.changed(e.target, key,
-                       _getNodeHandler.call(this, e.target.getDOMNode()));
-     }
+      }
+      if (viewlet.changed) {
+        viewlet.changed(e.target, key,
+            _getNodeHandler.call(this, e.target.getDOMNode()));
+      }
     };
 
     /**

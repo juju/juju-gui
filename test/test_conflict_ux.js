@@ -143,6 +143,6 @@ describe('Inspector Conflict UX', function() {
       assert.equal(input.hasClass('conflict'), false);
       done();
     });
- });
+  });
 
 });
