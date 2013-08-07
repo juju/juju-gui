@@ -23,7 +23,7 @@ from deploy_charm_for_testing import (
     main,
     parse_image_data,
     wait_for_service,
-    )
+)
 
 
 def noop(*args, **kws):
@@ -215,12 +215,12 @@ class TestParseImageData(unittest.TestCase):
 
     def test_picks_last(self):
         data = '\n'.join([
-            '| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-1.img ' +
-                '| ACTIVE | |',
-            '| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-2.img ' +
-                '| ACTIVE | |',
-            '| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-3.img ' +
-                '| ACTIVE | |'])
+            '| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-1.img '
+            '| ACTIVE | |',
+            '| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-2.img '
+            '| ACTIVE | |',
+            '| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-3.img '
+            '| ACTIVE | |'])
         img_id, desc = parse_image_data(data)
         self.assertEqual('fad-123', img_id)
         self.assertEqual(
