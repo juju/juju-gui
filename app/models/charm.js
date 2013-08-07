@@ -111,7 +111,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    * @class Charm
    */
-  var Charm = Y.Base.create('charm', Y.Model, [], {
+   var Charm = Y.Base.create('charm', Y.Model, [], {
 
     /**
 
@@ -486,9 +486,22 @@ YUI.add('juju-charm-models', function(Y) {
         }
         if (cfg.id) {
           this.set('storeId', cfg.id);
-          this.set('id', this.get('scheme') + ':' + cfg.id);
+        }
+        if (cfg.url) {
+          this.set('id', cfg.url);
         }
       }
+      var id = this.get('id'),
+          parts = parseCharmId(id),
+          self = this;
+      if (!parts) {
+        throw 'Developers must initialize charms with a well-formed id.';
+      }
+      this.loaded = false;
+      this.on('load', function() { this.loaded = true; });
+      Y.Object.each(parts, function(value, key) {
+        this.set(key, value);
+      }, this);
     },
 
     /**
@@ -561,6 +574,27 @@ YUI.add('juju-charm-models', function(Y) {
       },
       changelog: {
         value: {}
+      },
+      //XXX jcsackett Aug 7 2013 This attribute is only needed until we turn
+      // on the service inspector. It's just used by the charm view you get when
+      // inspecting a service, and should be ripped out (along with tests) when
+      // we remove that view.
+      charm_path: {
+        /**
+         * Generate the charm store path from the attributes of the charm.
+         *
+         * @method getter
+         *
+         */
+        getter: function() {
+          var owner = this.get('owner');
+          return [
+            (owner ? '~' + owner : 'charms'),
+            this.get('series'),
+            (this.get('package_name') + '-' + this.get('revision')),
+            'json'
+          ].join('/');
+        }
       },
       /**
        * Object of data about the source for this charm including bugs link,

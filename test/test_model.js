@@ -29,14 +29,28 @@ describe('charm normalization', function() {
     });
   });
 
-  it('must create derived attributes from official charm id', function() {
-    var charm = new models.Charm(
-        {id: 'cs:precise/openstack-dashboard-0'});
-    charm.get('scheme').should.equal('cs');
-    var _ = expect(charm.get('owner')).to.not.exist;
-    charm.get('full_name').should.equal('precise/openstack-dashboard');
-    charm.get('charm_path').should.equal(
-        'charms/precise/openstack-dashboard-0/json');
+  it('must create derived attributes from official charm id on BrowserCharm',
+    function() {
+      var charm = new models.BrowserCharm(
+          {id: 'cs:precise/openstack-dashboard-0'});
+      charm.get('scheme').should.equal('cs');
+      var _ = expect(charm.get('owner')).to.not.exist;
+      charm.get('full_name').should.equal('precise/openstack-dashboard');
+      charm.get('charm_path').should.equal(
+          'charms/precise/openstack-dashboard-0/json');
+  });
+
+  it('must create derived attributes from official charm id on Charm',
+    function() {
+      // XXX jcsackett Aug 6 2013 This test is a dupe of the one above for
+      // BrowserCharm, and can be deleted when Charm is no longer used in app/
+      var charm = new models.Charm(
+          {id: 'cs:precise/openstack-dashboard-0'});
+      charm.get('scheme').should.equal('cs');
+      var _ = expect(charm.get('owner')).to.not.exist;
+      charm.get('full_name').should.equal('precise/openstack-dashboard');
+      charm.get('charm_path').should.equal(
+          'charms/precise/openstack-dashboard-0/json');
   });
 
   it('can load options from both "options" and "config"', function() {
@@ -55,10 +69,18 @@ describe('charm normalization', function() {
     assert.equal(charm.get('options'), options);
   });
 
-  it('must convert timestamps into time objects', function() {
+  it('must convert timestamps into time objects on Charm', function() {
     var time = 1349797266.032,
         date = new Date(time),
         charm = new models.Charm(
+        { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
+    charm.get('last_change').created.should.eql(date);
+  });
+
+  it('must convert timestamps into time objects on BrowserCharm', function() {
+    var time = 1349797266.032,
+        date = new Date(time),
+        charm = new models.BrowserCharm(
         { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
     charm.get('last_change').created.should.eql(date);
   });
