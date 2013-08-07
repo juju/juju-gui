@@ -111,7 +111,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    * @class Charm
    */
-   var Charm = Y.Base.create('charm', Y.Model, [], {
+  var Charm = Y.Base.create('charm', Y.Model, [], {
 
     /**
 
