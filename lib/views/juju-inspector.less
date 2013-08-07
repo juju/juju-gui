@@ -477,17 +477,20 @@
             bottom: 0;
             left: 0;
             right: 0;
+            background-color: @inspector-background-color;
         }
 
         .view-container {
             border-top: 1px solid @inspector-divider-top;
             overflow: auto;
 
+            &.settings-config {
+                margin-bottom: 45px;
+            }
             h2 {
                 font-size: 18px;
                 padding-left: 0;
             }
-
             .settings-wrapper {
                 position: relative;
                 padding: 0 10px;
