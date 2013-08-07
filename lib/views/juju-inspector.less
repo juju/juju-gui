@@ -137,7 +137,7 @@
 
         .settings-wrapper {
             position: relative;
-            width: 268px;
+            width: 250px;
 
             label {
                 font-size: 14px;
@@ -146,7 +146,7 @@
             }
 
             textarea {
-                width: 260px;
+                width: 100%;
             }
 
             .settings-description {
@@ -679,6 +679,12 @@
             }
             .status-unit-header.pending {
                 background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
+            }
+            .status-unit-header.landscape-needs-reboot {
+                background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
+            }
+            .status-unit-header.landscape-security-upgrades {
+                background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
 
             .status-unit-content {
