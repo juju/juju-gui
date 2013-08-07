@@ -1,0 +1,148 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+'use strict';
+
+describe('Inspector Conflict UX', function() {
+
+  var Y, juju, views, templates, utils, container, models;
+  var conn, env, view, service, charmConfig, db, inspector;
+
+  before(function(done) {
+    var requires = ['juju-databinding',
+                    'juju-tests-utils',
+                    'juju-view-inspector',
+                    'juju-templates',
+                    'juju-gui',
+                    'juju-views',
+                    'node-event-simulate',
+                    'juju-charm-store',
+                    'juju-charm-models',
+                    'base',
+                    'juju-models'];
+    Y = YUI(GlobalConfig).use(requires, function(Y) {
+      juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      templates = views.Templates;
+      charmConfig = utils
+            .loadFixture('data/mediawiki-charmdata.json', true);
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    window.flags.serviceInspector = true;
+    container = utils.makeContainer();
+    db = new models.Database();
+    conn = new utils.SocketStub();
+    env = juju.newEnvironment({conn: conn});
+    inspector = setUpInspector();
+  });
+
+  afterEach(function(done) {
+    view.setInspector(inspector, true);
+    view.destroy();
+    env.after('destroy', function() { done(); });
+    env.destroy();
+    container.remove(true);
+    window.flags = {};
+  });
+
+  function setUpInspector(options) {
+    var charmId = 'precise/mediawiki-4';
+    charmConfig.id = charmId;
+    var charm = new models.Charm(charmConfig);
+    db.charms.add(charm);
+    service = new models.Service({
+      id: 'mediawiki',
+      charm: charmId,
+      config: {
+        logo: 'foo'
+      }});
+    db.services.add(service);
+    db.onDelta({data: {result: [
+      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}]
+    ]}});
+
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
+    view = new views.environment({
+      container: container,
+      db: db,
+      env: env,
+      store: fakeStore
+    });
+    view.render();
+    Y.Node.create(['<div id="content">'].join('')).appendTo(container);
+
+    return view.createServiceInspector(service, {databinding: {interval: 0}});
+  }
+
+  function modifyAndWait(node, value, callback) {
+    var handle = node.after('valueChange', function(e) {
+      callback(node);
+      handle.detach();
+    });
+    // Tricks to simulate valueChange
+    node.simulate('focus');
+    node.set('value', value);
+  }
+
+  it('should be able to indicate change to fields', function(done) {
+    var input = container.one('#input-logo');
+    assert.equal(input.get('value'), 'foo');
+
+    // Simulate editing.
+    modifyAndWait(input, 'something new', function(node) {
+      // See that it got the proper style added
+      assert.equal(node.hasClass('modified'), true);
+      done();
+    });
+  });
+
+  it('should indicate conflict and allow resolution of config', function(done) {
+    var input = container.one('#input-logo');
+    assert.equal(input.get('value'), 'foo');
+
+    modifyAndWait(input, 'form value', function() {
+      // See that it got the proper style added
+      assert.equal(input.hasClass('modified'), true);
+
+      service.set('config', {logo: 'conflicting value'});
+      assert.equal(input.hasClass('conflict-pending'), true);
+
+      // Open the conflict dialog
+      input.simulate('click');
+      var conflict_option = container.one('.conflicted-env');
+      assert.equal(conflict_option.get('text'), 'conflicting value');
+
+      // Select the models value
+      conflict_option.simulate('click');
+
+      // Verify the form is updated.
+      assert.equal(input.get('value'), 'conflicting value');
+      assert.equal(input.hasClass('modified'), false);
+      assert.equal(input.hasClass('conflict'), false);
+      done();
+    });
+  });
+
+});

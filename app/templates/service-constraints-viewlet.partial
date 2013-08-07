@@ -1,19 +1,11 @@
 {{#constraints}}
-  <div class="control-group">
-
-    <div class="conflicted warning-message" style="display: none">
-      <p>This field has been changed on another system. Accept the new value?</p>
-      <p class="newval"></p>
-      <button class="conflicted-confirm">Ok</button>
-      <button class="conflicted-cancel">Cancel</button>
-    </div>
-
-    <div class="control-label" for="{{name}}">{{title}}</div>
-    <div class="controls">
+  <div class="control-group settings-wrapper">
+   <div class="control-label" for="{{name}}">{{title}}</div>
+    <div>
       <input class="constraint-field" type="text" name="{{name}}"
           value="{{value}}" data-bind="constraints.{{name}}" />
           {{unit}}
     </div>
-
+    {{>conflict-ux}}
   </div>
 {{/constraints}}

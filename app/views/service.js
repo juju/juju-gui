@@ -787,7 +787,6 @@ YUI.add('juju-view-service', function(Y) {
   requires: [
     'base-build',
     'd3-statusbar',
-    'dd',
     'event-key',
     'event-resize',
     'handlebars',
@@ -796,6 +795,7 @@ YUI.add('juju-view-service', function(Y) {
     'juju-view-container',
     'juju-view-inspector',
     'juju-view-utils',
+    'juju-templates',
     'node',
     'panel',
     'transition',
