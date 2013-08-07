@@ -239,30 +239,6 @@ YUI.add('juju-env-sandbox', function(Y) {
 
 
   /**
-  Given attrs or a model object and a whitelist of desired attributes,
-  return an attrs hash of only the desired attributes.
-
-  @method _getDeltaAttrs
-  @private
-  @param {Object} attrs A models or attrs hash.
-  @param {Array} whitelist A list of desired attributes.
-  @return {Object} A hash of the whitelisted attributes of the attrs object.
-  */
-  var _getDeltaAttrs = function(attrs, whitelist) {
-    if (attrs.getAttrs) {
-      attrs = attrs.getAttrs();
-    }
-    // For fuller verisimilitude, we could convert some of the
-    // underlines in the attribute names to dashes.  That is currently
-    // unnecessary.
-    var filtered = {};
-    Y.each(whitelist, function(name) {
-      filtered[name] = attrs[name];
-    });
-    return filtered;
-  };
-
-  /**
   A sandbox Juju environment using the Python API.
 
   @class PyJujuAPI
@@ -328,12 +304,37 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Given attrs or a model object and a whitelist of desired attributes,
+    return an attrs hash of only the desired attributes.
+
+    @method _getDeltaAttrs
+    @private
+    @param {Object} attrs A models or attrs hash.
+    @param {Array} whitelist A list of desired attributes.
+    @return {Object} A hash of the whitelisted attributes of the attrs object.
+    */
+    _getDeltaAttrs: function(attrs, whitelist) {
+      if (attrs.getAttrs) {
+        attrs = attrs.getAttrs();
+      }
+      // For fuller verisimilitude, we could convert some of the
+      // underlines in the attribute names to dashes.  That is currently
+      // unnecessary.
+      var filtered = {};
+      Y.each(whitelist, function(name) {
+        filtered[name] = attrs[name];
+      });
+      return filtered;
+    },
+
+    /**
     Send a delta of events to the client from since the last time they asked.
 
     @method sendDelta
     @return {undefined} Nothing.
     */
     sendDelta: function() {
+      var self = this;
       var state = this.get('state');
       var changes = state.nextChanges();
       if (changes && changes.error) {
@@ -350,7 +351,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           var collectionName = changeType + 's';
           if (changes) {
             Y.each(changes[collectionName], function(change) {
-              var attrs = _getDeltaAttrs(change[0], whitelist);
+              var attrs = self._getDeltaAttrs(change[0], whitelist);
               var action = change[1] ? 'change' : 'remove';
               // The unit changeType is actually "serviceUnit" in the Python
               // stream.  Our model code handles either, so we're not modifying
@@ -361,7 +362,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           if (annotations) {
             Y.each(annotations[changeType + 's'], function(attrs, key) {
               if (!changes || !changes[key]) {
-                attrs = _getDeltaAttrs(attrs, whitelist);
+                attrs = self._getDeltaAttrs(attrs, whitelist);
                 // Special case environment handling.
                 if (changeType === 'annotation') {
                   changeType = 'annotations';
@@ -695,7 +696,9 @@ YUI.add('juju-env-sandbox', function(Y) {
   GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
     state: {},
-    client: {}
+    client: {},
+    currentNextRequestId: {value: 0},
+    deltaInterval: {value: 1000} // In milliseconds.
   };
 
   Y.extend(GoJujuAPI, Y.Base, {
@@ -726,6 +729,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         throw 'INVALID_STATE_ERR : Connection is open to another client.';
       }
     },
+
+    
 
     /**
     Closes the connection to the sandbox Juju environment.
@@ -800,6 +805,117 @@ YUI.add('juju-env-sandbox', function(Y) {
       });
     },
 
+    _deltaWhitelist: {
+      service: {
+        Name: 'id', 
+        Exposed: 'exposed', 
+        CharmURL: 'charm', 
+        Life: 'life',
+        Constraints: 'constraints', 
+        Config: 'config'
+      },
+      machine: {
+        Id: 'machine_d', 
+        InstanceId: 'instance_id', 
+        Status: 'agent_state', 
+        StateInfo: 'agent_status_info'
+      },
+      unit: {
+        Name: 'id', 
+        Service: function() {}, 
+        Series: function() {},
+        CharmURL: function() {}, 
+        PublicAddress: 'public_address',
+        PrivateAddress: 'private_address', 
+        MachineId: 'machine', 
+        Ports: 'open_ports', 
+        Status: 'agent_state', 
+        StatusInfo: 'agent_state_info'
+      },
+      relation: {
+        Key: 'relation_id', 
+        Endpoints: function() {}
+      },
+      annotation: {
+        Tag: function() {}, 
+        Annotations: function() {}
+      }
+    },
+
+    /**
+    Given attrs or a model object and a whitelist of desired attributes,
+    return an attrs hash of only the desired attributes.
+
+    @method _getDeltaAttrs
+    @private
+    @param {Object} attrs A models or attrs hash.
+    @param {Object} whitelist A list of desired attributes and means for
+      generating them.
+    @return {Object} A hash of the whitelisted attributes of the attrs object.
+    */
+    _getDeltaAttrs: function(attrs, whitelist) {
+      if (attrs.getAttrs) {
+        attrs = attrs.getAttrs();
+      }
+      var filtered = {};
+      Y.each(whitelist, function(value, key) {
+        if (typeof value === 'string') {
+          filtered[key] = attrs[value];
+        } else if (typeof value === 'function') {
+          filtered[key] = value(attrs);
+        }
+      });
+      return filtered;
+    },
+
+    /**
+    Send a delta of events to the client from since the last time they asked.
+
+    @method sendDelta
+    @return {undefined} Nothing.
+    */
+    sendDelta: function() {
+      var self = this;
+      var state = this.get('state');
+      var changes = state.nextChanges();
+      if (changes && changes.error) {
+        changes = null;
+      }
+      var annotations = state.nextAnnotations();
+      if (annotations && annotations.error) {
+        annotations = null;
+      }
+      if (changes || annotations) {
+        var deltas = [];
+        var response = {
+          RequestId: this.get('currentNextRequestId'),
+          Response: {Deltas: deltas}
+        };
+        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
+          var collectionName = changeType + 's';
+          if (changes) {
+            Y.each(changes[collectionName], function(change) {
+              var attrs = self._getDeltaAttrs(change[0], whitelist);
+              var action = change[1] ? 'change' : 'remove';
+              deltas.push([changeType, action, attrs]);
+            });
+          }
+          if (annotations) {
+            Y.each(annotations[changeType + 's'], function(attrs, key) {
+              if (!changes || !changes[key]) {
+                attrs = self._getDeltaAttrs(attrs, whitelist);
+                deltas.push([changeType, 'change', attrs]);
+              }
+            });
+          }
+        });
+        if (deltas.length) {
+          console.log('sendDelta', response);
+          this.get('client').receive(response);
+        }
+      }
+    },
+
     /**
     Handle WatchAll messages.
 
@@ -811,7 +927,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientWatchAll: function(data, client, state) {
       // TODO wire up delta stream to "Next" responses here.
-      client.receive({Response: {AllWatcherId: '42'}});
+      this.set('currentNextRequestId', data.RequestId);
+      this.deltaIntervalId = setInterval(
+          this.sendDelta.bind(this), this.get('deltaInterval'));
+      client.receive({Response: {AllWatcherId: 42}});
     },
 
     /**
@@ -824,9 +943,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
-      // This is a noop for the moment because it must exist but the current
-      // functionality does not depend on it having any effect.
-      // TODO See if there are any changes and if so, send them.
+      this.set('currentNextRequestId', data.RequestId);
+      clearInterval(this.deltaIntervalId);
+      this.deltaIntervalId = setInterval(
+          this.sendDelta.bind(this), this.get('deltaInterval'));
     },
 
     /**
