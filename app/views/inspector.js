@@ -274,16 +274,15 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _unexposeServiceCallback: function(ev) {
-      var service = this.get('model'),
-          db = this.get('db'),
-          getModelURL = this.get('getModelURL');
+      var service = this.viewletManager.get('model'),
+          db = this.viewletManager.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error un-exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: getModelURL(service),
+              link: undefined, // XXX See note below about getModelURL.
               modelId: service
             })
         );
@@ -321,16 +320,15 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _exposeServiceCallback: function(ev) {
-      var service = this.get('model'),
-          db = this.get('db'),
-          getModelURL = this.get('getModelURL');
+      var service = this.viewletManager.get('model'),
+          db = this.viewletManager.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: getModelURL(service),
+              link: undefined, // XXX See note below about getModelURL.
               modelId: service
             })
         );
@@ -496,17 +494,13 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     toggleExpose: function(e) {
+      e.halt();
       var service = this.viewletManager.get('model');
-      var env = this.viewletManager.get('db').environment;
-      var exposed;
       if (service.get('exposed')) {
         this.unexposeService();
-        exposed = false;
       } else {
         this.exposeService();
-        exposed = true;
       }
-      service.set('exposed', exposed);
     },
 
     /**
@@ -1096,6 +1090,7 @@ YUI.add('juju-view-inspector', function(Y) {
         bindings: {
           exposed: {
             'update': function(node, value) {
+              node.one('input').set('checked', value);
             }
           }
         },

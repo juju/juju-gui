@@ -54,7 +54,7 @@
   </div>
 {{/settings}}
 {{#unless ghost}}
-<div class="yui3-g controls viewlet-manager-footer">
+<div class="yui3-g controls configuration-buttons">
   <div class="yui3-u-1-2">
     <button class="cancel">Cancel</button>
   </div>

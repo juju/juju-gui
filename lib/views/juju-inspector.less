@@ -5,6 +5,7 @@
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 @confirm-button-color: #DD4814;
+@deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
@@ -90,7 +91,6 @@
         .create-border-radius(@border-radius);
         position: absolute;
         top: 20px;
-        bottom: @navbar-bottom-height + 20px;
         right: 35px;
         width: 292px;
         min-height: 250px;
@@ -136,7 +136,7 @@
                     .handle {
                         height: 18px;
                         width: 18px;
-                        background-color: @confirm-button-color;
+                        background-color: @deny-button-color;
                         .create-border-radius(@border-radius);
                         position: absolute;
                         margin: 4px;
@@ -157,6 +157,7 @@
                 }
                 input.hidden-checkbox:checked ~ label .handle {
                     left: 25px;
+                    background-color: @confirm-button-color;
                 }
                 input.hidden-checkbox:checked ~ label .handle:before {
                     content: '\2713';
@@ -468,6 +469,10 @@
         }
 
         .viewlet-manager-footer {
+            position: relative;
+        }
+
+        .configuration-buttons {
             position: absolute;
             bottom: 0;
             left: 0;
