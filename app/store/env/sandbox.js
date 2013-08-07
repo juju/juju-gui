@@ -730,7 +730,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
     },
 
-    
+
 
     /**
     Closes the connection to the sandbox Juju environment.
@@ -807,38 +807,38 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     _deltaWhitelist: {
       service: {
-        Name: 'id', 
-        Exposed: 'exposed', 
-        CharmURL: 'charm', 
+        Name: 'id',
+        Exposed: 'exposed',
+        CharmURL: 'charm',
         Life: 'life',
-        Constraints: 'constraints', 
+        Constraints: 'constraints',
         Config: 'config'
       },
       machine: {
-        Id: 'machine_d', 
-        InstanceId: 'instance_id', 
-        Status: 'agent_state', 
+        Id: 'machine_d',
+        InstanceId: 'instance_id',
+        Status: 'agent_state',
         StateInfo: 'agent_status_info'
       },
       unit: {
-        Name: 'id', 
-        Service: function() {}, 
-        Series: function() {},
-        CharmURL: function() {}, 
+        Name: 'id',
+        'Service': function() {},
+        'Series': function() {},
+        'CharmURL': function() {},
         PublicAddress: 'public_address',
-        PrivateAddress: 'private_address', 
-        MachineId: 'machine', 
-        Ports: 'open_ports', 
-        Status: 'agent_state', 
+        PrivateAddress: 'private_address',
+        MachineId: 'machine',
+        Ports: 'open_ports',
+        Status: 'agent_state',
         StatusInfo: 'agent_state_info'
       },
       relation: {
-        Key: 'relation_id', 
-        Endpoints: function() {}
+        Key: 'relation_id',
+        'Endpoints': function() {}
       },
       annotation: {
-        Tag: function() {}, 
-        Annotations: function() {}
+        'Tag': function() {},
+        'Annotations': function() {}
       }
     },
 
