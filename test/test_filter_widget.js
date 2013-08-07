@@ -55,8 +55,8 @@ describe('filter widget', function() {
     assert.isObject(instance.get('filters'));
     var categories = instance.get('categories');
 
-    instance.get('categories')[0].value.should.eql('databases');
-    instance.get('categories')[0].name.should.eql('Databases');
+    instance.get('categories')[0].value.should.eql('app-servers');
+    instance.get('categories')[0].name.should.eql('App Servers');
     instance.get('categories')[0].checked.should.eql(true);
 
     instance.get('type')[0].name.should.eql('Reviewed Charms');

@@ -198,7 +198,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
      */
     _searchChanged: function(ev) {
-      ev.halt();
+      if (ev && ev.halt) {
+        ev.halt();
+      }
       var change = {
         search: true,
         filter: {
