@@ -81,7 +81,7 @@ YUI.add('browser-search-widget', function(Y) {
               'success': function(data) {
                 var catData = this._suggestCategoryOptions(query);
                 if (catData) {
-                    data.result = data.result.concat(catData);
+                    data.result = catData.concat(data.result);
                 }
                 callback(data);
               },
@@ -143,7 +143,6 @@ YUI.add('browser-search-widget', function(Y) {
       var fakeModelData = [];
       var baseIconUrl = 'http://manage.jujucharms.com/static/img/charm-';
       Y.Object.each(models.FILTER_CATEGORIES, function(name, id) {
-        debugger;
         if (name.substr(0, query.length).toLowerCase() === query) {
           fakeModelData.push({
             charm: {
@@ -225,6 +224,11 @@ YUI.add('browser-search-widget', function(Y) {
       this.ac.get('inputNode').on('focus', function () {
         this.ac.sendRequest('');
       }, this);
+
+      // Stop clicking on charm-tokens from navigating.
+      this.get('boundingBox').delegate('click', function(ev) {
+        ev.halt();
+      }, 'a', this);
     },
 
     /**
@@ -236,25 +240,43 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _suggestionSelected: function(ev) {
-      // @todo
-      // The selection could be either a charm or a category. For a category
-      // we need to do a category search without a search term.
-
-      // For a charm we need to use that charm name as the search term.
-      // Make sure the input box is updated.
+      ev.halt();
+      var charmid = ev.result.raw.charm.id;
       var form = this.get('boundingBox').one('form');
-      form.one('input').set('value', ev.result.text);
 
-      var charm = ev.itemNode.one('a');
-      var charmID = charm.getData('charmid');
-      var change = {
-        charmID: charmID
-      };
+      if(charmid.substr(0, 4) === 'cat:') {
+        form.one('input').set('value', '');
 
-      this.fire(this.EVT_SEARCH_CHANGED, {
-        change: change,
-        newVal: ev.result.text
-      });
+        var category = charmid.match(/([^/]+)-\d\/?/);
+        var change = {
+          charmID: null,
+          search: true,
+          filter: {
+            categories: [category[1]],
+            replace: true
+          }
+        };
+
+        this.ac.hide();
+        this.fire(this.EVT_SEARCH_CHANGED, {
+          change: change,
+          newVal: ''
+        });
+
+      } else {
+        // For a charm we need to use that charm name as the search term.
+        // Make sure the input box is updated.
+        form.one('input').set('value', ev.result.text);
+        var change = {
+          charmID: charmid
+        };
+
+        this.ac.hide();
+        this.fire(this.EVT_SEARCH_CHANGED, {
+          change: change,
+          newVal: ev.result.text
+        });
+      }
     },
 
     /**
@@ -327,23 +349,9 @@ YUI.add('browser-search-widget', function(Y) {
       // Make sure the UI around the autocomplete search input is setup.
       if (window.flags && window.flags.ac) {
         this._setupAutocomplete();
-
-        // Override a couple of autocomplete events to help perform our
-        // navigation correctly.
-        // Block the links from the charm token from taking effect.
-        this.addEvent(
-            this.ac.get('boundingBox').delegate(
-                'click',
-                function(ev) {
-                  ev.halt();
-                },
-                '.yui3-charmtoken a'
-            )
-        );
         this.addEvent(
             this.ac.on('select', this._suggestionSelected, this)
         );
-
       }
     },
 

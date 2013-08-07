@@ -198,6 +198,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
      */
     _searchChanged: function(ev) {
+      ev.halt();
       var change = {
         search: true,
         filter: {
@@ -219,6 +220,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (ev.change) {
         change = Y.merge(change, ev.change);
       }
+
+      debugger;
       this.fire('viewNavigate', {change: change});
     },
 
