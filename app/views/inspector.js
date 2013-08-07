@@ -274,8 +274,10 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _unexposeServiceCallback: function(ev) {
-      var service = this.viewletManager.get('model'),
-          db = this.viewletManager.get('db');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.viewletManager : this;
+      var service = dataSource.get('model'),
+          db = dataSource.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -320,8 +322,10 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _exposeServiceCallback: function(ev) {
-      var service = this.viewletManager.get('model'),
-          db = this.viewletManager.get('db');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.viewletManager : this;
+      var service = dataSource.get('model'),
+          db = dataSource.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({

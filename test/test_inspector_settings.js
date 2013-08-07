@@ -44,11 +44,13 @@ describe('Inspector Settings', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    env.expose = function(service) {
+    env.expose = function(s) {
       exposeCalled = true;
+      service.set('exposed', true);
     };
-    env.unexpose = function(service) {
+    env.unexpose = function(s) {
       unexposeCalled = true;
+      service.set('exposed', false);
     };
     window.flags.serviceInspector = true;
   });
