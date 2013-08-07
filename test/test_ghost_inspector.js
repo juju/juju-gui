@@ -108,57 +108,57 @@ describe('Ghost Inspector', function() {
     charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
   });
 
-  /**** Begin service destroy UI tests. ****/
+  describe('Service destroy UI', function() {
+    it('has a button to destroy the service', function() {
+      inspector = setUpInspector();
+      assert.isObject(container.one('.destroy-service-trigger span'));
+    });
 
-  it('has a button to destroy the service', function() {
-    inspector = setUpInspector();
-    assert.isObject(container.one('.destroy-service-trigger span'));
+    it('shows the destroy service prompt if the trigger is clicked',
+        function() {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          assert.isTrue(promptBox.hasClass('closed'));
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+        });
+
+    it('hides the destroy service prompt if cancel is clicked', function() {
+      inspector = setUpInspector();
+      var promptBox = container.one('.destroy-service-prompt');
+      assert.isTrue(promptBox.hasClass('closed'));
+      // First we have to open the prompt.
+      container.one('.destroy-service-trigger span').simulate('click');
+      assert.isFalse(promptBox.hasClass('closed'));
+      // Now we can close it.
+      container.one('.cancel-destroy').simulate('click');
+      assert.isTrue(promptBox.hasClass('closed'));
+    });
+
+    it('initiates a destroy if the "Destroy" button is clicked',
+        function(done) {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          // First we have to open the prompt.
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+          // If the test times out, it failed (because the expected
+          // function call didn't happen).
+          inspector.initiateServiceDestroy = function() {
+            done();
+          };
+          container.one('.initiate-destroy').simulate('click');
+        });
+
+    it('wires up UI elements to handlers for destroy service', function() {
+      // There are UI elements and they all have to be wired up to something.
+      inspector = setUpInspector();
+      var events = inspector.viewletManager.events;
+      assert.equal(
+          typeof events['.destroy-service-trigger span'].click, 'function');
+      assert.equal(typeof events['.initiate-destroy'].click, 'function');
+      assert.equal(typeof events['.cancel-destroy'].click, 'function');
+    });
   });
-
-  it('shows the destroy service prompt if the trigger is clicked', function() {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    assert.isTrue(promptBox.hasClass('closed'));
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-  });
-
-  it('hides the destroy service prompt if cancel is clicked', function() {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    assert.isTrue(promptBox.hasClass('closed'));
-    // First we have to open the prompt.
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-    // Now we can close it.
-    container.one('.cancel-destroy').simulate('click');
-    assert.isTrue(promptBox.hasClass('closed'));
-  });
-
-  it('initiates a destroy if the "Destroy" button is clicked', function(done) {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    // First we have to open the prompt.
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-    // If the test times out, it failed (because the expected function call
-    // didn't happen).
-    inspector.initiateServiceDestroy = function() {
-      done();
-    };
-    container.one('.initiate-destroy').simulate('click');
-  });
-
-  it('wires up UI elements to handlers for destroy service', function() {
-    // There are UI elements and they all have to be wired up to something.
-    inspector = setUpInspector();
-    var events = inspector.viewletManager.events;
-    assert.equal(
-        typeof events['.destroy-service-trigger span'].click, 'function');
-    assert.equal(typeof events['.initiate-destroy'].click, 'function');
-    assert.equal(typeof events['.cancel-destroy'].click, 'function');
-  });
-
-  /**** End service destroy UI tests. ****/
 
 });
