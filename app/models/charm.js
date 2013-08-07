@@ -216,7 +216,7 @@ YUI.add('juju-charm-models', function(Y) {
       data.is_subordinate = data.subordinate || data.is_subordinate;
       // Because the old and new charm models have different places for
       // the options data, this handles the normalization.
-      if (data.config && data.config.options && ! data.options) {
+      if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
       }
@@ -537,7 +537,7 @@ YUI.add('juju-charm-models', function(Y) {
       data.is_subordinate = data.subordinate || data.is_subordinate;
       // Because the old and new charm models have different places for
       // the options data, this handles the normalization.
-      if (data.config && data.config.options && ! data.options) {
+      if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
       }
