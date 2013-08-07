@@ -506,6 +506,165 @@ describe('juju models', function() {
   });
 });
 
+describe('BrowserCharm load', function() {
+  var Y, models, conn, env, app, container, fakeStore, data, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
+                               'juju-tests-utils', 'json-stringify',
+                               'juju-charm-store'], function(Y) {
+      models = Y.namespace('juju.models');
+      juju = Y.namespace('juju');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub();
+    env = juju.newEnvironment({conn: conn});
+    env.connect();
+    conn.open();
+    container = Y.Node.create('<div id="test" class="container"></div>');
+    data = [];
+    fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: data
+            }]
+          }
+        });
+      }
+    });
+  });
+
+  afterEach(function() {
+    container.destroy();
+  });
+
+  it('will throw an exception with non-read sync', function() {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'});
+    try {
+      charm.sync('create');
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal('Only use the "read" action; "create" not supported.');
+    }
+    try {
+      charm.sync('update');
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal('Only use the "read" action; "update" not supported.');
+    }
+    try {
+      charm.sync('delete');
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal('Only use the "read" action; "delete" not supported.');
+    }
+  });
+
+  it('throws an error if you do not pass get_charm',
+     function() {
+       var charm = new models.BrowserCharm({id: 'local:precise/foo-4'});
+       try {
+         charm.sync('read', {});
+         assert.fail('Should have thrown an error');
+       } catch (e) {
+         e.should.equal(
+         'You must supply a get_charm function.');
+       }
+       try {
+         charm.sync('read', {env: 42});
+         assert.fail('Should have thrown an error');
+       } catch (e) {
+         e.should.equal(
+         'You must supply a get_charm function.');
+       }
+     });
+
+  it('must send request to juju environment for local charms', function() {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(env);
+    assert(!charm.loaded);
+    conn.last_message().op.should.equal('get_charm');
+  });
+
+  it('must handle success from local charm request', function(done) {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(!err);
+          charm.get('summary').should.equal('wowza');
+          assert(charm.loaded);
+          done();
+        });
+    var response = conn.last_message();
+    response.result = { summary: 'wowza' };
+    env.dispatch_result(response);
+    // The test in the callback above should run.
+  });
+
+  it('parses the old charm model options location correctly', function(done) {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(!err);
+          // This checks to make sure the parse mechanism is working properly
+          // for both the old ane new charm browser.
+          assert.equal(charm.get('options').default_log['default'], 'global');
+          done();
+        });
+    var response = conn.last_message();
+    response.result = {
+      config: {
+        options: {
+          default_log: {
+            'default': 'global',
+            description: 'Default log',
+            type: 'string'
+          }}}};
+    env.dispatch_result(response);
+  });
+
+  it('parses the new charm model options location correctly', function(done) {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(!err);
+          // This checks to make sure the parse mechanism is working properly
+          // for both the old ane new charm browser.
+          assert.equal(charm.get('options').default_log['default'], 'global');
+          done();
+        });
+    var response = conn.last_message();
+    response.result = {
+      options: {
+        default_log: {
+          'default': 'global',
+          description: 'Default log',
+          type: 'string'
+        }}};
+    env.dispatch_result(response);
+  });
+
+  it('must handle failure from local charm request', function(done) {
+    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+        env,
+        function(err, response) {
+          assert(err);
+          assert(response.err);
+          assert(!charm.loaded);
+          done();
+        });
+    var response = conn.last_message();
+    response.err = true;
+    env.dispatch_result(response);
+    // The test in the callback above should run.
+  });
+});
+
 describe('Charm load', function() {
   var Y, models, conn, env, app, container, fakeStore, data, juju;
 

@@ -504,6 +504,79 @@ YUI.add('juju-charm-models', function(Y) {
       }, this);
     },
 
+    sync: function(action, options, callback) {
+      if (action !== 'read') {
+        throw (
+            'Only use the "read" action; "' + action + '" not supported.');
+      }
+      if (Y.Lang.isValue(options.get_charm)) {
+        // This is an env.
+        options.get_charm(this.get('id'), function(response) {
+          if (response.err) {
+            callback(true, response);
+          } else if (response.result) {
+            callback(false, response.result);
+          } else {
+            // What's going on?  This does not look like either of our
+            // expected signatures.  Declare a loading error.
+            callback(true, response);
+          }
+        });
+      } else {
+        throw 'You must supply a get_charm function.';
+      }
+    },
+
+    parse: function(response) {
+      var data = Charm.superclass.parse.apply(this, arguments),
+          self = this;
+
+      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
+      // or juju core.  If not, remove the "|| data.is_subordinate" and change
+      // in the fakebackend and/or sandbox to send the expected thing there.
+      data.is_subordinate = data.subordinate || data.is_subordinate;
+      // Because the old and new charm models have different places for
+      // the options data, this handles the normalization.
+      if (data.config && data.config.options && ! data.options) {
+        data.options = data.config.options;
+        delete data.config;
+      }
+      Y.each(data, function(value, key) {
+        if (!Y.Lang.isValue(value) ||
+            !self.attrAdded(key) ||
+            Y.Lang.isValue(self.get(key))) {
+          delete data[key];
+        }
+      });
+      if (data.owner === 'charmers') {
+        delete data.owner;
+      }
+      return data;
+    },
+
+    compare: function(other, relevance, otherRelevance) {
+      // Official charms sort before owned charms.
+      // If !X.owner, that means it is owned by charmers.
+      var owner = this.get('owner'),
+          otherOwner = other.get('owner');
+      if (!owner && otherOwner) {
+        return -1;
+      } else if (owner && !otherOwner) {
+        return 1;
+      // Relevance is next most important.
+      } else if (relevance && (relevance !== otherRelevance)) {
+        // Higher relevance comes first.
+        return otherRelevance - relevance;
+      // Otherwise sort by package name, then by owner, then by revision.
+      } else {
+        return (
+                (this.get('package_name').localeCompare(
+                other.get('package_name'))) ||
+                (owner ? owner.localeCompare(otherOwner) : 0) ||
+                (this.get('revision') - other.get('revision')));
+      }
+    },
+
     /**
       Build the relatedCharms attribute from api data
 
