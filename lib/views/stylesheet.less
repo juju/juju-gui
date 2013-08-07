@@ -959,23 +959,57 @@ g.unit {
 }
 .zoom-controls {
     position: absolute;
-    right: -20px;
-    top: 35px;
+    right: 20px;
+    top: 40px;
     // The following is required to override Bootstrap styles for the slider
     // thumb sprite.
     img {
         max-width: none;
     }
 }
-#zoom-in-btn {
-    position: relative;
-    top: -90px;
-    left: 24px;
+.yui3-skin-sam .yui3-slider-y .yui3-slider-rail,
+.yui3-skin-sam .yui3-slider-y .yui3-slider-rail-cap-top,
+.yui3-skin-sam .yui3-slider-y .yui3-slider-rail-cap-bottom {
+    background-image: none;
 }
+.yui3-skin-sam .yui3-slider-y .yui3-slider-rail {
+    .create-border-radius(@border-radius);
+    .create-box-shadow(inset 0 0 4px rgba(0,0,0,.51));
+    background-color: #bbbbbb;
+    width: 10px;
+}
+
+.yui3-skin-sam .yui3-slider-y .yui3-slider-thumb-shadow {
+    display: none;
+}
+.yui3-skin-sam .yui3-slider-y .yui3-slider-thumb {
+    width: 21px;
+    height: 21px;
+    left: 0;
+    overflow: visible;
+}
+.yui3-skin-sam .yui3-slider-y .yui3-slider-thumb-image {
+    left: -5px;
+}
+
+#zoom-in-btn,
 #zoom-out-btn {
     position: relative;
-    top: 90px;
-    left: -30px;
+    left: -5px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#zoom-in-btn {
+    top: -10px;
+}
+#zoom-out-btn {
+    top: 10px;
 }
 
 .create-picker(@width, @top, @listtop, @listbottom) {
