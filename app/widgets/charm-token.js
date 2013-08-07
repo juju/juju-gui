@@ -222,6 +222,18 @@ YUI.add('browser-charm-token', function(Y) {
       commitCount: {},
 
       /**
+       * Force a specific icon url to be used.
+       *
+       * @attribute iconUrl
+       * @default undefined
+       * @type {String}
+       *
+       */
+      iconUrl: {
+
+      },
+
+      /**
        * @attribute recent_commit_count
        * @default undefined
        * @type {Number}
@@ -231,6 +243,8 @@ YUI.add('browser-charm-token', function(Y) {
       /**
          Supports size attributes of small and large that turn into the css
          class around the charm token.
+
+         Sizes include tiny, small, large
 
          @attribute size
          @default SIZE_SMALL
