@@ -222,6 +222,18 @@ YUI.add('browser-charm-token', function(Y) {
       commitCount: {},
 
       /**
+       * Force a specific icon url to be used.
+       *
+       * @attribute iconUrl
+       * @default undefined
+       * @type {String}
+       *
+       */
+      iconUrl: {
+
+      },
+
+      /**
        * @attribute recent_commit_count
        * @default undefined
        * @type {Number}

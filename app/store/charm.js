@@ -95,6 +95,7 @@ YUI.add('juju-charm-store', function(Y) {
       // Force that this is an autocomplete call to perform matching on the
       // start of names vs a fulltext search.
       filters.autocomplete = 'true';
+      filters.limit = 5;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
@@ -305,6 +306,7 @@ YUI.add('juju-charm-store', function(Y) {
         return charmData.charm;
       });
       return new Y.juju.models.BrowserCharmList({
+
         items: preppedData
       });
     },
