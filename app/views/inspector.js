@@ -658,14 +658,13 @@ YUI.add('juju-view-inspector', function(Y) {
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
           schema = charm.get('options'),
-          container = inspector.get('container'),
+          container = this.viewletManager.viewlets.config.container,
           button = container.one('button.confirm');
 
       button.set('disabled', 'disabled');
 
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
       var errors = utils.validate(newVals, schema);
-
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
@@ -733,7 +732,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     saveConstraints: function(ev) {
       var inspector = this.viewletManager;
-      var container = inspector.get('container');
+      var container = inspector.viewlets.constraints.container;
       var env = inspector.get('env');
       var service = inspector.get('model');
       // Retrieve constraint values.
@@ -847,6 +846,157 @@ YUI.add('juju-view-inspector', function(Y) {
       var charmId = ev.currentTarget.getAttribute('data-charmid');
       var charm = db.charms.getById(charmId);
       this.viewletManager.showViewlet('charmDetails', charm);
+    },
+
+    /**
+      Directs the unit action button click event to
+      the appropriate handler.
+
+      @method _unitActionButtonClick
+      @param {Y.EventFacade} e button click event.
+    */
+    _unitActionButtonClick: function(e) {
+      e.halt();
+      var handlers = {
+        resolve: this._sendUnitResolve,
+        retry: this._sendUnitRetry,
+        replace: this._sendUnitReplace
+      };
+
+      var units = e.currentTarget.ancestor('form').all('input[type=checkbox]');
+      var unitNames = [];
+      units.each(function(unit) {
+        if (unit.get('checked')) {
+          unitNames = unit.siblings('a').get('innerHTML');
+        }
+      });
+
+      var env = this.viewletManager.get('env'),
+          handlerName = e.currentTarget.getData('type'),
+          handlerFn = handlers[handlerName];
+
+      if (Y.Lang.isFunction(handlerFn)) {
+        handlerFn(unitNames, env);
+      } else {
+        console.error('No handler assigned to', handlerName);
+      }
+
+      return; // ignoring all other button clicks passed to this method
+    },
+
+    /**
+      Sends the resolve command to the env to resolve the
+      selected unit in the inspector unit list.
+
+      @method _sendUnitResolve
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitResolve: function(unitNames, env) {
+      unitNames.forEach(function(unitName) {
+        env.resolved(unitName, null);
+      });
+    },
+
+    /**
+      Sends the retry command to the env to retry the
+      selected unit in the inspector unit list.
+
+      @method _sendUnitRetry
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitRetry: function(unitNames, env) {
+      unitNames.forEach(function(unitName) {
+        env.resolved(unitName, null, true);
+      });
+    },
+
+    /**
+      Sends the required commands to the env to replace
+      the selected unit in the inspector unit list.
+
+      @method _sendUnitReplace
+      @param {Array} unitNames A list of unit names.
+      @param {Object} env The current environment (Go/Python).
+    */
+    _sendUnitReplace: function(unitNames, env) {
+      // currently a noop until min units is setup
+    }
+  };
+
+  var ConflictMixin = {
+    'changed': function(node, key, field) {
+      var modelValue = this.model.get(key);
+      var fieldValue = field.get(node);
+      if (modelValue !== fieldValue) {
+        node.addClass('modified');
+      } else {
+        node.removeClass('modified');
+      }
+    },
+    'conflict': function(node, model, viewletName, resolve, binding) {
+      /**
+       Calls the databinding resolve method
+       @method sendResolve
+      */
+      var key = node.getData('bind');
+      var modelValue = model.get(key);
+      var field = binding.field;
+      var wrapper = node.ancestor('.settings-wrapper');
+      var resolver = wrapper.one('.resolver');
+      var option = resolver.one('.config-field');
+      var handlers = [], watch = handlers.push;
+
+      /**
+       User selects one of the two conflicting values.
+       @method sendResolve
+       */
+      function sendResolve(e) {
+        e.halt(true);
+        var formValue = field.get(node);
+        handlers.forEach(function(h) { h.detach();});
+        node.removeClass('modified');
+        node.removeClass('conflict');
+        resolver.addClass('hidden');
+
+        if (e.currentTarget.hasClass('conflicted-env')) {
+          resolve(node, viewletName, modelValue);
+        } else {
+          resolve(node, viewletName, formValue);
+        }
+      }
+
+      /**
+       User selects a conflicting field, show the resolution UI
+
+       @method setupResolver
+      */
+      function setupResolver(e) {
+        e.halt(true);
+        node.removeClass('conflict-pending');
+        node.addClass('conflict');
+        option.addClass('conflict');
+        option.setStyle('width', node.get('offsetWidth'));
+        option.setHTML(modelValue);
+        resolver.removeClass('hidden');
+      }
+
+      // On conflict just indicate.
+      node.removeClass('modified');
+      node.addClass('conflict-pending');
+
+      watch(wrapper.delegate('click', setupResolver,
+          '.conflict-pending', this));
+
+      watch(wrapper.delegate('click', sendResolve,
+          '.conflict', this));
+    },
+    'unsyncedFields': function(dirtyFields) {
+      this.container.one('.controls .confirm').setHTML('Overwrite');
+    },
+    'syncedFields': function() {
+      this.container.one('.controls .confirm').setHTML('Confirm');
     }
   };
 
@@ -911,6 +1061,36 @@ YUI.add('juju-view-inspector', function(Y) {
     }
 
     /**
+      Generates the list of allowable buttons for the
+      different inspector unit lists.
+
+      @method generateActionButtonList
+      @param {String} category The unit status category.
+    */
+    function generateActionButtonList(category) {
+      var showingButtons = {},
+          buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
+          // if you adjust this list don't forget to edit
+          // the list in the unit tests
+          buttons = {
+            error: ['resolve', 'retry', 'replace'],
+            pending: ['retry', 'replace'],
+            running: ['replace'],
+            'landscape-needs-reboot': ['landscape'],
+            'landscape-security-upgrades': ['landscape']
+          };
+
+      buttonTypes.forEach(function(buttonType) {
+        buttons[category].forEach(function(allowedButton) {
+          if (buttonType === allowedButton) {
+            showingButtons[buttonType] = true;
+          }
+        });
+      });
+      return showingButtons;
+    }
+
+    /**
       Binds the statuses data set to d3
 
       @method generateAndBindUnitHeaders
@@ -958,8 +1138,9 @@ YUI.add('juju-view-inspector', function(Y) {
       unitStatusContentForm.append('div')
                            .classed('action-button-wrapper', true)
                            .html(
-          function() {
-                                 var tmpl = Templates['unit-action-buttons']();
+          function(d) {
+                                 var tmpl = Templates['unit-action-buttons'](
+                                     generateActionButtonList(d.category));
                                  buttonHeight = tmpl.offsetHeight;
                                  return tmpl;
           });
@@ -1077,7 +1258,8 @@ YUI.add('juju-view-inspector', function(Y) {
         },
         // These methods are exposed here to allow us access for testing.
         updateUnitList: updateUnitList,
-        generateAndBindUnitHeaders: generateAndBindUnitHeaders
+        generateAndBindUnitHeaders: generateAndBindUnitHeaders,
+        generateActionButtonList: generateActionButtonList
       },
       config: {
         name: 'config',
@@ -1132,37 +1314,6 @@ YUI.add('juju-view-inspector', function(Y) {
               }
             }
           }
-        },
-        'conflict': function(node, model, viewletName, resolve) {
-          /**
-            Calls the databinding resolve method
-            @method sendResolve
-          */
-          function sendResolve(e) {
-            handler.detach();
-            if (e.currentTarget.hasClass('conflicted-confirm')) {
-              node.setStyle('borderColor', 'black');
-              resolve(node, viewletName, newVal);
-            }
-            // if they don't accept the new value then do nothing.
-            message.setStyle('display', 'none');
-          }
-
-          node.setStyle('borderColor', 'red');
-
-          var message = node.ancestor('.settings-wrapper').one('.conflicted'),
-              newVal = model.get(node.getData('bind'));
-
-          message.one('.newval').setHTML(newVal);
-          message.setStyle('display', 'block');
-
-          var handler = message.delegate('click', sendResolve, 'button', this);
-        },
-        'unsyncedFields': function(dirtyFields) {
-          this.container.one('.controls .confirm').setHTML('Overwrite');
-        },
-        'syncedFields': function() {
-          this.container.one('.controls .confirm').setHTML('Confirm');
         }
       },
       // Service constraints viewlet.
@@ -1201,34 +1352,6 @@ YUI.add('juju-view-inspector', function(Y) {
           });
           this.container = Y.Node.create(this.templateWrapper);
           this.container.setHTML(contents);
-        },
-
-        'conflict': function(node, model, viewletName, resolve) {
-          /**
-            Calls the databinding resolve method.
-            @method sendResolve
-          */
-          function sendResolve(ev) {
-            handler.detach();
-            if (ev.currentTarget.hasClass('conflicted-confirm')) {
-              resolve(node, viewletName, newValue);
-            }
-            // If the user does not accept the new value then do nothing.
-            message.hide();
-          }
-          var newValue = model.get(node.getData('bind'));
-          if (newValue !== node.get('value')) {
-            // If the value changed, give the user the possibility to
-            // select which value to preserve.
-            var message = node.ancestor('.control-group').one('.conflicted');
-            message.one('.newval').setHTML(newValue);
-            message.show();
-            var handler = message.delegate(
-                'click', sendResolve, 'button', this);
-          } else {
-            // Otherwise, just resolve this conflict.
-            resolve(node, viewletName, newValue);
-          }
         }
       },
       //relations: {},
@@ -1270,6 +1393,10 @@ YUI.add('juju-view-inspector', function(Y) {
 
     // Add any imported viewlets into this DEFAULT_VIEWLETS from doom.
     DEFAULT_VIEWLETS = Y.merge(DEFAULT_VIEWLETS, viewletNS);
+    // Mixin Conflict Handling.
+    DEFAULT_VIEWLETS.config = Y.merge(DEFAULT_VIEWLETS.config, ConflictMixin);
+    DEFAULT_VIEWLETS.constraints = Y.merge(DEFAULT_VIEWLETS.constraints,
+                                           ConflictMixin);
 
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
