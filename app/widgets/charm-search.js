@@ -81,7 +81,7 @@ YUI.add('browser-search-widget', function(Y) {
               'success': function(data) {
                 var catData = this._suggestCategoryOptions(query);
                 if (catData) {
-                    data.result = catData.concat(data.result);
+                  data.result = catData.concat(data.result);
                 }
                 callback(data);
               },
@@ -137,6 +137,13 @@ YUI.add('browser-search-widget', function(Y) {
       var form = this.get('boundingBox').one('form').addClass('active');
     },
 
+    /**
+     * Manually append categories to the suggestion list.
+     *
+     * @method _suggestCategoryOptions
+     * @param {String} query the current query string to match against.
+     *
+     */
     _suggestCategoryOptions: function(query) {
       // For now return all categories in a format we can get the model/charm
       // token to play nice with.
@@ -153,7 +160,7 @@ YUI.add('browser-search-widget', function(Y) {
               shouldShowIcon: true,
               is_approved: false,
               iconUrl: baseIconUrl + id + '.svg',
-              name: name,
+              name: name
             }
           });
         }
@@ -221,7 +228,7 @@ YUI.add('browser-search-widget', function(Y) {
       });
       this.ac.render();
 
-      this.ac.get('inputNode').on('focus', function () {
+      this.ac.get('inputNode').on('focus', function() {
         this.ac.sendRequest('');
       }, this);
 
@@ -243,12 +250,12 @@ YUI.add('browser-search-widget', function(Y) {
       ev.halt();
       var charmid = ev.result.raw.charm.id;
       var form = this.get('boundingBox').one('form');
+      var change = {};
 
-      if(charmid.substr(0, 4) === 'cat:') {
+      if (charmid.substr(0, 4) === 'cat:') {
         form.one('input').set('value', '');
-
-        var category = charmid.match(/([^/]+)-\d\/?/);
-        var change = {
+        var category = charmid.match(/([^\/]+)-\d\/?/);
+        change = {
           charmID: null,
           search: true,
           filter: {
@@ -267,7 +274,7 @@ YUI.add('browser-search-widget', function(Y) {
         // For a charm we need to use that charm name as the search term.
         // Make sure the input box is updated.
         form.one('input').set('value', ev.result.text);
-        var change = {
+        change = {
           charmID: charmid
         };
 

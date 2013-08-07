@@ -87,7 +87,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
 
      */
     _handleCharmSelection: function(ev) {
-      debugger;
       ev.halt();
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');

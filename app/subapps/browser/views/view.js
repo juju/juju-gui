@@ -221,7 +221,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
         change = Y.merge(change, ev.change);
       }
 
-      debugger;
       this.fire('viewNavigate', {change: change});
     },
 
