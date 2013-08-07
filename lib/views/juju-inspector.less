@@ -12,16 +12,13 @@
 
 .yui3-juju-inspector {
     .customize-scrollbar;
-    position: absolute;
-    top: 20px;
-    right: 35px;
 
     .left-breakout {
         .type9;
         position: absolute;
-        top: 0;
-        bottom: 0;
-        right: @inspector-width;
+        top: 20px;
+        bottom: @navbar-bottom-height + 20px;
+        right: @inspector-width + 35px;
         overflow-y: auto;
         overflow-x: hidden;
         width: @bws-panel-width;
@@ -93,11 +90,9 @@
 
     .juju-inspector {
         .create-border-radius(@border-radius);
-        position: relative;
-        top: auto;
-        bottom: auto;
-        left: auto;
-        right: auto;
+        position: absolute;
+        top: 20px;
+        right: 35px;
         width: @inspector-width;
         min-height: 250px;
         border: 0;
