@@ -48,6 +48,20 @@ YUI.add('juju-databinding', function(Y) {
       }
     };
 
+    /**
+     Get the field handler for a given node with a fallback.
+
+     @method _getFieldHandler
+     */
+    function _getNodeHandler(node) {
+      /*jshint validthis:true */
+      var field = this._fieldHandlers[node.tagName.toLowerCase()];
+      if (!field) {
+        field = this._fieldHandlers['default'];
+      }
+      return field;
+    }
+
     function _indexBindings(bindings, keyfunc, multiple) {
       var index = {};
       if (!keyfunc) {
@@ -187,10 +201,14 @@ YUI.add('juju-databinding', function(Y) {
       if (viewlet.bindings && viewlet.bindings[config.name]) {
         binding = Y.mix(binding, viewlet.bindings[config.name], true);
       }
-      // Ensure 'target' is an Array.
-      if (typeof binding.target === 'string') {
-        binding.target = [binding.target];
+
+      // This could be done ahead of time, but by doing this at runtime
+      // we allow very flexible DOM mutation out of band. Revisit if
+      // this shows up on a profile.
+      if (binding.target) {
+        binding.field = _getNodeHandler.call(this, binding.target.getDOMNode());
       }
+
       binding.viewlet = viewlet;
       this._bindings.push(binding);
       return binding;
@@ -311,11 +329,10 @@ YUI.add('juju-databinding', function(Y) {
           name: node.getData('bind'),
           target: node
         }, viewlet);
-        // Add listeners for model cloning for conflict resolution
         viewlet._eventHandles.push(
-            node.on(
-            'valueChange', this._storeChanged, this, viewlet));
+            node.on('valueChange', this._storeChanged, this, viewlet));
       }, this);
+
       this._setupHeirarchicalBindings();
       this._setupDependencies();
       this._setupWildcarding(viewlet);
@@ -535,6 +552,10 @@ YUI.add('juju-databinding', function(Y) {
       if (save) {
         viewlet._changedValues.push(key);
       }
+      if (viewlet.changed) {
+        viewlet.changed(e.target, key,
+            _getNodeHandler.call(this, e.target.getDOMNode()));
+      }
     };
 
     /**
@@ -628,16 +649,6 @@ YUI.add('juju-databinding', function(Y) {
           return;
         }
 
-        // This could be done ahead of time, but by doing this at runtime
-        // we allow very flexible DOM mutation out of band. Revisit if
-        // this shows up on a profile.
-        var elementKind = binding.target.getDOMNode().tagName.toLowerCase();
-        var field = self._fieldHandlers[elementKind];
-        if (!field) {
-          field = self._fieldHandlers['default'];
-        }
-        var dataKey = binding.name;
-
         // If the field has been changed while the user was editing it
         viewlet._changedValues.forEach(function(changeKey) {
           if (changeKey === binding.name) {
@@ -645,7 +656,7 @@ YUI.add('juju-databinding', function(Y) {
             viewlet.unsyncedFields();
             binding.viewlet.conflict(
                 binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self));
+                Y.bind(resolve, self), binding);
           }
         });
 
@@ -665,7 +676,7 @@ YUI.add('juju-databinding', function(Y) {
           if (binding.update) {
             binding.update.call(binding, binding.target, value);
           } else {
-            field.set.call(binding, binding.target, value);
+            binding.field.set.call(binding, binding.target, value);
           }
           optionalCallbacks(delta.wildcards['+'],
                             'update', binding.target, value);
@@ -695,7 +706,7 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = this.name,
+      var key = node.getData('bind'),
           viewlet = this._viewlets[viewletName];
       var changedValues = Y.Array.filter(
           viewlet._changedValues, function(value) {
@@ -705,11 +716,7 @@ YUI.add('juju-databinding', function(Y) {
             return false;
           });
       viewlet._changedValues = changedValues;
-      var elementKind = node.getDOMNode().tagName.toLowerCase();
-      var field = this._fieldHandlers[elementKind];
-      if (!field) {
-        field = this._fieldHandlers['default'];
-      }
+      var field = _getNodeHandler.call(this, node.getDOMNode());
       field.set.call(this, node, value);
       // If there are no more changed values then tell the
       // the viewlet to update accordingly

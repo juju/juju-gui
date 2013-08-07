@@ -183,7 +183,7 @@ YUI.add('juju-view-environment', function(Y) {
               },
               viewletEvents: {
                 // Viewlet wrapper viewlet.
-                'button.confirm': { click: 'saveConfig'},
+                '.settings-config button.confirm': { click: 'saveConfig'},
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
