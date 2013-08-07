@@ -320,7 +320,13 @@ YUI.add('juju-gui', function(Y) {
           }
           var target = Y.one(spec.target);
           if (target) {
-            if (spec.toggle) { target.toggleView(); }
+            if (spec.toggle) {
+              if (target.getStyle('display') !== 'none') {
+                target.hide();
+              } else {
+                target.show();
+              }
+            }
             if (spec.focus) { target.focus(); }
           }
           if (spec.callback) { spec.callback.call(this, evt, target); }
