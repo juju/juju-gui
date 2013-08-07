@@ -17,14 +17,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Ghost Inspector', function() {
+describe.only('Ghost Inspector', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, charmConfig;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'juju-charm-store', 'juju-charm-models', 'juju-ghost-inspector'];
+      'juju-charm-store', 'juju-charm-models', 'juju-ghost-inspector',
+      'event-valuechange'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           utils = Y.namespace('juju-tests.utils');
           models = Y.namespace('juju.models');
@@ -86,7 +87,25 @@ describe('Ghost Inspector', function() {
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
-  it('updates the service name in the topology when changed in the inspector');
+  it('updates the service name in the topology when changed in the inspector',
+      function(done) {
+        inspector = setUpInspector();
+        var serviceIcon = Y.one('tspan.name');
+        assert.equal(serviceIcon.get('textContent'), '(mediawiki 1)');
+        var serviceNameInput = Y.one('input[name=service-name]'),
+            vmContainer = inspector.viewletManager.get('container');
+        var handler = vmContainer.delegate('valuechange', function() {
+          view.update(); // simulating a db.fire('update') call
+          // Reselecting the service node because it is replaced not actually
+          // updated by the topo service d3 system.
+          assert.equal(Y.one('tspan.name').get('textContent'), '(foo)');
+          handler.detach();
+          done();
+        }, 'input[name=service-name]');
+        serviceNameInput.simulate('focus');
+        serviceNameInput.set('value', 'foo');
+      });
+
   it('deploys a service with the specified unit count');
   it('deploys a service with the specified configuration');
   it('disables and resets input fields when \'use default config\' is active');
@@ -108,57 +127,57 @@ describe('Ghost Inspector', function() {
     charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
   });
 
-  /**** Begin service destroy UI tests. ****/
+  describe('Service destroy UI', function() {
+    it('has a button to destroy the service', function() {
+      inspector = setUpInspector();
+      assert.isObject(container.one('.destroy-service-trigger span'));
+    });
 
-  it('has a button to destroy the service', function() {
-    inspector = setUpInspector();
-    assert.isObject(container.one('.destroy-service-trigger span'));
+    it('shows the destroy service prompt if the trigger is clicked',
+        function() {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          assert.isTrue(promptBox.hasClass('closed'));
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+        });
+
+    it('hides the destroy service prompt if cancel is clicked', function() {
+      inspector = setUpInspector();
+      var promptBox = container.one('.destroy-service-prompt');
+      assert.isTrue(promptBox.hasClass('closed'));
+      // First we have to open the prompt.
+      container.one('.destroy-service-trigger span').simulate('click');
+      assert.isFalse(promptBox.hasClass('closed'));
+      // Now we can close it.
+      container.one('.cancel-destroy').simulate('click');
+      assert.isTrue(promptBox.hasClass('closed'));
+    });
+
+    it('initiates a destroy if the "Destroy" button is clicked',
+        function(done) {
+          inspector = setUpInspector();
+          var promptBox = container.one('.destroy-service-prompt');
+          // First we have to open the prompt.
+          container.one('.destroy-service-trigger span').simulate('click');
+          assert.isFalse(promptBox.hasClass('closed'));
+          // If the test times out, it failed (because the expected
+          // function call didn't happen).
+          inspector.initiateServiceDestroy = function() {
+            done();
+          };
+          container.one('.initiate-destroy').simulate('click');
+        });
+
+    it('wires up UI elements to handlers for destroy service', function() {
+      // There are UI elements and they all have to be wired up to something.
+      inspector = setUpInspector();
+      var events = inspector.viewletManager.events;
+      assert.equal(
+          typeof events['.destroy-service-trigger span'].click, 'function');
+      assert.equal(typeof events['.initiate-destroy'].click, 'function');
+      assert.equal(typeof events['.cancel-destroy'].click, 'function');
+    });
   });
-
-  it('shows the destroy service prompt if the trigger is clicked', function() {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    assert.isTrue(promptBox.hasClass('closed'));
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-  });
-
-  it('hides the destroy service prompt if cancel is clicked', function() {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    assert.isTrue(promptBox.hasClass('closed'));
-    // First we have to open the prompt.
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-    // Now we can close it.
-    container.one('.cancel-destroy').simulate('click');
-    assert.isTrue(promptBox.hasClass('closed'));
-  });
-
-  it('initiates a destroy if the "Destroy" button is clicked', function(done) {
-    inspector = setUpInspector();
-    var promptBox = container.one('.destroy-service-prompt');
-    // First we have to open the prompt.
-    container.one('.destroy-service-trigger span').simulate('click');
-    assert.isFalse(promptBox.hasClass('closed'));
-    // If the test times out, it failed (because the expected function call
-    // didn't happen).
-    inspector.initiateServiceDestroy = function() {
-      done();
-    };
-    container.one('.initiate-destroy').simulate('click');
-  });
-
-  it('wires up UI elements to handlers for destroy service', function() {
-    // There are UI elements and they all have to be wired up to something.
-    inspector = setUpInspector();
-    var events = inspector.viewletManager.events;
-    assert.equal(
-        typeof events['.destroy-service-trigger span'].click, 'function');
-    assert.equal(typeof events['.initiate-destroy'].click, 'function');
-    assert.equal(typeof events['.cancel-destroy'].click, 'function');
-  });
-
-  /**** End service destroy UI tests. ****/
 
 });
