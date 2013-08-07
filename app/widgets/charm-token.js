@@ -232,7 +232,7 @@ YUI.add('browser-charm-token', function(Y) {
          Supports size attributes of small and large that turn into the css
          class around the charm token.
 
-         Sizes include tiny, small, large, and 
+         Sizes include tiny, small, large
 
          @attribute size
          @default SIZE_SMALL
