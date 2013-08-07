@@ -95,7 +95,9 @@ describe('Ghost Inspector', function() {
 
         var serviceNameInput = Y.one('input[name=service-name]'),
             vmContainer = inspector.viewletManager.get('container');
-
+        // In order to properly detect the change event of the input we needed
+        // to create our own event handler listening for the special Y.View
+        // bubbling valuechange (note not valueChange) event.
         var handler = vmContainer.delegate('valuechange', function() {
           view.update(); // simulating a db.fire('update') call
           // Reselecting the service node because it is replaced not actually
