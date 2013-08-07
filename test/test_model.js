@@ -16,10 +16,9 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 'use strict';
 
-describe('charm normalization', function() {
+describe('Charm and BrowserCharm initialization', function() {
   var models;
 
   before(function(done) {
@@ -29,33 +28,101 @@ describe('charm normalization', function() {
     });
   });
 
-  it('must create derived attributes from official charm id on BrowserCharm',
-    function() {
-      var charm = new models.BrowserCharm(
-          {id: 'cs:precise/openstack-dashboard-0'});
-      charm.get('scheme').should.equal('cs');
-      var _ = expect(charm.get('owner')).to.not.exist;
-      charm.get('full_name').should.equal('precise/openstack-dashboard');
-      charm.get('charm_path').should.equal(
-          'charms/precise/openstack-dashboard-0/json');
+  it('must be able to create Charm', function() {
+    var charm = new models.Charm(
+        {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
+    charm.get('scheme').should.equal('cs');
+    charm.get('owner').should.equal('alt-bac');
+    charm.get('series').should.equal('precise');
+    charm.get('package_name').should.equal('openstack-dashboard');
+    charm.get('revision').should.equal(0);
+    charm.get('full_name').should.equal(
+        '~alt-bac/precise/openstack-dashboard');
+    charm.get('charm_path').should.equal(
+        '~alt-bac/precise/openstack-dashboard-0/json');
   });
 
-  it('must create derived attributes from official charm id on Charm',
-    function() {
-      // XXX jcsackett Aug 6 2013 This test is a dupe of the one above for
-      // BrowserCharm, and can be deleted when Charm is no longer used in app/
-      var charm = new models.Charm(
-          {id: 'cs:precise/openstack-dashboard-0'});
-      charm.get('scheme').should.equal('cs');
-      var _ = expect(charm.get('owner')).to.not.exist;
-      charm.get('full_name').should.equal('precise/openstack-dashboard');
-      charm.get('charm_path').should.equal(
-          'charms/precise/openstack-dashboard-0/json');
+  it('must be able to create BrowserCharm', function() {
+    var charm = new models.BrowserCharm(
+        {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
+    charm.get('scheme').should.equal('cs');
+    charm.get('owner').should.equal('alt-bac');
+    charm.get('series').should.equal('precise');
+    charm.get('package_name').should.equal('openstack-dashboard');
+    charm.get('revision').should.equal(0);
+    charm.get('full_name').should.equal(
+        '~alt-bac/precise/openstack-dashboard');
+    charm.get('charm_path').should.equal(
+        '~alt-bac/precise/openstack-dashboard-0/json');
+  });
+
+  it('must not set "owner" for promulgated charms', function() {
+    var charm;
+    charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
+    assert.isUndefined(charm.get('owner'));
+
+    charm = new models.BrowserCharm({
+      id: 'cs:precise/openstack-dashboard-0'
+    });
+    assert.isUndefined(charm.get('owner'));
+  });
+
+  it('must be able to parse hyphenated owner names', function() {
+    // Note that an earlier version of the parsing code did not handle
+    // hyphens in user names, so this test intentionally includes one.
+    var charm;
+    charm = new models.Charm(
+        {id: 'cs:~marco-ceppi/precise/wordpress-17'});
+    charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
+
+    charm = new models.BrowserCharm(
+        {id: 'cs:~marco-ceppi/precise/wordpress-17'});
+    charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
+  });
+
+  it('must reject bad charm ids.', function() {
+    var charm;
+    try {
+      charm = new models.Charm({id: 'foobar'});
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal(
+          'Developers must initialize charms with a well-formed id.');
+    }
+
+    try {
+      charm = new models.BrowserCharm({id: 'foobar'});
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal(
+          'Developers must initialize charms with a well-formed id.');
+    }
+  });
+
+
+  it('must reject missing charm ids at initialization.', function() {
+    var charm;
+    try {
+      charm = new models.Charm();
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal(
+          'Developers must initialize charms with a well-formed id.');
+    }
+
+    try {
+      charm = new models.BrowserCharm();
+      assert.fail('Should have thrown an error');
+    } catch (e) {
+      e.should.equal(
+          'Developers must initialize charms with a well-formed id.');
+    }
   });
 
   it('can load options from both "options" and "config"', function() {
-    var options = {foo: 'bar'};
-    var charm = new models.Charm({
+    var options = {foo: 'bar'},
+        charm;
+    charm = new models.Charm({
       id: 'cs:precise/openstack-dashboard-0',
       options: options
     });
@@ -84,7 +151,6 @@ describe('charm normalization', function() {
         { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
     charm.get('last_change').created.should.eql(date);
   });
-
 });
 
 describe('juju models', function() {
@@ -99,79 +165,6 @@ describe('juju models', function() {
 
   beforeEach(function() {
     window._gaq = [];
-  });
-
-  it('must be able to create charm', function() {
-    var charm = new models.Charm(
-        {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
-    charm.get('scheme').should.equal('cs');
-    charm.get('owner').should.equal('alt-bac');
-    charm.get('series').should.equal('precise');
-    charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('revision').should.equal(0);
-    charm.get('full_name').should.equal(
-        '~alt-bac/precise/openstack-dashboard');
-    charm.get('charm_path').should.equal(
-        '~alt-bac/precise/openstack-dashboard-0/json');
-  });
-
-  it('must be able to parse real-world charm names', function() {
-    var charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
-    charm.get('full_name').should.equal('precise/openstack-dashboard');
-    charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('charm_path').should.equal(
-        'charms/precise/openstack-dashboard-0/json');
-    charm.get('scheme').should.equal('cs');
-    var _ = expect(charm.get('owner')).to.not.exist;
-    charm.get('series').should.equal('precise');
-    charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('revision').should.equal(0);
-  });
-
-  it('must be able to parse individually owned charms', function() {
-    // Note that an earlier version of the parsing code did not handle
-    // hyphens in user names, so this test intentionally includes one.
-    var charm = new models.Charm(
-        {id: 'cs:~marco-ceppi/precise/wordpress-17'});
-    charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
-    charm.get('package_name').should.equal('wordpress');
-    charm.get('charm_path').should.equal(
-        '~marco-ceppi/precise/wordpress-17/json');
-    charm.get('revision').should.equal(17);
-  });
-
-  it('must reject bad charm ids.', function() {
-    try {
-      var charm = new models.Charm({id: 'foobar'});
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
-    }
-  });
-
-  it('must reject missing charm ids at initialization.', function() {
-    try {
-      var charm = new models.Charm();
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
-    }
-  });
-
-  it('must be able to create charm list', function() {
-    var c1 = new models.Charm(
-        { id: 'cs:precise/mysql-2',
-          description: 'A DB'}),
-        c2 = new models.Charm(
-        { id: 'cs:precise/logger-3',
-          description: 'Log sub'}),
-        clist = new models.CharmList();
-    clist.add([c1, c2]);
-    var names = clist.map(function(c) {return c.get('package_name');});
-    names[0].should.equal('mysql');
-    names[1].should.equal('logger');
   });
 
   it('service unit list should be able to get units of a given service',
@@ -513,7 +506,7 @@ describe('juju models', function() {
   });
 });
 
-describe('juju charm load', function() {
+describe('Charm load', function() {
   var Y, models, conn, env, app, container, fakeStore, data, juju;
 
   before(function(done) {
