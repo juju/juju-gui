@@ -861,9 +861,9 @@ YUI.add('juju-view-inspector', function(Y) {
     },
     'conflict': function(node, model, viewletName, resolve, binding) {
       /**
-          Calls the databinding resolve method
-          @method sendResolve
-        */
+       Calls the databinding resolve method
+       @method sendResolve
+      */
       var key = node.getData('bind');
       var modelValue = model.get(key);
       var field = binding.field;
@@ -873,10 +873,9 @@ YUI.add('juju-view-inspector', function(Y) {
       var handlers = [], watch = handlers.push;
 
       /**
-         User selects one of the two conflicting values.
-         @method sendResolve
-         */
-
+       User selects one of the two conflicting values.
+       @method sendResolve
+       */
       function sendResolve(e) {
         e.halt(true);
         var formValue = field.get(node);
@@ -893,10 +892,10 @@ YUI.add('juju-view-inspector', function(Y) {
       }
 
       /**
-          User selects a conflicting field, show the resolution UI
+       User selects a conflicting field, show the resolution UI
 
-          @method setupResolver
-        */
+       @method setupResolver
+      */
       function setupResolver(e) {
         e.halt(true);
         node.removeClass('conflict-pending');
