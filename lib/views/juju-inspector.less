@@ -137,7 +137,7 @@
 
         .settings-wrapper {
             position: relative;
-            width: 268px;
+            width: 250px;
 
             label {
                 font-size: 14px;
@@ -146,7 +146,7 @@
             }
 
             textarea {
-                width: 260px;
+                width: 100%;
             }
 
             .settings-description {
@@ -169,18 +169,7 @@
                 -webkit-hyphenate-after: 3;
                 hyphenate-lines: 3;
             }
-
-            .warning-message {
-                color: red;
-                padding: 1em;
-            }
-            .conflicted {
-                position: absolute;
-                border: 1px solid grey;
-                margin-top: -140px;
-                background-color: white;
-            }
-        }
+       }
 
         .config-file {
             padding: 10px 5px 10px 5px;
@@ -467,6 +456,16 @@
                     }
                 }
             }
+
+            .hightlight {
+                background: none repeat scroll 0 0 #DC4915;
+                display: block;
+                height: 3px;
+                left: 10px;
+                position: relative;
+                top: 0;
+                width: 57px;
+            }
         }
 
         .viewlet-manager-footer {
@@ -507,7 +506,7 @@
                 }
             }
 
-            .settings-wrapper {
+            .settings-wrapper, .control-group {
                 position: relative;
                 padding: 0 10px;
 
@@ -523,16 +522,42 @@
                     text-align: justify;
                 }
 
-                .warning-message {
-                    color: red;
-                    padding: 1em;
+                .config-field, .constraint-field {
+                  -webkit-transition: background 1s linear;
+                  -moz-transition: background 1s linear;
+                  -o-transition: background 1s linear;
+                  transition: background 1s linear;
+                  background-repeat: no-repeat;
+                  background-position: right center;
+                 background-url: none;
+                  margin-bottom: 0px;
+                  min-height: 26px;
+                  width: 260px;
                 }
-                .conflicted {
-                    position: absolute;
-                    border: 1px solid grey;
-                    margin-top: -140px;
-                    background-color: white;
+
+                .resolver {
+                  color: black;
+                  background-color: white;
+                  border: 1px solid #dedede;
+                  border-radius: 1px;
+                  div {
+                    width: 270px;
+                  }
                 }
+
+                .modified {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-changed.png);
+                }
+                .conflict-pending {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-conflict.png);
+                }
+
+                .conflict {
+                  background-color: #dedede;
+                  background-image: url(/juju-ui/assets/images/field-resolved.png);
+                 }
             }
 
             .control-expose {
@@ -639,6 +664,7 @@
 
             .action-button-wrapper {
                 height: 50px;
+                text-align: center;
             }
 
             .status-unit-header {
@@ -680,6 +706,10 @@
             .status-unit-header.pending {
                 background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
             }
+            .status-unit-header.landscape-needs-reboot,
+            .status-unit-header.landscape-security-upgrades {
+                background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
+            }
 
             .status-unit-content {
                 -moz-transition: .3s, max-height .3s;
@@ -702,6 +732,10 @@
                     cursor: pointer;
                     color: @text-colour;
                     text-decoration: underline;
+                }
+
+                a.landscape {
+                    font-size: 12px;
                 }
 
                 ul {
@@ -734,9 +768,6 @@
                     text-align: center;
                     margin: 20px 3px 0;
                 }
-                button.resolve {
-                    margin-left: 25px;
-                }
             }
 
             .status-unit-content.running ul li {
@@ -747,6 +778,10 @@
             }
             .status-unit-content.error ul li {
                 background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.landscape-security-upgrades ul li,
+            .status-unit-content.landscape-needs-reboot ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
             }
         }
 

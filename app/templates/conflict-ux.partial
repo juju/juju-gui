@@ -1,0 +1,3 @@
+<div class="hidden resolver">
+<div class="config-field conflicted-env" id="input-{{name}}-env"></div>
+</div>

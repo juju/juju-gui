@@ -183,7 +183,7 @@ YUI.add('juju-view-environment', function(Y) {
               },
               viewletEvents: {
                 // Viewlet wrapper viewlet.
-                'button.confirm': { click: 'saveConfig'},
+                '.settings-config button.confirm': { click: 'saveConfig'},
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
@@ -204,7 +204,8 @@ YUI.add('juju-view-environment', function(Y) {
                 '.status-unit-header': {click: 'toggleUnitHeader'},
                 '.unit-details': { click: 'showUnit'},
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
-                'a[data-unit]': { click: 'showUnitDetails'}
+                'a[data-unit]': { click: 'showUnitDetails'},
+                'button.unit-action-button': { click: '_unitActionButtonClick'}
               },
               viewletList: [
                 'overview', // Default viewlet first.

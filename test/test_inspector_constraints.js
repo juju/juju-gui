@@ -153,45 +153,6 @@ describe('Inspector Constraints', function() {
     });
   });
 
-  it('can resolve conflicts', function() {
-    var newValue = 'amd64';
-    var viewlet = getViewlet(inspector);
-    // Change the value in the form.
-    var node = changeForm(viewlet, 'arch', 'i386');
-    // Change the value in the database.
-    inspector.model.set('constraints', {arch: newValue});
-    // Accept the incoming new value.
-    var message = node.ancestor('.control-group').one('.conflicted');
-    // The user is informed about the new value.
-    assert.strictEqual(newValue, message.one('.newval').getContent());
-    message.one('.conflicted-confirm').simulate('click');
-    // The form value is changed accordingly.
-    assert.strictEqual(newValue, node.get('value'));
-  });
-
-  it('can ignore conflicts', function() {
-    var viewlet = getViewlet(inspector);
-    // Change the value in the form.
-    var node = changeForm(viewlet, 'arch', 'i386');
-    // Change the value in the database.
-    inspector.model.set('constraints', {arch: 'amd64'});
-    // Ignore the incoming new value.
-    var message = node.ancestor('.control-group').one('.conflicted');
-    message.one('.conflicted-cancel').simulate('click');
-    // The form value is preserved.
-    assert.strictEqual('i386', node.get('value'));
-  });
-
-  it('avoids displaying the conflicts message if not required', function() {
-    var viewlet = getViewlet(inspector);
-    // Change the value in the form.
-    var node = changeForm(viewlet, 'arch', 'i386');
-    // Change the value in the database.
-    inspector.model.set('constraints', {arch: 'i386'});
-    var message = node.ancestor('.control-group').one('.conflicted');
-    assert.strictEqual('', message.one('.newval').getContent());
-  });
-
   it('can save constraints', function() {
     var expected = {arch: 'amd64', cpu: 'photon', mem: '1 teraflop'};
     // Change values in the form.

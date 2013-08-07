@@ -153,8 +153,8 @@ describe('Inspector Overview', function() {
             'landscape-needs-reboot': 'foo'
           }
         }),
-        a = units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
-        b = units.add({ id: 'mysql/1', agent_state: 'instal-error' });
+        a = units.add({ id: 'mysql/0', agent_state: 'install-error' }),
+        b = units.add({ id: 'mysql/1', agent_state: 'install-error' });
 
     // This order is important.
     var expected = [
@@ -177,8 +177,8 @@ describe('Inspector Overview', function() {
 
     var units = new Y.LazyModelList();
 
-    units.add({ id: 'mysql/0', agent_state: 'instal-error' }),
-    units.add({ id: 'mysql/1', agent_state: 'instal-error' }),
+    units.add({ id: 'mysql/0', agent_state: 'install-error' }),
+    units.add({ id: 'mysql/1', agent_state: 'install-error' }),
     units.add({ id: 'mysql/2', agent_state: 'pending' }),
     units.add({ id: 'mysql/3', agent_state: 'started' });
 
@@ -261,4 +261,79 @@ describe('Inspector Overview', function() {
 
     newContainer.remove(true);
   });
+
+  describe('Unit action buttons', function() {
+    it('sends the resolve cmd to the env for the selected units', function() {
+      inspector = setUpInspector();
+      var unitId = 'mediawiki/7';
+
+      db.onDelta({data: {result: [
+        ['unit', 'add', {id: unitId, agent_state: 'install-error'}]
+      ]}});
+
+      var mgrContainer = inspector.viewletManager.get('container');
+      var retryButton = mgrContainer.one('button.unit-action-button.resolve');
+      var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
+
+      assert.equal(retryButton instanceof Y.Node, true);
+      assert.equal(unit instanceof Y.Node, true);
+
+      unit.simulate('click');
+      retryButton.simulate('click');
+      var msg = env.ws.last_message();
+
+      assert.deepEqual(msg, {
+        op: 'resolved',
+        unit_name: 'mediawiki/7',
+        relation_name: null,
+        retry: false,
+        request_id: 1
+      });
+    });
+
+    it('sends the retry command to the env for the selected unit', function() {
+      inspector = setUpInspector();
+      var unitId = 'mediawiki/7';
+
+      db.onDelta({data: {result: [
+        ['unit', 'add', {id: unitId, agent_state: 'install-error'}]
+      ]}});
+
+      var mgrContainer = inspector.viewletManager.get('container');
+      var retryButton = mgrContainer.one('button.unit-action-button.retry');
+      var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
+
+      assert.equal(retryButton instanceof Y.Node, true);
+      assert.equal(unit instanceof Y.Node, true);
+
+      unit.simulate('click');
+      retryButton.simulate('click');
+      var msg = env.ws.last_message();
+
+      assert.deepEqual(msg, {
+        op: 'resolved',
+        unit_name: 'mediawiki/7',
+        relation_name: null,
+        retry: true,
+        request_id: 1
+      });
+    });
+
+    it('generates the button display map for each unit category', function() {
+      inspector = setUpInspector();
+      var buttons = {
+        'error': {resolve: true, retry: true, replace: true},
+        'pending': {retry: true, replace: true},
+        'running': {replace: true},
+        'landscape-needs-reboot': {landscape: true},
+        'landscape-security-upgrades': {landscape: true}
+      };
+      var overview = inspector.viewletManager.viewlets.overview;
+      Y.Object.each(buttons, function(results, category) {
+        var buttonList = overview.generateActionButtonList(category);
+        assert.deepEqual(buttonList, results);
+      });
+    });
+  });
+
 });
