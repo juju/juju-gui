@@ -137,7 +137,7 @@
 
         .settings-wrapper {
             position: relative;
-            width: 268px;
+            width: 250px;
 
             label {
                 font-size: 14px;
@@ -146,7 +146,7 @@
             }
 
             textarea {
-                width: 260px;
+                width: 100%;
             }
 
             .settings-description {
@@ -456,6 +456,16 @@
                     }
                 }
             }
+
+            .hightlight {
+                background: none repeat scroll 0 0 #DC4915;
+                display: block;
+                height: 3px;
+                left: 10px;
+                position: relative;
+                top: 0;
+                width: 57px;
+            }
         }
 
         .viewlet-manager-footer {
@@ -695,6 +705,10 @@
             .status-unit-header.pending {
                 background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
             }
+            .status-unit-header.landscape-needs-reboot,
+            .status-unit-header.landscape-security-upgrades {
+                background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
+            }
 
             .status-unit-content {
                 -moz-transition: .3s, max-height .3s;
@@ -762,6 +776,10 @@
             }
             .status-unit-content.error ul li {
                 background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.landscape-security-upgrades ul li,
+            .status-unit-content.landscape-needs-reboot ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
             }
         }
 
