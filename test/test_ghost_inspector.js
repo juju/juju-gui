@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Ghost Inspector', function() {
+describe('Ghost Inspector', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, charmConfig;
@@ -92,8 +92,10 @@ describe.only('Ghost Inspector', function() {
         inspector = setUpInspector();
         var serviceIcon = Y.one('tspan.name');
         assert.equal(serviceIcon.get('textContent'), '(mediawiki 1)');
+
         var serviceNameInput = Y.one('input[name=service-name]'),
             vmContainer = inspector.viewletManager.get('container');
+
         var handler = vmContainer.delegate('valuechange', function() {
           view.update(); // simulating a db.fire('update') call
           // Reselecting the service node because it is replaced not actually
@@ -102,14 +104,78 @@ describe.only('Ghost Inspector', function() {
           handler.detach();
           done();
         }, 'input[name=service-name]');
+
         serviceNameInput.simulate('focus');
         serviceNameInput.set('value', 'foo');
       });
 
-  it('deploys a service with the specified unit count');
-  it('deploys a service with the specified configuration');
-  it('disables and resets input fields when \'use default config\' is active');
-  it('disables the file upload button when \'use default config\' is active');
+  it('deploys a service with the specified unit count & config', function() {
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container'),
+        numUnits = 10;
+
+    vmContainer.one('input[name=number-units]').set('value', numUnits);
+    vmContainer.one('textarea[name=name]').set('value', 'foo');
+    vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
+
+    var lm = env.ws.last_message();
+
+    assert.equal(lm.num_units, numUnits);
+    assert.equal(lm.op, 'deploy');
+    assert.equal(lm.service_name, 'mediawiki');
+    assert.deepEqual(lm.config, {
+      admins: '',
+      debug: false,
+      logo: '',
+      name: 'foo',
+      skin: 'vector'
+    });
+  });
+
+  it('disables and resets input fields when \'use default config\' is active',
+      function() {
+        function testDisabled(hasAttr) {
+          var settings = vmContainer.one(
+              '.service-configuration .ghost-config-content');
+          var inputs = settings.all('textarea');
+          inputs.each(function(input) {
+            assert.equal(input.hasAttribute('disabled'), hasAttr,
+                         'textarea missing disabled');
+          });
+          inputs = settings.all('input');
+          inputs.each(function(input) {
+            if (input.get('id') !== 'use-default-toggle') {
+              assert.equal(input.hasAttribute('disabled'), hasAttr,
+                           'input missing disabled');
+            }
+          });
+        }
+        inspector = setUpInspector();
+        var vmContainer = inspector.viewletManager.get('container');
+        // 'use default config' should be on set by default
+        var toggle = vmContainer.one('input#use-default-toggle');
+        assert.equal(toggle.hasAttribute('checked'), true,
+                     'toggle is not checked');
+        // inputs should be disabled by default within the settings
+        testDisabled(true);
+        // clicking the toggle enables the input elements
+        toggle.simulate('click');
+        testDisabled(false);
+        // set an input to a new value and then toggle the checkbox should
+        // reset it to its previous value.
+        var nameInput = vmContainer.one('textarea[name=name]'),
+            oldVal = nameInput.get('value'),
+            newVal = 'foo';
+
+        assert.equal(nameInput.get('value'), oldVal);
+        nameInput.set('value', newVal);
+        assert.equal(nameInput.get('value'), newVal);
+        toggle.simulate('click');
+        testDisabled(true);
+        assert.equal(nameInput.get('value'), oldVal);
+      });
+
   it('Saves the config when closing the inspector via \'X\' or \'Save\'');
 
   it('renders into the dom when instantiated', function() {
