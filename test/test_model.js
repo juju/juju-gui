@@ -506,6 +506,9 @@ describe('juju models', function() {
   });
 });
 
+// XXX jcsackett August 7 2013 This is a complete duplication of the next test
+// case, but we need to test independently for both models while we're merging
+// them. The Charm load suite below can be removed once the work is done.
 describe('BrowserCharm load', function() {
   var Y, models, conn, env, app, container, fakeStore, data, juju;
 
