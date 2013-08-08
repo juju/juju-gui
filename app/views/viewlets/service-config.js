@@ -68,24 +68,13 @@ YUI.add('viewlet-service-config', function(Y) {
       bindings: {
         exposed: {
           'update': function(node, value) {
-            var img = node.one('img');
-            var span = node.one('span');
-            if (value) {
-              img.set('src', '/juju-ui/assets/images/slider_on.png');
-              span.set('text', 'Yes');
-              span.removeClass('off');
-              span.addClass('on');
-            } else {
-              img.set('src', '/juju-ui/assets/images/slider_off.png');
-              span.set('text', 'No');
-              span.removeClass('on');
-              span.addClass('off');
-            }
+            node.one('input').set('checked', value);
           }
         }
       }
 
-    }, '0.0.1', {
+    };
+}, '0.0.1', {
   requires: [
     'node',
     'resizing-textarea',

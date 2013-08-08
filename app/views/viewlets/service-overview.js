@@ -157,7 +157,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     .classed('action-button-wrapper', true)
     .html(
       function(d) {
-      var tmpl = Templates['unit-action-buttons'](
+      var tmpl = templates['unit-action-buttons'](
         generateActionButtonList(d.category));
         buttonHeight = tmpl.offsetHeight;
         return tmpl;

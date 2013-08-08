@@ -1080,8 +1080,12 @@ YUI.add('juju-view-inspector', function(Y) {
     'view',
     // Imported viewlets
     'viewlet-charm-details',
-    'viewlet-unit-details',
-    'viewlet-inspector-header'
+    'viewlet-inspector-header',
+    'viewlet-inspector-overview',
+    'viewlet-service-config',
+    'viewlet-service-constraints',
+    'viewlet-service-ghost',
+    'viewlet-unit-details'
   ]
 });
 
