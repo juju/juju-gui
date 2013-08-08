@@ -248,9 +248,10 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _suggestionSelected: function(ev) {
       ev.halt();
-      var charmid = ev.result.raw.charm.id;
-      var form = this.get('boundingBox').one('form');
-      var change = {};
+      var change,
+          newVal,
+          charmid = ev.result.raw.charm.id,
+          form = this.get('boundingBox').one('form');
 
       if (charmid.substr(0, 4) === 'cat:') {
         form.one('input').set('value', '');
@@ -264,11 +265,7 @@ YUI.add('browser-search-widget', function(Y) {
           }
         };
 
-        this.ac.hide();
-        this.fire(this.EVT_SEARCH_CHANGED, {
-          change: change,
-          newVal: ''
-        });
+        newVal = '';
 
       } else {
         // For a charm we need to use that charm name as the search term.
@@ -277,13 +274,17 @@ YUI.add('browser-search-widget', function(Y) {
         change = {
           charmID: charmid
         };
-
-        this.ac.hide();
-        this.fire(this.EVT_SEARCH_CHANGED, {
-          change: change,
-          newVal: ev.result.text
-        });
+        newVal = ev.result.text;
       }
+
+      if (this.ac) {
+        this.ac.hide();
+      }
+      this.fire(this.EVT_SEARCH_CHANGED, {
+        change: change,
+        newVal: newVal
+      });
+
     },
 
     /**

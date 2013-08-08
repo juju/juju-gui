@@ -138,15 +138,21 @@ describe('browser search widget', function() {
 
     search.ac.on('results', function(ev) {
       // The results should be displaying now. Check for charm-token nodes.
-      assert.equal(ev.results.length, 19);
+      assert.equal(ev.results.length, 21);
       assert.isTrue(ev.results[0].display.hasClass('yui3-charmtoken'));
+
+      // There are two category results now for 'a'. They appear at the start
+      // of the list of completion options.
+      assert.equal(ev.results[0].text, 'App Servers');
+      assert.equal(ev.results[1].text, 'Applications');
+
       fakeStore.destroy();
       done();
     });
 
     // hack into the ac widget to simulate the valueChange event
     search.ac._afterValueChange({
-      newVal: 'test',
+      newVal: 'a',
       src: 'ui'
     });
 
@@ -162,6 +168,59 @@ describe('browser search widget', function() {
     });
 
     search._fetchSuggestions('test', function() {});
+  });
+
+  it('shows categories when search text is empty', function(done) {
+    search = new Search();
+    search._fetchSuggestions('', function(data) {
+      assert.equal(data.result.length, 6);
+      // Each of these is a category and should have an id that starts with
+      // cat: to help us ID them.
+      data.result.forEach(function(suggestion) {
+        assert.equal(suggestion.charm.id.substr(0, 4), 'cat:');
+      });
+      done();
+    });
+  });
+
+  it('routes to a search with charm when selected', function(done) {
+    // We're testing against the internal interface here to avoid going
+    // through the event forcing loops to verify we get the right change
+    // events for navigation.
+    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
+      assert.equal(ev.newVal, 'Ceph');
+      assert.equal(ev.change.charmID, 'precise/ceph-10');
+      done();
+    });
+
+    search._suggestionSelected({
+      halt: function(){},
+      result: {
+        raw: {charm: {id: 'precise/ceph-10'}},
+        text: 'Ceph'
+      },
+    });
+  });
+
+  it('generates a proper change event for category selection', function(done) {
+    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
+      // The search term is empty because we selected a category, not a
+      // specific charm to search for.
+      assert.equal(ev.newVal, '');
+      // There's no charm id selected, we want search results to display.
+      assert.equal(ev.change.charmID, null);
+      assert.equal(ev.change.search, true);
+      assert.equal(ev.change.filter.categories[0], 'app-servers');
+      done();
+    });
+
+    search._suggestionSelected({
+      halt: function(){},
+      result: {
+        raw: {charm: {id: 'cat:~gui/cat/app-servers-10'}},
+        text: 'App Servers'
+      },
+    });
   });
 
   it('supports an onHome event', function(done) {

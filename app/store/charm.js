@@ -306,7 +306,6 @@ YUI.add('juju-charm-store', function(Y) {
         return charmData.charm;
       });
       return new Y.juju.models.BrowserCharmList({
-
         items: preppedData
       });
     },
