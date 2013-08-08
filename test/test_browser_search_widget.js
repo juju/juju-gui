@@ -194,6 +194,9 @@ describe('browser search widget', function() {
     search.on(search.EVT_SEARCH_CHANGED, function(ev) {
       assert.equal(ev.newVal, 'Ceph');
       assert.equal(ev.change.charmID, 'precise/ceph-10');
+      assert.equal(ev.change.filter.replace, true);
+      assert.equal(ev.change.filter.categories.length, 0);
+      assert.equal(ev.change.filter.text, 'Ceph');
       done();
     });
 

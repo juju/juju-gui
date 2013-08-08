@@ -271,10 +271,15 @@ YUI.add('browser-search-widget', function(Y) {
         // For a charm we need to use that charm name as the search term.
         // Make sure the input box is updated.
         form.one('input').set('value', ev.result.text);
-        change = {
-          charmID: charmid
-        };
         newVal = ev.result.text;
+        change = {
+          charmID: charmid,
+          filter: {
+            categories: [],
+            text: newVal,
+            replace: true
+          }
+        };
       }
 
       if (this.ac) {
