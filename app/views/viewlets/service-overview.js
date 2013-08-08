@@ -276,7 +276,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     },
     // These methods are exposed here to allow us access for testing.
     updateUnitList: updateUnitList,
-    generateAndBindUnitHeaders: generateAndBindUnitHeaders
+    generateAndBindUnitHeaders: generateAndBindUnitHeaders,
+    generateActionButtonList: generateActionButtonList
   };
 
 }, '0.0.1', {
