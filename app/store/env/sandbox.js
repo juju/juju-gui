@@ -875,7 +875,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (attrs.getAttrs) {
         attrs = attrs.getAttrs();
       }
-      var filtered = {}, 
+      var filtered = {},
           self = this;
       Y.each(whitelist, function(value, key) {
         if (typeof value === 'string') {
