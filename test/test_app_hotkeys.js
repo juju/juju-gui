@@ -50,8 +50,11 @@ describe('application hotkeys', function() {
     app.render();
   });
 
-  afterEach(function() {
+  afterEach(function(done) {
     container.remove(true);
+    app.after('destroy', function() {
+      done();
+    });
     app.destroy({remove: true});
   });
 

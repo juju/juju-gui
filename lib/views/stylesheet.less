@@ -24,6 +24,7 @@
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 @navbar-height: 79px;
+@navbar-bottom-height: 50px;
 @navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
 @text-colour: #505050;
@@ -336,7 +337,7 @@ code {
 }
 .bottom-navbar {
     min-width: 800px;
-    height: 50px;
+    height: @navbar-bottom-height;
     position: relative;
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
 

@@ -106,4 +106,19 @@ describe('charm token', function() {
     assert(charm_container.one('.charm-token').hasClass('tiny'));
   });
 
+  it('allows overriding the charm icon url', function() {
+    var token = new CharmToken({
+      size: 'tiny',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      iconUrl: 'http://localhost.svg'
+    });
+
+    token.render(charm_container);
+    assert.equal(
+        charm_container.one('img').getAttribute('src'),
+        'http://localhost.svg');
+
+  });
+
 });

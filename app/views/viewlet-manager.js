@@ -480,12 +480,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       this.get('container').one(this.viewletContainer)
                            .setStyle('maxHeight', height + 'px');
-      // Since the left-breakout isn't part of the viewletContainer it also
-      // needs to be set.
-      var left_breakout = this.get('container').one('.left-breakout');
-      if (left_breakout) {
-        left_breakout.setStyle('max-height', height + TB_SPACING + 'px');
-      }
     },
 
     /**

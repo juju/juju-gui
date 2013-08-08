@@ -237,6 +237,55 @@ YUI.add('juju-env-sandbox', function(Y) {
     client.receiveNow(data);
   };
 
+  /**
+  Prepare a delta of events to send to the client from since the last time they
+  asked.
+
+  @method _prepareDelta
+  @return {Array} An array of deltas events.
+  */
+  var _prepareDelta = function() {
+    var self = this;
+    var state = this.get('state');
+    var deltas = [];
+    var changes = state.nextChanges();
+    if (changes && changes.error) {
+      changes = null;
+    }
+    var annotations = state.nextAnnotations();
+    if (annotations && annotations.error) {
+      annotations = null;
+    }
+    if (changes || annotations) {
+      Y.each(this._deltaWhitelist, function(whitelist, changeType) {
+        var collectionName = changeType + 's';
+        if (changes) {
+          Y.each(changes[collectionName], function(change) {
+            var attrs = self._getDeltaAttrs(change[0], whitelist);
+            var action = change[1] ? 'change' : 'remove';
+            // The unit changeType is actually "serviceUnit" in the Python
+            // stream.  Our model code handles either, so we're not modifying
+            // it for now.
+            deltas.push([changeType, action, attrs]);
+          });
+        }
+        if (annotations) {
+          Y.each(annotations[changeType + 's'], function(attrs, key) {
+            if (!changes || !changes[key]) {
+              attrs = self._getDeltaAttrs(attrs, whitelist);
+              // Special case environment handling.
+              if (changeType === 'annotation') {
+                changeType = 'annotations';
+                attrs = attrs.annotations;
+              }
+              deltas.push([changeType, 'change', attrs]);
+            }
+          });
+        }
+      });
+    }
+    return deltas;
+  };
 
   /**
   A sandbox Juju environment using the Python API.
@@ -334,48 +383,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     */
     sendDelta: function() {
-      var self = this;
-      var state = this.get('state');
-      var changes = state.nextChanges();
-      if (changes && changes.error) {
-        changes = null;
-      }
-      var annotations = state.nextAnnotations();
-      if (annotations && annotations.error) {
-        annotations = null;
-      }
-      if (changes || annotations) {
-        var deltas = [];
-        var response = {op: 'delta', result: deltas};
-        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          var collectionName = changeType + 's';
-          if (changes) {
-            Y.each(changes[collectionName], function(change) {
-              var attrs = self._getDeltaAttrs(change[0], whitelist);
-              var action = change[1] ? 'change' : 'remove';
-              // The unit changeType is actually "serviceUnit" in the Python
-              // stream.  Our model code handles either, so we're not modifying
-              // it for now.
-              deltas.push([changeType, action, attrs]);
-            });
-          }
-          if (annotations) {
-            Y.each(annotations[changeType + 's'], function(attrs, key) {
-              if (!changes || !changes[key]) {
-                attrs = self._getDeltaAttrs(attrs, whitelist);
-                // Special case environment handling.
-                if (changeType === 'annotation') {
-                  changeType = 'annotations';
-                  attrs = attrs.annotations;
-                }
-                deltas.push([changeType, 'change', attrs]);
-              }
-            });
-          }
-        });
-        if (deltas.length) {
-          this.get('client').receiveNow(response);
-        }
+      var deltas = _prepareDelta.apply(this);
+      if (deltas.length) {
+        this.get('client').receiveNow({op: 'delta', result: deltas});
       }
     },
 
@@ -820,9 +830,18 @@ YUI.add('juju-env-sandbox', function(Y) {
       },
       unit: {
         Name: 'id',
-        'Service': function() {},
-        'Series': function() {},
-        'CharmURL': function() {},
+        'Service': 'service',
+        'Series': function(attrs, self) {
+          var db = self.get('state').db;
+          var service = db.services.getById(attrs.service);
+          var charm = db.charms.getById(service.get('charm'));
+          return charm.get('series');
+        },
+        'CharmURL': function(attrs, self) {
+          var db = self.get('state').db;
+          var service = db.services.getById(attrs.service);
+          return service.get('charm');
+        },
         PublicAddress: 'public_address',
         PrivateAddress: 'private_address',
         MachineId: 'machine',
@@ -835,7 +854,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         'Endpoints': function() {}
       },
       annotation: {
-        'Tag': function() {},
+        'Tag': function() {
+        },
         'Annotations': function() {}
       }
     },
@@ -855,12 +875,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (attrs.getAttrs) {
         attrs = attrs.getAttrs();
       }
-      var filtered = {};
+      var filtered = {}, 
+          self = this;
       Y.each(whitelist, function(value, key) {
         if (typeof value === 'string') {
           filtered[key] = attrs[value];
         } else if (typeof value === 'function') {
-          filtered[key] = value(attrs);
+          filtered[key] = value(attrs, self);
         }
       });
       return filtered;
@@ -873,44 +894,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     */
     sendDelta: function() {
-      var self = this;
-      var state = this.get('state');
-      var changes = state.nextChanges();
-      if (changes && changes.error) {
-        changes = null;
-      }
-      var annotations = state.nextAnnotations();
-      if (annotations && annotations.error) {
-        annotations = null;
-      }
-      if (changes || annotations) {
-        var deltas = [];
-        var response = {
+      var deltas = _prepareDelta.apply(this);
+      if (deltas.length) {
+        console.log(deltas);
+        this.get('client').receive({
           RequestId: this.get('nextRequestId'),
           Response: {Deltas: deltas}
-        };
-        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          var collectionName = changeType + 's';
-          if (changes) {
-            Y.each(changes[collectionName], function(change) {
-              var attrs = self._getDeltaAttrs(change[0], whitelist);
-              var action = change[1] ? 'change' : 'remove';
-              deltas.push([changeType, action, attrs]);
-            });
-          }
-          if (annotations) {
-            Y.each(annotations[changeType + 's'], function(attrs, key) {
-              if (!changes || !changes[key]) {
-                attrs = self._getDeltaAttrs(attrs, whitelist);
-                deltas.push([changeType, 'change', attrs]);
-              }
-            });
-          }
         });
-        if (deltas.length) {
-          console.log('sendDelta', response);
-          this.get('client').receive(response);
-        }
       }
     },
 
@@ -924,7 +914,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientWatchAll: function(data, client, state) {
-      // TODO wire up delta stream to "Next" responses here.
       this.set('nextRequestId', data.RequestId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));

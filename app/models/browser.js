@@ -43,11 +43,11 @@ YUI.add('juju-browser-models', function(Y) {
   };
 
   ns.FILTER_CATEGORIES = {
+    'app-servers': 'App Servers',
+    'applications': 'Applications',
+    'cache-proxy': 'Cache/Proxy',
     'databases': 'Databases',
     'file-servers': 'File Servers',
-    'app-servers': 'App Servers',
-    'cache-proxy': 'Cache/Proxy',
-    'applications': 'Applications',
     'misc': 'Miscellaneous'
   };
 

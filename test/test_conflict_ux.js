@@ -107,6 +107,11 @@ describe('Inspector Conflict UX', function() {
   }
 
   it('should be able to indicate change to fields', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) {
+      done();
+    }
     var input = container.one('#input-logo');
     assert.equal(input.get('value'), 'foo');
 
@@ -119,6 +124,11 @@ describe('Inspector Conflict UX', function() {
   });
 
   it('should indicate conflict and allow resolution of config', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) {
+      done();
+    }
     var input = container.one('#input-logo');
     assert.equal(input.get('value'), 'foo');
 

@@ -129,9 +129,36 @@
     &.active {
         background-color: #d5d5d5;
         border-right: 2px solid @charm-panel-orange;
+
+        .charm-token {
+            padding-right: 18px;
+
+            .badge-approved {
+                right: 8px;
+            }
+        }
     }
 }
 
 .yui3-charmtoken-hidden {
     display: none;
+}
+
+/* Override styles for the autocomplete results */
+.yui3-aclist-item {
+
+    .yui3-charmtoken {
+
+        .charm-token {
+            padding: 4px;
+
+            &.tiny {
+                .icon,
+                .icon img {
+                    width: 27px;
+                    height: 27px;
+                }
+            }
+        }
+    }
 }
