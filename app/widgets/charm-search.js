@@ -188,13 +188,45 @@ YUI.add('browser-search-widget', function(Y) {
         return res.raw;
       }));
 
-      var res = charmlist.map(function(charm) {
+      var res = [],
+          lastCharmWasCategory = false;
+
+      var isCategory = function(id) {
+        if (id.substr(0, 4) === 'cat:') {
+          return true;
+        }
+      };
+
+      charmlist.each(function(charm, idx, list) {
         var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+        // Force the tokens to not show the is_approved star by force them to
+        // be false.
         var tokenAttrs = Y.merge(charm.getAttrs(), {
-          size: 'tiny'
+          size: 'tiny',
+          is_approved: false
         });
         var token = new ns.CharmToken(tokenAttrs);
-        return container.append(token.TEMPLATE(token.getAttrs()));
+        var html = token.TEMPLATE(token.getAttrs());
+
+        // If there are categories at the top, we need them to have an
+        // additional css class on the .yui3-charmtoken node.
+        if (isCategory(charm.get('id'))) {
+          lastCharmWasCategory = true;
+        } else {
+          // This charm is not a category charm. Was the last one?
+          if (lastCharmWasCategory) {
+            // If so, then update it with the .last-category class.
+            var lastIdx = idx - 1;
+            var lastHtml = res[lastIdx];
+            lastHtml.addClass('last-category');
+            res[lastIdx] = lastHtml;
+          }
+
+          // Reset that we're done with categories now.
+          lastCharmWasCategory = false;
+        }
+        container.append(html);
+        res.push(container);
       });
 
       return res;

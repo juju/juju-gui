@@ -151,6 +151,7 @@
 
         .charm-token {
             padding: 4px;
+            border-bottom: 1px solid @bws-border;
 
             &.tiny {
                 .icon,
@@ -162,3 +163,13 @@
         }
     }
 }
+
+/* Make sure we don't draw a border on the last one in the list */
+.yui3-aclist-list .yui3-aclist-item:last-child .yui3-charmtoken .charm-token {
+    border-bottom: 0;
+}
+
+.yui3-aclist-list .yui3-aclist-item .yui3-charmtoken.last-category {
+    border-bottom: 2px solid @bws-dark;
+}
+
