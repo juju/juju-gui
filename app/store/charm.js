@@ -271,6 +271,22 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+     * Generate the url to an icon for the category specified.
+     *
+     * @method categoryIconPath
+     * @param {String} categoryID the id of the category to load an icon for.
+     *
+     */
+    categoryIconPath: function(categoryID) {
+      return [
+        this.get('apiHost'),
+        'static/img/charm-',
+        categoryID,
+        '.svg'
+      ].join('');
+    },
+
+    /**
      * Load the QA data for a specific charm.
      *
      * @method qa

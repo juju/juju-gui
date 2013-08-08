@@ -148,7 +148,7 @@ YUI.add('browser-search-widget', function(Y) {
       // For now return all categories in a format we can get the model/charm
       // token to play nice with.
       var fakeModelData = [];
-      var baseIconUrl = 'http://manage.jujucharms.com/static/img/charm-';
+      var iconGenerator = this.get('categoryIconGenerator');
       Y.Object.each(models.FILTER_CATEGORIES, function(name, id) {
         if (name.substr(0, query.length).toLowerCase() === query) {
           fakeModelData.push({
@@ -159,7 +159,7 @@ YUI.add('browser-search-widget', function(Y) {
               description: '',
               shouldShowIcon: true,
               is_approved: false,
-              iconUrl: baseIconUrl + id + '.svg',
+              iconUrl: iconGenerator(id),
               name: name
             }
           });
@@ -232,7 +232,7 @@ YUI.add('browser-search-widget', function(Y) {
         this.ac.sendRequest('');
       }, this);
 
-      // Stop clicking on charm-tokens from navigating.
+      // Stop clicking on charm-tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
         ev.halt();
       }, 'a', this);
@@ -454,14 +454,30 @@ YUI.add('browser-search-widget', function(Y) {
       /**
         @attribute autocompleteSource
         @default {undefined} The api point for fetching the suggestions.
-        @type {Charmworld2}
+        @type {function}
 
       */
       autocompleteSource: {
 
       },
 
+      /**
+       * @attribute autoCompleteDataFormatter
+       * @default {undefined}
+       * @type {function}
+       *
+       */
       autocompleteDataFormatter: {
+
+      },
+
+      /**
+       * @attribute categoryIconGenerator
+       * @default {undefined}
+       * @type {function}
+       *
+       */
+      categoryIconGenerator: {
 
       },
 

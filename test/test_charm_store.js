@@ -127,6 +127,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
     });
 
+    it('constructs cateogry icon paths correctly', function() {
+      var hostname = 'http://localhost';
+      var api = new Y.juju.Charmworld2({
+        apiHost: hostname
+      });
+
+      var iconPath = api.categoryIconPath('app-servers');
+      assert.equal(
+          iconPath,
+          'http://localhost/static/img/charm-app-servers.svg');
+    });
+
     it('makes autocomplete requests with right query flag', function(done) {
       var hostname = 'http://localhost',
           data = [],
