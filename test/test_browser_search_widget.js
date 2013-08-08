@@ -131,6 +131,7 @@ describe('browser search widget', function() {
           fakeStore
       ),
       autocompleteDataFormatter: fakeStore.resultsToCharmlist,
+      categoryIconGenerator: Y.bind(fakeStore.categoryIconPath, fakeStore),
       filters: {}
     });
     search.render(container);
@@ -171,7 +172,10 @@ describe('browser search widget', function() {
   });
 
   it('shows categories when search text is empty', function(done) {
-    search = new Search();
+    var fakeStore = new Y.juju.Charmworld2({});
+    search = new Search({
+      categoryIconGenerator: Y.bind(fakeStore.categoryIconPath, fakeStore),
+    });
     search._fetchSuggestions('', function(data) {
       assert.equal(data.result.length, 6);
       // Each of these is a category and should have an id that starts with
