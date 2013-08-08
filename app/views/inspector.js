@@ -274,16 +274,17 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _unexposeServiceCallback: function(ev) {
-      var service = this.get('model'),
-          db = this.get('db'),
-          getModelURL = this.get('getModelURL');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.viewletManager : this;
+      var service = dataSource.get('model'),
+          db = dataSource.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error un-exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: getModelURL(service),
+              link: undefined, // XXX See note below about getModelURL.
               modelId: service
             })
         );
@@ -321,16 +322,17 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _exposeServiceCallback: function(ev) {
-      var service = this.get('model'),
-          db = this.get('db'),
-          getModelURL = this.get('getModelURL');
+      var svcInspector = window.flags && window.flags.serviceInspector;
+      var dataSource = svcInspector ? this.viewletManager : this;
+      var service = dataSource.get('model'),
+          db = dataSource.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: getModelURL(service),
+              link: undefined, // XXX See note below about getModelURL.
               modelId: service
             })
         );
@@ -363,26 +365,6 @@ YUI.add('juju-view-inspector', function(Y) {
     'render': function() {
       this.viewletManager.render();
       return this;
-    },
-
-    /**
-      Handles showing/hiding the configuration settings descriptions.
-
-      @method toggleSettingsHelp
-      @param {Y.EventFacade} e An event object.
-    */
-    toggleSettingsHelp: function(e) {
-      var button = e.currentTarget,
-          descriptions = e.container.all('.settings-description'),
-          btnString = 'Hide settings help';
-
-      if (e.currentTarget.getHTML().indexOf('Hide') < 0) {
-        button.setHTML(btnString);
-        descriptions.show();
-      } else {
-        button.setHTML('Show settings help');
-        descriptions.hide();
-      }
     },
 
     /**
@@ -516,17 +498,13 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     toggleExpose: function(e) {
+      e.halt();
       var service = this.viewletManager.get('model');
-      var env = this.viewletManager.get('db').environment;
-      var exposed;
       if (service.get('exposed')) {
         this.unexposeService();
-        exposed = false;
       } else {
         this.exposeService();
-        exposed = true;
       }
-      service.set('exposed', exposed);
     },
 
     /**
@@ -622,7 +600,6 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       var container = this.viewletManager.get('container');
       container.all('.settings-wrapper').hide();
-      container.one('.toggle-settings-help').hide();
     },
 
     /**
@@ -946,7 +923,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
       var option = resolver.one('.config-field');
-      var handlers = [], watch = handlers.push;
+      var handlers = [];
 
       /**
        User selects one of the two conflicting values.
@@ -986,10 +963,10 @@ YUI.add('juju-view-inspector', function(Y) {
       node.removeClass('modified');
       node.addClass('conflict-pending');
 
-      watch(wrapper.delegate('click', setupResolver,
+      handlers.push(wrapper.delegate('click', setupResolver,
           '.conflict-pending', this));
 
-      watch(wrapper.delegate('click', sendResolve,
+      handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
     },
     'unsyncedFields': function(dirtyFields) {
@@ -1000,6 +977,11 @@ YUI.add('juju-view-inspector', function(Y) {
     }
   };
 
+  // Mixin Conflict Handling.
+  viewletNS.config = Y.merge(viewletNS.config, ConflictMixin);
+  viewletNS.constraints = Y.merge(viewletNS.constraints, ConflictMixin);
+
+
   /**
     Service Inspector Viewlet Manager Controller
 
@@ -1007,11 +989,6 @@ YUI.add('juju-view-inspector', function(Y) {
    */
   views.ServiceInspector = (function() {
     var juju = Y.namespace('juju');
-
-    // Mixin Conflict Handling.
-    viewletNS.config = Y.merge(viewletNS.config, ConflictMixin);
-    viewletNS.constraints = Y.merge(viewletNS.constraints, ConflictMixin);
-
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
