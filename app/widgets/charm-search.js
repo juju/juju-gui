@@ -29,8 +29,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
+      models = Y.namespace('juju.models.browser'),
       templates = Y.namespace('juju.views').Templates;
-
 
   /**
    * Search widget present in the Charm browser across both fullscreen and
@@ -65,19 +65,34 @@ YUI.add('browser-search-widget', function(Y) {
     _fetchSuggestions: function(query, callback) {
       var filters = this.get('filters');
       filters.text = query;
-      // Assign the autocomplete function to a variable and call from there;
-      // required for IE10.
-      var autocompleteSource = this.get('autocompleteSource');
-      autocompleteSource(
-          filters, {
-            'success': callback,
-            'failure': function() {
-              // Autocomplete should not throw errors at the user or break the
-              // application. Just silently fail to find results.
-            }
-          },
-          this
-      );
+
+      // If the query is empty, just show categories.
+      if (query === '') {
+        var catData = this._suggestCategoryOptions(query);
+        callback({
+          result: catData
+        });
+      } else {
+        // Assign the autocomplete function to a variable and call from there;
+        // required for IE10.
+        var autocompleteSource = this.get('autocompleteSource');
+        autocompleteSource(
+            filters, {
+              'success': function(data) {
+                var catData = this._suggestCategoryOptions(query);
+                if (catData) {
+                  data.result = catData.concat(data.result);
+                }
+                callback(data);
+              },
+              'failure': function() {
+                // Autocomplete should not throw errors at the user or break
+                // the application. Just silently fail to find results.
+              }
+            },
+            this
+        );
+      }
     },
 
     /**
@@ -123,6 +138,38 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
+     * Manually append categories to the suggestion list.
+     *
+     * @method _suggestCategoryOptions
+     * @param {String} query the current query string to match against.
+     *
+     */
+    _suggestCategoryOptions: function(query) {
+      // For now return all categories in a format we can get the model/charm
+      // token to play nice with.
+      var fakeModelData = [];
+      var iconGenerator = this.get('categoryIconGenerator');
+      Y.Object.each(models.FILTER_CATEGORIES, function(name, id) {
+        if (name.substr(0, query.length).toLowerCase() === query) {
+          fakeModelData.push({
+            charm: {
+              // A very fake storeId so we can use the charm-token to display
+              // the categories in the results.
+              id: 'cat:~gui/cat/' + id + '-1',
+              description: '',
+              shouldShowIcon: true,
+              is_approved: false,
+              iconUrl: iconGenerator(id),
+              name: name
+            }
+          });
+        }
+      });
+
+      return fakeModelData;
+    },
+
+    /**
      * Format the html that will be used in the AC widget results.
      *
      * Results need to be processed as charm tokens to get them to render
@@ -140,7 +187,8 @@ YUI.add('browser-search-widget', function(Y) {
       var charmlist = dataprocessor(Y.Array.map(results, function(res) {
         return res.raw;
       }));
-      return charmlist.map(function(charm) {
+
+      var res = charmlist.map(function(charm) {
         var container = Y.Node.create('<div class="yui3-charmtoken"/>');
         var tokenAttrs = Y.merge(charm.getAttrs(), {
           size: 'tiny'
@@ -148,6 +196,8 @@ YUI.add('browser-search-widget', function(Y) {
         var token = new ns.CharmToken(tokenAttrs);
         return container.append(token.TEMPLATE(token.getAttrs()));
       });
+
+      return res;
     },
 
     /**
@@ -167,7 +217,8 @@ YUI.add('browser-search-widget', function(Y) {
       // needs to function properly.
       this.ac = new Y.AutoComplete({
         inputNode: this.get('boundingBox').one('input[name=bws-search]'),
-        queryDelay: 150,
+        minQueryLength: 0,
+        queryDelay: 100,
         resultFormatter: suggestFormatter,
         resultListLocator: 'result',
         'resultTextLocator': function(result) {
@@ -176,6 +227,15 @@ YUI.add('browser-search-widget', function(Y) {
         source: fetchSuggestions
       });
       this.ac.render();
+
+      this.ac.get('inputNode').on('focus', function(ev) {
+        this.ac.sendRequest(ev.currentTarget.get('value'));
+      }, this);
+
+      // Stop clicking on charm-tokens <a> links from navigating.
+      this.get('boundingBox').delegate('click', function(ev) {
+        ev.halt();
+      }, 'a', this);
     },
 
     /**
@@ -187,20 +247,49 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _suggestionSelected: function(ev) {
-      // Make sure the input box is updated.
-      var form = this.get('boundingBox').one('form');
-      form.one('input').set('value', ev.result.text);
+      ev.halt();
+      var change,
+          newVal,
+          charmid = ev.result.raw.charm.id,
+          form = this.get('boundingBox').one('form');
 
-      var charm = ev.itemNode.one('a');
-      var charmID = charm.getData('charmid');
-      var change = {
-        charmID: charmID
-      };
+      if (charmid.substr(0, 4) === 'cat:') {
+        form.one('input').set('value', '');
+        var category = charmid.match(/([^\/]+)-\d\/?/);
+        change = {
+          charmID: null,
+          search: true,
+          filter: {
+            categories: [category[1]],
+            replace: true
+          }
+        };
 
+        newVal = '';
+
+      } else {
+        // For a charm we need to use that charm name as the search term.
+        // Make sure the input box is updated.
+        form.one('input').set('value', ev.result.text);
+        newVal = ev.result.text;
+        change = {
+          charmID: charmid,
+          filter: {
+            categories: [],
+            text: newVal,
+            replace: true
+          }
+        };
+      }
+
+      if (this.ac) {
+        this.ac.hide();
+      }
       this.fire(this.EVT_SEARCH_CHANGED, {
         change: change,
-        newVal: ev.result.text
+        newVal: newVal
       });
+
     },
 
     /**
@@ -273,23 +362,9 @@ YUI.add('browser-search-widget', function(Y) {
       // Make sure the UI around the autocomplete search input is setup.
       if (window.flags && window.flags.ac) {
         this._setupAutocomplete();
-
-        // Override a couple of autocomplete events to help perform our
-        // navigation correctly.
-        // Block the links from the charm token from taking effect.
-        this.addEvent(
-            this.ac.get('boundingBox').delegate(
-                'click',
-                function(ev) {
-                  ev.halt();
-                },
-                '.yui3-charmtoken a'
-            )
-        );
         this.addEvent(
             this.ac.on('select', this._suggestionSelected, this)
         );
-
       }
     },
 
@@ -384,14 +459,30 @@ YUI.add('browser-search-widget', function(Y) {
       /**
         @attribute autocompleteSource
         @default {undefined} The api point for fetching the suggestions.
-        @type {Charmworld2}
+        @type {function}
 
       */
       autocompleteSource: {
 
       },
 
+      /**
+       * @attribute autoCompleteDataFormatter
+       * @default {undefined}
+       * @type {function}
+       *
+       */
       autocompleteDataFormatter: {
+
+      },
+
+      /**
+       * @attribute categoryIconGenerator
+       * @default {undefined}
+       * @type {function}
+       *
+       */
+      categoryIconGenerator: {
 
       },
 
@@ -430,6 +521,7 @@ YUI.add('browser-search-widget', function(Y) {
     'event-tracker',
     'event-mouseenter',
     'event-valuechange',
+    'juju-browser-models',
     'juju-templates',
     'juju-views',
     'widget'

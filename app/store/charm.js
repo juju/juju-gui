@@ -95,6 +95,7 @@ YUI.add('juju-charm-store', function(Y) {
       // Force that this is an autocomplete call to perform matching on the
       // start of names vs a fulltext search.
       filters.autocomplete = 'true';
+      filters.limit = 5;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
@@ -267,6 +268,22 @@ YUI.add('juju-charm-store', function(Y) {
           charmID,
           'icon.svg'].join('/');
       }
+    },
+
+    /**
+     * Generate the url to an icon for the category specified.
+     *
+     * @method categoryIconPath
+     * @param {String} categoryID the id of the category to load an icon for.
+     *
+     */
+    categoryIconPath: function(categoryID) {
+      return [
+        this.get('apiHost'),
+        'static/img/charm-',
+        categoryID,
+        '.svg'
+      ].join('');
     },
 
     /**

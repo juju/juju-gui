@@ -8,7 +8,11 @@
                 title="This charm has been reviewed."></span>
         {{/if}}
         <div class="icon">
-            <img src="{{charmIconPath storeId 'icon.svg'}}" alt="{{ name }} icon">
+            {{#unless iconUrl}}
+                <img src="{{charmIconPath storeId 'icon.svg'}}" alt="{{ name }} icon">
+            {{else}}
+                <img src="{{iconUrl}}" alt="{{ name }} icon">
+            {{/unless}}
         </div>
     </span>
     <span class="title">

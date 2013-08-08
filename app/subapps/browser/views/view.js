@@ -170,12 +170,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // It only makes sense to render search if we have a store to use to
       // search against.
       if (this.get('store')) {
+        var store = this.get('store');
         this.search = new widgets.browser.Search({
           autocompleteSource: Y.bind(
-              this.get('store').autocomplete,
-              this.get('store')
+              store.autocomplete,
+              store
           ),
-          autocompleteDataFormatter: this.get('store').resultsToCharmlist,
+          autocompleteDataFormatter: store.resultsToCharmlist,
+          categoryIconGenerator: Y.bind(store.categoryIconPath, store),
           filters: this.get('filters'),
           withHome: this.get('withHome')
         });
@@ -198,6 +200,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
      */
     _searchChanged: function(ev) {
+      if (ev && ev.halt) {
+        ev.halt();
+      }
       var change = {
         search: true,
         filter: {
@@ -219,6 +224,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (ev.change) {
         change = Y.merge(change, ev.change);
       }
+
       this.fire('viewNavigate', {change: change});
     },
 

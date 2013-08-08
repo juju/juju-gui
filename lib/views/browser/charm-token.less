@@ -143,3 +143,22 @@
 .yui3-charmtoken-hidden {
     display: none;
 }
+
+/* Override styles for the autocomplete results */
+.yui3-aclist-item {
+
+    .yui3-charmtoken {
+
+        .charm-token {
+            padding: 4px;
+
+            &.tiny {
+                .icon,
+                .icon img {
+                    width: 27px;
+                    height: 27px;
+                }
+            }
+        }
+    }
+}
