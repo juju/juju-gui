@@ -923,7 +923,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
       var option = resolver.one('.config-field');
-      var handlers = [], watch = handlers.push;
+      var handlers = [];
 
       /**
        User selects one of the two conflicting values.
@@ -963,10 +963,10 @@ YUI.add('juju-view-inspector', function(Y) {
       node.removeClass('modified');
       node.addClass('conflict-pending');
 
-      watch(wrapper.delegate('click', setupResolver,
+      handlers.push(wrapper.delegate('click', setupResolver,
           '.conflict-pending', this));
 
-      watch(wrapper.delegate('click', sendResolve,
+      handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
     },
     'unsyncedFields': function(dirtyFields) {
