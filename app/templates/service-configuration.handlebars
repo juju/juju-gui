@@ -1,12 +1,12 @@
 <div class="view-container settings-config">
   <h2>Expose</h2>
-  <div class="control-expose control">
-    <div class="inline">
-      <span>Expose this service?</span>
-    </div>
-    <div class="toggle-expose" data-bind="exposed">
-      <img src="/juju-ui/assets/images/slider_on.png" />
-      <span>Yes</span>
+  <div class="toggle settings-wrapper">
+    <span>Expose this service?</span>
+    <div class="toggle-switch toggle-expose" data-bind="exposed">
+      <input type="checkbox" class="hidden-checkbox" id="expose-toggle">
+      <label for="expose-toggle" class="light">
+        <div class="handle"></div>
+      </label>
     </div>
   </div>
 
@@ -15,6 +15,5 @@
     <input type="file">
     <div class="fakebutton">Import config file...</div>
   </div>
-  <div class="toggle-settings-help">Hide settings help</div>
   {{> service-configuration}}
 </div>

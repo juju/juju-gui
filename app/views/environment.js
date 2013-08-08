@@ -194,7 +194,6 @@ YUI.add('juju-view-environment', function(Y) {
                   blur: 'resetUnits'
                 },
                 // Settings viewlet.
-                '.toggle-settings-help': { click: 'toggleSettingsHelp' },
                 '.toggle-expose': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
