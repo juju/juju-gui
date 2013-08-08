@@ -228,8 +228,8 @@ YUI.add('browser-search-widget', function(Y) {
       });
       this.ac.render();
 
-      this.ac.get('inputNode').on('focus', function() {
-        this.ac.sendRequest('');
+      this.ac.get('inputNode').on('focus', function(ev) {
+        this.ac.sendRequest(ev.currentTarget.get('value'));
       }, this);
 
       // Stop clicking on charm-tokens <a> links from navigating.
