@@ -30,50 +30,50 @@ YUI.add('viewlet-service-config', function(Y) {
       utils = Y.namespace('juju.views.utils');
 
 
-    ns.config = {
-      name: 'config',
-      template: templates['service-configuration'],
-      'render': function(service, viewContainerAttrs) {
-        var settings = [];
-        var db = viewContainerAttrs.db;
-        var charm = db.charms.getById(service.get('charm'));
-        var charmOptions = charm.get('options');
-        Y.Object.each(service.get('config'), function(value, key) {
-          var setting = {
-            name: key,
-            value: value
-          };
-          if (charmOptions) {
-            var option = charmOptions[key];
-            if (option) {
-              setting.description = option.description;
-              setting.type = option.type;
-            }
+  ns.config = {
+    name: 'config',
+    template: templates['service-configuration'],
+    'render': function(service, viewContainerAttrs) {
+      var settings = [];
+      var db = viewContainerAttrs.db;
+      var charm = db.charms.getById(service.get('charm'));
+      var charmOptions = charm.get('options');
+      Y.Object.each(service.get('config'), function(value, key) {
+        var setting = {
+          name: key,
+          value: value
+        };
+        if (charmOptions) {
+          var option = charmOptions[key];
+          if (option) {
+            setting.description = option.description;
+            setting.type = option.type;
           }
-          settings.push(setting);
-        });
-        this.container = Y.Node.create(this.templateWrapper);
+        }
+        settings.push(setting);
+      });
+      this.container = Y.Node.create(this.templateWrapper);
 
-        this.container.setHTML(
+      this.container.setHTML(
           this.template({
-          service: service,
-          settings: settings,
-          exposed: service.get('exposed')}));
-          this.container.all('textarea.config-field')
+            service: service,
+            settings: settings,
+            exposed: service.get('exposed')}));
+      this.container.all('textarea.config-field')
           .plug(plugins.ResizingTextarea,
                 { max_height: 200,
                   min_height: 18,
                   single_line: 18});
-      },
-      bindings: {
-        exposed: {
-          'update': function(node, value) {
-            node.one('input').set('checked', value);
-          }
+    },
+    bindings: {
+      exposed: {
+        'update': function(node, value) {
+          node.one('input').set('checked', value);
         }
       }
+    }
 
-    };
+  };
 }, '0.0.1', {
   requires: [
     'node',

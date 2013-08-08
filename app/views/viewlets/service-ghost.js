@@ -32,40 +32,40 @@ YUI.add('viewlet-service-ghost', function(Y) {
       utils = Y.namespace('juju.views.utils');
 
 
-    ns.ghostConfig = {
-      name: 'ghostConfig',
-      template: templates['ghost-config-viewlet'],
-      bindings: {
-        'options': {
-          'update': function(node, val) {
-            var newVal = (val['default'] === undefined) ? '' : val['default'];
-            node.set('value', newVal);
-          }
+  ns.ghostConfig = {
+    name: 'ghostConfig',
+    template: templates['ghost-config-viewlet'],
+    bindings: {
+      'options': {
+        'update': function(node, val) {
+          var newVal = (val['default'] === undefined) ? '' : val['default'];
+          node.set('value', newVal);
         }
-      },
-      'render': function(model) {
-        this.container = Y.Node.create(this.templateWrapper);
+      }
+    },
+    'render': function(model) {
+      this.container = Y.Node.create(this.templateWrapper);
 
-        // This is to allow for data binding on the ghost settings
-        // while using a shared template across both inspectors
-        var options = model.getAttrs();
+      // This is to allow for data binding on the ghost settings
+      // while using a shared template across both inspectors
+      var options = model.getAttrs();
 
-        // XXX - Jeff
-        // not sure this should be done like this
-        // but this will allow us to use the old template.
-        options.settings = utils.extractServiceSettings(options.options);
+      // XXX - Jeff
+      // not sure this should be done like this
+      // but this will allow us to use the old template.
+      options.settings = utils.extractServiceSettings(options.options);
 
-        // Signalling to the shared templates that this is the ghost view.
-        options.ghost = true;
-        this.container.setHTML(this.template(options));
+      // Signalling to the shared templates that this is the ghost view.
+      options.ghost = true;
+      this.container.setHTML(this.template(options));
 
-        this.container.all('textarea.config-field')
+      this.container.all('textarea.config-field')
         .plug(plugins.ResizingTextarea,
               { max_height: 200,
                 min_height: 18,
                 single_line: 18});
-      }
-};
+    }
+  };
 
 }, '0.0.1', {
   requires: [

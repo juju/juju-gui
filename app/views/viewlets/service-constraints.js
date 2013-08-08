@@ -31,44 +31,44 @@ YUI.add('viewlet-service-constraints', function(Y) {
       utils = Y.namespace('juju.views.utils');
 
 
-    ns.constraints = {
-      name: 'constraints',
-      template: templates['service-constraints-viewlet'],
-      readOnlyConstraints: ['provider-type', 'ubuntu-series'],
-      constraintDescriptions: {
-        arch: {title: 'Architecture'},
-        cpu: {title: 'CPU', unit: 'Ghz'},
-        'cpu-cores': {title: 'CPU Cores'},
-        'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
-        mem: {title: 'Memory', unit: 'GB'}
-      },
+  ns.constraints = {
+    name: 'constraints',
+    template: templates['service-constraints-viewlet'],
+    readOnlyConstraints: ['provider-type', 'ubuntu-series'],
+    constraintDescriptions: {
+      arch: {title: 'Architecture'},
+      cpu: {title: 'CPU', unit: 'Ghz'},
+      'cpu-cores': {title: 'CPU Cores'},
+      'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+      mem: {title: 'Memory', unit: 'GB'}
+    },
 
-      bindings: {
-        'constraints': {
-          'format': function(value) {
-            // Display undefined constraints as empty strings.
-            // This method is inherited when using all nested
-            // constraints binding.
-            return value || '';
-          }
+    bindings: {
+      'constraints': {
+        'format': function(value) {
+          // Display undefined constraints as empty strings.
+          // This method is inherited when using all nested
+          // constraints binding.
+          return value || '';
         }
-      },
+      }
+    },
 
-      'render': function(service, options) {
-        var constraints = utils.getConstraints(
+    'render': function(service, options) {
+      var constraints = utils.getConstraints(
           service.get('constraints') || {},
           options.env.genericConstraints,
           this.readOnlyConstraints,
           this.constraintDescriptions);
-          var contents = this.template({
-            service: service,
-            constraints: constraints
-          });
-          this.container = Y.Node.create(this.templateWrapper);
-          this.container.setHTML(contents);
-      }
+      var contents = this.template({
+        service: service,
+        constraints: constraints
+      });
+      this.container = Y.Node.create(this.templateWrapper);
+      this.container.setHTML(contents);
+    }
 
-    };
+  };
 }, '0.0.1', {
   requires: [
     'node',

@@ -121,15 +121,15 @@ YUI.add('juju-databinding', function(Y) {
     function optionalCallbacks(contextArray, callbackName, target, value) {
       //Alias to preserve in scope.
       var name = callbackName,
-      tgt = target,
-      val = value,
-      result = true;
+          tgt = target,
+          val = value,
+          result = true;
 
       if (!contextArray) {return;}
       contextArray.forEach(function(context) {
         var retval = optionalCallback(context, name, tgt, val);
         if (retval !== undefined) {
-          result &= retval;
+          result = result && retval;
         }
       });
       return result;

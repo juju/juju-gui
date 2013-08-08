@@ -1,30 +1,30 @@
 /*
-   This file is part of the Juju GUI, which lets users view and manage Juju
-   environments within a graphical interface (https://launchpad.net/juju-gui).
-   Copyright (C) 2012-2013 Canonical Ltd.
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
 
-   This program is free software: you can redistribute it and/or modify it under
-   the terms of the GNU Affero General Public License version 3, as published by
-   the Free Software Foundation.
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT
-   ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-   SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-   General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
 
-   You should have received a copy of the GNU Affero General Public License along
-   with this program.  If not, see <http://www.gnu.org/licenses/>.
-   */
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 'use strict';
 
 
 YUI.add('viewlet-inspector-overview', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
-  views = Y.namespace('juju.views'),
-  templates = Y.namespace('juju.views').Templates,
-  models = Y.namespace('juju.models'),
-  utils = Y.namespace('juju.views.utils');
+      views = Y.namespace('juju.views'),
+      templates = Y.namespace('juju.views').Templates,
+      models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   var unitListNameMap = {
     error: 'Error',
@@ -47,7 +47,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     */
   function updateUnitList(values) {
     var statuses = [],
-    unitByStatus = {};
+        unitByStatus = {};
 
     values.each(function(value) {
       var category = utils.simplifyState(value);
@@ -87,16 +87,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     */
   function generateActionButtonList(category) {
     var showingButtons = {},
-    buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
-    // if you adjust this list don't forget to edit
-    // the list in the unit tests
-    buttons = {
-      error: ['resolve', 'retry', 'replace'],
-      pending: ['retry', 'replace'],
-      running: ['replace'],
-      'landscape-needs-reboot': ['landscape'],
-      'landscape-security-upgrades': ['landscape']
-    };
+        buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
+        // if you adjust this list don't forget to edit
+        // the list in the unit tests
+        buttons = {
+          error: ['resolve', 'retry', 'replace'],
+          pending: ['retry', 'replace'],
+          running: ['replace'],
+          'landscape-needs-reboot': ['landscape'],
+          'landscape-security-upgrades': ['landscape']
+        };
 
     buttonTypes.forEach(function(buttonType) {
       buttons[category].forEach(function(allowedButton) {
@@ -117,13 +117,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
   function generateAndBindUnitHeaders(node, statuses) {
     /*jshint validthis:true */
     var self = this,
-    buttonHeight;
+        buttonHeight;
 
     var categoryWrapperNodes = d3.select(node.getDOMNode())
     .selectAll('.unit-list-wrapper')
     .data(statuses, function(d) {
-      return d.category;
-    });
+          return d.category;
+        });
 
     // D3 header enter section
     var unitStatusWrapper = categoryWrapperNodes
@@ -134,16 +134,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     var unitStatusHeader = unitStatusWrapper
     .append('div')
     .attr('class', function(d) {
-      return 'status-unit-header ' +
-        'closed-unit-list ' + d.category;
-    });
+          return 'status-unit-header ' +
+              'closed-unit-list ' + d.category;
+        });
 
     var unitStatusContentForm = unitStatusWrapper
     .append('div')
     .attr('class', function(d) {
-      return 'status-unit-content ' +
-        'close-unit ' + d.category;
-    })
+          return 'status-unit-content ' +
+              'close-unit ' + d.category;
+        })
     .append('form');
 
     unitStatusContentForm.append('li')
@@ -156,12 +156,12 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     unitStatusContentForm.append('div')
     .classed('action-button-wrapper', true)
     .html(
-      function(d) {
-      var tmpl = templates['unit-action-buttons'](
-        generateActionButtonList(d.category));
-        buttonHeight = tmpl.offsetHeight;
-        return tmpl;
-    });
+        function(d) {
+          var tmpl = templates['unit-action-buttons'](
+            generateActionButtonList(d.category));
+          buttonHeight = tmpl.offsetHeight;
+          return tmpl;
+        });
 
     unitStatusHeader.append('span')
     .classed('unit-qty', true);
@@ -175,8 +175,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     // D3 header update section
     categoryWrapperNodes.select('.unit-qty')
     .text(function(d) {
-      return d.units.length;
-    });
+          return d.units.length;
+        });
 
     // Toggles the sections visible or hidden based on
     // whether there are units in their list.
@@ -191,16 +191,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     // Add the category label to each heading
     categoryWrapperNodes.select('.category-label')
     .text(function(d) {
-      return unitListNameMap[d.category];
-    });
+          return unitListNameMap[d.category];
+        });
 
     var unitsList = categoryWrapperNodes.select('ul')
     .selectAll('li')
     .data(function(d) {
-      return d.units;
-    }, function(unit) {
-      return unit.id;
-    });
+          return d.units;
+        }, function(unit) {
+          return unit.id;
+        });
 
     // D3 content enter section
     var unitItem = unitsList.enter()
@@ -208,42 +208,42 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     unitItem.append('input')
     .attr({
-      'type': 'checkbox',
-      'name': function(unit) {
-        return unit.id;
-      }});
+          'type': 'checkbox',
+          'name': function(unit) {
+            return unit.id;
+          }});
 
-      unitItem.append('a').text(
+    unitItem.append('a').text(
         function(d) {
-        return d.id;
-      })
+          return d.id;
+        })
       .attr('data-unit', function(d) {
-        return d.service + '/' + d.number;
-      });
+          return d.service + '/' + d.number;
+        });
 
-      // D3 content update section
-      unitsList.sort(
+    // D3 content update section
+    unitsList.sort(
         function(a, b) {
-        return a.number - b.number;
-      });
+          return a.number - b.number;
+        });
 
-      categoryWrapperNodes
+    categoryWrapperNodes
       .select('.status-unit-content')
       .style('max-height', function(d) {
-        if (!self._unitItemHeight) {
-          self._unitItemHeight =
-            d3.select(this).select('li').property('offsetHeight');
-        }
-        return ((self._unitItemHeight *
-                 (d.units.length + 1)) + buttonHeight) + 'px';
-      });
+          if (!self._unitItemHeight) {
+            self._unitItemHeight =
+                d3.select(this).select('li').property('offsetHeight');
+          }
+          return ((self._unitItemHeight *
+              (d.units.length + 1)) + buttonHeight) + 'px';
+        });
 
 
-      // D3 content exit section
-      unitsList.exit().remove();
+    // D3 content exit section
+    unitsList.exit().remove();
 
-      // D3 header exit section
-      categoryWrapperNodes.exit().remove();
+    // D3 header exit section
+    categoryWrapperNodes.exit().remove();
   }
 
 
