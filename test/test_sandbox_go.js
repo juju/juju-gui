@@ -152,6 +152,81 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.setCredentials({user: 'admin', password: 'password'});
       env.login();
     });
+    
+    it('can start the AllWatcher', function(done) {
+      var data = {
+        Type: 'Client',
+        Request: 'WatchAll',
+        Params: {},
+        RequestId: 1066
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.equal(receivedData.Response.AllWatcherId, 42);
+        assert.equal(client.get('juju').get('nextRequestId'), 1066);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can listen for deltas with Next', function(done) {
+      var data = {
+        Type: 'AllWatcher',
+        Request: 'Next',
+        Params: {},
+        RequestId: 1067
+      };
+      state.deploy('cs:precise/wordpress-15', function() {});
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.equal(receivedData.RequestId, 1067);
+        assert.isNotNull(receivedData.Response.Deltas);
+        var deltas = receivedData.Response.Deltas;
+        assert.equal(deltas.length, 3);
+        assert.deepEqual(deltas.map(function(delta) {
+          return delta[0];
+        }), ['service', 'machine', 'unit']);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('structures deltas properly', function(done) {
+      var data = {
+        Type: 'AllWatcher',
+        Request: 'Next',
+        Params: {},
+        RequestId: 1067
+      };
+      state.deploy('cs:precise/wordpress-15', function() {});
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        var deltas = receivedData.Response.Deltas;
+        assert.deepEqual(deltas, [
+          ["service","change",{
+            "Name":"wordpress",
+            "Exposed":false,
+            "CharmURL":"cs:precise/wordpress-15",
+            "Life":"alive",
+            "Constraints":{}
+          }],
+          ["machine","change",{"Status":"running"}],
+          ["unit","change",{
+            "Name":"wordpress/0",
+            "Service":"wordpress",
+            "Series":"precise",
+            "CharmURL":"cs:precise/wordpress-15",
+            "MachineId":"1",
+            "Status":"started"
+          }]
+        ]);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
 
     it('can deploy.', function(done) {
       // We begin logged in.  See utils.makeFakeBackend.
