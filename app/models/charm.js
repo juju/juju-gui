@@ -216,7 +216,7 @@ YUI.add('juju-charm-models', function(Y) {
       data.is_subordinate = data.subordinate || data.is_subordinate;
       // Because the old and new charm models have different places for
       // the options data, this handles the normalization.
-      if (data.config && data.config.options && ! data.options) {
+      if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
       }
@@ -397,10 +397,10 @@ YUI.add('juju-charm-models', function(Y) {
    * Model to represent the Charms from the Charmworld2 Api.
    *
    * @class BrowserCharm
-   * @extends {Charm}
+   * @extends {Y.Model}
    *
    */
-  models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+  models.BrowserCharm = Y.Base.create('browser-charm', Y.Model, [], {
     // Only care about at most, this number of related charms per interface.
     maxRelatedCharms: 5,
 
@@ -486,8 +486,94 @@ YUI.add('juju-charm-models', function(Y) {
         }
         if (cfg.id) {
           this.set('storeId', cfg.id);
-          this.set('id', this.get('scheme') + ':' + cfg.id);
         }
+        if (cfg.url) {
+          this.set('id', cfg.url);
+        }
+      }
+      var id = this.get('id'),
+          parts = parseCharmId(id),
+          self = this;
+      if (!parts) {
+        throw 'Developers must initialize charms with a well-formed id.';
+      }
+      this.loaded = false;
+      this.on('load', function() { this.loaded = true; });
+      Y.Object.each(parts, function(value, key) {
+        this.set(key, value);
+      }, this);
+    },
+
+    sync: function(action, options, callback) {
+      if (action !== 'read') {
+        throw (
+            'Only use the "read" action; "' + action + '" not supported.');
+      }
+      if (Y.Lang.isValue(options.get_charm)) {
+        // This is an env.
+        options.get_charm(this.get('id'), function(response) {
+          if (response.err) {
+            callback(true, response);
+          } else if (response.result) {
+            callback(false, response.result);
+          } else {
+            // What's going on?  This does not look like either of our
+            // expected signatures.  Declare a loading error.
+            callback(true, response);
+          }
+        });
+      } else {
+        throw 'You must supply a get_charm function.';
+      }
+    },
+
+    parse: function(response) {
+      var data = Charm.superclass.parse.apply(this, arguments),
+          self = this;
+
+      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
+      // or juju core.  If not, remove the "|| data.is_subordinate" and change
+      // in the fakebackend and/or sandbox to send the expected thing there.
+      data.is_subordinate = data.subordinate || data.is_subordinate;
+      // Because the old and new charm models have different places for
+      // the options data, this handles the normalization.
+      if (data.config && data.config.options && !data.options) {
+        data.options = data.config.options;
+        delete data.config;
+      }
+      Y.each(data, function(value, key) {
+        if (!Y.Lang.isValue(value) ||
+            !self.attrAdded(key) ||
+            Y.Lang.isValue(self.get(key))) {
+          delete data[key];
+        }
+      });
+      if (data.owner === 'charmers') {
+        delete data.owner;
+      }
+      return data;
+    },
+
+    compare: function(other, relevance, otherRelevance) {
+      // Official charms sort before owned charms.
+      // If !X.owner, that means it is owned by charmers.
+      var owner = this.get('owner'),
+          otherOwner = other.get('owner');
+      if (!owner && otherOwner) {
+        return -1;
+      } else if (owner && !otherOwner) {
+        return 1;
+      // Relevance is next most important.
+      } else if (relevance && (relevance !== otherRelevance)) {
+        // Higher relevance comes first.
+        return otherRelevance - relevance;
+      // Otherwise sort by package name, then by owner, then by revision.
+      } else {
+        return (
+                (this.get('package_name').localeCompare(
+                other.get('package_name'))) ||
+                (owner ? owner.localeCompare(otherOwner) : 0) ||
+                (this.get('revision') - other.get('revision')));
       }
     },
 
@@ -561,6 +647,27 @@ YUI.add('juju-charm-models', function(Y) {
       },
       changelog: {
         value: {}
+      },
+      //XXX jcsackett Aug 7 2013 This attribute is only needed until we turn
+      // on the service inspector. It's just used by the charm view you get when
+      // inspecting a service, and should be ripped out (along with tests) when
+      // we remove that view.
+      charm_path: {
+        /**
+         * Generate the charm store path from the attributes of the charm.
+         *
+         * @method getter
+         *
+         */
+        getter: function() {
+          var owner = this.get('owner');
+          return [
+            (owner ? '~' + owner : 'charms'),
+            this.get('series'),
+            (this.get('package_name') + '-' + this.get('revision')),
+            'json'
+          ].join('/');
+        }
       },
       /**
        * Object of data about the source for this charm including bugs link,

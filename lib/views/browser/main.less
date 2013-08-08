@@ -35,12 +35,13 @@
   .bws-view-data,
   #bws-sidebar,
   #bws-fullscreen {
-    background-color: @bws-background;
+    background: @bws-background;
     z-index: 1;
   }
   #bws-fullscreen,
   .bws-view-data {
     background-color: #fff;
+    background-image: none;
   }
   .bws-view-data,
   #bws-sidebar {
@@ -69,7 +70,7 @@
         padding-bottom: 50px;
     }
     .bws-header-wrapper {
-        background-color: @bws-background;
+        background: @bws-background;
         padding: 20px;
         border-bottom: 1px solid @bws-border;
     }
@@ -170,6 +171,7 @@
     left: @bws-sidebar-width;
     width: @bws-panel-width;
     background-color: #fff;
+    background-image: none;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   }
 }

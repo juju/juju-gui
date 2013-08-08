@@ -47,12 +47,12 @@
   </div>
 {{/settings}}
 {{#unless ghost}}
-<div class="yui3-g controls">
+<div class="yui3-g controls configuration-buttons">
   <div class="yui3-u-1-2">
     <button class="cancel">Cancel</button>
   </div>
   <div class="yui3-u-1-2">
-    <button class="confirm">Confirm</button>
+    <button class="confirm">Save Changes</button>
   </div>
 </div>
 {{/unless}}
