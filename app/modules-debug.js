@@ -307,6 +307,26 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/inspector-header.js'
         },
 
+        'viewlet-inspector-overview': {
+          fullpath: '/juju-ui/views/viewlets/service-overview.js'
+        },
+
+        'viewlet-service-config': {
+          fullpath: '/juju-ui/views/viewlets/service-config.js'
+        },
+
+        'viewlet-service-ghost': {
+          fullpath: '/juju-ui/views/viewlets/service-ghost.js'
+        },
+
+        'viewlet-service-constraints': {
+          fullpath: '/juju-ui/views/viewlets/service-constraints.js'
+        },
+
+        'viewlet-behavior-conflict': {
+          fullpath: '/juju-ui/views/viewlets/behavior-conflict.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
