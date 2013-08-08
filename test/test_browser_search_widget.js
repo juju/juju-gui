@@ -174,7 +174,7 @@ describe('browser search widget', function() {
   it('shows categories when search text is empty', function(done) {
     var fakeStore = new Y.juju.Charmworld2({});
     search = new Search({
-      categoryIconGenerator: Y.bind(fakeStore.categoryIconPath, fakeStore),
+      categoryIconGenerator: Y.bind(fakeStore.categoryIconPath, fakeStore)
     });
     search._fetchSuggestions('', function(data) {
       assert.equal(data.result.length, 6);
