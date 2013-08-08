@@ -90,9 +90,13 @@ YUI.add('juju-topology-importexport', function(Y) {
             // of which have a dataType), then it was caused by dropping
             // something external to the app, in which case it might be an
             // environment configuration, so process it as such.
-            var dataType = evt._event.dataTransfer.getData('dataType');
-            if (dataType === undefined) {
-              env.importEnvironment(evt._event.dataTransfer.getData('Text'));
+
+            //dataType is an invalid argument in IE10
+            if (!Y.UA.ie) {
+              var dataType = evt._event.dataTransfer.getData('dataType');
+              if (dataType === undefined) {
+                env.importEnvironment(evt._event.dataTransfer.getData('Text'));
+              }
             }
           }
           evt.preventDefault();

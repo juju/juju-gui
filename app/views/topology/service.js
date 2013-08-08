@@ -77,10 +77,7 @@ YUI.add('juju-topology-service', function(Y) {
           mouseout: 'serviceStatusMouseOut'
         },
         '.zoom-plane': {
-          click: 'canvasClick',
-          dragenter: '_ignore',
-          dragover: '_ignore',
-          drop: 'canvasDropHandler'
+          click: 'canvasClick'
         },
         // Menu/Controls
         '.view-service': {
@@ -180,19 +177,40 @@ YUI.add('juju-topology-service', function(Y) {
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
-
       // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
+
+    },
+
+    /**
+      Attaches the drag and drop events for this view. It is called from the
+      d3-components Components class to ensure that it's only ever run a single
+      time for the container.
+
+      @method _attachDragEvents
+    */
+    _attachDragEvents: function() {
+      var container = this.get('container'),
+          ZP = '.zoom-plane',
+          EC = 'i.sprite.empty_canvas';
+      container.delegate('drop', this.canvasDropHandler, ZP, this);
+      container.delegate('dragenter', this._ignore, ZP, this);
+      container.delegate('dragover', this._ignore, ZP, this);
+
+      // For 'drop here' help text in IE. These events are never triggered
+      // in FF or Chrome at the time of writing.
+      container.delegate('drop', this.canvasDropHandler, EC, this);
+      container.delegate('dragenter', this._ignore, EC, this);
+      container.delegate('dragover', this._ignore, EC, this);
     },
 
     /**
       * Ignore a drag event.
       * @method _ignore
       */
-    _ignore: function() {
-      var evt = d3.event;
-      evt.preventDefault();
-      evt.stopPropagation();
+    _ignore: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
     },
 
 
@@ -404,22 +422,24 @@ YUI.add('juju-topology-service', function(Y) {
      * @static
      * @return {undefined} Nothing.
      */
-    canvasDropHandler: function(_, self) {
-      var evt = d3.event._event;  // So well hidden.
+    canvasDropHandler: function(e) {
+      // Required - causes Ubuntu FF 22.0 to refresh without.
+      this._ignore(e);
+      var evt = e._event;
       var dataTransfer = evt.dataTransfer;
       var dragData = JSON.parse(dataTransfer.getData('Text'));
-      var topo = self.get('component');
-      var translation = topo.get('translate');
-      var scale = topo.get('scale');
-      var dropXY = d3.mouse(this);
+      //var topo = this.get('component');
+      //var translation = topo.get('translate');
+      //var scale = topo.get('scale');
+      //var dropXY = d3.mouse(this);
       var ghostAttributes = {coordinates: []};
-      // Required - causes Ubuntu FF 22.0 to refresh without.
-      evt.preventDefault();
+
+
       // Take the x,y offset (translation) of the topology view into account.
-      Y.Array.each(dropXY, function(_, index) {
-        ghostAttributes.coordinates[index] =
-            (dropXY[index] - translation[index]) / scale;
-      });
+      // Y.Array.each(dropXY, function(_, index) {
+      //   ghostAttributes.coordinates[index] =
+      //       (dropXY[index] - translation[index]) / scale;
+      // });
       if (dragData.dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
