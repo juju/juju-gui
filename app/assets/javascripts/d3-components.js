@@ -460,24 +460,11 @@ YUI.add('d3-components', function(Y) {
       if (!this._rendered) {
         this.renderOnce();
         this.update();
-        this._attachDragEvents();
         this._rendered = true;
       }
       // Render modules.
       Y.each(this.modules, renderAndBind, this);
       return this;
-    },
-
-    /**
-      Calls the _attachDragEvents method in the serviceModule.
-      This is done here so that it's not done multiple times
-      on each render from the multi-dispatch.
-
-      @method _attachDragEvents
-    */
-    _attachDragEvents: function() {
-      var serviceModule = this.modules.ServiceModule;
-      serviceModule._attachDragEvents.call(serviceModule);
     },
 
     /**

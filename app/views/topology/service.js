@@ -183,9 +183,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-      Attaches the drag and drop events for this view. It is called from the
-      d3-components Components class to ensure that it's only ever run a single
-      time for the container.
+      Attaches the drag and drop events for this view. These events need to be
+      here because attaching them in the events object causes drag and drop
+      events to stop bubbling at odd places cross browser.
 
       @method _attachDragEvents
     */
@@ -193,12 +193,12 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
           ZP = '.zoom-plane',
           EC = 'i.sprite.empty_canvas';
+
       container.delegate('drop', this.canvasDropHandler, ZP, this);
       container.delegate('dragenter', this._ignore, ZP, this);
       container.delegate('dragover', this._ignore, ZP, this);
 
-      // For 'drop here' help text in IE. These events are never triggered
-      // in FF or Chrome at the time of writing.
+      // allows the user to drop the charm on the 'drop here' help text in IE10.
       container.delegate('drop', this.canvasDropHandler, EC, this);
       container.delegate('dragenter', this._ignore, EC, this);
       container.delegate('dragover', this._ignore, EC, this);
@@ -419,6 +419,7 @@ YUI.add('juju-topology-service', function(Y) {
      * Handle deploying a services by dropping a charm onto the canvas.
      *
      * @method canvasDropHandler
+     * @param {Y.EventFacade} e the drop event object.
      * @static
      * @return {undefined} Nothing.
      */
@@ -428,18 +429,17 @@ YUI.add('juju-topology-service', function(Y) {
       var evt = e._event;
       var dataTransfer = evt.dataTransfer;
       var dragData = JSON.parse(dataTransfer.getData('Text'));
-      //var topo = this.get('component');
-      //var translation = topo.get('translate');
-      //var scale = topo.get('scale');
-      //var dropXY = d3.mouse(this);
-      var ghostAttributes = {coordinates: []};
-
+      var topo = this.get('component');
+      var translation = topo.get('translate');
+      var scale = topo.get('scale');
+      var ghostAttributes = { coordinates: [] };
+      var dropXY = [evt.clientX, (evt.clientY - 71)];
 
       // Take the x,y offset (translation) of the topology view into account.
-      // Y.Array.each(dropXY, function(_, index) {
-      //   ghostAttributes.coordinates[index] =
-      //       (dropXY[index] - translation[index]) / scale;
-      // });
+      Y.Array.each(dropXY, function(_, index) {
+        ghostAttributes.coordinates[index] =
+            (dropXY[index] - translation[index]) / scale;
+      });
       if (dragData.dataType === 'charm-token-drag-and-drop') {
         // The charm data was JSON encoded because the dataTransfer mechanism
         // only allows for string values.
@@ -726,6 +726,13 @@ YUI.add('juju-topology-service', function(Y) {
           topo = this.get('component'),
           width = topo.get('width'),
           height = topo.get('height');
+
+      // So that we only attach these events once regardless of how many
+      // times this module is rendered.
+      if (!this.rendered) {
+        this._attachDragEvents();
+        this.rendered = true;
+      }
 
       if (!this.service_scale) {
         this.service_scale = d3.scale.log().range([150, 200]);

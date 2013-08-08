@@ -365,39 +365,48 @@ describe('service module events', function() {
 
   it('should deploy a service on charm token drop events', function(done) {
     var localContainer = utils.makeContainer(),
-        src = '/juju-ui/assets/svgs/service_health_mask.svg';
+        src = '/juju-ui/assets/svgs/service_health_mask.svg',
+        preventCount = 0,
+        fakeEventObject = {
+          preventDefault: function() {
+            preventCount += 1;
+          },
+          stopPropagation: function() {
+            preventCount += 1;
+          },
+          _event: {
+            dataTransfer: {
+              getData: function(name) {
+                return JSON.stringify({
+                  charmData: '{"id": "cs:foo/bar-1"}',
+                  dataType: 'charm-token-drag-and-drop',
+                  iconSrc: src
+                });
+              }
+            },
+            target: {},
+            clientX: 155,
+            clientY: 153
+          }
+        };
     // this will be removed by the canvas drop handler
     localContainer.setAttribute('id', 'foo');
     localContainer.append('<img>').setAttribute('src', src);
-    d3.event = {};
-    d3.event._event = {
-      dataTransfer: {
-        getData: function(name) {
-          return JSON.stringify({
-            charmData: '{"id": "cs:foo/bar-1"}',
-            dataType: 'charm-token-drag-and-drop',
-            iconSrc: src
-          });
-        }
-      },
-      preventDefault: function() { return; }
-    };
-    d3.mouse = function() {
-      return [5, 7];
-    };
+
     var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
       eventHandle.detach();
-      // Assert that the correct ghostAttributes are passed; note that the
-      // service will be positioned at (150, 75) + the given coordinates due to
-      // transposition/scale of the canvas.
+      // After the translation and calculations the above x and y coords should
+      // place the element at 305, 157
       assert.deepEqual(ghostAttributes, {
-        coordinates: [155, 82],
+        coordinates: [305, 157],
         icon: src
       });
+      // Make sure that the drag and drop was properly prevented.
+      assert.equal(preventCount, 2);
       done();
     });
     serviceModule.set('component', topo);
-    serviceModule.canvasDropHandler(undefined, serviceModule);
+    serviceModule.canvasDropHandler(fakeEventObject);
   });
 
 });

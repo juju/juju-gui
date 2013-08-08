@@ -91,7 +91,8 @@ YUI.add('juju-topology-importexport', function(Y) {
             // something external to the app, in which case it might be an
             // environment configuration, so process it as such.
 
-            //dataType is an invalid argument in IE10
+            // dataType is an invalid argument in IE10 so in order to maintain
+            // this functionality for other browsers we need to do a UA check.
             if (!Y.UA.ie) {
               var dataType = evt._event.dataTransfer.getData('dataType');
               if (dataType === undefined) {
