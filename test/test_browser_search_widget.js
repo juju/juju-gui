@@ -194,11 +194,11 @@ describe('browser search widget', function() {
     });
 
     search._suggestionSelected({
-      halt: function(){},
+      halt: function() {},
       result: {
         raw: {charm: {id: 'precise/ceph-10'}},
         text: 'Ceph'
-      },
+      }
     });
   });
 
@@ -215,11 +215,11 @@ describe('browser search widget', function() {
     });
 
     search._suggestionSelected({
-      halt: function(){},
+      halt: function() {},
       result: {
         raw: {charm: {id: 'cat:~gui/cat/app-servers-10'}},
         text: 'App Servers'
-      },
+      }
     });
   });
 

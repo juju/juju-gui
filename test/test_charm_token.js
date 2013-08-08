@@ -116,8 +116,8 @@ describe('charm token', function() {
 
     token.render(charm_container);
     assert.equal(
-      charm_container.one('img').getAttribute('src'),
-      'http://localhost.svg');
+        charm_container.one('img').getAttribute('src'),
+        'http://localhost.svg');
 
   });
 
