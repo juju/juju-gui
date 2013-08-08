@@ -93,12 +93,12 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     /**
-      Trigger callback when present on context
+      Trigger callback when present on context. Passes additional arguments to
+      its callback.
 
       @method optionalCallback
       @param {Object} context of both call and callback.
       @param {String} callbackName to resolve and if present invoke.
-      @param {Arguments} arguments passed to callback.
       @return {Object} return value of callback.
     */
     function optionalCallback(context, callbackName) {
