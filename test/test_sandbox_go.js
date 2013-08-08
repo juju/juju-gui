@@ -171,6 +171,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can listen for deltas with Next', function(done) {
+      client.get('juju').set('deltaInterval', 50);
       var data = {
         Type: 'AllWatcher',
         Request: 'Next',
@@ -194,6 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('structures deltas properly', function(done) {
+      client.get('juju').set('deltaInterval', 50);
       var data = {
         Type: 'AllWatcher',
         Request: 'Next',
