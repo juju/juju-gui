@@ -152,7 +152,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.setCredentials({user: 'admin', password: 'password'});
       env.login();
     });
-    
+
     it('can start the AllWatcher', function(done) {
       var data = {
         Type: 'Client',
@@ -207,21 +207,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var receivedData = Y.JSON.parse(received.data);
         var deltas = receivedData.Response.Deltas;
         assert.deepEqual(deltas, [
-          ["service","change",{
-            "Name":"wordpress",
-            "Exposed":false,
-            "CharmURL":"cs:precise/wordpress-15",
-            "Life":"alive",
-            "Constraints":{}
+          ['service', 'change', {
+            'Name': 'wordpress',
+            'Exposed': false,
+            'CharmURL': 'cs:precise/wordpress-15',
+            'Life': 'alive',
+            'Constraints': {}
           }],
-          ["machine","change",{"Status":"running"}],
-          ["unit","change",{
-            "Name":"wordpress/0",
-            "Service":"wordpress",
-            "Series":"precise",
-            "CharmURL":"cs:precise/wordpress-15",
-            "MachineId":"1",
-            "Status":"started"
+          ['machine', 'change', {'Status': 'running'}],
+          ['unit', 'change', {
+            'Name': 'wordpress/0',
+            'Service': 'wordpress',
+            'Series': 'precise',
+            'CharmURL': 'cs:precise/wordpress-15',
+            'MachineId': '1',
+            'Status': 'started'
           }]
         ]);
         done();
