@@ -697,7 +697,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   GoJujuAPI.ATTRS = {
     state: {},
     client: {},
-    currentNextRequestId: {value: 0},
+    nextRequestId: {}, // The current outstanding "Next" RPC call ID.
     deltaInterval: {value: 1000} // In milliseconds.
   };
 
@@ -729,8 +729,6 @@ YUI.add('juju-env-sandbox', function(Y) {
         throw 'INVALID_STATE_ERR : Connection is open to another client.';
       }
     },
-
-
 
     /**
     Closes the connection to the sandbox Juju environment.
@@ -888,7 +886,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (changes || annotations) {
         var deltas = [];
         var response = {
-          RequestId: this.get('currentNextRequestId'),
+          RequestId: this.get('nextRequestId'),
           Response: {Deltas: deltas}
         };
         Y.each(this._deltaWhitelist, function(whitelist, changeType) {
@@ -927,7 +925,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientWatchAll: function(data, client, state) {
       // TODO wire up delta stream to "Next" responses here.
-      this.set('currentNextRequestId', data.RequestId);
+      this.set('nextRequestId', data.RequestId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));
       client.receive({Response: {AllWatcherId: 42}});
@@ -943,7 +941,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
-      this.set('currentNextRequestId', data.RequestId);
+      this.set('nextRequestId', data.RequestId);
       clearInterval(this.deltaIntervalId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));
