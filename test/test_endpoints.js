@@ -159,7 +159,7 @@ describe('Relation endpoints logic', function() {
 
 
 describe('Endpoints map', function() {
-  var Y, juju, models, controller;
+  var Y, juju, models, controller, data;
 
   beforeEach(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
@@ -182,25 +182,27 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
-    charm.set('provides', {
-      url: {
-        'interface': 'http',
-        optional: 'false'
+    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    charm.set('relations', {
+      provides: {
+        url: {
+          'interface': 'http',
+          optional: 'false'
+        },
+        'logging-dir': {
+          'interface': 'logging',
+          scope: 'container'
+        }
       },
-      'logging-dir': {
-        'interface': 'logging',
-        scope: 'container'
-      }
-    });
-    charm.set('requires', {
-      db: {
-        'interface': 'mysql',
-        optional: 'false'
-      },
-      cache: {
-        'interface': 'varnish',
-        optional: 'true'
+      requires: {
+        db: {
+          'interface': 'mysql',
+          optional: 'false'
+        },
+        cache: {
+          'interface': 'varnish',
+          optional: 'true'
+        }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
@@ -233,15 +235,17 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map, requires only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
-    charm.set('requires', {
-      db: {
-        'interface': 'mysql',
-        optional: 'false'
-      },
-      cache: {
-        'interface': 'varnish',
-        optional: 'true'
+    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    charm.set('relations', {
+      requires: {
+        db: {
+          'interface': 'mysql',
+          optional: 'false'
+        },
+        cache: {
+          'interface': 'varnish',
+          optional: 'true'
+        }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
@@ -264,15 +268,17 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map, provides only', function() {
     controller.endpointsMap = {};
-    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
-    charm.set('provides', {
-      url: {
-        'interface': 'http',
-        optional: 'false'
-      },
-      'logging-dir': {
-        'interface': 'logging',
-        scope: 'container'
+    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    charm.set('relations', {
+      provides: {
+        url: {
+          'interface': 'http',
+          optional: 'false'
+        },
+        'logging-dir': {
+          'interface': 'logging',
+          scope: 'container'
+        }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
