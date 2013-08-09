@@ -498,7 +498,6 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     toggleExpose: function(e) {
-      e.halt();
       var service = this.viewletManager.get('model');
       if (service.get('exposed')) {
         this.unexposeService();
