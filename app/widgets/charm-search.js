@@ -393,12 +393,10 @@ YUI.add('browser-search-widget', function(Y) {
       );
 
       // Make sure the UI around the autocomplete search input is setup.
-      if (window.flags && window.flags.ac) {
-        this._setupAutocomplete();
-        this.addEvent(
-            this.ac.on('select', this._suggestionSelected, this)
-        );
-      }
+      this._setupAutocomplete();
+      this.addEvent(
+          this.ac.on('select', this._suggestionSelected, this)
+      );
     },
 
     /**
