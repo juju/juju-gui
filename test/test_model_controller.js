@@ -1,23 +1,3 @@
-/*
-This file is part of the Juju GUI, which lets users view and manage Juju
-environments within a graphical interface (https://launchpad.net/juju-gui).
-Copyright (C) 2012-2013 Canonical Ltd.
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3, as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
-SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
-General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-'use strict';
-
 describe('Model Controller Promises', function() {
   var modelController, yui, env, db, conn, environment, load, serviceError,
       getService, cleanups, aEach;
@@ -28,7 +8,7 @@ describe('Model Controller Promises', function() {
         'juju-view-environment', 'juju-tests-utils', function(Y) {
           var environments = Y.juju.environments;
           yui = Y;
-          load = Y.juju.models.Charm.prototype.load;
+          load = Y.juju.models.BrowserCharm.prototype.load;
           getService = environments.PythonEnvironment.prototype.get_service;
           aEach = Y.Array.each;
           done();
@@ -59,14 +39,14 @@ describe('Model Controller Promises', function() {
   });
 
   /**
-    Monkeypatching the Charm model's load method to allow the load calls
+    Monkeypatching the BrowserCharm model's load method to allow the load calls
     to execute successfully.
 
     @method clobberLoad
     @static
   */
   function clobberLoad() {
-    yui.juju.models.Charm.prototype.load = function(env, callback) {
+    yui.juju.models.BrowserCharm.prototype.load = function(env, callback) {
       assert.deepEqual(env, environment);
       callback();
     };
@@ -74,13 +54,13 @@ describe('Model Controller Promises', function() {
   }
 
   /**
-    Restores the Charm model's load method to its original value.
+    Restores the BrowserCharm model's load method to its original value.
 
     @method restoreLoad
     @static
   */
   function restoreLoad() {
-    yui.juju.models.Charm.prototype.load = load;
+    yui.juju.models.BrowserCharm.prototype.load = load;
   }
 
   /**
