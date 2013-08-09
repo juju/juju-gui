@@ -301,7 +301,7 @@ describe('Endpoints map', function() {
   it('should add a service to the map, neither provides nor requires',
      function() {
        controller.endpointsMap = {};
-       var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+       var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
        controller.addServiceToEndpointsMap('wordpress', charm);
        controller.endpointsMap.should.eql({wordpress: {
          requires: [],
