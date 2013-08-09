@@ -194,7 +194,7 @@ YUI.add('juju-view-environment', function(Y) {
                   blur: 'resetUnits'
                 },
                 // Settings viewlet.
-                '.toggle-expose': { click: 'toggleExpose' },
+                'input#expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 // Constraints viewlet.
