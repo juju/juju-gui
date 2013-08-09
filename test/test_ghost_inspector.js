@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Ghost Inspector', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, charmConfig;
+      inspector, Y, jujuViews, charmData;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -31,8 +31,9 @@ describe('Ghost Inspector', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          charmConfig = utils
-            .loadFixture('data/mediawiki-charmdata.json', true);
+          charmData= utils.loadFixture(
+            'data/mediawiki-api-response.json',
+            true);
           done();
         });
 
@@ -60,8 +61,7 @@ describe('Ghost Inspector', function() {
   });
 
   var setUpInspector = function(options) {
-    charmConfig.id = 'precise/mediawiki-4';
-    var charm = new models.Charm(charmConfig);
+    var charm = new models.BrowserCharm(charmData.charm);
     db.charms.add(charm);
 
     // Create a ghost service with the fake charm.
@@ -191,13 +191,13 @@ describe('Ghost Inspector', function() {
   });
 
   it('properly renders a service without charm options', function() {
-    // Mutate charmConfig before the render.
-    delete charmConfig.config;
+    // Mutate charmData before the render.
+    delete charmData.options;
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
     assert.isObject(container.one('.ghost-config-wrapper'));
     // Restore the test global
-    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+    charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
   });
 
   describe('Service destroy UI', function() {
