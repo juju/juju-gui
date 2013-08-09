@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Inspector Conflict UX', function() {
+describe('Inspector Conflict UX', function() {
 
   var Y, juju, views, templates, utils, container, models;
   var conn, env, view, service, charmData, db, inspector;
