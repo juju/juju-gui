@@ -269,8 +269,10 @@ describe('search widget autocomplete functional checks', function() {
   it('properly identifies categories in the html results', function(done) {
     search.ac.on('results', function(ev) {
       // The first two results should be category
-      assert.isTrue(ev.results[0].display.one('.charm-token').hasClass('category'));
-      assert.isTrue(ev.results[1].display.one('.charm-token').hasClass('category'));
+      assert.isTrue(
+          ev.results[0].display.one('.charm-token').hasClass('category'));
+      assert.isTrue(
+          ev.results[1].display.one('.charm-token').hasClass('category'));
 
       // The second category is the last category and is labeled as such.
       assert.isTrue(ev.results[1].display.hasClass('last-category'));
