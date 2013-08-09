@@ -368,10 +368,7 @@ describe('service module events', function() {
         src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
         fakeEventObject = {
-          preventDefault: function() {
-            preventCount += 1;
-          },
-          stopPropagation: function() {
+          halt: function() {
             preventCount += 1;
           },
           _event: {
@@ -402,7 +399,7 @@ describe('service module events', function() {
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.
-      assert.equal(preventCount, 2);
+      assert.equal(preventCount, 1);
       done();
     });
     serviceModule.set('component', topo);
