@@ -76,11 +76,9 @@ YUI.add('juju-topology-service', function(Y) {
           mouseover: 'serviceStatusMouseOver',
           mouseout: 'serviceStatusMouseOut'
         },
+        // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
-          click: 'canvasClick',
-          dragenter: '_ignore',
-          dragover: '_ignore',
-          drop: 'canvasDropHandler'
+          click: 'canvasClick'
         },
         // Menu/Controls
         '.view-service': {
@@ -180,19 +178,39 @@ YUI.add('juju-topology-service', function(Y) {
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
-
       // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
+
+    },
+
+    /**
+      Attaches the drag and drop events for this view. These events need to be
+      here because attaching them in the events object causes drag and drop
+      events to stop bubbling at odd places cross browser.
+
+      @method _attachDragEvents
+    */
+    _attachDragEvents: function() {
+      var container = this.get('container'),
+          ZP = '.zoom-plane',
+          EC = 'i.sprite.empty_canvas';
+
+      container.delegate('drop', this.canvasDropHandler, ZP, this);
+      container.delegate('dragenter', this._ignore, ZP, this);
+      container.delegate('dragover', this._ignore, ZP, this);
+
+      // allows the user to drop the charm on the 'drop here' help text in IE10.
+      container.delegate('drop', this.canvasDropHandler, EC, this);
+      container.delegate('dragenter', this._ignore, EC, this);
+      container.delegate('dragover', this._ignore, EC, this);
     },
 
     /**
       * Ignore a drag event.
       * @method _ignore
       */
-    _ignore: function() {
-      var evt = d3.event;
-      evt.preventDefault();
-      evt.stopPropagation();
+    _ignore: function(e) {
+      e.halt();
     },
 
 
@@ -401,20 +419,24 @@ YUI.add('juju-topology-service', function(Y) {
      * Handle deploying a services by dropping a charm onto the canvas.
      *
      * @method canvasDropHandler
+     * @param {Y.EventFacade} e the drop event object.
      * @static
      * @return {undefined} Nothing.
      */
-    canvasDropHandler: function(_, self) {
-      var evt = d3.event._event;  // So well hidden.
+    canvasDropHandler: function(e) {
+      // Required - causes Ubuntu FF 22.0 to refresh without.
+      e.halt();
+      var evt = e._event;
       var dataTransfer = evt.dataTransfer;
       var dragData = JSON.parse(dataTransfer.getData('Text'));
-      var topo = self.get('component');
+      var topo = this.get('component');
       var translation = topo.get('translate');
       var scale = topo.get('scale');
-      var dropXY = d3.mouse(this);
-      var ghostAttributes = {coordinates: []};
-      // Required - causes Ubuntu FF 22.0 to refresh without.
-      evt.preventDefault();
+      var ghostAttributes = { coordinates: [] };
+      // The following magic number 71 is the height of the header and is
+      // required to position the service in the proper y position.
+      var dropXY = [evt.clientX, (evt.clientY - 71)];
+
       // Take the x,y offset (translation) of the topology view into account.
       Y.Array.each(dropXY, function(_, index) {
         ghostAttributes.coordinates[index] =
@@ -706,6 +728,13 @@ YUI.add('juju-topology-service', function(Y) {
           topo = this.get('component'),
           width = topo.get('width'),
           height = topo.get('height');
+
+      // So that we only attach these events once regardless of how many
+      // times this module is rendered.
+      if (!this.rendered) {
+        this._attachDragEvents();
+        this.rendered = true;
+      }
 
       if (!this.service_scale) {
         this.service_scale = d3.scale.log().range([150, 200]);
