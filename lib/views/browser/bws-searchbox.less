@@ -24,7 +24,7 @@
         }
         &.active input {
             // Need to overwrite the bootstrap focus border.
-            border-color: @bws-border;
+            border-color: @charm-panel-orange;
             color: @bws-text;
         }
         // Need to overwrite bootstrap box shadow on focus.
@@ -38,12 +38,78 @@
       z-index: 15;
       width: 100%;
 
+      .yui3-aclist-content {
+        border: 1px solid #bbb;
+        box-shadow: 1px 1px 1px #DFDFDF;
+      }
+
       .yui3-charmtoken {
           .title {
               max-width: 135px;
           }
       }
     }
+
+    /* Override styles for the autocomplete results */
+    .yui3-aclist-item {
+
+        .yui3-charmtoken {
+            border-bottom: 1px solid #efefef;
+            margin-left: 5px;
+            margin-right: 5px;
+
+            .charm-token.tiny.category {
+                .icon,
+                .icon img {
+                    width: 27px;
+                    height: 27px;
+                }
+
+                .title {
+                  .type13;
+                }
+            }
+
+            .charm-token {
+                padding: 8px 0;
+
+                .title {
+                    .type15;
+                }
+
+                .icon,
+                .icon img {
+                    width: 32px;
+                    height: 32px;
+                }
+
+            }
+        }
+    }
+}
+
+/* Make sure we don't draw a border on the last one in the list */
+.yui3-aclist-list .yui3-aclist-item:last-child .yui3-charmtoken {
+    border-bottom: 0;
+}
+
+/* The last category we find needs a special border to break it from the
+ * charms that are suggested */
+.yui3-aclist-list .yui3-aclist-item .yui3-charmtoken.last-category {
+    border-bottom: 1px solid #999;
+    /* Back out the aclist-item margin so our line goes across the container */
+    margin-left: -5px;
+    margin-right: -5px;
+
+    /* And put the margin back on the child container so the icons and such
+     * line back up */
+    .charm-token {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+}
+
+
 }
 
 .yui3-skin-sam .yui3-aclist-item-hover {
