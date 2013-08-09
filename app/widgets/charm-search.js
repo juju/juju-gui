@@ -206,12 +206,13 @@ YUI.add('browser-search-widget', function(Y) {
           is_approved: false
         });
         var token = new ns.CharmToken(tokenAttrs);
-        var html = token.TEMPLATE(token.getAttrs());
+        var html = Y.Node.create(token.TEMPLATE(token.getAttrs()));
 
         // If there are categories at the top, we need them to have an
         // additional css class on the .yui3-charmtoken node.
         if (isCategory(charm.get('id'))) {
           lastCharmWasCategory = true;
+          html.addClass('category');
         } else {
           // This charm is not a category charm. Was the last one?
           if (lastCharmWasCategory) {
