@@ -76,6 +76,7 @@ YUI.add('juju-topology-service', function(Y) {
           mouseover: 'serviceStatusMouseOver',
           mouseout: 'serviceStatusMouseOut'
         },
+        // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
           click: 'canvasClick'
         },
@@ -209,8 +210,7 @@ YUI.add('juju-topology-service', function(Y) {
       * @method _ignore
       */
     _ignore: function(e) {
-      e.preventDefault();
-      e.stopPropagation();
+      e.halt();
     },
 
 
@@ -425,7 +425,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     canvasDropHandler: function(e) {
       // Required - causes Ubuntu FF 22.0 to refresh without.
-      this._ignore(e);
+      e.halt();
       var evt = e._event;
       var dataTransfer = evt.dataTransfer;
       var dragData = JSON.parse(dataTransfer.getData('Text'));
@@ -433,6 +433,8 @@ YUI.add('juju-topology-service', function(Y) {
       var translation = topo.get('translate');
       var scale = topo.get('scale');
       var ghostAttributes = { coordinates: [] };
+      // The following magic number 71 is the height of the header and is
+      // required to position the service in the proper y position.
       var dropXY = [evt.clientX, (evt.clientY - 71)];
 
       // Take the x,y offset (translation) of the topology view into account.
