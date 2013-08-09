@@ -1345,7 +1345,7 @@ YUI.add('juju-gui', function(Y) {
           //should) remove this as well.
           { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
-            model: 'charm',
+            model: 'browser-charm',
             namespace: 'gui'},
           // Notifications.
           { path: '/notifications/',
