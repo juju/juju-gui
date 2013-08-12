@@ -640,6 +640,11 @@ YUI.add('juju-charm-models', function(Y) {
     }
   }, {
     ATTRS: {
+      id: {
+        validator: function(val) {
+          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+        }
+      },
       /**
        * "id" for use with the charmworld datastore
        *
