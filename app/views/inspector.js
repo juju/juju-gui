@@ -972,7 +972,8 @@ YUI.add('juju-view-inspector', function(Y) {
       this.container.one('.controls .confirm').setHTML('Overwrite');
     },
     'syncedFields': function() {
-      this.container.one('.controls .confirm').setHTML('Confirm');
+      this.container.one('.controls .confirm').setHTML('Save Changes');
+      this.container.all('.modified').removeClass('modified');
     }
   };
 
