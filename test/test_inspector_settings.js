@@ -69,17 +69,27 @@ describe('Inspector Settings', function() {
   });
 
   var setUpInspector = function(options) {
-    var charmId = 'precise/mediawiki-4';
+    var charmId = 'precise/mediawiki-6';
     charmConfig.id = charmId;
     var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);
     } else {
+      var parsedConfig = {};
+      // because a test deletes the config data we need a check to
+      // stop it from falling over.
+      if (charm.get('config')) {
+        Y.Object.each(charm.get('config').options, function(val, key) {
+          parsedConfig[key] = val.default || "";
+        });
+      }
       service = new models.Service({
         id: 'mediawiki',
         charm: charmId,
-        exposed: false});
+        exposed: false,
+        config: parsedConfig
+      });
       db.services.add(service);
       db.onDelta({data: {result: [
         ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
@@ -271,5 +281,19 @@ describe('Inspector Settings', function() {
   });
 
   /**** End service destroy UI tests. ****/
+
+  it('saves changes to settings values', function() {
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container'),
+        input = vmContainer.one('textarea[name=admins]'),
+        button = vmContainer.one('.configuration-buttons .confirm');
+
+    assert.equal(db.services.item(0).get('config').admins, '');
+    input.set('value', 'foo');
+
+    button.simulate('click');
+    assert.equal(env.ws.last_message().config.admins, 'foo');
+  });
 
 });
