@@ -1014,7 +1014,6 @@ YUI.add('juju-gui', function(Y) {
       if (e.data.result) {
         // We need to save the url to continue on to without redirecting
         // to root if there are extra path details.
-
         this.hideMask();
         var originalPath = window.location.pathname;
         if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
@@ -1026,8 +1025,17 @@ YUI.add('juju-gui', function(Y) {
           return;
         } else {
           var nsRouter = this.nsRouter;
+          // Add any querystring and hash back onto the url before navigating
+          // further.
+          var redirectPath = this.redirectPath;
+          if (window.location.search !== '') {
+            redirectPath += window.location.search;
+          }
+          if (window.location.hash !== '') {
+            redirectPath += window.location.hash;
+          }
           this.navigate(
-              nsRouter.url(nsRouter.parse(this.redirectPath)),
+              nsRouter.url(nsRouter.parse(redirectPath)),
               {overrideAllNamespaces: true});
           this.redirectPath = null;
           return;
