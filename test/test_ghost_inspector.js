@@ -32,8 +32,8 @@ describe('Ghost Inspector', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           charmData = utils.loadFixture(
-          'data/mediawiki-api-response.json',
-          true);
+            'data/mediawiki-api-response.json',
+            true);
           done();
         });
 
@@ -192,7 +192,7 @@ describe('Ghost Inspector', function() {
 
   it('properly renders a service without charm options', function() {
     // Mutate charmData before the render.
-    delete charmData.options;
+    delete charmData.charm.options;
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
     assert.isObject(container.one('.ghost-config-wrapper'));
