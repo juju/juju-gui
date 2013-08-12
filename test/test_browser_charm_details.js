@@ -135,7 +135,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(view.get('container').one('#bws-readme'));
       assert.isNull(view.get('container').one('#bws-configuration'));
       assert.isNull(view.get('container').one('#bws-source'));
-      assert.isNull(view.get('container').one('#bws-qa'));
+      assert.isNull(view.get('container').one('#bws-features'));
     });
 
     it('has sharing links', function() {

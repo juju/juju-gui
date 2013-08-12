@@ -167,7 +167,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
             var tabContent = ev.newVal.get('content');
-            if (tabContent === 'Quality') {
+            if (tabContent === 'Features') {
               this._loadQAContent();
               return;
             }
@@ -395,7 +395,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadQAContent: function() {
-      var node = Y.one('#bws-qa');
+      var node = Y.one('#bws-features');
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
