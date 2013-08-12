@@ -112,7 +112,7 @@ describe('Inspector Settings', function() {
     // Verify the viewlet rendered, previously it would raise.
     assert.isObject(container.one('.config-file'));
     // Restore the test global
-    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+    charmConfig = utils.loadFixture('data/mediawiki-api-response.json', true);
 
   });
 
