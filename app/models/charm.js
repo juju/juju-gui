@@ -536,9 +536,21 @@ YUI.add('juju-charm-models', function(Y) {
       data.is_subordinate = data.subordinate || data.is_subordinate;
       // Because the old and new charm models have different places for
       // the options data, this handles the normalization.
+
+      // TODO (jcsackett): Verify whether parse *ever* gets data.config or
+      // data.relations, if not we can remove the checks and default to altering
+      // the data.
       if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
+      }
+      if (!data.relations && (data.requires || data.provides)) {
+        data.relations = {
+          requires: data.requires,
+          provides: data.provides
+        };
+        delete data.requires;
+        delete data.provides;
       }
       Y.each(data, function(value, key) {
         if (!Y.Lang.isValue(value) ||
