@@ -32,8 +32,8 @@ describe('Inspector Overview', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           charmConfig = utils.loadFixture(
-            'data/mediawiki-api-response.json',
-            true);
+          'data/mediawiki-api-response.json',
+          true);
           done();
         });
 

@@ -42,7 +42,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = Y.Node.create('<div/>').hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      var charmOptions= {
+      var charmOptions = {
         a_bool: {name: 'bob', type: 'boolean', 'default': true},
         an_int: {type: 'int', 'default': 10},
         a_float: {type: 'float', 'default': 1.0},

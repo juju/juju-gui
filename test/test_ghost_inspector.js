@@ -31,9 +31,9 @@ describe('Ghost Inspector', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          charmData= utils.loadFixture(
-            'data/mediawiki-api-response.json',
-            true);
+          charmData = utils.loadFixture(
+          'data/mediawiki-api-response.json',
+          true);
           done();
         });
 
