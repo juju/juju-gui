@@ -237,29 +237,59 @@ YUI.add('juju-env-sandbox', function(Y) {
     client.receiveNow(data);
   };
 
-
   /**
-  Given attrs or a model object and a whitelist of desired attributes,
-  return an attrs hash of only the desired attributes.
+  Prepare a delta of events to send to the client since the last time they
+  asked.  The deltas list is prepared nearly the same way depending on Py or Go
+  implentation, but the data within the individual deltas must be structured
+  dependent on the backend.  This method is called using `apply` from within
+  the appropriate sandbox so that `this._deltaWhitelist` and
+  `self._getDeltaAttrs` can structure the delta
+  according to the juju type.
 
-  @method _getDeltaAttrs
-  @private
-  @param {Object} attrs A models or attrs hash.
-  @param {Array} whitelist A list of desired attributes.
-  @return {Object} A hash of the whitelisted attributes of the attrs object.
+  @method _prepareDelta
+  @return {Array} An array of deltas events.
   */
-  var _getDeltaAttrs = function(attrs, whitelist) {
-    if (attrs.getAttrs) {
-      attrs = attrs.getAttrs();
+  var _prepareDelta = function() {
+    var self = this;
+    var state = this.get('state');
+    var deltas = [];
+    var changes = state.nextChanges();
+    if (changes && changes.error) {
+      changes = null;
     }
-    // For fuller verisimilitude, we could convert some of the
-    // underlines in the attribute names to dashes.  That is currently
-    // unnecessary.
-    var filtered = {};
-    Y.each(whitelist, function(name) {
-      filtered[name] = attrs[name];
-    });
-    return filtered;
+    var annotations = state.nextAnnotations();
+    if (annotations && annotations.error) {
+      annotations = null;
+    }
+    if (changes || annotations) {
+      Y.each(this._deltaWhitelist, function(whitelist, changeType) {
+        var collectionName = changeType + 's';
+        if (changes) {
+          Y.each(changes[collectionName], function(change) {
+            var attrs = self._getDeltaAttrs(change[0], whitelist);
+            var action = change[1] ? 'change' : 'remove';
+            // The unit changeType is actually "serviceUnit" in the Python
+            // stream.  Our model code handles either, so we're not modifying
+            // it for now.
+            deltas.push([changeType, action, attrs]);
+          });
+        }
+        if (annotations) {
+          Y.each(annotations[changeType + 's'], function(attrs, key) {
+            if (!changes || !changes[key]) {
+              attrs = self._getDeltaAttrs(attrs, whitelist);
+              // Special case environment handling.
+              if (changeType === 'annotation') {
+                changeType = 'annotations';
+                attrs = attrs.annotations;
+              }
+              deltas.push([changeType, 'change', attrs]);
+            }
+          });
+        }
+      });
+    }
+    return deltas;
   };
 
   /**
@@ -316,6 +346,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
     },
 
+    /**
+    A white-list for model attributes.  This translates them from the raw ATTRS
+    to the format expected by the environment's delta handling.
+
+    @property _deltaWhitelist
+    @type {Object}
+    */
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
                 'subordinate', 'annotations'],
@@ -328,53 +365,39 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Given attrs or a model object and a whitelist of desired attributes,
+    return an attrs hash of only the desired attributes.
+
+    @method _getDeltaAttrs
+    @private
+    @param {Object} attrs A model or attrs hash.
+    @param {Array} whitelist A list of desired attributes.
+    @return {Object} A hash of the whitelisted attributes of the attrs object.
+    */
+    _getDeltaAttrs: function(attrs, whitelist) {
+      if (attrs.getAttrs) {
+        attrs = attrs.getAttrs();
+      }
+      // For fuller verisimilitude, we could convert some of the
+      // underlines in the attribute names to dashes.  That is currently
+      // unnecessary.
+      var filtered = {};
+      Y.each(whitelist, function(name) {
+        filtered[name] = attrs[name];
+      });
+      return filtered;
+    },
+
+    /**
     Send a delta of events to the client from since the last time they asked.
 
     @method sendDelta
     @return {undefined} Nothing.
     */
     sendDelta: function() {
-      var state = this.get('state');
-      var changes = state.nextChanges();
-      if (changes && changes.error) {
-        changes = null;
-      }
-      var annotations = state.nextAnnotations();
-      if (annotations && annotations.error) {
-        annotations = null;
-      }
-      if (changes || annotations) {
-        var deltas = [];
-        var response = {op: 'delta', result: deltas};
-        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          var collectionName = changeType + 's';
-          if (changes) {
-            Y.each(changes[collectionName], function(change) {
-              var attrs = _getDeltaAttrs(change[0], whitelist);
-              var action = change[1] ? 'change' : 'remove';
-              // The unit changeType is actually "serviceUnit" in the Python
-              // stream.  Our model code handles either, so we're not modifying
-              // it for now.
-              deltas.push([changeType, action, attrs]);
-            });
-          }
-          if (annotations) {
-            Y.each(annotations[changeType + 's'], function(attrs, key) {
-              if (!changes || !changes[key]) {
-                attrs = _getDeltaAttrs(attrs, whitelist);
-                // Special case environment handling.
-                if (changeType === 'annotation') {
-                  changeType = 'annotations';
-                  attrs = attrs.annotations;
-                }
-                deltas.push([changeType, 'change', attrs]);
-              }
-            });
-          }
-        });
-        if (deltas.length) {
-          this.get('client').receiveNow(response);
-        }
+      var deltas = _prepareDelta.apply(this);
+      if (deltas.length) {
+        this.get('client').receiveNow({op: 'delta', result: deltas});
       }
     },
 
@@ -695,7 +718,9 @@ YUI.add('juju-env-sandbox', function(Y) {
   GoJujuAPI.NAME = 'sandbox-go-juju-api';
   GoJujuAPI.ATTRS = {
     state: {},
-    client: {}
+    client: {},
+    nextRequestId: {}, // The current outstanding "Next" RPC call ID.
+    deltaInterval: {value: 1000} // In milliseconds.
   };
 
   Y.extend(GoJujuAPI, Y.Base, {
@@ -786,7 +811,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     /**
     Handle EnvironmentView messages.
 
-    @method handleClientServiceGet
+    @method handleClientEnvironmentInfo
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
@@ -801,6 +826,109 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    A white-list for model attributes.  This translates them from the raw ATTRS
+    to the format expected by the environment's delta handling.
+
+    @property _deltaWhitelist
+    @type {Object}
+    */
+    _deltaWhitelist: {
+      service: {
+        Name: 'id',
+        Exposed: 'exposed',
+        CharmURL: 'charm',
+        Life: 'life',
+        Constraints: 'constraints',
+        Config: 'config'
+      },
+      machine: {
+        Id: 'machine_d',
+        InstanceId: 'instance_id',
+        Status: 'agent_state',
+        StateInfo: 'agent_status_info'
+      },
+      unit: {
+        Name: 'id',
+        'Service': 'service',
+        'Series': function(attrs, self) {
+          var db = self.get('state').db;
+          var service = db.services.getById(attrs.service);
+          var charm = db.charms.getById(service.get('charm'));
+          return charm.get('series');
+        },
+        'CharmURL': function(attrs, self) {
+          var db = self.get('state').db;
+          var service = db.services.getById(attrs.service);
+          return service.get('charm');
+        },
+        PublicAddress: 'public_address',
+        PrivateAddress: 'private_address',
+        MachineId: 'machine',
+        Ports: 'open_ports',
+        Status: 'agent_state',
+        StatusInfo: 'agent_state_info'
+      },
+      relation: {
+        Key: 'relation_id',
+        'Endpoints': function() {}
+      },
+      annotation: {
+        'Tag': function() {
+        },
+        'Annotations': function() {}
+      }
+    },
+
+    /**
+    Given attrs or a model object and a whitelist of desired attributes,
+    return an attrs hash of only the desired attributes.
+
+    @method _getDeltaAttrs
+    @private
+    @param {Object} attrs A models or attrs hash.
+    @param {Object} whitelist A list of desired attributes and means for
+      generating them.
+    @return {Object} A hash of the whitelisted attributes of the attrs object.
+    */
+    _getDeltaAttrs: function(attrs, whitelist) {
+      if (attrs.getAttrs) {
+        attrs = attrs.getAttrs();
+      }
+      var filtered = {},
+          self = this;
+      Y.each(whitelist, function(value, key) {
+        if (typeof value === 'string') {
+          filtered[key] = attrs[value];
+        } else if (typeof value === 'function') {
+          filtered[key] = value(attrs, self);
+        }
+      });
+      return filtered;
+    },
+
+    /**
+    Send a delta of events to the client from since the last time they asked.
+
+    @method sendDelta
+    @return {undefined} Nothing.
+    */
+    sendDelta: function() {
+      var nextRequestId = this.get('nextRequestId');
+      if (nextRequestId) {
+        var deltas = _prepareDelta.apply(this);
+        if (deltas.length) {
+          this.get('client').receive({
+            RequestId: this.get('nextRequestId'),
+            Response: {Deltas: deltas}
+          });
+          // Prevent sending additional deltas until the Go environment is
+          // ready for them (when the next `Next` message is sent).
+          this.set('nextRequestId', undefined);
+        }
+      }
+    },
+
+    /**
     Handle WatchAll messages.
 
     @method handleClientWatchAll
@@ -810,8 +938,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientWatchAll: function(data, client, state) {
-      // TODO wire up delta stream to "Next" responses here.
-      client.receive({Response: {AllWatcherId: '42'}});
+      this.set('nextRequestId', data.RequestId);
+      this.deltaIntervalId = setInterval(
+          this.sendDelta.bind(this), this.get('deltaInterval'));
+      // AllWatcherId can be hard-coded because we will only ever have one
+      // client listening to the environment with the sandbox environment.
+      client.receive({Response: {AllWatcherId: 42}});
     },
 
     /**
@@ -824,9 +956,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
-      // This is a noop for the moment because it must exist but the current
-      // functionality does not depend on it having any effect.
-      // TODO See if there are any changes and if so, send them.
+      this.set('nextRequestId', data.RequestId);
+      clearInterval(this.deltaIntervalId);
+      this.deltaIntervalId = setInterval(
+          this.sendDelta.bind(this), this.get('deltaInterval'));
     },
 
     /**

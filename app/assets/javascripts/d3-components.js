@@ -458,9 +458,9 @@ YUI.add('d3-components', function(Y) {
       // do so now.
       this.attachContainer();
       if (!this._rendered) {
-        self.renderOnce();
-        self.update();
-        self._rendered = true;
+        this.renderOnce();
+        this.update();
+        this._rendered = true;
       }
       // Render modules.
       Y.each(this.modules, renderAndBind, this);

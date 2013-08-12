@@ -120,15 +120,22 @@ describe('Inspector Settings', function() {
     assert.isFalse(service.get('exposed'));
     assert.isFalse(exposeCalled);
     assert.isFalse(unexposeCalled);
-    var expose = container.one('.toggle-switch');
+    var vmContainer = inspector.viewletManager.get('container');
+    var expose = vmContainer.one('label[for=expose-toggle]');
+    var exposeLabel = expose.one('.handle');
     expose.simulate('click');
     assert.isTrue(service.get('exposed'));
     assert.isTrue(exposeCalled);
     assert.isFalse(unexposeCalled);
+    var checkedSelector = 'input.hidden-checkbox:checked ~ label .handle';
+    var handle = vmContainer.one(checkedSelector);
+    assert.equal(handle instanceof Y.Node, true);
 
     expose.simulate('click');
     assert.isTrue(unexposeCalled);
     assert.isFalse(service.get('exposed'));
+    handle = vmContainer.one(checkedSelector);
+    assert.equal(handle instanceof Y.Node, false);
   });
 
   /**** Begin service destroy UI tests. ****/

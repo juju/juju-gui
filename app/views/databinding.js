@@ -30,7 +30,8 @@ YUI.add('juju-databinding', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
-      Templates = views.Templates;
+      Templates = views.Templates,
+      slice = [].slice;
 
   views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
@@ -89,6 +90,49 @@ YUI.add('juju-databinding', function(Y) {
         }
       });
       return index;
+    }
+
+    /**
+      Trigger callback when present on context. Passes additional arguments to
+      its callback.
+
+      @method optionalCallback
+      @param {Object} context of both call and callback.
+      @param {String} callbackName to resolve and if present invoke.
+      @return {Object} return value of callback.
+    */
+    function optionalCallback(context, callbackName) {
+      var callback = context[callbackName];
+      if (callback) {
+        return callback.apply(context, slice.call(arguments, 2));
+      }
+      return undefined;
+    }
+
+    /**
+      Trigger callback when present on context
+
+      @method optionalCallbacks
+      @param {Array} Array of context objects to invoke optionalCallback on.
+      @param {String} callbackName to resolve and if present invoke.
+      @param {Arguments} arguments passed to callback.
+      @return {Boolean} return if any callbacks returned any value.
+    */
+    function optionalCallbacks(contextArray, callbackName, target, value) {
+      //Alias to preserve in scope.
+      var name = callbackName,
+          tgt = target,
+          val = value,
+          result = true;
+
+      if (!contextArray) {return;}
+      contextArray.forEach(function(context) {
+        var retval = optionalCallback(context, name, tgt, val);
+        if (retval !== undefined) {
+          result = result && retval;
+        }
+      });
+      return result;
     }
 
     /**
@@ -610,30 +654,6 @@ YUI.add('juju-databinding', function(Y) {
       if (delta.bindings.length === 0 &&
           !Object.keys(delta.wildcards).length) {
         return;
-      }
-
-      // Trigger callback on binding if present
-      function optionalCallback(binding, callbackName, target, value) {
-        var callback = binding[callbackName];
-        if (callback) {
-          callback.call(binding, target, value);
-          return true;
-        }
-        return false;
-      }
-
-      // Trigger callback on any bindings in collection
-      // where it is present.
-      function optionalCallbacks(bindings, callbackName, target, value) {
-        //Alias to preserve in scope.
-        var name = callbackName,
-            tgt = target,
-            val = value;
-        if (!bindings) {return;}
-
-        bindings.forEach(function(binding) {
-          optionalCallback(binding, name, tgt, val);
-        });
       }
 
       // Iterate bindings and updating each element as needed.
