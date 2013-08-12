@@ -239,7 +239,12 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   /**
   Prepare a delta of events to send to the client from since the last time they
-  asked.
+  asked.  The deltas list is prepared nearly the same way depending on Py or Go
+  implentation, but the data within the individual deltas must be structured 
+  dependent on the backend.  This method is called using `apply` from within
+  the appropriate sandbox so that `this._deltaWhitelist` and
+  `self._getDeltaAttrs` can structure the delta 
+  according to the juju type.
 
   @method _prepareDelta
   @return {Array} An array of deltas events.
@@ -895,12 +900,18 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     sendDelta: function() {
       var deltas = _prepareDelta.apply(this);
-      if (deltas.length) {
-        console.log(deltas);
-        this.get('client').receive({
-          RequestId: this.get('nextRequestId'),
-          Response: {Deltas: deltas}
-        });
+      var nextRequestId = this.get('nextRequestId');
+      if (nextRequestId) {
+        if (deltas.length) {
+          console.log(deltas);
+          this.get('client').receive({
+            RequestId: this.get('nextRequestId'),
+            Response: {Deltas: deltas}
+          });
+          // Prevent sending additional deltas until the Go environment is
+          // ready for them (when the next `Next` message is sent).
+          this.set('nextRequestId', undefined);
+        }
       }
     },
 
@@ -917,6 +928,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       this.set('nextRequestId', data.RequestId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));
+      // AllWatcherId can be hard-coded because we will only ever have one
+      // client listening to the environment with the sandbox environment.
       client.receive({Response: {AllWatcherId: 42}});
     },
 
