@@ -81,7 +81,7 @@ describe('Inspector Settings', function() {
       // stop it from falling over.
       if (charm.get('config')) {
         Y.Object.each(charm.get('config').options, function(val, key) {
-          parsedConfig[key] = val.default || "";
+          parsedConfig[key] = val['default'] || '';
         });
       }
       service = new models.Service({
