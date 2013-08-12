@@ -290,10 +290,17 @@ describe('Inspector Settings', function() {
         button = vmContainer.one('.configuration-buttons .confirm');
 
     assert.equal(db.services.item(0).get('config').admins, '');
+    input.simulate('focus');
     input.set('value', 'foo');
+    // XXX simulate focus doesn't work in IE10 yet
+    if (Y.UA.ie !== 10) {
+      assert.equal(vmContainer.all('.modified').size(), 1);
+    }
 
     button.simulate('click');
     assert.equal(env.ws.last_message().config.admins, 'foo');
+    assert.equal(vmContainer.all('.modified').size(), 0);
+    assert.equal(button.getHTML(), 'Save Changes');
   });
 
 });
