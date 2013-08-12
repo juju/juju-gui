@@ -69,7 +69,7 @@
     }
     pre {
         background: #FDF6F2;
-        border-radius: 4px 4px 4px 4px;
+        border-radius: @border-radius;
         padding: 10px 16px;
         white-space: pre-wrap;
         word-wrap: break-word;
@@ -260,11 +260,13 @@
             }
         }
     }
-    #bws-hooks {
+    #bws-code {
         select {
             margin: 6px 0 23px 0;
         }
         pre.prettyprint {
+            border: none;
+
             ol {
                 list-style-position: inside;
                 margin-left: 0;
@@ -282,7 +284,7 @@
                 li.L5,
                 li.L7,
                 li.L9 {
-                    background-color: rgba(0, 0, 0, 0.03);
+                    background-color: transparent;
                 }
             }
         }
