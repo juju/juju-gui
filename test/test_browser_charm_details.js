@@ -333,11 +333,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore
       });
       view.set('deploy', function(charm, serviceAttrs) {
-        // The charm passed in is not a BrowserCharm but a charm-panel charm.
         var browserCharm = view.get('charm');
-        assert.notDeepEqual(charm, browserCharm);
-        var madeCharm = new models.Charm(browserCharm.getAttrs());
-        assert.equal(charm.get('id'), madeCharm.get('url'));
+        assert.deepEqual(charm, browserCharm);
+        assert.equal(charm.get('id'), 'cs:precise/ceph-9');
         assert.equal(serviceAttrs.icon, 'charm icon url');
         done();
       });

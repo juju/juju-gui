@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Conflict UX', function() {
 
   var Y, juju, views, templates, utils, container, models;
-  var conn, env, view, service, charmConfig, db, inspector;
+  var conn, env, view, service, charmData, db, inspector;
 
   before(function(done) {
     var requires = ['juju-databinding',
@@ -40,8 +40,9 @@ describe('Inspector Conflict UX', function() {
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       templates = views.Templates;
-      charmConfig = utils
-            .loadFixture('data/mediawiki-charmdata.json', true);
+      charmData = utils.loadFixture(
+          'data/mediawiki-api-response.json',
+          true);
       done();
     });
   });
@@ -65,9 +66,8 @@ describe('Inspector Conflict UX', function() {
   });
 
   function setUpInspector(options) {
-    var charmId = 'precise/mediawiki-4';
-    charmConfig.id = charmId;
-    var charm = new models.Charm(charmConfig);
+    var charm = new models.BrowserCharm(charmData.charm),
+        charmId = charm.get('id');
     db.charms.add(charm);
     service = new models.Service({
       id: 'mediawiki',
