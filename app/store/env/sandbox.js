@@ -240,10 +240,10 @@ YUI.add('juju-env-sandbox', function(Y) {
   /**
   Prepare a delta of events to send to the client from since the last time they
   asked.  The deltas list is prepared nearly the same way depending on Py or Go
-  implentation, but the data within the individual deltas must be structured 
+  implentation, but the data within the individual deltas must be structured
   dependent on the backend.  This method is called using `apply` from within
   the appropriate sandbox so that `this._deltaWhitelist` and
-  `self._getDeltaAttrs` can structure the delta 
+  `self._getDeltaAttrs` can structure the delta
   according to the juju type.
 
   @method _prepareDelta
