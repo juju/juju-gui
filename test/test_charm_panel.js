@@ -157,7 +157,9 @@ describe('charm panel', function() {
 
     // Start deploying a charm, without confirming.
     var startDeployment = function(ghostXY) {
-      panel.deploy(new models.BrowserCharm({id: 'cs:precise/membase-6'}), ghostXY);
+      panel.deploy(
+          new models.BrowserCharm({id: 'cs:precise/membase-6'}),
+          ghostXY);
     };
 
     // Cancel an unconfirmed deployment.
