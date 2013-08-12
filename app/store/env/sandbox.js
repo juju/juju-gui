@@ -238,7 +238,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   };
 
   /**
-  Prepare a delta of events to send to the client from since the last time they
+  Prepare a delta of events to send to the client since the last time they
   asked.  The deltas list is prepared nearly the same way depending on Py or Go
   implentation, but the data within the individual deltas must be structured
   dependent on the backend.  This method is called using `apply` from within
@@ -346,6 +346,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
     },
 
+    /**
+    A white-list for model attributes.  This translates them from the raw ATTRS
+    to the format expected by the environment's delta handling.
+
+    @property _deltaWhitelist
+    @type {Object}
+    */
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
                 'subordinate', 'annotations'],
@@ -363,7 +370,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method _getDeltaAttrs
     @private
-    @param {Object} attrs A models or attrs hash.
+    @param {Object} attrs A model or attrs hash.
     @param {Array} whitelist A list of desired attributes.
     @return {Object} A hash of the whitelisted attributes of the attrs object.
     */
@@ -818,6 +825,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       });
     },
 
+    /**
+    A white-list for model attributes.  This translates them from the raw ATTRS
+    to the format expected by the environment's delta handling.
+
+    @property _deltaWhitelist
+    @type {Object}
+    */
     _deltaWhitelist: {
       service: {
         Name: 'id',
