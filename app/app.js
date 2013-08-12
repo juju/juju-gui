@@ -972,7 +972,7 @@ YUI.add('juju-gui', function(Y) {
         if (!req || req.path !== '/login/') {
           // Set the original requested path in the event the user has
           // to log in before continuing.
-          this.redirectPath = window.location.pathname;
+          this.redirectPath = this.get('currentUrl');
           this.navigate('/login/', { overrideAllNamespaces: true });
           return;
         }
@@ -1014,9 +1014,8 @@ YUI.add('juju-gui', function(Y) {
       if (e.data.result) {
         // We need to save the url to continue on to without redirecting
         // to root if there are extra path details.
-
         this.hideMask();
-        var originalPath = window.location.pathname;
+        var originalPath = this.get('currentUrl');
         if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
           this.redirectPath = originalPath;
         }
@@ -1026,6 +1025,7 @@ YUI.add('juju-gui', function(Y) {
           return;
         } else {
           var nsRouter = this.nsRouter;
+
           this.navigate(
               nsRouter.url(nsRouter.parse(this.redirectPath)),
               {overrideAllNamespaces: true});
@@ -1275,6 +1275,25 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charmworldURL: {},
+      /**
+       * @attribute currentUrl
+       * @default '/'
+       * @type {String}
+       *
+       */
+      currentUrl: {
+
+        /**
+         * @attribute currentUrl.getter
+         */
+        getter: function() {
+          return [
+            window.location.pathname,
+            window.location.search,
+            window.location.hash
+          ].join('');
+        }
+      },
       /**
          @attribute store
          @default Charmworld2
