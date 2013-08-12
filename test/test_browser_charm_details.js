@@ -902,7 +902,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-related-charms',
         charm: new models.BrowserCharm(data),
         isFullscreen: true,
         renderTo: testContainer,
@@ -911,7 +911,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.all('#bws-interfaces .charm-token').size(),
+          testContainer.all('#bws-related-charms .charm-token').size(),
           9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
@@ -937,7 +937,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-related-charms',
         charm: new models.BrowserCharm(data),
         isFullscreen: true,
         renderTo: testContainer,
