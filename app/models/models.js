@@ -721,7 +721,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': models.Charm
+        'charm': models.BrowserCharm
       };
     },
 
