@@ -163,7 +163,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.MachineId,
         public_address: change.PublicAddress
       };
-      db.units.process_delta(action, unitData);
+      db.units.process_delta(action, unitData, db);
       db.machines.process_delta(action, machineData, db);
     },
 
