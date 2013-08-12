@@ -1275,7 +1275,17 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charmworldURL: {},
+      /**
+       * @attribute currentUrl
+       * @default '/'
+       * @type {String}
+       *
+       */
       currentUrl: {
+
+        /**
+         * @attribute currentUrl.getter
+         */
         getter: function() {
           return [
             window.location.pathname,
