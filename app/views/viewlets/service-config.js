@@ -37,7 +37,6 @@ YUI.add('viewlet-service-config', function(Y) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
-      debugger;
       var charmOptions = charm.get('options');
       Y.Object.each(service.get('config'), function(value, key) {
         var setting = {
