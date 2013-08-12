@@ -1,12 +1,17 @@
 {{#if totalScore}}
-    <h3>Quality Rating: {{totalScore}}/{{totalAvailable}}</h3>
+    <h3>Charm Features</h3>
 
     <p>
-        This charm has scored {{totalScore}} out of a maximum of {{totalAvailable}}
-        points on the criteria below. Note that no charm today comes close to 
-        scoring full points. The scoring criteria form an ideal list which also 
-        helps guide contributors to where they can best spend their time 
-        fixing something.
+        Charm reviewers verify that recommended charms conform to <a
+        href="https://juju.ubuntu.com/docs/authors-charm-policy.html">the
+        requirements listed by the Charm Store Policy</a>.  Additionally,
+        reviewers evaluate charms using the standardized feature list below.
+        These consider data handling, security, reliability, flexibility, and
+        other capabilities.
+    </p>
+    <p>
+        <strong>This charm provides {{totalScore}} standardized features out
+        of a maximum of the {{totalAvailable}} listed below.</strong>
     </p>
 
     <div class="qa_data">
@@ -24,9 +29,13 @@
     </div>
 
 {{else}}
-    <h3>Quality Rating:</h3>
+    <h3>Charm Features</h3>
 
-    <p><strong>This charm does not have a Quality Rating</strong></p>
+    <p>
+        In addition to implementing service-specific functionality, charms also provide general features related to data handling, security, reliability, flexibility, and 
+    </p>
+
+    <p><strong>This charm's general </strong></p>
 
     {{#if charm.is_approved}}
         <p class="no-qa-reviewed">

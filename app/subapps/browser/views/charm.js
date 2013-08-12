@@ -54,7 +54,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .add': {
         click: '_addCharmEnvironment'
       },
-      '#bws-source select': {
+      '#bws-code select': {
         change: '_loadHookContent'
       },
       '.charm .back': {
@@ -167,7 +167,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.addEvent(
           tab.after('selectionChange', function(ev) {
             var tabContent = ev.newVal.get('content');
-            if (tabContent === 'Quality') {
+            if (tabContent === 'Features') {
               this._loadQAContent();
               return;
             }
@@ -358,7 +358,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var index = ev.currentTarget.get('selectedIndex');
       var filename = ev.currentTarget.get('options').item(
           index).getAttribute('value'),
-          node = this.get('container').one('#bws-source .filecontent');
+          node = this.get('container').one('#bws-code .filecontent');
 
       // Load the file, but make sure we prettify the code.
       if (filename) {
@@ -395,7 +395,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadQAContent: function() {
-      var node = Y.one('#bws-qa');
+      var node = Y.one('#bws-features');
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
