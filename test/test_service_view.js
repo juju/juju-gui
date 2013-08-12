@@ -42,32 +42,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = Y.Node.create('<div/>').hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      var charmConfig = {
-        options: {
-          a_bool: {name: 'bob', type: 'boolean', 'default': true},
-          an_int: {type: 'int', 'default': 10},
-          a_float: {type: 'float', 'default': 1.0},
-          a_string: {type: 'string', 'default': 'howdy'},
-          some_text: {type: 'string', 'default': 'hidey\nho'}
-        }
+      var charmOptions= {
+        a_bool: {name: 'bob', type: 'boolean', 'default': true},
+        an_int: {type: 'int', 'default': 10},
+        a_float: {type: 'float', 'default': 1.0},
+        a_string: {type: 'string', 'default': 'howdy'},
+        some_text: {type: 'string', 'default': 'hidey\nho'}
       };
-      charm = new models.Charm({
+      charm = new models.BrowserCharm({
         id: 'cs:precise/mysql-7',
         description: 'A DB',
-        config: charmConfig
+        options: charmOptions
       });
       db.charms.add([charm]);
       var serviceConfig = {};
-      Y.Object.each(charmConfig.options, function(v, k) {
+      Y.Object.each(charmOptions, function(v, k) {
         serviceConfig[k] = v['default'];
       });
-      service = new models.Service(
-          { id: 'mysql',
-            charm: 'cs:precise/mysql-7',
-            unit_count: db.units.size(),
-            loaded: true,
-            config: serviceConfig,
-            exposed: false});
+      service = new models.Service({
+        id: 'mysql',
+        charm: 'cs:precise/mysql-7',
+        unit_count: db.units.size(),
+        loaded: true,
+        config: serviceConfig,
+        exposed: false
+      });
 
       db.services.add([service]);
       view = new views.service_config({
@@ -187,7 +186,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         .hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({id: 'cs:precise/mysql-7', description: 'A DB'});
+      charm = new models.BrowserCharm({
+        id: 'cs:precise/mysql-7',
+        description: 'A DB'
+      });
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
       db.units.add([{id: 'mysql/0', agent_state: 'pending'},

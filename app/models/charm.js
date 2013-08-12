@@ -373,7 +373,6 @@ YUI.add('juju-charm-models', function(Y) {
     }
   });
 
-  models.Charm = Charm;
   models.charmIdRe = charmIdRe;
 
   /**

@@ -66,13 +66,12 @@ describe('charm panel', function() {
   });
 
   it('must be able to show and hide the panel', function() {
-    var panel = Y.namespace('juju.views').CharmPanel
-          .getInstance({
-          testing: true,
-          container: container,
-          app: { views: { environment: {}}}
-        }),
-        node = panel.node;
+    var panel = Y.namespace('juju.views').CharmPanel.getInstance({
+      testing: true,
+      container: container,
+      app: { views: { environment: {}}}
+    });
+    var node = panel.node;
     panel.setActivePanelName('configuration');
     node.getStyle('display').should.equal('none');
     panel.show();
@@ -158,7 +157,7 @@ describe('charm panel', function() {
 
     // Start deploying a charm, without confirming.
     var startDeployment = function(ghostXY) {
-      panel.deploy(new models.Charm({id: 'cs:precise/membase-6'}), ghostXY);
+      panel.deploy(new models.BrowserCharm({id: 'cs:precise/membase-6'}), ghostXY);
     };
 
     // Cancel an unconfirmed deployment.

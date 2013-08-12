@@ -30,8 +30,9 @@ describe('Inspector Settings', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          charmConfig = utils
-            .loadFixture('data/mediawiki-charmdata.json', true);
+          charmConfig = utils.loadFixture(
+            'data/mediawiki-api-response.json',
+            true);
           done();
         });
 
@@ -71,7 +72,7 @@ describe('Inspector Settings', function() {
   var setUpInspector = function(options) {
     var charmId = 'precise/mediawiki-4';
     charmConfig.id = charmId;
-    var charm = new models.Charm(charmConfig);
+    var charm = new models.BrowserCharm(charmConfig);
     db.charms.add(charm);
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);
