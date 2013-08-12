@@ -899,11 +899,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     */
     sendDelta: function() {
-      var deltas = _prepareDelta.apply(this);
       var nextRequestId = this.get('nextRequestId');
       if (nextRequestId) {
+        var deltas = _prepareDelta.apply(this);
         if (deltas.length) {
-          console.log(deltas);
           this.get('client').receive({
             RequestId: this.get('nextRequestId'),
             Response: {Deltas: deltas}
