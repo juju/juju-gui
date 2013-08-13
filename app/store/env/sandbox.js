@@ -1049,9 +1049,30 @@ YUI.add('juju-env-sandbox', function(Y) {
           state.setConfig(data.Params.ServiceName, data.Params.Config));
     },
 
+    /**
+    Handle ServiceSetYAML messages
+
+    @method handleClientServiceSetYAML
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
     handleClientServiceSetYAML: function(data, client, state) {
+      var config = {};
+      try {
+        config = jsyaml.safeLoad(data.Params.ConfigYAML);
+      } catch(e) {
+        if (e instanceof jsyaml.YAMLException) {
+          this._basicReceive(client, data, 
+              {error: 'Error parsing YAML.\n' + e});
+          return;
+        }
+        throw e;
+      }
+      var serviceName = data.Params.ServiceName;
       this._basicReceive(client, data, 
-          {error: 'ServiceSetYAML not supported in sandbox yet'});
+          state.setConfig(serviceName, config[serviceName]));
     },
 
     /**
@@ -1235,7 +1256,8 @@ YUI.add('juju-env-sandbox', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'timers',
-    'json-parse'
+    'js-yaml',
+    'json-parse',
+    'timers'
   ]
 });
