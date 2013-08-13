@@ -207,12 +207,7 @@ YUI.add('juju-charm-models', function(Y) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
 
-      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
-      // or juju core.  If not, remove the "|| data.is_subordinate" and change
-      // in the fakebackend and/or sandbox to send the expected thing there.
       data.is_subordinate = data.subordinate || data.is_subordinate;
-      // Because the old and new charm models have different places for
-      // the options data, this handles the normalization.
       if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
@@ -523,24 +518,20 @@ YUI.add('juju-charm-models', function(Y) {
       var data = models.BrowserCharm.superclass.parse.apply(this, arguments),
           self = this;
 
-      debugger;
-      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
-      // or juju core.  If not, remove the "|| data.is_subordinate" and change
-      // in the fakebackend and/or sandbox to send the expected thing there.
-      data.is_subordinate = data.subordinate || data.is_subordinate;
-
-      // TODO (jcsackett): Verify whether parse *ever* gets data.config or
-      // data.relations, if not we can remove the checks and default to altering
-      // the data.
-      if (data.config && data.config.options && !data.options) {
+      //Data can come from two places; a BrowserCharm being deployed into the
+      //environment, or a charm already in the environment. They have slightly
+      //different attributes.
+      if (data.config) {
+        // If data has a 'config' attribute, we're dealing with data from the
+        // environment. 
         data.options = data.config.options;
-        delete data.config;
-      }
-      if (!data.relations && (data.requires || data.provides)) {
         data.relations = {
           requires: data.requires,
           provides: data.provides
         };
+        data.is_subordinate = data.subordinate;
+        delete data.config;
+        delete data.subordinate;
         delete data.requires;
         delete data.provides;
       }
