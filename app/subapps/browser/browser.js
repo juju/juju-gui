@@ -502,13 +502,13 @@ YUI.add('subapp-browser', function(Y) {
           activeTab = hash;
       if (hash) {
         if (hash === urlNamespace + 'interfaces') {
-            activeTab = urlNamespace + 'related-charms';
+          activeTab = urlNamespace + 'related-charms';
         }
         else if (hash === urlNamespace + 'source') {
-            activeTab = urlNamespace + 'code';
+          activeTab = urlNamespace + 'code';
         }
         else if (hash === urlNamespace + 'qa') {
-            activeTab = urlNamespace + 'features';
+          activeTab = urlNamespace + 'features';
         }
       }
       var extraCfg = {
