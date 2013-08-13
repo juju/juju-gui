@@ -299,9 +299,9 @@ YUI.add('juju-charm-store', function(Y) {
     categoryIconPath: function(categoryID) {
       return [
         this.get('apiHost'),
-        'static/img/charm-',
+        'static/img/category-',
         categoryID,
-        '.svg'
+        '-bw.svg'
       ].join('');
     },
 

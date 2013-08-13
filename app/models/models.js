@@ -797,8 +797,7 @@ YUI.add('juju-models', function(Y) {
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
-      this.charms = new models.CharmList();
-      this.browserCharms = new models.BrowserCharmList();
+      this.charms = new models.BrowserCharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -820,7 +819,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': models.Charm
+        'charm': models.BrowserCharm
       };
 
       // Used to assign new relation ids.
