@@ -291,7 +291,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined, 1,
           callback);
     });
-    
+
     it('can destroy', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {
@@ -333,7 +333,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Request: 'CharmInfo',
         Params: {
-          CharmURL: 'cs:precise/wordpress-15',
+          CharmURL: 'cs:precise/wordpress-15'
         },
         RequestId: 42
       };
@@ -348,7 +348,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('can get a charm (environment integration)', function (done) {
+    it('can get a charm (environment integration)', function(done) {
       env.connect();
       var callback = function(result) {
         assert.isUndefined(result.Error);
@@ -466,7 +466,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.set_config('wordpress', undefined,
-          'wordpress:\n  llama: pajama', callback);
+            'wordpress:\n  llama: pajama', callback);
       });
     });
 

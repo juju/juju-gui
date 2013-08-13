@@ -953,7 +953,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
       this.set('nextRequestId', data.RequestId);
@@ -966,7 +965,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     Receive a basic response. Several API calls simply return a request ID
     and an error (if there is one); this utility method handles those cases.
 
-    @param {Object} client The active ClientConnection
+    @method _basicReceive
+    @private
+    @param {Object} client The active ClientConnection.
     @param {Object} request The initial request with a RequestId.
     @param {Object} result The result of the call with an optional error.
     */
@@ -1010,10 +1011,19 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceDestroy: function(data, client, state) {
-      this._basicReceive(client, data, 
+      this._basicReceive(client, data,
           state.destroyService(data.Params.ServiceName));
     },
 
+    /**
+    Handle CharmInfo messages
+
+    @method handleClientCharmInfo
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
     handleClientCharmInfo: function(data, client, state) {
       var self = this;
       state.getCharm(data.Params.CharmURL, function(result) {
@@ -1021,6 +1031,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           self._basicReceive(client, data, result);
         } else {
           result = result.result;
+          // Convert the charm into the Go format, so it can be converted
+          // back into the provided format.
           var convertedData = {
             RequestId: data.RequestId,
             Response: {
@@ -1056,8 +1068,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientSetServiceConstraints: function(data, client, state) {
-      this._basicReceive(client, data, 
-          state.setConstraints(data.Params.ServiceName, data.Params.Constraints));
+      this._basicReceive(client, data,
+          state.setConstraints(data.Params.ServiceName,
+          data.Params.Constraints));
     },
 
     /**
@@ -1070,7 +1083,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceSet: function(data, client, state) {
-      this._basicReceive(client, data, 
+      this._basicReceive(client, data,
           state.setConfig(data.Params.ServiceName, data.Params.Config));
     },
 
@@ -1087,16 +1100,16 @@ YUI.add('juju-env-sandbox', function(Y) {
       var config = {};
       try {
         config = jsyaml.safeLoad(data.Params.ConfigYAML);
-      } catch(e) {
+      } catch (e) {
         if (e instanceof jsyaml.YAMLException) {
-          this._basicReceive(client, data, 
+          this._basicReceive(client, data,
               {error: 'Error parsing YAML.\n' + e});
           return;
         }
         throw e;
       }
       var serviceName = data.Params.ServiceName;
-      this._basicReceive(client, data, 
+      this._basicReceive(client, data,
           state.setConfig(serviceName, config[serviceName]));
     },
 
@@ -1144,7 +1157,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
-      this._basicReceive(client, data, 
+      this._basicReceive(client, data,
           state.updateAnnotations(serviceId, data.Params.Pairs));
     },
 
