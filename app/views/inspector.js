@@ -675,7 +675,7 @@ YUI.add('juju-view-inspector', function(Y) {
       // If the user has conflicted fields and still choose to
       // save then we will be overwriting the values in Juju.
       var bindingEngine = this.viewletManager.bindingEngine;
-      bindingEngine.clearChangedValues.call(bindingEngine, 'config');
+      bindingEngine.clearChangedValues('config');
       var db = this.viewletManager.get('db');
       if (e.err) {
         db.notifications.add(

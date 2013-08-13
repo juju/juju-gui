@@ -993,17 +993,152 @@ describe('BrowserCharm test', function() {
   });
 });
 
-describe('database export', function() {
-  var models;
+describe('database import/export', function() {
+  var Y, models, utils;
+  var fakeStore, db;
+  var charmConfig;
+
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    Y = YUI(GlobalConfig).use(['juju-models',
+                              'juju-tests-utils',
+                              'juju-charm-store',
+                              'juju-charm-models'],
+      function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        models = Y.namespace('juju.models');
+        charmConfig = utils
+        .loadFixture('data/mediawiki-charmdata.json', true);
+        done();
+      });
+  });
+
+  beforeEach(function() {
+    db = new models.Database();
+    fakeStore = utils.makeFakeStore(db.charms);
+    fakeStore.iconpath = function() {return 'fake url';};
+  });
+
+
+  it('throws an error with more than one import target', function() {
+    assert.throws(function() {
+      db.importDeployer({a:{}, b:{}});
+    }, 'Import target ambigious, aborting.');
+  });
+
+  it('detect service id collisions', function(done) {
+    db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
+    var data = {
+      a: {services: {mysql: {
+        charm: 'cs:precise/mysql-26',
+        num_units: 2, options: {debug: false}}}}
+    };
+
+    assert.throws(function() {
+      db.importDeployer(data);
+    }, 'mysql is already present in the database.');
+
+    var imported = db.importDeployer(data, fakeStore, {rewriteIds: true});
+    imported.then(function() {
+      assert.equal(db.services.size(), 2);
       done();
     });
   });
 
+  it('properly implements inheritence in target definitions', function(done) {
+    var data = {
+      a: {services: {mysql: {charm: 'cs:precise/mysql-26',
+                             num_units: 2, options: {debug: false}}}},
+      b: {inherit: 'a', services: {mysql: {num_units: 5, options: {debug: true}}}},
+      c: {inherit: 'b', services: {mysql: {num_units: 3 }}},
+      d: {inherit: 'z', services: {mysql: {num_units: 3 }}}
+      };
+
+
+    // No 'z' available.
+    assert.throws(function() {
+      db.importDeployer(data, fakeStore, {targetBundle: 'd'});
+    }, 'Unable to resolve bundle inheritence.');
+
+    db.importDeployer(data,  fakeStore, {targetBundle: 'c'})
+    .then(function() {
+      // Insure that we inherit the debug options from 'b'
+      var mysql = db.services.getById('mysql');
+      assert.isNotNull(mysql);
+      var config = mysql.get('options');
+      assert.isTrue(config.debug);
+      done();
+    });
+ });
+
+ it('properly builds relations on import', function(done) {
+   var data = {
+      a: {
+        services: {
+          mysql: {
+            charm: 'cs:precise/mysql-26',
+            num_units: 2, options: {debug: false}},
+          wordpress: {
+            charm: 'cs:precise/wordpress-15',
+            num_units: 1
+          }},
+          relations: [['mysql', 'wordpress']]
+      }};
+
+   var importer = db.importDeployer(data,  fakeStore, {useGhost: false});
+   importer.then(function() {
+      var mysql = db.services.getById('mysql');
+      var wordpress = db.services.getById('wordpress');
+      assert.isNotNull(mysql);
+      assert.isNotNull(wordpress);
+
+      var rel = db.relations.item(0);
+      var ep = rel.get('endpoints');
+      // Validate we got the proper interfaces
+      assert.equal(ep[0][0], 'wordpress');
+      assert.equal(ep[0][1].name, 'db');
+      assert.equal(ep[1][0], 'mysql');
+      assert.equal(ep[1][1].name, 'db');
+      assert.isFalse(rel.get('pending'));
+      done();
+    }).then(undefined, function(e) {done(e);});
+
+
+ });
+
+ it('properly ghosts services and relations when flagged', function(done) {
+    var data = {
+      a: {
+        services: {
+          mysql: {
+            charm: 'cs:precise/mysql-26',
+            num_units: 2, options: {debug: false}},
+          wordpress: {
+            charm: 'cs:precise/wordpress-15',
+            num_units: 1
+          }},
+          relations: [['mysql', 'wordpress']]
+      }};
+
+   var importer = db.importDeployer(data,  fakeStore, {useGhost: true});
+   importer.then(function() {
+      var mysql = db.services.getById('mysql');
+      var wordpress = db.services.getById('wordpress');
+      assert.isNotNull(mysql);
+      assert.isNotNull(wordpress);
+      assert.isTrue(mysql.get('pending'));
+      assert.isTrue(wordpress.get('pending'));
+
+      // Their relation is pending as well.
+      var rel = db.relations.item(0);
+      assert.isTrue(rel.get('pending'));
+      done();
+    }).then(null, function(err) {
+      done(err);
+    });
+
+ });
+
   it('can export in deployer format', function() {
-    var db = new models.Database();
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     var wordpress = db.services.add({
       id: 'wordpress',

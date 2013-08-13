@@ -137,19 +137,27 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return charms;
     })(),
 
-    makeFakeBackend: function() {
+    makeFakeStore: function(cache) {
+      var modellist = cache;
       var fakeStore = new Y.juju.Charmworld2({});
-      fakeStore.charm = function(store_id, callbacks, bindscope) {
+      fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
         var charmName = store_id.split('/')[1];
         charmName = charmName.split('-', 1);
         if (charmName in jujuTests.utils._cached_charms) {
           var response = jujuTests.utils._cached_charms[charmName];
-          callbacks.success(response);
+          if (modellist) {
+            modellist.add(response.charm);
+          }
+          callbacks.success(response.charm);
         } else {
           callbacks.failure(new Error('Unable to load charm ' + charmName));
         }
       };
+      return fakeStore;
+    },
 
+    makeFakeBackend: function() {
+      var fakeStore = this.makeFakeStore();
       var fakebackend = new Y.juju.environments.FakeBackend({
         store: fakeStore
       });

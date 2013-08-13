@@ -159,6 +159,25 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+     Like the charm method but returning a Promise.
+
+     @method promiseCharm
+     @param {String} charmId to fetch.
+     @param {ModelList} cache a local cache of browser charms.
+     @return {Promise} to load charm.
+    */
+   promiseCharm: function(charmId, cache) {
+    var self = this;
+    return Y.Promise(function(resolve, reject) {
+      self.charm(charmId, {
+        success: function(c) { resolve(c.charm);},
+        failure: function(e) { console.log('Error resolving charm', e); reject(e);}
+      },
+      self, cache);
+    });
+   },
+
+    /**
      * Api call to search charms
      *
      * @method search
@@ -428,6 +447,7 @@ YUI.add('juju-charm-store', function(Y) {
     'datasource-io',
     'json-parse',
     'juju-charm-models',
+    'promise',
     'querystring-stringify'
   ]
 });
