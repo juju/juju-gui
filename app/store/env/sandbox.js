@@ -963,6 +963,22 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Receive a basic response. Several API calls simply return a request ID
+    and an error (if there is one); this utility method handles those cases.
+
+    @param {Object} client The active ClientConnection
+    @param {Object} request The initial request with a RequestId.
+    @param {Object} result The result of the call with an optional error.
+    */
+    _basicReceive: function(client, request, result) {
+      var response = {RequestId: request.RequestId, Response: {}};
+      if (result.error) {
+        response.Error = result.error;
+      }
+      client.receive(response);
+    },
+
+    /**
     Handle ServiceDeploy messages
 
     @method handleClientServiceDeploy
@@ -972,12 +988,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceDeploy: function(data, client, state) {
+      var self = this;
       var callback = function(result) {
-        var response = {RequestId: data.RequestId};
-        if (result.error) {
-          response.Error = result.error;
-        }
-        client.receive(response);
+        self._basicReceive(client, data, result);
       };
       state.deploy(data.Params.CharmUrl, callback, {
         name: data.Params.ServiceName,
@@ -985,6 +998,66 @@ YUI.add('juju-env-sandbox', function(Y) {
         configYAML: data.Params.ConfigYAML,
         unitCount: data.Params.NumUnits
       });
+    },
+
+    /**
+    Handle ServiceDestroy messages
+
+    @method handleClientServiceDestroy
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceDestroy: function(data, client, state) {
+      this._basicReceive(client, data, 
+          state.destroyService(data.Params.ServiceName));
+    },
+
+    handleClientCharminfo: function(data, client, state) {
+      var result = state.getCharm(data.Params.CharmURL, function(result) {
+        debugger;
+        client.receive(result);
+      });
+    },
+
+    /**
+    Handle SetServiceConstraints messages
+
+    @method handleClientSetServiceConstraints
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientSetServiceConstraints: function(data, client, state) {
+      this._basicReceive(client, data, 
+          state.setConstraints(data.Params.ServiceName, data.Params.Constraints));
+    },
+
+    /**
+    Handle ServiceSet messages
+
+    @method handleClientServiceSet
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceSet: function(data, client, state) {
+      this._basicReceive(client, data, 
+          state.setConfig(data.Params.ServiceName, data.Params.Config));
+    },
+
+    handleClientServiceSetYAML: function(data, client, state) {
+      this._basicReceive(client, data, 
+          {error: 'ServiceSetYAML not supported in sandbox yet'});
+    },
+
+    handleClientResolved: function(data, client, state) {
+      // Resolving a unit/relation pair is not supported by the Go back-end,
+      // so relationName is ignored.
+      this._basicReceive(client, data, state.resolved(data.Params.UnitName));
     },
 
     /**
@@ -997,12 +1070,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceSetCharm: function(data, client, state) {
+      var self = this;
       var callback = function(result) {
-        var response = {RequestId: data.RequestId};
-        if (result.error) {
-          response.Error = result.error;
-        }
-        client.receive(response);
+        self._basicReceive(client, data, result);
       };
       state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
           data.Params.Force, callback);
@@ -1019,10 +1089,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
-      var reply = state.updateAnnotations(serviceId, data.Params.Pairs);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error});
+      this._basicReceive(client, data, 
+          state.updateAnnotations(serviceId, data.Params.Pairs));
     },
 
     /**
@@ -1075,11 +1143,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceExpose: function(data, client, state) {
-      var reply = state.expose(data.Params.ServiceName);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {}});
+      this._basicReceive(client, data, state.expose(data.Params.ServiceName));
     },
 
     /**
@@ -1092,11 +1156,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceUnexpose: function(data, client, state) {
-      var reply = state.unexpose(data.Params.ServiceName);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {}});
+      this._basicReceive(client, data, state.unexpose(data.Params.ServiceName));
     },
 
     /**
@@ -1156,13 +1216,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientDestroyRelation: function(data, client, state) {
-      var stateData = state.removeRelation(
-          data.Params.Endpoints[0], data.Params.Endpoints[1]);
-      var resp = {RequestId: data.RequestId};
-      if (stateData.error) {
-        resp.Error = stateData.error;
-      }
-      client.receive(resp);
+      this._basicReceive(client, data, state.removeRelation(
+          data.Params.Endpoints[0], data.Params.Endpoints[1]));
     }
 
   });

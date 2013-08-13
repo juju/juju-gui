@@ -291,6 +291,116 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined, 1,
           callback);
     });
+    
+    it('can destroy', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'ServiceDestroy',
+          Params: {
+            ServiceName: 'wordpress'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.equal(receivedData.RequestId, data.RequestId);
+          assert.isUndefined(receivedData.Error);
+          assert.equal(state.db.services.size(), 0);
+          assert.isNull(state.db.services.getById('wordpress'));
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can destroy (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          assert.equal(state.db.services.size(), 0);
+          assert.isNull(state.db.services.getById('wordpress'));
+          done();
+        };
+        env.destroy_service('wordpress', callback);
+      });
+    });
+
+    it('can set constraints', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'SetServiceConstraints',
+          Params: {
+            ServiceName: 'wordpress',
+            Constraints: { mem: '2' }
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('constraintsStr'), 'mem=2');
+          assert.equal(service.get('constraints').mem, 2);
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can set constraints (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('constraintsStr'), 'mem=2');
+          assert.equal(service.get('constraints').mem, 2);
+          done();
+        };
+        env.set_constraints('wordpress', {mem: '2G'}, callback);
+      });
+    });
+
+    it('can set config', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'ServiceSet',
+          Params: {
+            ServiceName: 'wordpress',
+            Config: { llama: 'pajama' }
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can set config (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        env.set_config('wordpress', {llama: 'pajama'}, undefined, callback);
+      });
+    });
 
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {});
