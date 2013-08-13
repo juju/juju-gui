@@ -1022,6 +1022,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         } else {
           result = result.result;
           var convertedData = {
+            RequestId: data.RequestId,
             Response: {
               Config: {
                 Options: result.options

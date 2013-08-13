@@ -352,8 +352,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       var callback = function(result) {
         assert.isUndefined(result.Error);
-        assert.isObject(result.Response);
-        assert.equal(result.Response.URL, 'cs:precise/wordpress-15');
+        assert.isObject(result.result);
+        assert.equal(result.result.url, 'cs:precise/wordpress-15');
         done();
       };
       env.get_charm('cs:precise/wordpress-15', callback);
@@ -393,7 +393,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(service.get('constraints').mem, 2);
           done();
         };
-        env.set_constraints('wordpress', {mem: '2G'}, callback);
+        env.set_constraints('wordpress', {mem: '2'}, callback);
       });
     });
 
