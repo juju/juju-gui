@@ -496,9 +496,23 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderCharmDetails: function(req, res, next) {
-      var charmID = this._viewState.charmID;
+      var charmID = this._viewState.charmID,
+          hash = this._viewState.hash,
+          urlNamespace = '#bws-',
+          activeTab = hash;
+      if (hash) {
+        if (hash === urlNamespace + 'interfaces') {
+            activeTab = urlNamespace + 'related-charms';
+        }
+        else if (hash === urlNamespace + 'source') {
+            activeTab = urlNamespace + 'code';
+        }
+        else if (hash === urlNamespace + 'qa') {
+            activeTab = urlNamespace + 'features';
+        }
+      }
       var extraCfg = {
-        activeTab: this._viewState.hash,
+        activeTab: activeTab,
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
