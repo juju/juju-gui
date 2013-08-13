@@ -523,7 +523,7 @@ YUI.add('juju-charm-models', function(Y) {
       //different attributes.
       if (data.config) {
         // If data has a 'config' attribute, we're dealing with data from the
-        // environment. 
+        // environment.
         data.options = data.config.options;
         data.relations = {
           requires: data.requires,
