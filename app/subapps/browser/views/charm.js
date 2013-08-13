@@ -739,7 +739,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         var tab = this.get('container').one(
             '.tabs a[href="' + this.get('activeTab') + '"]');
         if (tab) {
-            tab.get('parentNode').simulate('click');
+          tab.get('parentNode').simulate('click');
         }
       }
 
