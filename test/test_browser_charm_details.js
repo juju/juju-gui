@@ -996,7 +996,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.render();
 
-      debugger;
       assert.equal(
           testContainer.one('.yui3-tab-selected a').getAttribute('href'),
           '#bws-summary');
