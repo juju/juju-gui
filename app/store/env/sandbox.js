@@ -1014,10 +1014,34 @@ YUI.add('juju-env-sandbox', function(Y) {
           state.destroyService(data.Params.ServiceName));
     },
 
-    handleClientCharminfo: function(data, client, state) {
-      var result = state.getCharm(data.Params.CharmURL, function(result) {
-        debugger;
-        client.receive(result);
+    handleClientCharmInfo: function(data, client, state) {
+      var self = this;
+      state.getCharm(data.Params.CharmURL, function(result) {
+        if (result.error) {
+          self._basicReceive(client, data, result);
+        } else {
+          result = result.result;
+          var convertedData = {
+            Response: {
+              Config: {
+                Options: result.options
+              },
+              Meta: {
+                Description: result.description,
+                Format: result.format,
+                Name: result.name,
+                Peers: result.peers,
+                Provides: result.provides,
+                Requires: result.requires,
+                Subordinate: result.is_subordinate,
+                Summary: result.summary
+              },
+              URL: result.url,
+              Revision: result.revision
+            }
+          };
+          client.receive(convertedData);
+        }
       });
     },
 

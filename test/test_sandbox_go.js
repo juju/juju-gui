@@ -328,6 +328,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('can get a charm', function(done) {
+      var data = {
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {
+          CharmURL: 'cs:precise/wordpress-15',
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.isUndefined(receivedData.Error);
+        assert.isObject(receivedData.Response);
+        assert.equal(receivedData.Response.URL, 'cs:precise/wordpress-15');
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can get a charm (environment integration)', function (done) {
+      env.connect();
+      var callback = function(result) {
+        assert.isUndefined(result.Error);
+        assert.isObject(result.Response);
+        assert.equal(result.Response.URL, 'cs:precise/wordpress-15');
+        done();
+      };
+      env.get_charm('cs:precise/wordpress-15', callback);
+    });
+
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {
