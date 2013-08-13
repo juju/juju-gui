@@ -1,22 +1,23 @@
-{{#if totalScore}}
-    <h3>Charm Features</h3>
+<h3>Charm Features</h3>
 
+<p>
+    Charm reviewers verify that recommended charms conform to <a
+    href="https://juju.ubuntu.com/docs/authors-charm-policy.html">the
+    requirements listed by the Charm Store Policy</a>.  Additionally,
+    reviewers evaluate charms using <a href="https://juju.ubuntu.com/docs
+    /authors-charm-quality.html">a standardized feature list</a>. This list
+    includes data handling, security, reliability, flexibility, and other
+    capabilities.
+</p>
+{{#if totalScore}}
     <p>
-        Charm reviewers verify that recommended charms conform to <a
-        href="https://juju.ubuntu.com/docs/authors-charm-policy.html">the
-        requirements listed by the Charm Store Policy</a>.  Additionally,
-        reviewers evaluate charms using the standardized feature list below.
-        This list includes data handling, security, reliability, flexibility,
-        and other capabilities.
-    </p>
-    <p>
-        <strong>This charm provides {{totalScore}} standardized features out
+        <strong>This recommended charm provides {{totalScore}} standardized features out
         of a maximum of the {{totalAvailable}} listed below.</strong>
     </p>
 
     <div class="qa_data">
         {{#each questions}}
-            <h3>{{description}}: <span class="heading-notes">{{score}}/{{questions.length}} points</span></h3>
+            <h3>{{description}}: <span class="heading-notes">{{score}}/{{questions.length}} features</span></h3>
 
             <ul>
                 {{#each questions}}
@@ -29,21 +30,15 @@
     </div>
 
 {{else}}
-    <h3>Charm Features</h3>
-
-    <p>
-        In addition to implementing service-specific functionality, charms also provide general features related to data handling, security, reliability, flexibility, and 
-    </p>
-
-    <p><strong>This charm's general </strong></p>
-
     {{#if charm.is_approved}}
         <p class="no-qa-reviewed">
-            It will be rated soon.
+            <strong>Reviewers will identify the standardized features of this
+            recommended charm soon.</strong>
         </p>
     {{else}}
         <p class="no-qa-unreviewed">
-            Only reviewed charms will have a Quality Rating. This charm is not reviewed and does not have a score.
+            <strong>This charm is not yet recommended and so reviewers have
+            not evaluated it for the standardized feature list.</strong>
         </p>
 
     {{/if}}
