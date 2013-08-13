@@ -1060,14 +1060,46 @@ YUI.add('juju-models', function(Y) {
 
       // Buils out a object will inherited properties.
       var source = targetBundle && data[targetBundle] ||
-          data[Object.keys(data)[0]]; var ancestors = [source];
-      while (source.inherit) {
-        source = data[source.inherit];
-        if (!source) {
-          throw new Error('Unable to resolve bundle inheritence.');
+          data[Object.keys(data)[0]];
+      var ancestors = [];
+      var seen = [];
+
+      /**
+        Helper to build out an inheritence chain
+
+        @method setupinheritance
+        @param {Object} base object currently being inspected.
+        @param {Array} baseList chain of ancestors to later inherit.
+        @param {Object} bundleData import data used to resolve ancestors.
+        @param {Array} seen list used to track objects already in inheritence
+        chain.  @return {Array} of all inherited objects ordered from most base
+        to most specialized.
+      */
+      function setupInheritance(base, baseList, bundleData, seen) {
+        // local alias for internal function.
+        var sourceData = bundleData;
+        var seenList = seen;
+
+        baseList.unshift(base);
+        // Normalize to array when present.
+        if (!base.inherits) {return;}
+        if (base.inherits && !Y.Lang.isArray(base.inherits)) {
+          base.inherits = [base.inherits];
         }
-        ancestors.unshift(source);
+
+        base.inherits.forEach(function(ancestor) {
+          var baseDeploy = sourceData[ancestor];
+          if (baseDeploy === undefined) {
+            throw new Error('Unable to resolve bundle inheritence.');
+          }
+          if (seenList.indexOf(ancestor) === -1) {
+            seenList.push(ancestor);
+            setupInheritance(baseDeploy, baseList, bundleData, seenList);
+          }
+        });
+
       }
+      setupInheritance(source, ancestors, data, seen);
       // Source now merges it all.
       source = {};
       ancestors.forEach(function(ancestor) {
@@ -1130,7 +1162,16 @@ YUI.add('juju-models', function(Y) {
               var serviceId = serviceIdMap[serviceName];
               var current = Y.mix(
                  source.services[serviceName], { id: serviceId, pending:
-                   useGhost}, true); self.services.add(current);
+                   useGhost}, true);
+              self.services.add(current);
+              // XXX: This is a questionable use case as we are only creating
+              // client side objects in the database.  There would ideally be
+              // a version of this code that returned a list of Promises that
+              // called proper env methods (for all the objects, not just
+              // units) to mutate a real env.
+              // This however will allow us to import bundles into a fresh
+              // database with the intention of only rendering it.
+              //if (!useGhost) {}
             });
           })
      .then(function() {

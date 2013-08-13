@@ -820,10 +820,10 @@ describe('database import/export', function() {
     var data = {
       a: {services: {mysql: {charm: 'cs:precise/mysql-26',
         num_units: 2, options: {debug: false}}}},
-      b: {inherit: 'a', services: {mysql: {num_units: 5,
+      b: {inherits: 'a', services: {mysql: {num_units: 5,
         options: {debug: true}}}},
-      c: {inherit: 'b', services: {mysql: {num_units: 3 }}},
-      d: {inherit: 'z', services: {mysql: {num_units: 3 }}}
+      c: {inherits: 'b', services: {mysql: {num_units: 3 }}},
+      d: {inherits: 'z', services: {mysql: {num_units: 3 }}}
     };
 
 
@@ -842,6 +842,28 @@ describe('database import/export', function() {
           done();
         });
   });
+
+  it('properly implements multiple inheritence', function(done) {
+    var data = {
+      a: {services: {mysql: {charm: 'cs:precise/mysql-26',
+        num_units: 2, options: {debug: false}}}},
+      b: {inherits: 'a', services: {mysql: {num_units: 5,
+        options: {debug: true}}}},
+      c: {inherits: 'a', services: {mysql: {num_units: 3 }}},
+      d: {inherits: ['b', 'c'], services: {mysql: {num_units: 3 }}}
+    };
+
+    db.importDeployer(data, fakeStore, {targetBundle: 'd'})
+    .then(function() {
+          // Insure that we inherit the debug options from 'b'
+          var mysql = db.services.getById('mysql');
+          assert.isNotNull(mysql);
+          var config = mysql.get('options');
+          assert.isTrue(config.debug);
+          done();
+        }).then(undefined, function(e) {done(e);});
+  });
+
 
   it('properly builds relations on import', function(done) {
     var data = {
@@ -874,8 +896,6 @@ describe('database import/export', function() {
       assert.isFalse(rel.get('pending'));
       done();
     }).then(undefined, function(e) {done(e);});
-
-
   });
 
   it('properly ghosts services and relations when flagged', function(done) {
@@ -908,8 +928,9 @@ describe('database import/export', function() {
     }).then(null, function(err) {
       done(err);
     });
-
   });
+
+  it('should properly create units when not ghosted');
 
   it('can export in deployer format', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
