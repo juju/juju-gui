@@ -1000,16 +1000,16 @@ describe('database import/export', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
-                              'juju-tests-utils',
-                              'juju-charm-store',
-                              'juju-charm-models'],
-      function(Y) {
-        utils = Y.namespace('juju-tests.utils');
-        models = Y.namespace('juju.models');
-        charmConfig = utils
+      'juju-tests-utils',
+      'juju-charm-store',
+      'juju-charm-models'],
+    function(Y) {
+      utils = Y.namespace('juju-tests.utils');
+      models = Y.namespace('juju.models');
+      charmConfig = utils
         .loadFixture('data/mediawiki-charmdata.json', true);
-        done();
-      });
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -1021,7 +1021,7 @@ describe('database import/export', function() {
 
   it('throws an error with more than one import target', function() {
     assert.throws(function() {
-      db.importDeployer({a:{}, b:{}});
+      db.importDeployer({a: {}, b: {}});
     }, 'Import target ambigious, aborting.');
   });
 
@@ -1047,11 +1047,12 @@ describe('database import/export', function() {
   it('properly implements inheritence in target definitions', function(done) {
     var data = {
       a: {services: {mysql: {charm: 'cs:precise/mysql-26',
-                             num_units: 2, options: {debug: false}}}},
-      b: {inherit: 'a', services: {mysql: {num_units: 5, options: {debug: true}}}},
+        num_units: 2, options: {debug: false}}}},
+      b: {inherit: 'a', services: {mysql: {num_units: 5,
+        options: {debug: true}}}},
       c: {inherit: 'b', services: {mysql: {num_units: 3 }}},
       d: {inherit: 'z', services: {mysql: {num_units: 3 }}}
-      };
+    };
 
 
     // No 'z' available.
@@ -1059,19 +1060,19 @@ describe('database import/export', function() {
       db.importDeployer(data, fakeStore, {targetBundle: 'd'});
     }, 'Unable to resolve bundle inheritence.');
 
-    db.importDeployer(data,  fakeStore, {targetBundle: 'c'})
+    db.importDeployer(data, fakeStore, {targetBundle: 'c'})
     .then(function() {
-      // Insure that we inherit the debug options from 'b'
-      var mysql = db.services.getById('mysql');
-      assert.isNotNull(mysql);
-      var config = mysql.get('options');
-      assert.isTrue(config.debug);
-      done();
-    });
- });
+          // Insure that we inherit the debug options from 'b'
+          var mysql = db.services.getById('mysql');
+          assert.isNotNull(mysql);
+          var config = mysql.get('options');
+          assert.isTrue(config.debug);
+          done();
+        });
+  });
 
- it('properly builds relations on import', function(done) {
-   var data = {
+  it('properly builds relations on import', function(done) {
+    var data = {
       a: {
         services: {
           mysql: {
@@ -1081,11 +1082,11 @@ describe('database import/export', function() {
             charm: 'cs:precise/wordpress-15',
             num_units: 1
           }},
-          relations: [['mysql', 'wordpress']]
+        relations: [['mysql', 'wordpress']]
       }};
 
-   var importer = db.importDeployer(data,  fakeStore, {useGhost: false});
-   importer.then(function() {
+    var importer = db.importDeployer(data, fakeStore, {useGhost: false});
+    importer.then(function() {
       var mysql = db.services.getById('mysql');
       var wordpress = db.services.getById('wordpress');
       assert.isNotNull(mysql);
@@ -1103,9 +1104,9 @@ describe('database import/export', function() {
     }).then(undefined, function(e) {done(e);});
 
 
- });
+  });
 
- it('properly ghosts services and relations when flagged', function(done) {
+  it('properly ghosts services and relations when flagged', function(done) {
     var data = {
       a: {
         services: {
@@ -1116,11 +1117,11 @@ describe('database import/export', function() {
             charm: 'cs:precise/wordpress-15',
             num_units: 1
           }},
-          relations: [['mysql', 'wordpress']]
+        relations: [['mysql', 'wordpress']]
       }};
 
-   var importer = db.importDeployer(data,  fakeStore, {useGhost: true});
-   importer.then(function() {
+    var importer = db.importDeployer(data, fakeStore, {useGhost: true});
+    importer.then(function() {
       var mysql = db.services.getById('mysql');
       var wordpress = db.services.getById('wordpress');
       assert.isNotNull(mysql);
@@ -1136,7 +1137,7 @@ describe('database import/export', function() {
       done(err);
     });
 
- });
+  });
 
   it('can export in deployer format', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});

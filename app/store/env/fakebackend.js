@@ -787,8 +787,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = this.db.relations
-                          .parseEndpointStrings(this.db, [endpointA, endpointB]);
+      var endpointData = this.db.relations.parseEndpointStrings(
+          this.db, [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {

@@ -537,13 +537,13 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Loops through the charm endpoint data to determine whether we have a
-      relationship match. The result is either an object with an error attribute,
-      or an object giving the interface, scope, providing endpoint, and requiring
-      endpoint.
+      relationship match. The result is either an object with an error
+      attribute, or an object giving the interface, scope, providing endpoint,
+      and requiring endpoint.
 
       @method findEndpointMatch
-      @param {Array} endpoints Pair of two endpoint data objects.  Each endpoint
-      data object has name, charm, service, and scope.
+      @param {Array} endpoints Pair of two endpoint data objects.  Each
+      endpoint data object has name, charm, service, and scope.
       @return {Object} A hash with the keys 'interface', 'scope', 'provides',
       and 'requires'.
       */
@@ -552,11 +552,12 @@ YUI.add('juju-models', function(Y) {
       Y.each([0, 1], function(providedIndex) {
         // Identify the candidates.
         var providingEndpoint = endpoints[providedIndex],
-        provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
-        requiringEndpoint = endpoints[!providedIndex + 0],
-        requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
+            provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+            requiringEndpoint = endpoints[!providedIndex + 0],
+            requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
         if (!provides['juju-info']) {
-          provides['juju-info'] = {'interface': 'juju-info', scope: 'container'};
+          provides['juju-info'] = {'interface': 'juju-info',
+                                    scope: 'container'};
         }
         // Restrict candidate types as tightly as possible.
         var candidateProvideTypes, candidateRequireTypes;
@@ -574,10 +575,10 @@ YUI.add('juju-models', function(Y) {
         Y.each(candidateProvideTypes, function(provideType) {
           Y.each(candidateRequireTypes, function(requireType) {
             var provideMatch = provides[provideType],
-            requireMatch = requires[requireType];
+                requireMatch = requires[requireType];
             if (provideMatch &&
                 requireMatch &&
-                  provideMatch['interface'] === requireMatch['interface']) {
+                provideMatch['interface'] === requireMatch['interface']) {
               matches.push({
                 'interface': provideMatch['interface'],
                 scope: provideMatch.scope || requireMatch.scope,
@@ -967,7 +968,7 @@ YUI.add('juju-models', function(Y) {
       @param {String} endpointB A string representation of the service name
         and endpoint connection type ie) wordpress:db.
       @param {Boolean} ghost When true this is a pending relationship.
-      @return {Object} new relation
+      @return {Object} new relation.
     */
     addRelation: function(endpointA, endpointB, ghost) {
       if ((typeof endpointA !== 'string') ||
@@ -1016,8 +1017,8 @@ YUI.add('juju-models', function(Y) {
 
       if (relation) {
         this._relationCount += 1;
-     }
-     return relation;
+      }
+      return relation;
 
     },
 
@@ -1040,106 +1041,111 @@ YUI.add('juju-models', function(Y) {
       @method importDeployer
       @param {Object} data to import.
       @param {Object} charmStore (with its promiseCharm method).
-      @parap {Object} options (optional).
+      @param {Object} options (optional).
       @return {Promise} that the import is complete.
     */
-   importDeployer: function(data, charmStore, options) {
-     options = options || {};
-     var self = this;
-     var rewriteIds = options.rewriteIds || false;
-     var targetBundle = options.targetBundle;
-     var useGhost = options.useGhost;
-     if (useGhost === undefined) {
-       useGhost = true;
-     }
+    importDeployer: function(data, charmStore, options) {
+      options = options || {};
+      var self = this;
+      var rewriteIds = options.rewriteIds || false;
+      var targetBundle = options.targetBundle;
+      var useGhost = options.useGhost;
+      if (useGhost === undefined) {
+        useGhost = true;
+      }
 
-     if (!data) {return;}
-     if (!targetBundle && Object.keys(data).length > 1) {
-       throw new Error('Import target ambigious, aborting.');
-     }
+      if (!data) {return;}
+      if (!targetBundle && Object.keys(data).length > 1) {
+        throw new Error('Import target ambigious, aborting.');
+      }
 
-     // Buils out a object will inherited properties.
-     var source = targetBundle && data[targetBundle] || data[Object.keys(data)[0]];
-     var ancestors = [source];
-     while (source.inherit) {
-       source = data[source.inherit];
-       if (!source) {
-         throw new Error('Unable to resolve bundle inheritence.');
-       }
-       ancestors.unshift(source);
-     }
-     // Source now merges it all.
-     source = {};
-     ancestors.forEach(function(ancestor) {
-       // Mix Merge and overwrite in order of inheritance
-       Y.mix(source, ancestor, true, undefined, 0, true);
-     });
+      // Buils out a object will inherited properties.
+      var source = targetBundle && data[targetBundle] ||
+          data[Object.keys(data)[0]]; var ancestors = [source];
+      while (source.inherit) {
+        source = data[source.inherit];
+        if (!source) {
+          throw new Error('Unable to resolve bundle inheritence.');
+        }
+        ancestors.unshift(source);
+      }
+      // Source now merges it all.
+      source = {};
+      ancestors.forEach(function(ancestor) {
+        // Mix Merge and overwrite in order of inheritance
+        Y.mix(source, ancestor, true, undefined, 0, true);
+      });
 
-     // Create an id mapping. This will track the ids of objects
-     // read from data as they are mapped into db. When options
-     // rewriteIds is true this is required for services, but some
-     // types of object ids ('relations' for example) can always
-     // be rewritten but depend on the use of the proper ids.
-     // By building this mapping now we can detect collisions
-     // prior to mutating the database.
-     var serviceIdMap = {};
-     var charms = [];
+      // Create an id mapping. This will track the ids of objects
+      // read from data as they are mapped into db. When options
+      // rewriteIds is true this is required for services, but some
+      // types of object ids ('relations' for example) can always
+      // be rewritten but depend on the use of the proper ids.
+      // By building this mapping now we can detect collisions
+      // prior to mutating the database.
+      var serviceIdMap = {};
+      var charms = [];
 
-     function nextServiceId(modellist, id) {
-       var existing = modellist.getById(id);
-       var count = 0;
-       var target;
-       while (existing) {
-         count += 1;
-         target = id + '-' + count;
-         existing = modellist.getById(target);
-       }
-       return target;
-     }
+      /**
+       Helper to generate the next valid service id.
+       @method nextServiceId
+       @return {String} next service id to use.
+      */
+      function nextServiceId(modellist, id) {
+        var existing = modellist.getById(id);
+        var count = 0;
+        var target;
+        while (existing) {
+          count += 1;
+          target = id + '-' + count;
+          existing = modellist.getById(target);
+        }
+        return target;
+      }
 
 
-     Object.keys(source.services).forEach(function(serviceName) {
-       var current = source.services[serviceName];
-       var existing = self.services.getById(serviceName);
-       var targetId = serviceName;
-       if (existing) {
-         if (!rewriteIds) {
-           throw new Error(serviceName +
+      Object.keys(source.services).forEach(function(serviceName) {
+        var current = source.services[serviceName];
+        var existing = self.services.getById(serviceName);
+        var targetId = serviceName;
+        if (existing) {
+          if (!rewriteIds) {
+            throw new Error(serviceName +
                            ' is already present in the database.');
-         }
-         targetId = nextServiceId(self.services, serviceName);
-       }
-       serviceIdMap[serviceName] = targetId;
+          }
+          targetId = nextServiceId(self.services, serviceName);
+        }
+        serviceIdMap[serviceName] = targetId;
 
-       // Also track any new charms we'll have to add.
-       if (current.charm && charms.indexOf(current.charm) === -1) {
-         charms.push(charmStore.promiseCharm(current.charm, self.charms));
-       }
-     });
+        // Also track any new charms we'll have to add.
+        if (current.charm && charms.indexOf(current.charm) === -1) {
+          charms.push(charmStore.promiseCharm(current.charm, self.charms));
+        }
+      });
 
-     // If we made it this far its time for mutation, start by importing
-     // charms and then services.
-     return Y.batch.apply(this, charms)
+      // If we made it this far its time for mutation, start by importing
+      // charms and then services.
+      return Y.batch.apply(this, charms)
      .then(function() {
-       Object.keys(serviceIdMap).forEach(function(serviceName) {
-         var serviceId = serviceIdMap[serviceName];
-         var current = Y.mix(
-           source.services[serviceName], { id: serviceId , pending: useGhost}, true);
-           self.services.add(current);
-       });
-     })
+            Object.keys(serviceIdMap).forEach(function(serviceName) {
+              var serviceId = serviceIdMap[serviceName];
+              var current = Y.mix(
+                 source.services[serviceName], { id: serviceId, pending:
+                   useGhost}, true); self.services.add(current);
+            });
+          })
      .then(function() {
-       if (!source.relations) { return;}
-       source.relations.forEach(function(relationData) {
-         if (relationData.length !== 2) {
-           // Skip peer relations
-           return;
-         }
-         self.addRelation(relationData[0], relationData[1], useGhost);
-       });
-     });
+            if (!source.relations) { return;}
+            source.relations.forEach(function(relationData) {
+              if (relationData.length !== 2) {
+                // Skip peer relations
+                return;
+              }
+              self.addRelation(relationData[0], relationData[1], useGhost);
+            });
+          });
 
-   },
+    },
 
     /**
      * Export deployer formatted dump of the current environment.
