@@ -402,6 +402,45 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('can resolve a unit', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.db.units.getById('wordpress/0').agent_state = 'error';
+        var data = {
+          Type: 'Client',
+          Request: 'Resolved',
+          Params: {
+            UnitName: 'wordpress/0'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          // Running resolved on fakebackend for just a unit does not do
+          // anything much, as no hooks were run in starting the unit.
+          // Additionally, resolved does not actually clear the unit error,
+          // as that would be done by the hooks.  Since no change actually
+          // takes place, we simply need to ensure that no error occurred.
+          assert.isUndefined(receivedData.Error);
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can resolve a unit (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.db.units.getById('wordpress/0').agent_state = 'error';
+        var callback = function(result) {
+          // See note above on resolving in a fakebackend.
+          assert.isUndefined(result.err);
+          done();
+        };
+        env.resolved('wordpress/0', undefined, false, callback);
+      });
+    });
+
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {});
       var data = {

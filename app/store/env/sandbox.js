@@ -1054,6 +1054,15 @@ YUI.add('juju-env-sandbox', function(Y) {
           {error: 'ServiceSetYAML not supported in sandbox yet'});
     },
 
+    /**
+    Handle Resolved messages
+
+    @method handleClientResolved
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
     handleClientResolved: function(data, client, state) {
       // Resolving a unit/relation pair is not supported by the Go back-end,
       // so relationName is ignored.
