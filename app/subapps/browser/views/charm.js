@@ -737,7 +737,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (this.get('activeTab')) {
         var tab = this.get('container').one(
-            '.tabs a[href="' + this.get('activeTab') + '"]')
+            '.tabs a[href="' + this.get('activeTab') + '"]');
         if (tab) {
             tab.get('parentNode').simulate('click');
         }
