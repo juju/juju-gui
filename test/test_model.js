@@ -779,7 +779,7 @@ describe('database import/export', function() {
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
       charmConfig = utils
-        .loadFixture('data/mediawiki-charmdata.json', true);
+        .loadFixture('data/mediawiki-api-response.json', true);
       done();
     });
   });
