@@ -34,6 +34,7 @@ YUI.add('juju-charm-models', function(Y) {
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
+
   var parseCharmId = models.parseCharmId = function(charmId, defaultSeries) {
     if (typeof charmId === 'string') {
       var parts = charmIdRe.exec(charmId);

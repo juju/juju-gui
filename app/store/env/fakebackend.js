@@ -32,76 +32,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   var VALUE_ERROR = {error: 'Unparsable environment data.'};
 
   /**
-    Loops through the charm endpoint data to determine whether we have a
-    relationship match. The result is either an object with an error attribute,
-    or an object giving the interface, scope, providing endpoint, and requiring
-    endpoint.
-
-    @method findMatch
-    @param {Array} endpoints Pair of two endpoint data objects.  Each endpoint
-      data object has name, charm, service, and scope.
-    @return {Object} A hash with the keys 'interface', 'scope', 'provides',
-      and 'requires'.
-  */
-  function findMatch(endpoints) {
-    var matches = [], result;
-    Y.each([0, 1], function(providedIndex) {
-      // Identify the candidates.
-      var providingEndpoint = endpoints[providedIndex],
-          provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
-          requiringEndpoint = endpoints[!providedIndex + 0],
-          requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
-      if (!provides['juju-info']) {
-        provides['juju-info'] = {'interface': 'juju-info', scope: 'container'};
-      }
-      // Restrict candidate types as tightly as possible.
-      var candidateProvideTypes, candidateRequireTypes;
-      if (providingEndpoint.type) {
-        candidateProvideTypes = [providingEndpoint.type];
-      } else {
-        candidateProvideTypes = Y.Object.keys(provides);
-      }
-      if (requiringEndpoint.type) {
-        candidateRequireTypes = [requiringEndpoint.type];
-      } else {
-        candidateRequireTypes = Y.Object.keys(requires);
-      }
-      // Find matches for candidates and evaluate them.
-      Y.each(candidateProvideTypes, function(provideType) {
-        Y.each(candidateRequireTypes, function(requireType) {
-          var provideMatch = provides[provideType],
-              requireMatch = requires[requireType];
-          if (provideMatch &&
-              requireMatch &&
-              provideMatch['interface'] === requireMatch['interface']) {
-            matches.push({
-              'interface': provideMatch['interface'],
-              scope: provideMatch.scope || requireMatch.scope,
-              provides: providingEndpoint,
-              requires: requiringEndpoint,
-              provideType: provideType,
-              requireType: requireType
-            });
-          }
-        });
-      });
-    });
-    if (matches.length === 0) {
-      result = {error: 'Specified relation is unavailable.'};
-    } else if (matches.length > 1) {
-      result = {error: 'Ambiguous relationship is not allowed.'};
-    } else {
-      result = matches[0];
-      // Specify the type for implicit relations.
-      result.provides = Y.merge(result.provides);
-      result.requires = Y.merge(result.requires);
-      result.provides.type = result.provideType;
-      result.requires.type = result.requireType;
-    }
-    return result;
-  }
-
-  /**
   An in-memory fake Juju backend.
 
   @class FakeBackend
@@ -221,32 +151,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       return result;
     },
-
-    /**
-      Takes two string endpoints and splits it into usable parts.
-
-      @method parseEndpointStrings
-      @param {Array} endpoints an array of endpoint strings
-        to split in the format wordpress:db.
-      @return {Object} A hash with four keys: service (the associated
-        service model), charm (the associated charm model for the
-        service), name (the user-defined service name), and type (the
-        charm-author-defined relation type name).
-    */
-    parseEndpointStrings: function(endpoints) {
-      return Y.Array.map(endpoints,
-          function(endpoint) {
-            var epData = endpoint.split(':'),
-                result = { name: epData[0], type: epData[1] };
-            result.service = this.db.services.getById(result.name);
-            if (result.service) {
-              result.charm = this.db.charms.getById(
-                  result.service.get('charm'));
-            }
-            return result;
-          }, this);
-    },
-
 
     /**
     Attempt to log a user in.
@@ -381,7 +285,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           // Convert the charm data to a charm and use the success
           // callback.
           success: function(data) {
-            var charm = self._getCharmFromData(data.charm);
+            var charm = self._getCharmFromData(data.charm || data);
             if (callbacks.success) {
               callbacks.success(charm);
             }
@@ -800,7 +704,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = this.parseEndpointStrings([endpointA, endpointB]);
+      var endpointData = this.db.relations
+                             .parseEndpointStrings(this.db,
+                                                   [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {
@@ -808,7 +714,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var match = findMatch(endpointData);
+      var match = this.db.relations.findEndpointMatch(endpointData);
 
       // If there is an error fetching a valid interface and scope
       if (match.error) { return match; }
@@ -881,7 +787,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = this.parseEndpointStrings([endpointA, endpointB]);
+      var endpointData = this.db.relations.parseEndpointStrings(
+          this.db, [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {
