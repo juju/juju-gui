@@ -316,7 +316,7 @@ YUI.add('juju-charm-panel', function(Y) {
           '.btn.cancel': {click: 'goBack'},
           '.btn.deploy': {click: 'onCharmDeployClicked'},
           '.charm-section h4': {click: toggleSectionVisibility},
-          '.config-file-upload-widget': {change: 'onFileChange'},
+          '.zonfig-file-upload-widget': {change: 'onFileChange'},
           '.config-file-upload-overlay': {click: 'onOverlayClick'},
           '.config-field': {
             focus: 'showDescription',

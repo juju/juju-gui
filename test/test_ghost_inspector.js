@@ -17,29 +17,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Ghost Inspector', function() {
+describe.only('Ghost Inspector', function() {
 
-  var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, charmData;
+  var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
+      jujuViews, models, service, utils, view, Y;
 
   before(function(done) {
-    var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'juju-charm-store', 'juju-charm-models', 'juju-ghost-inspector',
-      'event-valuechange'];
+    var requires = [
+        'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
+        'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
-          utils = Y.namespace('juju-tests.utils');
-          models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
+          models = Y.namespace('juju.models');
+          utils = Y.namespace('juju-tests.utils');
+
           charmData = utils.loadFixture(
-              'data/mediawiki-api-response.json',
-              true);
+              'data/mediawiki-api-response.json', true);
           done();
         });
 
   });
 
   beforeEach(function() {
+    cleanIconHelper = utils.stubCharmIconPath();
     container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
@@ -48,6 +49,7 @@ describe('Ghost Inspector', function() {
   });
 
   afterEach(function(done) {
+    cleanIconHelper();
     if (view) {
       if (inspector) {
         view.setInspector(inspector, true);
@@ -126,12 +128,11 @@ describe('Ghost Inspector', function() {
     vmContainer.one('textarea[name=name]').set('value', 'foo');
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
-    var lm = env.ws.last_message();
-
-    assert.equal(lm.num_units, numUnits);
-    assert.equal(lm.op, 'deploy');
-    assert.equal(lm.service_name, 'mediawiki');
-    assert.deepEqual(lm.config, {
+    var message = env.ws.last_message();
+    assert.equal(message.num_units, numUnits);
+    assert.equal(message.op, 'deploy');
+    assert.equal(message.service_name, 'mediawiki');
+    assert.deepEqual(message.config, {
       admins: '',
       debug: false,
       logo: '',
@@ -198,6 +199,18 @@ describe('Ghost Inspector', function() {
     assert.isObject(container.one('.ghost-config-wrapper'));
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
+  });
+
+  it('must hide configuration panel when a file is uploaded', function() {
+    inspector = setUpInspector();
+    var fileContents = 'yaml yaml yaml';
+
+    inspector.onFileLoaded({target: {result: fileContents}});
+    inspector.viewletManager.configFileContent.should.equal(fileContents);
+    var settings = container.all('.settings-wrapper');
+    settings.each(function(node) {
+        node.getStyle('display').should.equal('none');
+    });
   });
 
   describe('Service destroy UI', function() {
