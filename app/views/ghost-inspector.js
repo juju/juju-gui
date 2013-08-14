@@ -114,7 +114,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
 
       // Check if a file has been uploaded and use that config.
-      if (this.configFileContent) {
+      if (this.viewletManager.configFileContent) {
         config = null;
       } else {
         config = utils.getElementsValuesMapping(
@@ -123,9 +123,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       options.env.deploy(
           model.get('id'),
-          serviceName, config, this.configFileContent,
-          numUnits, Y.bind(
-              this._deployCallbackHandler, this, serviceName, config));
+          serviceName,
+          config,
+          this.viewletManager.configFileContent,
+          numUnits,
+          Y.bind(this._deployCallbackHandler, this, serviceName, config));
     },
 
     /**

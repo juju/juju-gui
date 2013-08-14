@@ -213,7 +213,6 @@ describe.only('Ghost Inspector', function() {
     });
   });
 
-
   it('must remove configuration data when the button is pressed', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
@@ -224,10 +223,8 @@ describe.only('Ghost Inspector', function() {
     settings.each(function(node) {
         node.getStyle('display').should.equal('none');
     });
-    // We need to trigger the file input to change based on the content we
-    // want it to have.
-    var fileInput = container.one('.config-file input');
     // Load the file.
+    var fileInput = container.one('.config-file input');
     inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
 
     // And then click to remove it.
@@ -245,6 +242,26 @@ describe.only('Ghost Inspector', function() {
         container.one('.config-file .fakebutton').getContent(),
         'Import config file...'
     );
+  });
+
+  it('must be able to deploy with configuration from a file', function() {
+    var received_config,
+        received_config_raw;
+
+    inspector = setUpInspector();
+    view.get('env').deploy = function(charm_url, service_name, config, config_raw) {
+      received_config = config;
+      received_config_raw = config_raw;
+    };
+
+    var config_raw = 'admins: \n user:pass';
+    inspector.onFileLoaded('a.yaml', {target: {result: config_raw}});
+
+    container.one('.confirm').simulate('click');
+    // The config from the charm model should be emptied out.
+    assert.equal(received_config, undefined);
+    // The config from the file should take precedence.
+    assert.equal(received_config_raw, config_raw);
   });
 
   describe('Service destroy UI', function() {
