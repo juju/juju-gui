@@ -62,7 +62,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       console.log('Loading charm view', storeId);
       this.get('store').charm(storeId, {
         'success': Y.bind(function(data) {
-          var charm = new Y.juju.models.Charm(data.charm);
+          var charm = new Y.juju.models.BrowserCharm(data.charm);
           this.set('charm', charm);
           this.render();
         }, this),

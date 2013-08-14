@@ -497,6 +497,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
+
       var extraCfg = {
         activeTab: this._viewState.hash,
         charmID: charmID,

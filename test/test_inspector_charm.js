@@ -94,7 +94,7 @@ describe('Inspector Charm', function() {
     };
     var viewletAttrs = {
       db: {
-        browserCharms: new Y.juju.models.BrowserCharmList()
+        charms: new Y.juju.models.BrowserCharmList()
       },
       store: fakeStore
     };
@@ -128,7 +128,7 @@ describe('Inspector Charm', function() {
     };
     var viewletAttrs = {
       db: {
-        browserCharms: cache
+        charms: cache
       },
       store: fakeStore
     };

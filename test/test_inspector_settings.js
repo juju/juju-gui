@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmConfig;
+      inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmData;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -30,8 +30,9 @@ describe('Inspector Settings', function() {
           models = Y.namespace('juju.models');
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
-          charmConfig = utils
-            .loadFixture('data/mediawiki-charmdata.json', true);
+          charmData = utils.loadFixture(
+              'data/mediawiki-api-response.json',
+              true);
           done();
         });
 
@@ -69,17 +70,26 @@ describe('Inspector Settings', function() {
   });
 
   var setUpInspector = function(options) {
-    var charmId = 'precise/mediawiki-4';
-    charmConfig.id = charmId;
-    var charm = new models.Charm(charmConfig);
+    var charm = new models.BrowserCharm(charmData.charm),
+        charmId = charm.get('id');
     db.charms.add(charm);
     if (options && options.useGhost) {
       service = db.services.ghostService(charm);
     } else {
+      var parsedConfig = {};
+      // because a test deletes the config data we need a check to
+      // stop it from falling over.
+      if (charm.get('options')) {
+        Y.Object.each(charm.get('options'), function(val, key) {
+          parsedConfig[key] = val['default'] || '';
+        });
+      }
       service = new models.Service({
         id: 'mediawiki',
         charm: charmId,
-        exposed: false});
+        exposed: false,
+        config: parsedConfig
+      });
       db.services.add(service);
       db.onDelta({data: {result: [
         ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
@@ -105,13 +115,13 @@ describe('Inspector Settings', function() {
   };
 
   it('properly renders a service without charm options', function() {
-    // Mutate charmConfig before the render.
-    delete charmConfig.config;
+    // Mutate charmData before the render.
+    delete charmData.charm.options;
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
     assert.isObject(container.one('.config-file'));
     // Restore the test global
-    charmConfig = utils.loadFixture('data/mediawiki-charmdata.json', true);
+    charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
   });
 
@@ -271,5 +281,20 @@ describe('Inspector Settings', function() {
   });
 
   /**** End service destroy UI tests. ****/
+
+  it('saves changes to settings values', function() {
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container'),
+        input = vmContainer.one('textarea[name=admins]'),
+        button = vmContainer.one('.configuration-buttons .confirm');
+
+    assert.equal(db.services.item(0).get('config').admins, '');
+    input.set('value', 'foo');
+
+    button.simulate('click');
+    assert.equal(env.ws.last_message().config.admins, 'foo');
+    assert.equal(button.getHTML(), 'Save Changes');
+  });
 
 });
