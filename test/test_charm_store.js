@@ -136,7 +136,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var iconPath = api.categoryIconPath('app-servers');
       assert.equal(
           iconPath,
-          'http://localhost/static/img/charm-app-servers.svg');
+          'http://localhost/static/img/category-app-servers-bw.svg');
     });
 
     it('makes autocomplete requests with right query flag', function(done) {

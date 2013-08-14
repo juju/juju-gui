@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('Charm and BrowserCharm initialization', function() {
+describe('BrowserCharm initialization', function() {
   var models;
 
   before(function(done) {
@@ -26,20 +26,6 @@ describe('Charm and BrowserCharm initialization', function() {
       models = Y.namespace('juju.models');
       done();
     });
-  });
-
-  it('must be able to create Charm', function() {
-    var charm = new models.Charm(
-        {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
-    charm.get('scheme').should.equal('cs');
-    charm.get('owner').should.equal('alt-bac');
-    charm.get('series').should.equal('precise');
-    charm.get('package_name').should.equal('openstack-dashboard');
-    charm.get('revision').should.equal(0);
-    charm.get('full_name').should.equal(
-        '~alt-bac/precise/openstack-dashboard');
-    charm.get('charm_path').should.equal(
-        '~alt-bac/precise/openstack-dashboard-0/json');
   });
 
   it('must be able to create BrowserCharm', function() {
@@ -57,11 +43,7 @@ describe('Charm and BrowserCharm initialization', function() {
   });
 
   it('must not set "owner" for promulgated charms', function() {
-    var charm;
-    charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
-    assert.isUndefined(charm.get('owner'));
-
-    charm = new models.BrowserCharm({
+    var charm = new models.BrowserCharm({
       id: 'cs:precise/openstack-dashboard-0'
     });
     assert.isUndefined(charm.get('owner'));
@@ -70,28 +52,14 @@ describe('Charm and BrowserCharm initialization', function() {
   it('must be able to parse hyphenated owner names', function() {
     // Note that an earlier version of the parsing code did not handle
     // hyphens in user names, so this test intentionally includes one.
-    var charm;
-    charm = new models.Charm(
-        {id: 'cs:~marco-ceppi/precise/wordpress-17'});
-    charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
-
-    charm = new models.BrowserCharm(
+    var charm = new models.BrowserCharm(
         {id: 'cs:~marco-ceppi/precise/wordpress-17'});
     charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
   });
 
   it('must reject bad charm ids.', function() {
-    var charm;
     try {
-      charm = new models.Charm({id: 'foobar'});
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
-    }
-
-    try {
-      charm = new models.BrowserCharm({id: 'foobar'});
+      var charm = new models.BrowserCharm({id: 'foobar'});
       assert.fail('Should have thrown an error');
     } catch (e) {
       e.should.equal(
@@ -101,47 +69,13 @@ describe('Charm and BrowserCharm initialization', function() {
 
 
   it('must reject missing charm ids at initialization.', function() {
-    var charm;
     try {
-      charm = new models.Charm();
+      var charm = new models.BrowserCharm();
       assert.fail('Should have thrown an error');
     } catch (e) {
       e.should.equal(
           'Developers must initialize charms with a well-formed id.');
     }
-
-    try {
-      charm = new models.BrowserCharm();
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
-    }
-  });
-
-  it('can load options from both "options" and "config"', function() {
-    var options = {foo: 'bar'},
-        charm;
-    charm = new models.Charm({
-      id: 'cs:precise/openstack-dashboard-0',
-      options: options
-    });
-    assert.equal(charm.get('options'), options);
-    charm = new models.Charm({
-      id: 'cs:precise/openstack-dashboard-0',
-      config: {
-        options: options
-      }
-    });
-    assert.equal(charm.get('options'), options);
-  });
-
-  it('must convert timestamps into time objects on Charm', function() {
-    var time = 1349797266.032,
-        date = new Date(time),
-        charm = new models.Charm(
-        { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
-    charm.get('last_change').created.should.eql(date);
   });
 
   it('must convert timestamps into time objects on BrowserCharm', function() {
@@ -506,9 +440,6 @@ describe('juju models', function() {
   });
 });
 
-// XXX jcsackett August 7 2013 This is a complete duplication of the next test
-// case, but we need to test independently for both models while we're merging
-// them. The Charm load suite below can be removed once the work is done.
 describe('BrowserCharm load', function() {
   var Y, models, conn, env, app, container, fakeStore, data, juju;
 
@@ -654,165 +585,6 @@ describe('BrowserCharm load', function() {
 
   it('must handle failure from local charm request', function(done) {
     var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(err);
-          assert(response.err);
-          assert(!charm.loaded);
-          done();
-        });
-    var response = conn.last_message();
-    response.err = true;
-    env.dispatch_result(response);
-    // The test in the callback above should run.
-  });
-});
-
-describe('Charm load', function() {
-  var Y, models, conn, env, app, container, fakeStore, data, juju;
-
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-                               'juju-tests-utils', 'json-stringify',
-                               'juju-charm-store'], function(Y) {
-      models = Y.namespace('juju.models');
-      juju = Y.namespace('juju');
-      done();
-    });
-  });
-
-  beforeEach(function() {
-    conn = new (Y.namespace('juju-tests.utils')).SocketStub();
-    env = juju.newEnvironment({conn: conn});
-    env.connect();
-    conn.open();
-    container = Y.Node.create('<div id="test" class="container"></div>');
-    data = [];
-    fakeStore = new Y.juju.Charmworld2({});
-    fakeStore.set('datasource', {
-      sendRequest: function(params) {
-        params.callback.success({
-          response: {
-            results: [{
-              responseText: data
-            }]
-          }
-        });
-      }
-    });
-  });
-
-  afterEach(function() {
-    container.destroy();
-  });
-
-  it('will throw an exception with non-read sync', function() {
-    var charm = new models.Charm({id: 'local:precise/foo-4'});
-    try {
-      charm.sync('create');
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal('Only use the "read" action; "create" not supported.');
-    }
-    try {
-      charm.sync('update');
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal('Only use the "read" action; "update" not supported.');
-    }
-    try {
-      charm.sync('delete');
-      assert.fail('Should have thrown an error');
-    } catch (e) {
-      e.should.equal('Only use the "read" action; "delete" not supported.');
-    }
-  });
-
-  it('throws an error if you do not pass get_charm',
-     function() {
-       var charm = new models.Charm({id: 'local:precise/foo-4'});
-       try {
-         charm.sync('read', {});
-         assert.fail('Should have thrown an error');
-       } catch (e) {
-         e.should.equal(
-         'You must supply a get_charm function.');
-       }
-       try {
-         charm.sync('read', {env: 42});
-         assert.fail('Should have thrown an error');
-       } catch (e) {
-         e.should.equal(
-         'You must supply a get_charm function.');
-       }
-     });
-
-  it('must send request to juju environment for local charms', function() {
-    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
-    assert(!charm.loaded);
-    conn.last_message().op.should.equal('get_charm');
-  });
-
-  it('must handle success from local charm request', function(done) {
-    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          charm.get('summary').should.equal('wowza');
-          assert(charm.loaded);
-          done();
-        });
-    var response = conn.last_message();
-    response.result = { summary: 'wowza' };
-    env.dispatch_result(response);
-    // The test in the callback above should run.
-  });
-
-  it('parses the old charm model options location correctly', function(done) {
-    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          // This checks to make sure the parse mechanism is working properly
-          // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log['default'], 'global');
-          done();
-        });
-    var response = conn.last_message();
-    response.result = {
-      config: {
-        options: {
-          default_log: {
-            'default': 'global',
-            description: 'Default log',
-            type: 'string'
-          }}}};
-    env.dispatch_result(response);
-  });
-
-  it('parses the new charm model options location correctly', function(done) {
-    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          // This checks to make sure the parse mechanism is working properly
-          // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log['default'], 'global');
-          done();
-        });
-    var response = conn.last_message();
-    response.result = {
-      options: {
-        default_log: {
-          'default': 'global',
-          description: 'Default log',
-          type: 'string'
-        }}};
-    env.dispatch_result(response);
-  });
-
-  it('must handle failure from local charm request', function(done) {
-    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
         env,
         function(err, response) {
           assert(err);

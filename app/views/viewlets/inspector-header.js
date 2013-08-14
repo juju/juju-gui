@@ -66,6 +66,7 @@ YUI.add('viewlet-inspector-header', function(Y) {
   requires: [
     'node',
     'juju-charm-models',
+    'juju-templates',
     'juju-view'
   ]
 });

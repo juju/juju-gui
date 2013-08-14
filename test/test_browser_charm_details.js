@@ -134,8 +134,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isNull(view.get('container').one('.heading'));
       assert.isNull(view.get('container').one('#bws-readme'));
       assert.isNull(view.get('container').one('#bws-configuration'));
-      assert.isNull(view.get('container').one('#bws-source'));
-      assert.isNull(view.get('container').one('#bws-qa'));
+      assert.isNull(view.get('container').one('#bws-code'));
+      assert.isNull(view.get('container').one('#bws-features'));
     });
 
     it('has sharing links', function() {
@@ -333,11 +333,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore
       });
       view.set('deploy', function(charm, serviceAttrs) {
-        // The charm passed in is not a BrowserCharm but a charm-panel charm.
         var browserCharm = view.get('charm');
-        assert.notDeepEqual(charm, browserCharm);
-        var madeCharm = new models.Charm(browserCharm.getAttrs());
-        assert.equal(charm.get('id'), madeCharm.get('url'));
+        assert.deepEqual(charm, browserCharm);
+        assert.equal(charm.get('id'), 'cs:precise/ceph-9');
         assert.equal(serviceAttrs.icon, 'charm icon url');
         done();
       });
@@ -373,14 +371,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
-      Y.one('#bws-source').all('select option').size().should.equal(3);
+      Y.one('#bws-code').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws-source').all('select option').item(2).set(
+      Y.one('#bws-code').all('select option').item(2).set(
           'selected', 'selected');
-      Y.one('#bws-source').one('select').simulate('change');
+      Y.one('#bws-code').one('select').simulate('change');
 
-      var content = Y.one('#bws-source').one('div.filecontent');
+      var content = Y.one('#bws-code').one('div.filecontent');
       content.get('text').should.eql('install hook content.');
     });
 
@@ -902,7 +900,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-related-charms',
         charm: new models.BrowserCharm(data),
         isFullscreen: true,
         renderTo: testContainer,
@@ -911,7 +909,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.all('#bws-interfaces .charm-token').size(),
+          testContainer.all('#bws-related-charms .charm-token').size(),
           9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
@@ -937,7 +935,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-interfaces',
+        activeTab: '#bws-related-charms',
         charm: new models.BrowserCharm(data),
         isFullscreen: true,
         renderTo: testContainer,
@@ -965,6 +963,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(state.loadCount, 1);
       assert(state.hitTabRender);
       assert(state.hitRelatedRender);
+    });
+
+    it('ignore invalid tab selections', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true).charm;
+      var testContainer = utils.makeContainer();
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+
+      var fakeStore = new Y.juju.Charmworld2({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: utils.loadFixture('data/related.json')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        activeTab: '#bws-does-not-exist',
+        charm: new models.BrowserCharm(data),
+        isFullscreen: true,
+        renderTo: testContainer,
+        store: fakeStore
+      });
+      view.render();
+
+      assert.equal(
+          testContainer.one('.yui3-tab-selected a').getAttribute('href'),
+          '#bws-summary');
     });
 
   });

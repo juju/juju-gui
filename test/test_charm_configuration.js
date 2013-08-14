@@ -84,7 +84,7 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for service and number of units', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'}),
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'}),
         view = makeView(charm);
     charm.loaded = true;
     view.render();
@@ -93,7 +93,7 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for items in the charm schema', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView({
       container: container,
@@ -117,7 +117,7 @@ describe('charm configuration', function() {
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
-        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
+        charm = new models.BrowserCharm({id: 'cs:precise/mysql-7'}),
         view = makeView(charm, env);
     charm.loaded = true;
     view.render();
@@ -128,7 +128,7 @@ describe('charm configuration', function() {
   });
 
   it('must use the correct input type', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -161,7 +161,7 @@ describe('charm configuration', function() {
   });
 
   it('textareas must have resizing plugin', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -196,7 +196,7 @@ describe('charm configuration', function() {
             received_config = config;
             received_num_units = num_units;
           }},
-        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
+        charm = new models.BrowserCharm({id: 'cs:precise/mysql-7'}),
         view = makeView(charm, env);
     charm.setAttrs({
       options: {
@@ -226,7 +226,7 @@ describe('charm configuration', function() {
          function(charm_url, service_name, config, config_raw, num_units) {
            deployed = true;
          }},
-       charm = new models.Charm({id: 'precise/mysql-7'}),
+       charm = new models.BrowserCharm({id: 'precise/mysql-7'}),
        view = makeView(charm, env);
        db.services.add([{id: 'wordpress'}]);
        charm.loaded = true;
@@ -242,7 +242,7 @@ describe('charm configuration', function() {
      });
 
   it('must show the description in a tooltip', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -306,7 +306,7 @@ describe('charm configuration', function() {
   });
 
   it('must hide the tooltip when its field scrolls away', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
         { container: container,
@@ -335,7 +335,7 @@ describe('charm configuration', function() {
 
   it('must not show a configuration file upload button if the charm ' +
       'has no settings', function() {
-       var charm = new models.Charm({id: 'precise/mysql-7'});
+       var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
        var db = new models.Database();
        var view = new views.CharmConfigurationView(
        { container: container,
@@ -349,7 +349,7 @@ describe('charm configuration', function() {
 
   it('must show a configuration file upload button if the charm ' +
       'has settings', function() {
-       var charm = new models.Charm({id: 'precise/mysql-7'});
+       var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
        charm.setAttrs({
          options: {
            option0: {
@@ -373,7 +373,7 @@ describe('charm configuration', function() {
      });
 
   it('must hide configuration panel when a file is uploaded', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     charm.setAttrs({
       options: {
         option0: {
@@ -397,7 +397,7 @@ describe('charm configuration', function() {
   });
 
   it('must remove configuration data when the button is pressed', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var charm = new models.BrowserCharm({id: 'precise/mysql-7'});
     charm.setAttrs({
       options: {
         option0: {
@@ -427,7 +427,7 @@ describe('charm configuration', function() {
   it('must be able to deploy with configuration from a file', function() {
     var received_config,
         received_config_raw,
-        charm = new models.Charm({id: 'precise/mysql-7'}),
+        charm = new models.BrowserCharm({id: 'precise/mysql-7'}),
         db = {services: {getById: function(name) {return null;}}},
         env =
         { deploy:
