@@ -351,12 +351,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can get a charm (environment integration)', function(done) {
       env.connect();
       var callback = function(result) {
-        assert.isUndefined(result.Error);
+        assert.isUndefined(result.err);
         assert.isObject(result.result);
         assert.equal(result.result.url, 'cs:precise/wordpress-15');
         done();
       };
       env.get_charm('cs:precise/wordpress-15', callback);
+    });
+
+    it('can communicate errors in getting a charm', function(done) {
+      env.connect();
+      var callback = function(result) {
+        assert.isUndefined(result.result);
+        assert.equal(result.err, 'Error interacting with the charmworld api.');
+        done();
+      };
+      env.get_charm('cs:precise/notarealcharm-15', callback);
     });
 
     it('can set constraints', function(done) {
