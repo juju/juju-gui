@@ -907,7 +907,7 @@ YUI.add('juju-env-go', function(Y) {
        Transform the data returned from juju-core call to
        SetServiceConstraints into that suitable for the user callback.
 
-       @method handleSetConfig
+       @method handleSetConstraints
        @static
        @param {Function} userCallback The callback originally submitted by
          the call site.
