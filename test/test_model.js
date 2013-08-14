@@ -797,7 +797,7 @@ describe('database import/export', function() {
     }, 'Import target ambigious, aborting.');
   });
 
-  it('detect service id collisions', function(done) {
+  it('detects service id collisions', function(done) {
     db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
     var data = {
       a: {services: {mysql: {
