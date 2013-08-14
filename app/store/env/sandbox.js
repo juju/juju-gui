@@ -1011,8 +1011,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceDestroy: function(data, client, state) {
-      this._basicReceive(client, data,
-          state.destroyService(data.Params.ServiceName));
+      var result = state.destroyService(data.Params.ServiceName);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1068,9 +1068,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientSetServiceConstraints: function(data, client, state) {
-      this._basicReceive(client, data,
-          state.setConstraints(data.Params.ServiceName,
-          data.Params.Constraints));
+      var result = state.setConstraints(data.Params.ServiceName,
+          data.Params.Constraints);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1083,8 +1083,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceSet: function(data, client, state) {
-      this._basicReceive(client, data,
-          state.setConfig(data.Params.ServiceName, data.Params.Config));
+      var result = state.setConfig(data.Params.ServiceName, data.Params.Config);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1109,8 +1109,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         throw e;
       }
       var serviceName = data.Params.ServiceName;
-      this._basicReceive(client, data,
-          state.setConfig(serviceName, config[serviceName]));
+      var result = state.setConfig(serviceName, config[serviceName]);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1125,7 +1125,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientResolved: function(data, client, state) {
       // Resolving a unit/relation pair is not supported by the Go back-end,
       // so relationName is ignored.
-      this._basicReceive(client, data, state.resolved(data.Params.UnitName));
+      var result = state.resolved(data.Params.UnitName);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1157,8 +1158,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
-      this._basicReceive(client, data,
-          state.updateAnnotations(serviceId, data.Params.Pairs));
+      var result = state.updateAnnotations(serviceId, data.Params.Pairs);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1211,7 +1212,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceExpose: function(data, client, state) {
-      this._basicReceive(client, data, state.expose(data.Params.ServiceName));
+      var result = state.expose(data.Params.ServiceName);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1224,7 +1226,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceUnexpose: function(data, client, state) {
-      this._basicReceive(client, data, state.unexpose(data.Params.ServiceName));
+      var result = state.unexpose(data.Params.ServiceName);
+      this._basicReceive(client, data, result);
     },
 
     /**
@@ -1284,8 +1287,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientDestroyRelation: function(data, client, state) {
-      this._basicReceive(client, data, state.removeRelation(
-          data.Params.Endpoints[0], data.Params.Endpoints[1]));
+      var result = state.removeRelation(data.Params.Endpoints[0],
+          data.Params.Endpoints[1]);
+      this._basicReceive(client, data, result);
     }
 
   });

@@ -292,7 +292,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback);
     });
 
-    it('can destroy', function(done) {
+    it('can destroy a service', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {
           Type: 'Client',
@@ -315,7 +315,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('can destroy (environment integration)', function(done) {
+    it('can destroy a service (environment integration)', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-15', function() {
         var callback = function(result) {
