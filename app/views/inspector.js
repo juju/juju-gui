@@ -533,6 +533,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e An event object.
     */
     handleFileChange: function(e) {
+      debugger;
       var file = e.currentTarget.get('files').shift(),
           reader = new FileReader();
       reader.onerror = Y.bind(this.onFileError, this);
@@ -581,10 +582,11 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Object} e An event object.
     */
     onFileLoaded: function(e) {
-      //set the fileContent on the viewlet-manager so we can have access to it
+      debugger;
+      //set the configFileContent on the viewlet-manager so we can have access to it
       // when the user submit their config.
-      this.viewletManager.fileContent = e.target.result;
-      if (!this.viewletManager.fileContent) {
+      this.viewletManager.configFileContent = e.target.result;
+      if (!this.viewletManager.configFileContent) {
         // Some file read errors do not go through the error handler as
         // expected but instead return an empty string.  Warn the user if
         // this happens.
@@ -610,7 +612,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     onRemoveFile: function(e) {
       var container = this.viewletManager.get('container');
-      this.viewletManager.fileContent = null;
+      this.viewletManager.configFileContent = null;
       container.one('.fakebutton').setHTML('Import config file...');
       container.all('.settings-wrapper').show();
       // Replace the file input node.  There does not appear to be any way
