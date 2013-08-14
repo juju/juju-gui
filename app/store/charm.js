@@ -171,7 +171,7 @@ YUI.add('juju-charm-store', function(Y) {
       var self = this;
       return Y.Promise(function(resolve, reject) {
         self.charm(charmId, { 'success': resolve, 'failure': reject },
-        self, cache);
+            self, cache);
       });
     },
 

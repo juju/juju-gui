@@ -533,7 +533,7 @@ YUI.add('juju-models', function(Y) {
         result.service = db.services.getById(result.name);
         if (result.service) {
           result.charm = db.charms.getById(
-            result.service.get('charm'));
+              result.service.get('charm'));
         }
         return result;
       }, this);
@@ -1163,33 +1163,32 @@ YUI.add('juju-models', function(Y) {
       // charms and then services.
       return Y.batch.apply(this, charms)
      .then(function() {
-        Object.keys(serviceIdMap).forEach(function(serviceName) {
-          var serviceId = serviceIdMap[serviceName];
-          var current = Y.mix(
-             source.services[serviceName], { id: serviceId, pending:
-               useGhost}, true);
-          self.services.add(current);
-          // XXX: This is a questionable use case as we are only creating
-          // client side objects in the database.  There would ideally be
-          // a version of this code that returned a list of Promises that
-          // called proper env methods (for all the objects, not just
-          // units) to mutate a real env.
-          // This however will allow us to import bundles into a fresh
-          // database with the intention of only rendering it.
-          //if (!useGhost) {}
-        });
-      })
+            Object.keys(serviceIdMap).forEach(function(serviceName) {
+              var serviceId = serviceIdMap[serviceName];
+              var current = Y.mix(
+                 source.services[serviceName], { id: serviceId, pending:
+                   useGhost}, true);
+              self.services.add(current);
+              // XXX: This is a questionable use case as we are only creating
+              // client side objects in the database.  There would ideally be
+              // a version of this code that returned a list of Promises that
+              // called proper env methods (for all the objects, not just
+              // units) to mutate a real env.
+              // This however will allow us to import bundles into a fresh
+              // database with the intention of only rendering it.
+              //if (!useGhost) {}
+            });
+          })
       .then(function() {
-          if (!source.relations) { return; }
-          source.relations.forEach(function(relationData) {
-            if (relationData.length !== 2) {
-              // Skip peer relations
-              return;
-            }
-            console.log('addRelation', relationData, self.charms.toArray().map(function(c) {return c.getAttrs();}));
-            self.addRelation(relationData[0], relationData[1], useGhost);
+            if (!source.relations) { return; }
+            source.relations.forEach(function(relationData) {
+              if (relationData.length !== 2) {
+                // Skip peer relations
+                return;
+              }
+              self.addRelation(relationData[0], relationData[1], useGhost);
+            });
           });
-        });
 
     },
 
