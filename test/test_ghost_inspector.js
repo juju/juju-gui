@@ -17,15 +17,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Ghost Inspector', function() {
+describe('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
       jujuViews, models, service, utils, view, Y;
 
   before(function(done) {
     var requires = [
-        'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
-        'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange'];
+      'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
+      'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
@@ -209,7 +209,7 @@ describe.only('Ghost Inspector', function() {
     inspector.viewletManager.configFileContent.should.equal(fileContents);
     var settings = container.all('.settings-wrapper');
     settings.each(function(node) {
-        node.getStyle('display').should.equal('none');
+      node.getStyle('display').should.equal('none');
     });
   });
 
@@ -221,7 +221,7 @@ describe.only('Ghost Inspector', function() {
     inspector.viewletManager.configFileContent.should.equal(fileContents);
     var settings = container.all('.settings-wrapper');
     settings.each(function(node) {
-        node.getStyle('display').should.equal('none');
+      node.getStyle('display').should.equal('none');
     });
     // Load the file.
     var fileInput = container.one('.config-file input');
@@ -232,11 +232,11 @@ describe.only('Ghost Inspector', function() {
 
     // The content should be gone now.
     assert.equal(
-      inspector.viewletManager.configFileContent,
-      undefined);
+        inspector.viewletManager.configFileContent,
+        undefined);
     assert.equal(
-      container.one('.config-file input').get('files').size(),
-      0
+        container.one('.config-file input').get('files').size(),
+        0
     );
     assert.equal(
         container.one('.config-file .fakebutton').getContent(),
@@ -249,7 +249,8 @@ describe.only('Ghost Inspector', function() {
         received_config_raw;
 
     inspector = setUpInspector();
-    view.get('env').deploy = function(charm_url, service_name, config, config_raw) {
+    var env = view.get('env');
+    env.deploy = function(charm_url, service_name, config, config_raw) {
       received_config = config;
       received_config_raw = config_raw;
     };

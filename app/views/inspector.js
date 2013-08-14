@@ -583,8 +583,8 @@ YUI.add('juju-view-inspector', function(Y) {
       // Add a link for the user to remove this file now that it's loaded.
       var button = this.viewletManager.get('container').one('.fakebutton');
       button.setHTML(filename + ' - Remove file');
-      //set the configFileContent on the viewlet-manager so we can have access to it
-      // when the user submit their config.
+      //set the configFileContent on the viewlet-manager so we can have access
+      //to it when the user submit their config.
       this.viewletManager.configFileContent = e.target.result;
       if (!this.viewletManager.configFileContent) {
         // Some file read errors do not go through the error handler as
