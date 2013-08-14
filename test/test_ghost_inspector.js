@@ -201,16 +201,50 @@ describe.only('Ghost Inspector', function() {
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
   });
 
-  it('must hide configuration panel when a file is uploaded', function() {
+  it('hides configuration panel when a file is uploaded', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
 
-    inspector.onFileLoaded({target: {result: fileContents}});
+    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
     inspector.viewletManager.configFileContent.should.equal(fileContents);
     var settings = container.all('.settings-wrapper');
     settings.each(function(node) {
         node.getStyle('display').should.equal('none');
     });
+  });
+
+
+  it('must remove configuration data when the button is pressed', function() {
+    inspector = setUpInspector();
+    var fileContents = 'yaml yaml yaml';
+
+    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
+    inspector.viewletManager.configFileContent.should.equal(fileContents);
+    var settings = container.all('.settings-wrapper');
+    settings.each(function(node) {
+        node.getStyle('display').should.equal('none');
+    });
+    // We need to trigger the file input to change based on the content we
+    // want it to have.
+    var fileInput = container.one('.config-file input');
+    // Load the file.
+    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
+
+    // And then click to remove it.
+    container.one('.config-file .fakebutton').simulate('click');
+
+    // The content should be gone now.
+    assert.equal(
+      inspector.viewletManager.configFileContent,
+      undefined);
+    assert.equal(
+      container.one('.config-file input').get('files').size(),
+      0
+    );
+    assert.equal(
+        container.one('.config-file .fakebutton').getContent(),
+        'Import config file...'
+    );
   });
 
   describe('Service destroy UI', function() {

@@ -514,7 +514,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e An event object.
     */
     handleFileClick: function(e) {
-      if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+      if (e.currentTarget.getHTML().indexOf('Remove') === -1) {
         // Because we can't style file input buttons properly we style a normal
         // element and then simulate a click on the real hidden input when our
         // fake button is clicked.
@@ -533,13 +533,11 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e An event object.
     */
     handleFileChange: function(e) {
-      debugger;
       var file = e.currentTarget.get('files').shift(),
           reader = new FileReader();
       reader.onerror = Y.bind(this.onFileError, this);
-      reader.onload = Y.bind(this.onFileLoaded, this);
+      reader.onload = Y.bind(this.onFileLoaded, this, file.name);
       reader.readAsText(file);
-      e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
     },
 
     /**
@@ -581,8 +579,10 @@ YUI.add('juju-view-inspector', function(Y) {
       @method onFileLoaded
       @param {Object} e An event object.
     */
-    onFileLoaded: function(e) {
-      debugger;
+    onFileLoaded: function(filename, e) {
+      // Add a link for the user to remove this file now that it's loaded.
+      var button = this.viewletManager.get('container').one('.fakebutton');
+      button.setHTML(filename + ' - Remove file');
       //set the configFileContent on the viewlet-manager so we can have access to it
       // when the user submit their config.
       this.viewletManager.configFileContent = e.target.result;
