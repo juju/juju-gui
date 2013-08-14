@@ -513,26 +513,30 @@ YUI.add('juju-models', function(Y) {
       Takes two string endpoints and splits it into usable parts.
 
       @method parseEndpointStrings
-      @param {Database} database to resolve charms/services on.
+      @param {Database} db to resolve charms/services on.
       @param {Array} endpoints an array of endpoint strings
         to split in the format wordpress:db.
-      @return {Object} A hash with four keys: service (the associated
-        service model), charm (the associated charm model for the
-        service), name (the user-defined service name), and type (the
-        charm-author-defined relation type name).
-    */
+      @return {Object} An Array of parsed endpoints, each containing name, type
+      and the related charm. Name is the user defined service name and type is
+      the charms authors name for the relation type.
+     */
     parseEndpointStrings: function(db, endpoints) {
-      return Y.Array.map(endpoints,
-          function(endpoint) {
-            var epData = endpoint.split(':'),
-                result = { name: epData[0], type: epData[1] };
-            result.service = db.services.getById(result.name);
-            if (result.service) {
-              result.charm = db.charms.getById(
-                  result.service.get('charm'));
-            }
-            return result;
-          }, this);
+      return Y.Array.map(endpoints, function(endpoint) {
+        var epData = endpoint.split(':');
+        var result = {};
+        if (epData.length > 1) {
+          result.name = epData[0];
+          result.type = epData[1];
+        } else {
+          result.name = epData[0];
+        }
+        result.service = db.services.getById(result.name);
+        if (result.service) {
+          result.charm = db.charms.getById(
+            result.service.get('charm'));
+        }
+        return result;
+      }, this);
     },
 
     /**
@@ -546,13 +550,14 @@ YUI.add('juju-models', function(Y) {
       endpoint data object has name, charm, service, and scope.
       @return {Object} A hash with the keys 'interface', 'scope', 'provides',
       and 'requires'.
-      */
+     */
     findEndpointMatch: function(endpoints) {
       var matches = [], result;
       Y.each([0, 1], function(providedIndex) {
         // Identify the candidates.
-        var providingEndpoint = endpoints[providedIndex],
-            provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+        var providingEndpoint = endpoints[providedIndex];
+        // The merges here result in a shallow copy.
+        var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
             requiringEndpoint = endpoints[!providedIndex + 0],
             requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
         if (!provides['juju-info']) {
@@ -1024,7 +1029,7 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Import deployer styled dumps and create the relevant objects in the
-      database. This modified the database its called on directly. \
+      database. This modifies the database its called on directly. \
 
       Options contains flags controlling import behavior. If 'rewrite-ids' is
       true then import id conflicts will result in the imported object being
@@ -1044,6 +1049,7 @@ YUI.add('juju-models', function(Y) {
       @return {Promise} that the import is complete.
     */
     importDeployer: function(data, charmStore, options) {
+      if (!data) {return;}
       options = options || {};
       var self = this;
       var rewriteIds = options.rewriteIds || false;
@@ -1053,12 +1059,11 @@ YUI.add('juju-models', function(Y) {
         useGhost = true;
       }
 
-      if (!data) {return;}
       if (!targetBundle && Object.keys(data).length > 1) {
         throw new Error('Import target ambigious, aborting.');
       }
 
-      // Buils out a object will inherited properties.
+      // Builds out a object with inherited properties.
       var source = targetBundle && data[targetBundle] ||
           data[Object.keys(data)[0]];
       var ancestors = [];
@@ -1082,7 +1087,7 @@ YUI.add('juju-models', function(Y) {
 
         baseList.unshift(base);
         // Normalize to array when present.
-        if (!base.inherits) {return;}
+        if (!base.inherits) { return; }
         if (base.inherits && !Y.Lang.isArray(base.inherits)) {
           base.inherits = [base.inherits];
         }
@@ -1158,32 +1163,33 @@ YUI.add('juju-models', function(Y) {
       // charms and then services.
       return Y.batch.apply(this, charms)
      .then(function() {
-            Object.keys(serviceIdMap).forEach(function(serviceName) {
-              var serviceId = serviceIdMap[serviceName];
-              var current = Y.mix(
-                 source.services[serviceName], { id: serviceId, pending:
-                   useGhost}, true);
-              self.services.add(current);
-              // XXX: This is a questionable use case as we are only creating
-              // client side objects in the database.  There would ideally be
-              // a version of this code that returned a list of Promises that
-              // called proper env methods (for all the objects, not just
-              // units) to mutate a real env.
-              // This however will allow us to import bundles into a fresh
-              // database with the intention of only rendering it.
-              //if (!useGhost) {}
-            });
-          })
-     .then(function() {
-            if (!source.relations) { return;}
-            source.relations.forEach(function(relationData) {
-              if (relationData.length !== 2) {
-                // Skip peer relations
-                return;
-              }
-              self.addRelation(relationData[0], relationData[1], useGhost);
-            });
+        Object.keys(serviceIdMap).forEach(function(serviceName) {
+          var serviceId = serviceIdMap[serviceName];
+          var current = Y.mix(
+             source.services[serviceName], { id: serviceId, pending:
+               useGhost}, true);
+          self.services.add(current);
+          // XXX: This is a questionable use case as we are only creating
+          // client side objects in the database.  There would ideally be
+          // a version of this code that returned a list of Promises that
+          // called proper env methods (for all the objects, not just
+          // units) to mutate a real env.
+          // This however will allow us to import bundles into a fresh
+          // database with the intention of only rendering it.
+          //if (!useGhost) {}
+        });
+      })
+      .then(function() {
+          if (!source.relations) { return; }
+          source.relations.forEach(function(relationData) {
+            if (relationData.length !== 2) {
+              // Skip peer relations
+              return;
+            }
+            console.log('addRelation', relationData, self.charms.toArray().map(function(c) {return c.getAttrs();}));
+            self.addRelation(relationData[0], relationData[1], useGhost);
           });
+        });
 
     },
 

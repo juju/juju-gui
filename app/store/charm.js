@@ -164,15 +164,13 @@ YUI.add('juju-charm-store', function(Y) {
      @method promiseCharm
      @param {String} charmId to fetch.
      @param {ModelList} cache a local cache of browser charms.
-     @return {Promise} to load charm.
+     @return {Promise} to load charm. Triggered with same result
+             as this.charm.
     */
     promiseCharm: function(charmId, cache) {
       var self = this;
       return Y.Promise(function(resolve, reject) {
-        self.charm(charmId, {
-          'success': function(c) { resolve(c.charm);},
-          'failure': function(e) { reject(e);}
-        },
+        self.charm(charmId, { 'success': resolve, 'failure': reject },
         self, cache);
       });
     },

@@ -148,7 +148,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           if (modellist) {
             modellist.add(response.charm);
           }
-          callbacks.success(response.charm);
+          callbacks.success(response);
         } else {
           callbacks.failure(new Error('Unable to load charm ' + charmName));
         }
