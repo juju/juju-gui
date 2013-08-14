@@ -292,6 +292,233 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback);
     });
 
+    it('can destroy a service', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'ServiceDestroy',
+          Params: {
+            ServiceName: 'wordpress'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.equal(receivedData.RequestId, data.RequestId);
+          assert.isUndefined(receivedData.Error);
+          assert.equal(state.db.services.size(), 0);
+          assert.isNull(state.db.services.getById('wordpress'));
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can destroy a service (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          assert.equal(state.db.services.size(), 0);
+          assert.isNull(state.db.services.getById('wordpress'));
+          done();
+        };
+        env.destroy_service('wordpress', callback);
+      });
+    });
+
+    it('can get a charm', function(done) {
+      var data = {
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {
+          CharmURL: 'cs:precise/wordpress-15'
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.isUndefined(receivedData.Error);
+        assert.isObject(receivedData.Response);
+        assert.equal(receivedData.Response.URL, 'cs:precise/wordpress-15');
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can get a charm (environment integration)', function(done) {
+      env.connect();
+      var callback = function(result) {
+        assert.isUndefined(result.err);
+        assert.isObject(result.result);
+        assert.equal(result.result.url, 'cs:precise/wordpress-15');
+        done();
+      };
+      env.get_charm('cs:precise/wordpress-15', callback);
+    });
+
+    it('can communicate errors in getting a charm', function(done) {
+      env.connect();
+      var callback = function(result) {
+        assert.isUndefined(result.result);
+        assert.equal(result.err, 'Error interacting with the charmworld api.');
+        done();
+      };
+      env.get_charm('cs:precise/notarealcharm-15', callback);
+    });
+
+    it('can set constraints', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'SetServiceConstraints',
+          Params: {
+            ServiceName: 'wordpress',
+            Constraints: { mem: '2' }
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('constraintsStr'), 'mem=2');
+          assert.equal(service.get('constraints').mem, 2);
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can set constraints (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('constraintsStr'), 'mem=2');
+          assert.equal(service.get('constraints').mem, 2);
+          done();
+        };
+        env.set_constraints('wordpress', {mem: '2'}, callback);
+      });
+    });
+
+    it('can set config', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'ServiceSet',
+          Params: {
+            ServiceName: 'wordpress',
+            Config: { llama: 'pajama' }
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can set config (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        env.set_config('wordpress', {llama: 'pajama'}, undefined, callback);
+      });
+    });
+
+    it('can set YAML config', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'ServiceSetYAML',
+          Params: {
+            ServiceName: 'wordpress',
+            ConfigYAML: 'wordpress:\n  llama: pajama'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.isUndefined(receivedData.Error);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can set YAML config (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          var service = state.db.services.getById('wordpress');
+          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          done();
+        };
+        env.set_config('wordpress', undefined,
+            'wordpress:\n  llama: pajama', callback);
+      });
+    });
+
+    it('can resolve a unit', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.db.units.getById('wordpress/0').agent_state = 'error';
+        var data = {
+          Type: 'Client',
+          Request: 'Resolved',
+          Params: {
+            UnitName: 'wordpress/0'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          // Running resolved on fakebackend for just a unit does not do
+          // anything much, as no hooks were run in starting the unit.
+          // Additionally, resolved does not actually clear the unit error,
+          // as that would be done by the hooks.  Since no change actually
+          // takes place, we simply need to ensure that no error occurred.
+          assert.isUndefined(receivedData.Error);
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it('can resolve a unit (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        state.db.units.getById('wordpress/0').agent_state = 'error';
+        var callback = function(result) {
+          // See note above on resolving in a fakebackend.
+          assert.isUndefined(result.err);
+          done();
+        };
+        env.resolved('wordpress/0', undefined, false, callback);
+      });
+    });
+
     it('can set a charm.', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {});
       var data = {
