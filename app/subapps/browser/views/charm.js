@@ -744,7 +744,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
       if (!tplData.forInspector) {
-        renderTo.one('.heading').scrollIntoView();
+        // Do NOT use scrollIntoView as IE will move the whole environment. We
+        // just reset the scrollTop directly which jumps, but works cross
+        // browser.
+        renderTo._node.scrollTop = 0;
       }
     },
 

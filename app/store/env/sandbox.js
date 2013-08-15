@@ -953,13 +953,33 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data The contents of the API arguments.
     @param {Object} client The active ClientConnection.
     @param {Object} state An instance of FakeBackend.
-    @return {undefined} Side effects only.
     */
     handleAllWatcherNext: function(data, client, state) {
       this.set('nextRequestId', data.RequestId);
       clearInterval(this.deltaIntervalId);
       this.deltaIntervalId = setInterval(
           this.sendDelta.bind(this), this.get('deltaInterval'));
+    },
+
+    /**
+    Receive a basic response. Several API calls simply return a request ID
+    and an error (if there is one); this utility method handles those cases.
+
+    @method _basicReceive
+    @private
+    @param {Object} client The active ClientConnection.
+    @param {Object} request The initial request with a RequestId.
+    @param {Object} result The result of the call with an optional error.
+    */
+    _basicReceive: function(request, client, result) {
+      var response = {
+        RequestId: request.RequestId,
+        Response: {}
+      };
+      if (result.error) {
+        response.Error = result.error;
+      }
+      client.receive(response);
     },
 
     /**
@@ -972,19 +992,142 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceDeploy: function(data, client, state) {
-      var callback = function(result) {
-        var response = {RequestId: data.RequestId};
-        if (result.error) {
-          response.Error = result.error;
-        }
-        client.receive(response);
-      };
+      var callback = Y.bind(function(result) {
+        this._basicReceive(data, client, result);
+      }, this);
       state.deploy(data.Params.CharmUrl, callback, {
         name: data.Params.ServiceName,
         config: data.Params.Config,
         configYAML: data.Params.ConfigYAML,
         unitCount: data.Params.NumUnits
       });
+    },
+
+    /**
+    Handle ServiceDestroy messages
+
+    @method handleClientServiceDestroy
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceDestroy: function(data, client, state) {
+      var result = state.destroyService(data.Params.ServiceName);
+      this._basicReceive(data, client, result);
+    },
+
+    /**
+    Handle CharmInfo messages
+
+    @method handleClientCharmInfo
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientCharmInfo: function(data, client, state) {
+      state.getCharm(data.Params.CharmURL, Y.bind(function(result) {
+        if (result.error) {
+          this._basicReceive(data, client, result);
+        } else {
+          result = result.result;
+          // Convert the charm into the Go format, so it can be converted
+          // back into the provided format.
+          var convertedData = {
+            RequestId: data.RequestId,
+            Response: {
+              Config: {
+                Options: result.options
+              },
+              Meta: {
+                Description: result.description,
+                Format: result.format,
+                Name: result.name,
+                Peers: result.peers,
+                Provides: result.provides,
+                Requires: result.requires,
+                Subordinate: result.is_subordinate,
+                Summary: result.summary
+              },
+              URL: result.url,
+              Revision: result.revision
+            }
+          };
+          client.receive(convertedData);
+        }
+      }, this));
+    },
+
+    /**
+    Handle SetServiceConstraints messages
+
+    @method handleClientSetServiceConstraints
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientSetServiceConstraints: function(data, client, state) {
+      var result = state.setConstraints(data.Params.ServiceName,
+          data.Params.Constraints);
+      this._basicReceive(data, client, result);
+    },
+
+    /**
+    Handle ServiceSet messages
+
+    @method handleClientServiceSet
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceSet: function(data, client, state) {
+      var result = state.setConfig(data.Params.ServiceName, data.Params.Config);
+      this._basicReceive(data, client, result);
+    },
+
+    /**
+    Handle ServiceSetYAML messages
+
+    @method handleClientServiceSetYAML
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientServiceSetYAML: function(data, client, state) {
+      var config = {};
+      try {
+        config = jsyaml.safeLoad(data.Params.ConfigYAML);
+      } catch (e) {
+        if (e instanceof jsyaml.YAMLException) {
+          this._basicReceive(data, client,
+              {error: 'Error parsing YAML.\n' + e});
+          return;
+        }
+        throw e;
+      }
+      var serviceName = data.Params.ServiceName;
+      var result = state.setConfig(serviceName, config[serviceName]);
+      this._basicReceive(data, client, result);
+    },
+
+    /**
+    Handle Resolved messages
+
+    @method handleClientResolved
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleClientResolved: function(data, client, state) {
+      // Resolving a unit/relation pair is not supported by the Go back-end,
+      // so relationName is ignored.
+      var result = state.resolved(data.Params.UnitName);
+      this._basicReceive(data, client, result);
     },
 
     /**
@@ -997,13 +1140,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceSetCharm: function(data, client, state) {
-      var callback = function(result) {
-        var response = {RequestId: data.RequestId};
-        if (result.error) {
-          response.Error = result.error;
-        }
-        client.receive(response);
-      };
+      var callback = Y.bind(function(result) {
+        this._basicReceive(data, client, result);
+      }, this);
       state.setCharm(data.Params.ServiceName, data.Params.CharmUrl,
           data.Params.Force, callback);
     },
@@ -1019,10 +1158,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientSetAnnotations: function(data, client, state) {
       var serviceId = /service-([^ ]*)$/.exec(data.Params.Tag)[1];
-      var reply = state.updateAnnotations(serviceId, data.Params.Pairs);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error});
+      var result = state.updateAnnotations(serviceId, data.Params.Pairs);
+      this._basicReceive(data, client, result);
     },
 
     /**
@@ -1075,11 +1212,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceExpose: function(data, client, state) {
-      var reply = state.expose(data.Params.ServiceName);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {}});
+      var result = state.expose(data.Params.ServiceName);
+      this._basicReceive(data, client, result);
     },
 
     /**
@@ -1092,11 +1226,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceUnexpose: function(data, client, state) {
-      var reply = state.unexpose(data.Params.ServiceName);
-      client.receive({
-        RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {}});
+      var result = state.unexpose(data.Params.ServiceName);
+      this._basicReceive(data, client, result);
     },
 
     /**
@@ -1156,13 +1287,9 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientDestroyRelation: function(data, client, state) {
-      var stateData = state.removeRelation(
-          data.Params.Endpoints[0], data.Params.Endpoints[1]);
-      var resp = {RequestId: data.RequestId};
-      if (stateData.error) {
-        resp.Error = stateData.error;
-      }
-      client.receive(resp);
+      var result = state.removeRelation(data.Params.Endpoints[0],
+          data.Params.Endpoints[1]);
+      this._basicReceive(data, client, result);
     }
 
   });
@@ -1171,7 +1298,8 @@ YUI.add('juju-env-sandbox', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'timers',
-    'json-parse'
+    'js-yaml',
+    'json-parse',
+    'timers'
   ]
 });

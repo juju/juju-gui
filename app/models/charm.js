@@ -34,6 +34,7 @@ YUI.add('juju-charm-models', function(Y) {
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
+
   var parseCharmId = models.parseCharmId = function(charmId, defaultSeries) {
     if (typeof charmId === 'string') {
       var parts = charmIdRe.exec(charmId);
@@ -111,6 +112,9 @@ YUI.add('juju-charm-models', function(Y) {
    *
    * @class Charm
    */
+  // XXX jcsackett Aug 12 2013 Charm model is only being kept while we observe
+  // the effects of the changeover to Browsercharm. This can be deleted once we
+  // ascertain there is no fallout.
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
     /**
@@ -148,8 +152,6 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      // XXX jcsackett July 19 2013 This is temporary while resolving Charm and
-      // BrowserCharm; Charm wants a fully qualified url as it's ID.
       if (cfg && cfg.url) {
         this.set('id', cfg.url);
       }
@@ -164,10 +166,6 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
-      // XXX jcsackett July 16 2013 There are a raft of bits and bobs of
-      // differences between the two charm models that need to be resolved for
-      // the new API to work with the old model. These will no longer be needed
-      // when we switch over to BrowserCharm everywhere.
       if (cfg) {
         if (cfg.config) {
           this.set('options', cfg.config.options);
@@ -210,12 +208,7 @@ YUI.add('juju-charm-models', function(Y) {
       var data = Charm.superclass.parse.apply(this, arguments),
           self = this;
 
-      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
-      // or juju core.  If not, remove the "|| data.is_subordinate" and change
-      // in the fakebackend and/or sandbox to send the expected thing there.
       data.is_subordinate = data.subordinate || data.is_subordinate;
-      // Because the old and new charm models have different places for
-      // the options data, this handles the normalization.
       if (data.config && data.config.options && !data.options) {
         data.options = data.config.options;
         delete data.config;
@@ -263,10 +256,6 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {},
-      //XXX jcsackett July 31 2013 This attribute is only needed until we turn
-      // on the service inspector. It's just used by the charm view you get when
-      // inspecting a service, and should be ripped out (along with tests) when
-      // we remove that view.
       charm_path: {
         /**
          * Generate the charm store path from the attributes of the charm.
@@ -527,28 +516,23 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     parse: function(response) {
-      var data = Charm.superclass.parse.apply(this, arguments),
+      var data = models.BrowserCharm.superclass.parse.apply(this, arguments),
           self = this;
 
-      // TODO (gary): verify whether is_subordinate is ever passed by pyjuju
-      // or juju core.  If not, remove the "|| data.is_subordinate" and change
-      // in the fakebackend and/or sandbox to send the expected thing there.
-      data.is_subordinate = data.subordinate || data.is_subordinate;
-      // Because the old and new charm models have different places for
-      // the options data, this handles the normalization.
-
-      // TODO (jcsackett): Verify whether parse *ever* gets data.config or
-      // data.relations, if not we can remove the checks and default to altering
-      // the data.
-      if (data.config && data.config.options && !data.options) {
+      //Data can come from two places; a BrowserCharm being deployed into the
+      //environment, or a charm already in the environment. They have slightly
+      //different attributes.
+      if (data.config) {
+        // If data has a 'config' attribute, we're dealing with data from the
+        // environment.
         data.options = data.config.options;
-        delete data.config;
-      }
-      if (!data.relations && (data.requires || data.provides)) {
         data.relations = {
           requires: data.requires,
           provides: data.provides
         };
+        data.is_subordinate = data.subordinate;
+        delete data.config;
+        delete data.subordinate;
         delete data.requires;
         delete data.provides;
       }

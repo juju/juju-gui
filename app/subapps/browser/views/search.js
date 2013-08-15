@@ -128,7 +128,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           // should reset where the node's overflow is scrolled to, but it
           // doesn't. Se we scroll the heading into view to ensure the view
           // renders at the top of the content.
-          target.one('.section-title').scrollIntoView();
+          target._node.scrollTop = 0;
           this.hideIndicator(this.get('renderTo'));
 
           // Set the active charm if available.
