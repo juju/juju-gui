@@ -405,7 +405,7 @@ YUI.add('juju-view-inspector', function(Y) {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
             Y.bind(this._destroyServiceCallback, this, model, db));
-      } else if (model.name === 'charm') {
+      } else if (model.name === 'browser-charm') {
         db.services.remove(this.options.ghostService);
       } else {
         throw new Error('Unexpected model type: ' + model.name);
@@ -514,7 +514,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e An event object.
     */
     handleFileClick: function(e) {
-      if (e.currentTarget.getHTML().indexOf('Remove') < 0) {
+      if (e.currentTarget.getHTML().indexOf('Remove') === -1) {
         // Because we can't style file input buttons properly we style a normal
         // element and then simulate a click on the real hidden input when our
         // fake button is clicked.
@@ -536,9 +536,8 @@ YUI.add('juju-view-inspector', function(Y) {
       var file = e.currentTarget.get('files').shift(),
           reader = new FileReader();
       reader.onerror = Y.bind(this.onFileError, this);
-      reader.onload = Y.bind(this.onFileLoaded, this);
+      reader.onload = Y.bind(this.onFileLoaded, this, file.name);
       reader.readAsText(file);
-      e.container.one('.fakebutton').setHTML(file.name + ' - Remove file');
     },
 
     /**
@@ -580,11 +579,14 @@ YUI.add('juju-view-inspector', function(Y) {
       @method onFileLoaded
       @param {Object} e An event object.
     */
-    onFileLoaded: function(e) {
-      //set the fileContent on the viewlet-manager so we can have access to it
-      // when the user submit their config.
-      this.viewletManager.fileContent = e.target.result;
-      if (!this.viewletManager.fileContent) {
+    onFileLoaded: function(filename, e) {
+      // Add a link for the user to remove this file now that it's loaded.
+      var button = this.viewletManager.get('container').one('.fakebutton');
+      button.setHTML(filename + ' - Remove file');
+      //set the configFileContent on the viewlet-manager so we can have access
+      //to it when the user submit their config.
+      this.viewletManager.configFileContent = e.target.result;
+      if (!this.viewletManager.configFileContent) {
         // Some file read errors do not go through the error handler as
         // expected but instead return an empty string.  Warn the user if
         // this happens.
@@ -610,7 +612,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     onRemoveFile: function(e) {
       var container = this.viewletManager.get('container');
-      this.viewletManager.fileContent = null;
+      this.viewletManager.configFileContent = null;
       container.one('.fakebutton').setHTML('Import config file...');
       container.all('.settings-wrapper').show();
       // Replace the file input node.  There does not appear to be any way
@@ -674,7 +676,7 @@ YUI.add('juju-view-inspector', function(Y) {
       // If the user has conflicted fields and still choose to
       // save then we will be overwriting the values in Juju.
       var bindingEngine = this.viewletManager.bindingEngine;
-      bindingEngine.clearChangedValues.call(bindingEngine, 'config');
+      bindingEngine.clearChangedValues('config');
       var db = this.viewletManager.get('db');
       if (e.err) {
         db.notifications.add(
