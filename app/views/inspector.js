@@ -99,9 +99,12 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       ev.halt(true);
 
-      if (/^\d+$/.test(field.get('value'))) {
-        if (flags.serviceInspector) {
-          this._confirmUnitConstraints(parseInt(field.get('value'), 10));
+      var numUnits = parseInt(field.get('value'), 10),
+          currentUnits = this.viewletManager.get('model').get('unit_count');
+
+      if (/^\d+$/.test(numUnits)) {
+        if (flags.serviceInspector && numUnits > currentUnits) {
+          this._confirmUnitConstraints(numUnits);
         } else {
           this._modifyUnits(parseInt(field.get('value'), 10));
         }
@@ -155,6 +158,17 @@ YUI.add('juju-view-inspector', function(Y) {
       var container = this.viewletManager.viewlets.overview.container;
       this._modifyUnits(container.one('input.num-units-control').get('value'));
       this._closeUnitConfirm();
+    },
+
+    /**
+      Shows the unit constraints when the user wants to edit them
+      while increasing the total number of units
+
+      @method _editUnitConstraints
+    */
+    _editUnitConstraints: function() {
+      // show constraints viewlet on overview page to allow the user to
+      // edit them without changing viewlets.
     },
 
     _modifyUnits: function(requested_unit_count) {
@@ -214,7 +228,9 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._removeUnitCallback, this)
         );
       }
-      field.set('disabled', true);
+      if (!flags.serviceInspector) {
+        field.set('disabled', true);
+      }
     },
 
     _addUnitCallback: function(ev) {
