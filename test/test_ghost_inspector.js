@@ -213,7 +213,7 @@ describe('Ghost Inspector', function() {
     });
   });
 
-  it('must remove configuration data when the button is pressed', function() {
+  it('must restore file input when config is removed', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
 
