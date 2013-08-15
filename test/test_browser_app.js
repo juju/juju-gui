@@ -576,6 +576,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(req.params, undefined);
       });
 
+      it('fullscreen destroys old views not required', function(done) {
+        var searchCleaned = false,
+            editorialCleaned = false;
+
+        app = new browser.Browser({
+          store: new Charmworld2({
+            'apiHost': 'http://localhost',
+            'noop': true
+          })
+        });
+
+        app._search = {
+          destroy: function() {
+            searchCleaned = true
+          }
+        }
+        app._editorial = {
+          destroy: function() {
+            editorialCleaned = true
+          }
+        }
+
+        // We'll hit the default renderEditorial so stub that out as the catch
+        // that out test is done.
+        app.renderEditorial = function() {
+          assert.equal(searchCleaned, true);
+          assert.equal(editorialCleaned, true);
+          done();
+        }
+
+        app.fullscreen();
+      });
+
     });
 
     describe('browser subapp display tree', function() {
