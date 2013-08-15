@@ -589,14 +589,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         app._search = {
           destroy: function() {
-            searchCleaned = true
+            searchCleaned = true;
           }
-        }
+        };
         app._editorial = {
           destroy: function() {
-            editorialCleaned = true
+            editorialCleaned = true;
           }
-        }
+        };
 
         // We'll hit the default renderEditorial so stub that out as the catch
         // that out test is done.
@@ -604,9 +604,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(searchCleaned, true);
           assert.equal(editorialCleaned, true);
           done();
-        }
+        };
 
-        app.fullscreen();
+        app.fullscreen({}, {}, function() {});
       });
 
     });
