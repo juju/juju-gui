@@ -262,6 +262,43 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           bar.update(value);
         }
       },
+      unit_count: {
+        'update': function(node, value, prevVal) {
+          node.setHTML(value);
+          var sibling = node.siblings('.units-starting-spinner').item(0),
+              input = this.viewlet.container.one('input.num-units-control');
+          prevVal = parseInt(prevVal, 10);
+          value = parseInt(value, 10);
+          if (prevVal !== undefined &&
+              prevVal !== value &&
+              parseInt(input.get('value'), 10) > value) {
+                if (!this._unitSpinner) {
+                  /* global Spinner */
+                  this._unitSpinner = new Spinner({
+                    lines: 17,
+                    length: 4,
+                    width: 2,
+                    radius: 0,
+                    corners: 0,
+                    rotate: 0,
+                    trail: 83,
+                    speed: 1.0,
+                    direction: 1,
+                    hwaccel: true,
+                    color: '#2D74F3',
+                    top: 9,
+                    left: -11
+                  }).spin(sibling);
+                } else {
+                  this._unitSpinner.spin(sibling);
+                }
+          } else {
+            if (this._unitSpinner) {
+              this._unitSpinner.stop();
+            }
+          }
+        }
+      },
       units: {
         depends: ['aggregated_status'],
         'update': function(node, value) {

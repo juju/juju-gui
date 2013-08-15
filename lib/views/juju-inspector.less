@@ -13,6 +13,26 @@
 .yui3-juju-inspector {
     .customize-scrollbar;
 
+    .inspector-buttons {
+        a {
+            .create-border-radius(@border-radius);
+            .create-box-shadow(0 2px 2px -2px #777 inset);
+            box-shadow: 0 2px 2px -2px #777777 inset;
+            color: #fff;
+            background: #dd4814;
+            padding: 5px 0;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 10px;
+            width: 110px;
+            float: left;
+            margin-left: 13px;
+        }
+        .cancel {
+            background: #999;
+        }
+    }
+
     .left-breakout {
         .type9;
         position: absolute;
@@ -109,6 +129,7 @@
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
+
         .toggle {
             font-size: 12px;
 
@@ -165,6 +186,7 @@
                 }
             }
         }
+
         .controls {
 
             button {
@@ -190,6 +212,47 @@
                         color: #eee;
                     }
                 }
+            }
+        }
+
+        .unit-scaling {
+            .current-unit-num-wrapper {
+                width: 95px;
+                background-color: @inspector-region-background-color;
+                height: 30px;
+                .create-border-radius(@border-radius);
+                line-height: 30px;
+                padding-left: 10px;
+                position: relative;
+            }
+            .units-starting-spinner {
+                position: absolute;
+                right: 10px;
+            }
+            input.num-units-control {
+                width: 115px;
+            }
+            span {
+                padding: 0 10px;
+                line-height: 30px;
+            }
+            a.edit-constraints {
+                padding-left: 10px;
+                &:before {
+                    content: '\A';
+                }
+            }
+            .unit-constraints-confirm {
+                overflow: hidden;
+                height: 120px;
+                letter-spacing: normal;
+                background-color: @inspector-region-background-color;
+                -moz-transition: .3s, height .3s;
+                -webkit-transition: .25s, height .3s;
+                transition: .3s, height .3s;
+            }
+            .unit-constraints-confirm.closed {
+                height: 0;
             }
         }
 
@@ -512,7 +575,7 @@
                   transition: background 1s linear;
                   background-repeat: no-repeat;
                   background-position: right center;
-                 background-url: none;
+                  background-url: none;
                   margin-bottom: 0px;
                   min-height: 26px;
                   width: 260px;
@@ -590,31 +653,6 @@
 
             .message {
                 margin: 5px 15px;
-            }
-
-            .buttons {
-                a {
-                    .create-border-radius(@border-radius);
-                    .create-box-shadow(0 2px 2px -2px #777 inset);
-                    box-shadow: 0 2px 2px -2px #777777 inset;
-                    color: #fff;
-                    background: #dd4814;
-                    padding: 5px 0;
-                    text-decoration: none;
-                    text-align: center;
-                    margin-top: 10px;
-                    width: 110px;
-                    float: left;
-                    margin-left: 13px;
-                }
-
-                a:last-of-type {
-                    mergin-right: 0;
-                }
-
-                .grey {
-                    background: #999;
-                }
             }
         }
 

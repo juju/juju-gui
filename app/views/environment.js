@@ -190,9 +190,10 @@ YUI.add('juju-view-environment', function(Y) {
                 '.cancel-destroy': {click: '_onCancelDestroy'},
                 // Overview viewlet.
                 '.num-units-control': {
-                  keydown: 'modifyUnits',
-                  blur: 'resetUnits'
+                  keydown: 'modifyUnits'
                 },
+                '.cancel-num-units': { click: '_closeUnitConfirm'},
+                '.confirm-num-units': { click: '_confirmUnitChange'},
                 // Settings viewlet.
                 'input.expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},

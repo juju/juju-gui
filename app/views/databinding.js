@@ -143,9 +143,10 @@ YUI.add('juju-databinding', function(Y) {
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
+      @param {Y.EventFacade | Object} e an event change object.
       @return {Array} bindings array filtered by keys when present.
     */
-    function deltaFromChange(modelChangeKeys) {
+    function deltaFromChange(modelChangeKeys, e) {
       /*jshint validthis:true */
       var self = this;
       var bindings = this._bindings;
@@ -164,7 +165,12 @@ YUI.add('juju-databinding', function(Y) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
-          return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
+          var bindingName = binding.name.split('.')[0];
+          if (modelChangeKeys.indexOf(bindingName) > -1) {
+            binding.prevVal = e.changed[bindingName].prevVal;
+            return true;
+          }
+
         });
       }
 
@@ -184,6 +190,19 @@ YUI.add('juju-databinding', function(Y) {
           });
         }
       });
+
+      this._pendingBindings = this._pendingBindings.concat(result.bindings);
+      // remove duplicates (later deltas are more important)
+      this._pendingBindings.reverse();
+      var keys = [];
+      result.bindings = this._pendingBindings.filter(function(binding) {
+        if (keys.indexOf(binding.name) === -1) {
+          keys.push(binding.name);
+          return true;
+        }
+        return false;
+      });
+
       return result;
     }
 
@@ -224,6 +243,7 @@ YUI.add('juju-databinding', function(Y) {
       this._bindings = [];  // [Binding,...]
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
       this._models = {}; // {ModelName: [Event Handles]}
+      this._pendingBindings = [];
     }
 
     /**
@@ -621,11 +641,14 @@ YUI.add('juju-databinding', function(Y) {
       } else {
         keys = evt && Y.Object.keys(evt.changed);
       }
-      delta = deltaFromChange.call(this, keys);
+
+      delta = deltaFromChange.call(this, keys, evt);
+
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
         this._updateTimeout = null;
       }
+
       if (this.interval) {
         this._updateTimeout = Y.later(
             this.interval,
@@ -650,6 +673,8 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var resolve = self.resolve;
+
+      this._pendingBindings = [];
 
       if (delta.bindings.length === 0 &&
           !Object.keys(delta.wildcards).length) {
@@ -684,6 +709,7 @@ YUI.add('juju-databinding', function(Y) {
         if (binding.format) {
           value = binding.format.call(binding, value);
         }
+
         // Do conflict detection
         if (binding.target !== conflicted) {
           optionalCallback(binding,
@@ -694,7 +720,7 @@ YUI.add('juju-databinding', function(Y) {
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
           if (binding.update) {
-            binding.update.call(binding, binding.target, value);
+            binding.update.call(binding, binding.target, value, binding.prevVal);
           } else {
             binding.field.set.call(binding, binding.target, value);
           }

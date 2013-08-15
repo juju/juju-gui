@@ -5,8 +5,8 @@
   <div class="message">
   Are you sure you want to destroy the service? This cannot be undone.
   </div>
-  <div class="buttons">
-    <a class="cancel-destroy grey">Cancel</a>
+  <div class="inspector-buttons">
+    <a class="cancel-destroy cancel">Cancel</a>
     <a class="initiate-destroy">Destroy</a>
   </div>
 </div>

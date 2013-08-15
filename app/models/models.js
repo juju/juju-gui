@@ -394,8 +394,8 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
-      var sum = Y.Array.reduce(
-          Y.Object.values(aggregate), 0, function(a, b) {return a + b;});
+      var units = service.get('units');
+      var sum = units && units.size() || 0;
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate);

@@ -100,10 +100,61 @@ YUI.add('juju-view-inspector', function(Y) {
       ev.halt(true);
 
       if (/^\d+$/.test(field.get('value'))) {
-        this._modifyUnits(parseInt(field.get('value'), 10));
+        if (flags.serviceInspector) {
+          this._confirmUnitConstraints(parseInt(field.get('value'), 10));
+        } else {
+          this._modifyUnits(parseInt(field.get('value'), 10));
+        }
       } else {
         this.resetUnits();
       }
+    },
+
+    /**
+      Shows the UX below the unit input box for the user to confirm the
+      constraints for the new units.
+
+      @method _confirmUnitConstraints
+      @param {Number} requestedUnitCount
+    */
+    _confirmUnitConstraints: function(requestedUnitCount) {
+      var container = this.viewletManager.viewlets.overview.container,
+          confirm = container.one('.unit-constraints-confirm'),
+          constraints = this.model.get('constraints');
+
+      confirm.setHTML(Templates['service-overview-constraints'](constraints));
+      confirm.removeClass('closed');
+    },
+
+    /**
+      Closes the unit confirm constraints dialogue.
+
+      @method _closeUnitConfirm
+    */
+    _closeUnitConfirm: function(e) {
+      var container = this.viewletManager.viewlets.overview.container,
+          confirm = container.one('.unit-constraints-confirm');
+
+      // If this was from the user clicking cancel;
+      if (e && e.halt) {
+        e.halt();
+        this.resetUnits();
+      }
+
+      confirm.addClass('closed');
+    },
+
+    /**
+      Calls the _modifyUnits method with the unit count when the user
+      accepts the constraints
+
+      @method _confirmUnitChange
+    */
+    _confirmUnitChange: function(e) {
+      e.halt();
+      var container = this.viewletManager.viewlets.overview.container;
+      this._modifyUnits(container.one('input.num-units-control').get('value'));
+      this._closeUnitConfirm();
     },
 
     _modifyUnits: function(requested_unit_count) {
@@ -127,9 +178,21 @@ YUI.add('juju-view-inspector', function(Y) {
       var delta = requested_unit_count - unit_count;
       if (delta > 0) {
         // Add units!
-        env.add_unit(
-            service.get('id'), delta,
-            Y.bind(this._addUnitCallback, this));
+
+        // XXX REMOVE ME - I'm only here to throttle unit creation to test UX
+        var self = this;
+        /*jshint validthis:true */
+        for(var j = 0; j < delta; j+=1) {
+          setTimeout(function() {
+            console.log('settimeout');
+            // Keep me but swap self for this and 1 to delta
+            env.add_unit(
+                service.get('id'), 1,
+                Y.bind(self._addUnitCallback, self));
+          }, j * 1000);
+
+
+        }
       } else if (delta < 0) {
         delta = Math.abs(delta);
         var db;
