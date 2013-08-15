@@ -273,9 +273,9 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           if (prevVal !== undefined &&
               prevVal !== value &&
               parseInt(input.get('value'), 10) > value) {
-                if (sibling.hasClass('hidden')) {
-                  sibling.removeClass('hidden');
-                }
+                          if (sibling.hasClass('hidden')) {
+                            sibling.removeClass('hidden');
+                          }
           } else {
             if (!sibling.hasClass('hidden')) {
               sibling.addClass('hidden');

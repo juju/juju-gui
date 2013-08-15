@@ -118,7 +118,7 @@ YUI.add('juju-view-inspector', function(Y) {
       constraints for the new units.
 
       @method _confirmUnitConstraints
-      @param {Number} requestedUnitCount
+      @param {Number} requestedUnitCount the number of units to create.
     */
     _confirmUnitConstraints: function(requestedUnitCount) {
       var container = this.viewletManager.viewlets.overview.container,

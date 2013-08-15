@@ -720,7 +720,8 @@ YUI.add('juju-databinding', function(Y) {
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
           if (binding.update) {
-            binding.update.call(binding, binding.target, value, binding.prevVal);
+            binding.update.call(
+                binding, binding.target, value, binding.prevVal);
           } else {
             binding.field.set.call(binding, binding.target, value);
           }
