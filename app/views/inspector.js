@@ -192,21 +192,9 @@ YUI.add('juju-view-inspector', function(Y) {
       var delta = requested_unit_count - unit_count;
       if (delta > 0) {
         // Add units!
-
-        // XXX REMOVE ME - I'm only here to throttle unit creation to test UX
-        var self = this;
-        /*jshint validthis:true */
-        for(var j = 0; j < delta; j+=1) {
-          setTimeout(function() {
-            console.log('settimeout');
-            // Keep me but swap self for this and 1 to delta
-            env.add_unit(
-                service.get('id'), 1,
-                Y.bind(self._addUnitCallback, self));
-          }, j * 1000);
-
-
-        }
+        env.add_unit(
+            service.get('id'), delta,
+            Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
         var db;
