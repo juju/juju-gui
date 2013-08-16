@@ -1,0 +1,26 @@
+<span>Scale up with the following constraints?</span>
+<span class="constraint-details">
+  {{#if cpu}}
+    {{cpu}}Ghz
+  {{else}}
+    Default CPU
+  {{/if}}
+  &nbsp;
+  {{#if mem}}
+    {{mem}}GB
+  {{else}}
+    Default Mem
+  {{/if}}
+  &nbsp;
+  {{#if arch}}
+    {{arch}}
+  {{else}}
+    Default Arch
+  {{/if}}
+</span>
+<a class="edit-constraints">Edit</a>
+<div class="overview-constraints"></div>
+<div class="inspector-buttons">
+  <a class="cancel-num-units cancel-button">Cancel</a>
+  <a class="confirm-num-units">Confirm</a>
+</div>

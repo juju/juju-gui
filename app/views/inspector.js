@@ -83,9 +83,10 @@ YUI.add('juju-view-inspector', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container, flags = window.flags;
+      var container, flags = window.flags, currentUnits;
       if (flags.serviceInspector) {
         container = this.viewletManager.get('container');
+        currentUnits = this.viewletManager.get('model').get('unit_count');
       } else {
         container = this.get('container');
       }
@@ -99,11 +100,76 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       ev.halt(true);
 
-      if (/^\d+$/.test(field.get('value'))) {
-        this._modifyUnits(parseInt(field.get('value'), 10));
+      var numUnits = field.get('value');
+
+      if (/^\d+$/.test(numUnits)) {
+        numUnits = parseInt(numUnits, 10);
+        if (flags.serviceInspector && numUnits > currentUnits) {
+          this._confirmUnitConstraints(numUnits);
+        } else {
+          this._modifyUnits(numUnits);
+        }
       } else {
         this.resetUnits();
       }
+    },
+
+    /**
+      Shows the UX below the unit input box for the user to confirm the
+      constraints for the new units.
+
+      @method _confirmUnitConstraints
+      @param {Number} requestedUnitCount the number of units to create.
+    */
+    _confirmUnitConstraints: function(requestedUnitCount) {
+      var container = this.viewletManager.viewlets.overview.container,
+          confirm = container.one('.unit-constraints-confirm'),
+          constraints = this.model.get('constraints') || {};
+
+      confirm.setHTML(Templates['service-overview-constraints'](constraints));
+      confirm.removeClass('closed');
+    },
+
+    /**
+      Closes the unit confirm constraints dialogue.
+
+      @method _closeUnitConfirm
+    */
+    _closeUnitConfirm: function(e) {
+      var container = this.viewletManager.viewlets.overview.container,
+          confirm = container.one('.unit-constraints-confirm');
+
+      // If this was from the user clicking cancel
+      if (e && e.halt) {
+        e.halt();
+        this.resetUnits();
+      }
+
+      confirm.addClass('closed');
+    },
+
+    /**
+      Calls the _modifyUnits method with the unit count when the user
+      accepts the constraints
+
+      @method _confirmUnitChange
+    */
+    _confirmUnitChange: function(e) {
+      e.halt();
+      var container = this.viewletManager.viewlets.overview.container;
+      this._modifyUnits(container.one('input.num-units-control').get('value'));
+      this._closeUnitConfirm();
+    },
+
+    /**
+      Shows the unit constraints when the user wants to edit them
+      while increasing the total number of units
+
+      @method _editUnitConstraints
+    */
+    _editUnitConstraints: function() {
+      // show constraints viewlet on overview page to allow the user to
+      // edit them without changing viewlets.
     },
 
     _modifyUnits: function(requested_unit_count) {
@@ -151,7 +217,9 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._removeUnitCallback, this)
         );
       }
-      field.set('disabled', true);
+      if (!flags.serviceInspector) {
+        field.set('disabled', true);
+      }
     },
 
     _addUnitCallback: function(ev) {
