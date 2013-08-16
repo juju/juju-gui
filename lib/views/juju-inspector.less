@@ -194,19 +194,21 @@
         }
 
         .settings-wrapper {
+            .border-box;
             position: relative;
-            width: 250px;
+            width: 100%;
 
+            & > div {
+                padding-right: 10px;
+            }
             label {
                 font-size: 14px;
                 margin: 14px 0 7px 0;
                 font-weight: bold;
             }
-
             textarea {
                 width: 100%;
             }
-
             .settings-description {
                 font-size: 12px;
 
@@ -491,7 +493,8 @@
                 font-size: 18px;
                 padding-left: 0;
             }
-            .settings-wrapper, .control-group {
+            .settings-wrapper,
+            .control-group {
                 position: relative;
                 padding: 0 10px;
 
@@ -500,24 +503,22 @@
                     margin: 14px 0 7px 0;
                     font-weight: bold;
                 }
-
                 .settings-description {
                     font-size: 12px;
                 }
-
-                .config-field, .constraint-field {
+                .config-field,
+                .constraint-field {
                   -webkit-transition: background 1s linear;
                   -moz-transition: background 1s linear;
                   -o-transition: background 1s linear;
                   transition: background 1s linear;
                   background-repeat: no-repeat;
                   background-position: right center;
-                 background-url: none;
+                  background-url: none;
                   margin-bottom: 0px;
                   min-height: 26px;
-                  width: 260px;
+                  width: 100%;
                 }
-
                 .resolver {
                   color: black;
                   background-color: white;
@@ -527,7 +528,6 @@
                     width: 270px;
                   }
                 }
-
                 .modified {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
@@ -536,7 +536,6 @@
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
                 }
-
                 .conflict {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
