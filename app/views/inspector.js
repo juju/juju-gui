@@ -139,7 +139,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var container = this.viewletManager.viewlets.overview.container,
           confirm = container.one('.unit-constraints-confirm');
 
-      // If this was from the user clicking cancel;
+      // If this was from the user clicking cancel
       if (e && e.halt) {
         e.halt();
         this.resetUnits();
