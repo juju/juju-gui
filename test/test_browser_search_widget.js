@@ -241,6 +241,11 @@ describe('search widget autocomplete functional checks', function() {
     Y.Handlebars.helpers.charmFilePath = undefined;
   });
 
+  it('sets the positioning for autocomplete as absolute', function() {
+    var bb = search.ac.get('boundingBox');
+    assert.equal(bb.getStyle('position'), 'absolute');
+  });
+
   it('supports autocompletion while entering text', function(done) {
     // Create our own search instance.
     search.destroy();
