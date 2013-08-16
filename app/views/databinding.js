@@ -165,18 +165,7 @@ YUI.add('juju-databinding', function(Y) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
-          var bindingName = binding.name.split('.')[0];
-          if (modelChangeKeys.indexOf(bindingName) > -1) {
-            // if this is a YUI change event
-            if (e.changed) {
-              binding.prevVal = e.changed[bindingName].prevVal;
-            } else { // if this is a pojo change event
-              binding.prevVal = e.oldVal;
-            }
-
-            return true;
-          }
-
+          return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
         });
       }
 
@@ -238,7 +227,6 @@ YUI.add('juju-databinding', function(Y) {
       this._unappliedChanges = []; // Model keys having changes we've buffered.
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
       this._models = {}; // {ModelName: [Event Handles]}
-      this._pendingBindings = [];
     }
 
     /**
@@ -726,8 +714,7 @@ YUI.add('juju-databinding', function(Y) {
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
           if (binding.update) {
-            binding.update.call(
-                binding, binding.target, value, binding.prevVal);
+            binding.update.call(binding, binding.target, value);
           } else {
             binding.field.set.call(binding, binding.target, value);
           }

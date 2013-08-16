@@ -263,19 +263,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         }
       },
       unit_count: {
-        'update': function(node, value, prevVal) {
+        'update': function(node, value) {
           var sibling = node.siblings('.units-starting-spinner').item(0),
               input = this.viewlet.container.one('input.num-units-control');
 
           node.setHTML(value);
-          prevVal = parseInt(prevVal, 10);
           value = parseInt(value, 10);
-          if (prevVal !== undefined &&
-              prevVal !== value &&
-              parseInt(input.get('value'), 10) > value) {
-                          if (sibling.hasClass('hidden')) {
-                            sibling.removeClass('hidden');
-                          }
+          if (parseInt(input.get('value'), 10) > value) {
+            if (sibling.hasClass('hidden')) {
+              sibling.removeClass('hidden');
+            }
           } else {
             if (!sibling.hasClass('hidden')) {
               sibling.addClass('hidden');

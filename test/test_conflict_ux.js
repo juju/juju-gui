@@ -135,11 +135,11 @@ describe('Inspector Conflict UX', function() {
     modifyAndWait(input, 'form value', function() {
       // See that it got the proper style added
       assert.equal(input.hasClass('modified'), true,
-        'missing modified class');
+          'missing modified class');
 
       service.set('config', {logo: 'conflicting value'});
       assert.equal(input.hasClass('conflict-pending'), true,
-        'missing conflict-pending class');
+          'missing conflict-pending class');
 
       // Open the conflict dialog
       input.simulate('click');
