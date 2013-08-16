@@ -242,6 +242,9 @@ describe('search widget autocomplete functional checks', function() {
   });
 
   it('sets the positioning for autocomplete as absolute', function() {
+    // We need to ensure that the boundingBox is always in position: absolute.
+    // In IE10 it can be set to position: relative, causing rendering problems
+    // in the header.
     var bb = search.ac.get('boundingBox');
     assert.equal(bb.getStyle('position'), 'absolute');
   });
