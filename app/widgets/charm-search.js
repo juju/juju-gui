@@ -264,7 +264,7 @@ YUI.add('browser-search-widget', function(Y) {
       this.ac.get('inputNode').on('focus', function(ev) {
         this.ac.sendRequest(ev.currentTarget.get('value'));
       }, this);
-      
+
       // Ensure that the widget is rendered position: absolute
       this.ac.get('boundingBox').setStyle('position', 'absolute');
 
