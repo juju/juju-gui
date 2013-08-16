@@ -265,6 +265,11 @@ YUI.add('browser-search-widget', function(Y) {
         this.ac.sendRequest(ev.currentTarget.get('value'));
       }, this);
 
+      // Ensure that the widget is rendered position: absolute. For reasons
+      // unknown, the widget is being set to position: relative in IE10 which
+      // causes rendering errors in the header.
+      this.ac.get('boundingBox').setStyle('position', 'absolute');
+
       // Stop clicking on charm-tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
         ev.halt();
