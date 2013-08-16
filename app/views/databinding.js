@@ -160,14 +160,20 @@ YUI.add('juju-databinding', function(Y) {
         return binding.name;
       }, true);
 
-      if (modelChangeKeys !== undefined) {
+      if (modelChangeKeys !== undefined && modelChangeKeys.length !== 0) {
         bindings = bindings.filter(function(binding) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
           var bindingName = binding.name.split('.')[0];
           if (modelChangeKeys.indexOf(bindingName) > -1) {
-            binding.prevVal = e.changed[bindingName].prevVal;
+            // if this is a YUI change event
+            if (e.changed) {
+              binding.prevVal = e.changed[bindingName].prevVal;
+            } else { // if this is a pojo change event
+              binding.prevVal = e.oldVal;
+            }
+
             return true;
           }
 
@@ -189,18 +195,6 @@ YUI.add('juju-databinding', function(Y) {
             }
           });
         }
-      });
-
-      this._pendingBindings = this._pendingBindings.concat(result.bindings);
-      // remove duplicates (later deltas are more important)
-      this._pendingBindings.reverse();
-      var keys = [];
-      result.bindings = this._pendingBindings.filter(function(binding) {
-        if (keys.indexOf(binding.name) === -1) {
-          keys.push(binding.name);
-          return true;
-        }
-        return false;
       });
 
       return result;
@@ -241,6 +235,7 @@ YUI.add('juju-databinding', function(Y) {
           this.options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = [];  // [Binding,...]
+      this._unappliedChanges = []; // Model keys having changes we've buffered.
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
       this._models = {}; // {ModelName: [Event Handles]}
       this._pendingBindings = [];
@@ -642,7 +637,17 @@ YUI.add('juju-databinding', function(Y) {
         keys = evt && Y.Object.keys(evt.changed);
       }
 
-      delta = deltaFromChange.call(this, keys, evt);
+      // Mix any unapplied changes into the key set
+      // updating this list. We then use that combined
+      // list to generate the binding set.
+      if (keys) {
+        keys.forEach(function(k) {
+          if (this._unappliedChanges.indexOf(k) === -1) {
+            this._unappliedChanges.push(k);
+          }
+        }, this);
+      }
+      delta = deltaFromChange.call(this, this._unappliedChanges, evt);
 
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
@@ -674,7 +679,8 @@ YUI.add('juju-databinding', function(Y) {
       var self = this;
       var resolve = self.resolve;
 
-      this._pendingBindings = [];
+      // updateDOM applies all the changes clearing the buffer.
+      this._unappliedChanges = [];
 
       if (delta.bindings.length === 0 &&
           !Object.keys(delta.wildcards).length) {

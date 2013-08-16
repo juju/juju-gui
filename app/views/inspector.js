@@ -83,9 +83,10 @@ YUI.add('juju-view-inspector', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container, flags = window.flags;
+      var container, flags = window.flags, currentUnits;
       if (flags.serviceInspector) {
         container = this.viewletManager.get('container');
+        currentUnits = this.viewletManager.get('model').get('unit_count');
       } else {
         container = this.get('container');
       }
@@ -99,14 +100,14 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       ev.halt(true);
 
-      var numUnits = parseInt(field.get('value'), 10),
-          currentUnits = this.viewletManager.get('model').get('unit_count');
+      var numUnits = field.get('value');
 
       if (/^\d+$/.test(numUnits)) {
+        numUnits = parseInt(numUnits, 10);
         if (flags.serviceInspector && numUnits > currentUnits) {
           this._confirmUnitConstraints(numUnits);
         } else {
-          this._modifyUnits(parseInt(field.get('value'), 10));
+          this._modifyUnits(numUnits);
         }
       } else {
         this.resetUnits();
@@ -123,7 +124,7 @@ YUI.add('juju-view-inspector', function(Y) {
     _confirmUnitConstraints: function(requestedUnitCount) {
       var container = this.viewletManager.viewlets.overview.container,
           confirm = container.one('.unit-constraints-confirm'),
-          constraints = this.model.get('constraints');
+          constraints = this.model.get('constraints') || {};
 
       confirm.setHTML(Templates['service-overview-constraints'](constraints));
       confirm.removeClass('closed');

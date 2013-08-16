@@ -130,6 +130,8 @@ describe('Inspector Overview', function() {
        var control = container.one('.num-units-control');
        control.set('value', 7);
        control.simulate('keydown', { keyCode: ENTER });
+       // confirm the constraints
+       container.one('.confirm-num-units').simulate('click');
        var message = conn.last_message();
        message.op.should.equal('add_unit');
        message.service_name.should.equal('mediawiki');
