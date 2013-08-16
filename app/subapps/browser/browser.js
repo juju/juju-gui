@@ -667,6 +667,17 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
+      // If we have a _search and we're not showing it, then destroy it.
+      if (this._search && !this._shouldShowSearch()) {
+        this._search.destroy();
+      }
+
+      // Clean up any old editorial content. If we need it, we'll reset it up
+      // below.
+      if (this._editorial) {
+        this._editorial.destroy();
+      }
+
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
