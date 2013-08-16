@@ -178,9 +178,9 @@ describe('Inspector Overview', function() {
 
     var units = new Y.LazyModelList();
 
-    units.add({ id: 'mysql/0', agent_state: 'install-error' }),
-    units.add({ id: 'mysql/1', agent_state: 'install-error' }),
-    units.add({ id: 'mysql/2', agent_state: 'pending' }),
+    units.add({ id: 'mysql/0', agent_state: 'install-error' });
+    units.add({ id: 'mysql/1', agent_state: 'install-error' });
+    units.add({ id: 'mysql/2', agent_state: 'pending' });
     units.add({ id: 'mysql/3', agent_state: 'started' });
 
     var statuses = overview.updateUnitList(units);

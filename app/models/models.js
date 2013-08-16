@@ -742,7 +742,7 @@ YUI.add('juju-models', function(Y) {
         var modelId = notification.get('modelId'),
             modelList;
         if (modelId) {
-          modelList = modelId[0],
+          modelList = modelId[0];
           modelId = modelId[1];
           return (modelList === model.name) && (
               modelId === modelKey);
