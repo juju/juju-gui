@@ -1,12 +1,13 @@
 {
-    // The basis for this file was taken from https://github.com/oryband/dotfiles/blob/master/jshintrc
+    // The basis for this file was taken from:
+    // https://github.com/oryband/dotfiles/blob/master/jshintrc
     // and then extensively modified.
     // Settings
     "passfail"      : false,  // Stop on first error.
     "maxerr"        : 100,    // Maximum errors before stopping.
 
 
-    // Predefined globals whom JSHint will ignore.
+    // Predefined globals that JSHint will ignore.
     "browser"       : true,   // Standard browser globals e.g. `window`, `document`.
     "node"          : true,
     "rhino"         : false,

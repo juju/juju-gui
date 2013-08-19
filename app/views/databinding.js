@@ -56,6 +56,7 @@ YUI.add('juju-databinding', function(Y) {
      */
     function _getNodeHandler(node) {
       /* jshint -W040 */
+      // Ignore 'possible strict violation'
       var field = this._fieldHandlers[node.tagName.toLowerCase()];
       if (!field) {
         field = this._fieldHandlers['default'];
@@ -148,6 +149,7 @@ YUI.add('juju-databinding', function(Y) {
     */
     function deltaFromChange(modelChangeKeys) {
       /* jshint -W040 */
+      // Ignore 'possible strict violation'
       var self = this;
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};

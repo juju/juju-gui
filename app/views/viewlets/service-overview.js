@@ -116,6 +116,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     */
   function generateAndBindUnitHeaders(node, statuses) {
     /* jshint -W040 */
+    // Ignore 'possible strict violation'
     var self = this,
         buttonHeight;
 
