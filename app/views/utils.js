@@ -525,11 +525,18 @@ YUI.add('juju-view-utils', function(Y) {
       an object with the following fields: name, value, title, unit
       (optional).
   */
-  utils.getConstraints = function(
-      serviceConstraints, genericConstraints, readOnlyConstraints,
-      constraintDescriptions) {
+  utils.getConstraints = function(serviceConstraints, genericConstraints) {
+
     var constraints = [];
     var initial = Object.create(null);
+    var readOnlyConstraints = ['provider-type', 'ubuntu-series'];
+    var constraintDescriptions = {
+      arch: {title: 'Architecture'},
+      cpu: {title: 'CPU', unit: 'Ghz'},
+      'cpu-cores': {title: 'CPU Cores'},
+      'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+      mem: {title: 'Memory', unit: 'GB'}
+    };
     // Exclude read-only constraints.
     Y.Object.each(serviceConstraints, function(value, key) {
       if (readOnlyConstraints.indexOf(key) === -1) {
