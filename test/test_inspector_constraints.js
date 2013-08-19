@@ -127,7 +127,7 @@ describe('Inspector Constraints', function() {
     });
   });
 
-  it.only('renders the constraint titles correctly', function() {
+  it('renders the constraint titles correctly', function() {
     var constraintDescriptions = viewUtils.constraintDescriptions;
 
     Y.Array.each(env.genericConstraints, function(key) {
