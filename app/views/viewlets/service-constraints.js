@@ -34,14 +34,6 @@ YUI.add('viewlet-service-constraints', function(Y) {
   ns.constraints = {
     name: 'constraints',
     template: templates['service-constraints-viewlet'],
-    readOnlyConstraints: ['provider-type', 'ubuntu-series'],
-    constraintDescriptions: {
-      arch: {title: 'Architecture'},
-      cpu: {title: 'CPU', unit: 'Ghz'},
-      'cpu-cores': {title: 'CPU Cores'},
-      'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
-      mem: {title: 'Memory', unit: 'GB'}
-    },
 
     bindings: {
       'constraints': {
@@ -56,10 +48,7 @@ YUI.add('viewlet-service-constraints', function(Y) {
 
     'render': function(service, options) {
       var constraints = utils.getConstraints(
-          service.get('constraints') || {},
-          options.env.genericConstraints,
-          this.readOnlyConstraints,
-          this.constraintDescriptions);
+          service.get('constraints') || {}, options.env.genericConstraints);
       var contents = this.template({
         service: service,
         constraints: constraints
