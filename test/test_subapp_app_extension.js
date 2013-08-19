@@ -127,7 +127,7 @@ describe('SubApplication App Extension', function() {
     numberOfRoutes = mocks.subAppRoutes.length + mocks.parentAppRoutes.length;
     app.set('routes', mocks.parentAppRoutes);
 
-    augmentedRoutes = app._augmentRoutes(mocks.subAppRoutes),
+    augmentedRoutes = app._augmentRoutes(mocks.subAppRoutes);
 
     assert.equal(augmentedRoutes.length, numberOfRoutes,
         'Number of routes does not match');
