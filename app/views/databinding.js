@@ -143,6 +143,7 @@ YUI.add('juju-databinding', function(Y) {
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
+      @param {Y.EventFacade | Object} e an event change object.
       @return {Array} bindings array filtered by keys when present.
     */
     function deltaFromChange(modelChangeKeys) {
@@ -159,7 +160,7 @@ YUI.add('juju-databinding', function(Y) {
         return binding.name;
       }, true);
 
-      if (modelChangeKeys !== undefined) {
+      if (modelChangeKeys !== undefined && modelChangeKeys.length !== 0) {
         bindings = bindings.filter(function(binding) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
@@ -184,6 +185,7 @@ YUI.add('juju-databinding', function(Y) {
           });
         }
       });
+
       return result;
     }
 
@@ -222,6 +224,7 @@ YUI.add('juju-databinding', function(Y) {
           this.options.interval : 250;
       this._viewlets = {};  // {viewlet.name: viewlet}
       this._bindings = [];  // [Binding,...]
+      this._unappliedChanges = []; // Model keys having changes we've buffered.
       this._fieldHandlers = DEFAULT_FIELD_HANDLERS;
       this._models = {}; // {ModelName: [Event Handles]}
     }
@@ -621,11 +624,24 @@ YUI.add('juju-databinding', function(Y) {
       } else {
         keys = evt && Y.Object.keys(evt.changed);
       }
-      delta = deltaFromChange.call(this, keys);
+
+      // Mix any unapplied changes into the key set
+      // updating this list. We then use that combined
+      // list to generate the binding set.
+      if (keys) {
+        keys.forEach(function(k) {
+          if (this._unappliedChanges.indexOf(k) === -1) {
+            this._unappliedChanges.push(k);
+          }
+        }, this);
+      }
+      delta = deltaFromChange.call(this, this._unappliedChanges, evt);
+
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
         this._updateTimeout = null;
       }
+
       if (this.interval) {
         this._updateTimeout = Y.later(
             this.interval,
@@ -650,6 +666,9 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._updateDOM = function(delta) {
       var self = this;
       var resolve = self.resolve;
+
+      // updateDOM applies all the changes clearing the buffer.
+      this._unappliedChanges = [];
 
       if (delta.bindings.length === 0 &&
           !Object.keys(delta.wildcards).length) {
@@ -684,6 +703,7 @@ YUI.add('juju-databinding', function(Y) {
         if (binding.format) {
           value = binding.format.call(binding, value);
         }
+
         // Do conflict detection
         if (binding.target !== conflicted) {
           optionalCallback(binding,
