@@ -55,7 +55,8 @@ YUI.add('juju-databinding', function(Y) {
      @method _getFieldHandler
      */
     function _getNodeHandler(node) {
-      /*jshint validthis:true */
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
       var field = this._fieldHandlers[node.tagName.toLowerCase()];
       if (!field) {
         field = this._fieldHandlers['default'];
@@ -146,8 +147,9 @@ YUI.add('juju-databinding', function(Y) {
       @param {Y.EventFacade | Object} e an event change object.
       @return {Array} bindings array filtered by keys when present.
     */
-    function deltaFromChange(modelChangeKeys, e) {
-      /*jshint validthis:true */
+    function deltaFromChange(modelChangeKeys) {
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
       var self = this;
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};

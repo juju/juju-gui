@@ -738,7 +738,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (!this.service_scale) {
         this.service_scale = d3.scale.log().range([150, 200]);
-        this.service_scale_width = d3.scale.log().range([164, 200]),
+        this.service_scale_width = d3.scale.log().range([164, 200]);
         this.service_scale_height = d3.scale.log().range([64, 100]);
       }
 
@@ -989,7 +989,7 @@ YUI.add('juju-topology-service', function(Y) {
         // If there are x/y annotations on the service model and they are
         // different from the node's current x/y coordinates, update the
         // node, as the annotations may have been set in another session.
-        x = annotations['gui-x'],
+        x = annotations['gui-x'];
         y = annotations['gui-y'];
         if (!d ||
             (x !== undefined && x !== d.x) ||

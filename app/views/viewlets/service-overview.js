@@ -115,7 +115,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     @param {Array} statuses A key value pair of categories to unit list.
     */
   function generateAndBindUnitHeaders(node, statuses) {
-    /*jshint validthis:true */
+    /* jshint -W040 */
+    // Ignore 'possible strict violation'
     var self = this,
         buttonHeight;
 

@@ -35,7 +35,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function(done) {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+      conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = Y.namespace('juju').newEnvironment({conn: conn});
       env.connect();
       conn.open();
@@ -178,7 +178,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function(done) {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+      conn = new (Y.namespace('juju-tests.utils')).SocketStub();
       env = Y.namespace('juju').newEnvironment({conn: conn});
       env.connect();
       conn.open();
