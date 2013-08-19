@@ -319,6 +319,10 @@
         }
 
         .ghost {
+            input[type=text] {
+                /* Fixes the bottom of the service name getting cutoff (IE10) */
+                height: auto;
+            }
             .header-slot {
                 header {
                     margin-bottom: 0;
