@@ -145,16 +145,16 @@ describe('utilities', function() {
       readOnlyConstraints = ['provider-type', 'ubuntu-series'];
       constraintDescriptions = {
         arch: {title: 'Architecture'},
-        cpu: {title: 'CPU', unit: 'Ghz'},
+        cpu: {title: 'CPU', unit: 'GHz'},
         'cpu-cores': {title: 'CPU Cores'},
-        'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+        'cpu-power': {title: 'CPU Power', unit: 'GHz'},
         mem: {title: 'Memory', unit: 'GB'}
       };
     });
 
     it('correctly returns constraints for a service', function() {
       var expected = [
-        {name: 'cpu', value: 'quantum', title: 'CPU', unit: 'Ghz'},
+        {name: 'cpu', value: 'quantum', title: 'CPU', unit: 'GHz'},
         {name: 'mem', value: 'teraflop', title: 'Memory', unit: 'GB'},
         {name: 'arch', value: 'lcars', title: 'Architecture'}
       ];
@@ -166,7 +166,7 @@ describe('utilities', function() {
 
     it('handles missing service constraints', function() {
       var expected = [
-        {name: 'cpu', value: '', title: 'CPU', unit: 'Ghz'},
+        {name: 'cpu', value: '', title: 'CPU', unit: 'GHz'},
         {name: 'mem', value: '', title: 'Memory', unit: 'GB'},
         {name: 'arch', value: '', title: 'Architecture'}
       ];
@@ -176,7 +176,7 @@ describe('utilities', function() {
 
     it('includes unexpected service constraints', function() {
       var expected = [
-        {name: 'cpu', value: '', title: 'CPU', unit: 'Ghz'},
+        {name: 'cpu', value: '', title: 'CPU', unit: 'GHz'},
         {name: 'mem', value: '1GB', title: 'Memory', unit: 'GB'},
         {name: 'arch', value: 'amd64', title: 'Architecture'},
         {name: 'foo', value: 'bar', title: 'foo'}

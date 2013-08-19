@@ -517,10 +517,6 @@ YUI.add('juju-view-utils', function(Y) {
       current service constraints.
     @param {Array} genericConstraints Generic constraint keys for the
       environment in use.
-    @param {Array} readOnlyConstraints Constraint keys to be excluded from
-      the resulting list.
-    @param {Object} constraintDescriptions Key-value pairs mapping constraint
-      keys to objects describing the corresponding title and optional unit.
     @return {Array} The resulting constraints list, each item being
       an object with the following fields: name, value, title, unit
       (optional).
@@ -532,9 +528,9 @@ YUI.add('juju-view-utils', function(Y) {
     var readOnlyConstraints = ['provider-type', 'ubuntu-series'];
     var constraintDescriptions = {
       arch: {title: 'Architecture'},
-      cpu: {title: 'CPU', unit: 'Ghz'},
+      cpu: {title: 'CPU', unit: 'GHz'},
       'cpu-cores': {title: 'CPU Cores'},
-      'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+      'cpu-power': {title: 'CPU Power', unit: 'GHz'},
       mem: {title: 'Memory', unit: 'GB'}
     };
     // Exclude read-only constraints.
