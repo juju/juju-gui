@@ -138,17 +138,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.set('withHome', true);
       });
 
-      it('reroutes to minimized when toggled', function(done) {
-        var container = Y.one('#subapp-browser');
-        view = new FullScreen();
-        view.on('viewNavigate', function(ev) {
-          assert(ev.change.viewmode === 'minimized');
-          done();
-        });
-        view.render(container);
-        container.one('.bws-icon').simulate('click');
-      });
-
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
             fakeStore = new Y.juju.Charmworld2({});
