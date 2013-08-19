@@ -23,7 +23,6 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './yuidoc*' -prune \
 	-o \( \
 		-name '*.js' \
-		-o -name '*.json' \
 		-o -name 'generateTemplates' \
 	\) -print \
 	| sort | sed -e 's/^\.\///' \
@@ -260,7 +259,7 @@ gjslint: virtualenv/bin/gjslint
 	    | sed -n '0,/^Found /p'| sed '/^Found /q1' # less garbage output
 
 jshint: node_modules/jshint
-	node_modules/jshint/bin/hint $(JSFILES)
+	node_modules/jshint/bin/jshint --verbose $(JSFILES)
 
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented

@@ -30,6 +30,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // The "requires" property should not be used here because the javascript
 // minimizer will not parse it.
+/* jshint -W079 */
+// Tell jshint to ignore the global redefinition
 var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI.

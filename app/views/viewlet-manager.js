@@ -520,26 +520,18 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @private
     */
     _expandViewletConfig: function() {
-      // uncomment below when we upgrade jshint
-      // /*jshint -W089 */
+      /*jshint -W089 */
+      // Tells jshint to ignore the lack of hasOwnProperty in forloops
       for (var viewlet in this.viewletConfig) {
-        // remove ifcheck when we upgrade jshint
-        if (this.viewletConfig.hasOwnProperty(viewlet)) {
-          for (var cfg in this.viewletConfig[viewlet]) {
-            // remove ifcheck when we upgrade jshint
-            if (this.viewletConfig[viewlet].hasOwnProperty(cfg)) {
-              if (this.viewletConfig[viewlet][cfg].value === undefined) {
-                this.viewletConfig[viewlet][cfg] = {
-                  value: this.viewletConfig[viewlet][cfg],
-                  writable: true
-                };
-              }
-            }
+        for (var cfg in this.viewletConfig[viewlet]) {
+          if (this.viewletConfig[viewlet][cfg].value === undefined) {
+            this.viewletConfig[viewlet][cfg] = {
+              value: this.viewletConfig[viewlet][cfg],
+              writable: true
+            };
           }
         }
       }
-      // uncomment below when we upgrade jshint
-      // /*jshint +W089 */
     },
 
     /**
