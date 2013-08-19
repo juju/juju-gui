@@ -142,14 +142,8 @@ describe('utilities', function() {
       serviceConstraints = {arch: 'lcars', cpu: 'quantum', mem: 'teraflop'};
       customConstraints = {foo: 'bar', arch: 'amd64', mem: '1GB'};
       genericConstraints = ['cpu', 'mem', 'arch'];
-      readOnlyConstraints = ['provider-type', 'ubuntu-series'];
-      constraintDescriptions = {
-        arch: {title: 'Architecture'},
-        cpu: {title: 'CPU', unit: 'GHz'},
-        'cpu-cores': {title: 'CPU Cores'},
-        'cpu-power': {title: 'CPU Power', unit: 'GHz'},
-        mem: {title: 'Memory', unit: 'GB'}
-      };
+      readOnlyConstraints = utils.readOnlyConstraints;
+      constraintDescriptions = utils.constraintDescriptions;
     });
 
     it('correctly returns constraints for a service', function() {
