@@ -127,11 +127,19 @@ describe('Inspector Constraints', function() {
   });
 
   it('renders the constraint titles correctly', function() {
-    var constraintDescriptions = getViewlet(inspector).constraintDescriptions;
+    // mock - copied from utils.js getConstraints
+    var constraintDescriptions = {
+      arch: {title: 'Architecture'},
+      cpu: {title: 'CPU', unit: 'Ghz'},
+      'cpu-cores': {title: 'CPU Cores'},
+      'cpu-power': {title: 'CPU Power', unit: 'Ghz'},
+      mem: {title: 'Memory', unit: 'GB'}
+    };
+
     Y.Array.each(env.genericConstraints, function(key) {
       var node = container.one('div[for=' + key + '].control-label');
       var expectedTitle = constraintDescriptions[key].title;
-      assert.strictEqual(expectedTitle, node.getContent());
+      assert.strictEqual(expectedTitle, node.getHTML());
     });
   });
 
