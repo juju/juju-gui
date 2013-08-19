@@ -18,11 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var saveAs;
 
 (function() {
   describe('websocket recording', function() {
-    var Y, WebsocketLogging, websocketLogging;
+    var Y, WebsocketLogging, websocketLogging, saveAs;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
