@@ -196,6 +196,10 @@ YUI.add('juju-models', function(Y) {
         value: ALIVE
       },
       unit_count: {},
+      upgrade_available: {
+        value: false
+      },
+      upgrade_to: {},
       aggregated_status: {}
     }
   });

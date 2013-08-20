@@ -82,7 +82,7 @@ YUI.add('model-controller', function(Y) {
             if (charm && charm.loaded) {
               resolve(charm);
             } else {
-              charm = db.charms.add({id: charmId}).load(env,
+              charm = db.charms.add({url: charmId}).load(env,
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
                   function(err, data) {
@@ -144,6 +144,7 @@ YUI.add('model-controller', function(Y) {
     getServiceWithCharm: function(serviceId) {
       var db = this.get('db'),
           env = this.get('env'),
+          store = this.get('store'),
           mController = this;
 
       return this._getPromise(
@@ -151,7 +152,25 @@ YUI.add('model-controller', function(Y) {
           function(resolve, reject) {
             mController.getService(serviceId).then(function(service) {
               mController.getCharm(service.get('charm')).then(function(charm) {
-                resolve({service: service, charm: charm});
+                if (charm.get('scheme') === 'cs' &&
+                    window.flags.upgradeCharm) {
+                  // Get the charm's store ID, then replace the version number
+                  // with '-HEAD' to retrieve the latest version of the charm.
+                  var storeId = charm.get('storeId').replace(/-\d+$/, '-HEAD');
+                  store.promiseCharm(storeId, db.charms)
+                    .then(function(latestCharm) {
+                        var latestVersion = parseInt(
+                            latestCharm.charm.id.split('-').pop(), 10),
+                            currentVersion = parseInt(charm.get('revision'), 10);
+                        if (latestVersion > currentVersion) {
+                          service.set('upgrade_available', true);
+                          service.set('upgrade_to', latestCharm.charm.id);
+                        }
+                        resolve({service: service, charm: charm});
+                      }, function() {debugger;});
+                } else {
+                  resolve({service: service, charm: charm});
+                }
               }, reject);
             }, reject);
           });
@@ -159,6 +178,15 @@ YUI.add('model-controller', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+        Reference to the client db.
+
+        @attribute db
+        @type {Y.Base}
+        @default undefined
+      */
+      db: {},
+
       /**
         Reference to the client env.
 
@@ -169,13 +197,13 @@ YUI.add('model-controller', function(Y) {
       env: {},
 
       /**
-        Reference to the client db.
+        Reference to the client charm store.
 
-        @attribute db
-        @type {Y.Base}
+        @attribute store
+        @type {Charmworld2}
         @default undefined
       */
-      db: {}
+      store: {}
     }
   });
 
