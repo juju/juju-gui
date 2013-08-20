@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Inspector Constraints', function() {
-  var container, env, inspector, juju, models, utils, view, views, Y;
+  var container, env, inspector, juju, models, utils, view, views, Y, viewUtils;
 
   before(function(done) {
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
@@ -29,6 +29,7 @@ describe('Inspector Constraints', function() {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
+      viewUtils = Y.namespace('juju.views.utils');
       done();
     });
   });
@@ -127,11 +128,12 @@ describe('Inspector Constraints', function() {
   });
 
   it('renders the constraint titles correctly', function() {
-    var constraintDescriptions = getViewlet(inspector).constraintDescriptions;
+    var constraintDescriptions = viewUtils.constraintDescriptions;
+
     Y.Array.each(env.genericConstraints, function(key) {
       var node = container.one('div[for=' + key + '].control-label');
       var expectedTitle = constraintDescriptions[key].title;
-      assert.strictEqual(expectedTitle, node.getContent());
+      assert.strictEqual(expectedTitle, node.getHTML());
     });
   });
 

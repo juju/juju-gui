@@ -517,19 +517,16 @@ YUI.add('juju-view-utils', function(Y) {
       current service constraints.
     @param {Array} genericConstraints Generic constraint keys for the
       environment in use.
-    @param {Array} readOnlyConstraints Constraint keys to be excluded from
-      the resulting list.
-    @param {Object} constraintDescriptions Key-value pairs mapping constraint
-      keys to objects describing the corresponding title and optional unit.
     @return {Array} The resulting constraints list, each item being
       an object with the following fields: name, value, title, unit
       (optional).
   */
-  utils.getConstraints = function(
-      serviceConstraints, genericConstraints, readOnlyConstraints,
-      constraintDescriptions) {
+  utils.getConstraints = function(serviceConstraints, genericConstraints) {
+
     var constraints = [];
     var initial = Object.create(null);
+    var readOnlyConstraints = utils.readOnlyConstraints;
+    var constraintDescriptions = utils.constraintDescriptions;
     // Exclude read-only constraints.
     Y.Object.each(serviceConstraints, function(value, key) {
       if (readOnlyConstraints.indexOf(key) === -1) {
@@ -560,6 +557,26 @@ YUI.add('juju-view-utils', function(Y) {
       return item;
     });
   };
+
+  /**
+    Constraint descriptions used in getConstraints
+
+    @property constraintDescriptions
+  */
+  utils.constraintDescriptions = {
+    arch: {title: 'Architecture'},
+    cpu: {title: 'CPU', unit: 'GHz'},
+    'cpu-cores': {title: 'CPU Cores'},
+    'cpu-power': {title: 'CPU Power', unit: 'GHz'},
+    mem: {title: 'Memory', unit: 'GB'}
+  };
+
+  /**
+    Read-only constraints used in getConstraints
+
+    @property readOnlyConstraints
+  */
+  utils.readOnlyConstraints = ['provider-type', 'ubuntu-series'];
 
   /**
      Check whether or not the given relationId represents a PyJuju relation.
