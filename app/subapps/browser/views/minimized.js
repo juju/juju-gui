@@ -48,6 +48,11 @@ YUI.add('subapp-browser-minimized', function(Y) {
       }
     },
 
+    /**
+       Binds the viewmode control events to navigation.
+
+       @method _bindViewmodeControls
+     */
     _bindViewmodeControls: function() {
       var container = this.get('container');
       this.addEvent(

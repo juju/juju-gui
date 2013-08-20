@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser minimized view', function() {
-      var browser, container, Minimized , view, views, Y;
+      var browser, container, Minimized, view, views, Y;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -92,7 +92,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         view.controls._toggleViewable({halt: function() {} });
       });
-    })
+    });
   })();
 
   (function() {
