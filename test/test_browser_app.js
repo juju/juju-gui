@@ -33,6 +33,69 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   (function() {
+    describe.only('browser minimized view', function() {
+      var browser, container, Minimized , view, views, Y;
+
+      before(function(done) {
+        Y = YUI(GlobalConfig).use(
+            'juju-views',
+            'juju-browser',
+            'juju-tests-utils',
+            'subapp-browser-minimized', function(Y) {
+              browser = Y.namespace('juju.browser');
+              views = Y.namespace('juju.browser.views');
+              Minimized = views.MinimizedView;
+              done();
+            });
+      });
+
+      beforeEach(function() {
+        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        addBrowserContainer(Y, container);
+        // Mock out a dummy location for the Store used in view instances.
+        window.juju_config = {
+          charmworldURL: 'http://localhost'
+        };
+
+      });
+
+      afterEach(function() {
+        view.destroy();
+        Y.one('#subapp-browser').remove(true);
+        delete window.juju_config;
+        container.remove(true);
+      });
+
+      it('can route to fullscreen', function() {
+        view = new Minimized();
+        view.render();
+        view.on('viewNavigate', function(ev) {
+          assert.equal(ev.change.viewmode, 'fullscreen');
+        });
+        view.controls._goFullscreen({halt: function() {} });
+      });
+
+      it('can route to sidebar via view controls', function() {
+        view = new Minimized();
+        view.render();
+        view.on('viewNavigate', function(ev) {
+          assert.equal(ev.change.viewmode, 'sidebar');
+        });
+        view.controls._goSidebar({halt: function() {} });
+      });
+
+      it('can toggle back to oldviewmode via the toggle', function() {
+        view = new Minimized({oldViewmode: 'sidebar'});
+        view.render();
+        view.on('viewNavigate', function(ev) {
+          assert.equal(ev.change.viewmode, 'sidebar');
+        });
+        view.controls._toggleViewable({halt: function() {} });
+      });
+    })
+  })();
+
+  (function() {
     describe('browser fullscreen view', function() {
       var browser, container, FullScreen, view, views, Y;
 
