@@ -165,7 +165,8 @@ YUI.add('model-controller', function(Y) {
                     .then(function(latestCharm) {
                         var latestVersion = parseInt(
                             latestCharm.charm.id.split('-').pop(), 10),
-                            currentVersion = parseInt(charm.get('revision'), 10);
+                            currentVersion = parseInt(charm.get('revision'),
+                            10);
                         if (latestVersion > currentVersion) {
                           service.set('upgrade_available', true);
                           service.set('upgrade_to', latestCharm.charm.id);
