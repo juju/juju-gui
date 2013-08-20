@@ -152,6 +152,10 @@ YUI.add('model-controller', function(Y) {
           function(resolve, reject) {
             mController.getService(serviceId).then(function(service) {
               mController.getCharm(service.get('charm')).then(function(charm) {
+                // Check if a newer charm is available for this service so that
+                // we can offer it as an upgrade.
+                // XXX Makyo Aug. 20 - Remove feature flag when upgradecharm
+                // feature lands.
                 if (charm.get('scheme') === 'cs' &&
                     window.flags.upgradeCharm) {
                   // Get the charm's store ID, then replace the version number
@@ -167,7 +171,7 @@ YUI.add('model-controller', function(Y) {
                           service.set('upgrade_to', latestCharm.charm.id);
                         }
                         resolve({service: service, charm: charm});
-                      }, function() {debugger;});
+                      }, reject);
                 } else {
                   resolve({service: service, charm: charm});
                 }
