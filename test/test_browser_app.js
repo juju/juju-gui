@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   };
 
   (function() {
-    describe.only('browser minimized view', function() {
+    describe('browser minimized view', function() {
       var browser, container, Minimized , view, views, Y;
 
       before(function(done) {
