@@ -37,13 +37,66 @@ YUI.add('subapp-browser-minimized', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [], {
+  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [
+    Y.Event.EventTracker
+  ], {
     template: views.Templates.minimized,
 
     events: {
       '.bws-icon': {
         click: '_toggleViewState'
       }
+    },
+
+    _bindViewmodeControls: function() {
+      var container = this.get('container');
+      this.addEvent(
+          this.controls.on(
+              this.controls.EVT_TOGGLE_VIEWABLE, this._toggleViewState, this)
+      );
+
+      this.addEvent(
+          this.controls.on(
+              this.controls.EVT_FULLSCREEN, this._goFullscreen, this)
+      );
+      this.addEvent(
+          this.controls.on(
+              this.controls.EVT_SIDEBAR, this._goSidebar, this)
+      );
+    },
+
+    /**
+      Upon clicking the browser icon make sure we re-route to the
+      new form of the UX.
+
+      @method _goFullscreen
+      @param {Event} ev the click event handler on the button.
+
+     */
+    _goFullscreen: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'fullscreen'
+        }
+      });
+    },
+
+    /**
+      Upon clicking the build icon make sure we re-route to the
+      new form of the UX.
+
+      @method _goSidebar
+      @param {Event} ev the click event handler on the button.
+
+     */
+    _goSidebar: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'sidebar'
+        }
+      });
     },
 
     /**
@@ -88,6 +141,13 @@ YUI.add('subapp-browser-minimized', function(Y) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
       this.get('container').setHTML(tplNode);
+      // Make sure the controls starts out setting the correct active state
+      // based on the current viewmode for our View.
+      this.controls = new Y.juju.widgets.ViewmodeControls({
+        currentViewmode: this.get('oldViewMode')
+      });
+      this.controls.render();
+      this._bindViewmodeControls();
     }
 
   }, {
@@ -116,6 +176,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
     'base',
     'juju-templates',
     'juju-views',
-    'view'
+    'view',
+    'viewmode-controls'
   ]
 });
