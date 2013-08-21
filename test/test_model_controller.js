@@ -247,30 +247,29 @@ describe('Model Controller Promises', function() {
             });
       });
 
-  it('can check for available upgrades',
-      function(done) {
-        clobberLoad();
-        clobberGetService();
-        var serviceId = 'wordpress',
-            charmId = 'cs:precise/wordpress-7';
-        db.services.add({
-          id: serviceId,
-          loaded: true,
-          charm: charmId
-        });
-        window.flags.upgradeCharm = true;
-        modelController.set('store', utils.makeFakeStore());
-        var promise = modelController.getServiceWithCharm(serviceId);
-        promise.then(
-            function(result) {
-              var service = db.services.getById(serviceId);
-              assert(service.get('upgrade_available'), true);
-              assert(service.get('upgrade_to'), 'precise/wordpress-15');
-              done();
-            },
-            function() {
-              assert.fail('This should not have failed.');
-              done();
-            });
+  it('can check for available upgrades', function(done) {
+      clobberLoad();
+      clobberGetService();
+      var serviceId = 'wordpress',
+          charmId = 'cs:precise/wordpress-7';
+      db.services.add({
+        id: serviceId,
+        loaded: true,
+        charm: charmId
       });
+      window.flags.upgradeCharm = true;
+      modelController.set('store', utils.makeFakeStore());
+      var promise = modelController.getServiceWithCharm(serviceId);
+      promise.then(
+          function(result) {
+            var service = db.services.getById(serviceId);
+            assert(service.get('upgrade_available'), true);
+            assert(service.get('upgrade_to'), 'precise/wordpress-15');
+            done();
+          },
+          function() {
+            assert.fail('This should not have failed.');
+            done();
+          });
+    });
 });
