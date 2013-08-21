@@ -248,6 +248,9 @@
                 padding-left: 10px;
                 cursor: pointer;
             }
+            .editable-constraints {
+                padding-left: 10px;
+            }
             .unit-constraints-confirm {
                 overflow: hidden;
                 height: 130px;
@@ -292,6 +295,9 @@
             }
             textarea {
                 width: 100%;
+            }
+            input[type=text] {
+                width: 150px;
             }
             .settings-description {
                 font-size: 12px;
@@ -392,7 +398,7 @@
         }
 
         /* Resetting panel styles. Can be removed after old inspector styles are
-           removed. */
+           removed. (ServiceInspector) */
         .charm-panel-configure {
             background: transparent;
             float: none;
@@ -585,8 +591,7 @@
                 font-size: 18px;
                 padding-left: 0;
             }
-            .settings-wrapper,
-            .control-group {
+            .settings-wrapper {
                 position: relative;
                 padding: 0 10px;
 
