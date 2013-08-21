@@ -201,7 +201,7 @@ YUI.add('juju-models', function(Y) {
         Whether or not an upgrade is available.
 
         @attribute upgrade_available
-        @type boolean
+        @type {boolean}
         @default false
       */
       upgrade_available: {
@@ -212,7 +212,7 @@ YUI.add('juju-models', function(Y) {
         The latest charm URL that the service can be upgraded to.
 
         @attribute upgrade_to
-        @type string
+        @type {string}
       */
       upgrade_to: {},
       aggregated_status: {}

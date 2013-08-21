@@ -190,14 +190,14 @@ YUI.add('juju-charm-store', function(Y) {
       var storeId = charm.get('storeId').replace(/-\d+$/, '-HEAD');
       return this.promiseCharm(storeId, cache)
         .then(function(latest) {
-          var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10),
-              currentVersion = parseInt(charm.get('revision'), 10);
-          if (latestVersion > currentVersion) {
-            return latest.charm.id;
-          }
-        }, function(e) { 
-          throw e; 
-        });
+            var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10),
+               currentVersion = parseInt(charm.get('revision'), 10);
+            if (latestVersion > currentVersion) {
+              return latest.charm.id;
+            }
+          }, function(e) {
+            throw e;
+          });
     },
 
     /**

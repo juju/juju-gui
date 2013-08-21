@@ -160,10 +160,10 @@ YUI.add('model-controller', function(Y) {
                     window.flags.upgradeCharm) {
                   store.promiseUpgradeAvailability(charm, db.charms)
                     .then(function(latestId) {
-                      service.set('upgrade_available', !!latestId);
-                      service.set('upgrade_to', latestId);
-                      resolve({service: service, charm: charm});
-                    }, reject);
+                        service.set('upgrade_available', !!latestId);
+                        service.set('upgrade_to', latestId);
+                        resolve({service: service, charm: charm});
+                      }, reject);
                 } else {
                   resolve({service: service, charm: charm});
                 }
