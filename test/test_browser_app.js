@@ -66,29 +66,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container.remove(true);
       });
 
-      it('can route to fullscreen', function() {
+      it('can route to fullscreen', function(done) {
         view = new Minimized();
         view.render();
         view.on('viewNavigate', function(ev) {
           assert.equal(ev.change.viewmode, 'fullscreen');
+          done();
         });
         view.controls._goFullscreen({halt: function() {} });
       });
 
-      it('can route to sidebar via view controls', function() {
+      it('can route to sidebar via view controls', function(done) {
         view = new Minimized();
         view.render();
         view.on('viewNavigate', function(ev) {
           assert.equal(ev.change.viewmode, 'sidebar');
+          done();
         });
         view.controls._goSidebar({halt: function() {} });
       });
 
-      it('can toggle back to oldviewmode via the toggle', function() {
+      it('can toggle back to oldviewmode via the toggle', function(done) {
         view = new Minimized({oldViewmode: 'sidebar'});
         view.render();
         view.on('viewNavigate', function(ev) {
           assert.equal(ev.change.viewmode, 'sidebar');
+          done();
         });
         view.controls._toggleViewable({halt: function() {} });
       });
