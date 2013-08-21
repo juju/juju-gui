@@ -123,10 +123,14 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _confirmUnitConstraints: function(requestedUnitCount) {
       var container = this.viewletManager.viewlets.overview.container,
+          genericConstraints = this.options.env.genericConstraints,
           confirm = container.one('.unit-constraints-confirm'),
-          constraints = this.model.get('constraints') || {};
+          srvConstraints = this.model.get('constraints') || {};
 
-      confirm.setHTML(Templates['service-overview-constraints'](constraints));
+      confirm.setHTML(Templates['service-overview-constraints']({
+        srvConstraints: srvConstraints,
+        constraints: utils.getConstraints(srvConstraints, genericConstraints)
+      }));
       confirm.removeClass('closed');
     },
 
@@ -167,9 +171,13 @@ YUI.add('juju-view-inspector', function(Y) {
 
       @method _editUnitConstraints
     */
-    _editUnitConstraints: function() {
-      // show constraints viewlet on overview page to allow the user to
-      // edit them without changing viewlets.
+    _editUnitConstraints: function(e) {
+      e.halt();
+      var container = this.viewletManager.viewlets.overview.container;
+
+      container.all('.hide-on-edit').hide();
+      container.one('.editable-constraints').show();
+      container.one('.unit-constraints-confirm').addClass('editing');
     },
 
     _modifyUnits: function(requested_unit_count) {

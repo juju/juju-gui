@@ -1,25 +1,30 @@
 <span>Scale up with the following constraints?</span>
-<span class="constraint-details">
-  {{#if cpu}}
-    {{cpu}}Ghz
-  {{else}}
-    Default CPU
-  {{/if}}
-  &nbsp;
-  {{#if mem}}
-    {{mem}}GB
-  {{else}}
-    Default Mem
-  {{/if}}
-  &nbsp;
-  {{#if arch}}
-    {{arch}}
-  {{else}}
-    Default Arch
-  {{/if}}
+<span class="constraint-details hide-on-edit">
+  {{#srvConstraints}}
+    {{#if cpu}}
+      {{cpu}}Ghz
+    {{else}}
+      Default CPU
+    {{/if}}
+    &nbsp;
+    {{#if mem}}
+      {{mem}}GB
+    {{else}}
+      Default Mem
+    {{/if}}
+    &nbsp;
+    {{#if arch}}
+      {{arch}}
+    {{else}}
+      Default Arch
+    {{/if}}
+  {{/srvConstraints}}
 </span>
 <div class="edit-constraints-wrapper">
-  <a class="edit-constraints">Edit</a>
+  <a class="edit-constraints hide-on-edit">Edit</a>
+  <div class="editable-constraints" style="display: none;">
+    {{> service-constraints}}
+  </div>
 </div>
 <div class="overview-constraints"></div>
 <div class="inspector-buttons">
