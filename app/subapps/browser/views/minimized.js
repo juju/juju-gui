@@ -30,6 +30,11 @@ YUI.add('subapp-browser-minimized', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views');
 
+  // XXX jcsackett Aug 21 2013 The minimized view currently dupes a bunch of
+  // code from the Mainview. We can't just use mainview here b/c mainview
+  // expects search stuff to exist, which is only true for the sidebar and
+  // fullscreen views. When we add the search bar to always be present, we
+  // should remove this duplication.
   /**
    * The minimized state view.
    *
