@@ -955,14 +955,14 @@ YUI.add('juju-charm-models', function(Y) {
   models.BrowserCharmList = Y.Base.create('browserCharmList', Y.ModelList, [], {
     model: models.BrowserCharm,
     /**
-      Search charms for ids in various formats. This defaults to doing a getById
-      but when no match is found this will parse the charmId argument and attempt
-      to match without scheme and with the default series of the environment (if
-      provided.)
+      Search charms for ids in various formats. This defaults to doing a
+      getById but when no match is found this will parse the charmId argument
+      and attempt to match without scheme and with the default series of the
+      environment (if provided.)
 
       @method find
-      @param {String} charmIdl.
-      @param {String} defaultSeries.
+      @param {String} charmId to find.
+      @param {String} defaultSeries optional series to search.
       @return {Object} charm.
     */
     find: function(charmId, defaultSeries) {
@@ -985,7 +985,7 @@ YUI.add('juju-charm-models', function(Y) {
       if (result.length === 1) {
         return result[0];
       }
-     return null;
+      return null;
     }
   }, {
     ATTRS: {}

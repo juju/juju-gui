@@ -166,7 +166,7 @@ YUI.add('juju-charm-store', function(Y) {
      @method promiseCharm
      @param {String} charmId to fetch.
      @param {ModelList} cache a local cache of browser charms.
-     @param {String} defaultSeries.
+     @param {String} defaultSeries to resolve.
      @return {Promise} to load charm. Triggered with same result
              as this.charm.
     */
@@ -187,8 +187,8 @@ YUI.add('juju-charm-store', function(Y) {
      where revision can currently be any numeric placeholder.
 
      @method normalizeCharmId
-     @param {String} charmId
-     @param {String} defaultSeries
+     @param {String} charmId to normalize.
+     @param {String} defaultSeries to resolve.
      @return {String} normalized id.
      */
     normalizeCharmId: function(charmId, defaultSeries) {

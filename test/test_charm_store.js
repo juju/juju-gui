@@ -200,15 +200,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can normalize charm names for lookup', function() {
       var api = new Y.juju.Charmworld2({apiHost: 'http://localhost'});
       assert.equal(api.normalizeCharmId('wordpress', 'precise'),
-                  'precise/wordpress-1');
+          'precise/wordpress-1');
       assert.equal(api.normalizeCharmId('precise/wordpress', 'precise'),
-                  'precise/wordpress-1');
+          'precise/wordpress-1');
       assert.equal(api.normalizeCharmId('precise/wordpress'),
-                  'precise/wordpress-1');
+          'precise/wordpress-1');
       assert.equal(api.normalizeCharmId('precise/wordpress-10'),
-                  'precise/wordpress-10');
+          'precise/wordpress-10');
       assert.equal(api.normalizeCharmId('cs:precise/wordpress-10'),
-                  'precise/wordpress-10');
+          'precise/wordpress-10');
     });
   });
 

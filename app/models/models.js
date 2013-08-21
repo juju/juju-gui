@@ -1156,7 +1156,8 @@ YUI.add('juju-models', function(Y) {
 
         // Also track any new charms we'll have to add.
         if (current.charm && charms.indexOf(current.charm) === -1) {
-          charms.push(charmStore.promiseCharm(current.charm, self.charms, defaultSeries));
+          charms.push(charmStore.promiseCharm(current.charm, self.charms,
+                                              defaultSeries));
         }
       });
 
@@ -1169,7 +1170,7 @@ YUI.add('juju-models', function(Y) {
               var serviceId = serviceIdMap[serviceName];
               var charm = self.charms.find(serviceData.charm, defaultSeries);
               var charmId = charm && charm.get('id') || undefined;
-              var current = Y.mix( serviceData, {
+              var current = Y.mix(serviceData, {
                 id: serviceId, pending: useGhost, charm: charmId
               }, true);
               self.services.add(current);

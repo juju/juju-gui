@@ -87,10 +87,10 @@ describe('data binding library', function() {
             }, 100);
           });
 
-      it('supports more than one binding to a single model element', function(done) {
-        // We intentionally run this test with an interval, and thus need a wait.
-        // This is because the change interval can mask certain types of errors
-        // and we want the space to see that this acutally works.
+      it('supports gt one binding to a single model element', function(done) {
+        // We intentionally run this test with an interval, and thus need a
+        // wait.  This is because the change interval can mask certain types of
+        // errors and we want the space to see that this actually works.
         engine = new BindingEngine({interval: 50});
         container = utils.makeContainer();
         container.append('<input data-bind="a"/>');
