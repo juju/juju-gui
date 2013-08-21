@@ -426,8 +426,40 @@ YUI.add('juju-topology-service', function(Y) {
     canvasDropHandler: function(e) {
       // Required - causes Ubuntu FF 22.0 to refresh without.
       e.halt();
+      var topo = this.get('component');
       var evt = e._event;
       var dataTransfer = evt.dataTransfer;
+      var fileSources = dataTransfer.files;
+      if (fileSources && fileSources.length) {
+        // Path for dumping Deployer files on canvas.
+        var db = topo.get('db');
+        var store = topo.get('store');
+        var notifications = db.notifications;
+        Y.Array.each(fileSources, function(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            // Import each into the environment
+            db.importDeployer(jsyaml.safeLoad(e.target.result),
+                              store, {useGhost: false})
+                              .then(function() {
+                                notifications.add({
+                                  title: 'Imported Environment',
+                                  message: 'Import from "' + file.name + '" successful',
+                                  level: 'important'
+                                });
+                              }, function(err) {
+                                notifications.add({
+                                  title: 'Import Environment Failed',
+                                  message: 'Import from "' + file.name +
+                                    '" failed.<br/>' + err,
+                                  level: 'error'
+                                });
+                              });
+          };
+          reader.readAsText(file);
+        });
+      } else {
+        // Path for dropping tokens from browser.
       var dragData = JSON.parse(dataTransfer.getData('Text'));
       var topo = this.get('component');
       var translation = topo.get('translate');
@@ -450,6 +482,7 @@ YUI.add('juju-topology-service', function(Y) {
         ghostAttributes.icon = dragData.iconSrc;
         var charm = new models.BrowserCharm(charmData);
         Y.fire('initiateDeploy', charm, ghostAttributes);
+        }
       }
     },
 

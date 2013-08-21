@@ -87,6 +87,30 @@ describe('data binding library', function() {
             }, 100);
           });
 
+      it('supports more than one binding to a single model element', function(done) {
+        // We intentionally run this test with an interval, and thus need a wait.
+        // This is because the change interval can mask certain types of errors
+        // and we want the space to see that this acutally works.
+        engine = new BindingEngine({interval: 50});
+        container = utils.makeContainer();
+        container.append('<input data-bind="a"/>');
+        container.append('<input data-bind="a"/>');
+        var viewlet = {
+          container: container,
+          _changedValues: [],
+          _eventHandles: []
+        };
+        var model = new Y.Model({a: 'b'});
+        engine.bind(model, viewlet);
+        // Trigger the change event.
+        model.set('a', 'c');
+        setTimeout(function() {
+          var nodes = container.all('input');
+          assert.equal(nodes.item(0).get('value'), 'c');
+          assert.equal(nodes.item(1).get('value'), 'c');
+          done();
+        }, 100);
+      });
 
       it('supports nested model bindings', function() {
         container = utils.makeContainer();
