@@ -216,7 +216,7 @@ YUI.add('juju-view-environment', function(Y) {
                 'unitDetails',
                 'inspectorHeader'
               ],
-              template: Y.juju.views.Templates['viewlet-manager']
+              template: Y.juju.views.Templates['service-config-wrapper']
             },
             configGhost: {
               // controller will show the first one in this array by default
