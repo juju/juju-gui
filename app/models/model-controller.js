@@ -158,21 +158,12 @@ YUI.add('model-controller', function(Y) {
                 // feature lands.
                 if (charm.get('scheme') === 'cs' &&
                     window.flags.upgradeCharm) {
-                  // Get the charm's store ID, then replace the version number
-                  // with '-HEAD' to retrieve the latest version of the charm.
-                  var storeId = charm.get('storeId').replace(/-\d+$/, '-HEAD');
-                  store.promiseCharm(storeId, db.charms)
-                    .then(function(latestCharm) {
-                        var latestVersion = parseInt(
-                            latestCharm.charm.id.split('-').pop(), 10),
-                            currentVersion = parseInt(charm.get('revision'),
-                            10);
-                        if (latestVersion > currentVersion) {
-                          service.set('upgrade_available', true);
-                          service.set('upgrade_to', latestCharm.charm.id);
-                        }
-                        resolve({service: service, charm: charm});
-                      }, reject);
+                  store.promiseUpgradeAvailability(charm, db.charms)
+                    .then(function(latestId) {
+                      service.set('upgrade_available', !!latestId);
+                      service.set('upgrade_to', latestId);
+                      resolve({service: service, charm: charm});
+                    }, reject);
                 } else {
                   resolve({service: service, charm: charm});
                 }
