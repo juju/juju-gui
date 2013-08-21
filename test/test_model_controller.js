@@ -57,6 +57,7 @@ describe('Model Controller Promises', function() {
     yui.Array.each(cleanups, function(cleanup) {
       cleanup();
     });
+    window.flags = {};
   });
 
   /**
