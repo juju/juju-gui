@@ -35,4 +35,12 @@
     </div>
   </div>
   {{/if}}
+
+  {{#if constraints}}
+  <!-- Service Constraints added in -->
+  <div class="ghost-config-wrapper service-constraints">
+    <div class="ghost-config-header">Constraints</div>
+    <div class="ghost-config-content use-defaults">
+      {{> service-constraints}}
+  {{/if}}
 </div>
