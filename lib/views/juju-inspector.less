@@ -11,6 +11,8 @@
 @disabled-input-text-color: #252525;
 
 .yui3-juju-inspector {
+    input[type=text]::-ms-clear { display: none; }
+
     .customize-scrollbar;
 
     .inspector-buttons {
@@ -217,6 +219,8 @@
         }
 
         .unit-scaling {
+            width: 255px;
+
             .current-unit-num-wrapper {
                 width: 95px;
                 background-color: @inspector-region-background-color;
@@ -231,26 +235,39 @@
                 right: 10px;
             }
             input.num-units-control {
-                width: 115px;
+                width: 107px;
             }
             span {
                 padding: 0 10px;
                 line-height: 30px;
             }
+            .constraint-details {
+                font-size: 11px;
+            }
             a.edit-constraints {
                 padding-left: 10px;
-                &:before {
-                    content: '\A';
-                }
+                cursor: pointer;
             }
             .unit-constraints-confirm {
                 overflow: hidden;
-                height: 120px;
+                height: 130px;
                 letter-spacing: normal;
                 background-color: @inspector-region-background-color;
                 -moz-transition: .3s, height .3s;
                 -webkit-transition: .25s, height .3s;
                 transition: .3s, height .3s;
+
+                .constraint-details {
+                    display: block;
+                }
+                .inspector-buttons {
+                    padding-bottom: 10px;
+
+                    a {
+                        display: inline-block;
+                        float: none;
+                    }
+                }
             }
             .unit-constraints-confirm.closed {
                 height: 0;
@@ -419,6 +436,7 @@
         }
 
         .viewlet-container {
+            overflow-x: hidden;
             overflow-y: auto;
             border-top: 1px solid @inspector-divider-top;
             /* overwritten by the recalculateHeight() method in
