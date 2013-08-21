@@ -121,6 +121,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
+      debugger;
       options.env.deploy(
           model.get('id'),
           serviceName,

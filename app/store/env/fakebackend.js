@@ -372,6 +372,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
+        // fill this bad boy in.
         constraints: {},
         exposed: false,
         subordinate: charm.get('is_subordinate'),
