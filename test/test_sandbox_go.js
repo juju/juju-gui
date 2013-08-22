@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('sandbox.GoJujuAPI', function() {
+  describe.only('sandbox.GoJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
       'juju-models', 'promise'];
@@ -255,6 +255,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(service.get('config'), {funny: 'business'});
         var units = state.db.units.get_units_for_service(service);
         assert.lengthOf(units, 2);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can deploy with constraints', function(done) {
+      var constraints = {
+        'CpuCores': 1,
+        'CpuPower': 0,
+        'Mem': '512M',
+        'Arch': 'i386'
+      };
+      var data = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          CharmUrl: 'cs:precise/wordpress-15',
+          Constraints: constraints,
+          ServiceName: 'kumquat',
+          ConfigYAML: 'funny: business',
+          NumUnits: 2
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var service = state.db.services.getById('kumquat');
+        debugger;
+        assert.deepEqual(service.get('constraints'), {
+          'cpu-cores': 1,
+          'cpu-power': 0,
+          'mem': '512M',
+          'arch': 'i386'
+        });
         done();
       };
       client.open();

@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models', 'promise'];
@@ -412,6 +412,39 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             callback);
       });
       env.connect();
+    });
+
+    it('can deploy with constraints', function(done) {
+      var constraints = {
+        'cpu': 1,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+      var data = {
+        op: 'deploy',
+        charm_url: 'cs:precise/wordpress-15',
+        service_name: 'kumquat',
+        config_raw: 'funny: business',
+        constraints: constraints,
+        num_units: 2,
+        request_id: 42
+      };
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will be the reply to our
+        // deployment.
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('kumquat');
+          assert.deepEqual(service.get('constraints'), {
+            'cpu': 1,
+            'mem': '512M',
+            'arch': 'i386'
+          });
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      };
+      client.open();
     });
 
     it('can send a delta stream of changes.', function(done) {
