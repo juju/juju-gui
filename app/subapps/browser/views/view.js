@@ -40,7 +40,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
    *
    */
   ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
-    Y.Event.EventTracker
+    Y.Event.EventTracker,
+    Y.juju.views.utils.viewmodeControllingView
   ], {
 
     /**
@@ -85,27 +86,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _bindSearchWidgetEvents: function() {
       var container = this.get('container');
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
-      );
-
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_FULLSCREEN, this._goFullscreen, this)
-      );
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_SIDEBAR, this._goSidebar, this)
-      );
-
       if (this.search) {
         this.addEvent(
             this.search.on(
                 this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
         );
       }
-
 
       if (this.search) {
         this.addEvent(
@@ -137,6 +123,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
           }
         }, this);
       }
+      this._bindViewmodeControls(this.controls);
     },
 
     /**
@@ -237,7 +224,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        @param {Event} ev event to trigger the toggle.
 
      */
-    _toggleBrowser: function(ev) {
+    _toggleMinimized: function(ev) {
       ev.halt();
 
       this.fire('viewNavigate', {
@@ -247,41 +234,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
     },
 
-    /**
-      Upon clicking the browser icon make sure we re-route to the
-      new form of the UX.
-
-      @method _goFullscreen
-      @param {Event} ev the click event handler on the button.
-
-     */
-    _goFullscreen: function(ev) {
-      ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'fullscreen'
-        }
-      });
-    },
-
-    /**
-      Upon clicking the build icon make sure we re-route to the
-      new form of the UX.
-
-      @method _goSidebar
-      @param {Event} ev the click event handler on the button.
-
-     */
-    _goSidebar: function(ev) {
-      ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'sidebar'
-        }
-      });
-    },
-
-    /**
+    /*
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
@@ -385,6 +338,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-browser-models',
     'juju-models',
+    'juju-view-utils',
     'querystring-stringify',
     'view',
     'viewmode-controls'
