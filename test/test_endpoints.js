@@ -378,6 +378,7 @@ describe('Endpoints map handlers', function() {
 
   it('should update endpoints map when non-pending services are added',
      function(done) {
+       var store = utils.makeFakeStore();
        var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
        app.db.charms.add({id: charm_id});
@@ -388,6 +389,7 @@ describe('Endpoints map handlers', function() {
          id: service_name,
          pending: true,
          loaded: true,
+         store: store,
          charm: charm_id});
 
        controller.on('endpointMapAdded', function() {

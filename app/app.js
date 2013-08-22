@@ -398,7 +398,8 @@ YUI.add('juju-gui', function(Y) {
 
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
-        db: this.db
+        db: this.db,
+        store: this.get('store')
       });
 
       // Update the on-screen environment name provided in the configuration,

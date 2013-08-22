@@ -1,0 +1,52 @@
+wordpress-base:
+    series: precise
+    services:
+        blog:
+            charm: wordpress
+
+wordpress-stage:
+    series: precise
+    inherits:
+        - wordpress-base
+    services:
+        blog:
+            constraints: instance-type=m1.small
+            num_units: 3
+            options:
+                tuning: optimized
+                engine: apache
+                wp-content: include-base64://blog.snippet
+        db:
+            charm: mysql
+            options:
+                tuning-level: fast
+        memcached:
+            charm: memcached
+            options:
+                size: 100
+        haproxy:
+            charm: haproxy
+            options:
+                services: include-file://blog-include.yaml
+    relations:
+        - - blog
+          - db
+        - - blog:cache
+          - memcached
+        - - blog
+          - haproxy
+
+wordpress-prod:
+    series: precise
+    inherits: wordpress-stage
+    services:
+        blog:
+            options:
+                engine: nginx
+                tuning: optimized
+            constraints: instance-type=m1.large
+
+        db:
+            constraints: instance-type=m1.large
+            options:
+                tuning-level: safest

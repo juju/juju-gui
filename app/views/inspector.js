@@ -123,10 +123,14 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _confirmUnitConstraints: function(requestedUnitCount) {
       var container = this.viewletManager.viewlets.overview.container,
+          genericConstraints = this.options.env.genericConstraints,
           confirm = container.one('.unit-constraints-confirm'),
-          constraints = this.model.get('constraints') || {};
+          srvConstraints = this.model.get('constraints') || {};
 
-      confirm.setHTML(Templates['service-overview-constraints'](constraints));
+      confirm.setHTML(Templates['service-overview-constraints']({
+        srvConstraints: srvConstraints,
+        constraints: utils.getConstraints(srvConstraints, genericConstraints)
+      }));
       confirm.removeClass('closed');
     },
 
@@ -145,7 +149,10 @@ YUI.add('juju-view-inspector', function(Y) {
         this.resetUnits();
       }
 
+      // editing class added if the user clicked 'edit'
+      confirm.removeClass('editing');
       confirm.addClass('closed');
+      this.overviewConstraintsEdit = false;
     },
 
     /**
@@ -156,8 +163,19 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _confirmUnitChange: function(e) {
       e.halt();
-      var container = this.viewletManager.viewlets.overview.container;
-      this._modifyUnits(container.one('input.num-units-control').get('value'));
+      var container = this.viewletManager.viewlets.overview.container,
+          unitCount = container.one('input.num-units-control').get('value'),
+          service = this.model;
+
+      // If the user chose to edit the constraints
+      if (this.overviewConstraintsEdit) {
+        var constraints = utils.getElementsValuesMapping(
+                                  container, '.constraint-field');
+        var cb = Y.bind(this._modifyUnits, this, unitCount);
+        this.options.env.set_constraints(service.get('id'), constraints, cb);
+      } else {
+        this._modifyUnits(unitCount);
+      }
       this._closeUnitConfirm();
     },
 
@@ -165,11 +183,15 @@ YUI.add('juju-view-inspector', function(Y) {
       Shows the unit constraints when the user wants to edit them
       while increasing the total number of units
 
-      @method _editUnitConstraints
+      @method _showEditUnitConstraints
     */
-    _editUnitConstraints: function() {
-      // show constraints viewlet on overview page to allow the user to
-      // edit them without changing viewlets.
+    _showEditUnitConstraints: function(e) {
+      e.halt();
+      var container = this.viewletManager.viewlets.overview.container;
+      container.all('.hide-on-edit').hide();
+      container.one('.editable-constraints').show();
+      container.one('.unit-constraints-confirm').addClass('editing');
+      this.overviewConstraintsEdit = true;
     },
 
     _modifyUnits: function(requested_unit_count) {
@@ -181,6 +203,7 @@ YUI.add('juju-view-inspector', function(Y) {
         container = this.get('container');
         env = this.get('env');
       }
+
       var service = this.model || this.get('model');
       var unit_count = service.get('unit_count');
       var field = container.one('.num-units-control');
