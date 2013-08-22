@@ -18,10 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// We need to override the global saveAs method below; silence errors about it.
+/* jslint -W079 */
+var saveAs = saveAs;
 
 (function() {
   describe('websocket recording', function() {
-    var Y, WebsocketLogging, websocketLogging, saveAs;
+    var Y, WebsocketLogging, websocketLogging;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -34,6 +37,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       websocketLogging = new WebsocketLogging();
       // Provide a noop saveAs global which is normally provided by the app.
+      // We need to override a 'read-only' variable; silence errors about it.
+      /* jslint -W020 */
       saveAs = function() {};
     });
 
@@ -44,14 +49,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.detach('saveWebsocketLog');
     });
 
-    it('can save a log', function() {
+    it('can save a log', function(done) {
       // When asked to save a log, the global saveAs function is called with a
       // blob containing the serialized log entries.
+      // We need to override a 'read-only' variable; silence errors about it.
+      /* jslint -W020 */
       saveAs = function(blob, fileName) {
         assert.isTrue(blob !== undefined);
         assert.equal(blob.type, 'text/plain;charset=utf-8');
         assert.equal(blob.size, 6);
         assert.equal(fileName, 'websocket-log.txt');
+        done();
       };
       websocketLogging.saveLog(['my', 'log']);
     });
