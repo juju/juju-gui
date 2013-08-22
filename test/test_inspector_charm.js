@@ -93,9 +93,7 @@ describe('Inspector Charm', function() {
       };
     };
     var viewletAttrs = {
-      db: {
-        charms: new Y.juju.models.BrowserCharmList()
-      },
+      db: new Y.juju.models.Database(),
       store: fakeStore
     };
 

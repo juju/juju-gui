@@ -1077,6 +1077,7 @@ YUI.add('juju-models', function(Y) {
       if (useGhost === undefined) {
         useGhost = true;
       }
+      var defaultSeries = self.environment.get('defaultSeries');
 
       if (!targetBundle && Object.keys(data).length > 1) {
         throw new Error('Import target ambigious, aborting.');
@@ -1174,7 +1175,8 @@ YUI.add('juju-models', function(Y) {
 
         // Also track any new charms we'll have to add.
         if (current.charm && charms.indexOf(current.charm) === -1) {
-          charms.push(charmStore.promiseCharm(current.charm, self.charms));
+          charms.push(charmStore.promiseCharm(current.charm, self.charms,
+                                              defaultSeries));
         }
       });
 
@@ -1183,10 +1185,13 @@ YUI.add('juju-models', function(Y) {
       return Y.batch.apply(this, charms)
      .then(function() {
             Object.keys(serviceIdMap).forEach(function(serviceName) {
+              var serviceData = source.services[serviceName];
               var serviceId = serviceIdMap[serviceName];
-              var current = Y.mix(
-                 source.services[serviceName], { id: serviceId, pending:
-                   useGhost}, true);
+              var charm = self.charms.find(serviceData.charm, defaultSeries);
+              var charmId = charm && charm.get('id') || undefined;
+              var current = Y.mix(serviceData, {
+                id: serviceId, pending: useGhost, charm: charmId
+              }, true);
               self.services.add(current);
               // XXX: This is a questionable use case as we are only creating
               // client side objects in the database.  There would ideally be
