@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models', 'promise'];
@@ -154,6 +154,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             localCb);
       });
       env.connect();
@@ -209,6 +210,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             localCb);
       });
       env.connect();
@@ -383,6 +385,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             callback);
       });
       env.connect();
@@ -405,6 +408,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             undefined,
             undefined,
             1,
+            null,
             callback);
       });
       env.connect();
@@ -1032,6 +1036,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             undefined,
             undefined,
             1,
+            null,
             addRelation);
       });
     });
@@ -1138,9 +1143,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1,
+            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, null,
             function() {
-              env.deploy('cs:precise/mysql-26', null, null, null, 1,
+              env.deploy('cs:precise/mysql-26', null, null, null, 1, null,
                   function() {
                     env.add_relation(endpoints[0], endpoints[1], function() {
                       env.remove_relation(endpoints[0], endpoints[1], localCb);

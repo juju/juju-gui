@@ -118,7 +118,7 @@ describe('charm panel', function() {
       serviceName = 'membase';
       // Mock the relevant environment calls.
       env = {
-        deploy: function(url, service, config, config_raw, units, callback) {
+        deploy: function(url, service, config, config_raw, units, constraints, callback) {
           callback({err: false});
         },
         update_annotations: function(service, type, annotations, callback) {
