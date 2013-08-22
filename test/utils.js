@@ -141,6 +141,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       var modellist = cache;
       var fakeStore = new Y.juju.Charmworld2({});
       fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
+        store_id = this.normalizeCharmId(store_id, 'precise');
         var charmName = store_id.split('/')[1];
         charmName = charmName.split('-', 1);
         if (charmName in jujuTests.utils._cached_charms) {

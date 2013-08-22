@@ -426,30 +426,62 @@ YUI.add('juju-topology-service', function(Y) {
     canvasDropHandler: function(e) {
       // Required - causes Ubuntu FF 22.0 to refresh without.
       e.halt();
+      var topo = this.get('component');
       var evt = e._event;
       var dataTransfer = evt.dataTransfer;
-      var dragData = JSON.parse(dataTransfer.getData('Text'));
-      var topo = this.get('component');
-      var translation = topo.get('translate');
-      var scale = topo.get('scale');
-      var ghostAttributes = { coordinates: [] };
-      // The following magic number 71 is the height of the header and is
-      // required to position the service in the proper y position.
-      var dropXY = [evt.clientX, (evt.clientY - 71)];
+      var fileSources = dataTransfer.files;
+      if (fileSources && fileSources.length) {
+        // Path for dumping Deployer files on canvas.
+        var db = topo.get('db');
+        var store = topo.get('store');
+        var notifications = db.notifications;
+        Y.Array.each(fileSources, function(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            // Import each into the environment
+            db.importDeployer(jsyaml.safeLoad(e.target.result),
+                              store, {useGhost: false})
+                              .then(function() {
+                  notifications.add({
+                    title: 'Imported Environment',
+                    message: 'Import from "' + file.name + '" successful',
+                    level: 'important'
+                  });
+                }, function(err) {
+                  notifications.add({
+                    title: 'Import Environment Failed',
+                    message: 'Import from "' + file.name +
+                                    '" failed.<br/>' + err,
+                    level: 'error'
+                  });
+                });
+          };
+          reader.readAsText(file);
+        });
+      } else {
+        // Path for dropping tokens from browser.
+        var dragData = JSON.parse(dataTransfer.getData('Text'));
+        var translation = topo.get('translate');
+        var scale = topo.get('scale');
+        var ghostAttributes = { coordinates: [] };
+        // The following magic number 71 is the height of the header and is
+        // required to position the service in the proper y position.
+        var dropXY = [evt.clientX, (evt.clientY - 71)];
 
-      // Take the x,y offset (translation) of the topology view into account.
-      Y.Array.each(dropXY, function(_, index) {
-        ghostAttributes.coordinates[index] =
-            (dropXY[index] - translation[index]) / scale;
-      });
-      if (dragData.dataType === 'charm-token-drag-and-drop') {
-        // The charm data was JSON encoded because the dataTransfer mechanism
-        // only allows for string values.
-        var charmData = Y.JSON.parse(dragData.charmData);
-        // Add the icon url to the ghost attributes for the ghost icon
-        ghostAttributes.icon = dragData.iconSrc;
-        var charm = new models.BrowserCharm(charmData);
-        Y.fire('initiateDeploy', charm, ghostAttributes);
+        // Take the x,y offset (translation) of the topology view into account.
+        Y.Array.each(dropXY, function(_, index) {
+          ghostAttributes.coordinates[index] =
+              (dropXY[index] - translation[index]) / scale;
+        });
+        if (dragData.dataType === 'charm-token-drag-and-drop') {
+          // The charm data was JSON encoded because the dataTransfer mechanism
+          // only allows for string values.
+          var charmData = Y.JSON.parse(dragData.charmData);
+          // Add the icon url to the ghost attributes for the ghost icon
+          ghostAttributes.icon = dragData.iconSrc;
+          var charm = new models.BrowserCharm(charmData);
+          Y.fire('initiateDeploy', charm, ghostAttributes);
+        }
       }
     },
 

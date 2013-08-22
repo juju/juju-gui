@@ -194,7 +194,7 @@ YUI.add('juju-view-environment', function(Y) {
                 },
                 '.cancel-num-units': { click: '_closeUnitConfirm'},
                 '.confirm-num-units': { click: '_confirmUnitChange'},
-                'a.edit-constraints': { click: '_editUnitConstraints'},
+                'a.edit-constraints': { click: '_showEditUnitConstraints'},
                 // Settings viewlet.
                 'input.expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
@@ -312,9 +312,6 @@ YUI.add('juju-view-environment', function(Y) {
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
             topo.addModule(views.LandscapeModule);
-            if (this.get('useDragDropImport')) {
-              topo.addModule(views.ImportExportModule);
-            }
 
             topo.addTarget(this);
             this.topo = topo;
