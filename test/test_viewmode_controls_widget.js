@@ -117,10 +117,8 @@ describe('viewmode control extension', function() {
                                'node-event-simulate',
                                'node'], function(Y) {
       ViewmodeControls = Y.juju.widgets.ViewmodeControls;
-      TestView = Y.Base.create(
-        'testclass',
-        Y.View,
-        [Y.juju.widgets.ViewmodeControllingViewExtension]);
+      TestView = Y.Base.create('testclass', Y.View, [
+        Y.juju.widgets.ViewmodeControllingViewExtension]);
       done();
     });
   });
@@ -137,7 +135,6 @@ describe('viewmode control extension', function() {
   });
 
   afterEach(function() {
-    debugger;
     container.remove(true);
     if (view) {
       view.destroy();

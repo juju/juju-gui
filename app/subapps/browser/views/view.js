@@ -234,7 +234,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
     },
 
-    /*
+    /**
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
