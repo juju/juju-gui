@@ -122,7 +122,6 @@ YUI.add('subapp-browser-minimized', function(Y) {
     'base',
     'juju-templates',
     'juju-views',
-    'juju-view-utils',
     'view',
     'viewmode-controls'
   ]

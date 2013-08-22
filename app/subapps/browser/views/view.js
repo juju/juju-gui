@@ -234,7 +234,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
     },
 
-    /**
+    /*
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
@@ -337,7 +337,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-browser-models',
     'juju-models',
-    'juju-view-utils',
     'querystring-stringify',
     'view',
     'viewmode-controls'

@@ -189,6 +189,88 @@ YUI.add('viewmode-controls', function(Y) {
     }
   });
 
+  /**
+   * Extension for views to provide viewmode controls.
+   *
+   * @class viewmodeControllingView
+   */
+  ns.viewmodeControllingViewExtension = function() {
+    this._initViewmodeControllingView();
+  };
+  ns.viewmodeControllingViewExtension.prototype = {
+    /**
+     * Constructor
+     *
+     * @method _initViewmodeControllingView
+     */
+    _initViewmodeControllingViewExtnsion: function() {
+    },
+
+    /**
+     * Binds the viewmode controls on the page to the viewmode change events.
+     *
+     * @method _bindViewmodeControls
+     * @param {Y.Widget} controls The viewmode control widget.
+     */
+    _bindViewmodeControls: function(controls) {
+      this._fullscreen = this.controls.on(
+          this.controls.EVT_FULLSCREEN, this._goFullscreen, this);
+      this._sidebar = this.controls.on(
+          this.controls.EVT_SIDEBAR, this._goSidebar, this);
+      this._minimized = this.controls.on(
+          this.controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
+      this._destroy = this.on('destroy', function() {
+        this._fullscreen.detach();
+        this._sidebar.detach();
+        this._minimized.detach();
+        this._destroy.detach();
+      });
+    },
+
+    /**
+      Upon clicking the browser icon make sure we re-route to the
+      new form of the UX.
+
+      @method _goFullscreen
+      @param {Event} ev the click event handler on the button.
+
+     */
+    _goFullscreen: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'fullscreen'
+        }
+      });
+    },
+
+    /**
+      Upon clicking the build icon make sure we re-route to the
+      new form of the UX.
+
+      @method _goSidebar
+      @param {Event} ev the click event handler on the button.
+
+     */
+    _goSidebar: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'sidebar'
+        }
+      });
+    },
+
+    /**
+     * Place holder to toggle the minimized view; in minimized this should show
+     * sidebar, in sidebar this should show minimized.
+     * @method _toggle_sidebar
+     * @param {Event} ev event to trigger the toggle.
+     *
+     */
+    _toggleMinimized: function(ev) {}
+  };
+
 }, '0.1.0', {
   requires: [
     'base',
