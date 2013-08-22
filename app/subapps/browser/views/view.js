@@ -234,11 +234,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
       });
     },
 
-    /*
+    /**
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
-     *
      */
     destructor: function() {
       // Clean up any details view we might have hanging around.
