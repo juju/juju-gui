@@ -482,6 +482,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         name: data.service_name,
         config: data.config,
         configYAML: data.config_raw,
+        constraints: data.constraints,
         unitCount: data.num_units
       });
     },
