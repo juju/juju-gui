@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('sandbox.PyJujuAPI', function() {
+  describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models', 'promise'];
