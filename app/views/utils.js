@@ -1479,7 +1479,7 @@ YUI.add('juju-view-utils', function(Y) {
      * Binds the viewmode controls on the page to the viewmode change events.
      *
      * @method _bindViewmodeControls
-     * @param {Y.Widget} controls The viewmode control widget 
+     * @param {Y.Widget} controls The viewmode control widget.
      */
     _bindViewmodeControls: function(controls) {
       this._fullscreen = this.controls.on(
