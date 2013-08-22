@@ -37,7 +37,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
    *
    */
   ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [
-    Y.juju.views.utils.viewmodeControllingView
+    Y.juju.widgets.ViewmodeControllingViewExtension
   ], {
     template: views.Templates.minimized,
 

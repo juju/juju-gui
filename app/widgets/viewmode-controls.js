@@ -194,16 +194,16 @@ YUI.add('viewmode-controls', function(Y) {
    *
    * @class viewmodeControllingView
    */
-  ns.viewmodeControllingViewExtension = function() {
-    this._initViewmodeControllingView();
+  ns.ViewmodeControllingViewExtension = function() {
+    this._initViewmodeControllingViewExtension();
   };
-  ns.viewmodeControllingViewExtension.prototype = {
+  ns.ViewmodeControllingViewExtension.prototype = {
     /**
      * Constructor
      *
      * @method _initViewmodeControllingView
      */
-    _initViewmodeControllingViewExtnsion: function() {
+    _initViewmodeControllingViewExtension: function() {
     },
 
     /**
@@ -213,12 +213,12 @@ YUI.add('viewmode-controls', function(Y) {
      * @param {Y.Widget} controls The viewmode control widget.
      */
     _bindViewmodeControls: function(controls) {
-      this._fullscreen = this.controls.on(
-          this.controls.EVT_FULLSCREEN, this._goFullscreen, this);
-      this._sidebar = this.controls.on(
-          this.controls.EVT_SIDEBAR, this._goSidebar, this);
-      this._minimized = this.controls.on(
-          this.controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
+      this._fullscreen = controls.on(
+          controls.EVT_FULLSCREEN, this._goFullscreen, this);
+      this._sidebar = controls.on(
+          controls.EVT_SIDEBAR, this._goSidebar, this);
+      this._minimized = controls.on(
+          controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
       this._destroy = this.on('destroy', function() {
         this._fullscreen.detach();
         this._sidebar.detach();

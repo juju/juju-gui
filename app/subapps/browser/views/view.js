@@ -41,7 +41,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
    */
   ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
     Y.Event.EventTracker,
-    Y.juju.views.utils.viewmodeControllingView
+    Y.juju.widgets.ViewmodeControllingViewExtension
   ], {
 
     /**
