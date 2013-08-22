@@ -20,7 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, ENTER, charmConfig;
+      inspector, Y, jujuViews, ENTER, charmConfig,
+
+      client, backendJuju, state;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -60,6 +62,16 @@ describe('Inspector Overview', function() {
     env.destroy();
     container.remove(true);
     window.flags = {};
+
+    if (client) {
+      client.destroy();
+    }
+    if (backendJuju) {
+      backendJuju.destroy();
+    }
+    if (state) {
+      state.destroy();
+    }
   });
 
   var setUpInspector = function() {
@@ -132,10 +144,41 @@ describe('Inspector Overview', function() {
        control.simulate('keydown', { keyCode: ENTER });
        // confirm the 'please confirm constraints' dialogue
        container.one('.confirm-num-units').simulate('click');
+       assert.equal(container.one('.unit-constraints-confirm')
+                       .one('span:first-child')
+                       .getHTML(), 'Scale up with the following constraints?');
        var message = conn.last_message();
        message.op.should.equal('add_unit');
        message.service_name.should.equal('mediawiki');
        message.num_units.should.equal(4);
+     });
+
+  it('should set the constraints before deploying any more units',
+     function() {
+       setUpInspector(true);
+       var control = container.one('.num-units-control');
+       control.set('value', 7);
+       control.simulate('keydown', { keyCode: ENTER });
+       var editConstraintsButton = container.one('.edit-constraints');
+       editConstraintsButton.simulate('click');
+       // It should be hidden after being clicked to display the constraints
+       assert.equal(editConstraintsButton.getStyle('display'), 'none');
+       var constraintsWrapper = container.one('.editable-constraints');
+       assert.equal(constraintsWrapper.getStyle('display'), 'block');
+       var cpuInput = constraintsWrapper.one('input[name=cpu]'),
+           memInput = constraintsWrapper.one('input[name=mem]'),
+           archInput = constraintsWrapper.one('input[name=arch]');
+
+       cpuInput.set('value', 1);
+       memInput.set('value', 2);
+       archInput.set('value', 3);
+
+       // confirm the 'please confirm constraints' dialogue
+       container.one('.confirm-num-units').simulate('click');
+       var message = conn.last_message();
+       message.op.should.equal('set_constraints');
+       message.service_name.should.equal('mediawiki');
+       assert.deepEqual(message.constraints, ['cpu=1', 'mem=2', 'arch=3']);
      });
 
   it('generates a proper statuses object', function() {

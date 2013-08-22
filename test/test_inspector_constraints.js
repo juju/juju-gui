@@ -131,7 +131,7 @@ describe('Inspector Constraints', function() {
     var constraintDescriptions = viewUtils.constraintDescriptions;
 
     Y.Array.each(env.genericConstraints, function(key) {
-      var node = container.one('div[for=' + key + '].control-label');
+      var node = container.one('label[for=' + key + ']');
       var expectedTitle = constraintDescriptions[key].title;
       assert.strictEqual(expectedTitle, node.getHTML());
     });

@@ -170,7 +170,7 @@ YUI.add('juju-view-inspector', function(Y) {
       // If the user chose to edit the constraints
       if (this.overviewConstraintsEdit) {
         var constraints = utils.getElementsValuesMapping(
-                                              container, '.constraint-field');
+                                  container, '.constraint-field');
         var cb = Y.bind(this._modifyUnits, this, unitCount);
         this.options.env.set_constraints(service.get('id'), constraints, cb);
       } else {
