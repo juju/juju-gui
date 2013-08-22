@@ -261,40 +261,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('can deploy with constraints', function(done) {
-      var constraints = {
-        'CpuCores': 1,
-        'CpuPower': 0,
-        'Mem': '512M',
-        'Arch': 'i386'
-      };
-      var data = {
-        Type: 'Client',
-        Request: 'ServiceDeploy',
-        Params: {
-          CharmUrl: 'cs:precise/wordpress-15',
-          Constraints: constraints,
-          ServiceName: 'kumquat',
-          ConfigYAML: 'funny: business',
-          NumUnits: 2
-        },
-        RequestId: 42
-      };
-      client.onmessage = function(received) {
-        var service = state.db.services.getById('kumquat');
-        debugger;
-        assert.deepEqual(service.get('constraints'), {
-          'cpu-cores': 1,
-          'cpu-power': 0,
-          'mem': '512M',
-          'arch': 'i386'
-        });
-        done();
-      };
-      client.open();
-      client.send(Y.JSON.stringify(data));
-    });
-
     it('can deploy (environment integration).', function() {
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
@@ -312,6 +278,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           null,
           1,
           null,
+          callback);
+    });
+
+    it('can deploy with constraints', function(done) {
+      debugger;
+      var constraints = {
+        'cpu-cores': 1,
+        'cpu-power': 0,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+
+      env.connect();
+      // We begin logged in.  See utils.makeFakeBackend.
+      var callback = function(result) {
+        var service = state.db.services.getById('kumquat');
+        debugger;
+        assert.deepEqual(service.get('constraints'), constraints);
+      };
+      env.deploy(
+          'cs:precise/wordpress-15',
+          'kumquat',
+          {llama: 'pajama'},
+          null,
+          1,
+          constraints,
           callback);
     });
 

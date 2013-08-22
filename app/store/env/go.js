@@ -397,6 +397,7 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Nothing.
      */
     handleDeploy: function(userCallback, service_name, charm_url, data) {
+      debugger;
       var transformedData = {
         err: data.Error,
         service_name: service_name,

@@ -894,7 +894,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     _getDeltaAttrs: function(attrs, whitelist) {
       if (attrs.getAttrs) {
         attrs = attrs.getAttrs();
-      }
+      // }
       var filtered = {},
           self = this;
       Y.each(whitelist, function(value, key) {

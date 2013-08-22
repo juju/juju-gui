@@ -476,7 +476,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Mem': '512M',
             'Arch': 'i386'
           });
-
     });
 
     it('successfully deploys a service storing charm data', function() {
