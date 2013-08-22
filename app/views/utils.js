@@ -1467,11 +1467,11 @@ YUI.add('juju-view-utils', function(Y) {
     this._initViewmodeControllingView(cfg);
   };
   utils.viewmodeControllingView.prototype = {
-     /**
-      * Constructor
-      *
-      * @method _initViewmodeControllingView
-      */
+    /**
+     * Constructor
+     *
+     * @method _initViewmodeControllingView
+     */
     _initViewmodeControllingView: function() {
     },
 
