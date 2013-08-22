@@ -907,19 +907,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can add a relation (integration)', function(done) {
       env.connect();
-      env.deploy('cs:precise/wordpress-15', null, null, null, 1, null, function() {
-        env.deploy('cs:precise/mysql-26', null, null, null, 1, null, function() {
-          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
-              endpointB = ['mysql', {name: 'db', role: 'server'}];
-          env.add_relation(endpointA, endpointB, function(recData) {
-            assert.equal(recData.err, undefined);
-            assert.equal(recData.endpoint_a, 'wordpress:db');
-            assert.equal(recData.endpoint_b, 'mysql:db');
-            assert.isObject(recData.result);
-            done();
-          });
-        });
-      });
+      env.deploy(
+          'cs:precise/wordpress-15', null, null, null, 1, null, function() {
+            env.deploy(
+                'cs:precise/mysql-26', null, null, null, 1, null, function() {
+                  var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+                      endpointB = ['mysql', {name: 'db', role: 'server'}];
+                  env.add_relation(endpointA, endpointB, function(recData) {
+                    assert.equal(recData.err, undefined);
+                    assert.equal(recData.endpoint_a, 'wordpress:db');
+                    assert.equal(recData.endpoint_b, 'mysql:db');
+                    assert.isObject(recData.result);
+                    done();
+                  });
+                }
+            );
+          }
+      );
     });
 
     it('is able to add a relation with a subordinate service', function(done) {
@@ -1023,20 +1027,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can remove a relation(integration)', function(done) {
       env.connect();
-      env.deploy('cs:precise/wordpress-15', null, null, null, 1, null, function() {
-        env.deploy('cs:precise/mysql-26', null, null, null, 1, null, function() {
-          var endpointA = ['wordpress', {name: 'db', role: 'client'}],
-              endpointB = ['mysql', {name: 'db', role: 'server'}];
-          env.add_relation(endpointA, endpointB, function() {
-            env.remove_relation(endpointA, endpointB, function(recData) {
-              assert.equal(recData.err, undefined);
-              assert.equal(recData.endpoint_a, 'wordpress:db');
-              assert.equal(recData.endpoint_b, 'mysql:db');
-              done();
-            });
-          });
-        });
-      });
+      env.deploy(
+          'cs:precise/wordpress-15', null, null, null, 1, null, function() {
+            env.deploy(
+                'cs:precise/mysql-26', null, null, null, 1, null, function() {
+                  var endpointA = ['wordpress', {name: 'db', role: 'client'}],
+                      endpointB = ['mysql', {name: 'db', role: 'server'}];
+                  env.add_relation(endpointA, endpointB, function() {
+                    env.remove_relation(
+                        endpointA, endpointB, function(recData) {
+                          assert.equal(recData.err, undefined);
+                          assert.equal(recData.endpoint_a, 'wordpress:db');
+                          assert.equal(recData.endpoint_b, 'mysql:db');
+                          done();
+                        }
+                    );
+                  });
+                }
+            );
+          }
+      );
     });
 
   });

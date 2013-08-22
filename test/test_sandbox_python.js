@@ -1143,8 +1143,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1, null,
-            function() {
+            'cs:precise/wordpress-15', 'kumquat',
+            {llama: 'pajama'}, null, 1, null, function() {
               env.deploy('cs:precise/mysql-26', null, null, null, 1, null,
                   function() {
                     env.add_relation(endpoints[0], endpoints[1], function() {
