@@ -1,6 +1,6 @@
 {{#constraints}}
-  <div class="control-group settings-wrapper">
-   <div class="control-label" for="{{name}}">{{title}}</div>
+  <div class="settings-wrapper">
+   <label for="{{name}}">{{title}}</label>
     <div>
       <input class="constraint-field" type="text" name="{{name}}"
           value="{{value}}" data-bind="constraints.{{name}}" />

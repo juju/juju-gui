@@ -115,7 +115,7 @@
         .create-border-radius(@border-radius);
         position: absolute;
         top: 20px;
-        right: 35px;
+        right: 70px;
         width: @inspector-width;
         min-height: 250px;
         border: 0;
@@ -248,6 +248,9 @@
                 padding-left: 10px;
                 cursor: pointer;
             }
+            .editable-constraints {
+                padding-left: 10px;
+            }
             .unit-constraints-confirm {
                 overflow: hidden;
                 height: 130px;
@@ -272,6 +275,9 @@
             .unit-constraints-confirm.closed {
                 height: 0;
             }
+            .unit-constraints-confirm.editing {
+                height: 300px;
+            }
         }
 
         .settings-wrapper {
@@ -289,6 +295,9 @@
             }
             textarea {
                 width: 100%;
+            }
+            input[type=text] {
+                width: 150px;
             }
             .settings-description {
                 font-size: 12px;
@@ -389,7 +398,7 @@
         }
 
         /* Resetting panel styles. Can be removed after old inspector styles are
-           removed. */
+           removed. (ServiceInspector) */
         .charm-panel-configure {
             background: transparent;
             float: none;
@@ -582,8 +591,7 @@
                 font-size: 18px;
                 padding-left: 0;
             }
-            .settings-wrapper,
-            .control-group {
+            .settings-wrapper {
                 position: relative;
                 padding: 0 10px;
 

@@ -196,6 +196,25 @@ YUI.add('juju-models', function(Y) {
         value: ALIVE
       },
       unit_count: {},
+
+      /**
+        Whether or not an upgrade is available.
+
+        @attribute upgrade_available
+        @type {boolean}
+        @default false
+      */
+      upgrade_available: {
+        value: false
+      },
+
+      /**
+        The latest charm URL that the service can be upgraded to.
+
+        @attribute upgrade_to
+        @type {string}
+      */
+      upgrade_to: {},
       aggregated_status: {}
     }
   });

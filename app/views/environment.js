@@ -194,7 +194,7 @@ YUI.add('juju-view-environment', function(Y) {
                 },
                 '.cancel-num-units': { click: '_closeUnitConfirm'},
                 '.confirm-num-units': { click: '_confirmUnitChange'},
-                'a.edit-constraints': { click: '_editUnitConstraints'},
+                'a.edit-constraints': { click: '_showEditUnitConstraints'},
                 // Settings viewlet.
                 'input.expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},

@@ -134,7 +134,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         pending: false,
         life: 'alive',
         subordinate: false,
-        unit_count: undefined
+        unit_count: undefined,
+        upgrade_available: false,
+        upgrade_to: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);
       assert.lengthOf(units, 1);
