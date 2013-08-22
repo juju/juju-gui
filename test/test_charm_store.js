@@ -204,12 +204,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var charm = new models.BrowserCharm({url: 'cs:precise/wordpress-10'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
-          assert.equal(upgrade, 'precise/wordpress-15');
-          done();
-        }, function(error) {
-          assert.isTrue(false, 'We should not get here');
-          done();
-        });
+            assert.equal(upgrade, 'precise/wordpress-15');
+            done();
+          }, function(error) {
+            assert.isTrue(false, 'We should not get here');
+            done();
+          });
     });
 
     it('finds upgrades for charms - no upgrade available', function(done) {
@@ -217,12 +217,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var charm = new models.BrowserCharm({url: 'cs:precise/wordpress-15'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
-          assert.isUndefined(upgrade);
-          done();
-        }, function(error) {
-          assert.isTrue(false, 'We should not get here');
-          done();
-        });
+            assert.isUndefined(upgrade);
+            done();
+          }, function(error) {
+            assert.isTrue(false, 'We should not get here');
+            done();
+          });
     });
 
   });
