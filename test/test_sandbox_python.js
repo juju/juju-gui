@@ -154,6 +154,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             localCb);
       });
       env.connect();
@@ -209,6 +210,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             localCb);
       });
       env.connect();
@@ -383,6 +385,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             {llama: 'pajama'},
             null,
             1,
+            null,
             callback);
       });
       env.connect();
@@ -405,9 +408,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             undefined,
             undefined,
             1,
+            null,
             callback);
       });
       env.connect();
+    });
+
+    it('can deploy with constraints', function(done) {
+      var constraints = {
+        'cpu': 1,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+      var data = {
+        op: 'deploy',
+        charm_url: 'cs:precise/wordpress-15',
+        service_name: 'kumquat',
+        config_raw: 'funny: business',
+        constraints: constraints,
+        num_units: 2,
+        request_id: 42
+      };
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will be the reply to our
+        // deployment.
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('kumquat');
+          assert.deepEqual(service.get('constraints'), {
+            'cpu': 1,
+            'mem': '512M',
+            'arch': 'i386'
+          });
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      };
+      client.open();
     });
 
     it('can send a delta stream of changes.', function(done) {
@@ -1032,6 +1069,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             undefined,
             undefined,
             1,
+            null,
             addRelation);
       });
     });
@@ -1138,9 +1176,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
         env.deploy(
-            'cs:precise/wordpress-15', 'kumquat', {llama: 'pajama'}, null, 1,
-            function() {
-              env.deploy('cs:precise/mysql-26', null, null, null, 1,
+            'cs:precise/wordpress-15', 'kumquat',
+            {llama: 'pajama'}, null, 1, null, function() {
+              env.deploy('cs:precise/mysql-26', null, null, null, 1, null,
                   function() {
                     env.add_relation(endpoints[0], endpoints[1], function() {
                       env.remove_relation(endpoints[0], endpoints[1], localCb);

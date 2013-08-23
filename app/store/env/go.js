@@ -337,16 +337,34 @@ YUI.add('juju-env-go', function(Y) {
          configuration options. Only one of `config` and `config_raw` should be
          provided, though `config_raw` takes precedence if it is given.
        @param {Integer} num_units The number of units to be deployed.
+       @param {Object} constraints The machine constraints to use.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     callback) {
+                     constraints, callback) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeploy, this,
             callback, service_name, charm_url);
+      }
+
+      if (constraints) {
+        // If the constraints is a function (this arg position used to be a
+        // callback) then log it out to the console to fix it.
+        if (typeof constraints === 'function') {
+          console.error('Constraints need to be an object not a function');
+          console.warn(constraints);
+        }
+        var goConstraints = {};
+        // The object names need to be converted into the Go appropriate
+        // versions.
+        Y.Object.each(constraints, function(value, key) {
+          var goKey = this.genericConstraintsGoNames[key];
+          goConstraints[goKey] = value;
+        }, this);
+        constraints = goConstraints;
       }
       this._send_rpc(
           { Type: 'Client',
@@ -355,6 +373,7 @@ YUI.add('juju-env-go', function(Y) {
               ServiceName: service_name,
               Config: stringifyObjectValues(config),
               ConfigYAML: config_raw,
+              Constraints: constraints,
               CharmUrl: charm_url,
               NumUnits: num_units
             }
@@ -870,6 +889,12 @@ YUI.add('juju-env-go', function(Y) {
 
     // The constraints that the backend understands.  Used to generate forms.
     genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+    genericConstraintsGoNames: {
+      'cpu-power': 'CpuPower',
+      'cpu-cores': 'CpuCores',
+      'mem': 'Mem',
+      'arch': 'Arch'
+    },
 
     /**
        Change the constraints of the given service.

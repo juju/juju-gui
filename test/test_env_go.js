@@ -460,15 +460,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, msg);
     });
 
+    it('successfully deploys a service with constraints', function() {
+      var constraints = {
+        'cpu-cores': 1,
+        'cpu-power': 0,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+      env.deploy('precise/mediawiki', null, null, null, 1, constraints);
+      msg = conn.last_message();
+      assert.deepEqual(
+          msg.Params.Constraints, {
+            'CpuCores': 1,
+            'CpuPower': 0,
+            'Mem': '512M',
+            'Arch': 'i386'
+          });
+    });
+
     it('successfully deploys a service storing charm data', function() {
       var charm_url;
       var err;
       var service_name;
-      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
-        charm_url = data.charm_url;
-        err = data.err;
-        service_name = data.service_name;
-      });
+      env.deploy(
+          'precise/mysql', 'mysql', null, null, null, null, function(data) {
+            charm_url = data.charm_url;
+            err = data.err;
+            service_name = data.service_name;
+          }
+      );
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -481,9 +501,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed service deploy', function() {
       var err;
-      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
-        err = data.err;
-      });
+      env.deploy(
+          'precise/mysql', 'mysql', null, null, null, null, function(data) {
+            err = data.err;
+          }
+      );
       // Mimic response.
       conn.msg({
         RequestId: 1,

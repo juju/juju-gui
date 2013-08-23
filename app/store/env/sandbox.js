@@ -482,6 +482,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         name: data.service_name,
         config: data.config,
         configYAML: data.config_raw,
+        constraints: data.constraints,
         unitCount: data.num_units
       });
     },
@@ -999,6 +1000,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         name: data.Params.ServiceName,
         config: data.Params.Config,
         configYAML: data.Params.ConfigYAML,
+        constraints: data.Params.Constraints,
         unitCount: data.Params.NumUnits
       });
     },
