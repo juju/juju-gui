@@ -145,6 +145,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(units[0].service, 'wordpress');
     });
 
+    it('deploys a charm with constraints', function() {
+      var options = {
+        constraints: {
+          cpu: 1,
+          mem: '4G',
+          arch: 'i386'
+        }
+      };
+      assert.isNull(
+          fakebackend.db.charms.getById('cs:precise/wordpress-15'));
+      fakebackend.deploy('cs:precise/wordpress-15', callback, options);
+      var service = fakebackend.db.services.getById('wordpress');
+      assert.isObject(
+          service,
+          'Null returend when a service was expected.');
+      assert.strictEqual(service, result.service);
+      var attrs = service.getAttrs();
+      var deployedConstraints = attrs.constraints;
+      assert.deepEqual(
+          options.constraints,
+          deployedConstraints
+      );
+    });
+
     it('rejects names that duplicate an existing service', function() {
       fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(result.error);
