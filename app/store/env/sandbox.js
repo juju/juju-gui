@@ -996,6 +996,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       var callback = Y.bind(function(result) {
         this._basicReceive(data, client, result);
       }, this);
+
+      // Munge back here.
       state.deploy(data.Params.CharmUrl, callback, {
         name: data.Params.ServiceName,
         config: data.Params.Config,
