@@ -70,6 +70,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg.config_raw.should.equal(config_raw);
     });
 
+    it('successfully deploys a service with constraints', function() {
+      var constraints = {
+        'cpu': 1,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+      env.deploy('precise/mysql', null, null, null, 1, constraints);
+      msg = conn.last_message();
+      assert.deepEqual(msg.constraints, constraints);
+    });
+
     it('can add a unit', function() {
       env.add_unit('mysql', 3);
       msg = conn.last_message();
@@ -442,7 +453,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('denies deploying a charm if the GUI is read-only', function() {
       assertOperationDenied(
-          'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3]);
+          'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3, null]);
     });
 
     it('denies exposing a service if the GUI is read-only', function() {

@@ -255,13 +255,14 @@ YUI.add('juju-env-python', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     callback) {
+                     constraints, callback) {
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,
             config: config,
             config_raw: config_raw,
             charm_url: charm_url,
+            constraints: constraints,
             num_units: num_units},
           callback, true);
     },
