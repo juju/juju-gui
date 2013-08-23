@@ -41,7 +41,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
    */
   ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
     Y.Event.EventTracker,
-    Y.juju.widgets.ViewmodeControllingViewExtension
+    Y.juju.widgets.ViewmodeControlsViewExtension
   ], {
 
     /**
@@ -220,7 +220,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
        view, however this will be expanded to be controlled from the new
        constant nav menu outside of the view once it's completed.
 
-       @method _toggle_sidebar
+       This is called by the ViewmodeControlsViewExtension.
+
+       @method _toggleMinimized
        @param {Event} ev event to trigger the toggle.
 
      */

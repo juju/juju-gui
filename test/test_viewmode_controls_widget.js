@@ -118,7 +118,7 @@ describe('viewmode control extension', function() {
                                'node'], function(Y) {
       ViewmodeControls = Y.juju.widgets.ViewmodeControls;
       TestView = Y.Base.create('testclass', Y.View, [
-        Y.juju.widgets.ViewmodeControllingViewExtension]);
+        Y.juju.widgets.ViewmodeControlsViewExtension]);
       done();
     });
   });

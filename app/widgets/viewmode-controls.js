@@ -194,18 +194,8 @@ YUI.add('viewmode-controls', function(Y) {
    *
    * @class viewmodeControllingView
    */
-  ns.ViewmodeControllingViewExtension = function() {
-    this._initViewmodeControllingViewExtension();
-  };
-  ns.ViewmodeControllingViewExtension.prototype = {
-    /**
-     * Constructor
-     *
-     * @method _initViewmodeControllingView
-     */
-    _initViewmodeControllingViewExtension: function() {
-    },
-
+  ns.ViewmodeControlsViewExtension = function() {};
+  ns.ViewmodeControlsViewExtension.prototype = {
     /**
      * Binds the viewmode controls on the page to the viewmode change events.
      *
@@ -264,7 +254,7 @@ YUI.add('viewmode-controls', function(Y) {
     /**
      * Place holder to toggle the minimized view; in minimized this should show
      * sidebar, in sidebar this should show minimized.
-     * @method _toggle_sidebar
+     * @method _toggleMinimized
      * @param {Event} ev event to trigger the toggle.
      *
      */
