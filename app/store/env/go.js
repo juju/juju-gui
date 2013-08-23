@@ -262,7 +262,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method _handleRpcResponse
       @param {Object} data The data returned by the server.
-      @return {undefined} No;thing.
+      @return {undefined} Nothing.
      */
     _handleRpcResponse: function(data) {
       // We do this early to get a response back fast.  Might be a bad
