@@ -1457,10 +1457,11 @@ YUI.add('juju-view-utils', function(Y) {
     debugger;
     /*jshint debug:false */
   });
+
   /*
    * Extension for views to provide an apiFailure method.
    *
-   * @class apiFailure
+   * @class apiFailingView
    */
   utils.apiFailingView = function() {
     this._initAPIFailingView();

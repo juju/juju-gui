@@ -106,3 +106,75 @@ describe('viewmode controls widgets', function() {
     triggered.should.eql(true);
   });
 });
+
+describe('viewmode control extension', function() {
+  var Y, container, controls, ViewmodeControls, TestView, view;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['viewmode-controls',
+                               'juju-tests-utils',
+                               'event-simulate',
+                               'node-event-simulate',
+                               'node'], function(Y) {
+      ViewmodeControls = Y.juju.widgets.ViewmodeControls;
+      TestView = Y.Base.create('testclass', Y.View, [
+        Y.juju.widgets.ViewmodeControlsViewExtension]);
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    Y.Node.create([
+      '<div id="content">',
+      '<div id="browser-nav">',
+      '<div class="sidebar"></div>',
+      '<div class="fullscreen"</div>',
+      '</div>'
+    ].join('')).appendTo(container);
+  });
+
+  afterEach(function() {
+    container.remove(true);
+    if (view) {
+      view.destroy();
+    }
+    if (controls) {
+      controls.destroy();
+    }
+  });
+
+  it('can route to fullscreen', function(done) {
+    view = new TestView();
+    controls = new ViewmodeControls();
+    view._bindViewmodeControls(controls);
+    view.on('viewNavigate', function(ev) {
+      assert.equal(ev.change.viewmode, 'fullscreen');
+      done();
+    });
+    controls._goFullscreen({halt: function() {} });
+  });
+
+  it('can route to sidebar via view controls', function(done) {
+    view = new TestView();
+    controls = new ViewmodeControls();
+    view._bindViewmodeControls(controls);
+    view.on('viewNavigate', function(ev) {
+      assert.equal(ev.change.viewmode, 'sidebar');
+      done();
+    });
+    controls._goSidebar({halt: function() {} });
+  });
+
+  it('can handle toggling the minimized state', function() {
+    var called = false;
+    view = new TestView();
+    controls = new ViewmodeControls();
+    view._toggleMinimized = function() {
+      called = true;
+    };
+    view._bindViewmodeControls(controls);
+    controls._toggleViewable({halt: function() {} });
+    assert.isTrue(called);
+  });
+});
