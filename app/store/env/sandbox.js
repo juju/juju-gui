@@ -997,12 +997,18 @@ YUI.add('juju-env-sandbox', function(Y) {
         this._basicReceive(data, client, result);
       }, this);
 
-      // Munge back here.
+      // Hack in here and transfer the Constraint data back to app names.
+      var origConstraints = {};
+      if (data.Params.Constraints) {
+        var goConstraints = new Y.juju.environments.GoConstraints();
+        origConstraints = goConstraints.toOrigFormat(data.Params.Constraints);
+      }
+
       state.deploy(data.Params.CharmUrl, callback, {
         name: data.Params.ServiceName,
         config: data.Params.Config,
         configYAML: data.Params.ConfigYAML,
-        constraints: data.Params.Constraints,
+        constraints: origConstraints,
         unitCount: data.Params.NumUnits
       });
     },
@@ -1304,6 +1310,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     'base',
     'js-yaml',
     'json-parse',
+    'juju-env-go',
     'timers'
   ]
 });
