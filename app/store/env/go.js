@@ -126,16 +126,14 @@ YUI.add('juju-env-go', function(Y) {
    * upper case Go format.
    *
    * @method toGoFormat
-   * @param {Object} constraints the list of contraints to set.
+   * @param {Object} constraints the list of constraints to set.
    *
    */
   GoConstraints.prototype.toGoFormat = function(constraints) {
-    var converted = {};
-    Y.Object.each(constraints, function(value, key) {
-      var goKey = this.goNames[key];
-      converted[goKey] = value;
+    constraints.forEach(function(con, idx, constraints) {
+      constraints[idx].name = this.goNames[con.name];
     }, this);
-    return converted;
+    return constraints;
   };
 
   /**
@@ -153,12 +151,10 @@ YUI.add('juju-env-go', function(Y) {
       backNames[value] = key;
     }, this);
 
-    var converted = {};
-    Y.Object.each(goConstraints, function(value, key) {
-      var backKey = backNames[key];
-      converted[backKey] = value;
+    goConstraints.forEach(function(con, idx, constraints) {
+      constraints[idx].name = backNames[con.name];
     }, this);
-    return converted;
+    return goConstraints;
   };
 
   /**

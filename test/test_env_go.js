@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('Go Juju environment utilities', function() {
+  describe.only('Go Juju environment utilities', function() {
     var environments, Y;
 
     before(function(done) {
@@ -74,33 +74,75 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'title': 'Architecture',
           'value': ''
         }
-      };
+      ];
       var constraints = new GoConstraints();
       var converted = constraints.toGoFormat(toConvert);
-      assert.deepEqual(converted, {
-        'CpuPower': 0,
-        'CpuCores': 1,
-        'Mem': '512M',
-        'Arch': 'i386'
-      });
+      assert.deepEqual(converted, [{
+          'name': 'CpuPower',
+          'title': 'CPU Power',
+          'unit': 'GHZ',
+          'value': ''
+        }, {
+          'name': 'CpuCores',
+          'title': 'CPU Cores',
+          'value': '2'
+        }, {
+          'name': 'Mem',
+          'title': 'Memory',
+          'unit': 'GB',
+          'value': '512MB'
+        }, {
+          'name': 'Arch',
+          'title': 'Architecture',
+          'value': ''
+        }
+      ]);
     });
 
     it('can convert back the go constraints back', function() {
       var GoConstraints = environments.GoConstraints;
-      var toConvert = {
-        'CpuPower': 0,
-        'CpuCores': 1,
-        'Mem': '512M',
-        'Arch': 'i386'
-      };
+      var toConvert = [{
+          'name': 'CpuPower',
+          'title': 'CPU Power',
+          'unit': 'GHZ',
+          'value': ''
+        }, {
+          'name': 'CpuCores',
+          'title': 'CPU Cores',
+          'value': '2'
+        }, {
+          'name': 'Mem',
+          'title': 'Memory',
+          'unit': 'GB',
+          'value': '512MB'
+        }, {
+          'name': 'Arch',
+          'title': 'Architecture',
+          'value': ''
+        }
+      ];
       var constraints = new GoConstraints();
       var converted = constraints.toOrigFormat(toConvert);
-      assert.deepEqual(converted, {
-        'cpu-power': 0,
-        'cpu-cores': 1,
-        'mem': '512M',
-        'arch': 'i386'
-      });
+      assert.deepEqual(converted, [{
+          'name': 'cpu-power',
+          'title': 'CPU Power',
+          'unit': 'GHZ',
+          'value': ''
+        }, {
+          'name': 'cpu-cores',
+          'title': 'CPU Cores',
+          'value': '2'
+        }, {
+          'name': 'mem',
+          'title': 'Memory',
+          'unit': 'GB',
+          'value': '512MB'
+        }, {
+          'name': 'arch',
+          'title': 'Architecture',
+          'value': ''
+        }
+      ]);
     });
 
   });
