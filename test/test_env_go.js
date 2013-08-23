@@ -55,11 +55,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('provides a constraints tool for converting to Go formats', function() {
       var GoConstraints = environments.GoConstraints;
-      var toConvert = {
-        'cpu-power': 0,
-        'cpu-cores': 1,
-        'mem': '512M',
-        'arch': 'i386'
+      var toConvert = [{
+          'name': 'cpu-power',
+          'title': 'CPU Power',
+          'unit': 'GHZ',
+          'value': ''
+        }, {
+          'name': 'cpu-cores',
+          'title': 'CPU Cores',
+          'value': '2'
+        }, {
+          'name': 'mem',
+          'title': 'Memory',
+          'unit': 'GB',
+          'value': '512MB'
+        }, {
+          'name': 'arch',
+          'title': 'Architecture',
+          'value': ''
+        }
       };
       var constraints = new GoConstraints();
       var converted = constraints.toGoFormat(toConvert);

@@ -432,9 +432,6 @@ YUI.add('juju-env-go', function(Y) {
               Constraints: goConstraints,
               CharmUrl: charm_url,
               NumUnits: num_units,
-              Constraints: {
-
-              }
             }
           },
           intermediateCallback
