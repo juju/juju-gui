@@ -291,6 +291,12 @@ YUI.add('viewlet-inspector-overview', function(Y) {
             this.viewlet.generateAndBindUnitHeaders(node, statuses);
           }
         }
+      },
+      upgrade_to: {
+        depends: ['units'],
+        'update': function(node, value) {
+          debugger;
+        }
       }
     },
     // These methods are exposed here to allow us access for testing.
