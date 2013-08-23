@@ -181,6 +181,54 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   })();
 
   (function() {
+    describe('browser minimzed view', function() {
+      var Y, browser, container, view, views, Minimized;
+
+      before(function(done) {
+        Y = YUI(GlobalConfig).use(
+            'juju-browser',
+            'juju-models',
+            'juju-views',
+            'juju-tests-utils',
+            'subapp-browser-minimized',
+            function(Y) {
+              browser = Y.namespace('juju.browser');
+              views = Y.namespace('juju.browser.views');
+              Minimized = views.MinimizedView;
+              done();
+            });
+      });
+
+      beforeEach(function() {
+        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        addBrowserContainer(Y, container);
+        // Mock out a dummy location for the Store used in view instances.
+        window.juju_config = {
+          charmworldURL: 'http://localhost'
+        };
+      });
+
+      afterEach(function() {
+        view.destroy();
+        Y.one('#subapp-browser').remove(true);
+        delete window.juju_config;
+        container.remove(true);
+      });
+
+      it('toggles to sidebar', function(done) {
+        var container = Y.one('#subapp-browser');
+        view = new Minimized();
+        view.on('viewNavigate', function(ev) {
+          assert(ev.change.viewmode === 'sidebar');
+          done();
+        });
+        view.render(container);
+        view.controls._toggleViewable({halt: function() {}});
+      });
+    });
+  })();
+
+  (function() {
     describe('browser sidebar view', function() {
       var Y, browser, container, view, views, Sidebar;
 
