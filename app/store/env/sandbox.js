@@ -994,6 +994,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceDeploy: function(data, client, state) {
+      debugger;
       var callback = Y.bind(function(result) {
         this._basicReceive(data, client, result);
       }, this);
