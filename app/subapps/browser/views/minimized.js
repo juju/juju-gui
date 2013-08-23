@@ -29,12 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('subapp-browser-minimized', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views');
-
-  // XXX jcsackett Aug 21 2013 The minimized view currently dupes a bunch of
-  // code from the Mainview. We can't just use mainview here b/c mainview
-  // expects search stuff to exist, which is only true for the sidebar and
-  // fullscreen views. When we add the search bar to always be present, we
-  // should remove this duplication.
   /**
    * The minimized state view.
    *
@@ -43,7 +37,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
    *
    */
   ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [
-    Y.Event.EventTracker
+    Y.juju.widgets.ViewmodeControlsViewExtension
   ], {
     template: views.Templates.minimized,
 
@@ -54,71 +48,13 @@ YUI.add('subapp-browser-minimized', function(Y) {
     },
 
     /**
-       Binds the viewmode control events to navigation.
-
-       @method _bindViewmodeControls
-     */
-    _bindViewmodeControls: function() {
-      var container = this.get('container');
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_TOGGLE_VIEWABLE, this._toggleViewState, this)
-      );
-
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_FULLSCREEN, this._goFullscreen, this)
-      );
-      this.addEvent(
-          this.controls.on(
-              this.controls.EVT_SIDEBAR, this._goSidebar, this)
-      );
-    },
-
-    /**
-      Upon clicking the browser icon make sure we re-route to the
-      new form of the UX.
-
-      @method _goFullscreen
-      @param {Event} ev the click event handler on the button.
-
-     */
-    _goFullscreen: function(ev) {
-      ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'fullscreen'
-        }
-      });
-    },
-
-    /**
-      Upon clicking the build icon make sure we re-route to the
-      new form of the UX.
-
-      @method _goSidebar
-      @param {Event} ev the click event handler on the button.
-
-     */
-    _goSidebar: function(ev) {
-      ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'sidebar'
-        }
-      });
-    },
-
-    /**
-     * Toggle the visibility of the browser. Bound to nav controls in the
-     * view, however this will be expanded to be controlled from the new
-     * constant nav menu outside of the view once it's completed.
+     * Toggle the visibility of the browser.
      *
-     * @method _toggle_sidebar
+     * @method _toggleMinimized
      * @param {Event} ev event to trigger the toggle.
      *
      */
-    _toggleViewState: function(ev) {
+    _toggleMinimized: function(ev) {
       ev.halt();
 
       this.get('container').hide();
@@ -157,7 +93,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
         currentViewmode: this.get('oldViewMode')
       });
       this.controls.render();
-      this._bindViewmodeControls();
+      this._bindViewmodeControls(this.controls);
     }
 
   }, {

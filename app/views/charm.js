@@ -153,6 +153,9 @@ YUI.add('juju-view-charm-collection', function(Y) {
           charmId,
           serviceName,
           config,
+          null,
+          null,
+          null,
           Y.bind(this._deployCallback, this)
       );
     },
