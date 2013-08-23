@@ -53,7 +53,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, result);
     });
 
+    it('provides a constraints tool for converting to Go formats', function() {
+      var GoConstraints = environments.GoConstraints;
+      var toConvert = {
+        'cpu-power': 0,
+        'cpu-cores': 1,
+        'mem': '512M',
+        'arch': 'i386'
+      };
+      var constraints = new GoConstraints();
+      var converted = constraints.toGoFormat(toConvert);
+      assert.deepEqual(converted, {
+        'CpuPower': 0,
+        'CpuCores': 1,
+        'Mem': '512M',
+        'Arch': 'i386'
+      });
+    });
+
+    it('can convert back the go constraints back', function() {
+      var GoConstraints = environments.GoConstraints;
+      var toConvert = {
+        'CpuPower': 0,
+        'CpuCores': 1,
+        'Mem': '512M',
+        'Arch': 'i386'
+      };
+      var constraints = new GoConstraints();
+      var converted = constraints.toOrigFormat(toConvert);
+      assert.deepEqual(converted, {
+        'cpu-power': 0,
+        'cpu-cores': 1,
+        'mem': '512M',
+        'arch': 'i386'
+      });
+    });
+
   });
+
 
   describe('Go Juju JSON replacer', function() {
     var cleanUpJSON, Y;

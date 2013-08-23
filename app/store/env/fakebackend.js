@@ -369,7 +369,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
 
-      debugger;
       var constraints = {};
       if (options.constraints) {
         constraints = options.constraints;

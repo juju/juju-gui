@@ -103,6 +103,43 @@ YUI.add('juju-env-go', function(Y) {
     return value;
   };
 
+
+  function GoConstraints() {
+    this.names = ['cpu-power', 'cpu-cores', 'mem', 'arch'];
+    this.goNames = {
+      'cpu-power': 'CpuPower',
+      'cpu-cores': 'CpuCores',
+      'mem': 'Mem',
+      'arch': 'Arch'
+    };
+  }
+
+  // The object names need to be converted into the Go appropriate
+  // versions.
+  GoConstraints.prototype.toGoFormat = function(constraints) {
+    var converted = {};
+    Y.Object.each(constraints, function(value, key) {
+      var goKey = this.goNames[key];
+      converted[goKey] = value;
+    }, this);
+    return converted;
+  };
+
+  GoConstraints.prototype.toOrigFormat = function(goConstraints) {
+    // Build a reverse of the goNames.
+    var backNames = {};
+    Y.Object.each(this.goNames, function(value, key) {
+      backNames[value] = key;
+    }, this);
+
+    var converted = {};
+    Y.Object.each(goConstraints, function(value, key) {
+      var backKey = backNames[key];
+      converted[backKey] = value;
+    }, this);
+    return converted;
+  };
+
   /**
    * The Go Juju environment.
    *
@@ -130,6 +167,8 @@ YUI.add('juju-env-go', function(Y) {
       // predefined value in the login mask.
       this.defaultUser = 'user-admin';
       this.on('_rpc_response', this._handleRpcResponse);
+      this.constraints = new GoConstraints();
+      this.genericConstraints = this.constraints.names;
     },
 
     /**
@@ -202,7 +241,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method _handleRpcResponse
       @param {Object} data The data returned by the server.
-      @return {undefined} Nothing.
+      @return {undefined} No;thing.
      */
     _handleRpcResponse: function(data) {
       // We do this early to get a response back fast.  Might be a bad
@@ -357,14 +396,9 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
-        var goConstraints = {};
-        // The object names need to be converted into the Go appropriate
-        // versions.
-        Y.Object.each(constraints, function(value, key) {
-          var goKey = this.genericConstraintsGoNames[key];
-          goConstraints[goKey] = value;
-        }, this);
-        constraints = goConstraints;
+
+        // Convert the constraints to the Go message format.
+        var goConstraints = this.constraints.toGoFormat(constraints);
       }
       this._send_rpc(
           { Type: 'Client',
@@ -373,7 +407,7 @@ YUI.add('juju-env-go', function(Y) {
               ServiceName: service_name,
               Config: stringifyObjectValues(config),
               ConfigYAML: config_raw,
-              Constraints: constraints,
+              Constraints: goConstraints,
               CharmUrl: charm_url,
               NumUnits: num_units
             }
@@ -887,15 +921,6 @@ YUI.add('juju-env-go', function(Y) {
       }, intermediateCallback);
     },
 
-    // The constraints that the backend understands.  Used to generate forms.
-    genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
-    genericConstraintsGoNames: {
-      'cpu-power': 'CpuPower',
-      'cpu-cores': 'CpuCores',
-      'mem': 'Mem',
-      'arch': 'Arch'
-    },
-
     /**
        Change the constraints of the given service.
 
@@ -1268,6 +1293,7 @@ YUI.add('juju-env-go', function(Y) {
   });
 
   environments.createRelationKey = createRelationKey;
+  environments.GoConstraints = GoConstraints;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;

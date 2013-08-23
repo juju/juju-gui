@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('sandbox.GoJujuAPI', function() {
+  describe('sandbox.GoJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
       'juju-models', 'promise'];
@@ -282,7 +282,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy with constraints', function(done) {
-      debugger;
       var constraints = {
         'cpu-cores': 1,
         'cpu-power': 0,
@@ -294,8 +293,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         var service = state.db.services.getById('kumquat');
-        debugger;
         assert.deepEqual(service.get('constraints'), constraints);
+        done();
       };
       env.deploy(
           'cs:precise/wordpress-15',
