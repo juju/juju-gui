@@ -388,6 +388,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var response = this.addUnit(options.name, options.unitCount);
       response.service = service;
       callback(response);
+      debugger;
     },
 
     /**
