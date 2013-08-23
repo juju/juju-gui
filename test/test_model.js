@@ -925,12 +925,45 @@ describe('database import/export', function() {
       var rel = db.relations.item(0);
       assert.isTrue(rel.get('pending'));
       done();
-    }).then(null, function(err) {
-      done(err);
-    });
+    }).then(undefined, done);
+  });
+
+  it('should support finding charms through a search', function(done) {
+    // Use import to import many charms and then resolve them with a few
+    // different keys.
+    var defaultSeries = 'precise';
+    db.environment.set('defaultSeries', defaultSeries);
+    db.importDeployer(jsyaml.safeLoad(utils.loadFixture('data/blog.yaml')),
+                      fakeStore, {useGhost: true,
+                        targetBundle: 'wordpress-prod'})
+      .then(function() {
+          assert.isNotNull(db.charms.find('wordpress', defaultSeries));
+          assert.isNotNull(db.charms.find('precise/wordpress', defaultSeries));
+          assert.isNotNull(db.charms.find('precise/wordpress'));
+          assert.isNotNull(db.charms.find('cs:precise/wordpress'));
+          assert.isNotNull(db.charms.find('cs:precise/wordpress-999'));
+          // Can't find this w/o a series
+          assert.isNull(db.charms.find('wordpress'));
+          // Find fails on missing items as well.
+          assert.isNull(db.charms.find('foo'));
+          assert.isNull(db.charms.find('foo', defaultSeries));
+          done();
+        }).then(undefined, done);
   });
 
   it('should properly create units when not ghosted');
+
+  it('can import from a YAML fixture', function(done) {
+    db.environment.set('defaultSeries', 'precise');
+    db.importDeployer(jsyaml.safeLoad(utils.loadFixture('data/blog.yaml')),
+                      fakeStore, {useGhost: true,
+                        targetBundle: 'wordpress-prod'})
+      .then(function() {
+          assert.isNotNull(db.services.getById('db'));
+          assert.isNotNull(db.services.getById('blog'));
+          done();
+        });
+  });
 
   it('can export in deployer format', function() {
     var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});

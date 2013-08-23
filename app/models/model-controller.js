@@ -82,7 +82,7 @@ YUI.add('model-controller', function(Y) {
             if (charm && charm.loaded) {
               resolve(charm);
             } else {
-              charm = db.charms.add({id: charmId}).load(env,
+              charm = db.charms.add({url: charmId}).load(env,
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
                   function(err, data) {
@@ -144,6 +144,7 @@ YUI.add('model-controller', function(Y) {
     getServiceWithCharm: function(serviceId) {
       var db = this.get('db'),
           env = this.get('env'),
+          store = this.get('store'),
           mController = this;
 
       return this._getPromise(
@@ -151,7 +152,21 @@ YUI.add('model-controller', function(Y) {
           function(resolve, reject) {
             mController.getService(serviceId).then(function(service) {
               mController.getCharm(service.get('charm')).then(function(charm) {
-                resolve({service: service, charm: charm});
+                // Check if a newer charm is available for this service so that
+                // we can offer it as an upgrade.
+                // XXX Makyo Aug. 20 - Remove feature flag when upgradecharm
+                // feature lands.
+                if (charm.get('scheme') === 'cs' &&
+                    window.flags.upgradeCharm) {
+                  store.promiseUpgradeAvailability(charm, db.charms)
+                    .then(function(latestId) {
+                        service.set('upgrade_available', !!latestId);
+                        service.set('upgrade_to', latestId);
+                        resolve({service: service, charm: charm});
+                      }, reject);
+                } else {
+                  resolve({service: service, charm: charm});
+                }
               }, reject);
             }, reject);
           });
@@ -159,6 +174,15 @@ YUI.add('model-controller', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+        Reference to the client db.
+
+        @attribute db
+        @type {Y.Base}
+        @default undefined
+      */
+      db: {},
+
       /**
         Reference to the client env.
 
@@ -169,13 +193,13 @@ YUI.add('model-controller', function(Y) {
       env: {},
 
       /**
-        Reference to the client db.
+        Reference to the client charm store.
 
-        @attribute db
-        @type {Y.Base}
+        @attribute store
+        @type {Charmworld2}
         @default undefined
       */
-      db: {}
+      store: {}
     }
   });
 

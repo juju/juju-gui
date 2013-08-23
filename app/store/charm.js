@@ -126,12 +126,13 @@ YUI.add('juju-charm-store', function(Y) {
      * Api call to fetch a charm's details, with an optional local cache.
      *
      * @method charmWithCache
-     * @param {String} charmID the charm to fetch.
+     * @param {String} charmID the charm to fetch This is the fully qualified
+     * charm name in the format scheme:series/charm-revision..
      * @param {Object} callbacks the success/failure callbacks to use.
      * @param {Object} bindScope the scope of *this* in the callbacks.
      * @param {ModelList} cache a local cache of browser charms.
      */
-    charm: function(charmID, callbacks, bindScope, cache) {
+    charm: function(charmID, callbacks, bindScope, cache, defaultSeries) {
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
       }
@@ -155,7 +156,8 @@ YUI.add('juju-charm-store', function(Y) {
           };
         }
       }
-      this._charm(charmID, callbacks, bindScope);
+      this._charm(this.normalizeCharmId(charmID, defaultSeries),
+                  callbacks, bindScope);
     },
 
     /**
@@ -164,15 +166,74 @@ YUI.add('juju-charm-store', function(Y) {
      @method promiseCharm
      @param {String} charmId to fetch.
      @param {ModelList} cache a local cache of browser charms.
+     @param {String} defaultSeries to resolve.
      @return {Promise} to load charm. Triggered with same result
              as this.charm.
     */
-    promiseCharm: function(charmId, cache) {
+    promiseCharm: function(charmId, cache, defaultSeries) {
       var self = this;
       return Y.Promise(function(resolve, reject) {
         self.charm(charmId, { 'success': resolve, 'failure': reject },
-            self, cache);
+            self, cache, defaultSeries);
       });
+    },
+
+    /**
+     Normalize a charm name so we can request its full data. Charm lookup
+     requires a very specific form of the charm identifier.
+
+     series/charm-revision
+
+     where revision can currently be any numeric placeholder.
+
+     @method normalizeCharmId
+     @param {String} charmId to normalize.
+     @param {String} defaultSeries to resolve.
+     @return {String} normalized id.
+     */
+    normalizeCharmId: function(charmId, defaultSeries) {
+      var result = charmId;
+      if (/^(cs:|local:)/.exec(result)) {
+        result = result.slice(result.indexOf(':') + 1);
+      }
+
+      if (result.indexOf('/') === -1) {
+        if (!defaultSeries) {
+          console.warn('Unable to normalize charm id, no defaultSeries');
+          defaultSeries = 'precise';
+        }
+        result = defaultSeries + '/' + result;
+      }
+      if (/\-\d+/.exec(result) === null) {
+        // Add in a revision placeholder
+        result = result + '-1';
+      }
+      return result;
+    },
+
+    /**
+      Promises to return the latest charm ID for a given charm if a newer one
+      exists; this also caches the newer charm if one is available.
+
+      @method promiseUpgradeAvailability
+      @param {Charm} charm an existing charm potentially in need of an upgrade.
+      @param {ModelList} cache a local cache of browser charms.
+      @return {Promise} with an id or undefined.
+    */
+    promiseUpgradeAvailability: function(charm, cache) {
+      // Get the charm's store ID, then replace the version number
+      // with '-HEAD' to retrieve the latest version of the charm.
+      var storeId = charm.get('storeId').replace(/-\d+$/, '-HEAD');
+      return this.promiseCharm(storeId, cache)
+        .then(function(latest) {
+            var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10),
+               currentVersion = parseInt(charm.get('revision'), 10);
+            if (latestVersion > currentVersion) {
+              return latest.charm.id;
+            }
+          }, function(e) {
+            throw e;
+          });
     },
 
     /**

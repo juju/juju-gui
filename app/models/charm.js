@@ -30,7 +30,7 @@ YUI.add('juju-charm-models', function(Y) {
   var RECENT_DAYS = 30;
 
   var models = Y.namespace('juju.models');
-  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/;
+  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+|HEAD)$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
@@ -953,7 +953,40 @@ YUI.add('juju-charm-models', function(Y) {
    * @class BrowserCharmList
    */
   models.BrowserCharmList = Y.Base.create('browserCharmList', Y.ModelList, [], {
-    model: models.BrowserCharm
+    model: models.BrowserCharm,
+    /**
+      Search charms for ids in various formats. This defaults to doing a
+      getById but when no match is found this will parse the charmId argument
+      and attempt to match without scheme and with the default series of the
+      environment (if provided.)
+
+      @method find
+      @param {String} charmId to find.
+      @param {String} defaultSeries optional series to search.
+      @return {Object} charm.
+    */
+    find: function(charmId, defaultSeries) {
+      var result = this.getById(charmId);
+      var partial = charmId;
+      if (result) { return result; }
+
+      if (/^(cs:|local:)/.exec(partial) !== null) {
+        partial = partial.slice(partial.indexOf(':') + 1);
+      }
+      if (charmId.indexOf('/') === -1 && defaultSeries) {
+        partial = defaultSeries + '/' + partial;
+      }
+      if (/\-\d+$/.exec(partial)) {
+        partial = partial.slice(0, partial.indexOf('-'));
+      }
+      result = this.filter(function(charm) {
+        return charm.get('full_name') === partial;
+      });
+      if (result.length === 1) {
+        return result[0];
+      }
+      return null;
+    }
   }, {
     ATTRS: {}
   });

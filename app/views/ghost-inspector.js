@@ -128,6 +128,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           config,
           this.viewletManager.configFileContent,
           numUnits,
+          null,  // constraints
           Y.bind(this._deployCallbackHandler, this, serviceName, config));
     },
 

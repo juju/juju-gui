@@ -29,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('subapp-browser-minimized', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views');
-
   /**
    * The minimized state view.
    *
@@ -37,7 +36,9 @@ YUI.add('subapp-browser-minimized', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [], {
+  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [
+    Y.juju.widgets.ViewmodeControlsViewExtension
+  ], {
     template: views.Templates.minimized,
 
     events: {
@@ -47,15 +48,13 @@ YUI.add('subapp-browser-minimized', function(Y) {
     },
 
     /**
-     * Toggle the visibility of the browser. Bound to nav controls in the
-     * view, however this will be expanded to be controlled from the new
-     * constant nav menu outside of the view once it's completed.
+     * Toggle the visibility of the browser.
      *
-     * @method _toggle_sidebar
+     * @method _toggleMinimized
      * @param {Event} ev event to trigger the toggle.
      *
      */
-    _toggleViewState: function(ev) {
+    _toggleMinimized: function(ev) {
       ev.halt();
 
       this.get('container').hide();
@@ -88,6 +87,13 @@ YUI.add('subapp-browser-minimized', function(Y) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
       this.get('container').setHTML(tplNode);
+      // Make sure the controls starts out setting the correct active state
+      // based on the current viewmode for our View.
+      this.controls = new Y.juju.widgets.ViewmodeControls({
+        currentViewmode: this.get('oldViewMode')
+      });
+      this.controls.render();
+      this._bindViewmodeControls(this.controls);
     }
 
   }, {
@@ -116,6 +122,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
     'base',
     'juju-templates',
     'juju-views',
-    'view'
+    'view',
+    'viewmode-controls'
   ]
 });

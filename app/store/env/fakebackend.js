@@ -368,12 +368,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
           throw e;
         }
       }
+
+      var constraints = {};
+      if (options.constraints) {
+        constraints = options.constraints;
+      }
+
       var service = this.db.services.add({
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
-        // fill this bad boy in.
-        constraints: {},
+        constraints: constraints,
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         config: options.config

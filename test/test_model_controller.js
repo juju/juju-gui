@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Model Controller Promises', function() {
   var modelController, yui, env, db, conn, environment, load, serviceError,
-      getService, cleanups, aEach;
+      getService, cleanups, aEach, utils;
 
   before(function(done) {
     YUI(GlobalConfig).use(
@@ -31,12 +31,13 @@ describe('Model Controller Promises', function() {
           load = Y.juju.models.BrowserCharm.prototype.load;
           getService = environments.PythonEnvironment.prototype.get_service;
           aEach = Y.Array.each;
+          utils = Y.namespace('juju-tests.utils');
           done();
         });
   });
 
   beforeEach(function() {
-    conn = new yui['juju-tests'].utils.SocketStub();
+    conn = new utils.SocketStub();
     environment = env = yui.juju.newEnvironment(
         {conn: conn});
     db = new yui.juju.models.Database();
@@ -56,6 +57,7 @@ describe('Model Controller Promises', function() {
     yui.Array.each(cleanups, function(cleanup) {
       cleanup();
     });
+    window.flags = {};
   });
 
   /**
@@ -244,4 +246,30 @@ describe('Model Controller Promises', function() {
               done();
             });
       });
+
+  it('can check for available upgrades', function(done) {
+    clobberLoad();
+    clobberGetService();
+    var serviceId = 'wordpress',
+        charmId = 'cs:precise/wordpress-7';
+    db.services.add({
+      id: serviceId,
+      loaded: true,
+      charm: charmId
+    });
+    window.flags.upgradeCharm = true;
+    modelController.set('store', utils.makeFakeStore());
+    var promise = modelController.getServiceWithCharm(serviceId);
+    promise.then(
+        function(result) {
+          var service = db.services.getById(serviceId);
+          assert(service.get('upgrade_available'), true);
+          assert(service.get('upgrade_to'), 'precise/wordpress-15');
+          done();
+        },
+        function() {
+          assert.fail('This should not have failed.');
+          done();
+        });
+  });
 });

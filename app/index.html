@@ -350,6 +350,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
         }
 
+        // XXX 22-08-2013 Jeff - Set the new inspector as the default so
+        // that we can remove the old inspectors step by step.
+        if (!flags.serviceInspector) {
+          flags.serviceInspector = true;
+        }
+
         return flags;
       };
 
