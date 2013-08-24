@@ -91,7 +91,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       for (var url in urls) {
         if (urls.hasOwnProperty(url)) {
-          urls[url].serviceInspector = true;
           assert.deepEqual(featureFlags(url), urls[url]);
         }
       }
