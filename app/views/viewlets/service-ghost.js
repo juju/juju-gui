@@ -53,8 +53,7 @@ YUI.add('viewlet-service-ghost', function(Y) {
       // XXX - Jeff
       // not sure this should be done like this
       // but this will allow us to use the old template.
-      templateOptions.settings = utils.extractServiceSettings(
-          model.get('options'));
+      templateOptions.settings = utils.extractServiceSettings(templateOptions);
 
       templateOptions.constraints = utils.getConstraints(
           // no current constraints in play.
