@@ -418,6 +418,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceDeploy',
         Params: {
           Config: {},
+          Constraints: {},
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
@@ -433,6 +434,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           // Configuration values are sent as strings.
           Config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          Constraints: {},
           CharmUrl: 'precise/mediawiki'
         },
         RequestId: 1
@@ -451,6 +453,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceDeploy',
         Params: {
           Config: {},
+          Constraints: {},
           ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql'
         },
