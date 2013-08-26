@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Ghost Inspector', function() {
+describe.only('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
       jujuViews, models, service, utils, view, Y;
@@ -139,6 +139,62 @@ describe('Ghost Inspector', function() {
       name: 'foo',
       skin: 'vector'
     });
+  });
+
+  it ('presents the contraints to the user in python env', function() {
+    // Create our own env to make sure we know which backend we're creating it
+    // against.
+    env.destroy();
+    env = juju.newEnvironment({conn: conn}, 'python');
+    inspector = setUpInspector();
+    var constraintsNode = container.all('.service-constraints');
+    assert.equal(constraintsNode.size(), 1);
+
+    var inputNodes = container.all('.service-constraints input');
+    assert.equal(inputNodes.size(), 3);
+  });
+
+  it ('presents the contraints to the user in go env', function() {
+    // Create our own env to make sure we know which backend we're creating it
+    // against.
+    env.destroy();
+    env = juju.newEnvironment({conn: conn}, 'go');
+    inspector = setUpInspector();
+    var constraintsNode = container.all('.service-constraints');
+    assert.equal(constraintsNode.size(), 1);
+
+    var inputNodes = container.all('.service-constraints input');
+    assert.equal(inputNodes.size(), 4);
+  });
+
+  it('deploys with constraints in python env', function() {
+    env.destroy();
+    env = juju.newEnvironment({conn: conn}, 'python');
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container');
+
+    vmContainer.one('input[name=cpu]').set('value', 2);
+    // Called the deploy button, but the css if confirm.
+    vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
+
+    var message = env.ws.last_message();
+    assert.equal(message.constraints.cpu, "2");
+  });
+
+  it('deploys with constraints in go env', function() {
+    env.destroy();
+    env = juju.newEnvironment({conn: conn}, 'go');
+    inspector = setUpInspector();
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container');
+
+    vmContainer.one('input[name=cpu-power]').set('value', 2);
+    // Called the deploy button, but the css if confirm.
+    vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
+
+    var message = env.ws.last_message();
+    assert.equal(message.Params.Constraints['cpu-power'], "2");
   });
 
   it('disables and resets input fields when \'use default config\' is active',
