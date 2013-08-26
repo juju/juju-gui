@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('Go Juju environment utilities', function() {
+  describe('Go Juju environment utilities', function() {
     var environments, Y;
 
     before(function(done) {
@@ -51,98 +51,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           expected = {key1: '42', key2: 'false', key3: 'null', key4: 'foo'},
           result = environments.stringifyObjectValues(obj);
       assert.deepEqual(expected, result);
-    });
-
-    it('provides a constraints tool for converting to Go formats', function() {
-      var GoConstraints = environments.GoConstraints;
-      var toConvert = [{
-          'name': 'cpu-power',
-          'title': 'CPU Power',
-          'unit': 'GHZ',
-          'value': ''
-        }, {
-          'name': 'cpu-cores',
-          'title': 'CPU Cores',
-          'value': '2'
-        }, {
-          'name': 'mem',
-          'title': 'Memory',
-          'unit': 'GB',
-          'value': '512MB'
-        }, {
-          'name': 'arch',
-          'title': 'Architecture',
-          'value': ''
-        }
-      ];
-      var constraints = new GoConstraints();
-      var converted = constraints.toGoFormat(toConvert);
-      assert.deepEqual(converted, [{
-          'name': 'CpuPower',
-          'title': 'CPU Power',
-          'unit': 'GHZ',
-          'value': ''
-        }, {
-          'name': 'CpuCores',
-          'title': 'CPU Cores',
-          'value': '2'
-        }, {
-          'name': 'Mem',
-          'title': 'Memory',
-          'unit': 'GB',
-          'value': '512MB'
-        }, {
-          'name': 'Arch',
-          'title': 'Architecture',
-          'value': ''
-        }
-      ]);
-    });
-
-    it('can convert back the go constraints back', function() {
-      var GoConstraints = environments.GoConstraints;
-      var toConvert = [{
-          'name': 'CpuPower',
-          'title': 'CPU Power',
-          'unit': 'GHZ',
-          'value': ''
-        }, {
-          'name': 'CpuCores',
-          'title': 'CPU Cores',
-          'value': '2'
-        }, {
-          'name': 'Mem',
-          'title': 'Memory',
-          'unit': 'GB',
-          'value': '512MB'
-        }, {
-          'name': 'Arch',
-          'title': 'Architecture',
-          'value': ''
-        }
-      ];
-      var constraints = new GoConstraints();
-      var converted = constraints.toOrigFormat(toConvert);
-      assert.deepEqual(converted, [{
-          'name': 'cpu-power',
-          'title': 'CPU Power',
-          'unit': 'GHZ',
-          'value': ''
-        }, {
-          'name': 'cpu-cores',
-          'title': 'CPU Cores',
-          'value': '2'
-        }, {
-          'name': 'mem',
-          'title': 'Memory',
-          'unit': 'GB',
-          'value': '512MB'
-        }, {
-          'name': 'arch',
-          'title': 'Architecture',
-          'value': ''
-        }
-      ]);
     });
 
   });
@@ -510,7 +418,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceDeploy',
         Params: {
           Config: {},
-          Constraints: {},
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
@@ -526,7 +433,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           // Configuration values are sent as strings.
           Config: {debug: 'true', logo: 'example.com/mylogo.png'},
-          Constraints: {},
           CharmUrl: 'precise/mediawiki'
         },
         RequestId: 1
@@ -546,7 +452,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           Config: {},
           ConfigYAML: config_raw,
-          Constraints: {},
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
@@ -565,13 +470,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.deploy('precise/mediawiki', null, null, null, 1, constraints);
       msg = conn.last_message();
-      assert.deepEqual(
-          msg.Params.Constraints, {
-            'CpuCores': 1,
-            'CpuPower': 0,
-            'Mem': '512M',
-            'Arch': 'i386'
-          });
+      assert.deepEqual(msg.Params.Constraints, constraints);
     });
 
     it('successfully deploys a service storing charm data', function() {

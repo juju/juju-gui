@@ -103,60 +103,6 @@ YUI.add('juju-env-go', function(Y) {
     return value;
   };
 
-
-  /**
-   * Helper to deal with Go formatted constraints.
-   *
-   * @class GoConstraints
-   * @constructor
-   *
-   */
-  function GoConstraints() {
-    this.names = ['cpu-power', 'cpu-cores', 'mem', 'arch'];
-    this.goNames = {
-      'cpu-power': 'CpuPower',
-      'cpu-cores': 'CpuCores',
-      'mem': 'Mem',
-      'arch': 'Arch'
-    };
-  }
-
-  /**
-   * Convert the constraints object from the normal lowercase format to the
-   * upper case Go format.
-   *
-   * @method toGoFormat
-   * @param {Object} constraints the list of constraints to set.
-   *
-   */
-  GoConstraints.prototype.toGoFormat = function(constraints) {
-    constraints.forEach(function(con, idx, constraints) {
-      constraints[idx].name = this.goNames[con.name];
-    }, this);
-    return constraints;
-  };
-
-  /**
-   * Convert the caps Go format of constraints back to the lower case to use
-   * in the rest of the application.
-   *
-   * @method toOrigFormat
-   * @param {Object} goConstraints the Go formatted constraints object.
-   *
-   */
-  GoConstraints.prototype.toOrigFormat = function(goConstraints) {
-    // Build a reverse of the goNames.
-    var backNames = {};
-    Y.Object.each(this.goNames, function(value, key) {
-      backNames[value] = key;
-    }, this);
-
-    goConstraints.forEach(function(con, idx, constraints) {
-      constraints[idx].name = backNames[con.name];
-    }, this);
-    return goConstraints;
-  };
-
   /**
    * The Go Juju environment.
    *
@@ -173,6 +119,8 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
+    genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+
     /**
      * Go environment constructor.
      *
@@ -184,8 +132,6 @@ YUI.add('juju-env-go', function(Y) {
       // predefined value in the login mask.
       this.defaultUser = 'user-admin';
       this.on('_rpc_response', this._handleRpcResponse);
-      this.constraints = new GoConstraints();
-      this.genericConstraints = this.constraints.names;
     },
 
     /**
@@ -393,7 +339,8 @@ YUI.add('juju-env-go', function(Y) {
          configuration options. Only one of `config` and `config_raw` should be
          provided, though `config_raw` takes precedence if it is given.
        @param {Integer} num_units The number of units to be deployed.
-       @param {Object} constraints The machine constraints to use.
+       @param {Object} constraints The machine constraints to use in the
+         object format key: value.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.
@@ -406,7 +353,6 @@ YUI.add('juju-env-go', function(Y) {
             callback, service_name, charm_url);
       }
 
-      var goConstraints = {};
       if (constraints) {
         // If the constraints is a function (this arg position used to be a
         // callback) then log it out to the console to fix it.
@@ -414,9 +360,6 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
-
-        // Convert the constraints to the Go message format.
-        goConstraints = this.constraints.toGoFormat(constraints);
       }
       this._send_rpc(
           { Type: 'Client',
@@ -425,9 +368,9 @@ YUI.add('juju-env-go', function(Y) {
               ServiceName: service_name,
               Config: stringifyObjectValues(config),
               ConfigYAML: config_raw,
-              Constraints: goConstraints,
+              Constraints: constraints,
               CharmUrl: charm_url,
-              NumUnits: num_units,
+              NumUnits: num_units
             }
           },
           intermediateCallback
@@ -1311,7 +1254,6 @@ YUI.add('juju-env-go', function(Y) {
   });
 
   environments.createRelationKey = createRelationKey;
-  environments.GoConstraints = GoConstraints;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;

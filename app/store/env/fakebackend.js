@@ -346,7 +346,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {undefined} Get the result from the callback.
     */
     _deployFromCharm: function(charm, callback, options) {
-      debugger;
       if (!options.name) {
         options.name = charm.get('package_name');
       }
@@ -388,7 +387,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var response = this.addUnit(options.name, options.unitCount);
       response.service = service;
       callback(response);
-      debugger;
     },
 
     /**

@@ -121,11 +121,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
-      debugger;
       var genericConstraints = this.options.env.genericConstraints;
+      // Deploy needs constraints in simple key:value object.
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
-      constraints = utils.getConstraints(constraints, genericConstraints);
+
       options.env.deploy(
           model.get('id'),
           serviceName,
@@ -133,7 +133,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
           this.viewletManager.configFileContent,
           numUnits,
           constraints,
-          Y.bind(this._deployCallbackHandler, this, serviceName, config));
+          Y.bind(this._deployCallbackHandler,
+                 this,
+                 serviceName,
+                 config,
+                 constraints));
     },
 
     /**
@@ -234,17 +238,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Object} config The configuration object of the service.
       @param {Y.EventFacade} e The event facade from the deploy event.
     */
-    _deployCallbackHandler: function(serviceName, config, e) {
+    _deployCallbackHandler: function(serviceName, config, constraints, e) {
       var options = this.options,
           db = options.db,
           ghostService = options.ghostService;
-      debugger;
-
-      // Verify that the constraints were set:
-      options.env.get_service(serviceName, function(ev) {
-          debugger;
-          console.log(ev.result.constraints);
-      });
 
       if (e.err) {
         db.notifications.add(
@@ -296,7 +293,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
         id: serviceName,
         pending: false,
         loading: false,
-        config: config
+        config: config,
+        constraints: constraints
       });
 
       this.closeInspector();

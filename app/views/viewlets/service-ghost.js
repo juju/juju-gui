@@ -57,10 +57,9 @@ YUI.add('viewlet-service-ghost', function(Y) {
           model.get('options'));
 
       templateOptions.constraints = utils.getConstraints(
-        // no current constraints in play.
-        {},
-        viewletMgrAttrs.env.genericConstraints
-      );
+          // no current constraints in play.
+          {},
+          viewletMgrAttrs.env.genericConstraints);
 
       // Signalling to the shared templates that this is the ghost view.
       templateOptions.ghost = true;
