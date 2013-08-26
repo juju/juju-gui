@@ -53,42 +53,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, result);
     });
 
-    it('provides a constraints tool for converting to Go formats', function() {
-      var GoConstraints = environments.GoConstraints;
-      var toConvert = {
-        'cpu-power': 0,
-        'cpu-cores': 1,
-        'mem': '512M',
-        'arch': 'i386'
-      };
-      var constraints = new GoConstraints();
-      var converted = constraints.toGoFormat(toConvert);
-      assert.deepEqual(converted, {
-        'CpuPower': 0,
-        'CpuCores': 1,
-        'Mem': '512M',
-        'Arch': 'i386'
-      });
-    });
-
-    it('can convert back the go constraints back', function() {
-      var GoConstraints = environments.GoConstraints;
-      var toConvert = {
-        'CpuPower': 0,
-        'CpuCores': 1,
-        'Mem': '512M',
-        'Arch': 'i386'
-      };
-      var constraints = new GoConstraints();
-      var converted = constraints.toOrigFormat(toConvert);
-      assert.deepEqual(converted, {
-        'cpu-power': 0,
-        'cpu-cores': 1,
-        'mem': '512M',
-        'arch': 'i386'
-      });
-    });
-
   });
 
 
@@ -489,8 +453,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceDeploy',
         Params: {
           Config: {},
-          ConfigYAML: config_raw,
           Constraints: {},
+          ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
@@ -509,13 +473,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       env.deploy('precise/mediawiki', null, null, null, 1, constraints);
       msg = conn.last_message();
-      assert.deepEqual(
-          msg.Params.Constraints, {
-            'CpuCores': 1,
-            'CpuPower': 0,
-            'Mem': '512M',
-            'Arch': 'i386'
-          });
+      assert.deepEqual(msg.Params.Constraints, constraints);
     });
 
     it('successfully deploys a service storing charm data', function() {
