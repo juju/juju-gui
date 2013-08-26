@@ -121,7 +121,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
-      var genericConstraints = this.options.env.genericConstraints;
       // Deploy needs constraints in simple key:value object.
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');

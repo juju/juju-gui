@@ -56,7 +56,9 @@ YUI.add('viewlet-service-constraints', function(Y) {
       this.container = Y.Node.create(this.templateWrapper);
       this.container.setHTML(contents);
     }
+
   };
+
 }, '0.0.1', {
   requires: [
     'node',

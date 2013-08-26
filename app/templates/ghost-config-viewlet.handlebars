@@ -8,6 +8,15 @@
     </div>
   </div>
   {{/unless}}
+
+  {{#if constraints}}
+  <!-- Service Constraints added in -->
+  <div class="ghost-config-wrapper service-constraints">
+    <div class="ghost-config-header">Constraints</div>
+    <div class="ghost-config-content use-defaults">
+      {{> service-constraints}}
+  {{/if}}
+
   {{#if settings}}
   <!-- Service configuration form -->
   <div class="ghost-config-wrapper service-configuration">
@@ -36,11 +45,4 @@
   </div>
   {{/if}}
 
-  {{#if constraints}}
-  <!-- Service Constraints added in -->
-  <div class="ghost-config-wrapper service-constraints">
-    <div class="ghost-config-header">Constraints</div>
-    <div class="ghost-config-content use-defaults">
-      {{> service-constraints}}
-  {{/if}}
 </div>

@@ -484,7 +484,6 @@ YUI.add('juju-env-sandbox', function(Y) {
         configYAML: data.config_raw,
         constraints: data.constraints,
         unitCount: data.num_units
-        // add in constraints into here
       });
     },
 
