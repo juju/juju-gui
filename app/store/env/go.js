@@ -360,7 +360,10 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
+      } else {
+        constraints = {};
       }
+
       this._send_rpc(
           { Type: 'Client',
             Request: 'ServiceDeploy',
