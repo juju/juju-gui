@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Ghost Inspector', function() {
+describe('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
       jujuViews, models, service, utils, view, Y;
@@ -141,7 +141,7 @@ describe.only('Ghost Inspector', function() {
     });
   });
 
-  it ('presents the contraints to the user in python env', function() {
+  it('presents the contraints to the user in python env', function() {
     // Create our own env to make sure we know which backend we're creating it
     // against.
     env.destroy();
@@ -154,7 +154,7 @@ describe.only('Ghost Inspector', function() {
     assert.equal(inputNodes.size(), 3);
   });
 
-  it ('presents the contraints to the user in go env', function() {
+  it('presents the contraints to the user in go env', function() {
     // Create our own env to make sure we know which backend we're creating it
     // against.
     env.destroy();
@@ -179,7 +179,7 @@ describe.only('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.constraints.cpu, "2");
+    assert.equal(message.constraints.cpu, '2');
   });
 
   it('deploys with constraints in go env', function() {
@@ -194,7 +194,7 @@ describe.only('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.Params.Constraints['cpu-power'], "2");
+    assert.equal(message.Params.Constraints['cpu-power'], '2');
   });
 
   it('disables and resets input fields when \'use default config\' is active',
