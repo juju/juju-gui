@@ -43,19 +43,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
       ns.CharmResults, [], {
         template: views.Templates.search,
 
-        /**
-           Watch for changes to the filters to update results.
-
-           @method _bindEvents
-
-         */
-        _bindEvents: function() {
-          this.events['.filterControl a'] = {
-            click: '_toggleFilters'
-          };
-        },
-
-        /**
+       /**
            When a filter is changed, catch the event and build a change object
            for the subapp to generate a new route for.
 
