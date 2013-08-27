@@ -26,8 +26,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-env', function(Y) {
 
-  // Default to the Python environment.
-  var DEFAULT_BACKEND = 'python';
+  // Default to the Go environment.
+  var DEFAULT_BACKEND = 'go';
 
   /**
    * Create and return a store environment suitable for connecting to the

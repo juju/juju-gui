@@ -307,7 +307,8 @@ describe('Inspector Settings', function() {
     input.set('value', 'foo');
 
     button.simulate('click');
-    assert.equal(env.ws.last_message().config.admins, 'foo');
+    var message = env.ws.last_message();
+    assert.equal('foo', message.Params.Config.admins);
     assert.equal(button.getHTML(), 'Save Changes');
   });
 

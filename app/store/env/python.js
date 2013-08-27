@@ -256,6 +256,10 @@ YUI.add('juju-env-python', function(Y) {
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      constraints, callback) {
+      if (!constraints) {
+        constraints = {};
+      }
+
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,

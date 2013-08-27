@@ -537,7 +537,13 @@ describe('Service config handlers', function() {
     });
   });
 
-  it('should not call get_service when a pending service is added',
+  // Ensure the last message in the connection is a ServiceGet request.
+  var assertServiceGetCalled = function() {
+    assert.equal(1, conn.messages.length);
+    assert.equal('ServiceGet', conn.last_message().Request);
+  };
+
+  it('should not call ServiceGet when a pending service is added',
      function() {
        var charm_id = 'cs:precise/wordpress-2';
        app.db.services.add({
@@ -547,7 +553,7 @@ describe('Service config handlers', function() {
        assert.equal(0, conn.messages.length);
      });
 
-  it('should call get_service when non-pending services are added',
+  it('should call ServiceGet when non-pending services are added',
      function() {
        var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
@@ -560,11 +566,10 @@ describe('Service config handlers', function() {
          charm: charm_id});
        var svc = app.db.services.getById(service_name);
        svc.set('pending', false);
-       assert.equal(1, conn.messages.length);
-       assert.equal('get_service', conn.last_message().op);
+       assertServiceGetCalled();
      });
 
-  it('should call get_service when a service\'s charm changes', function() {
+  it('should call ServiceGet when a service\'s charm changes', function() {
     var service_name = 'wordpress';
     var charm_id = 'cs:precise/wordpress-2';
     var charm = app.db.charms.add({id: charm_id});
@@ -574,15 +579,13 @@ describe('Service config handlers', function() {
       id: service_name,
       pending: false,
       charm: charm_id});
-    assert.equal(1, conn.messages.length);
-    assert.equal('get_service', conn.last_message().op);
+    assertServiceGetCalled();
     var svc = app.db.services.getById(service_name);
     charm_id = 'cs:precise/wordpress-3';
     var charm2 = app.db.charms.add({id: charm_id, loaded: true});
     destroyMe.push(charm2);
     svc.set('charm', charm_id);
-    assert.equal(1, conn.messages.length);
-    assert.equal('get_service', conn.last_message().op);
+    assertServiceGetCalled();
   });
 
 });

@@ -46,7 +46,7 @@ describe('Viewlet Manager', function() {
         constraints: Y.merge(viewletConfig)
       },
       viewletList: viewletList,
-      template: juju.views.Templates['viewlet-manager'],
+      template: juju.views.Templates['service-config-wrapper'],
       templateConfig: {},
       container: container,
       events: {
