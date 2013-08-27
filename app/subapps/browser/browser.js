@@ -51,8 +51,10 @@ YUI.add('subapp-browser', function(Y) {
     _cleanOldViews: function(newViewMode) {
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
-        this[viewAttr].destroy();
-        delete this[viewAttr];
+        if (this[viewAttr]) {
+          this[viewAttr].destroy();
+          delete this[viewAttr];
+        }
       }
     },
 
@@ -863,6 +865,8 @@ YUI.add('subapp-browser', function(Y) {
           this[viewmode](req, res, next);
         }
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -920,6 +924,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this.hidden) {
         this[viewmode](req, res, next);
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -965,6 +971,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this.hidden) {
         this[req.params.viewmode](req, res, next);
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -992,6 +1000,18 @@ YUI.add('subapp-browser', function(Y) {
       if (this.hidden) {
         browser.hide();
         minview.hide();
+
+        // We also need to destroy the Views so that they're not holding UX
+        // references for interaction events.
+        if (this._sidebar) {
+          this._sidebar.destroy();
+        }
+        if (this._minimized) {
+          this._minimized.destroy();
+        }
+        if (this._fullscreen) {
+          this._fullscreen.destroy();
+        }
       } else {
         if (this._viewState.viewmode === 'minimized') {
           minview.show();
