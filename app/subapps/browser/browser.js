@@ -578,17 +578,6 @@ YUI.add('subapp-browser', function(Y) {
         // Add any sidebar charms to the running cache.
         this._cache = Y.merge(this._cache, ev.cache);
       }, this);
-      this._editorial.on(this._editorial.EV_CATEGORY_LINK_CLICKED,
-          function(ev) {
-            var change = {
-              search: true,
-              filter: {
-                categories: [ev.category]
-              }
-            };
-            this.fire('viewNavigate', {change: change});
-          });
-
       this._editorial.render(this._cache.interesting);
       this._editorial.addTarget(this);
     },
