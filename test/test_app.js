@@ -235,11 +235,19 @@ function injectData(app, data) {
       constructAppInstance({
         env: juju.newEnvironment({
           conn: {
-            send: function() {},
+            send: function() {}, 
             close: function() {}
           }
         })
       });
+
+      // XXX bug:1217383
+      // Force an app._controlEvents so that we don't try to bind viewmode
+      // controls.
+      var fakeEv = {
+        detach: function() {}
+      }
+      app._controlEvents = [fakeEv, fakeEv];
 
       var checkUrls = [{
         url: ':gui:/service/memcached/',
