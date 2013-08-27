@@ -40,7 +40,7 @@ var juju_config = {
   socket_port: 8081,
   user: undefined,
   password: undefined,
-  apiBackend: 'python', // Value can be 'python' or 'go'.
+  apiBackend: 'go', // Value can be 'python' or 'go'.
   sandbox: false,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.

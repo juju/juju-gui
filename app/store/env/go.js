@@ -275,7 +275,11 @@ YUI.add('juju-env-go', function(Y) {
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated || this.pendingLoginResponse) {
+      if (this.userIsAuthenticated) {
+        this.fire('login', {data: {result: true}});
+        return;
+      }
+      if (this.pendingLoginResponse) {
         return;
       }
       var credentials = this.getCredentials();

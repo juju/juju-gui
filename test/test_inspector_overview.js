@@ -122,8 +122,9 @@ describe('Inspector Overview', function() {
        control.set('value', 1);
        control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
        var message = conn.last_message();
-       message.op.should.equal('remove_units');
-       message.unit_names.should.eql(['mediawiki/2', 'mediawiki/1']);
+       assert.equal('DestroyServiceUnits', message.Request);
+       assert.deepEqual(
+          ['mediawiki/2', 'mediawiki/1'], message.Params.UnitNames);
      });
 
   it('should not do anything if requested is < 1',
@@ -148,9 +149,9 @@ describe('Inspector Overview', function() {
                        .one('span:first-child')
                        .getHTML(), 'Scale up with the following constraints?');
        var message = conn.last_message();
-       message.op.should.equal('add_unit');
-       message.service_name.should.equal('mediawiki');
-       message.num_units.should.equal(4);
+       assert.equal('AddServiceUnits', message.Request);
+       assert.equal('mediawiki', message.Params.ServiceName);
+       assert.equal(4, message.Params.NumUnits);
      });
 
   it('should set the constraints before deploying any more units',
@@ -165,20 +166,18 @@ describe('Inspector Overview', function() {
        assert.equal(editConstraintsButton.getStyle('display'), 'none');
        var constraintsWrapper = container.one('.editable-constraints');
        assert.equal(constraintsWrapper.getStyle('display'), 'block');
-       var cpuInput = constraintsWrapper.one('input[name=cpu]'),
-           memInput = constraintsWrapper.one('input[name=mem]'),
-           archInput = constraintsWrapper.one('input[name=arch]');
-
-       cpuInput.set('value', 1);
-       memInput.set('value', 2);
-       archInput.set('value', 3);
+       var constraints = {arch: 'amd64', 'cpu-cores': 4, mem: 8};
+       Y.Object.each(constraints, function(value, key) {
+          var node = constraintsWrapper.one('input[name=' + key + ']');
+          node.set('value', value);
+       });
 
        // confirm the 'please confirm constraints' dialogue
        container.one('.confirm-num-units').simulate('click');
        var message = conn.last_message();
-       message.op.should.equal('set_constraints');
-       message.service_name.should.equal('mediawiki');
-       assert.deepEqual(message.constraints, ['cpu=1', 'mem=2', 'arch=3']);
+       assert.equal('SetServiceConstraints', message.Request);
+       assert.equal('mediawiki', message.Params.ServiceName);
+       assert.deepEqual(constraints, message.Params.Constraints);
      });
 
   it('generates a proper statuses object', function() {
@@ -326,15 +325,14 @@ describe('Inspector Overview', function() {
 
       unit.simulate('click');
       retryButton.simulate('click');
-      var msg = env.ws.last_message();
 
-      assert.deepEqual(msg, {
-        op: 'resolved',
-        unit_name: 'mediawiki/7',
-        relation_name: null,
-        retry: false,
-        request_id: 1
-      });
+      var expected = {
+        Params: {Retry: false, UnitName: 'mediawiki/7'},
+        Request: 'Resolved',
+        RequestId: 1,
+        Type: 'Client'
+      };
+      assert.deepEqual(expected, env.ws.last_message());
     });
 
     it('sends the retry command to the env for the selected unit', function() {
@@ -354,15 +352,14 @@ describe('Inspector Overview', function() {
 
       unit.simulate('click');
       retryButton.simulate('click');
-      var msg = env.ws.last_message();
 
-      assert.deepEqual(msg, {
-        op: 'resolved',
-        unit_name: 'mediawiki/7',
-        relation_name: null,
-        retry: true,
-        request_id: 1
-      });
+      var expected = {
+        Params: {Retry: true, UnitName: 'mediawiki/7'},
+        Request: 'Resolved',
+        RequestId: 1,
+        Type: 'Client'
+      };
+      assert.deepEqual(expected, env.ws.last_message());
     });
 
     it('generates the button display map for each unit category', function() {

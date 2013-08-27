@@ -85,14 +85,15 @@ describe('Inspector Constraints', function() {
     return inspector;
   };
 
-  // Create a fake response from the API server.
+  // Create a fake response from the juju-core API server.
   var makeResponse = function(service, error) {
-    return {
-      err: error,
-      op: 'set_constraints',
-      request_id: 1,
-      service_name: service.get('id')
-    };
+    var response = {RequestId: 1};
+    if (error) {
+      response.Error = 'bad wolf';
+    } else {
+      response.Response = {};
+    }
+    return response;
   };
 
   // Retrieve and return the constraints viewlet.
@@ -156,7 +157,7 @@ describe('Inspector Constraints', function() {
   });
 
   it('can save constraints', function() {
-    var expected = {arch: 'amd64', cpu: 'photon', mem: '1 teraflop'};
+    var expected = {arch: 'amd64', 'cpu-power': 100, mem: 4};
     // Change values in the form.
     Y.Object.each(expected, function(value, key) {
       var node = container.one('input[name=' + key + '].constraint-field');
@@ -167,14 +168,10 @@ describe('Inspector Constraints', function() {
     saveButton.simulate('click');
     var lastMessage = env.ws.last_message();
     // The set_constraint API method is correctly called.
-    assert.equal('set_constraints', lastMessage.op);
+    assert.equal('SetServiceConstraints', lastMessage.Request);
     // The expected constraints are passed in the API call.
     var obtained = Object.create(null);
-    Y.Array.each(lastMessage.constraints, function(value) {
-      var pair = value.split('=');
-      obtained[pair[0]] = pair[1];
-    });
-    assert.deepEqual(expected, obtained);
+    assert.deepEqual(expected, lastMessage.Params.Constraints);
   });
 
   it('handles error responses from the environment', function() {

@@ -45,26 +45,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('the user is initially assumed to be unauthenticated', function() {
-      assert.equal(env.userIsAuthenticated, false);
+      assert.isFalse(env.userIsAuthenticated);
     });
 
     test('successful login event marks user as authenticated', function() {
-      var evt = {data: {op: 'login', result: true}};
-      env.handleLoginEvent(evt);
-      assert.equal(env.userIsAuthenticated, true);
+      var data = {Response: {}};
+      env.handleLogin(data);
+      assert.isTrue(env.userIsAuthenticated);
     });
 
     test('unsuccessful login event keeps user unauthenticated', function() {
-      var evt = {data: {op: 'login'}};
-      env.handleLoginEvent(evt);
-      assert.equal(env.userIsAuthenticated, false);
+      var data = {Error: 'who are you?'};
+      env.handleLogin(data);
+      assert.isFalse(env.userIsAuthenticated);
     });
 
     test('bad credentials are removed', function() {
-      var evt = {data: {op: 'login'}};
-      env.handleLoginEvent(evt);
-      var credentials = env.getCredentials();
-      assert.equal(credentials, null);
+      var data = {Error: 'who are you?'};
+      env.handleLogin(data);
+      assert.isNull(env.getCredentials());
     });
 
     test('credentials passed to the constructor are stored', function() {
@@ -93,11 +92,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     test('with credentials set, login() sends an RPC message', function() {
-      env.setCredentials({ user: 'user', password: 'password' });
+      env.setCredentials({user: 'user', password: 'password'});
       env.login();
-      assert.equal(conn.last_message().op, 'login');
-      assert.equal(conn.last_message().user, 'user');
-      assert.equal(conn.last_message().password, 'password');
+      var message = conn.last_message();
+      assert.equal('Login', message.Request);
+      assert.equal('user', message.Params.AuthTag);
+      assert.equal('password', message.Params.Password);
     });
 
   });
@@ -143,9 +143,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.appendChild('<input/>').set('type', 'password').set(
           'value', 'password');
       loginView.login(ev);
-      assert.equal(conn.last_message().op, 'login');
-      assert.equal(conn.last_message().user, 'user');
-      assert.equal(conn.last_message().password, 'password');
+      var message = conn.last_message();
+      assert.equal('Login', message.Request);
+      assert.equal('user', message.Params.AuthTag);
+      assert.equal('password', message.Params.Password);
     });
 
     test('the view render method adds the login form', function() {

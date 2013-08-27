@@ -212,8 +212,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('#resolved-unit-button').simulate('click');
       container.one('#resolved-modal-panel .btn-danger').simulate('click');
       var msg = conn.last_message();
-      msg.op.should.equal('resolved');
-      msg.retry.should.equal(false);
+      assert.equal('Resolved', msg.Request);
+      assert.isFalse(msg.Params.Retry);
     });
 
     it('should send resolved op with retry when retry clicked', function() {
@@ -221,8 +221,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = makeView();
       container.one('#retry-unit-button').simulate('click');
       var msg = conn.last_message();
-      msg.op.should.equal('resolved');
-      msg.retry.should.equal(true);
+      assert.equal('Resolved', msg.Request);
+      assert.isTrue(msg.Params.Retry);
     });
 
     it('should send remove_units op when confirmation clicked', function() {
@@ -231,8 +231,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = makeView();
       container.one('#remove-unit-button').simulate('click');
       container.one('#remove-modal-panel .btn-danger').simulate('click');
-      var msg = conn.last_message();
-      msg.op.should.equal('remove_units');
+      assert.equal('DestroyServiceUnits', conn.last_message().Request);
     });
 
     it('should clear out the database after a unit is removed', function() {
@@ -274,10 +273,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
       var msg = conn.last_message();
-      msg.op.should.equal('resolved');
-      msg.unit_name.should.equal('mysql/0');
-      msg.relation_name.should.equal('db');
-      msg.retry.should.equal(false);
+      assert.equal('Resolved', msg.Request);
+      assert.equal('mysql/0', msg.Params.UnitName);
+      assert.isFalse(msg.Params.Retry);
     });
 
     it('should be able to send a retry relation message', function() {
@@ -285,10 +283,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var view = makeView();
       container.one('.retry-relation-button').simulate('click');
       var msg = conn.last_message();
-      msg.op.should.equal('resolved');
-      msg.unit_name.should.equal('mysql/0');
-      msg.relation_name.should.equal('db');
-      msg.retry.should.equal(true);
+      assert.equal('Resolved', msg.Request);
+      assert.equal('mysql/0', msg.Params.UnitName);
+      assert.isTrue(msg.Params.Retry);
     });
 
     it('should create an error notification if a resolve fails', function() {
@@ -297,10 +294,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('.resolved-relation-button').simulate('click');
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
-      var msg = conn.last_message();
-      msg.err = true;
+      var response = {
+        RequestId: conn.last_message().RequestId,
+        Error: 'bad wolf'
+      };
       db.notifications.size().should.equal(0);
-      env.dispatch_result(msg);
+      env.dispatch_result(response);
       db.notifications.size().should.equal(1);
       var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
@@ -311,10 +310,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       unit.relation_errors = {'db': ['mediawiki']};
       var view = makeView();
       container.one('.retry-relation-button').simulate('click');
-      var msg = conn.last_message();
-      msg.err = true;
+      var response = {
+        RequestId: conn.last_message().RequestId,
+        Error: 'bad wolf'
+      };
       db.notifications.size().should.equal(0);
-      env.dispatch_result(msg);
+      env.dispatch_result(response);
       db.notifications.size().should.equal(1);
       var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
