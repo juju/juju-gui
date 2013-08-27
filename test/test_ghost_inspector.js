@@ -118,6 +118,14 @@ describe('Ghost Inspector', function() {
         serviceNameInput.set('value', 'foo');
       });
 
+  it('displays the charms icon when rendered', function() {
+    inspector = setUpInspector();
+    var icon = container.one('.icon img');
+
+    // The icon url is from the fakestore we manually defined.
+    assert.equal(icon.getAttribute('src'), 'charm icon url');
+  });
+
   it('deploys a service with the specified unit count & config', function() {
     inspector = setUpInspector();
     env.connect();
