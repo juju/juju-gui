@@ -114,6 +114,7 @@ YUI.add('juju-charm-store', function(Y) {
      */
     _charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
+      console.log(charmID);
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
@@ -204,7 +205,7 @@ YUI.add('juju-charm-store', function(Y) {
         }
         result = defaultSeries + '/' + result;
       }
-      if (/\-\d+/.exec(result) === null) {
+      if (/\-(\d+|HEAD)/.exec(result) === null) {
         // Add in a revision placeholder
         result = result + '-1';
       }

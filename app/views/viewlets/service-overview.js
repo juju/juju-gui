@@ -34,18 +34,36 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     'landscape-security-upgrades': 'Security Upgrade'
   };
 
+  function categoryName(status) {
+    var nameMap = {
+      'unit': unitListNameMap,
+      'service': {
+        'upgrade-service': function(status) {
+          return status.upgradeAvailable ?
+            'A new upgrade is available' :
+            'Upgrade service';
+        }
+      }
+    };
+
+    var name = nameMap[status.type][status.category];
+    return typeof name === 'function' ? name(status) : name;
+  }
+
   /**
     Generates the unit list sorted by status category and landscape
     annotation key and returns an array with the data to
     generate the unit list UI.
 
-    @method updateUnitList
+    @method updateStatusList
     @param {Object} values From the databinding update method.
-    @return {Array} An array of objects with agent_state or landscape
-    annotation id as category and an array of units
-    [{ category: 'started', units: [model, model, ...]}].
+    @return {Array} An array of status objects. For units, this means
+    agent_state or landscape annotation id as category and an array of units
+    [{ type: 'unit', category: 'started', units: [model, model, ...]}].  For
+    services, this means whether or not an upgrade is available
+    [{ type: 'service', upgradeAvailable: true, upgradeTo: ...}].
     */
-  function updateUnitList(values) {
+  function updateStatusList(values) {
     var statuses = [],
         unitByStatus = {};
 
@@ -72,8 +90,48 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       if (unitByStatus[key]) {
         unit = unitByStatus[key];
       }
-      statuses.push({category: key, units: unit});
+      statuses.push({type: 'unit', category: key, units: unit});
     });
+
+    var flags = window.flags;
+    if (flags.upgradeCharm) {
+      var upgradeServiceStatus = {
+        type: 'service',
+        category: 'upgrade-service',
+        upgradeAvailable: this.model.get('upgrade_available'),
+        upgradeTo: this.model.get('upgrade_to'),
+        downgrades: []
+      };
+      // Retrieve the charm ID (minus the schema).
+      var charm = this.model.get('charm').replace(/^cs:/, '');
+      // Find the latest version number - if we have an upgrade, it will be
+      // that charm's version; otherwise it will be the current charm's
+      // version.
+      var currVersion = parseInt(charm.split('-').pop(), 10),
+          maxVersion = upgradeServiceStatus.upgradeAvailable ?
+              parseInt(upgradeServiceStatus.upgradeTo.split('-').pop(), 10) :
+              currVersion;
+      // Remove the version number from the charm so that we can build a 
+      // list of downgrades.
+      charm = charm.replace(/-\d+$/, '');
+      // Build a list of available downgrades 
+      if (maxVersion > 1) {
+        for (var version = maxVersion - 1; version > 0; version--) {
+          if (version === currVersion) {
+            continue;
+          }
+          upgradeServiceStatus.downgrades.push(charm + '-' + version);
+        }
+      }
+      // If we have an upgrade for this service, then it needs to appear under
+      // the pending units (at index 1, so insert at index 2); otherwise, it
+      // should just be pushed onto the end of the list of statuses.
+      if (upgradeServiceStatus.upgradeAvailable) {
+        statuses.splice(2, 0, upgradeServiceStatus);
+      } else {
+        statuses.push(upgradeServiceStatus);
+      }
+    }
 
     return statuses;
   }
@@ -111,10 +169,10 @@ YUI.add('viewlet-inspector-overview', function(Y) {
   /**
     Binds the statuses data set to d3
 
-    @method generateAndBindUnitHeaders
+    @method generateAndBindStatusHeaders
     @param {Array} statuses A key value pair of categories to unit list.
     */
-  function generateAndBindUnitHeaders(node, statuses) {
+  function generateAndBindStatusHeaders(node, statuses) {
     /* jshint -W040 */
     // Ignore 'possible strict violation'
     var self = this,
@@ -127,19 +185,91 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         });
 
     // D3 header enter section
-    var unitStatusWrapper = categoryWrapperNodes
+    var categoryStatusWrapper = categoryWrapperNodes
     .enter()
     .append('div')
     .classed('unit-list-wrapper hidden', true);
 
-    var unitStatusHeader = unitStatusWrapper
+    var categoryStatusHeader = categoryStatusWrapper
     .append('div')
     .attr('class', function(d) {
           return 'status-unit-header ' +
               'closed-unit-list ' + d.category;
         });
 
-    var unitStatusContentForm = unitStatusWrapper
+    var serviceStatusContentForm = categoryStatusWrapper
+    .filter(function(d) { return d.type === 'service'; })
+    .append('div')
+    .attr('class', function(d) {
+          return 'status-unit-content ' +
+              'close-unit ' + d.category;
+        });
+
+    var serviceUpgradeLi = serviceStatusContentForm
+    .filter(function(d) { 
+      return d.category === 'upgrade-service' && d.upgradeAvailable;
+    })
+    .append('li');
+
+    serviceUpgradeLi.append('a')
+      .attr('href', function(d) {
+        return '/' + d.upgradeTo;
+      })
+      .text(function(d) { return 'cs:' + d.upgradeTo; });
+
+    serviceUpgradeLi.append('a')
+      .classed('upgrade-link', true)
+      .text('Upgrade');
+
+    serviceStatusContentForm
+      .filter(function(d) {
+        return d.category === 'upgrade-service' && d.upgradeAvailable;
+      })
+      .append('li')
+      .append('a')
+      .classed('upgrade-link', true)
+      .text(function(d) {
+        return d.downgrades.length + ' hidden upgrades'
+      })
+      .on('click', function(d) {
+        // Toggle the 'hidden' class.
+        serviceStatusContentForm.select('.other-charms')
+          .classed('hidden', function() {
+            return !d3.select(this).classed('hidden');
+          })
+      });
+
+    var serviceUpgradeOtherCharms = serviceStatusContentForm
+      .filter(function(d) {
+        return d.category === 'upgrade-service';
+      })
+      .append('div')
+      .classed('other-charms', true)
+      .classed('hidden', function(d) {
+        return d.upgradeAvailable;
+      })
+      .selectAll('.other-charm')
+      .data(function(d) {
+        return d.downgrades;
+      })
+      .enter()
+      .append('li')
+      .classed('other-charm', true);
+
+    serviceUpgradeOtherCharms
+      .append('a')
+      .attr('href', function(d) {
+        return '/' + d;
+      })
+      .text(function(d) { return 'cs:' + d; });
+
+    serviceUpgradeOtherCharms
+      .append('a')
+      .classed('upgrade-link', true)
+      .text('Upgrade');
+
+    var unitStatusContentForm = categoryStatusWrapper
+    .filter(function(d) { return d.type === 'unit'; })
     .append('div')
     .attr('class', function(d) {
           return 'status-unit-content ' +
@@ -164,13 +294,15 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           return tmpl;
         });
 
-    unitStatusHeader.append('span')
+    categoryStatusHeader
+    .filter(function(d) { return d.type === 'unit'; })
+    .append('span')
     .classed('unit-qty', true);
 
-    unitStatusHeader.append('span')
+    categoryStatusHeader.append('span')
     .classed('category-label', true);
 
-    unitStatusHeader.append('span')
+    categoryStatusHeader.append('span')
     .classed('chevron', true);
 
     // D3 header update section
@@ -179,23 +311,25 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           return d.units.length;
         });
 
-    // Toggles the sections visible or hidden based on
-    // whether there are units in their list.
-    categoryWrapperNodes.filter(function(d) { return d.units.length > 0; })
+    // Toggles the sections visible or hidden based on if this is a service
+    // status or, if it's a unit status, whether there are units in the list.
+    categoryWrapperNodes.filter(function(d) { 
+      return d.type === 'service' || (d.type === 'unit' && d.units.length > 0);
+    })
     .classed('hidden', false);
 
     categoryWrapperNodes.filter(function(d) {
-      return d.units.length === undefined;
+      return d.type === 'unit' && d.units.length === undefined;
     })
     .classed('hidden', true);
 
     // Add the category label to each heading
     categoryWrapperNodes.select('.category-label')
-    .text(function(d) {
-          return unitListNameMap[d.category];
-        });
+    .text(categoryName);
 
-    var unitsList = categoryWrapperNodes.select('ul')
+    var unitsList = categoryWrapperNodes
+    .filter(function(d) { return d.type === 'unit'; })
+    .select('ul')
     .selectAll('li')
     .data(function(d) {
           return d.units;
@@ -231,12 +365,22 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     categoryWrapperNodes
       .select('.status-unit-content')
       .style('max-height', function(d) {
-          if (!self._unitItemHeight) {
-            self._unitItemHeight =
+          if (!self._itemHeight) {
+            self._itemHeight =
                 d3.select(this).select('li').property('offsetHeight');
           }
-          return ((self._unitItemHeight *
-              (d.units.length + 1)) + buttonHeight) + 'px';
+          var numItems = 0;
+          if (d.type === 'unit') {
+            numItems = d.units.length + 1;
+          } else {
+            if (d.category === 'upgrade-service') {
+              // If there is an upgrade available, make room for that, plus the
+              // link to show hidden upgrades; otherwise, just return the number
+              // of downgrades.
+              numItems = d.downgrades.length + (d.upgradeAvailable ? 2 : 0);
+            }
+          }
+          return ((self._itemHeight * numItems) + buttonHeight) + 'px';
         });
 
 
@@ -287,21 +431,15 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           // Called under the databinding context.
           // Subordinates may not have a value.
           if (value) {
-            var statuses = this.viewlet.updateUnitList(value);
-            this.viewlet.generateAndBindUnitHeaders(node, statuses);
+            var statuses = this.viewlet.updateStatusList(value);
+            this.viewlet.generateAndBindStatusHeaders(node, statuses);
           }
-        }
-      },
-      upgrade_to: {
-        depends: ['units'],
-        'update': function(node, value) {
-          debugger;
         }
       }
     },
     // These methods are exposed here to allow us access for testing.
-    updateUnitList: updateUnitList,
-    generateAndBindUnitHeaders: generateAndBindUnitHeaders,
+    updateStatusList: updateStatusList,
+    generateAndBindStatusHeaders: generateAndBindStatusHeaders,
     generateActionButtonList: generateActionButtonList
   };
 

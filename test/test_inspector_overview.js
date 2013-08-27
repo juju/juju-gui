@@ -203,13 +203,13 @@ describe('Inspector Overview', function() {
         b = units.add({ id: 'mysql/1', agent_state: 'install-error' });
 
     // This order is important.
-    var expected = [
+    var expected = { units: [
       { category: 'error', units: [a, b] },
       { category: 'pending', units: [c] },
       { category: 'running', units: [d, e] },
       { category: 'landscape-needs-reboot', units: [e]},
       { category: 'landscape-security-upgrades', units: []}
-    ];
+    ] };
     assert.deepEqual(overview.updateUnitList(units), expected);
   });
 
@@ -230,7 +230,7 @@ describe('Inspector Overview', function() {
 
     var statuses = overview.updateUnitList(units);
 
-    overview.generateAndBindUnitHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses);
 
     var unitListWrappers = newContainer.all('.unit-list-wrapper');
     var SUH = '.status-unit-header',
@@ -278,7 +278,7 @@ describe('Inspector Overview', function() {
 
     statuses = overview.updateUnitList(units);
 
-    overview.generateAndBindUnitHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
