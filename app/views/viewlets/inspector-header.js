@@ -29,24 +29,7 @@ YUI.add('viewlet-inspector-header', function(Y) {
     name: 'inspectorHeader',
     template: templates['inspector-header'],
     slot: 'header',
-    bindings: {
-      icon: {
-        'update': function(node, value) {
-          // XXX: Icon is only present on services that pass through
-          // the Ghost phase of the GUI. Once we have better integration
-          // with the charm browser API services handling of icon
-          // can be improved.
-          var icon = node.one('img');
-          if (icon === null && value) {
-            node.append('<img>');
-            icon = node.one('img');
-          }
-          if (value) {
-            icon.set('src', value);
-          }
-        }
-      }
-    },
+    bindings: {},
     'render': function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
       var pojoModel = model.getAttrs();
@@ -58,6 +41,9 @@ YUI.add('viewlet-inspector-header', function(Y) {
       } else {
         pojoModel.charmUrl = pojoModel.id;
       }
+      // Manually add the icon url for the charm since we don't have access to
+      // the browser handlebars helper at this location.
+      pojoModel.icon = viewContainerAttrs.store.iconpath(pojoModel.storeId);
       this.container.setHTML(this.template(pojoModel));
     }
   };
