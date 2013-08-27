@@ -119,7 +119,7 @@ describe('viewmode controls widgets', function() {
   });
 });
 
-describe.only('viewmode control extension', function() {
+describe('viewmode control extension', function() {
   var Y, container, controls, ViewmodeControls, TestView, view;
 
   before(function(done) {
