@@ -137,16 +137,18 @@ describe('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.num_units, numUnits);
-    assert.equal(message.op, 'deploy');
-    assert.equal(message.service_name, 'mediawiki');
-    assert.deepEqual(message.config, {
+    var params = message.Params;
+    var config = {
       admins: '',
-      debug: false,
+      debug: 'false',
       logo: '',
       name: 'foo',
       skin: 'vector'
-    });
+    };
+    assert.equal('ServiceDeploy', message.Request);
+    assert.equal('mediawiki', params.ServiceName);
+    assert.equal(numUnits, params.NumUnits);
+    assert.deepEqual(config, params.Config);
   });
 
   it('presents the contraints to the user in python env', function() {

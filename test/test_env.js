@@ -43,12 +43,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('returns the default env if none is specified', function() {
       var env = juju.newEnvironment({});
-      assert.equal('python-env', env.name);
+      assert.equal('go-env', env.name);
     });
 
     it('returns the default env if an invalid one is specified', function() {
       var env = juju.newEnvironment({}, 'invalid-api-backend');
-      assert.equal('python-env', env.name);
+      assert.equal('go-env', env.name);
     });
 
     it('sets up the env using the provided options', function() {

@@ -522,7 +522,7 @@ describe('BrowserCharm load', function() {
   it('must send request to juju environment for local charms', function() {
     var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(env);
     assert(!charm.loaded);
-    conn.last_message().op.should.equal('get_charm');
+    assert.equal('CharmInfo', conn.last_message().Request);
   });
 
   it('must handle success from local charm request', function(done) {
@@ -530,57 +530,47 @@ describe('BrowserCharm load', function() {
         env,
         function(err, response) {
           assert(!err);
-          charm.get('summary').should.equal('wowza');
+          assert.equal('wowza', charm.get('summary'));
           assert(charm.loaded);
           done();
         });
-    var response = conn.last_message();
-    response.result = { summary: 'wowza' };
+    var response = {
+      RequestId: conn.last_message().RequestId,
+      Response: {Meta: {Summary: 'wowza'}, Config: {}}
+    };
     env.dispatch_result(response);
     // The test in the callback above should run.
   });
 
-  it('parses the old charm model options location correctly', function(done) {
+  it('parses charm model options correctly', function(done) {
     var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
         env,
         function(err, response) {
           assert(!err);
           // This checks to make sure the parse mechanism is working properly
           // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log['default'], 'global');
+          var option = charm.get('options').default_log;
+          assert.equal('global', option['default']);
+          assert.equal('Default log', option.description);
           done();
         });
-    var response = conn.last_message();
-    response.result = {
-      config: {
-        options: {
-          default_log: {
-            'default': 'global',
-            description: 'Default log',
-            type: 'string'
-          }}}};
+    var response = {
+      RequestId: conn.last_message().RequestId,
+      Response: {
+        Meta: {},
+        Config: {
+          Options: {
+            default_log: {
+              Default: 'global',
+              Description: 'Default log',
+              Type: 'string'
+            }
+          }
+        }
+      }
+    };
     env.dispatch_result(response);
-  });
-
-  it('parses the new charm model options location correctly', function(done) {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          // This checks to make sure the parse mechanism is working properly
-          // for both the old ane new charm browser.
-          assert.equal(charm.get('options').default_log['default'], 'global');
-          done();
-        });
-    var response = conn.last_message();
-    response.result = {
-      options: {
-        default_log: {
-          'default': 'global',
-          description: 'Default log',
-          type: 'string'
-        }}};
-    env.dispatch_result(response);
+    // The test in the callback above should run.
   });
 
   it('must handle failure from local charm request', function(done) {
@@ -592,8 +582,10 @@ describe('BrowserCharm load', function() {
           assert(!charm.loaded);
           done();
         });
-    var response = conn.last_message();
-    response.err = true;
+    var response = {
+      RequestId: conn.last_message().RequestId,
+      Error: 'error'
+    };
     env.dispatch_result(response);
     // The test in the callback above should run.
   });
