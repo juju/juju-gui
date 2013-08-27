@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Inspector Overview', function() {
+describe.only('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, ENTER, charmConfig,
@@ -210,14 +210,14 @@ describe('Inspector Overview', function() {
         b = units.add({ id: 'mysql/1', agent_state: 'install-error' });
 
     // This order is important.
-    var expected = { units: [
-      { category: 'error', units: [a, b] },
-      { category: 'pending', units: [c] },
-      { category: 'running', units: [d, e] },
-      { category: 'landscape-needs-reboot', units: [e]},
-      { category: 'landscape-security-upgrades', units: []}
-    ] };
-    assert.deepEqual(overview.updateUnitList(units), expected);
+    var expected = [
+      { type: 'unit', category: 'error', units: [a, b] },
+      { type: 'unit', category: 'pending', units: [c] },
+      { type: 'unit', category: 'running', units: [d, e] },
+      { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
+      { type: 'unit', category: 'landscape-security-upgrades', units: []}
+    ];
+    assert.deepEqual(overview.updateStatusList(units), expected);
   });
 
   it('generates the unit list data bound elements', function() {
@@ -235,7 +235,7 @@ describe('Inspector Overview', function() {
     units.add({ id: 'mysql/2', agent_state: 'pending' });
     units.add({ id: 'mysql/3', agent_state: 'started' });
 
-    var statuses = overview.updateUnitList(units);
+    var statuses = overview.updateStatusList(units);
 
     overview.generateAndBindStatusHeaders(newContainer, statuses);
 
@@ -283,7 +283,7 @@ describe('Inspector Overview', function() {
     units.add({ id: 'mysql/4', agent_state: 'pending' });
     units.add({ id: 'mysql/5', agent_state: 'pending' });
 
-    statuses = overview.updateUnitList(units);
+    statuses = overview.updateStatusList(units);
 
     overview.generateAndBindStatusHeaders(newContainer, statuses);
 
