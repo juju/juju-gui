@@ -1130,12 +1130,13 @@ YUI.add('juju-gui', function(Y) {
           this.renderEnvironment = false;
 
           // XXX bug:1217383
-          // We're hiding the subapp from view, but people want to be able to click on the
-          // viewmode controls. We handle that here as a temp hack until the old
-          // :gui: views are gone and we've moved to the serviceInspector. Then
-          // the browser will always be around and can handle this widget for
-          // us. This is horrible and we know it. When the idea of 'hidden' is
-          // removed with the old views this hack will go away with it.
+          // We're hiding the subapp from view, but people want to be able to
+          // click on the viewmode controls. We handle that here as a temp
+          // hack until the old :gui: views are gone and we've moved to the
+          // serviceInspector. Then the browser will always be around and can
+          // handle this widget for us. This is horrible and we know it. When
+          // the idea of 'hidden' is removed with the old views this hack will
+          // go away with it.
           if (!this._controlEvents || this._controlEvents.length === 0) {
             this._controls = new widgets.ViewmodeControls({
               currentViewmode: subapps.charmbrowser._viewState.viewmode
@@ -1143,27 +1144,29 @@ YUI.add('juju-gui', function(Y) {
             this._controls.render();
             this._controlEvents = [];
             this._controlEvents.push(
-              this._controls.on(
-                this._controls.EVT_FULLSCREEN,
-                function(ev) {
-                  // Navigate away from anything in :gui: and to the /fullscreen
-                  // in :charmbrowser:
-                  this._navigate('/fullscreen',
-                                 { overrideAllNamespaces: true });
+                this._controls.on(
+                    this._controls.EVT_FULLSCREEN,
+                    function(ev) {
+                      // Navigate away from anything in :gui: and to the
+                      // /fullscreen in :charmbrowser:
+                      this._navigate('/fullscreen',
+                                     { overrideAllNamespaces: true });
 
-                  this._controls._updateActiveNav('fullscreen');
-                }, this)
+                      this._controls._updateActiveNav('fullscreen');
+                    }, this
+                )
             );
             this._controlEvents.push(
-              this._controls.on(
-                this._controls.EVT_SIDEBAR,
-                function(ev) {
-                  // Navigate away from anything in :gui: and to the /fullscreen
-                  // in :charmbrowser:
-                  this._navigate('/sidebar',
-                                 { overrideAllNamespaces: true });
-                  this._controls._updateActiveNav('sidebar');
-                }, this)
+                this._controls.on(
+                    this._controls.EVT_SIDEBAR,
+                    function(ev) {
+                      // Navigate away from anything in :gui: and to the
+                      // /sidebar in :charmbrowser:
+                      this._navigate('/sidebar',
+                                     { overrideAllNamespaces: true });
+                      this._controls._updateActiveNav('sidebar');
+                    }, this
+                )
             );
           }
 
