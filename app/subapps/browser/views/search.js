@@ -43,49 +43,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
       ns.CharmResults, [], {
         template: views.Templates.search,
 
-       /**
-           When a filter is changed, catch the event and build a change object
-           for the subapp to generate a new route for.
-
-           @method _filterChanged
-           @param {Event} ev the change event detected from the widget.
-
-         */
-        _filterChanged: function(ev) {
-          var filters = this.get('filters');
-          filters[ev.change.field] = ev.change.value;
-          var change = {
-            search: true,
-            filter: {}
-          };
-          change.filter[ev.change.field] = ev.change.value;
-          this.fire('viewNavigate', {change: change});
-        },
-
-        /**
-           Show/hide the filters based on the click of this control.
-
-           @method _toggleFilters
-           @param {Event} ev The click event from YUI.
-
-         */
-        _toggleFilters: function(ev) {
-          ev.halt();
-
-          var control = ev.currentTarget;
-          var newTarget = control.hasClass('less') ? 'more' : 'less';
-          newTarget = this.get('container').one('.filterControl .' + newTarget);
-
-          control.hide();
-          newTarget.show();
-
-          if (newTarget.hasClass('less')) {
-            this.get('container').one('.search-filters').show();
-          } else {
-            this.get('container').one('.search-filters').hide();
-          }
-        },
-
         /**
            Renders the search results from the the store query.
 
@@ -99,8 +56,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 isFullscreen: this.get('isFullscreen')
               }),
               tplNode = Y.Node.create(tpl),
-              results_container = tplNode.one('.search-results'),
-              filter_container = tplNode.one('.search-filters');
+              results_container = tplNode.one('.search-results');
 
           results.map(function(charm) {
             var ct = new widgets.browser.CharmToken(Y.merge(
@@ -109,7 +65,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }));
             ct.render(results_container);
           }, this);
-          this._renderFilterWidget(filter_container);
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending
@@ -133,25 +88,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
           };
           cache.charms.add(results);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
-        },
-
-        /**
-           Render the filter controls widget into the search page.
-
-           @method _renderfilterWidget
-           @param {Node} container the node to drop the filter control into.
-
-         */
-        _renderFilterWidget: function(container) {
-          this.filters = new widgets.browser.Filter({
-            filters: this.get('filters')
-          });
-
-          this.filters.render(container);
-          this.addEvent(
-              this.filters.on(
-                  this.filters.EV_FILTER_CHANGED, this._filterChanged, this)
-          );
         },
 
         /**
