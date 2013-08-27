@@ -669,7 +669,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Clean up any old editorial content. If we need it, we'll reset it up
       // below.
-      if (this._editorial || forceFullscreen) {
+      if (this._editorial) {
         this._editorial.destroy();
       }
 
@@ -760,9 +760,7 @@ YUI.add('subapp-browser', function(Y) {
         }
 
         this.renderSearchResults(req, res, next);
-      }
-
-      if (this._shouldShowEditorial() || forceSidebar) {
+      } else if (this._shouldShowEditorial() || forceSidebar) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
@@ -770,6 +768,7 @@ YUI.add('subapp-browser', function(Y) {
 
         this.renderEditorial(req, res, next);
       }
+
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.

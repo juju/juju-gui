@@ -380,13 +380,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, Charmworld2, next;
+      var Y, app, browser, Charmworld2, container, next;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
             'app-subapp-extension',
             'juju-browser',
             'juju-charm-store',
+            'juju-tests-utils',
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
@@ -401,12 +402,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         window.juju_config = {
           charmworldURL: 'http://localhost'
         };
+        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        addBrowserContainer(Y, container);
+
       });
 
       afterEach(function() {
         if (app) {
           app.destroy();
         }
+        container.remove(true);
         window.juju_config = undefined;
       });
 
@@ -657,6 +662,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-subapp-extension',
             'juju-views',
             'juju-browser',
+            'juju-tests-utils',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
 
@@ -771,6 +777,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('resets filters when navigating away from search', function() {
         browser._viewState.search = true;
         browser._filter.set('text', 'foo');
+        // Set the state before changing up.
+        browser._saveState();
         browser._getStateUrl({search: false});
         assert.equal('', browser._filter.get('text'));
       });
@@ -1236,16 +1244,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'querystring': 'text=apache'
         });
         assert.isTrue(browser._searchChanged());
+        browser._saveState();
         browser._getStateUrl({
           'search': true,
           'querystring': 'text=apache'
         });
         assert.isFalse(browser._searchChanged());
+        browser._saveState();
         browser._getStateUrl({
           'search': true,
           'querystring': 'text=ceph'
         });
         assert.isTrue(browser._searchChanged());
+        browser._saveState();
       });
 
       it('permits a filter clear command', function() {

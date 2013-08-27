@@ -1084,7 +1084,6 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.set('defaultSeries', evt.newVal);
     },
 
-
     /**
       Display the Environment Name.
 
@@ -1149,6 +1148,7 @@ YUI.add('juju-gui', function(Y) {
                     function(ev) {
                       // Navigate away from anything in :gui: and to the
                       // /fullscreen in :charmbrowser:
+                      this.renderEnvironment = true;
                       this._navigate('/fullscreen',
                                      { overrideAllNamespaces: true });
 
@@ -1162,6 +1162,7 @@ YUI.add('juju-gui', function(Y) {
                     function(ev) {
                       // Navigate away from anything in :gui: and to the
                       // /sidebar in :charmbrowser:
+                      this.renderEnvironment = true;
                       this._navigate('/sidebar',
                                      { overrideAllNamespaces: true });
                       this._controls._updateActiveNav('sidebar');
