@@ -135,4 +135,4 @@ describe('Inspector Charm', function() {
     content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
     testContainer.one('.left-breakout').setHTML(content);
   });
-})
+});

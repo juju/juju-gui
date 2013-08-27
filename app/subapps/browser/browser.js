@@ -634,7 +634,12 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode fullscreen, we need to render it.
       // We know the viewmode is already fullscreen because we're in this
       // function.
-      if (this._hasStateChanged('viewmode') || !this._fullscreen) {
+      var forceFullscreen = false;
+      if (!this._fullscreen) {
+        forceFullscreen = true;
+      }
+
+      if (this._hasStateChanged('viewmode') || forceFullscreen) {
         var extraCfg = {};
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
@@ -664,7 +669,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Clean up any old editorial content. If we need it, we'll reset it up
       // below.
-      if (this._editorial) {
+      if (this._editorial || forceFullscreen) {
         this._editorial.destroy();
       }
 

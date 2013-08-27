@@ -143,10 +143,13 @@ YUI.add('viewmode-controls', function(Y) {
 
       this._updateActiveNav(this.get('currentViewmode'));
       this.on('destroy', function(ev) {
+        // We don't actually want the widget to remove any DOM. Just run our
+        // unbinding of events for us.
         ev.halt();
         this._events.forEach(function(e) {
           e.detach();
         });
+        this._events = [];
       }, this);
 
     },
@@ -217,10 +220,14 @@ YUI.add('viewmode-controls', function(Y) {
       this._minimized = controls.on(
           controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
       this._destroy = this.on('destroy', function() {
+        // Unbind the View events listening for events from the widget.
         this._fullscreen.detach();
         this._sidebar.detach();
         this._minimized.detach();
+        // Including this event.
         this._destroy.detach();
+        // Finally, make sure we run destroy on the widget itself to unbind
+        // it's own events.
         controls.destroy();
       });
     },

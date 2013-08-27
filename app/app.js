@@ -1169,11 +1169,6 @@ YUI.add('juju-gui', function(Y) {
                 )
 
             );
-            this._controlEvents.push(
-                this._controls.on(
-                    this._controls.EVT_TOGGLE_VIEWABLE,
-                    function(ev) {}, this)
-            );
           }
 
         } else {
