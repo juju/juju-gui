@@ -39,7 +39,8 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      utils = views.utils;
+      utils = views.utils,
+      widgets = Y.namespace('juju.widgets');
 
   /**
    * The main app class.
@@ -1127,10 +1128,60 @@ YUI.add('juju-gui', function(Y) {
           // route on root namespaced paths and this check will no longer
           // be needed
           this.renderEnvironment = false;
+
+          // XXX bug:1217383
+          // We're hiding the subapp from view, but people want to be able to click on the
+          // viewmode controls. We handle that here as a temp hack until the old
+          // :gui: views are gone and we've moved to the serviceInspector. Then
+          // the browser will always be around and can handle this widget for
+          // us. This is horrible and we know it. When the idea of 'hidden' is
+          // removed with the old views this hack will go away with it.
+          if (!this._controlEvents || this._controlEvents.length === 0) {
+            this._controls = new widgets.ViewmodeControls({
+              currentViewmode: subapps.charmbrowser._viewState.viewmode
+            });
+            this._controls.render();
+            this._controlEvents = [];
+            this._controlEvents.push(
+              this._controls.on(
+                this._controls.EVT_FULLSCREEN,
+                function(ev) {
+                  // Navigate away from anything in :gui: and to the /fullscreen
+                  // in :charmbrowser:
+                  this._navigate('/fullscreen',
+                                 { overrideAllNamespaces: true });
+
+                  this._controls._updateActiveNav('fullscreen');
+                }, this)
+            );
+            this._controlEvents.push(
+              this._controls.on(
+                this._controls.EVT_SIDEBAR,
+                function(ev) {
+                  // Navigate away from anything in :gui: and to the /fullscreen
+                  // in :charmbrowser:
+                  this._navigate('/sidebar',
+                                 { overrideAllNamespaces: true });
+                  this._controls._updateActiveNav('sidebar');
+                }, this)
+            );
+          }
+
         } else {
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
+
+          // XXX bug:1217383
+          // Destroy the controls widget we might have had around for a bit.
+          if (this._controlEvents) {
+            this._controlEvents.forEach(function(ev) {
+              ev.detach();
+            });
+            // reset the list to no events.
+            this._controlEvents = [];
+          }
         }
+
         charmbrowser.updateVisible();
       }
 
@@ -1445,6 +1496,7 @@ YUI.add('juju-gui', function(Y) {
     'model-controller',
     'FileSaver',
     'juju-inspector-widget',
-    'juju-ghost-inspector'
+    'juju-ghost-inspector',
+    'viewmode-controls'
   ]
 });
