@@ -131,11 +131,11 @@ describe('Ghost Inspector', function() {
     var message = env.ws.last_message();
     var params = message.Params;
     var config = {
-        admins: '',
-        debug: 'false',
-        logo: '',
-        name: 'foo',
-        skin: 'vector'
+      admins: '',
+      debug: 'false',
+      logo: '',
+      name: 'foo',
+      skin: 'vector'
     };
     assert.equal('ServiceDeploy', message.Request);
     assert.equal('mediawiki', params.ServiceName);

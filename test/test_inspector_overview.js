@@ -124,7 +124,7 @@ describe('Inspector Overview', function() {
        var message = conn.last_message();
        assert.equal('DestroyServiceUnits', message.Request);
        assert.deepEqual(
-          ['mediawiki/2', 'mediawiki/1'], message.Params.UnitNames);
+       ['mediawiki/2', 'mediawiki/1'], message.Params.UnitNames);
      });
 
   it('should not do anything if requested is < 1',
