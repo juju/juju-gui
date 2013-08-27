@@ -35,14 +35,16 @@ YUI.add('viewlet-inspector-header', function(Y) {
       if (pojoModel.scheme) {
         pojoModel.ghost = true;
       }
+      // If this is a service, the id is the service.charm.
       if (pojoModel.charm) {
         pojoModel.charmUrl = pojoModel.charm;
       } else {
+        // If this is a charm model, just use the id.
         pojoModel.charmUrl = pojoModel.id;
       }
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
-      pojoModel.icon = viewContainerAttrs.store.iconpath(pojoModel.storeId);
+      pojoModel.icon = viewContainerAttrs.store.iconpath(pojoModel.charmUrl);
       this.container.setHTML(this.template(pojoModel));
     }
   };
