@@ -70,8 +70,8 @@ describe('Ghost Inspector', function() {
     service = db.services.ghostService(charm);
 
     var fakeStore = new Y.juju.Charmworld2({});
-    fakeStore.iconpath = function() {
-      return 'charm icon url';
+    fakeStore.iconpath = function(id) {
+      return '/icon/' + id;
     };
 
     view = new jujuViews.environment({
@@ -117,6 +117,14 @@ describe('Ghost Inspector', function() {
         serviceNameInput.simulate('focus');
         serviceNameInput.set('value', 'foo');
       });
+
+  it('displays the charms icon when rendered', function() {
+    inspector = setUpInspector();
+    var icon = container.one('.icon img');
+
+    // The icon url is from the fakestore we manually defined.
+    assert.equal(icon.getAttribute('src'), '/icon/cs:precise/mediawiki-8');
+  });
 
   it('deploys a service with the specified unit count & config', function() {
     inspector = setUpInspector();

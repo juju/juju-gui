@@ -90,8 +90,8 @@ describe('Inspector Overview', function() {
       ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
     ]}});
     var fakeStore = new Y.juju.Charmworld2({});
-    fakeStore.iconpath = function() {
-      return 'charm icon url';
+    fakeStore.iconpath = function(id) {
+      return '/icon/' + id;
     };
     view = new jujuViews.environment({
       container: container,
@@ -107,6 +107,14 @@ describe('Inspector Overview', function() {
         {databinding: {interval: 0}});
     return inspector;
   };
+
+  it('should show the proper icon based off the charm model', function() {
+    inspector = setUpInspector();
+    var icon = container.one('.icon img');
+
+    // The icon url comes from the fake store and the service charm attribute.
+    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-4');
+  });
 
   it('should start with the proper number of units shown in the text field',
      function() {
