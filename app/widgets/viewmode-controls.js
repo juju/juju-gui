@@ -142,6 +142,13 @@ YUI.add('viewmode-controls', function(Y) {
       );
 
       this._updateActiveNav(this.get('currentViewmode'));
+      this.on('destroy', function(ev) {
+        ev.halt();
+        this._events.forEach(function(e) {
+          e.detach();
+        });
+      }, this);
+
     },
 
     /**
@@ -214,6 +221,7 @@ YUI.add('viewmode-controls', function(Y) {
         this._sidebar.detach();
         this._minimized.detach();
         this._destroy.detach();
+        controls.destroy();
       });
     },
 

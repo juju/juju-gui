@@ -1167,6 +1167,12 @@ YUI.add('juju-gui', function(Y) {
                       this._controls._updateActiveNav('sidebar');
                     }, this
                 )
+
+            );
+            this._controlEvents.push(
+                this._controls.on(
+                    this._controls.EVT_TOGGLE_VIEWABLE,
+                    function(ev) {}, this)
             );
           }
 
@@ -1182,6 +1188,10 @@ YUI.add('juju-gui', function(Y) {
             });
             // reset the list to no events.
             this._controlEvents = [];
+          }
+
+          if (this._controls) {
+            this._controls.destroy();
           }
         }
 
