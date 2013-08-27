@@ -235,7 +235,7 @@ function injectData(app, data) {
       constructAppInstance({
         env: juju.newEnvironment({
           conn: {
-            send: function() {}, 
+            send: function() {},
             close: function() {}
           }
         })
@@ -246,7 +246,7 @@ function injectData(app, data) {
       // controls.
       var fakeEv = {
         detach: function() {}
-      }
+      };
       app._controlEvents = [fakeEv, fakeEv];
 
       var checkUrls = [{
