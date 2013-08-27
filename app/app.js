@@ -713,7 +713,7 @@ YUI.add('juju-gui', function(Y) {
       if (active && active.name === 'EnvironmentView') {
         active.rendered();
       } else {
-        this.dispatch();
+        // this.dispatch();
       }
     },
 
@@ -1151,12 +1151,12 @@ YUI.add('juju-gui', function(Y) {
                       debugger;
                       // Navigate away from anything in :gui: and to the
                       // /fullscreen in :charmbrowser:
-                      this.renderEnvironment = true;
                       this._controls._updateActiveNav('fullscreen');
+
                       this.navigate(this.nsRouter.url({
                         gui: '/',
                         charmbrowser: '/fullscreen'
-                      }));
+                      }), { overrideAllNamespaces: true });
 
                     }, this
                 )
@@ -1168,20 +1168,17 @@ YUI.add('juju-gui', function(Y) {
                       debugger;
                       // Navigate away from anything in :gui: and to the
                       // /sidebar in :charmbrowser:
-                      this.renderEnvironment = true;
                       this._controls._updateActiveNav('sidebar');
                       this.navigate(this.nsRouter.url({
                         gui: '/',
                         charmbrowser: '/sidebar'
-                      }));
+                      }), { overrideAllNamespaces: true });
                     }, this
                 )
-
             );
           }
 
         } else {
-          debugger;
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
 

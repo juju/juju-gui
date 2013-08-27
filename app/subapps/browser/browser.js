@@ -485,6 +485,11 @@ YUI.add('subapp-browser', function(Y) {
         search: null,
         viewmode: null
       };
+      debugger;
+      if (this._sidebar) {
+        this._sidebar.destroy();
+        delete this['_sidebar'];
+      }
       this._viewState = Y.merge(this._oldState, {});
     },
 
