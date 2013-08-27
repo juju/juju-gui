@@ -1191,6 +1191,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('when hidden the browser avoids routing', function() {
         browser.hidden = true;
+        // XXX bug:1217383
+        // We also want to verify that the old views are cleared to avoid
+        // having hidden views doing UX work for us.
+        var hitCount = 0;
+        var mockView = {
+          destroy: function() {
+            hitCount = hitCount + 1;
+          }
+        };
+        browser._sidebar = mockView;
+        browser._minimized = mockView;
+        browser._fullscreen = mockView;
 
         var req = {
           path: '/minimized',
@@ -1209,6 +1221,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         minNode.getComputedStyle('display').should.eql('none');
         browserNode.getComputedStyle('display').should.eql('none');
+
+        assert.equal(hitCount, 3);
+
+        // The view state needs to also be sync'd and updated even though
+        // we're hidden so that we can detect changes in the app state across
+        // requests while hidden.
+        assert.equal(browser._oldState.viewmode, 'minimized');
       });
 
       it('knows when the search cache should be updated', function() {

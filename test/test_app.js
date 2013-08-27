@@ -241,6 +241,14 @@ function injectData(app, data) {
         })
       });
 
+      // XXX bug:1217383
+      // Force an app._controlEvents so that we don't try to bind viewmode
+      // controls.
+      var fakeEv = {
+        detach: function() {}
+      };
+      app._controlEvents = [fakeEv, fakeEv];
+
       var checkUrls = [{
         url: ':gui:/service/memcached/',
         hidden: true
