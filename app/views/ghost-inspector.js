@@ -121,14 +121,22 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
+      // Deploy needs constraints in simple key:value object.
+      var constraints = utils.getElementsValuesMapping(
+          container, '.constraint-field');
+
       options.env.deploy(
           model.get('id'),
           serviceName,
           config,
           this.viewletManager.configFileContent,
           numUnits,
-          null,  // constraints
-          Y.bind(this._deployCallbackHandler, this, serviceName, config));
+          constraints,
+          Y.bind(this._deployCallbackHandler,
+                 this,
+                 serviceName,
+                 config,
+                 constraints));
     },
 
     /**
@@ -226,10 +234,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       @method _deployCallbackHandler
       @param {String} serviceName The service name.
-      @param {Object} config The configuration oject of the service.
+      @param {Object} config The configuration object of the service.
       @param {Y.EventFacade} e The event facade from the deploy event.
     */
-    _deployCallbackHandler: function(serviceName, config, e) {
+    _deployCallbackHandler: function(serviceName, config, constraints, e) {
       var options = this.options,
           db = options.db,
           ghostService = options.ghostService;
@@ -284,7 +292,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
         id: serviceName,
         pending: false,
         loading: false,
-        config: config
+        config: config,
+        constraints: constraints
       });
 
       this.closeInspector();
@@ -292,4 +301,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   };
 
+}, '0.1.0', {
+  requires: [
+  ]
 });

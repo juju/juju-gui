@@ -82,7 +82,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="header">
               <div class="error">
                 <span><i class="sprite alert_icon2"></i>
-                <h4>Your browser is not fully supported</h4></span>
+                <h4>Your browser is not supported</h4></span>
               </div>
             </div>
             <p>
@@ -213,8 +213,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       isBrowserSupported = function(agent) {
-        // At the moment Chrome and Firefox are supported.
-        return (/Chrome|Firefox/.test(agent));
+        // Latest Chrome, Firefox, IE10 are supported
+        return (/Chrome|Firefox|MSIE\ 10/.test(agent));
       };
 
       displayBrowserWarning = function() {

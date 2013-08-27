@@ -30,8 +30,12 @@
       assert.isTrue(isBrowserSupported('Firefox'));
     });
 
-    it('knows that IE is not supported', function() {
-      assert.isFalse(isBrowserSupported('MSIE'));
+    it('knows that IE 10 is supported', function() {
+      assert.isTrue(isBrowserSupported('MSIE 10.0'));
+    });
+
+    it('knows that <IE 10 is not supported', function() {
+      assert.isFalse(isBrowserSupported('MSIE 9.0'));
     });
 
     it('can display the browser warning', function() {

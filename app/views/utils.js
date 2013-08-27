@@ -564,11 +564,11 @@ YUI.add('juju-view-utils', function(Y) {
     @property constraintDescriptions
   */
   utils.constraintDescriptions = {
-    arch: {title: 'Architecture'},
-    cpu: {title: 'CPU', unit: 'GHz'},
+    'arch': {title: 'Architecture'},
+    'cpu': {title: 'CPU', unit: 'GHz'},
     'cpu-cores': {title: 'CPU Cores'},
     'cpu-power': {title: 'CPU Power', unit: 'GHz'},
-    mem: {title: 'Memory', unit: 'GB'}
+    'mem': {title: 'Memory', unit: 'GB'}
   };
 
   /**

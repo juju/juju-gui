@@ -43,27 +43,34 @@ YUI.add('viewlet-service-ghost', function(Y) {
         }
       }
     },
-    'render': function(model) {
+    'render': function(model, viewletMgrAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       // This is to allow for data binding on the ghost settings
       // while using a shared template across both inspectors
-      var options = model.getAttrs();
+      var templateOptions = model.getAttrs();
 
       // XXX - Jeff
       // not sure this should be done like this
       // but this will allow us to use the old template.
-      options.settings = utils.extractServiceSettings(options.options);
+      templateOptions.settings = utils.extractServiceSettings(
+          templateOptions.options);
+
+      templateOptions.constraints = utils.getConstraints(
+          // no current constraints in play.
+          {},
+          viewletMgrAttrs.env.genericConstraints);
 
       // Signalling to the shared templates that this is the ghost view.
-      options.ghost = true;
-      this.container.setHTML(this.template(options));
+      templateOptions.ghost = true;
+      this.container.setHTML(this.template(templateOptions));
 
-      this.container.all('textarea.config-field')
-        .plug(plugins.ResizingTextarea,
-              { max_height: 200,
-                min_height: 18,
-                single_line: 18});
+      var ResizingTextarea = plugins.ResizingTextArea;
+      this.container.all('textarea.config-field').plug(ResizingTextarea, {
+        max_height: 200,
+        min_height: 18,
+        single_line: 18
+      });
     }
   };
 
