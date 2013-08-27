@@ -1129,6 +1129,7 @@ YUI.add('juju-gui', function(Y) {
           // be needed
           this.renderEnvironment = false;
 
+          // XXX bug:1217383
           // We're hiding the subapp from view, but people want to be able to click on the
           // viewmode controls. We handle that here as a temp hack until the old
           // :gui: views are gone and we've moved to the serviceInspector. Then
@@ -1170,6 +1171,7 @@ YUI.add('juju-gui', function(Y) {
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
 
+          // XXX bug:1217383
           // Destroy the controls widget we might have had around for a bit.
           if (this._controlEvents) {
             this._controlEvents.forEach(function(ev) {

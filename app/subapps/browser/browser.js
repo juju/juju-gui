@@ -1001,6 +1001,7 @@ YUI.add('subapp-browser', function(Y) {
         browser.hide();
         minview.hide();
 
+        // XXX bug:1217383
         // We also need to destroy the Views so that they're not holding UX
         // references for interaction events.
         if (this._sidebar) {
