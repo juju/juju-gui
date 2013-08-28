@@ -886,7 +886,7 @@ YUI.add('juju-view-inspector', function(Y) {
           title: 'Environment does not support setCharm',
           message: 'Your juju environment does not support setCharm/' +
             'upgrade-charm through the API; please try from the ' +
-            'command line.'
+            'command line.',
           level: 'error'
         }));
         console.warn('Environment does not support setCharm.');

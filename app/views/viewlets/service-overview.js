@@ -440,9 +440,10 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       }
     },
     // These methods are exposed here to allow us access for testing.
-    updateStatusList: updateStatusList,
+    categoryName: categoryName,
     generateAndBindStatusHeaders: generateAndBindStatusHeaders,
-    generateActionButtonList: generateActionButtonList
+    generateActionButtonList: generateActionButtonList,
+    updateStatusList: updateStatusList
   };
 
 }, '0.0.1', {
