@@ -889,13 +889,11 @@ YUI.add('juju-view-inspector', function(Y) {
             'command line.'
           level: 'error'
         }));
-        // TODO Makyo Aug 27 - do this with a notification.
         console.warn('Environment does not support setCharm.');
       }
       debugger;
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
-          // TODO Makyo Aug 27 - do this with a notification.
           db.notifications.add(new db.models.Notification({
             title: 'Error setting charm.',
             message: result.err,
@@ -903,8 +901,9 @@ YUI.add('juju-view-inspector', function(Y) {
           }));
           return;
         }
-        service.set('upgrade_available', false);
-        service.set('upgrade_to', undefined);
+        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
+        // the service with the new charm, set info as needed - juju will not
+        // report new charm URL properly with GetService.
       });
     },
 
