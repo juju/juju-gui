@@ -59,7 +59,7 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Destroy and remove any lingering views. 
+     * Destroy and remove any lingering views.
      *
      * Make sure they don't linger and hold UX bound events on us when they
      * should be gone.
@@ -511,7 +511,7 @@ YUI.add('subapp-browser', function(Y) {
       };
       if (this._sidebar) {
         this._sidebar.destroy();
-        delete this['_sidebar'];
+        delete this._sidebar;
       }
       this._viewState = Y.merge(this._oldState, {});
       this._clearViews();
