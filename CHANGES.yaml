@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 0.9.0:
     - Added autocomplete to the Charm Browser search input field.
     - Added support for Internet Explorer 10.
