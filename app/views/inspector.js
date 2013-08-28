@@ -871,6 +871,39 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.showViewlet('unitDetails', unit);
     },
 
+    upgradeService: function(ev) {
+      ev.halt();
+      var db = this.viewletManager.get('db'),
+          env = this.viewletManager.get('env'),
+          mc = new Y.namespace('juju.ModelController')({
+            db: db,
+            env: env,
+            store: this.viewletManager.get('store'),
+          });
+          service = this.model,
+          upgradeTo = ev.currentTarget.getData('upgradeto');
+      if (!upgradeTo) {
+        return;
+      }
+      if (!env.setCharm) {
+        // TODO Makyo Aug 27 - do this with a notification.
+        console.warn('Environment does not support setCharm.');
+      }
+      debugger;
+      env.setCharm(service.get('id'), upgradeTo, false, function(result) {
+        if (result.err) {
+          console.warn(result.err);
+          return;
+        }
+        mc.getServiceWithCharm(service.get('id'))
+        .then(function(models) {
+          service.setAttrs(models.service.getAttrs());
+        }, function(e) {
+          console.warn(e);
+        });
+      });
+    },
+
     /**
       Toggles the close-unit class on the unit-list-wrapper which triggers
       the css close and open animations.
@@ -1164,6 +1197,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
+    'juju-model-controller',
     'juju-viewlet-manager',
     'juju-view-service',
     'juju-view-utils',

@@ -219,6 +219,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceUpgradeLi.append('a')
       .classed('upgrade-link', true)
+      .attr('data-upgradeto', function(d) { return d.upgradeTo; })
       .text('Upgrade');
 
     serviceStatusContentForm
@@ -266,6 +267,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     serviceUpgradeOtherCharms
       .append('a')
       .classed('upgrade-link', true)
+      .attr('data-upgradeto', function(d) { return d; })
       .text('Upgrade');
 
     var unitStatusContentForm = categoryStatusWrapper
