@@ -59,6 +59,30 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+     * Destroy and remove any lingering views. 
+     *
+     * Make sure they don't linger and hold UX bound events on us when they
+     * should be gone.
+     *
+     * @method _clearViews
+     *
+     */
+    _clearViews: function() {
+      if (this._sidebar) {
+        this._sidebar.destroy();
+        delete this._sidebar;
+      }
+      if (this._minimized) {
+        this._minimized.destroy();
+        delete this._minimized;
+      }
+      if (this._fullscreen) {
+        this._fullscreen.destroy();
+        delete this._fullscreen;
+      }
+    },
+
+    /**
       Show or hide the details panel.
 
       @method _detailsVisible
@@ -485,12 +509,12 @@ YUI.add('subapp-browser', function(Y) {
         search: null,
         viewmode: null
       };
-      debugger;
       if (this._sidebar) {
         this._sidebar.destroy();
         delete this['_sidebar'];
       }
       this._viewState = Y.merge(this._oldState, {});
+      this._clearViews();
     },
 
     /**
@@ -1003,22 +1027,7 @@ YUI.add('subapp-browser', function(Y) {
       if (this.hidden) {
         browser.hide();
         minview.hide();
-
-        // XXX bug:1217383
-        // We also need to destroy the Views so that they're not holding UX
-        // references for interaction events.
-        if (this._sidebar) {
-          this._sidebar.destroy();
-          delete this._sidebar;
-        }
-        if (this._minimized) {
-          this._minimized.destroy();
-          delete this._minimized;
-        }
-        if (this._fullscreen) {
-          this._fullscreen.destroy();
-          delete this._fullscreen;
-        }
+        this._clearViews();
       } else {
         if (this._viewState.viewmode === 'minimized') {
           minview.show();

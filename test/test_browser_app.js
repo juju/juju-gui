@@ -436,6 +436,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(called);
       });
 
+      it('resets using initState', function() {
+        app = new browser.Browser();
+        var mockView = {
+          destroy: function() {}
+        };
+        app._sidebar = mockView;
+        app._minimized = mockView;
+        app._fullscreen = mockView;
+
+        // Setup some previous state to check for clearing.
+        app._oldState.viewmode = 'fullscreen';
+        app._viewState.viewmode = 'sidebar';
+
+        app.initState();
+
+        assert.equal(app._sidebar, undefined, 'sidebar is removed');
+        assert.equal(app._fullscreen, undefined, 'fullscreen is removed');
+        assert.equal(app._minimized, undefined, 'minimized is removed');
+        assert.equal(app._oldState.viewmode, null, 'old state is reset');
+        assert.equal(app._viewState.viewmode, null, 'view state is reset');
+      });
+
       it('correctly strips viewmode from the charmID', function() {
         app = new browser.Browser();
         var paths = [

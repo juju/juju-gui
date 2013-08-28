@@ -219,9 +219,7 @@ YUI.add('viewmode-controls', function(Y) {
           controls.EVT_SIDEBAR, this._goSidebar, this);
       this._minimized = controls.on(
           controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
-      debugger;
       this._destroyMe = this.on('destroy', function() {
-        debugger;
         // Unbind the View events listening for events from the widget.
         this._fullscreen.detach();
         this._sidebar.detach();
@@ -243,7 +241,6 @@ YUI.add('viewmode-controls', function(Y) {
 
      */
     _goFullscreen: function(ev) {
-      debugger;
       ev.halt();
       this.fire('viewNavigate', {
         change: {
@@ -261,7 +258,6 @@ YUI.add('viewmode-controls', function(Y) {
 
      */
     _goSidebar: function(ev) {
-      debugger;
       ev.halt();
       this.fire('viewNavigate', {
         change: {

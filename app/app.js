@@ -713,7 +713,7 @@ YUI.add('juju-gui', function(Y) {
       if (active && active.name === 'EnvironmentView') {
         active.rendered();
       } else {
-        // this.dispatch();
+        this.dispatch();
       }
     },
 
@@ -934,7 +934,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_notifications_view
      */
     show_notifications_view: function(req, res, next) {
-      debugger;
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
       if (!instance) {
@@ -1128,7 +1127,6 @@ YUI.add('juju-gui', function(Y) {
           // route on root namespaced paths and this check will no longer
           // be needed
           this.renderEnvironment = false;
-          debugger;
 
           // XXX bug:1217383
           // We're hiding the subapp from view, but people want to be able to
@@ -1148,11 +1146,9 @@ YUI.add('juju-gui', function(Y) {
                 this._controls.on(
                     this._controls.EVT_FULLSCREEN,
                     function(ev) {
-                      debugger;
                       // Navigate away from anything in :gui: and to the
                       // /fullscreen in :charmbrowser:
                       this._controls._updateActiveNav('fullscreen');
-
                       this.navigate(this.nsRouter.url({
                         gui: '/',
                         charmbrowser: '/fullscreen'
@@ -1165,7 +1161,6 @@ YUI.add('juju-gui', function(Y) {
                 this._controls.on(
                     this._controls.EVT_SIDEBAR,
                     function(ev) {
-                      debugger;
                       // Navigate away from anything in :gui: and to the
                       // /sidebar in :charmbrowser:
                       this._controls._updateActiveNav('sidebar');
@@ -1221,7 +1216,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
-      debugger;
       if (!this.renderEnvironment) {
         next(); return;
       }
