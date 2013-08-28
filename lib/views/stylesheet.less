@@ -1,3 +1,27 @@
+/*
+
+General CSS Notes
+=================
+
+z-indexes
+----------
+The rule of thumb for the z-index values to use is setup below
+
+ - Ground level: < 100 is for things that are flat on the surface without
+                 expectations of overlaying anything in the UX.
+ - Floaty level: >= 500 is the land of floating panels. Things like the
+                 browser and inspector which expect to float over the
+                 environment, for instance.
+ - Overlay level: > 1000 is the land for things that overlay. Spinny
+                  indicators, masks, etc.
+
+
+Using fonts
+------------
+Go forth and see the typography.less file and use those.
+
+*/
+
 /* Processed with LESS from lib/views/stylesheet.less */
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 @font-family-medium: 'Ubuntu Medium', 'Ubuntu-Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
