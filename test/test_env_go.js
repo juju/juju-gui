@@ -1246,6 +1246,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var callbackData = {
         Response: {
           Deltas: [
+            ['annotation', 'change', {}],
+            ['relation', 'change', {}],
             ['machine', 'change', {}],
             ['unit', 'change', {}],
             ['service', 'deploy', {}]
@@ -1256,7 +1258,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var change = evt.data.result.map(function(delta) {
           return delta[0];
         });
-        assert.deepEqual(['serviceInfo', 'unitInfo', 'machineInfo'], change);
+        assert.deepEqual([
+          'serviceInfo', 
+          'relationInfo',
+          'unitInfo', 
+          'machineInfo',
+          'annotationInfo'
+        ], change);
         done();
       });
       env._handleRpcResponse(callbackData);
