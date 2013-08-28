@@ -1260,9 +1260,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           return delta[0];
         });
         assert.deepEqual([
-          'serviceInfo', 
+          'serviceInfo',
           'relationInfo',
-          'unitInfo', 
+          'unitInfo',
           'machineInfo',
           'annotationInfo',
           'foobarInfo'
