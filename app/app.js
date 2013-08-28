@@ -1084,7 +1084,6 @@ YUI.add('juju-gui', function(Y) {
       this.db.environment.set('defaultSeries', evt.newVal);
     },
 
-
     /**
       Display the Environment Name.
 
@@ -1149,10 +1148,12 @@ YUI.add('juju-gui', function(Y) {
                     function(ev) {
                       // Navigate away from anything in :gui: and to the
                       // /fullscreen in :charmbrowser:
-                      this._navigate('/fullscreen',
-                                     { overrideAllNamespaces: true });
-
                       this._controls._updateActiveNav('fullscreen');
+                      this.navigate(this.nsRouter.url({
+                        gui: '/',
+                        charmbrowser: '/fullscreen'
+                      }), { overrideAllNamespaces: true });
+
                     }, this
                 )
             );
@@ -1162,9 +1163,11 @@ YUI.add('juju-gui', function(Y) {
                     function(ev) {
                       // Navigate away from anything in :gui: and to the
                       // /sidebar in :charmbrowser:
-                      this._navigate('/sidebar',
-                                     { overrideAllNamespaces: true });
                       this._controls._updateActiveNav('sidebar');
+                      this.navigate(this.nsRouter.url({
+                        gui: '/',
+                        charmbrowser: '/sidebar'
+                      }), { overrideAllNamespaces: true });
                     }, this
                 )
             );
@@ -1182,6 +1185,10 @@ YUI.add('juju-gui', function(Y) {
             });
             // reset the list to no events.
             this._controlEvents = [];
+          }
+
+          if (this._controls) {
+            this._controls.destroy();
           }
         }
 
