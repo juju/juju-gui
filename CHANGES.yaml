@@ -20,7 +20,21 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.9.0:
+    - Added autocomplete to the Charm Browser search input field.
+    - Added support for Internet Explorer 10.
+    - Added unit action buttons to the new inspector unitlist (feature-flagged).
+    - >
+      Added the ability to resolve user input configuration conflicts
+      in the new inspector panel (feature-flagged).
+    - Added Constraints and unit scaling to inspector panel (feature-flagged).
+    - Added charm details to the new inspector panel (feature-flagged).
+    - Finished juju-core sandbox implementation.
+    - Significant progress on normalizing the charm models.
+    - Updated YUI version to 3.11.0
+    - Fixed outstanding Internet Explorer 10 bugs.
+    - UI updates.
+    - Performance and bug fixes.
 - 0.8.2:
     - Fixed boolean data type export.
     - Fixed unit tests in IE10.
