@@ -1249,6 +1249,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             ['annotation', 'change', {}],
             ['relation', 'change', {}],
             ['machine', 'change', {}],
+            ['foobar', 'fake', {}],
             ['unit', 'change', {}],
             ['service', 'deploy', {}]
           ]
@@ -1263,7 +1264,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'relationInfo',
           'unitInfo', 
           'machineInfo',
-          'annotationInfo'
+          'annotationInfo',
+          'foobarInfo'
         ], change);
         done();
       });
