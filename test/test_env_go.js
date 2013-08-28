@@ -1241,6 +1241,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env._handleRpcResponse(callbackData);
     });
 
+    it('sorts deltas', function(done) {
+      env.detach('delta');
+      var callbackData = {
+        Response: {
+          Deltas: [
+            ['machine', 'change', {}],
+            ['unit', 'change', {}],
+            ['service', 'deploy', {}]
+          ]
+        }
+      };
+      env.on('delta', function(evt) {
+        var change = evt.data.result.map(function(delta) {
+          return delta[0];
+        });
+        assert.deepEqual(['serviceInfo', 'unitInfo', 'machineInfo'], change);
+        done();
+      });
+      env._handleRpcResponse(callbackData);
+    });
+
     it('the _rpc_response subscription can not have args', function() {
       var subscribers = env.getEvent('_rpc_response')._subscribers;
       // This test assumes that there is only one subscriber.  If we ever have
