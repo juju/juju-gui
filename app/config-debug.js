@@ -36,11 +36,12 @@ var juju_config = {
   // url.  For backwards compatibility in the GUI charm, if you provide the
   // socket port and/or protocol *and* the socket_url, the socket_url will be
   // ignored (the port/protocol behavior overrides socket_url).
-  socket_protocol: 'ws',
-  socket_port: 8081,
-  user: 'admin',
+  //socket_protocol: 'ws',
+  //socket_port: 8081,
+  socket_url: 'wss://ec2-54-211-99-248.compute-1.amazonaws.com:17070',
+  user: 'user-admin',
   password: 'admin',
-  apiBackend: 'python', // Value can be 'python' or 'go'.
+  apiBackend: 'go', // Value can be 'python' or 'go'.
   sandbox: false,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.

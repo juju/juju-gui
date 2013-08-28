@@ -875,11 +875,12 @@ YUI.add('juju-view-inspector', function(Y) {
       ev.halt();
       var db = this.viewletManager.get('db'),
           env = this.viewletManager.get('env'),
-          mc = new Y.namespace('juju.ModelController')({
+          ModelController = Y.namespace('juju.ModelController'),
+          mc = new ModelController({
             db: db,
             env: env,
-            store: this.viewletManager.get('store'),
-          });
+            store: this.viewletManager.get('store')
+          }),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -892,6 +893,7 @@ YUI.add('juju-view-inspector', function(Y) {
       debugger;
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
+          // TODO Makyo Aug 27 - do this with a notification.
           console.warn(result.err);
           return;
         }

@@ -60,6 +60,18 @@ describe('viewmode controls widgets', function() {
     assert.isTrue(container.one('.fullscreen').hasClass('active'));
   });
 
+  it('is safe to destroy it without removing dom', function() {
+    controls = new ViewmodeControls({
+      currentViewmode: 'fullscreen'
+    });
+    controls.render();
+    controls.destroy();
+
+    assert.equal(container.all('.fullscreen').size(), 1);
+    assert.equal(container.all('.sidebar').size(), 1);
+    assert.equal(controls._events.length, 0);
+  });
+
   it('should fire a fullscreen event when expand clicked', function() {
     var triggered = false;
     controls = new ViewmodeControls();
@@ -137,10 +149,8 @@ describe('viewmode control extension', function() {
   afterEach(function() {
     container.remove(true);
     if (view) {
+      // When the view is destroyed the controls are also destroyed.
       view.destroy();
-    }
-    if (controls) {
-      controls.destroy();
     }
   });
 

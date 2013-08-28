@@ -211,13 +211,32 @@ YUI.add('juju-env-go', function(Y) {
       // idea. :-)
       this._next();
       // data.Deltas has our stuff.  We need to translate the kind of each
-      // change in delta events based on the deltas we got.
-      var deltas = [];
+      // change in delta events based on the deltas we got.  This needs to be
+      // handled in a hierarchical fashion; cmp stores the comparison values
+      // for the sort function below.
+      var deltas = [],
+          cmp = {
+            serviceInfo: 1,
+            relationInfo: 2,
+            unitInfo: 3,
+            machineInfo: 4,
+            annotationInfo: 5
+          };
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0],
             operation = delta[1],
             entityInfo = delta[2];
         deltas.push([kind + 'Info', operation, entityInfo]);
+      });
+      deltas.sort(function(a, b) {
+        // Sort items not in our hierarchy last.
+        if (!cmp[a[0]]) {
+          return 1;
+        }
+        if (!cmp[b[0]]) {
+          return -1;
+        }
+        return cmp[a[0]] - cmp[b[0]];
       });
       this.fire('delta', {data: {result: deltas}});
     },

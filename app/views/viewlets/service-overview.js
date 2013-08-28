@@ -103,7 +103,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         downgrades: []
       };
       // Retrieve the charm ID (minus the schema).
-      var charm = this.model.get('charm').replace(/^cs:/, '');
+      var charm = this.model.get('charm');
       // Find the latest version number - if we have an upgrade, it will be
       // that charm's version; otherwise it will be the current charm's
       // version.
@@ -213,9 +213,9 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceUpgradeLi.append('a')
       .attr('href', function(d) {
-        return '/' + d.upgradeTo;
+        return '/' + d.upgradeTo.replace(/^cs:/, '');
       })
-      .text(function(d) { return 'cs:' + d.upgradeTo; });
+      .text(function(d) { return d.upgradeTo; });
 
     serviceUpgradeLi.append('a')
       .classed('upgrade-link', true)
@@ -260,9 +260,9 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     serviceUpgradeOtherCharms
       .append('a')
       .attr('href', function(d) {
-        return '/' + d;
+        return '/' + d.replace(/^cs:/, '');
       })
-      .text(function(d) { return 'cs:' + d; });
+      .text(function(d) { return d; });
 
     serviceUpgradeOtherCharms
       .append('a')
