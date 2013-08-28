@@ -873,20 +873,22 @@ YUI.add('juju-view-inspector', function(Y) {
 
     upgradeService: function(ev) {
       ev.halt();
-      var db = this.viewletManager.get('db'),
+      var viewletManager = this.viewletManager,
+          db = this.viewletManager.get('db'),
           env = this.viewletManager.get('env'),
-          ModelController = Y.namespace('juju.ModelController'),
-          mc = new ModelController({
-            db: db,
-            env: env,
-            store: this.viewletManager.get('store')
-          }),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
         return;
       }
       if (!env.setCharm) {
+        db.notifications.add(new db.models.Notification({
+          title: 'Environment does not support setCharm',
+          message: 'Your juju environment does not support setCharm/' +
+            'upgrade-charm through the API; please try from the ' +
+            'command line.'
+          level: 'error'
+        }));
         // TODO Makyo Aug 27 - do this with a notification.
         console.warn('Environment does not support setCharm.');
       }
@@ -894,15 +896,15 @@ YUI.add('juju-view-inspector', function(Y) {
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
           // TODO Makyo Aug 27 - do this with a notification.
-          console.warn(result.err);
+          db.notifications.add(new db.models.Notification({
+            title: 'Error setting charm.',
+            message: result.err,
+            level: 'error'
+          }));
           return;
         }
-        mc.getServiceWithCharm(service.get('id'))
-        .then(function(models) {
-          service.setAttrs(models.service.getAttrs());
-        }, function(e) {
-          console.warn(e);
-        });
+        service.set('upgrade_available', false);
+        service.set('upgrade_to', undefined);
       });
     },
 
