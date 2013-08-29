@@ -929,14 +929,14 @@ YUI.add('juju-view-inspector', function(Y) {
       var handlers = {
         resolve: this._sendUnitResolve,
         retry: this._sendUnitRetry,
-        replace: this._sendUnitReplace
+        remove: this._sendUnitRemove
       };
 
       var units = e.currentTarget.ancestor('form').all('input[type=checkbox]');
       var unitNames = [];
       units.each(function(unit) {
         if (unit.get('checked')) {
-          unitNames = unit.siblings('a').get('innerHTML');
+          unitNames.push(unit.siblings('a').get('innerHTML'));
         }
       });
 
@@ -982,15 +982,19 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Sends the required commands to the env to replace
+      Sends the required commands to the env to remove
       the selected unit in the inspector unit list.
 
-      @method _sendUnitReplace
+      @method _sendUnitRemove
       @param {Array} unitNames A list of unit names.
       @param {Object} env The current environment (Go/Python).
     */
-    _sendUnitReplace: function(unitNames, env) {
-      // currently a noop until min units is setup
+    _sendUnitRemove: function(unitNames, env) {
+      // The Go backend can take an array of unitNames but the python one cannot
+      // XXX Remove this loop when we drop python support.
+      unitNames.forEach(function(unitName) {
+        env.remove_units(unitName);
+      });
     }
   };
 

@@ -87,13 +87,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     */
   function generateActionButtonList(category) {
     var showingButtons = {},
-        buttonTypes = ['resolve', 'retry', 'replace', 'landscape'],
+        buttonTypes = ['resolve', 'retry', 'remove', 'landscape'],
         // if you adjust this list don't forget to edit
         // the list in the unit tests
         buttons = {
-          error: ['resolve', 'retry', 'replace'],
-          pending: ['retry', 'replace'],
-          running: ['replace'],
+          error: ['resolve', 'retry', 'remove'],
+          pending: ['retry', 'remove'],
+          running: ['remove'],
           'landscape-needs-reboot': ['landscape'],
           'landscape-security-upgrades': ['landscape']
         };
@@ -261,24 +261,6 @@ YUI.add('viewlet-inspector-overview', function(Y) {
             }).render();
           }
           bar.update(value);
-        }
-      },
-      unit_count: {
-        'update': function(node, value) {
-          var sibling = node.siblings('.units-starting-spinner').item(0),
-              input = this.viewlet.container.one('input.num-units-control');
-
-          node.setHTML(value);
-          value = parseInt(value, 10);
-          if (parseInt(input.get('value'), 10) > value) {
-            if (sibling.hasClass('hidden')) {
-              sibling.removeClass('hidden');
-            }
-          } else {
-            if (!sibling.hasClass('hidden')) {
-              sibling.addClass('hidden');
-            }
-          }
         }
       },
       units: {
