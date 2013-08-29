@@ -431,8 +431,9 @@ YUI.add('juju-env-go', function(Y) {
        Set a service's charm.
 
        @method setCharm
+       @param {String} service_name The name of the service to be upgraded.
        @param {String} charm_url The URL of the charm.
-       @param {String} service_name The name of the service to be deployed.
+       @param {Boolean} force Force upgrading machines in error.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.

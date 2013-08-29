@@ -872,6 +872,48 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Upgrades a service to the one specified in the event target's upgradeto
+      data attribute.
+
+      @method upgradeService
+      @param {Y.EventFacade} ev Click event object.
+    */
+    upgradeService: function(ev) {
+      ev.halt();
+      var viewletManager = this.viewletManager,
+          db = this.viewletManager.get('db'),
+          env = this.viewletManager.get('env'),
+          service = this.model,
+          upgradeTo = ev.currentTarget.getData('upgradeto');
+      if (!upgradeTo) {
+        return;
+      }
+      if (!env.setCharm) {
+        db.notifications.add(new db.models.Notification({
+          title: 'Environment does not support setCharm',
+          message: 'Your juju environment does not support setCharm/' +
+              'upgrade-charm through the API; please try from the ' +
+              'command line.',
+          level: 'error'
+        }));
+        console.warn('Environment does not support setCharm.');
+      }
+      env.setCharm(service.get('id'), upgradeTo, false, function(result) {
+        if (result.err) {
+          db.notifications.add(new db.models.Notification({
+            title: 'Error setting charm.',
+            message: result.err,
+            level: 'error'
+          }));
+          return;
+        }
+        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
+        // the service with the new charm, set info as needed - juju will not
+        // report new charm URL properly with GetService. - Bug: #1218447
+      });
+    },
+
+    /**
       Toggles the close-unit class on the unit-list-wrapper which triggers
       the css close and open animations.
 
@@ -1168,6 +1210,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
+    'juju-model-controller',
     'juju-viewlet-manager',
     'juju-view-service',
     'juju-view-utils',

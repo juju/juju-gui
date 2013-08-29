@@ -757,6 +757,9 @@
             .status-unit-header.error {
                 background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
             }
+            .status-unit-header.upgrade-service {
+                background-image: url("/juju-ui/assets/images/inspector-charm-upgrade.png");
+            }
             .status-unit-header.running {
                 background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
             }
@@ -802,9 +805,15 @@
 
                 li {
                     list-style-type: none;
-                    padding: 7px 0 7px 10px;
+                    padding: 7px 10px 7px 10px;
                     border-top: 1px solid @inspector-status-border-color;
                     font-size: 13px;
+                    clear: both;
+
+                    .upgrade-link {
+                        float: right;
+                        color: @confirm-button-color;
+                    }
                 }
 
                 input[type="checkbox"] {
