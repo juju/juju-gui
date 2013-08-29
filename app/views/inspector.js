@@ -909,7 +909,7 @@ YUI.add('juju-view-inspector', function(Y) {
         }
         // TODO Makyo Aug 28 - figure out if there's an upgrade available for
         // the service with the new charm, set info as needed - juju will not
-        // report new charm URL properly with GetService.
+        // report new charm URL properly with GetService. - Bug: #1218447
       });
     },
 

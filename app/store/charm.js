@@ -114,7 +114,6 @@ YUI.add('juju-charm-store', function(Y) {
      */
     _charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
-      console.log(charmID);
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
