@@ -122,8 +122,15 @@ YUI.add('juju-ghost-inspector', function(Y) {
       }
 
       // Deploy needs constraints in simple key:value object.
-      var constraints = utils.getElementsValuesMapping(
+      var constraintMap = utils.getElementsValuesMapping(
           container, '.constraint-field');
+      // Format the constraints into the proper format.
+      var constraints = [];
+      /*jshint -W089 */
+      // Tells jshint to ignore the lack of hasOwnProperty in forloops
+      for (var constr in constraintMap) {
+        constraints.push(constr + '=' + constraintMap[constr]);
+      }
 
       options.env.deploy(
           model.get('id'),
