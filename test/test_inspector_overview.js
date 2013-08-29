@@ -383,9 +383,9 @@ describe('Inspector Overview', function() {
       var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
 
       assert.equal(removeButton instanceof Y.Node, true,
-        'removeButton is not an instance of Y.Node');
+          'removeButton is not an instance of Y.Node');
       assert.equal(unit instanceof Y.Node, true,
-        'unit is not an instance of Y.Node');
+          'unit is not an instance of Y.Node');
 
       unit.simulate('click');
       removeButton.simulate('click');
