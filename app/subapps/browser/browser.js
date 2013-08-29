@@ -122,7 +122,7 @@ YUI.add('subapp-browser', function(Y) {
         urlParts.push('search');
       } else if (this._oldState.search) {
         // We had a search, but are moving away; clear the old search.
-        this._filter.reset();
+        this._filter.clear();
       }
 
       if (this._viewState.charmID) {

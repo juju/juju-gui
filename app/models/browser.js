@@ -92,22 +92,9 @@ YUI.add('juju-browser-models', function(Y) {
    */
   ns.Filter = Y.Base.create('filter', Y.Model, [], {
     /**
-     * Set up the default filters used to load charms.
-     *
-     * @method _setDefaults
-     * @private
-     *
-     */
-    _setDefaults: function() {
-      this.set('series', ['precise']);
-      this.set('type', ['approved']);
-    },
-
-    /**
        Clears all filter data
 
-       @method _clear
-       @private
+       @method clear
      */
     clear: function() {
       this.setAttrs({
@@ -119,15 +106,6 @@ YUI.add('juju-browser-models', function(Y) {
       });
     },
 
-    /**
-       Resets the filter
-
-       @method reset
-     */
-    reset: function() {
-      this.clear();
-      this._setDefaults();
-    },
     /**
        Given the current filters, generate a query string to use for api
        calls.
@@ -179,8 +157,6 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     initializer: function(cfg) {
-      this._setDefaults();
-
       if (cfg) {
         // we've got initial data we need to load into proper arrays and
         // such. We use this update because it turns strings from the query
