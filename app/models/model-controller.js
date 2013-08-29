@@ -162,7 +162,7 @@ YUI.add('model-controller', function(Y) {
                     .then(function(latestId) {
                         service.set('upgrade_available', !!latestId);
                         service.set('upgrade_to',
-                          charm.get('scheme') + latestId);
+                            charm.get('scheme') + latestId);
                         resolve({service: service, charm: charm});
                       }, reject);
                 } else {
