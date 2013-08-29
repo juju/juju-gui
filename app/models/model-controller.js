@@ -161,7 +161,7 @@ YUI.add('model-controller', function(Y) {
                   store.promiseUpgradeAvailability(charm, db.charms)
                     .then(function(latestId) {
                         service.set('upgrade_available', !!latestId);
-                        service.set('upgrade_to', 
+                        service.set('upgrade_to',
                           charm.get('scheme') + latestId);
                         resolve({service: service, charm: charm});
                       }, reject);
