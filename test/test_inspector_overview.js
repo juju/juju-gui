@@ -335,7 +335,7 @@ describe('Inspector Overview', function() {
       retryButton.simulate('click');
 
       var expected = {
-        Params: {Retry: false, UnitName: 'mediawiki/7'},
+        Params: {Retry: false, UnitName: ['mediawiki/7']},
         Request: 'Resolved',
         RequestId: 1,
         Type: 'Client'
@@ -362,20 +362,49 @@ describe('Inspector Overview', function() {
       retryButton.simulate('click');
 
       var expected = {
-        Params: {Retry: true, UnitName: 'mediawiki/7'},
+        Params: {Retry: true, UnitName: ['mediawiki/7']},
         Request: 'Resolved',
         RequestId: 1,
         Type: 'Client'
       };
-      assert.deepEqual(expected, env.ws.last_message());
+      assert.deepEqual(env.ws.last_message(), expected);
+    });
+
+    it('sends the remove command to the env for the selected unit', function() {
+      inspector = setUpInspector();
+      var unitId = 'mediawiki/7';
+
+      db.onDelta({data: {result: [
+        ['unit', 'add', {id: unitId, agent_state: 'install-error'}]
+      ]}});
+
+      var mgrContainer = inspector.viewletManager.get('container');
+      var removeButton = mgrContainer.one('button.unit-action-button.remove');
+      var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
+
+      assert.equal(removeButton instanceof Y.Node, true,
+        'removeButton is not an instance of Y.Node');
+      assert.equal(unit instanceof Y.Node, true,
+        'unit is not an instance of Y.Node');
+
+      unit.simulate('click');
+      removeButton.simulate('click');
+
+      var expected = {
+        Params: {UnitNames: ['mediawiki/7']},
+        Request: 'DestroyServiceUnits',
+        RequestId: 1,
+        Type: 'Client'
+      };
+      assert.deepEqual(env.ws.last_message(), expected);
     });
 
     it('generates the button display map for each unit category', function() {
       inspector = setUpInspector();
       var buttons = {
-        'error': {resolve: true, retry: true, replace: true},
-        'pending': {retry: true, replace: true},
-        'running': {replace: true},
+        'error': {resolve: true, retry: true, remove: true},
+        'pending': {retry: true, remove: true},
+        'running': {remove: true},
         'landscape-needs-reboot': {landscape: true},
         'landscape-security-upgrades': {landscape: true}
       };
