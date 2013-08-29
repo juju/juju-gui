@@ -501,7 +501,7 @@ describe('Inspector Overview', function() {
     newContainer.remove(true);
   });
 
-  it('upgrades services', function(done) {
+  it('attempts to upgrade on click', function(done) {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = inspector.viewletManager.get('container');
