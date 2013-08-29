@@ -41,7 +41,7 @@ var juju_config = {
   user: 'admin',
   password: 'admin',
   apiBackend: 'python', // Value can be 'python' or 'go'.
-  sandbox: true,
+  sandbox: false,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
   // There is also a hotkey to toggle the simulator.

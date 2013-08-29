@@ -121,6 +121,20 @@ YUI.add('juju-ghost-inspector', function(Y) {
             container, '.service-config .config-field');
       }
 
+      var charmOptions = options.model.get('options');
+      /*jshint -W089 */
+      // Tells jshint to ignore the lack of hasOwnProperty in forloops
+      for (var cfgOption in config) {
+        // Remove config options which are not different from the charm defaults
+        // Intentionally letting the browser do the type coersion.
+        // The || check is to allow empty inputs to match an undefined default
+        /* jshint -W116 */
+        if (config[cfgOption] == (charmOptions[cfgOption].default || '')) {
+          delete config[cfgOption];
+        }
+        /* jshint +W116 */
+      }
+
       // Deploy needs constraints in simple key:value object.
       var constraintMap = utils.getElementsValuesMapping(
           container, '.constraint-field');
