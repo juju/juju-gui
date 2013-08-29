@@ -52,19 +52,37 @@ YUI.add('subapp-browser-searchview', function(Y) {
         _renderSearchResults: function(results) {
           var target = this.get('renderTo'),
               tpl = this.template({
-                count: results.size(),
+                count: results.best.length + results.remainder.length,
                 isFullscreen: this.get('isFullscreen')
               }),
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
+          var bestContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Top results',
+                cutoff: 10,
+                children: results.best.map(function(charm) {
+                  return charm.getAttrs();
+                })}, {
+                additionalChildConfig: {
+                  size: 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
 
-          results.map(function(charm) {
-            var ct = new widgets.browser.CharmToken(Y.merge(
-                charm.getAttrs(), {
-                  size: 'small'
-                }));
-            ct.render(results_container);
-          }, this);
+          var remainderContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                cutoff: 10,
+                children: results.remainder.map(function(charm) {
+                  return charm.getAttrs();
+                })}, {
+                additionalChildConfig: {
+                  size: 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
+          bestContainer.render(results_container.one('.best'));
+          remainderContainer.render(results_container.one('.remainder'));
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending
@@ -86,7 +104,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
             search: results,
             charms: new models.BrowserCharmList()
           };
-          cache.charms.add(results);
+          cache.charms.add(results.best);
+          cache.charms.add(results.remainder);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
         },
 
@@ -120,7 +139,19 @@ YUI.add('subapp-browser-searchview', function(Y) {
               'success': function(data) {
                 var results = this.get('store').resultsToCharmlist(
                     data.result);
-                this._renderSearchResults(results);
+                var best = [],
+                    remainder = [];
+                results.map(function(charm) {
+                  if (charm.get('is_approved')) {
+                    best.push(charm);
+                  } else {
+                    remainder.push(charm);
+                  }
+                }, this);
+                this._renderSearchResults({
+                  best: best,
+                  remainder: remainder
+                });
               },
               'failure': this.apiFailure
             }, this);
@@ -143,6 +174,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
   requires: [
     'base-build',
     'browser-charm-token',
+    'browser-charm-container',
     'browser-filter-widget',
     'event-tracker',
     'juju-browser-models',
