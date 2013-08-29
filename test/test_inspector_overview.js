@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Inspector Overview', function() {
+describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, ENTER, charmConfig,
@@ -306,7 +306,7 @@ describe.only('Inspector Overview', function() {
           'precise/mediawiki-2',
           'precise/mediawiki-1'
         ]
-      },
+      }
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
@@ -316,9 +316,9 @@ describe.only('Inspector Overview', function() {
       'Error': { type: 'unit', category: 'error', units: [] },
       'Pending': { type: 'unit', category: 'pending', units: [] },
       'Running': { type: 'unit', category: 'running', units: [] },
-      'Needs Reboot': { type: 'unit', 
+      'Needs Reboot': { type: 'unit',
         category: 'landscape-needs-reboot', units: []},
-      'Security Upgrade': { type: 'unit', 
+      'Security Upgrade': { type: 'unit',
         category: 'landscape-security-upgrades', units: []},
       'A new upgrade is available': { type: 'service',
         category: 'upgrade-service', upgradeAvailable: true,
@@ -334,14 +334,14 @@ describe.only('Inspector Overview', function() {
           'precise/mediawiki-2',
           'precise/mediawiki-1'
         ]
-      },
+      }
     };
 
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
 
     Y.Object.each(outputInput, function(value, key, obj) {
-      assert.equal(overview.categoryName(value), key)
+      assert.equal(overview.categoryName(value), key);
     });
   });
 
@@ -470,7 +470,7 @@ describe.only('Inspector Overview', function() {
     assert.equal(serviceWrapper.one(SUH).hasClass('upgrade-service'), true);
     assert.equal(serviceWrapper.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(serviceWrapper.one(SUC).hasClass('close-unit'), true);
-    assert.equal(serviceWrapper.one('.category-label').getHTML(), 
+    assert.equal(serviceWrapper.one('.category-label').getHTML(),
         'A new upgrade is available');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
@@ -494,10 +494,29 @@ describe.only('Inspector Overview', function() {
     assert.equal(serviceWrapper.one(SUH).hasClass('upgrade-service'), true);
     assert.equal(serviceWrapper.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(serviceWrapper.one(SUC).hasClass('close-unit'), true);
-    assert.equal(serviceWrapper.one('.category-label').getHTML(), 'Upgrade service');
+    assert.equal(serviceWrapper.one('.category-label').getHTML(),
+        'Upgrade service');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
 
     newContainer.remove(true);
+  });
+
+  it('upgrades services', function(done) {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview,
+        newContainer = inspector.viewletManager.get('container');
+
+    window.flags.upgradeCharm = true;
+
+    env.setCharm = function() {
+      done();
+    };
+
+    var statuses = overview.updateStatusList(service.get('units'));
+
+    overview.generateAndBindStatusHeaders(newContainer, statuses);
+
+    newContainer.one('.upgrade-link').simulate('click');
   });
 
   describe('Unit action buttons', function() {

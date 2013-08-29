@@ -34,14 +34,22 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     'landscape-security-upgrades': 'Security Upgrade'
   };
 
+  /**
+    Return a category name based on a status, generated either from the
+    `unitListNameMap` (in the case of units) or from a data-driven function.
+
+    @method categoryName
+    @param {Object} status The status to name.
+    @return {String} a name for the status.
+  */
   function categoryName(status) {
     var nameMap = {
       'unit': unitListNameMap,
       'service': {
         'upgrade-service': function(status) {
           return status.upgradeAvailable ?
-            'A new upgrade is available' :
-            'Upgrade service';
+              'A new upgrade is available' :
+              'Upgrade service';
         }
       }
     };
@@ -95,15 +103,18 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     var flags = window.flags;
     if (flags.upgradeCharm) {
+      // Disable strict violation warning for use of `this`.
+      /* jshint -W040 */
+      var service = this.model;
       var upgradeServiceStatus = {
         type: 'service',
         category: 'upgrade-service',
-        upgradeAvailable: this.model.get('upgrade_available'),
-        upgradeTo: this.model.get('upgrade_to'),
+        upgradeAvailable: service.get('upgrade_available'),
+        upgradeTo: service.get('upgrade_to'),
         downgrades: []
       };
       // Retrieve the charm ID (minus the schema).
-      var charm = this.model.get('charm');
+      var charm = service.get('charm');
       // Find the latest version number - if we have an upgrade, it will be
       // that charm's version; otherwise it will be the current charm's
       // version.
@@ -111,11 +122,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           maxVersion = upgradeServiceStatus.upgradeAvailable ?
               parseInt(upgradeServiceStatus.upgradeTo.split('-').pop(), 10) :
               currVersion;
-      // Remove the version number from the charm so that we can build a 
+      // Remove the version number from the charm so that we can build a
       // list of downgrades.
       charm = charm.replace(/-\d+$/, '');
-      // Build a list of available downgrades 
+      // Build a list of available downgrades
       if (maxVersion > 1) {
+        // Disable -- operator warning so that we can loop.
+        /* jshint -W016 */
         for (var version = maxVersion - 1; version > 0; version--) {
           if (version === currVersion) {
             continue;
@@ -206,15 +219,15 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         });
 
     var serviceUpgradeLi = serviceStatusContentForm
-    .filter(function(d) { 
-      return d.category === 'upgrade-service' && d.upgradeAvailable;
-    })
+    .filter(function(d) {
+          return d.category === 'upgrade-service' && d.upgradeAvailable;
+        })
     .append('li');
 
     serviceUpgradeLi.append('a')
       .attr('href', function(d) {
-        return '/' + d.upgradeTo.replace(/^cs:/, '');
-      })
+          return '/' + d.upgradeTo.replace(/^cs:/, '');
+        })
       .text(function(d) { return d.upgradeTo; });
 
     serviceUpgradeLi.append('a')
@@ -224,35 +237,35 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceStatusContentForm
       .filter(function(d) {
-        return d.category === 'upgrade-service' && d.upgradeAvailable;
-      })
+          return d.category === 'upgrade-service' && d.upgradeAvailable;
+        })
       .append('li')
       .append('a')
       .classed('upgrade-link', true)
       .text(function(d) {
-        return d.downgrades.length + ' hidden upgrades'
-      })
+          return d.downgrades.length + ' hidden upgrades';
+        })
       .on('click', function(d) {
-        // Toggle the 'hidden' class.
-        serviceStatusContentForm.select('.other-charms')
+          // Toggle the 'hidden' class.
+          serviceStatusContentForm.select('.other-charms')
           .classed('hidden', function() {
-            return !d3.select(this).classed('hidden');
-          })
-      });
+                return !d3.select(this).classed('hidden');
+              });
+        });
 
     var serviceUpgradeOtherCharms = serviceStatusContentForm
       .filter(function(d) {
-        return d.category === 'upgrade-service';
-      })
+          return d.category === 'upgrade-service';
+        })
       .append('div')
       .classed('other-charms', true)
       .classed('hidden', function(d) {
-        return d.upgradeAvailable;
-      })
+          return d.upgradeAvailable;
+        })
       .selectAll('.other-charm')
       .data(function(d) {
-        return d.downgrades;
-      })
+          return d.downgrades;
+        })
       .enter()
       .append('li')
       .classed('other-charm', true);
@@ -260,8 +273,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     serviceUpgradeOtherCharms
       .append('a')
       .attr('href', function(d) {
-        return '/' + d.replace(/^cs:/, '');
-      })
+          return '/' + d.replace(/^cs:/, '');
+        })
       .text(function(d) { return d; });
 
     serviceUpgradeOtherCharms
@@ -315,7 +328,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     // Toggles the sections visible or hidden based on if this is a service
     // status or, if it's a unit status, whether there are units in the list.
-    categoryWrapperNodes.filter(function(d) { 
+    categoryWrapperNodes.filter(function(d) {
       return d.type === 'service' || (d.type === 'unit' && d.units.length > 0);
     })
     .classed('hidden', false);

@@ -871,6 +871,13 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.showViewlet('unitDetails', unit);
     },
 
+    /**
+      Upgrades a service to the one specified in the event target's upgradeto
+      data attribute.
+
+      @method upgradeService
+      @param {Y.EventFacade} ev Click event object.
+    */
     upgradeService: function(ev) {
       ev.halt();
       var viewletManager = this.viewletManager,
@@ -885,13 +892,12 @@ YUI.add('juju-view-inspector', function(Y) {
         db.notifications.add(new db.models.Notification({
           title: 'Environment does not support setCharm',
           message: 'Your juju environment does not support setCharm/' +
-            'upgrade-charm through the API; please try from the ' +
-            'command line.',
+              'upgrade-charm through the API; please try from the ' +
+              'command line.',
           level: 'error'
         }));
         console.warn('Environment does not support setCharm.');
       }
-      debugger;
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
           db.notifications.add(new db.models.Notification({
