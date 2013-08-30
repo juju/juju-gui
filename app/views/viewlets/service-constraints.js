@@ -49,7 +49,6 @@ YUI.add('viewlet-service-constraints', function(Y) {
     'render': function(service, options) {
       var constraints = utils.getConstraints(
           service.get('constraints') || {}, options.env.genericConstraints);
-
       var contents = this.template({
         service: service,
         constraints: constraints

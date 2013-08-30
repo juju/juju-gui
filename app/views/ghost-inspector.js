@@ -139,6 +139,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
+      var consVal;
+      for (var cons in constraints) {
+        consVal = constraints[cons];
+        if (cons !== 'arch') {
+          constraints[cons] = parseInt(consVal, 10);
+        }
+      }
+
       options.env.deploy(
           model.get('id'),
           serviceName,

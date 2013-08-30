@@ -659,6 +659,20 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Removes unchanged config options from a collection of config values and
+    returns only those that are different from the charmOptions defaults.
+
+    @method removeUnchangedConfigOptions
+    @param {}
+    @param {}
+    @return {Object} An object containing the key/value pairs of config options.
+  */
+  utils.removeUnchangedConfigOptions = function(config, charmOptions) {
+    console.log(config, charmOptions);
+    return;
+  };
+
+  /**
    Return a template-friendly array of settings.
 
    @method extractServiceSettings

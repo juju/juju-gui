@@ -735,6 +735,8 @@ YUI.add('juju-view-inspector', function(Y) {
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
       var errors = utils.validate(newVals, schema);
 
+      //newVals = utils.removeUnchangedConfigOptions(newVals, schema);
+
       if (Y.Object.isEmpty(errors)) {
         /*jshint -W089 */
         // Tells jshint to ignore the lack of hasOwnProperty in forloops
