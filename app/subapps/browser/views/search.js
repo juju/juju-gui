@@ -60,12 +60,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
           var reviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Reviewed charms',
-                cutoff: 10,
+                cutoff: 5,
                 children: results.reviewed.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
-                  size: 'small',
+                  size: this.get('isFullscreen') ? 'large' : 'small',
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
@@ -73,12 +73,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
           var unreviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Unreviewed charms',
-                cutoff: 10,
+                cutoff: 5,
                 children: results.unreviewed.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
-                  size: 'small',
+                  size: this.get('isFullscreen') ? 'large' : 'small',
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
@@ -108,10 +108,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
           cache.charms.add(results.reviewed);
           cache.charms.add(results.unreviewed);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
-          this.on('destroy', function() {
-            reviewedContainer.destroy();
-            unreviewedContainer.destroy();
-          });
+          this.charmContainers = [
+            reviewedContainer,
+            unreviewedContainer
+          ];
         },
 
         /**
@@ -122,6 +122,19 @@ YUI.add('subapp-browser-searchview', function(Y) {
          */
         apiFailure: function(data, request) {
           this._apiFailure(data, request, 'Failed to load search results.');
+        },
+
+        /**
+           Destroy this view and clear from the dom world.
+
+           @method destructor
+         */
+        destructor: function() {
+          if (this.charmContainers) {
+            Y.Array.each(this.charmContainers, function(container) {
+              container.destroy();
+            });
+          }
         },
 
         /**
