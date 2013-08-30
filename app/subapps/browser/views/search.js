@@ -142,7 +142,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 var best = [],
                     remainder = [];
                 results.map(function(charm) {
-                  if (charm.get('is_approved')) {
+                  if (charm.get('is_approved') &&
+                      charm.get('series') === 'precise') {
                     best.push(charm);
                   } else {
                     remainder.push(charm);

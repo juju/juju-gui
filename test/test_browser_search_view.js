@@ -135,6 +135,57 @@ describe('search view', function() {
     container.one('.charm-token').simulate('click');
   });
 
+  it('organizes results into best and remainder', function(done) {
+    view._renderSearchResults = function(results) {
+      assert.equal(results.best.length, 1);
+      assert.equal(results.best[0].get('id'), 'precise/bar-2');
+      assert.equal(results.remainder.length, 2);
+      done();
+    };
+    var sampleData = {
+      result: [{
+        charm: {
+          id: 'precise/bar-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: true,
+        }
+      }, {
+        charm: {
+          id: 'lucid/flim-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: true,
+        }
+      }, {
+        charm: {
+          id: 'precise/shazbot-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: false,
+        }
+      }]
+    };
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: Y.JSON.stringify(sampleData)
+            }]
+          }
+        });
+      }
+    });
+    view.set('store', fakeStore);
+    view.render();
+  });
+
   it('clicking a charm navigates for sidebar', function(done) {
     view.render();
     view.on('viewNavigate', function(ev) {
@@ -155,7 +206,10 @@ describe('search view', function() {
 
   it('uses passed in cache data if available', function() {
     var search_called = false,
-        results = new Y.juju.models.BrowserCharmList();
+        results = {
+          best: new Y.juju.models.BrowserCharmList(),
+          remainder: new Y.juju.models.BrowserCharmList()
+        };
 
     view.get('store').search = function() {
       search_called = true;
