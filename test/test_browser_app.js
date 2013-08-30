@@ -380,13 +380,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, Charmworld2, next;
+      var Y, app, browser, Charmworld2, container, next;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
             'app-subapp-extension',
             'juju-browser',
             'juju-charm-store',
+            'juju-tests-utils',
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
@@ -401,12 +402,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         window.juju_config = {
           charmworldURL: 'http://localhost'
         };
+        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        addBrowserContainer(Y, container);
+
       });
 
       afterEach(function() {
         if (app) {
           app.destroy();
         }
+        container.remove(true);
         window.juju_config = undefined;
       });
 
@@ -429,6 +434,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         app.routeDefault(req, null, next);
         assert.isTrue(called);
+      });
+
+      it('resets using initState', function() {
+        app = new browser.Browser();
+        var mockView = {
+          destroy: function() {}
+        };
+        app._sidebar = mockView;
+        app._minimized = mockView;
+        app._fullscreen = mockView;
+
+        // Setup some previous state to check for clearing.
+        app._oldState.viewmode = 'fullscreen';
+        app._viewState.viewmode = 'sidebar';
+
+        app.initState();
+
+        assert.equal(app._sidebar, undefined, 'sidebar is removed');
+        assert.equal(app._fullscreen, undefined, 'fullscreen is removed');
+        assert.equal(app._minimized, undefined, 'minimized is removed');
+        assert.equal(app._oldState.viewmode, null, 'old state is reset');
+        assert.equal(app._viewState.viewmode, null, 'view state is reset');
       });
 
       it('correctly strips viewmode from the charmID', function() {
@@ -657,6 +684,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'app-subapp-extension',
             'juju-views',
             'juju-browser',
+            'juju-tests-utils',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
 
@@ -771,6 +799,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('resets filters when navigating away from search', function() {
         browser._viewState.search = true;
         browser._filter.set('text', 'foo');
+        // Set the state before changing up.
+        browser._saveState();
         browser._getStateUrl({search: false});
         assert.equal('', browser._filter.get('text'));
       });
@@ -1191,6 +1221,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('when hidden the browser avoids routing', function() {
         browser.hidden = true;
+        // XXX bug:1217383
+        // We also want to verify that the old views are cleared to avoid
+        // having hidden views doing UX work for us.
+        var hitCount = 0;
+        var mockView = {
+          destroy: function() {
+            hitCount = hitCount + 1;
+          }
+        };
+        browser._sidebar = mockView;
+        browser._minimized = mockView;
+        browser._fullscreen = mockView;
 
         var req = {
           path: '/minimized',
@@ -1209,6 +1251,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         minNode.getComputedStyle('display').should.eql('none');
         browserNode.getComputedStyle('display').should.eql('none');
+
+        assert.equal(hitCount, 3);
+
+        // The view state needs to also be sync'd and updated even though
+        // we're hidden so that we can detect changes in the app state across
+        // requests while hidden.
+        assert.equal(browser._oldState.viewmode, 'minimized');
       });
 
       it('knows when the search cache should be updated', function() {
@@ -1217,16 +1266,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'querystring': 'text=apache'
         });
         assert.isTrue(browser._searchChanged());
+        browser._saveState();
         browser._getStateUrl({
           'search': true,
           'querystring': 'text=apache'
         });
         assert.isFalse(browser._searchChanged());
+        browser._saveState();
         browser._getStateUrl({
           'search': true,
           'querystring': 'text=ceph'
         });
         assert.isTrue(browser._searchChanged());
+        browser._saveState();
       });
 
       it('permits a filter clear command', function() {

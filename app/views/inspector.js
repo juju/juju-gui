@@ -872,6 +872,48 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Upgrades a service to the one specified in the event target's upgradeto
+      data attribute.
+
+      @method upgradeService
+      @param {Y.EventFacade} ev Click event object.
+    */
+    upgradeService: function(ev) {
+      ev.halt();
+      var viewletManager = this.viewletManager,
+          db = this.viewletManager.get('db'),
+          env = this.viewletManager.get('env'),
+          service = this.model,
+          upgradeTo = ev.currentTarget.getData('upgradeto');
+      if (!upgradeTo) {
+        return;
+      }
+      if (!env.setCharm) {
+        db.notifications.add(new db.models.Notification({
+          title: 'Environment does not support setCharm',
+          message: 'Your juju environment does not support setCharm/' +
+              'upgrade-charm through the API; please try from the ' +
+              'command line.',
+          level: 'error'
+        }));
+        console.warn('Environment does not support setCharm.');
+      }
+      env.setCharm(service.get('id'), upgradeTo, false, function(result) {
+        if (result.err) {
+          db.notifications.add(new db.models.Notification({
+            title: 'Error setting charm.',
+            message: result.err,
+            level: 'error'
+          }));
+          return;
+        }
+        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
+        // the service with the new charm, set info as needed - juju will not
+        // report new charm URL properly with GetService. - Bug: #1218447
+      });
+    },
+
+    /**
       Toggles the close-unit class on the unit-list-wrapper which triggers
       the css close and open animations.
 
@@ -929,14 +971,14 @@ YUI.add('juju-view-inspector', function(Y) {
       var handlers = {
         resolve: this._sendUnitResolve,
         retry: this._sendUnitRetry,
-        replace: this._sendUnitReplace
+        remove: this._sendUnitRemove
       };
 
       var units = e.currentTarget.ancestor('form').all('input[type=checkbox]');
       var unitNames = [];
       units.each(function(unit) {
         if (unit.get('checked')) {
-          unitNames = unit.siblings('a').get('innerHTML');
+          unitNames.push(unit.siblings('a').get('innerHTML'));
         }
       });
 
@@ -982,15 +1024,19 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Sends the required commands to the env to replace
+      Sends the required commands to the env to remove
       the selected unit in the inspector unit list.
 
-      @method _sendUnitReplace
+      @method _sendUnitRemove
       @param {Array} unitNames A list of unit names.
       @param {Object} env The current environment (Go/Python).
     */
-    _sendUnitReplace: function(unitNames, env) {
-      // currently a noop until min units is setup
+    _sendUnitRemove: function(unitNames, env) {
+      // The Go backend can take an array of unitNames but the python one cannot
+      // XXX Remove this loop when we drop python support.
+      unitNames.forEach(function(unitName) {
+        env.remove_units(unitName);
+      });
     }
   };
 
@@ -1164,6 +1210,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'json-stringify',
     'juju-databinding',
     'juju-models',
+    'juju-model-controller',
     'juju-viewlet-manager',
     'juju-view-service',
     'juju-view-utils',

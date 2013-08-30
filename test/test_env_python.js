@@ -37,7 +37,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             testUtils = Y.namespace('juju-tests.utils');
             conn = new testUtils.SocketStub();
             juju = Y.namespace('juju');
-            env = juju.newEnvironment({conn: conn});
+            env = juju.newEnvironment({conn: conn}, 'python');
             env.connect();
             conn.open();
             done();

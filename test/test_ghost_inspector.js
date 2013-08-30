@@ -70,8 +70,8 @@ describe('Ghost Inspector', function() {
     service = db.services.ghostService(charm);
 
     var fakeStore = new Y.juju.Charmworld2({});
-    fakeStore.iconpath = function() {
-      return 'charm icon url';
+    fakeStore.iconpath = function(id) {
+      return '/icon/' + id;
     };
 
     view = new jujuViews.environment({
@@ -118,6 +118,14 @@ describe('Ghost Inspector', function() {
         serviceNameInput.set('value', 'foo');
       });
 
+  it('displays the charms icon when rendered', function() {
+    inspector = setUpInspector();
+    var icon = container.one('.icon img');
+
+    // The icon url is from the fakestore we manually defined.
+    assert.equal(icon.getAttribute('src'), '/icon/cs:precise/mediawiki-8');
+  });
+
   it('deploys a service with the specified unit count & config', function() {
     inspector = setUpInspector();
     env.connect();
@@ -129,16 +137,18 @@ describe('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.num_units, numUnits);
-    assert.equal(message.op, 'deploy');
-    assert.equal(message.service_name, 'mediawiki');
-    assert.deepEqual(message.config, {
+    var params = message.Params;
+    var config = {
       admins: '',
-      debug: false,
+      debug: 'false',
       logo: '',
       name: 'foo',
       skin: 'vector'
-    });
+    };
+    assert.equal('ServiceDeploy', message.Request);
+    assert.equal('mediawiki', params.ServiceName);
+    assert.equal(numUnits, params.NumUnits);
+    assert.deepEqual(config, params.Config);
   });
 
   it('presents the contraints to the user in python env', function() {

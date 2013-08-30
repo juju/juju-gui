@@ -211,13 +211,32 @@ YUI.add('juju-env-go', function(Y) {
       // idea. :-)
       this._next();
       // data.Deltas has our stuff.  We need to translate the kind of each
-      // change in delta events based on the deltas we got.
-      var deltas = [];
+      // change in delta events based on the deltas we got.  This needs to be
+      // handled in a hierarchical fashion; cmp stores the comparison values
+      // for the sort function below.
+      var deltas = [],
+          cmp = {
+            serviceInfo: 1,
+            relationInfo: 2,
+            unitInfo: 3,
+            machineInfo: 4,
+            annotationInfo: 5
+          };
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0],
             operation = delta[1],
             entityInfo = delta[2];
         deltas.push([kind + 'Info', operation, entityInfo]);
+      });
+      deltas.sort(function(a, b) {
+        // Sort items not in our hierarchy last.
+        if (!cmp[a[0]]) {
+          return 1;
+        }
+        if (!cmp[b[0]]) {
+          return -1;
+        }
+        return cmp[a[0]] - cmp[b[0]];
       });
       this.fire('delta', {data: {result: deltas}});
     },
@@ -275,7 +294,11 @@ YUI.add('juju-env-go', function(Y) {
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated || this.pendingLoginResponse) {
+      if (this.userIsAuthenticated) {
+        this.fire('login', {data: {result: true}});
+        return;
+      }
+      if (this.pendingLoginResponse) {
         return;
       }
       var credentials = this.getCredentials();
@@ -408,8 +431,9 @@ YUI.add('juju-env-go', function(Y) {
        Set a service's charm.
 
        @method setCharm
+       @param {String} service_name The name of the service to be upgraded.
        @param {String} charm_url The URL of the charm.
-       @param {String} service_name The name of the service to be deployed.
+       @param {Boolean} force Force upgrading machines in error.
        @param {Function} callback A callable that must be called once the
          operation is performed.
        @return {undefined} Sends a message to the server only.

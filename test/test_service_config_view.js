@@ -156,10 +156,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // event handler manually.
       view.saveConfig();
       var message = conn.last_message();
-      message.op.should.equal('set_config');
-      message.service_name.should.equal('mysql');
-      message.config.option0.should.equal('new value');
-      message.config.option1.should.equal(true);
+      var params = message.Params;
+      assert.equal('ServiceSet', message.Request);
+      assert.equal('mysql', params.ServiceName);
+      assert.equal('new value', params.Config.option0);
+      assert.equal('true', params.Config.option1);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {

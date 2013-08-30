@@ -160,7 +160,7 @@ function injectData(app, data) {
 
     it('should be able to route objects to internal URLs', function() {
       constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+        env: juju.newEnvironment({conn: new utils.SocketStub()}, 'python')
       });
       // Take handles to database objects and ensure we can route to the view
       // needed to show them.
@@ -240,6 +240,14 @@ function injectData(app, data) {
           }
         })
       });
+
+      // XXX bug:1217383
+      // Force an app._controlEvents so that we don't try to bind viewmode
+      // controls.
+      var fakeEv = {
+        detach: function() {}
+      };
+      app._controlEvents = [fakeEv, fakeEv];
 
       var checkUrls = [{
         url: ':gui:/service/memcached/',
@@ -329,6 +337,12 @@ function injectData(app, data) {
       return app;
     };
 
+    // Ensure the given message is a login request.
+    var assertIsLogin = function(message) {
+      assert.equal('Admin', message.Type);
+      assert.equal('Login', message.Request);
+    };
+
     it('avoids trying to login if the env is not connected', function(done) {
       var app = makeApp(false); // Create a disconnected app.
       app.after('ready', function() {
@@ -341,7 +355,7 @@ function injectData(app, data) {
       var app = makeApp(true); // Create a connected app.
       app.after('ready', function() {
         assert.equal(1, conn.messages.length);
-        assert.equal('login', conn.last_message().op);
+        assertIsLogin(conn.last_message());
         done();
       });
     });
@@ -360,21 +374,22 @@ function injectData(app, data) {
     it('displays the login view if credentials are not valid', function(done) {
       var app = makeApp(true); // Create a connected app.
       app.after('ready', function() {
-        // Mimic a login failed response.
-        conn.msg({op: 'login', result: false});
+        app.env.login();
+        // Mimic a login failed response assuming login is the first request.
+        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
         assert.equal(1, conn.messages.length);
-        assert.equal('login', conn.last_message().op);
+        assertIsLogin(conn.last_message());
         assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
         done();
       });
     });
 
-    it('login method hanlder is called after successful login', function(done) {
+    it('login method handler is called after successful login', function(done) {
       var oldOnLogin = Y.juju.App.onLogin;
       Y.juju.App.prototype.onLogin = function(e) {
         assert.equal(conn.messages.length, 1);
-        assert.equal(conn.last_message().op, 'login');
-        assert.equal(e.data.result, true);
+        assertIsLogin(conn.last_message());
+        assert.isTrue(e.data.result, true);
         Y.juju.App.onLogin = oldOnLogin;
         done();
       };
@@ -391,7 +406,7 @@ function injectData(app, data) {
       app.after('ready', function() {
         env.connect();
         assert.equal(1, conn.messages.length);
-        assert.equal('login', conn.last_message().op);
+        assertIsLogin(conn.last_message());
         done();
       });
     });
@@ -403,10 +418,8 @@ function injectData(app, data) {
         // Disconnect and reconnect the WebSocket.
         conn.transient_close();
         conn.open();
-        assert.equal(2, conn.messages.length);
-        Y.each(conn.messages, function(message) {
-          assert.equal('login', message.op);
-        });
+        assert.equal(1, conn.messages.length);
+        assertIsLogin(conn.last_message());
         done();
       });
     });

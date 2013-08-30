@@ -363,10 +363,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var view = makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 1);
-         control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
+         control.simulate('keydown', {keyCode: ENTER}); // Simulate Enter.
          var message = conn.last_message();
-         message.op.should.equal('remove_units');
-         message.unit_names.should.eql(['mysql/2', 'mysql/1']);
+         assert.equal('DestroyServiceUnits', message.Request);
+         assert.deepEqual(['mysql/2', 'mysql/1'], message.Params.UnitNames);
        });
 
     it('should not do anything if requested is < 1',
@@ -398,9 +398,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          control.set('value', 7);
          control.simulate('keydown', { keyCode: ENTER });
          var message = conn.last_message();
-         message.op.should.equal('add_unit');
-         message.service_name.should.equal('mysql');
-         message.num_units.should.equal(4);
+         assert.equal('AddServiceUnits', message.Request);
+         assert.equal('mysql', message.Params.ServiceName);
+         assert.equal(4, message.Params.NumUnits);
        });
 
     it('should add pending units as soon as it gets a reply back ' +
@@ -419,7 +419,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // Since we don't have an app to listen to this event and tell the
          // view to re-render, we need to do it ourselves.
          db.on('update', view.render, view);
-         callbacks[0]({result: [new_unit_id]});
+         callbacks[0]({Response: {Units: [new_unit_id]}});
          var db_names = db.units.map(function(u) {return u.id;});
          db_names.sort();
          db_names.should.eql(expected_names);
@@ -482,17 +482,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should send an expose RPC call when exposeService is invoked',
        function() {
           var view = makeServiceView();
-
           view.exposeService();
-          conn.last_message().op.should.equal('expose');
+          assert.equal('ServiceExpose', conn.last_message().Request);
        });
 
     it('should send an unexpose RPC call when unexposeService is invoked',
        function() {
           var view = makeServiceView();
-
           view.unexposeService();
-          conn.last_message().op.should.equal('unexpose');
+          assert.equal('ServiceUnexpose', conn.last_message().Request);
        });
 
     it('should invoke callback when expose RPC returns',
@@ -653,9 +651,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          control.simulate('click');
          var remove = container.one('#remove-modal-panel .btn-danger');
          remove.simulate('click');
-         var message = conn.last_message();
-         message.op.should.equal('remove_relation');
-         remove.get('disabled').should.equal(true);
+         assert.equal('DestroyRelation', conn.last_message().Request);
+         assert.isTrue(remove.get('disabled'));
        });
 
     it('should remove peer relations when requested',
@@ -685,9 +682,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
-          var message = conn.last_message();
-          message.op.should.equal('remove_relation');
-          remove.get('disabled').should.equal(true);
+          assert.equal('DestroyRelation', conn.last_message().Request);
+         assert.isTrue(remove.get('disabled'));
         });
 
     it('should remove two consecutive relations when requested',
@@ -788,11 +784,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var callbacks = Y.Object.values(env._txn_callbacks);
           callbacks.length.should.equal(1);
           var existing_notice_count = db.notifications.size();
-          callbacks[0](
-              { err: true, endpoint_a: service_name,
-                endpoint_b: 'squid'});
-          remove.get('disabled').should.equal(false);
-          db.notifications.size().should.equal(existing_notice_count + 1);
+          callbacks[0]({Error: 'error'});
+          assert.isFalse(remove.get('disabled'));
+          assert.equal(existing_notice_count + 1, db.notifications.size());
           var row = control.ancestor('tr');
           var _ = expect(row.one('.highlighted')).to.not.exist;
         });
@@ -865,8 +859,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var destroy = container.one('#destroy-modal-panel .btn-danger');
          destroy.simulate('click');
          var message = conn.last_message();
-         message.op.should.equal('destroy_service');
-         destroy.get('disabled').should.equal(true);
+         assert.equal('ServiceDestroy', conn.last_message().Request);
+         assert.isTrue(destroy.get('disabled'));
        });
 
     it('should remove the service from the db after server ack',
