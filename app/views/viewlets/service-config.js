@@ -38,26 +38,15 @@ YUI.add('viewlet-service-config', function(Y) {
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
       var charmOptions = charm.get('options');
-      Y.Object.each(service.get('config'), function(value, key) {
-        var setting = {
-          name: key,
-          value: value
-        };
-        if (charmOptions) {
-          var option = charmOptions[key];
-          if (option) {
-            setting.description = option.description;
-            setting.type = option.type;
-          }
-        }
-        settings.push(setting);
-      });
+      var templatedSettings = utils.extractServiceSettings(
+          charm.get('options'));
+
       this.container = Y.Node.create(this.templateWrapper);
 
       this.container.setHTML(
           this.template({
             service: service,
-            settings: settings,
+            settings: templatedSettings,
             exposed: service.get('exposed')}));
       this.container.all('textarea.config-field')
           .plug(plugins.ResizingTextarea,
