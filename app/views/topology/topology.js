@@ -49,17 +49,15 @@ YUI.add('juju-topology', function(Y) {
    */
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {
-      Topology.superclass.constructor.apply(this, arguments);
-      this.options = Y.mix(options || {
+      this.options = Y.mix(options || {}, {
         minZoom: 0.25,
         maxZoom: 2,
         minSlider: 25,
         maxSlider: 200
       });
-
+      Topology.superclass.constructor.apply(this, arguments);
       // Build a service.id -> BoundingBox map for services.
       this.service_boxes = {};
-
       this._subscriptions = [];
     },
 
@@ -111,11 +109,16 @@ YUI.add('juju-topology', function(Y) {
       this.computeScales();
 
       // Set up the visualization with a pack layout.
-      svg = d3.select(container.getDOMNode())
-              .selectAll('.topology-canvas')
-              .append('svg:svg')
-              .attr('width', width)
-              .attr('height', height);
+      var canvas = d3.select(container.getDOMNode());
+      var base = canvas.select('.topology-canvas');
+      if (base.empty()) {
+        base = canvas.append('div')
+              .classed('topology-canvas', true);
+      }
+
+      svg = base.append('svg:svg')
+                .attr('width', width)
+                .attr('height', height);
       this.svg = svg;
 
       this.zoomPlane = svg.append('rect')
@@ -209,9 +212,9 @@ YUI.add('juju-topology', function(Y) {
         getter: function() {return this.get('size')[1];}
       },
       /*
-       * Scale and translate are managed by an external module
-       * (PanZoom in this case). If that module isn't
-       * loaded nothing will modify these values.
+        Scale and translate are managed by an external module
+        (PanZoom in this case). If that module isn't
+        loaded nothing will modify these values.
        */
       scale: {
         getter: function() {return this.zoom.scale();},

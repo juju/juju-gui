@@ -132,6 +132,7 @@ YUI.add('d3-components', function(Y) {
 
       modEvents = module.events;
       this.events[module.name] = modEvents;
+
       this.bind(module.name);
       module.componentBound();
 
@@ -286,6 +287,7 @@ YUI.add('d3-components', function(Y) {
      * @method bind
      **/
     bind: function(moduleName) {
+      if (this.get('interactive') === false) { return; }
       var eventSet = this.events,
           filtered = {};
 
@@ -319,6 +321,7 @@ YUI.add('d3-components', function(Y) {
           owns = Y.Object.owns,
           module;
 
+      if (this.get('interactive') === false) { return; }
       if (!modEvents || !modEvents.d3) {
         return;
       }
@@ -520,7 +523,15 @@ YUI.add('d3-components', function(Y) {
     }
   }, {
     ATTRS: {
-      container: {}
+      container: {},
+      /**
+       Boolean indicating if bind should be allowed to actually
+       bind events for the component.
+
+       @property {Boolean} interactive
+       @default true
+       */
+      interactive: {value: true}
     }
 
   });

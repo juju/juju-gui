@@ -117,6 +117,11 @@ each have their purpose and share some common syntax around expression in the
 module declaration, but a module writer must understand them all to properly use
 the framework.
 
+When a Component is created it can be in either an interactive or
+non-interactive state. This is controlled through a Boolean 'interactive'
+attribute which defaults to true. When false events will not be bound and this
+section can be skipped.
+
 When modules are added, three sets of declarative events are bound. This is
 done by including in the module an events object with the following (each
 optional) sections::
