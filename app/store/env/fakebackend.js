@@ -374,11 +374,24 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraints = options.constraints;
       }
 
+      // In order for the constraints to support the python back end this
+      // needs to be an array, so we are converting it back to an object
+      // here so that the GUI displays it properly.
+      var constraintsMap = {}, vals;
+      if (Y.Lang.isArray(constraints)) {
+        constraints.forEach(function(cons) {
+          vals = cons.split('=');
+          constraintsMap[vals[0]] = vals[1];
+        });
+      } else {
+        constraintsMap = constraints;
+      }
+
       var service = this.db.services.add({
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
-        constraints: constraints,
+        constraints: constraintsMap,
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         config: options.config

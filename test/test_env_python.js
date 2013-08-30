@@ -71,14 +71,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with constraints', function() {
-      var constraints = {
-        'cpu': 1,
-        'mem': '512M',
-        'arch': 'i386'
-      };
+      var constraints =  { cpu: '1', mem: '512M', arch: 'i386'};
       env.deploy('precise/mysql', null, null, null, 1, constraints);
       msg = conn.last_message();
-      assert.deepEqual(msg.constraints, constraints);
+      // The python backend needs to format them differently than the go
+      // backend to support rapi.
+      assert.deepEqual(msg.constraints, [ 'cpu=1', 'mem=512M', 'arch=i386' ]);
     });
 
     it('can add a unit', function() {
