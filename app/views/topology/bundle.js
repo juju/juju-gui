@@ -40,30 +40,30 @@ YUI.add('juju-view-bundle', function(Y) {
     @class BundleModule
    */
 
-  var BundleModule = Y.Base.create('BundleModule', d3ns.Module,
-                                   [views.ServiceModuleCommon], {
+  var BundleModule = Y.Base.create('BundleModule', d3ns.Module, [
+    views.ServiceModuleCommon], {
 
-        /**
+    /**
       Attempt to reuse as much of the existing graph and view models
       as possible to re-render the graph.
 
       @method update
      */
-        update: function() {
-          var self = this,
+    update: function() {
+      var self = this,
               topo = this.get('component'),
               width = topo.get('width'),
               height = topo.get('height');
 
-          // Process any changed data.
-          this.updateData();
+      // Process any changed data.
+      this.updateData();
 
-          // Generate a node for each service, draw it as a rect with
-          // labels for service and charm.
-          var node = this.node;
+      // Generate a node for each service, draw it as a rect with
+      // labels for service and charm.
+      var node = this.node;
 
-          // enter
-          node
+      // enter
+      node
         .enter().append('g')
         .attr({
                 'class': function(d) {
@@ -73,11 +73,11 @@ YUI.add('juju-view-bundle', function(Y) {
                 'transform': function(d) { return d.translateStr;}})
         .call(self.createServiceNode, self);
 
-          // Update all nodes.
-          self.updateServiceNodes(node);
-        },
+      // Update all nodes.
+      self.updateServiceNodes(node);
+    },
 
-        /**
+    /**
       Fill a service node with empty structures that will be filled out
       in the update stage.
 
@@ -86,8 +86,8 @@ YUI.add('juju-view-bundle', function(Y) {
       @return {null} side effects only.
       @method createServiceNode
      */
-        createServiceNode: function(node, self) {
-          node.append('image')
+    createServiceNode: function(node, self) {
+      node.append('image')
        .classed('service-icon', true)
        .attr({
                 'xlink:href': function(d) {
@@ -96,12 +96,12 @@ YUI.add('juju-view-bundle', function(Y) {
                 width: 96,
                 height: 96
               });
-          node.append('text').append('tspan')
+      node.append('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) {return d.displayName; });
-        },
+    },
 
-        /**
+    /**
       Fill the empty structures within a service node such that they
       match the db.
 
@@ -109,62 +109,62 @@ YUI.add('juju-view-bundle', function(Y) {
       @return {null} side effects only.
       @method updateServiceNodes
      */
-        updateServiceNodes: function(node) {
-          if (node.empty()) {
-            return;
-          }
-          var self = this,
+    updateServiceNodes: function(node) {
+      if (node.empty()) {
+        return;
+      }
+      var self = this,
               topo = this.get('component'),
               landscape = topo.get('landscape');
 
-          // Apply Position Annotations
-          // This is done after the services_boxes
-          // binding as the event handler will
-          // use that index.
-          node.each(function(d) {
-            var service = d.model,
+      // Apply Position Annotations
+      // This is done after the services_boxes
+      // binding as the event handler will
+      // use that index.
+      node.each(function(d) {
+        var service = d.model,
                 annotations = service.get('annotations'),
                 x, y;
 
-            if (!annotations) {
-              return;
-            }
+        if (!annotations) {
+          return;
+        }
 
-            // If there are x/y annotations on the service model and they are
-            // different from the node's current x/y coordinates, update the
-            // node, as the annotations may have been set in another session.
-            x = annotations['gui-x'];
-            y = annotations['gui-y'];
-            if (!d ||
+        // If there are x/y annotations on the service model and they are
+        // different from the node's current x/y coordinates, update the
+        // node, as the annotations may have been set in another session.
+        x = annotations['gui-x'];
+        y = annotations['gui-y'];
+        if (!d ||
                 (x !== undefined && x !== d.x) ||
                 (y !== undefined && y !== d.y)) {
-              d.x = x;
-              d.y = y;
-              d3.select(this).attr({
-                x: x,
-                y: y,
-                transform: d.translateStr});
+          d.x = x;
+          d.y = y;
+          d3.select(this).attr({
+            x: x,
+            y: y,
+            transform: d.translateStr});
 
-            }});
+        }});
 
-          // Mark subordinates as such.  This is needed for when a new service
-          // is created.
-          node.filter(function(d) {
-            return d.subordinate;
-          }).classed('subordinate', true);
+      // Mark subordinates as such.  This is needed for when a new service
+      // is created.
+      node.filter(function(d) {
+        return d.subordinate;
+      }).classed('subordinate', true);
 
-          // Size the node for drawing.
-          node.attr({
-            'width': function(box) { box.w = 96; return box.w;},
-            'height': function(box) { box.h = 96; return box.h;}
-          });
+      // Size the node for drawing.
+      node.attr({
+        'width': function(box) { box.w = 96; return box.w;},
+        'height': function(box) { box.h = 96; return box.h;}
+      });
 
-          // Draw a subordinate relation indicator.
-          var subRelationIndicator = node.filter(function(d) {
-            return d.subordinate &&
-                d3.select(this)
+      // Draw a subordinate relation indicator.
+      var subRelationIndicator = node.filter(function(d) {
+        return d.subordinate &&
+            d3.select(this)
                   .select('.sub-rel-block').empty();
-          })
+      })
         .append('g')
         .attr('class', 'sub-rel-block')
         .attr('transform', function(d) {
@@ -173,49 +173,49 @@ YUI.add('juju-view-bundle', function(Y) {
                 return 'translate(' + [d.w, d.h / 2 - 26] + ')';
               });
 
-          subRelationIndicator.append('image')
+      subRelationIndicator.append('image')
         .attr({'xlink:href': '/juju-ui/assets/svgs/sub_relation.svg',
-                'width': 87,
-                'height': 47});
-          subRelationIndicator.append('text').append('tspan')
+            'width': 87,
+            'height': 47});
+      subRelationIndicator.append('text').append('tspan')
         .attr({'class': 'sub-rel-count',
-                'x': 64,
-                'y': 47 * 0.8});
+            'x': 64,
+            'y': 47 * 0.8});
 
-          // The following are sizes in pixels of the SVG assets used to
-          // render a service, and are used to in calculating the vertical
-          // positioning of text down along the service block.
-          var service_height = 224,
+      // The following are sizes in pixels of the SVG assets used to
+      // render a service, and are used to in calculating the vertical
+      // positioning of text down along the service block.
+      var service_height = 224,
               name_size = 22,
               charm_label_size = 16,
               name_padding = 26,
               charm_label_padding = 150;
 
-          node.select('.name')
+      node.select('.name')
         .attr({'style': function(d) {
-                // Programmatically size the font.
-                // Number derived from service assets:
-                // font-size 22px when asset is 224px.
-                return 'font-size:' + d.h *
-                    (name_size / service_height) + 'px';
-              },
-              'x': function(d) { return d.w / 2; },
-              'y': function(d) {
-                // Number derived from service assets:
-                // padding-top 26px when asset is 224px.
-                return d.h * (name_padding / service_height) + d.h *
-                    (name_size / service_height) / 2;
-              }
-              });
-
-          // Show whether or not the service is exposed using an indicator.
-          var exposed = node.filter(function(d) {
-            return d.exposed;
+            // Programmatically size the font.
+            // Number derived from service assets:
+            // font-size 22px when asset is 224px.
+            return 'font-size:' + d.h *
+                (name_size / service_height) + 'px';
+          },
+          'x': function(d) { return d.w / 2; },
+          'y': function(d) {
+            // Number derived from service assets:
+            // padding-top 26px when asset is 224px.
+            return d.h * (name_padding / service_height) + d.h *
+                (name_size / service_height) / 2;
+          }
           });
-          exposed.each(function(d) {
-            var existing = Y.one(this).one('.exposed-indicator');
-            if (!existing) {
-              existing = d3.select(this).append('image')
+
+      // Show whether or not the service is exposed using an indicator.
+      var exposed = node.filter(function(d) {
+        return d.exposed;
+      });
+      exposed.each(function(d) {
+        var existing = Y.one(this).one('.exposed-indicator');
+        if (!existing) {
+          existing = d3.select(this).append('image')
         .attr({'class': 'exposed-indicator on',
                     'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
                     'width': 32,
@@ -225,53 +225,50 @@ YUI.add('juju-view-bundle', function(Y) {
         .text(function(d) {
                     return d.exposed ? 'Exposed' : '';
                   });
-            }
-            existing = d3.select(this).select('.exposed-indicator')
-        .attr({
-                  'x': 145,
-                  'y': 79
-                });
-          });
-        },
+        }
+        existing = d3.select(this).select('.exposed-indicator')
+        .attr({ 'x': 64, 'y': 64 });
+      });
+    },
 
 
-        /**
+    /**
       Pans the environment view to the center all the services on the canvas.
 
       @method panToCenter
       @param {object} evt The event fired.
       @return {undefined} Side effects only.
     */
-        panToCenter: function(evt) {
-          var topo = this.get('component');
-          var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-          this.findAndSetCentroid(vertices);
-        },
+    panToCenter: function(evt) {
+      var topo = this.get('component');
+      var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+      this.findAndSetCentroid(vertices);
+    },
 
-        /**
+    /**
       Given a set of vertices, find the centroid and pan to that location.
 
       @method findAndSetCentroid
       @param {array} vertices A list of vertices in the form [x, y].
       @return {undefined} Side effects only.
     */
-        findAndSetCentroid: function(vertices) {
-          var topo = this.get('component');
-          var centroid = topoUtils.centroid(vertices);
-          /* The centroid is set on the topology object due to the fact that it
+    findAndSetCentroid: function(vertices) {
+      var topo = this.get('component');
+      var centroid = topoUtils.centroid(vertices);
+      /* The centroid is set on the topology object due to the fact that it
              is used as a sigil to tell whether or not to pan to the point
              after the first delta. */
-          topo.centroid = centroid;
-          topo.fire('panToPoint', {point: topo.centroid});
-        }
-      }, {
-        ATTRS: {
-          /**
+      topo.centroid = centroid;
+      topo.fire('panToPoint', {point: topo.centroid});
+    }
+  }, {
+    ATTRS: {
+      /**
         @property {d3ns.Component} component
       */
-          component: {}
-        }
-      });
+      component: {}
+    }
+  });
   views.BundleModule = BundleModule;
 
   /**

@@ -74,24 +74,34 @@ describe('bundle module', function() {
     promiseBundle()
     .then(function(bundle) {
           // The size of the element should reflect the passed in params
-          var svg = d3.select(container.getDOMNode()).select('svg');
+          var selection = d3.select(container.getDOMNode());
+          var svg = selection.select('svg');
           assert.equal(svg.attr('width'), 640);
           assert.equal(svg.attr('height'), 480);
 
           // We should have the two rendered services
           assert.equal(container.all('.service').size(), 2);
-          assert.deepEqual(container.all('tspan.name').get('text'),
-              ['mysql', 'wordpress']);
+          assert.deepEqual(container.all('tspan.name').get('text'), [
+            'mysql', 'wordpress']);
           var service = svg.select('.service');
-          assert.equal(service.attr('width'), '96');
-          assert.equal(service.attr('transform'), 'translate(115,89)');
 
+          // Sizing
+          assert.equal(service.attr('width'), '96');
+          assert.equal(service.attr('height'), '96');
+          // Annotations
+          assert.equal(service.attr('transform'), 'translate(115,89)');
+          // Ensure that we've exposed one service
+          assert.equal(container.all('.exposed-indicator').size(), 1);
+          var indicator = selection.select('.exposed-indicator');
+          assert.equal(indicator.attr('width'), '32');
+          assert.equal(indicator.attr('height'), '32');
+          assert.equal(indicator.attr('x'), '64');
+          assert.equal(indicator.attr('y'), '64');
 
           container.remove(true);
           bundle.destroy();
           done();
         }).then(undefined, done);
-
   });
 
 });
