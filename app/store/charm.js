@@ -204,7 +204,7 @@ YUI.add('juju-charm-store', function(Y) {
         }
         result = defaultSeries + '/' + result;
       }
-      if (/\-\d+/.exec(result) === null) {
+      if (/\-(\d+|HEAD)/.exec(result) === null) {
         // Add in a revision placeholder
         result = result + '-1';
       }

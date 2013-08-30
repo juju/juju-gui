@@ -51,8 +51,34 @@ YUI.add('subapp-browser', function(Y) {
     _cleanOldViews: function(newViewMode) {
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
-        this[viewAttr].destroy();
-        delete this[viewAttr];
+        if (this[viewAttr]) {
+          this[viewAttr].destroy();
+          delete this[viewAttr];
+        }
+      }
+    },
+
+    /**
+     * Destroy and remove any lingering views.
+     *
+     * Make sure they don't linger and hold UX bound events on us when they
+     * should be gone.
+     *
+     * @method _clearViews
+     *
+     */
+    _clearViews: function() {
+      if (this._sidebar) {
+        this._sidebar.destroy();
+        delete this._sidebar;
+      }
+      if (this._minimized) {
+        this._minimized.destroy();
+        delete this._minimized;
+      }
+      if (this._fullscreen) {
+        this._fullscreen.destroy();
+        delete this._fullscreen;
       }
     },
 
@@ -88,7 +114,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     _getStateUrl: function(change) {
       var urlParts = [];
-      this._oldState = this._viewState;
 
       // If there are changes to the filters, we need to update our filter
       // object first, and then generate a new query string for the state to
@@ -485,6 +510,7 @@ YUI.add('subapp-browser', function(Y) {
         viewmode: null
       };
       this._viewState = Y.merge(this._oldState, {});
+      this._clearViews();
     },
 
     /**
@@ -633,7 +659,12 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode fullscreen, we need to render it.
       // We know the viewmode is already fullscreen because we're in this
       // function.
-      if (this._hasStateChanged('viewmode')) {
+      var forceFullscreen = false;
+      if (!this._fullscreen) {
+        forceFullscreen = true;
+      }
+
+      if (this._hasStateChanged('viewmode') || forceFullscreen) {
         var extraCfg = {};
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
@@ -719,8 +750,14 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+      // If we've gone from no _sidebar to having one, then force editorial to
+      // render.
+      var forceSidebar = false;
+      if (!this._sidebar) {
+        forceSidebar = true;
+      }
       // If we've switched to viewmode sidebar, we need to render it.
-      if (this._hasStateChanged('viewmode')) {
+      if (this._hasStateChanged('viewmode') || forceSidebar) {
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
               container: this.get('container')
@@ -748,9 +785,7 @@ YUI.add('subapp-browser', function(Y) {
         }
 
         this.renderSearchResults(req, res, next);
-      }
-
-      if (this._shouldShowEditorial()) {
+      } else if (this._shouldShowEditorial() || forceSidebar) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
@@ -758,6 +793,7 @@ YUI.add('subapp-browser', function(Y) {
 
         this.renderEditorial(req, res, next);
       }
+
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
@@ -852,6 +888,8 @@ YUI.add('subapp-browser', function(Y) {
           this[viewmode](req, res, next);
         }
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -909,6 +947,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this.hidden) {
         this[viewmode](req, res, next);
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -954,6 +994,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this.hidden) {
         this[req.params.viewmode](req, res, next);
       } else {
+        // Update the app state even though we're not showing anything.
+        this._saveState();
         // Let the next route go on.
         next();
       }
@@ -981,6 +1023,7 @@ YUI.add('subapp-browser', function(Y) {
       if (this.hidden) {
         browser.hide();
         minview.hide();
+        this._clearViews();
       } else {
         if (this._viewState.viewmode === 'minimized') {
           minview.show();

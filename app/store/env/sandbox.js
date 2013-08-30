@@ -785,7 +785,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     */
     receive: function(data) {
-      console.log('client message', data);
       if (this.connected) {
         var client = this.get('client');
         this['handle' + data.Type + data.Request](data,

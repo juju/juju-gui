@@ -138,14 +138,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       var deployInput = charmView.get('container').one('#charm-deploy');
       deployInput.after('click', function() {
-        var msg = conn.last_message(),
-            charm = charmResults.charm,
-            expected = charm.series + '/' + charm.name;
+        var msg = conn.last_message();
         // Ensure the websocket received the `deploy` message.
-        msg.op.should.equal('deploy');
-        msg.charm_url.should.contain(expected);
+        assert.equal('ServiceDeploy', msg.Request);
+        assert.equal(charmResults.charm.id, msg.Params.CharmUrl);
         // A click to the deploy button redirects to the root page.
-        redirected.should.equal(true);
+        assert.isTrue(redirected);
         done();
       });
       deployInput.simulate('click');
@@ -164,8 +162,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
         var msg = conn.last_message();
-        assert.equal(msg.op, 'deploy');
-        assert.equal(msg.service_name, serviceName);
+        assert.equal('ServiceDeploy', msg.Request);
+        assert.equal(serviceName, msg.Params.ServiceName);
         done();
       });
       var serviceNameField = container.one('#service-name');
@@ -188,9 +186,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
         var msg = conn.last_message();
-        assert.equal(msg.op, 'deploy');
-        assert.property(msg.config, 'option0');
-        assert.equal(msg.config.option0, option0Value);
+        assert.equal('ServiceDeploy', msg.Request);
+        var config = msg.Params.Config;
+        assert.property(config, 'option0');
+        assert.equal(option0Value, config.option0);
         done();
       });
       container.one('#input-option0').set('value', option0Value);
@@ -225,7 +224,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
         var msg = conn.last_message();
-        assert.equal(msg.op, 'deploy');
+        assert.equal('ServiceDeploy', msg.Request);
         done();
       });
       deployButton.simulate('click');

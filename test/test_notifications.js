@@ -263,7 +263,7 @@ describe('notifications', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = juju.newEnvironment({conn: conn});
+        env = juju.newEnvironment({conn: conn}, 'python');
     app = new Y.juju.App({
       env: env,
       container: container,
@@ -307,7 +307,7 @@ describe('notifications', function() {
         var container = Y.Node.create(
            '<div id="test" class="container"></div>');
         var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
-        var env = juju.newEnvironment({conn: conn});
+        var env = juju.newEnvironment({conn: conn}, 'python');
         env.connect();
         app = new Y.juju.App({
           env: env,

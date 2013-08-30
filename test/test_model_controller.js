@@ -93,7 +93,7 @@ describe('Model Controller Promises', function() {
     @static
   */
   function clobberGetService() {
-    yui.juju.environments.PythonEnvironment.prototype.get_service = function(
+    yui.juju.environments.GoEnvironment.prototype.get_service = function(
         serviceName, callback) {
       assert(typeof serviceName, 'string');
       // This is to test the error reject path of the getService tests
