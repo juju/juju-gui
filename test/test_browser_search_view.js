@@ -207,8 +207,8 @@ describe('search view', function() {
   it('uses passed in cache data if available', function() {
     var search_called = false,
         results = {
-          best: new Y.juju.models.BrowserCharmList(),
-          remainder: new Y.juju.models.BrowserCharmList()
+          reviewed: new Y.juju.models.BrowserCharmList(),
+          unreviewed: new Y.juju.models.BrowserCharmList()
         };
 
     view.get('store').search = function() {
