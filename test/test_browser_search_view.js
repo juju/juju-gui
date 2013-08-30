@@ -149,7 +149,7 @@ describe('search view', function() {
           name: 'foo',
           description: 'some charm named bar',
           files: [],
-          is_approved: true,
+          is_approved: true
         }
       }, {
         charm: {
@@ -157,7 +157,7 @@ describe('search view', function() {
           name: 'foo',
           description: 'some charm named bar',
           files: [],
-          is_approved: true,
+          is_approved: true
         }
       }, {
         charm: {
@@ -165,7 +165,7 @@ describe('search view', function() {
           name: 'foo',
           description: 'some charm named bar',
           files: [],
-          is_approved: false,
+          is_approved: false
         }
       }]
     };
