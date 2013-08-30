@@ -52,16 +52,16 @@ YUI.add('subapp-browser-searchview', function(Y) {
         _renderSearchResults: function(results) {
           var target = this.get('renderTo'),
               tpl = this.template({
-                count: results.best.length + results.remainder.length,
+                count: results.reviewed.length + results.unreviewed.length,
                 isFullscreen: this.get('isFullscreen')
               }),
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
-          var bestContainer = new widgets.browser.CharmContainer(
+          var reviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
-                name: 'Top results',
+                name: 'Reviewed charms',
                 cutoff: 10,
-                children: results.best.map(function(charm) {
+                children: results.reviewed.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
@@ -70,10 +70,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }
               }));
 
-          var remainderContainer = new widgets.browser.CharmContainer(
+          var unreviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
+                name: 'Unreviewed charms',
                 cutoff: 10,
-                children: results.remainder.map(function(charm) {
+                children: results.unreviewed.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
@@ -81,8 +82,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
-          bestContainer.render(results_container.one('.best'));
-          remainderContainer.render(results_container.one('.remainder'));
+          reviewedContainer.render(results_container.one('.reviewed'));
+          unreviewedContainer.render(results_container.one('.unreviewed'));
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending
@@ -104,9 +105,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
             search: results,
             charms: new models.BrowserCharmList()
           };
-          cache.charms.add(results.best);
-          cache.charms.add(results.remainder);
+          cache.charms.add(results.reviewed);
+          cache.charms.add(results.unreviewed);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
+          this.on('destroy', function() {
+            reviewedContainer.destroy();
+            unreviewedContainer.destroy();
+          });
         },
 
         /**
@@ -139,19 +144,19 @@ YUI.add('subapp-browser-searchview', function(Y) {
               'success': function(data) {
                 var results = this.get('store').resultsToCharmlist(
                     data.result);
-                var best = [],
-                    remainder = [];
+                var reviewed = [],
+                    unreviewed = [];
                 results.map(function(charm) {
                   if (charm.get('is_approved') &&
                       charm.get('series') === 'precise') {
-                    best.push(charm);
+                    reviewed.push(charm);
                   } else {
-                    remainder.push(charm);
+                    unreviewed.push(charm);
                   }
                 }, this);
                 this._renderSearchResults({
-                  best: best,
-                  remainder: remainder
+                  reviewed: reviewed,
+                  unreviewed: unreviewed
                 });
               },
               'failure': this.apiFailure

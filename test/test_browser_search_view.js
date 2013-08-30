@@ -137,9 +137,9 @@ describe('search view', function() {
 
   it('organizes results into best and remainder', function(done) {
     view._renderSearchResults = function(results) {
-      assert.equal(results.best.length, 1);
-      assert.equal(results.best[0].get('id'), 'precise/bar-2');
-      assert.equal(results.remainder.length, 2);
+      assert.equal(results.reviewed.length, 1);
+      assert.equal(results.reviewed[0].get('id'), 'precise/bar-2');
+      assert.equal(results.unreviewed.length, 2);
       done();
     };
     var sampleData = {
