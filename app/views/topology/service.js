@@ -58,13 +58,13 @@ YUI.add('juju-topology-service', function(Y) {
   };
 
   /**
-      Fill the empty structures within a service node such that they
-      match the db.
+    Fill the empty structures within a service node such that they
+    match the db.
 
-      @param {object} node the collection of nodes to update.
-      @return {null} side effects only.
-      @method updateServiceNodes
-     */
+    @param {object} node the collection of nodes to update.
+    @return {null} side effects only.
+    @method updateServiceNodes
+  */
   ServiceModuleCommon.prototype.updateServiceNodes = function(node) {
     if (node.empty()) {
       return;
@@ -460,8 +460,8 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _attachDragEvents: function() {
       var container = this.get('container'),
-              ZP = '.zoom-plane',
-              EC = 'i.sprite.empty_canvas';
+          ZP = '.zoom-plane',
+          EC = 'i.sprite.empty_canvas';
 
       container.delegate('drop', this.canvasDropHandler, ZP, this);
       container.delegate('dragenter', this._ignore, ZP, this);
@@ -494,7 +494,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     attachTouchstartEvents: function(data, node) {
       var topo = this.get('component'),
-              yuiNode = Y.Node(node);
+          yuiNode = Y.Node(node);
 
       // Do not attach the event to the ghost nodes
       if (!d3.select(node).classed('pending')) {
@@ -513,7 +513,7 @@ YUI.add('juju-topology-service', function(Y) {
       // To execute the serviceClick method under the same context as
       // click we call it under the touch target context
       var node = e.currentTarget.getDOMNode(),
-              box = d3.select(node).datum();
+          box = d3.select(node).datum();
       // If we're dragging with two fingers, ignore this as a tap and let
       // drag take over.
       if (e.touches.length > 1) {
@@ -1140,11 +1140,11 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-    Pans the environment view to the center all the services on the canvas.
+      Pans the environment view to the center all the services on the canvas.
 
-    @method panToCenter
-    @param {object} evt The event fired.
-    @return {undefined} Side effects only.
+      @method panToCenter
+      @param {object} evt The event fired.
+      @return {undefined} Side effects only.
     */
     panToCenter: function(evt) {
       var topo = this.get('component');

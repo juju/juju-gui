@@ -119,7 +119,7 @@ the framework.
 
 When a Component is created it can be in either an interactive or
 non-interactive state. This is controlled through a Boolean 'interactive'
-attribute which defaults to true. When false events will not be bound and this
+attribute which defaults to true. When false, events will not be bound and this
 section can be skipped.
 
 When modules are added, three sets of declarative events are bound. This is

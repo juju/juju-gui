@@ -325,12 +325,12 @@ YUI.add('juju-view-bundle', function(Y) {
   };
 
   /**
-      Pans the canvas to the center all the services.
+    Pans the canvas to the center all the services.
 
-      @method panToCenter
-      @param {object} evt The event fired.
-      @return {undefined} Side effects only.
-    */
+    @method panToCenter
+    @param {object} evt The event fired.
+    @return {undefined} Side effects only.
+  */
   BundleTopology.prototype.panToCenter = function() {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
