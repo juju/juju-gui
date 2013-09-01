@@ -1507,6 +1507,7 @@ YUI.add('juju-gui', function(Y) {
     'FileSaver',
     'juju-inspector-widget',
     'juju-ghost-inspector',
+    'juju-view-bundle',
     'viewmode-controls'
   ]
 });
