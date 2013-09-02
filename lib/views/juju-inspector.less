@@ -469,20 +469,24 @@
                         width: 125px;
                     }
                     .icon {
-                        width: 64px;
-                        height: 64px;
                         margin-right: 1em;
+                        vertical-align: top;
 
                         img {
                             /* bootstrap sets this to middle */
                             vertical-align: baseline;
-                            /* Required for sizing images in IE10 */
-                            width: 64px;
-                            height: 64px;
+                            margin-top: 5px;
                         }
                     }
+                    .icon,
+                    .icon img {
+                        /* Required for sizing images in IE10 */
+                        width: 30px;
+                        height: 30px;
+                    
+                    }
                     .details-wrapper {
-                        width: 135px;
+                        width: 175px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
