@@ -90,7 +90,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       return Y.Array.map(endpoints, function(endpoint) {
         var relation = endpoint.Relation,
             data = {role: relation.Role, name: relation.Name};
-        return [relation.ServiceName, data];
+        return [endpoint.ServiceName, data];
       });
     }
 
