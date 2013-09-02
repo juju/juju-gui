@@ -1,5 +1,4 @@
 @inspector-background-color: #221e1c;
-@inspector-region-background-color: #282828;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
@@ -125,7 +124,6 @@
         margin: 0;
 
         h1, h2, h3, h4, h5, h6 {
-            background-color: @inspector-region-background-color;
             padding-left: 1em;
         }
 
@@ -155,9 +153,6 @@
                     position: relative;
                     margin: 0;
 
-                    &.light {
-                        background-color: @inspector-region-background-color;
-                    }
                     .handle {
                         height: 18px;
                         width: 18px;
@@ -223,7 +218,6 @@
 
             .current-unit-num-wrapper {
                 width: 95px;
-                background-color: @inspector-region-background-color;
                 height: 30px;
                 .create-border-radius(@border-radius);
                 line-height: 30px;
@@ -255,7 +249,6 @@
                 overflow: hidden;
                 height: 130px;
                 letter-spacing: normal;
-                background-color: @inspector-region-background-color;
                 -moz-transition: .3s, height .3s;
                 -webkit-transition: .25s, height .3s;
                 transition: .3s, height .3s;
@@ -363,7 +356,6 @@
             }
             .ghost-config-content {
                 padding: 15px 10px;
-                background-color: @inspector-region-background-color;
 
                 input[name=number-units] {
                     display: inline-block;
@@ -460,7 +452,6 @@
 
         .header-slot {
             header {
-                background-color: @inspector-region-background-color;
                 border-bottom: 1px solid #1C1817;
                 padding: 15px;
                 margin-bottom: 6px;
@@ -523,7 +514,6 @@
         .viewlet-manager-navigation {
             margin: 0;
             padding-left: 65px;
-            background-color: @inspector-region-background-color;
 
             li {
                 display: inline-block;
@@ -677,7 +667,6 @@
         .destroy-service-prompt {
             overflow: hidden;
             height: 95px;
-            background-color: @inspector-region-background-color;
             -moz-transition: .3s, height .3s;
             -webkit-transition: .25s, height .3s;
             transition: .3s, height .3s;
@@ -725,7 +714,6 @@
             }
 
             .status-unit-header {
-                background-color: @inspector-region-background-color;
                 padding: 15px 15px 15px 40px;
                 font-size: 14px;
                 cursor: pointer;
