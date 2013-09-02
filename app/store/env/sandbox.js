@@ -870,7 +870,22 @@ YUI.add('juju-env-sandbox', function(Y) {
       },
       relation: {
         Key: 'relation_id',
-        'Endpoints': function() {}
+        'Endpoints': function(relation, goAPI) {
+          var result = [];
+          if (relation.endpoints.length === 1) {
+            return;
+          }
+          relation.endpoints.forEach(function(endpoint, index) {
+            result.push({Relation: {
+              Name: endpoint[1].name,
+              Role: (index) ? 'server' : 'client',
+              Interface: relation.type,
+              Scope: relation.scope,
+              ServiceName: endpoint[0],
+            }});
+          });
+          return result;
+        }
       },
       annotation: {
         'Tag': function() {
