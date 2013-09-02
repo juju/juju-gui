@@ -121,7 +121,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         annotations: {},
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-15',
-        config: undefined,
+        config: {
+          debug: 'no',
+          engine: 'nginx',
+          tuning: 'single',
+          'wp-content': ''
+        },
         constraints: {},
         constraintsStr: undefined,
         destroyed: false,
@@ -216,8 +221,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('accepts a config.', function() {
       fakebackend.deploy(
-          'cs:precise/wordpress-15', callback, {config: {funny: 'business'}});
-      assert.deepEqual(result.service.get('config'), {funny: 'business'});
+          'cs:precise/wordpress-15', callback, {config: {engine: 'apache'}});
+      assert.deepEqual(result.service.get('config'), {
+        debug: 'no',
+        engine: 'apache',
+        tuning: 'single',
+        'wp-content': ''
+      });
     });
 
     it('deploys multiple units.', function() {
@@ -247,8 +257,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy(
           'cs:precise/wordpress-15',
           callback,
-          {config: {funny: 'business'}, configYAML: 'funny: girl'});
-      assert.deepEqual(result.service.get('config'), {funny: 'girl'});
+          {config: {funny: 'business'}, configYAML: 'engine: apache'});
+      assert.deepEqual(result.service.get('config'), {
+        debug: 'no',
+        engine: 'apache',
+        tuning: 'single',
+        'wp-content': ''
+      });
     });
 
     it('rejects a non-string configYAML', function() {
@@ -264,7 +279,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {configYAML:
                 Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
       assert.isObject(result.service.get('config'));
-      assert.equal(result.service.get('config')['tuning-level'], 'super bad');
+      assert.equal(result.service.get('config').tuning, 'super bad');
     });
 
     it('rejects unparseable YAML config string.', function() {

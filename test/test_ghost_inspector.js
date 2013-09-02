@@ -201,7 +201,7 @@ describe('Ghost Inspector', function() {
 
     var message = env.ws.last_message();
     assert.deepEqual(message.Params.Constraints,
-        { cpu-power: 2, 'cpu-cores': '', 'mem': '', arch: '' });
+        { 'cpu-power': 2, 'cpu-cores': null, 'mem': null, arch: '' });
   });
 
   it('disables and resets input fields when \'use default config\' is active',

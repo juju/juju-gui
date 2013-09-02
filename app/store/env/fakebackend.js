@@ -400,8 +400,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         config: (function() {
           var charmOptions = charm.get('options');
           var config = {};
+          if (!options.config) { options.config = {}; }
           Object.keys(charmOptions).forEach(function(key) {
-            config[key] = options.config[key] || 
+            config[key] =
+                options.config[key] ||
                 (charmOptions[key] ? charmOptions[key].default : undefined);
           });
           return config;

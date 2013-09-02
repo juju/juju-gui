@@ -119,7 +119,7 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
-    /** 
+    /**
       A list of the valid constraints for all providers. Required
       because we cannot request these constraints from Juju yet.
 
@@ -946,7 +946,7 @@ YUI.add('juju-env-go', function(Y) {
             callback, serviceName);
       }
       // Some of the constraints have to be integers.
-      this.integerConstraints.forEach(function(key) { 
+      this.integerConstraints.forEach(function(key) {
         constraints[key] = parseInt(constraints[key], 10) || undefined;
       });
       sendData = {
