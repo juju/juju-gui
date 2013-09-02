@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe('Inspector Conflict UX', function() {
+describe.only('Inspector Conflict UX', function() {
 
   var Y, juju, views, templates, utils, container, models;
   var conn, env, view, service, charmData, db, inspector;
@@ -143,7 +143,7 @@ describe('Inspector Conflict UX', function() {
 
       // Open the conflict dialog
       input.simulate('click');
-      var conflict_option = container.one('.conflicted-env');
+      var conflict_option = container.one('#input-logo-env.conflicted-env');
       assert.equal(conflict_option.get('text'), 'conflicting value');
 
       // Select the models value
