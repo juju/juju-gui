@@ -122,7 +122,26 @@ describe('Inspector Settings', function() {
     assert.isObject(container.one('.config-file'));
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
+  });
 
+  it('properly renders charm options with booleans', function() {
+    inspector = setUpInspector();
+    // Verify the viewlet rendered, previously it would raise.
+    assert.isObject(container.one('.config-file'));
+    // Restore the test global
+    charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
+
+    // One boolean checkbox
+    assert.equal(
+        container.all('.config-field.boolean').size(),
+        1,
+        'did not render one boolean field');
+
+    // One numeric input field
+    assert.equal(
+        container.all('input.config-field').size(),
+        1,
+        'did not render one numeric field');
   });
 
   it('toggles exposure', function() {
