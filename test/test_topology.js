@@ -28,6 +28,7 @@ describe('topology', function() {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
                                'juju-tests-utils',
+                               'juju-view-bundle',
                                'node',
                                'node-event-simulate'],
     function(Y) {
@@ -110,5 +111,41 @@ describe('topology', function() {
        // Verify that we have built the default scene.
        Y.Lang.isValue(topo.vis).should.equal(true);
      });
+
+  it('should be able to create a bundle display topology', function(done) {
+    container.destroy(true);
+    container = utils.makeContainer();
+
+    db = new models.Database();
+    db.environment.set('defaultSeries', 'precise');
+    var fakeStore = utils.makeFakeStore(db.charms);
+    fakeStore.iconpath = function() { return 'fake.svg'; };
+
+    db.importDeployer(
+        jsyaml.safeLoad(utils.loadFixture('data/wp-deployer.yaml')),
+        fakeStore, {useGhost: true, targetBundle: 'wordpress-prod'})
+    .then(function() {
+          // Init the topo with the db at this point and ...
+          var bundle = new views.BundleTopology({
+            container: container,
+            size: [320, 240],
+            db: db,
+            store: fakeStore}).render();
+
+          // The size of the element should reflect the passed in params
+          var svg = d3.select(container.getDOMNode()).select('svg');
+          assert.equal(svg.attr('width'), 320);
+          assert.equal(svg.attr('height'), 240);
+
+          // We should have the two rendered services
+          assert.equal(container.all('.service').size(), 2);
+          // and the one relation between them
+          assert.equal(container.all('.relation').size(), 1);
+
+          container.remove(true);
+          bundle.destroy();
+          done();
+        }).then(undefined, done);
+  });
 
 });
