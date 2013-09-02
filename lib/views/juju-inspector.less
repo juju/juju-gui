@@ -452,9 +452,7 @@
 
         .header-slot {
             header {
-                border-bottom: 1px solid #1C1817;
                 padding: @inspector-main-padding;
-                margin-bottom: 6px;
 
                 .service-charm {
                     color: @charm-panel-background-color;
@@ -465,17 +463,22 @@
                         font-weight: 300;
                         line-height: 1.2;
                     }
+                    span.service-name {
+                        display: inline-block;
+                        margin-top: -0.1em;
+                    }
                     input.service-name {
-                        width: 125px;
+                        width: 170px;
+                        height: 20px;
+                        font-size: 14px;
                     }
                     .icon {
-                        margin-right: 1em;
+                        margin-right: 10px;
                         vertical-align: top;
 
                         img {
                             /* bootstrap sets this to middle */
                             vertical-align: baseline;
-                            margin-top: 5px;
                         }
                     }
                     .icon,
@@ -486,7 +489,7 @@
                     
                     }
                     .details-wrapper {
-                        width: 175px;
+                        width: 180px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
@@ -501,12 +504,14 @@
                     .close {
                         /* required to overwrite bootstrap styles */
                         text-shadow: none;
-                        color: #cbcbcb;
-                        font-weight: normal;
+                        color: #a0a0a0;
+                        font-weight: 200;
                         opacity: 1;
-                        font-size: 30px;
+                        font-size: 17px;
+                        line-height: 17px;
                         /* not overwriting */
                         vertical-align: top;
+                        margin-top: -6px;
                     }
                     div {
                         display: inline-block;
@@ -516,12 +521,14 @@
         }
 
         .viewlet-manager-navigation {
+            min-height: 9px;
             margin: 0;
-            padding-left: 65px;
+            padding-left: @inspector-main-padding;
+            background-color: #1c1817;
+            border-top: 1px solid #12110f;
 
             li {
                 display: inline-block;
-                margin-right: 40px;
 
                 &:last-child {
                     margin-right: 0;
@@ -530,13 +537,14 @@
                     .border-box;
                     display: block;
                     height: 50px;
-                    padding-top: 13px;
+                    padding: 13px 20px 0 20px;
 
                     &:hover {
                         text-decoration: none;
                     }
                     &.active {
-                        border-bottom: 2px solid @charm-panel-orange;
+                        background-color: #12110f;
+                        border-bottom: 3px solid @charm-panel-orange;
 
                         .normal {
                             display: none;
