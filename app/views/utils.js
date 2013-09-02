@@ -659,7 +659,9 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-   Return a template-friendly array of settings.
+   Return a template-friendly array of settings
+
+   Used for service-configuration.partial adding isBool, isNumeric metadata.
 
    @method extractServiceSettings
    @param {Object} schema The schema for a charm.
@@ -687,7 +689,9 @@ YUI.add('juju-view-utils', function(Y) {
         'name': field_name
       };
 
-      if (schema[field_name].type === 'boolean') {
+      var dataType = schema[field_name].type;
+
+      if (dataType === 'boolean') {
         entry.isBool = true;
 
         if (config[field_name]) {
@@ -699,8 +703,7 @@ YUI.add('juju-view-utils', function(Y) {
           entry.value = '';
         }
       } else {
-        if (schema[field_name].type === 'int' ||
-            schema[field_name].type === 'float') {
+        if (dataType === 'int' || dataType === 'float') {
           entry.isNumeric = true;
         }
 
