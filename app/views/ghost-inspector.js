@@ -127,15 +127,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
-      // PyJuju does not rquire some constraints to be
-      // integers but the GO backend does.
-      var integerConstraints = this.options.env.integerConstraints;
-      if (integerConstraints) {
-        integerConstraints.forEach(function(key) {
-          constraints[key] = parseInt(constraints[key], 10);
-        });
-      }
-
       options.env.deploy(
           model.get('id'),
           serviceName,

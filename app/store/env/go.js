@@ -402,6 +402,13 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
+
+        var integerConstraints = this.integerConstraints;
+        if (integerConstraints) {
+          integerConstraints.forEach(function(key) {
+            constraints[key] = parseInt(constraints[key], 10);
+          });
+        }
       } else {
         constraints = {};
       }
