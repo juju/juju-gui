@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Inspector Settings', function() {
+describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
       inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmData;
@@ -133,15 +133,15 @@ describe.only('Inspector Settings', function() {
 
     // One boolean checkbox
     assert.equal(
-      container.all('.config-field.boolean').size(),
-      1,
-      'did not render one boolean field');
+        container.all('.config-field.boolean').size(),
+        1,
+        'did not render one boolean field');
 
     // One numeric input field
     assert.equal(
-      container.all('input.config-field').size(),
-      1,
-      'did not render one numeric field');
+        container.all('input.config-field').size(),
+        1,
+        'did not render one numeric field');
   });
 
   it('toggles exposure', function() {
