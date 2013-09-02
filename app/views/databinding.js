@@ -35,6 +35,7 @@ YUI.add('juju-databinding', function(Y) {
 
   views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
+      // add getter/setter for checkbox.
       input: {
         'get': function(node) { return node.get('value');},
         'set': function(node, value) { node.set('value', value);}
@@ -57,6 +58,7 @@ YUI.add('juju-databinding', function(Y) {
     function _getNodeHandler(node) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
+      // update this type attr of the input field for checkbox
       var field = this._fieldHandlers[node.tagName.toLowerCase()];
       if (!field) {
         field = this._fieldHandlers['default'];
