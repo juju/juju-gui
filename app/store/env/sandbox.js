@@ -881,7 +881,7 @@ YUI.add('juju-env-sandbox', function(Y) {
               Role: (index) ? 'server' : 'client',
               Interface: relation.type,
               Scope: relation.scope,
-              ServiceName: endpoint[0],
+              ServiceName: endpoint[0]
             }});
           });
           return result;

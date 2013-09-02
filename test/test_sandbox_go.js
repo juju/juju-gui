@@ -918,7 +918,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(recData.RequestId, data.RequestId);
             assert.equal(recData.Error, undefined);
             assert.isObject(
-              state.db.relations.getById('wordpress:db mysql:db'));
+                state.db.relations.getById('wordpress:db mysql:db'));
             var recEndpoints = recData.Response.Endpoints;
             assert.equal(recEndpoints.wordpress.Name, 'db');
             assert.equal(recEndpoints.wordpress.Scope, 'global');
@@ -946,7 +946,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     assert.equal(recData.endpoint_b, 'mysql:db');
                     assert.isObject(recData.result);
                     assert.isObject(
-                      state.db.relations.getById('wordpress:db mysql:db'));
+                       state.db.relations.getById('wordpress:db mysql:db'));
                     done();
                   });
                 }
