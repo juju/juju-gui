@@ -568,7 +568,7 @@ YUI.add('juju-view-utils', function(Y) {
     'cpu': {title: 'CPU', unit: 'GHz'},
     'cpu-cores': {title: 'CPU Cores'},
     'cpu-power': {title: 'CPU Power', unit: 'GHz'},
-    'mem': {title: 'Memory', unit: 'GB'}
+    'mem': {title: 'Memory', unit: 'MB'}
   };
 
   /**
@@ -663,13 +663,22 @@ YUI.add('juju-view-utils', function(Y) {
     returns only those that are different from the charmOptions defaults.
 
     @method removeUnchangedConfigOptions
-    @param {}
-    @param {}
+    @param {Object} config is a ref to service config values in the GUI.
+    @param {Object} charmOptions is a ref to the charm configuration options.
     @return {Object} An object containing the key/value pairs of config options.
   */
   utils.removeUnchangedConfigOptions = function(config, charmOptions) {
-    console.log(config, charmOptions);
-    return;
+    Object.keys(config).forEach(function(key) {
+      // Remove config options which are not different from the charm defaults
+      // Intentionally letting the browser do the type coersion.
+      // The || check is to allow empty inputs to match an undefined default
+      /* jshint -W116 */
+      if (config[key] == (charmOptions[key].default || '')) {
+        delete config[key];
+      }
+      /* jshint +W116 */
+    });
+    return config;
   };
 
   /**

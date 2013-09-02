@@ -733,24 +733,11 @@ YUI.add('juju-view-inspector', function(Y) {
       button.set('disabled', 'disabled');
 
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
+      newVals = utils.removeUnchangedConfigOptions(newVals, schema);
+
       var errors = utils.validate(newVals, schema);
 
-      //newVals = utils.removeUnchangedConfigOptions(newVals, schema);
-
       if (Y.Object.isEmpty(errors)) {
-        /*jshint -W089 */
-        // Tells jshint to ignore the lack of hasOwnProperty in forloops
-        for (var cfgOption in newVals) {
-          // Remove config options which are not different from the charm defaults
-          // Intentionally letting the browser do the type coersion.
-          // The || check is to allow empty inputs to match an undefined default
-          /* jshint -W116 */
-          if (newVals[cfgOption] == (schema[cfgOption].default || '')) {
-            delete newVals[cfgOption];
-          }
-          /* jshint +W116 */
-        }
-
         env.set_config(
             service.get('id'),
             newVals,

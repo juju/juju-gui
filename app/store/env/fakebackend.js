@@ -394,7 +394,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraints: constraintsMap,
         exposed: false,
         subordinate: charm.get('is_subordinate'),
-        config: options.config
+        // Because we only send the user changed options now
+        // we need to mix those values in to the charm config
+        // options when creating a new model.
+        config: (function() {
+          var charmOptions = charm.get('options');
+          var config = {};
+          Object.keys(charmOptions).forEach(function(key) {
+            config[key] = options.config[key] || 
+                (charmOptions[key] ? charmOptions[key].default : undefined);
+          });
+          return config;
+        })()
       });
       this.changes.services[service.get('id')] = [service, true];
       var response = this.addUnit(options.name, options.unitCount);

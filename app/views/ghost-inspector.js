@@ -119,32 +119,21 @@ YUI.add('juju-ghost-inspector', function(Y) {
       } else {
         config = utils.getElementsValuesMapping(
             container, '.service-config .config-field');
-      }
-
-      var charmOptions = options.model.get('options');
-      /*jshint -W089 */
-      // Tells jshint to ignore the lack of hasOwnProperty in forloops
-      for (var cfgOption in config) {
-        // Remove config options which are not different from the charm defaults
-        // Intentionally letting the browser do the type coersion.
-        // The || check is to allow empty inputs to match an undefined default
-        /* jshint -W116 */
-        if (config[cfgOption] == (charmOptions[cfgOption].default || '')) {
-          delete config[cfgOption];
-        }
-        /* jshint +W116 */
+        config = utils.removeUnchangedConfigOptions(
+            config, options.model.get('options'));
       }
 
       // Deploy needs constraints in simple key:value object.
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
-      var consVal;
-      for (var cons in constraints) {
-        consVal = constraints[cons];
-        if (cons !== 'arch') {
-          constraints[cons] = parseInt(consVal, 10);
-        }
+      // PyJuju does not rquire some constraints to be 
+      // integers but the GO backend does.
+      var integerConstraints = this.options.env.integerConstraints;
+      if (integerConstraints) {
+        integerConstraints.forEach(function(key) {
+          constraints[key] = parseInt(constraints[key], 10);
+        });
       }
 
       options.env.deploy(

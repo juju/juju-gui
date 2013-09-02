@@ -119,7 +119,26 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
+    /** 
+      A list of the valid constraints for all providers. Required
+      because we cannot request these constraints from Juju yet.
+
+      @property genericConstraints
+      @default ['cpu-power', 'cpu-cores', 'mem', 'arch']
+      @type {Array}
+    */
     genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+
+    /**
+      A list of the constraints that need to be integers. We require
+      this list because we cannot request the valid constraints from
+      Juju.
+
+      @property integerConstraints
+      @default ['cpu-power', 'cpu-cores', 'mem']
+      @type {Array}
+    */
+    integerConstraints: ['cpu-power', 'cpu-cores', 'mem'],
 
     /**
      * Go environment constructor.
@@ -926,8 +945,8 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleSetConstraints, null,
             callback, serviceName);
       }
-      // Some of the constraints have to be numbers.
-      Y.Array.each(['cpu-cores', 'cpu-power', 'mem'], function(key) {
+      // Some of the constraints have to be integers.
+      this.integerConstraints.forEach(function(key) { 
         constraints[key] = parseInt(constraints[key], 10) || undefined;
       });
       sendData = {
