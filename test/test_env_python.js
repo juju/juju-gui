@@ -200,7 +200,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can set a service config', function() {
       var config = {'cfg-key': 'cfg-val'};
-      env.set_config('mysql', config);
+      // This also tests that it only sends changed values.
+      env.set_config('mysql', config, null, {});
       msg = conn.last_message();
       assert.equal(msg.op, 'set_config');
       assert.equal(msg.service_name, 'mysql');
@@ -211,7 +212,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       /*jshint multistr:true */
       var data = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
-      env.set_config('mysql', null, data);
+      env.set_config('mysql', null, data, null);
       msg = conn.last_message();
       assert.equal(msg.op, 'set_config');
       assert.equal(msg.service_name, 'mysql');
@@ -220,7 +221,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed set config', function() {
       var err, service_name;
-      env.set_config('yoursql', {}, null, function(evt) {
+      env.set_config('yoursql', {}, null, {}, function(evt) {
         err = evt.err;
         service_name = evt.service_name;
       });
@@ -477,7 +478,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('denies changes to config options if the GUI is read-only', function() {
-      assertOperationDenied('set_config', ['haproxy', {}, null]);
+      assertOperationDenied('set_config', ['haproxy', {}, null, {}]);
     });
 
     it('denies changing constraints if the GUI is read-only', function() {

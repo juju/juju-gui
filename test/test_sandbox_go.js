@@ -491,7 +491,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
           done();
         };
-        env.set_config('wordpress', {engine: 'apache'}, undefined, callback);
+        env.set_config('wordpress', {
+          engine: 'apache'
+        }, undefined, {}, callback);
       });
     });
 
@@ -538,7 +540,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         };
         env.set_config('wordpress', undefined,
-            'wordpress:\n  engine: apache', callback);
+            'wordpress:\n  engine: apache', {}, callback);
       });
     });
 

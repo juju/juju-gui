@@ -733,8 +733,6 @@ YUI.add('juju-view-inspector', function(Y) {
       button.set('disabled', 'disabled');
 
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
-      newVals = utils.removeUnchangedConfigOptions(newVals, schema);
-
       var errors = utils.validate(newVals, schema);
 
       if (Y.Object.isEmpty(errors)) {
@@ -742,6 +740,7 @@ YUI.add('juju-view-inspector', function(Y) {
             service.get('id'),
             newVals,
             null,
+            service.get('config'),
             Y.bind(this._setConfigCallback, this, container)
         );
       } else {
