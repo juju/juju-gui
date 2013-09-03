@@ -93,6 +93,7 @@ YUI.add('juju-topology-viewport', function(Y) {
         height: dimensions.height + 'px'});
       // Reset the scale parameters
       topo.set('size', [dimensions.width, dimensions.height]);
+      topo.fire('panToCenter');
     },
 
     /**

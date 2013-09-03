@@ -481,6 +481,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function createRelation(charms, relation, mock, done, callback) {
       fakebackend.deploy(charms[0], function() {
         fakebackend.deploy(charms[1], function() {
+          relation.push(true);
           var result = fakebackend.addRelation.apply(fakebackend, relation);
           assert.equal(result.error, undefined);
           assert.equal(result.relationId, 'relation-0');
@@ -1105,6 +1106,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     function createRelation(charms, relation, mock, done) {
       fakebackend.deploy(charms[0], function() {
         fakebackend.deploy(charms[1], function() {
+          relation.push(true);
           var result = fakebackend.addRelation.apply(fakebackend, relation);
           assert.equal(result.error, undefined);
           assert.equal(result.relationId, 'relation-0');

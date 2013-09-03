@@ -143,7 +143,7 @@ describe('Inspector Conflict UX', function() {
 
       // Open the conflict dialog
       input.simulate('click');
-      var conflict_option = container.one('.conflicted-env');
+      var conflict_option = container.one('#input-logo-env.conflicted-env');
       assert.equal(conflict_option.get('text'), 'conflicting value');
 
       // Select the models value

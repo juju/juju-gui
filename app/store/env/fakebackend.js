@@ -698,8 +698,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
         and endpoint connection type ie) wordpress:db.
       @param {String} endpointB A string representation of the service name
         and endpoint connection type ie) wordpress:db.
+      @param {Boolean} useRelationCount whether or not to generate and
+        incremented relation id or to just use the name and types of the
+        endpoints.
     */
-    addRelation: function(endpointA, endpointB) {
+    addRelation: function(endpointA, endpointB, useRelationCount) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
@@ -726,16 +729,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (match.error) { return match; }
 
       // Assign a unique relation id which is incremented after every
-      // successful relation.
-      var relationId = 'relation-' + this._relationCount;
+      // successful relation if useRelationCount is set to true.  If not, then
+      // it will be set with the requires/provides endpoint names.
+      var relationId = '';
+      if (useRelationCount) {
+        relationId = 'relation-' + this._relationCount;
+      } else {
+        relationId = [
+          match.requires.name + ':' + match.requires.type,
+          match.provides.name + ':' + match.provides.type
+        ].join(' ');
+      }
       // The ordering of requires and provides is stable in Juju Core, and not
       // specified in PyJuju.
       var endpoints = Y.Array.map(
           [match.requires, match.provides],
           function(endpoint) {
-            var result = [];
-            result.push(endpoint.name);
-            result.push({name: endpoint.type});
             return [endpoint.name, {name: endpoint.type}];
           });
 

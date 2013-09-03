@@ -226,6 +226,9 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/topology.js'
         },
 
+        'juju-view-bundle': {
+          fullpath: '/juju-ui/views/topology/bundle.js'
+        },
         'juju-view-utils': {
           fullpath: '/juju-ui/views/utils.js'
         },
