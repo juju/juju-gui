@@ -229,7 +229,10 @@
                 right: 10px;
             }
             input.num-units-control {
-                width: 107px;
+                width: 87px;
+                margin: 0 0 0 10px;
+                padding-left: 10px;
+                font-size: 14px;
             }
             span {
                 padding: 0 10px;
@@ -349,23 +352,28 @@
                 }
             }
             .ghost-config-header {
-                font-size: 17px;
                 height: 35px;
+                border-top: 1px solid @inspector-divider-top;
+                font-size: 16px;
                 line-height: 35px;
                 padding-left: @inspector-main-padding;
             }
             .ghost-config-content {
                 padding: @inspector-main-padding;
+                border-bottom: 1px solid @inspector-divider-bottom;
 
                 input[name=number-units] {
+                    .border-box;
                     display: inline-block;
-                    width: 120px;
+                    width: 100%;
                     margin-bottom: 0;
+                    padding-left: 10px;
                 }
                 label[for=number-units] {
-                    display: inline-block;
-                    margin-left: 25px;
-                    vertical-align: middle;
+                    display: block;
+                    margin: -24px 10px 0 0;
+                    color: #b5b5b5;
+                    text-align: right;
                 }
                 &.use-defaults {
                     textarea {
