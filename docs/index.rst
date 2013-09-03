@@ -22,6 +22,7 @@ Contents:
    continuous-integration
    datasources
    recording-and-playing-back-websocket-traffic
+   databinding
    viewlets
    analytics
 

@@ -1,6 +1,6 @@
-========================
-Databinding and Viewlets
-========================
+===========
+Databinding
+===========
 
 
 The Juju GUI includes a set of tools for ensuring that changes to objects
@@ -66,10 +66,11 @@ covered in the section on conflict resolution.
 A Simple Viewlet
 ================
 
-::
-var model = new Y.Model({alpha: 'beta'});
-var dom = new Y.Node.create('<input type="text" data-bind="alpha"/>);
-var b = new BindingEngine().bind(model, {conatiner: dom});
+Example::
+
+  var model = new Y.Model({alpha: 'beta'});
+  var dom = new Y.Node.create('<input type="text" data-bind="alpha"/>);
+  var b = new BindingEngine().bind(model, {conatiner: dom});
 
 At this point changes to the models 'alpha' value will appear in that DOM Node.
 
@@ -77,21 +78,22 @@ At this point changes to the models 'alpha' value will appear in that DOM Node.
 More complex interactions
 =========================
 
-::
-var model = new Y.Model({constraints: {cpu: '3Ghz'}});
-var dom = new Y.Node.create('<input type="text" data-bind="constraints.cpu"/>);
-var b = new BindingEngine();
-var viewlet = {
-    name: 'constraintsViewlet',
-    container: dom,
-    bindings: {
-        constraints: {
-            format: function(value) {
-            return value || '';
-            }
-        }
-    }
-}).bind(model, viewlet);
+Example::
+
+   var model = new Y.Model({constraints: {cpu: '3Ghz'}});
+   var dom = new Y.Node.create('<input type="text" data-bind="constraints.cpu"/>);
+   var b = new BindingEngine();
+   var viewlet = {
+       name: 'constraintsViewlet',
+       container: dom,
+       bindings: {
+           constraints: {
+               format: function(value) {
+               return value || '';
+               }
+           }
+       }
+   }).bind(model, viewlet);
 
 This example introduces a number of new concepts. The model introduces
 'constraints' which is itself a mapping object. The DOM fragment sets up a
@@ -179,6 +181,3 @@ produce changes within the viewlet.container directly.
 If complex updates relating to the singular elements in the model list are 
 required we've used D3 in the update method of the viewlet todo render the 
 elements in the list with proper enter/update/exit sections.
-
-
-
