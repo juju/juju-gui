@@ -200,8 +200,7 @@ describe('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.deepEqual(message.Params.Constraints,
-        { 'cpu-power': 2, 'cpu-cores': null, 'mem': null, arch: '' });
+    assert.deepEqual(message.Params.Constraints, { 'cpu-power': 2 });
   });
 
   it('disables and resets input fields when \'use default config\' is active',

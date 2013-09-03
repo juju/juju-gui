@@ -283,6 +283,21 @@ YUI.add('juju-env-go', function(Y) {
       });
     },
 
+    filterConstraints: function(constraints) {
+      // Some of the constraints have to be integers.
+      this.integerConstraints.forEach(function(key) {
+        constraints[key] = parseInt(constraints[key], 10) || undefined;
+      });
+      // Remove all constraint options which don't have values
+      // else the go back end has issues.
+      Object.keys(constraints).forEach(function(key) {
+        if (constraints[key] === undefined || (constraints[key].trim && constraints[key].trim() === '')) {
+          delete constraints[key];
+        }
+      })
+      return constraints;
+    },
+
     /**
      * React to the results of sending a login message to the server.
      *
@@ -404,12 +419,7 @@ YUI.add('juju-env-go', function(Y) {
           console.warn(constraints);
         }
 
-        var integerConstraints = this.integerConstraints;
-        if (integerConstraints) {
-          integerConstraints.forEach(function(key) {
-            constraints[key] = parseInt(constraints[key], 10);
-          });
-        }
+        constraints = this.filterConstraints(constraints);
       } else {
         constraints = {};
       }
@@ -955,10 +965,7 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleSetConstraints, null,
             callback, serviceName);
       }
-      // Some of the constraints have to be integers.
-      this.integerConstraints.forEach(function(key) {
-        constraints[key] = parseInt(constraints[key], 10) || undefined;
-      });
+      constraints = this.filterConstraints(constraints);
       sendData = {
         Type: 'Client',
         Request: 'SetServiceConstraints',
