@@ -93,8 +93,8 @@ describe('bundle module', function() {
           assert.equal(service.attr('width'), '96');
           assert.equal(service.attr('height'), '96');
           // Annotations
-          assert.equal(normalizeTranslate(service.attr('transform')), 
-            'translate(115 89)');
+          assert.equal(normalizeTranslate(service.attr('transform')),
+              'translate(115 89)');
           // Ensure that we've exposed one service
           assert.equal(container.all('.exposed-indicator').size(), 1);
           var indicator = selection.select('.exposed-indicator');
