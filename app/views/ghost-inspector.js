@@ -119,6 +119,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       } else {
         config = utils.getElementsValuesMapping(
             container, '.service-config .config-field');
+        config = utils.removeUnchangedConfigOptions(
+            config, options.model.get('options'));
       }
 
       // Deploy needs constraints in simple key:value object.

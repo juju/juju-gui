@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-go', function(Y) {
 
   var environments = Y.namespace('juju.environments');
+  var utils = Y.namespace('juju.views.utils');
 
   var endpointToName = function(endpoint) {
     return endpoint[0] + ':' + endpoint[1].name;
@@ -119,7 +120,26 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
+    /**
+      A list of the valid constraints for all providers. Required
+      because we cannot request these constraints from Juju yet.
+
+      @property genericConstraints
+      @default ['cpu-power', 'cpu-cores', 'mem', 'arch']
+      @type {Array}
+    */
     genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+
+    /**
+      A list of the constraints that need to be integers. We require
+      this list because we cannot request the valid constraints from
+      Juju.
+
+      @property integerConstraints
+      @default ['cpu-power', 'cpu-cores', 'mem']
+      @type {Array}
+    */
+    integerConstraints: ['cpu-power', 'cpu-cores', 'mem'],
 
     /**
      * Go environment constructor.
@@ -264,6 +284,30 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+      Utility method for filtering the constraint data and removing constraints
+      which do not have valid values.
+
+      @method filterConstraints
+      @param {Object} constraints key:value pairs.
+      @return an object of valid constraint values.
+    */
+    filterConstraints: function(constraints) {
+      // Some of the constraints have to be integers.
+      this.integerConstraints.forEach(function(key) {
+        constraints[key] = parseInt(constraints[key], 10) || undefined;
+      });
+      // Remove all constraint options which don't have values
+      // else the go back end has issues.
+      Object.keys(constraints).forEach(function(key) {
+        if (constraints[key] === undefined ||
+           (constraints[key].trim && constraints[key].trim() === '')) {
+             delete constraints[key];
+           }
+      });
+      return constraints;
+    },
+
+    /**
      * React to the results of sending a login message to the server.
      *
      * @method handleLogin
@@ -383,6 +427,8 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
+
+        constraints = this.filterConstraints(constraints);
       } else {
         constraints = {};
       }
@@ -852,14 +898,15 @@ YUI.add('juju-env-go', function(Y) {
        @param {String} data The YAML representation of the charm
          configuration options. Only one of `config` and `data` should be
          provided, though `data` takes precedence if it is given.
+       @param {Object} serviceConfig the current configuration object
+                       of the service.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object containing:
           err - a string describing the problem (if an error occurred),
           service_name - the name of the service.
        @return {undefined} Sends a message to the server only.
      */
-    set_config: function(serviceName, config, data, callback) {
-
+    set_config: function(serviceName, config, data, serviceConfig, callback) {
       if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
           (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
         throw 'Exactly one of config and data must be provided';
@@ -878,6 +925,7 @@ YUI.add('juju-env-go', function(Y) {
         sendData.Request = 'ServiceSetYAML';
         sendData.Params.ConfigYAML = data;
       } else {
+        config = utils.removeUnchangedConfigOptions(config, serviceConfig);
         sendData.Request = 'ServiceSet';
         sendData.Params.Config = stringifyObjectValues(config);
       }
@@ -926,10 +974,7 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleSetConstraints, null,
             callback, serviceName);
       }
-      // Some of the constraints have to be numbers.
-      Y.Array.each(['cpu-cores', 'cpu-power', 'mem'], function(key) {
-        constraints[key] = parseInt(constraints[key], 10) || undefined;
-      });
+      constraints = this.filterConstraints(constraints);
       sendData = {
         Type: 'Client',
         Request: 'SetServiceConstraints',

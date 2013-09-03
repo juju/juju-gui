@@ -805,7 +805,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can set a service config', function() {
-      env.set_config('mysql', {'cfg-key': 'cfg-val'});
+      // This also tests that it only sends the changed values
+      env.set_config('mysql', {
+        'cfg-key': 'cfg-val',
+        'unchanged': 'bar'
+      }, null, {
+        'cfg-key': 'foo',
+        'unchanged': 'bar'
+      });
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -841,7 +848,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('handles failed set config', function() {
       var err, service_name;
-      env.set_config('yoursql', {}, null, function(evt) {
+      env.set_config('yoursql', {}, null, {}, function(evt) {
         err = evt.err;
         service_name = evt.service_name;
       });

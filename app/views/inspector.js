@@ -734,11 +734,13 @@ YUI.add('juju-view-inspector', function(Y) {
 
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
       var errors = utils.validate(newVals, schema);
+
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
             newVals,
             null,
+            service.get('config'),
             Y.bind(this._setConfigCallback, this, container)
         );
       } else {
