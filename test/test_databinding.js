@@ -20,7 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('data binding library', function() {
   var Y, BindingEngine, utils, container;
 
-
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
                     'base', 'handlebars',
@@ -31,8 +30,6 @@ describe('data binding library', function() {
       done();
     });
   });
-
-
 
   describe('supports declarative bindings', function() {
     var engine, form, model;
@@ -177,8 +174,6 @@ describe('data binding library', function() {
            'child format');
          });
 
-
-
       it('supports formatters', function() {
         container = utils.makeContainer();
         container.append('<div data-bind="a"></div>');
@@ -249,7 +244,6 @@ describe('data binding library', function() {
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').getHTML(), 'abc');
       });
-
 
       it('update callback uses formatted value', function() {
         container = utils.makeContainer();
@@ -340,7 +334,6 @@ describe('data binding library', function() {
           assert.equal(result.length, 1);
         });
       });
-
 
       it('should be able to observe pojos', function(done) {
         var pojo = {id: 'a', name: 'test'};
@@ -434,6 +427,16 @@ describe('data binding library', function() {
         generateEngine('<input type="number" data-bind="e"/>');
         engine.bind(new Y.Model({e: 7}), viewlet);
         assert.equal(container.one('[data-bind=e]').get('value'), '7');
+      });
+
+      it('binds boolean to checkboxes', function() {
+        generateEngine('<input type="checkbox" data-bind="e"/>');
+        var model = new Y.Model({e: false});
+        engine.bind(model, viewlet);
+        var input = container.one('[data-bind=e]');
+        assert.equal(input.get('checked'), false);
+        model.set('e', true);
+        assert.equal(input.get('checked'), true);
       });
 
     });
