@@ -23,7 +23,7 @@ describe('data binding library', function() {
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
                     'base', 'handlebars',
-                    'model', 'model-list', 'node-event-simulate'];
+                    'model', 'model-list'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       BindingEngine = Y.namespace('juju.views').BindingEngine;
