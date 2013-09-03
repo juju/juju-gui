@@ -678,7 +678,7 @@ YUI.add('juju-view-utils', function(Y) {
       // Intentionally letting the browser do the type coersion.
       // The || check is to allow empty inputs to match an undefined default
       /* jshint -W116 */
-      if (typeof options[key] === 'object') {
+      if (Y.Lang.isObject(options[key])) {
         // If options is the charm config
         if (config[key] == (options[key].default || '')) {
           delete config[key];
