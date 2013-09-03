@@ -5,9 +5,9 @@ Databinding
 
 The Juju GUI includes a set of tools for ensuring that changes to objects
 can automatically update the DOM elements used to render or visualize 
-these objects. Concretely changes to Y.Model objects can automatically
-update forms when new delta events manipulate those objects over the 
-websocket.
+these objects. DOM Elements which are bound to Y.Model objects can
+automatically update forms when new delta events manipulate those objects over
+the websocket.
 
 This document explains how to use the databinding service and enumerates
 its feature set.
@@ -21,15 +21,16 @@ Binding
 Model
     A Y.Model instance.
 POJO
-    A Native Javascript Object instance. Modern browser provide an
+    A Native Javascript Object instance. Modern browsers provide an
     Object.observe call which is use to observe such object independent of
-    Y.Model support.
+    Y.Model support. Today this is provided by a polyfill of Object.observe
+    which we hope to remove in the near future.
 Databinding Engine 
-    Manages the connection between an Object and DOM representing it. Configured
-    by viewlets.
+    Manages the connection between an Object and DOM representing it. It is
+    configured by viewlets.
 Viewlet
     Configuration and code used in the context of a model and some DOM (usually
-    from a Template) that manages the relationship between the model, the DOM 
+    a template) that manages the relationship between the model, the DOM 
     and the databinding engine.
 ViewletManager
     A container class implementing policy around a collection of viewlets usually
@@ -39,49 +40,43 @@ ViewletManager
 Overview
 ===================
 
-The best way to use the databinding library depends on what you need to do with
-it. There are a number of ways to interact with it. Understanding that the
-ViewletManager layer is a way of selecting which configuration to include when
-setting up the binding engine means that we can focus on the features of the 
-lower levels first.
-
 Given a DOM fragment and a model the binding engine will scan the DOM fragment
 looking for data-bind attributes. Each of these attributes will internally be
 translated into a Binding instance. Binding instances are largely transparent
 at the level that one uses the system but are a useful way to understand how
 certain configuration choices work. These will be covered later in some detail.
 
-Once the DOM fragment has been parsed and the bindings array is generated the 
+Once the DOM fragment has been parsed and the bindings array is generated, the 
 configuration is used to optionally supplement the bindings. When this is done
 events are bound and the connection between the model and the DOM is active.
 
 Various databinding engines provide different styles of bindings, from Models
-to DOM, from DOM (typicall forms) to Models and some offer bi-directional
-binding. While our use cases didn't require bi-directional binding at the time 
-of authoring this library we do provide some features related to bi-directional
-bindings as well the Model to DOM style bindings discussed. This will be
-covered in the section on conflict resolution.
+to DOM, from DOM typical to Models and some offer bi-directional binding. While
+our use cases didn't require bi-directional binding at the time of authoring
+this library we do provide some features related to bi-directional bindings as
+well the Model to DOM style bindings discussed. This will be covered in the
+section on conflict resolution.
 
 
-A Simple Viewlet
-================
+Basic Databinding
+=================
 
 Example::
 
   var model = new Y.Model({alpha: 'beta'});
-  var dom = new Y.Node.create('<input type="text" data-bind="alpha"/>);
-  var b = new BindingEngine().bind(model, {conatiner: dom});
+  var dom = new Y.Node.create('<input type="text" data-bind="alpha"/>');
+  var b = new BindingEngine().bind(model, {container: dom});
 
 At this point changes to the models 'alpha' value will appear in that DOM Node.
 
 
-More complex interactions
-=========================
+Advanced Usage
+==============
 
 Example::
 
    var model = new Y.Model({constraints: {cpu: '3Ghz'}});
-   var dom = new Y.Node.create('<input type="text" data-bind="constraints.cpu"/>);
+   var dom = new Y.Node.create('<input type="text" data-bind="constraints.cpu"/>');
    var b = new BindingEngine();
    var viewlet = {
        name: 'constraintsViewlet',
@@ -97,7 +92,7 @@ Example::
 
 This example introduces a number of new concepts. The model introduces
 'constraints' which is itself a mapping object. The DOM fragment sets up a
-single binding to a nested element within that model ('cpu'). Bindings
+single binding to a nested property within that model ('cpu'). Bindings
 automatically follow dotted paths for attribute names.
 
 Another important concept in this example is extending the implicit binding
@@ -109,13 +104,15 @@ The final concept of this example is support for hierarchical bindings. The
 'constraints' object as noted is a mapping with many possible keys and dotted
 path access. When defining binding methods such as 'format' or 'update' we can
 apply them to the top level model key and they will apply to all dotted path
-elements under that key. In this example bindings on 'contraints' will apply to
+properties under that key. In this example bindings on 'contraints' will apply
+to
 constrants.cpu and for example constraints.mem or other keys.
+
 
 Viewlets
 ========
 
-Viewlets 
+See the viewlets documentation.
 
 
 
@@ -153,7 +150,7 @@ Method Wildcarding
 
 The databinding library support triggering two classes of method when other
 binding updates are triggered. This is handled as binding wildcarding. To
-define a wildcard you use on of the two possible matching patterns and define a
+define a wildcard you use one of the two possible matching patterns and define a
 beforeUpdate/update/afterUpdate method. The two possible matching patterns and their 
 semantics are:
 
@@ -181,3 +178,59 @@ produce changes within the viewlet.container directly.
 If complex updates relating to the singular elements in the model list are 
 required we've used D3 in the update method of the viewlet todo render the 
 elements in the list with proper enter/update/exit sections.
+
+Example::
+
+   var model = new Y.Model({a: 'alpha', b: 'beta'}});
+   var dom = new Y.Node.create('<input type="text" data-bind="a"/>' + 
+                               '<input type="text" data-bind="b"/>)');
+   var b = new BindingEngine();
+   var viewlet = {
+       container: dom,
+       bindings: {
+        '+' : { 
+            beforeUpdate: function(node, value) {
+                this._changing = [];
+            },
+            update: function(node, value) {
+                this._changing.push(node.getData('bind'));
+            },
+            afterUpdate: function() {
+                console.log("this._changing", this._changing);
+            }
+          }
+       }
+     }
+   }).bind(model, viewlet);
+
+In this example we suppose that we want to record the keys that have changed
+on any given update cycle. Here we create a list before doing updates, add the
+name of the bound key (extracted from the DOM in this case) and log these when
+the update is complete. If only the key 'a' changed on a delta update this 
+example will only log that 'a' has changed as we used a '+' pattern match.
+
+
+ModelList Rendering
+===================
+
+Example::
+
+   var model = new Y.Model({title; 'Sir'}});
+   var dom = new Y.Node.create('<input type="text" data-bind="first_name"/>);
+   var b = new BindingEngine();
+   var viewlet = {
+       container: dom,
+       update: function(modellist) {
+            this.container.setHTML(Templates['renderList'](modellist));
+       }
+     }
+   }).bind(model, viewlet);
+
+In this example we take advantage of the viewlets ability to specify an
+'update' method for handling model lists. We assume there is a compiled
+template under a Templates object (not shown) which can render itself with the
+model list when the list has changed. In this case it would fully re-render itself
+when anything in the ModelList has changed. 'this' is the viewlet for this call
+and we are able to extract the template and populate it.
+
+
