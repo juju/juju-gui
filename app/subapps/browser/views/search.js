@@ -57,6 +57,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
               }),
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
+
           var reviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Reviewed charms',
@@ -82,6 +83,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
+
           reviewedContainer.render(results_container.one('.reviewed'));
           unreviewedContainer.render(results_container.one('.unreviewed'));
           this.get('container').setHTML(tplNode);
