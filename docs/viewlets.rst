@@ -73,7 +73,8 @@ Viewlets
 =========
 
 A Viewlet is essentially a configuration object to link some DOM representation
-to a `Databinding Engine`_. In practice, a Viewlet can be thought of as a very lightweight View.
+to a `Databinding Engine`_. In practice, a Viewlet can be thought of as a very
+lightweight View.
 
 All Viewlets are rendered and hidden by default when the `Viewlet Manager`_ is
 rendered. To show a viewlet you need to call the ViewletManager.showViewlet()
@@ -83,8 +84,8 @@ configuration in the `Viewlet Manager`_ viewlets configuration object property.
 How to write viewlets
 ---------------------
 
-Viewlets are passed to the `Viewlet Manager`_ on instantiation
-in the `viewlets` object property and have a few configuration properties:
+Viewlets are passed to the `Viewlet Manager`_ on instantiation in the
+`viewlets` object property and have a few configuration properties:
 
 - name: String for user defined name of the viewlet.
 - templateWrapper: String or compiled Handlebars template to use as the wrapper
@@ -92,18 +93,17 @@ in the `viewlets` object property and have a few configuration properties:
 - template: String or compiled Handlebars template for the viewlet.
 - bindings: An object mapping additional methods onto the binding. 'format' and
   'update' are examples. See auto-generated (yuidoc) Developer documentation.
-- rebind: A function that returns a model or model list to which this viewlet
-  should be bound. This was designed to return a  model or modellist that was
-  nested in the model passed to the `Viewlet Manager`_ for binding.
+- selectBindTarget: A function that returns a model or model list to which this
+  viewlet should be bound. This was designed to return a  model or modellist
+  that was nested in the model passed to the `Viewlet Manager`_ for binding.
 - update: A function which is responsible for re-rendering the whole viewlet if
   the binding engine binds a modellist to the viewlet. This was designed as a
   performant technique for representing a large number of units while
   maintaining databinding to keep the UI updated.
-- render: A function which receives the bound model from the
-  `Databinding Engine`_ and compiles the viewlet templates. It then sets a local
-  `container` property with the compiled output. This is generally only called
-  once to set up the template however this could also be called by the update
-  method.
+- render: A function which receives the bound model from the `Databinding
+  Engine`_ and compiles the viewlet templates. It then sets a local `container`
+  property with the compiled output. This is generally only called once to set
+  up the template however this could also be called by the update method.
 
 While a viewlet doesn't explicitly require the `Viewlet Manager`_ it was
 designed to be managed by a parent handler.
@@ -136,16 +136,13 @@ An example passing Viewlets into a ViewletManager is::
     ...
   });
 
-For now, the viewletsNS object is merged with a `DEFAULT_VIEWLETS` object for
-locally defined viewlet configs.
-
 
 Databinding Engine
 ==================
 
 The Databinding Engine is the class which handles the binding between the model
 passed to the `Viewlet Manager`_ and the `Viewlets`_ using the viewlet
-configuration property `bindings`.
+configuration property `bindings`. See the databindings documentation.
 
 
 Controller
