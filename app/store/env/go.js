@@ -283,6 +283,14 @@ YUI.add('juju-env-go', function(Y) {
       });
     },
 
+    /**
+      Utility method for filtering the constraint data and removing constraints
+      which do not have valid values.
+
+      @method filterConstraints
+      @param {Object} constraints key:value pairs.
+      @return an object of valid constraint values.
+    */
     filterConstraints: function(constraints) {
       // Some of the constraints have to be integers.
       this.integerConstraints.forEach(function(key) {
@@ -291,10 +299,11 @@ YUI.add('juju-env-go', function(Y) {
       // Remove all constraint options which don't have values
       // else the go back end has issues.
       Object.keys(constraints).forEach(function(key) {
-        if (constraints[key] === undefined || (constraints[key].trim && constraints[key].trim() === '')) {
-          delete constraints[key];
-        }
-      })
+        if (constraints[key] === undefined ||
+           (constraints[key].trim && constraints[key].trim() === '')) {
+             delete constraints[key];
+           }
+      });
       return constraints;
     },
 
