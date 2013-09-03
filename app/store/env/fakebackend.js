@@ -698,6 +698,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         and endpoint connection type ie) wordpress:db.
       @param {String} endpointB A string representation of the service name
         and endpoint connection type ie) wordpress:db.
+      @param {Boolean} useRelationCount whether or not to generate and
+        incremented relation id or to just use the name and types of the
+        endpoints.
     */
     addRelation: function(endpointA, endpointB, useRelationCount) {
       if (!this.get('authenticated')) {
