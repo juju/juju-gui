@@ -127,11 +127,15 @@
         h1, h2, h3, h4, h5, h6 {
             padding-left: 1em;
         }
-
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
-
+        .text-in-input {
+            display: block;
+            margin: -24px 10px 0 0;
+            color: #b5b5b5;
+            text-align: right;
+        }
         .toggle {
             font-size: 12px;
 
@@ -185,7 +189,6 @@
                 }
             }
         }
-
         .controls {
             button {
                 .create-border-radius(@border-radius);
@@ -295,6 +298,20 @@
             input[type=text] {
                 width: 150px;
             }
+            input.constraint-field {
+                text-align: right;
+                width: 140px;
+                padding-right: 10px;
+
+                &.mem,
+                &.cpu {
+                    width: 110px;
+                    padding-right: 40px;
+                }
+            }
+            .constraint-label {
+                margin: -27px 95px 0 0;
+            }
             .settings-description {
                 font-size: 12px;
 
@@ -369,19 +386,11 @@
                     margin-bottom: 0;
                     padding-left: 10px;
                 }
-                label[for=number-units] {
-                    display: block;
-                    margin: -24px 10px 0 0;
-                    color: #b5b5b5;
-                    text-align: right;
+                .constraint-label {
+                    margin-top: -32px;
                 }
                 &.use-defaults {
-                    textarea {
-                        background-color: @disabled-input-background-color;
-                        border-color: @inspector-background-color;
-                        cursor: not-allowed;
-                        color: @disabled-input-text-color;
-                    }
+                    textarea,
                     input[type=text] {
                         background-color: @disabled-input-background-color;
                         border-color: @inspector-background-color;
@@ -624,6 +633,8 @@
                   background-url: none;
                   margin-bottom: 0px;
                   min-height: 26px;
+                }
+                .config-field {
                   width: 100%;
                 }
                 .resolver {
@@ -631,6 +642,7 @@
                   background-color: white;
                   border: 1px solid #dedede;
                   border-radius: 1px;
+
                   div {
                     width: 270px;
                   }
@@ -655,14 +667,12 @@
                    margin: 0;
                 }
             }
-
         }
-
-
         .status {
             display: inline-block;
             width: 33%;
             text-align: center;
+
             &.running {
                 background-color: #00b711;
             }
@@ -701,9 +711,6 @@
         .destroy-service-prompt.closed {
             height: 0;
         }
-
-
-
         .viewlet-wrapper{
             h3, h2, legend {
                 .border-box;
@@ -745,6 +752,7 @@
                 border-top: 1px solid @inspector-divider-top;
                 background-position: 20px center;
                 background-repeat: no-repeat;
+
                 span {
                     margin-right: 5px;
                 }
