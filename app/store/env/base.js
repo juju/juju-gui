@@ -255,6 +255,8 @@ YUI.add('juju-env-base', function(Y) {
      * Subclasses must implement the "_dispatch_rpc_result" and
      * "_dispatch_event" methods or override this method directly.
      *
+     * This method is overridden in go.js
+     *
      * @method dispatch_result
      * @param {Object} data The JSON contents returned by the API backend.
      * @return {undefined} Dispatches only.

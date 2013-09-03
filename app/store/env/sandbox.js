@@ -651,7 +651,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_add_relation: function(data) {
       var relation = this.get('state').addRelation(
-          data.endpoint_a, data.endpoint_b);
+          data.endpoint_a, data.endpoint_b, true);
 
       if (relation === false) {
         // If everything checks out but could not create a new relation model
@@ -870,7 +870,24 @@ YUI.add('juju-env-sandbox', function(Y) {
       },
       relation: {
         Key: 'relation_id',
-        'Endpoints': function() {}
+        'Endpoints': function(relation, goAPI) {
+          var result = [];
+          if (relation.endpoints.length === 1) {
+            return;
+          }
+          relation.endpoints.forEach(function(endpoint, index) {
+            result.push({
+              Relation: {
+                Name: endpoint[1].name,
+                Role: (index) ? 'server' : 'client',
+                Interface: relation.type,
+                Scope: relation.scope
+              },
+              ServiceName: endpoint[0]
+            });
+          });
+          return result;
+        }
       },
       annotation: {
         'Tag': function() {
@@ -1243,7 +1260,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientAddRelation: function(data, client, state) {
       var stateData = state.addRelation(
-          data.Params.Endpoints[0], data.Params.Endpoints[1]);
+          data.Params.Endpoints[0], data.Params.Endpoints[1], false);
       var resp = {RequestId: data.RequestId};
       if (stateData === false) {
         // Everything checks out but could not create a new relation model.
@@ -1261,13 +1278,13 @@ YUI.add('juju-env-sandbox', function(Y) {
           stateEpB = stateData.endpoints[1],
           epA = {
             Name: stateEpA[1].name,
-            Role: stateEpA[1].role,
+            Role: 'requirer',
             Scope: stateData.scope,
             Interface: stateData['interface']
           },
           epB = {
             Name: stateEpB[1].name,
-            Role: stateEpB[1].role,
+            Role: 'provider',
             Scope: stateData.scope,
             Interface: stateData['interface']
           };
