@@ -1192,11 +1192,41 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
-      // TODO Include the optional Config or Constraints in the response.
-      client.receive({
+      var response = {
         RequestId: data.RequestId,
-        Error: reply.error,
-        Response: {Service: data.Params.ServiceName}});
+      };
+      if (reply.error) {
+        response.Error = reply.error;
+        client.receive(response);
+      } else {
+        var charmName = reply.result.charm;
+
+        // Get the charm to load the full options data as the service config
+        // format.
+        state.getCharm(charmName, function(payload) {
+          var charmData = payload.result;
+          var formattedConfig = {};
+          var backendConfig = reply.result.config;
+
+          Y.Object.each(charmData.options, function(value, key) {
+            formattedConfig[key] = charmData.options[key];
+            if (backendConfig[key]) {
+              formattedConfig[key].value = backendConfig[key];
+            } else {
+              formattedConfig[key].value = charmData.options[key]['default'];
+            }
+          });
+
+          response.Response = {
+            Service: data.Params.ServiceName,
+            Charm: charmName,
+            Config: formattedConfig,
+            Constraints: reply.result.constraints
+          };
+          client.receiveNow(response);
+        });
+      }
+
     },
 
     /**
