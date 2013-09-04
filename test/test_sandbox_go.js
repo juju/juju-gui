@@ -272,28 +272,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('can deploy (environment integration).', function() {
+    it('can deploy (environment integration).', function(done) {
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
-        assert.equal(result.charm_url, 'cs:precise/wordpress-15');
+        assert.equal(result.charm_url, 'cs:precise/mediawiki-8');
         var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        assert.deepEqual(service.get('config'), {
-          debug: 'no',
-          engine: 'apache',
-          tuning: 'single',
-          'wp-content': ''
-        });
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
+        assert.deepEqual(
+          service.get('config'), {
+            admins: undefined,
+            debug: false,
+            logo: 'test logo',
+            name: 'Please set name of wiki',
+            skin: 'vector'
+          }
+        );
+        done();
       };
       env.deploy(
-          'cs:precise/wordpress-15',
+          'cs:precise/mediawiki-8',
           'kumquat',
-          {engine: 'apache'},
+          {logo: 'test logo'},
           null,
           1,
-          null,
+          {},
           callback);
     });
 
