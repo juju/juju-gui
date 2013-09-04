@@ -885,6 +885,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var viewletManager = this.viewletManager,
           db = this.viewletManager.get('db'),
           env = this.viewletManager.get('env'),
+          store = this.viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -902,16 +903,39 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
-          db.notifications.add(new db.models.Notification({
+          db.notifications.create({
             title: 'Error setting charm.',
             message: result.err,
             level: 'error'
-          }));
+          });
           return;
         }
         // TODO Makyo Aug 28 - figure out if there's an upgrade available for
         // the service with the new charm, set info as needed - juju will not
         // report new charm URL properly with GetService. - Bug: #1218447
+        // Get the charm from the store or cache.
+        //XXX Fix 'precise'
+        var serviceCharm;
+        store.promiseCharm(upgradeTo.replace(/^cs:/, ''), db.charms, 'precise')
+          .then(function(data, charm) {
+            // Set the charm on the service.
+            debugger;
+            serviceCharm = db.charms.getById(data.charm.id);
+            service.set('charm', upgradeTo);
+            return store.promiseUpgradeAvailability(charm, db.charms);
+          }, function(error) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: error,
+              level: 'error'
+            });
+          })
+          .then(function(latestId) {
+            // Redraw(?) the inspector.
+            service.set('upgrade_available', !!latestid);
+            service.set('upgrade_to', serviceCharm.get('scheme') + latestId);
+            debugger;
+          }, function() {debugger;});
       });
     },
 
