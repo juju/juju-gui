@@ -1,4 +1,5 @@
 @inspector-background-color: #221e1c;
+@inspector-controls-height: 67px;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
@@ -123,18 +124,32 @@
         color: #fff;
         /* Can be removed once the old inspector styles are removed. */
         margin: 0;
+        font-size: 14px;
 
         h1, h2, h3, h4, h5, h6 {
             padding-left: 1em;
         }
+        hr {
+            border-width: 1px 0;
+            border-style: solid;
+            border-top-color: @inspector-divider-bottom;
+            border-bottom-color: @inspector-divider-top;
+        }
         input[type=checkbox].hidden-checkbox {
             display: none;
+        }
+        input[type=text] {
+            min-height: 20px;
+            font-size: 14px;
         }
         .text-in-input {
             display: block;
             margin: -24px 10px 0 0;
             color: #b5b5b5;
             text-align: right;
+        }
+        .config-field.boolean {
+            margin-right: 10px;
         }
         .toggle {
             font-size: 12px;
@@ -190,14 +205,17 @@
             }
         }
         .controls {
+            margin-top: 20px;
+            border-top: 1px solid @inspector-divider-top;
+            border-bottom: 1px solid @inspector-divider-bottom;
+
             button {
                 .create-border-radius(@border-radius);
                 width: 120px;
-                height: 25px;
-                margin: 10px 0;
+                height: 30px;
+                margin: 20px 0;
                 border: none;
-                color: white;
-                font-weight: bold;
+                color: #fff;
 
                 &.cancel {
                     background-color: #A3A3A3;
@@ -289,7 +307,7 @@
             }
             label {
                 font-size: 14px;
-                margin: 14px 0 7px 0;
+                margin: 20px 0 10px 0;
                 font-weight: bold;
             }
             textarea {
@@ -298,19 +316,8 @@
             input[type=text] {
                 width: 150px;
             }
-            input.constraint-field {
-                text-align: right;
-                width: 140px;
-                padding-right: 10px;
-
-                &.mem,
-                &.cpu {
-                    width: 110px;
-                    padding-right: 40px;
-                }
-            }
             .constraint-label {
-                margin: -27px 95px 0 0;
+                margin: -25px 95px 0 0;
             }
             .settings-description {
                 font-size: 12px;
@@ -334,7 +341,7 @@
        }
 
         .config-file {
-            padding: 10px @inspector-main-padding;
+            padding: 10px 0;
 
             input {
                 position: absolute;
@@ -368,6 +375,9 @@
                     border-bottom: none;
                 }
             }
+            .controls {
+                margin-top: 0;
+            }
             .ghost-config-header {
                 height: 35px;
                 border-top: 1px solid @inspector-divider-top;
@@ -387,7 +397,7 @@
                     padding-left: 10px;
                 }
                 .constraint-label {
-                    margin-top: -32px;
+                    margin-top: -34px;
                 }
                 &.use-defaults {
                     textarea,
@@ -403,6 +413,9 @@
                         cursor: default;
                     }
                 }
+            }
+            .destroy-service-trigger {
+                padding-top: 10px;
             }
         }
 
@@ -604,7 +617,7 @@
             overflow: auto;
 
             &.settings-config {
-                margin-bottom: 45px;
+                margin-bottom: @inspector-controls-height + 20px;
             }
             h2 {
                 font-size: 18px;
@@ -616,7 +629,7 @@
 
                 label {
                     font-size: 14px;
-                    margin: 14px 0 7px 0;
+                    margin: 20px 0 10px 0;
                     font-weight: bold;
                 }
                 .settings-description {
@@ -632,7 +645,7 @@
                   background-position: right center;
                   background-url: none;
                   margin-bottom: 0px;
-                  min-height: 26px;
+                  min-height: 20px;
                 }
                 .config-field {
                   width: 100%;
@@ -683,13 +696,12 @@
                 background-color: #ba0000;
             }
         }
-        .destroy-service-trigger{
+        .destroy-service-trigger {
             padding-left: @inspector-main-padding;
-            height: 20px;
+            padding: 20px;
+            border-top: 1px solid @inspector-divider-top;
 
             span {
-                font-size: 11px;
-                font-weight: bold;
                 cursor: pointer;
             }
         }
