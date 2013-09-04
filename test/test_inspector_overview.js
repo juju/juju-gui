@@ -514,7 +514,7 @@ describe('Inspector Overview', function() {
     };
     env.get_charm = function(upgradeTo, callback) {
       assert.equal(upgradeTo, newContainer.one('.upgrade-link')
-        .getData('upgradeto');
+        .getData('upgradeto'));
       done();
     };
 

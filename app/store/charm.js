@@ -231,7 +231,7 @@ YUI.add('juju-charm-store', function(Y) {
         storeId = charm.url;
         revision = parseInt(charm.revision, 10);
       }
-      var storeId = storeId.replace(/-\d+$/, '-HEAD');
+      storeId = storeId.replace(/-\d+$/, '-HEAD');
       return this.promiseCharm(storeId, cache)
         .then(function(latest) {
             var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10);
