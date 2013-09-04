@@ -416,6 +416,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           var bar = this._statusbar;
           if (!bar) {
             bar = this._statusbar = new views.StatusBar({
+              width: 250,
               target: node.getDOMNode()
             }).render();
           }
@@ -423,7 +424,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         }
       },
       units: {
-        depends: ['aggregated_status'],
+        depends: ['aggregated_status', 'upgrade_to'],
         'update': function(node, value) {
           // Called under the databinding context.
           // Subordinates may not have a value.

@@ -91,7 +91,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       for (var url in urls) {
         if (urls.hasOwnProperty(url)) {
-          assert.deepEqual(featureFlags(url), urls[url]);
+          var expected = urls[url];
+          // XXX frankban: remove this line once the service inspector
+          // transition is completed.
+          expected.serviceInspector = true;
+          assert.deepEqual(featureFlags(url), expected);
         }
       }
     });

@@ -223,12 +223,19 @@ YUI.add('juju-charm-store', function(Y) {
     promiseUpgradeAvailability: function(charm, cache) {
       // Get the charm's store ID, then replace the version number
       // with '-HEAD' to retrieve the latest version of the charm.
-      var storeId = charm.get('storeId').replace(/-\d+$/, '-HEAD');
+      var storeId, revision;
+      if (charm instanceof Y.Model) {
+        storeId = charm.get('storeId');
+        revision = parseInt(charm.get('revision'), 10);
+      } else {
+        storeId = charm.url;
+        revision = parseInt(charm.revision, 10);
+      }
+      storeId = storeId.replace(/-\d+$/, '-HEAD');
       return this.promiseCharm(storeId, cache)
         .then(function(latest) {
-            var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10),
-               currentVersion = parseInt(charm.get('revision'), 10);
-            if (latestVersion > currentVersion) {
+            var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10);
+            if (latestVersion > revision) {
               return latest.charm.id;
             }
           }, function(e) {

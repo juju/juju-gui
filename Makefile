@@ -291,7 +291,7 @@ lint-license-headers:
 
 virtualenv/bin/python:
 	virtualenv virtualenv --system-site-packages
-	virtualenv/bin/easy_install archives/selenium-2.33.0.tar.gz
+	virtualenv/bin/easy_install archives/selenium-2.35.0.tar.gz
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
@@ -467,6 +467,7 @@ test-prod-server: build-prod test-prep
 
 test-misc:
 	PYTHONPATH=lib python test/test_websocketreplay.py
+	PYTHONPATH=lib python test/test_browser.py
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin python test/test_http_server.py
 
