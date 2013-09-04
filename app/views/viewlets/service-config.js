@@ -59,7 +59,15 @@ YUI.add('viewlet-service-config', function(Y) {
         'update': function(node, value) {
           node.one('input').set('checked', value);
         }
-      }
+      },
+      'config': {
+        'update': function(node, val) {
+          if (val === undefined) {
+            val = '';
+          }
+          node.set('value', val);
+        }
+      },
     }
 
   };
