@@ -63,7 +63,7 @@ YUI.add('viewlet-service-config', function(Y) {
       'config': {
         'update': function(node, val) {
           if (val === undefined) {
-            val = "";
+            val = '';
           }
           node.set('value', val);
         }
