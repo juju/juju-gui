@@ -415,6 +415,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_charm('cs:precise/notarealcharm-15', callback);
     });
 
+    it('can successfully get a service and its config', function(done) {
+      env.connect();
+      state.deploy('cs:precise/mediawiki-15', function() {});
+      var callback = function(result) {
+        assert.deepEqual(
+          result.result.config, {
+            admins: undefined,
+            debug: false,
+            logo: undefined,
+            name: 'Please set name of wiki',
+            skin: 'vector'
+          }
+        );
+        // We also make sure that we get some object of data for constraints.
+        assert.deepEqual(result.result.constraints, {});
+        done();
+      };
+      env.get_service('mediawiki', callback);
+    });
+
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {
