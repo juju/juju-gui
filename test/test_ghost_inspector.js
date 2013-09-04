@@ -139,11 +139,7 @@ describe('Ghost Inspector', function() {
     var message = env.ws.last_message();
     var params = message.Params;
     var config = {
-      admins: '',
-      debug: 'false',
-      logo: '',
-      name: 'foo',
-      skin: 'vector'
+      name: 'foo'
     };
     assert.equal('ServiceDeploy', message.Request);
     assert.equal('mediawiki', params.ServiceName);
@@ -189,7 +185,7 @@ describe('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.constraints.cpu, '2');
+    assert.deepEqual(message.constraints, ['cpu=2', 'mem=', 'arch=']);
   });
 
   it('deploys with constraints in go env', function() {
@@ -204,7 +200,7 @@ describe('Ghost Inspector', function() {
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
 
     var message = env.ws.last_message();
-    assert.equal(message.Params.Constraints['cpu-power'], '2');
+    assert.deepEqual(message.Params.Constraints, { 'cpu-power': 2 });
   });
 
   it('disables and resets input fields when \'use default config\' is active',

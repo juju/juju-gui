@@ -212,6 +212,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Exposed': false,
             'CharmURL': 'cs:precise/wordpress-15',
             'Life': 'alive',
+            'Config': {
+              debug: 'no',
+              engine: 'nginx',
+              tuning: 'single',
+              'wp-content': ''
+            },
             'Constraints': {}
           }],
           ['machine', 'change', {'Status': 'running'}],
@@ -238,7 +244,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           CharmUrl: 'cs:precise/wordpress-15',
           ServiceName: 'kumquat',
-          ConfigYAML: 'funny: business',
+          ConfigYAML: 'engine: apache',
           NumUnits: 2
         },
         RequestId: 42
@@ -252,7 +258,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var service = state.db.services.getById('kumquat');
         assert.isObject(service);
         assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        assert.deepEqual(service.get('config'), {funny: 'business'});
+        assert.deepEqual(service.get('config'), {
+          debug: 'no',
+          engine: 'apache',
+          tuning: 'single',
+          'wp-content': ''
+        });
         var units = state.db.units.get_units_for_service(service);
         assert.lengthOf(units, 2);
         done();
@@ -261,23 +272,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it('can deploy (environment integration).', function() {
+    it('can deploy (environment integration).', function(done) {
       env.connect();
       // We begin logged in.  See utils.makeFakeBackend.
       var callback = function(result) {
         assert.isUndefined(result.err);
-        assert.equal(result.charm_url, 'cs:precise/wordpress-15');
+        assert.equal(result.charm_url, 'cs:precise/mediawiki-8');
         var service = state.db.services.getById('kumquat');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        assert.deepEqual(service.get('config'), {llama: 'pajama'});
+        assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
+        assert.deepEqual(
+          service.get('config'), {
+            admins: undefined,
+            debug: false,
+            logo: 'test logo',
+            name: 'Please set name of wiki',
+            skin: 'vector'
+          }
+        );
+        done();
       };
       env.deploy(
-          'cs:precise/wordpress-15',
+          'cs:precise/mediawiki-8',
           'kumquat',
-          {llama: 'pajama'},
+          {logo: 'test logo'},
           null,
           1,
-          null,
+          {},
           callback);
     });
 
@@ -395,6 +415,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.get_charm('cs:precise/notarealcharm-15', callback);
     });
 
+    it('can successfully get a service and its config', function(done) {
+      env.connect();
+      state.deploy('cs:precise/mediawiki-15', function() {});
+      var callback = function(result) {
+        assert.deepEqual(
+          result.result.config, {
+            admins: undefined,
+            debug: false,
+            logo: undefined,
+            name: 'Please set name of wiki',
+            skin: 'vector'
+          }
+        );
+        // We also make sure that we get some object of data for constraints.
+        assert.deepEqual(result.result.constraints, {});
+        done();
+      };
+      env.get_service('mediawiki', callback);
+    });
+
     it('can set constraints', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {
@@ -440,7 +480,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSet',
           Params: {
             ServiceName: 'wordpress',
-            Config: { llama: 'pajama' }
+            Config: { engine: 'apache' }
           },
           RequestId: 42
         };
@@ -448,7 +488,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         client.open();
@@ -462,10 +507,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
-        env.set_config('wordpress', {llama: 'pajama'}, undefined, callback);
+        env.set_config('wordpress', {
+          engine: 'apache'
+        }, undefined, {}, callback);
       });
     });
 
@@ -476,7 +528,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSetYAML',
           Params: {
             ServiceName: 'wordpress',
-            ConfigYAML: 'wordpress:\n  llama: pajama'
+            ConfigYAML: 'wordpress:\n  engine: apache'
           },
           RequestId: 42
         };
@@ -484,7 +536,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         client.open();
@@ -498,11 +555,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         env.set_config('wordpress', undefined,
-            'wordpress:\n  llama: pajama', callback);
+            'wordpress:\n  engine: apache', {}, callback);
       });
     });
 
