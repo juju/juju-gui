@@ -508,7 +508,13 @@ describe('Inspector Overview', function() {
 
     window.flags.upgradeCharm = true;
 
-    env.setCharm = function() {
+    // Ensure that get_charm is called to get the new charm.
+    env.setCharm = function(serviceName, upgradeTo, force, callback) {
+      callback({});
+    };
+    env.get_charm = function(upgradeTo, callback) {
+      assert.equal(upgradeTo, newContainer.one('.upgrade-link')
+        .getData('upgradeto'));
       done();
     };
 
