@@ -52,13 +52,13 @@ describe('D3 StatusBar', function() {
   it('should render to a container properly', function() {
     var bar = new views.StatusBar({
       container: container.getDOMNode(),
-      width: 280,
+      width: 300,
       fontSize: 18
     }).render();
 
     bar.update({'running': 4, 'pending': 4, 'error': 2});
     assert.ok(container.one('svg g.statusbar'));
-    assert.equal(container.one('svg').getAttribute('width'), 280);
+    assert.equal(container.one('svg').getAttribute('width'), 300);
 
     // Verify the computed rendering itself.
     var rect = d3.select(container.getDOMNode()).select('rect');
