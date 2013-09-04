@@ -655,7 +655,7 @@
                   width: 100%;
 
                   &.boolean {
-                    width: auto;
+                    width: 25px;
                   }
                 }
                 .resolver {
@@ -671,6 +671,12 @@
                 .modified {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
+
+                  &.boolean {
+                    display: inline-block;
+                    min-width: 13px;
+                    min-height: 13px;
+                  }
                 }
                 .conflict-pending {
                   background-color: #dedede;

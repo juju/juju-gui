@@ -1047,9 +1047,24 @@ YUI.add('juju-view-inspector', function(Y) {
       var modelValue = this.model.get(key);
       var fieldValue = field.get(node);
       if (modelValue !== fieldValue) {
-        node.addClass('modified');
+        if (node.getAttribute('type') === 'checkbox') {
+          node.get('parentNode').append(
+              Y.Node.create('<span class="modified boolean"/>'));
+        } else {
+          node.addClass('modified');
+        }
       } else {
-        node.removeClass('modified');
+        if (node.getAttribute('type') === 'checkbox') {
+          var modifiedNode = node.get('parentNode').one('.modified');
+          if (modifiedNode) {
+            modifiedNode.remove();
+          }
+          node.removeClass('conflict');
+          node.removeClass('conflict-env');
+          node.removeClass('conflict-pending');
+        } else {
+          node.removeClass('modified');
+        }
       }
     },
     'conflict': function(node, model, viewletName, resolve, binding) {
@@ -1073,7 +1088,15 @@ YUI.add('juju-view-inspector', function(Y) {
         e.halt(true);
         var formValue = field.get(node);
         handlers.forEach(function(h) { h.detach();});
-        node.removeClass('modified');
+
+        if (node.getAttribute('type') === 'checkbox') {
+          var modifiedNode = node.get('parentNode').one('.modified');
+          if (modifiedNode) {
+            modifiedNode.remove();
+          }
+        } else {
+          node.removeClass('modified');
+        }
         node.removeClass('conflict');
         resolver.addClass('hidden');
 

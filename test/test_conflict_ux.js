@@ -21,6 +21,7 @@ describe('Inspector Conflict UX', function() {
 
   var Y, juju, views, templates, utils, container, models;
   var conn, env, view, service, charmData, db, inspector;
+  var modifyAndWaitHandler;
 
   before(function(done) {
     var requires = ['juju-databinding',
@@ -73,7 +74,8 @@ describe('Inspector Conflict UX', function() {
       id: 'mediawiki',
       charm: charmId,
       config: {
-        logo: 'foo'
+        logo: 'foo',
+        debug: 'false',
       }});
     db.services.add(service);
     db.onDelta({data: {result: [
@@ -97,13 +99,33 @@ describe('Inspector Conflict UX', function() {
   }
 
   function modifyAndWait(node, value, callback) {
-    var handle = node.after('valueChange', function(e) {
+    var event,
+        prop;
+    var isCheckbox = node.getAttribute('type') ==='checkbox' ? true: false;
+    if (isCheckbox) {
+      event = 'change';
+    } else {
+      event = 'valueChange';
+    }
+    modifyAndWaitHandler = node.after(event, function(e) {
       callback(node);
-      handle.detach();
+      if (modifyAndWaitHandler) {
+        modifyAndWaitHandler.detach();
+      }
     });
     // Tricks to simulate valueChange
     node.simulate('focus');
-    node.set('value', value);
+
+    if (isCheckbox) {
+      prop = 'checked';
+    } else {
+      prop = 'value';
+    }
+    node.set(prop, value);
+
+    if (isCheckbox) {
+      node.simulate('change');
+    }
   }
 
   it('should be able to indicate change to fields', function(done) {
@@ -157,4 +179,53 @@ describe('Inspector Conflict UX', function() {
     });
   });
 
+  it('should indicate conflict of boolean config values', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) {
+      done();
+    }
+    var input = container.one('#input-debug');
+    assert.equal(input.get('checked'), false);
+
+    modifyAndWait(input, true, function() {
+      // See that the modified node is placed next to it.
+      var parentNode = input.get('parentNode');
+      assert.equal(
+        parentNode.all('.modified').size(),
+        1,
+        'missing modified node');
+
+      service.set('config', {debug: false});
+      assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        1,
+        'missing conflict-pending node');
+
+      // In the checkbox form we don't open up values to display and choose
+      // from. You may simply check/uncheck again to resolve the conflict.
+
+      // Before we finish testing we need to unbind the modify and wait
+      // handler so that we don't cause another loop when we simulate
+      // changing the checkbox again.
+      modifyAndWaitHandler.detach();
+
+      input.simulate('click');
+      // Uncheck the box to match the conflict state.
+      input.set('checked', false);
+      input.simulate('change');
+
+      // Verify the form is updated.
+      assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+
+      assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+      done();
+    });
+  });
 });
