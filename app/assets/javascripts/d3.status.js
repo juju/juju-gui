@@ -52,7 +52,7 @@ YUI.add('d3-statusbar', function(Y) {
       this.options = Y.mix(options || {}, {
         container: 'body',
         target: 'svg',
-        width: 270,
+        width: 250,
         fontSize: 16,
         transitionTime: 750,
         resize: true,
