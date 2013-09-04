@@ -19,6 +19,7 @@
     input[type=text]::-ms-clear {
         display: none;
     }
+    button.unit-action-button,
     .controls button,
     .inspector-buttons a {
         .create-border-radius(@border-radius);
@@ -34,10 +35,14 @@
         padding: 0;
         border: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
+        color: #505050;
         text-align: center;
         text-decoration: none;
         line-height: 30px;
+    }
+    .controls button,
+    .inspector-buttons a {
+        color: #fff;
 
         &.cancel-button,
         &.cancel {
@@ -848,22 +853,10 @@
                     margin-right: 30px;
                 }
 
-                button.unit-action-button,
-                input[type="checkbox"] {
-                    .create-border-radius(@border-radius);
-                    .create-box-shadow(0 2px 2px -2px #777 inset);
-                    background: @charm-panel-series-color;
-                }
-
                 button.unit-action-button {
-                    border: 0;
-                    padding: 5px;
                     width: 70px;
-                    text-align: center;
                     margin: 20px 3px 0;
-                }
-                button.resolve {
-                    margin-left: 25px;
+                    background: @charm-panel-series-color;
                 }
                 &.pending {
                     .action-button-wrapper {
