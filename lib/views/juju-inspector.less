@@ -241,22 +241,23 @@
             width: 255px;
 
             .unit-label,
-            .current-unit-num-wrapper,
-            input.num-units-control {
+            .current-unit-num {
                 display: inline-block;
             }
-            .current-unit-num-wrapper {
-                .create-border-radius(@border-radius);
-                width: 95px;
+            .unit-label,
+            .current-unit-num {
                 height: 30px;
-                padding-left: 10px;
                 line-height: 30px;
             }
-            input.num-units-control {
-                width: 101px;
-            }
-            .unit-label {
-                padding: 0 20px 0 10px;
+            .units-input {
+                float: right;
+
+                input.num-units-control {
+                    width: 101px;
+                }
+                .unit-label {
+                    padding: 0 20px 0 0;
+                }
             }
             .constraint-details {
                 font-size: 11px;
