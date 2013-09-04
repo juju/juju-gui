@@ -4,7 +4,7 @@
     <div class="ghost-config-header">Service details</div>
     <div class="ghost-config-content">
       <input class="config-field" type="text" name="number-units" value="1"/>
-      <label for="number-units">Minimum units</label>
+      <label for="number-units" class="text-in-input">Minimum units</label>
     </div>
   </div>
   {{/unless}}
@@ -13,7 +13,7 @@
   <!-- Service Constraints added in -->
   <div class="ghost-config-wrapper service-constraints">
     <div class="ghost-config-header">Constraints</div>
-    <div class="ghost-config-content use-defaults">
+    <div class="ghost-config-content">
       {{> service-constraints-viewlet}}
     </div>
   </div>
@@ -33,6 +33,7 @@
           </label>
         </div>
       </div>
+      <hr />
       <div class="config-file">
         <input type="file" disabled>
         <div class="fakebutton">Import config file...</div>
