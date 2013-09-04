@@ -910,11 +910,6 @@ YUI.add('juju-view-inspector', function(Y) {
           });
           return;
         }
-        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
-        // the service with the new charm, set info as needed - juju will not
-        // report new charm URL properly with GetService. - Bug: #1218447
-        // Get the charm from the store or cache.
-        //XXX Fix 'precise'
         env.get_charm(upgradeTo, function(data) {
           if(data.err) {
             db.notifications.create({

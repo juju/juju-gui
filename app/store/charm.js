@@ -235,7 +235,6 @@ YUI.add('juju-charm-store', function(Y) {
       return this.promiseCharm(storeId, cache)
         .then(function(latest) {
             var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10);
-            console.log('current, latest', revision, latestVersion);
             if (latestVersion > revision) {
               return latest.charm.id;
             }
