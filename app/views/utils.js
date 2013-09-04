@@ -1165,11 +1165,16 @@ YUI.add('juju-view-utils', function(Y) {
     var state = unit.agent_state;
     if (state === 'started') {
       if (!ignoreRelationErrors &&
+          // No longer used in the Go back end.
           unit.relation_errors &&
           Y.Object.size(unit.relation_errors)) {
         return 'error';
       }
       return 'running';
+    }
+    if (state === 'error') {
+      // This will only be triggerd with the Go backend and simulator.
+      return 'error';
     }
     if ((/-?error$/).test(state)) {
       return 'error';
