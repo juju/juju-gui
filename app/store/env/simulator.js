@@ -170,7 +170,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               unit.agent_state = 'error';
               var relation = relations[
                 Math.floor(Math.random() * relations.length)];
-              var interfaceName
+              var interfaceName;
               relation.get('endpoints').forEach(function(endpoint) {
                 if (endpoint[0] !== serviceName) { return; }
                 interfaceName = endpoint[1].name;
