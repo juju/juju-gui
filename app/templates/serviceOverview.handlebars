@@ -5,23 +5,13 @@
    incorrectly calculated height -->
   <svg class="statusbar" data-bind="aggregated_status" height="18"></svg>
 </div>
-<div class="content yui3-g unit-scaling">
-  <div class="yui3-u">
-    <div class="current-unit-num-wrapper yui3-g">
-      <div class="current-unit-num yui3-u" data-bind="unit_count"></div>
-      <div class="units-starting-spinner yui3-u hidden">
-        <img src="/juju-ui/assets/images/non-sprites/units-loading.gif" />
-      </div>
-    </div>
+<div class="content unit-scaling">
+  <div class="current-unit-num-wrapper yui3-g">
+    <div class="current-unit-num yui3-u" data-bind="unit_count"></div>
   </div>
-  <div class="yui3-u">
-    <span>of</span>
-  </div>
-  <div class="yui3-u">
-    <div>
-      <input type="text" class="num-units-control" value="{{unit_count}}"/>
-    </div>
-  </div>
+  <div class="unit-label">of</div>
+  <input type="text" class="num-units-control" value="{{unit_count}}"/>
+  <span class="text-in-input">Units</span>
   <div class="unit-constraints-confirm closed"></div>
 </div>
 <h3>Units</h3>

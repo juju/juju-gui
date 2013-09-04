@@ -12,10 +12,12 @@
 @disabled-input-text-color: #252525;
 
 .yui3-juju-inspector {
-    input[type=text]::-ms-clear { display: none; }
-
     .customize-scrollbar;
 
+    /* Hide IE input clear control */
+    input[type=text]::-ms-clear {
+        display: none;
+    }
     .inspector-buttons {
         a {
             .create-border-radius(@border-radius);
@@ -113,7 +115,7 @@
     }
 
     .juju-inspector {
-        .create-border-radius(2px);
+        .create-border-radius(@border-radius);
         position: absolute;
         top: 20px;
         right: 70px;
@@ -139,7 +141,15 @@
             display: none;
         }
         input[type=text] {
-            min-height: 20px;
+            .create-border-radius(@border-radius);
+            .border-box;
+            .create-box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.7));
+            width: 100%;
+            min-height: 30px;
+            margin: 0;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: none;
             font-size: 14px;
         }
         .text-in-input {
@@ -237,27 +247,23 @@
         .unit-scaling {
             width: 255px;
 
+            .unit-label,
+            .current-unit-num-wrapper,
+            input.num-units-control {
+                display: inline-block;
+            }
             .current-unit-num-wrapper {
+                .create-border-radius(@border-radius);
                 width: 95px;
                 height: 30px;
-                .create-border-radius(@border-radius);
-                line-height: 30px;
                 padding-left: 10px;
-                position: relative;
-            }
-            .units-starting-spinner {
-                position: absolute;
-                right: 10px;
+                line-height: 30px;
             }
             input.num-units-control {
-                width: 87px;
-                margin: 0 0 0 10px;
-                padding-left: 10px;
-                font-size: 14px;
+                width: 101px;
             }
-            span {
-                padding: 0 10px;
-                line-height: 30px;
+            .unit-label {
+                padding: 0 20px 0 10px;
             }
             .constraint-details {
                 font-size: 11px;
@@ -393,16 +399,6 @@
                 padding: @inspector-main-padding;
                 border-bottom: 1px solid @inspector-divider-bottom;
 
-                input[name=number-units] {
-                    .border-box;
-                    display: inline-block;
-                    width: 100%;
-                    margin-bottom: 0;
-                    padding-left: 10px;
-                }
-                .constraint-label {
-                    margin-top: -34px;
-                }
                 &.use-defaults {
                     textarea,
                     input[type=text] {
@@ -492,20 +488,6 @@
                     color: @charm-panel-background-color;
                     width: 100%;
 
-                    .service-name {
-                        font-size: 20px;
-                        font-weight: 300;
-                        line-height: 1.2;
-                    }
-                    span.service-name {
-                        display: inline-block;
-                        margin-top: -0.1em;
-                    }
-                    input.service-name {
-                        width: 170px;
-                        height: 20px;
-                        font-size: 14px;
-                    }
                     .icon {
                         margin-right: 10px;
                         vertical-align: top;
@@ -527,6 +509,18 @@
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
+
+                        div.service-name {
+                            margin-top: -0.1em;
+                            font-size: 20px;
+                            font-weight: 300;
+                            line-height: 1.2;
+                        }
+                        input.service-name {
+                            display: block;
+                            width: 170px;
+                            margin-bottom: 5px;
+                        }
                     }
                     .charm-url {
                         font-size: 14px;
@@ -547,7 +541,7 @@
                         vertical-align: top;
                         margin-top: -6px;
                     }
-                    div {
+                    & > div {
                         display: inline-block;
                     }
                 }
@@ -649,7 +643,6 @@
                   background-position: right center;
                   background-url: none;
                   margin-bottom: 0px;
-                  min-height: 20px;
                 }
                 .config-field {
                   width: 100%;
