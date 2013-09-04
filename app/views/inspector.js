@@ -915,27 +915,29 @@ YUI.add('juju-view-inspector', function(Y) {
         // report new charm URL properly with GetService. - Bug: #1218447
         // Get the charm from the store or cache.
         //XXX Fix 'precise'
-        var serviceCharm;
-        store.promiseCharm(upgradeTo.replace(/^cs:/, ''), db.charms, 'precise')
-          .then(function(data, charm) {
-            // Set the charm on the service.
-            debugger;
-            serviceCharm = db.charms.getById(data.charm.id);
-            service.set('charm', upgradeTo);
-            return store.promiseUpgradeAvailability(charm, db.charms);
+        env.get_charm(upgradeTo, function(data) {
+          if(data.err) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: data.err,
+              level: 'error'
+            });
+          }
+          // Set the charm on the service.
+          service.set('charm', upgradeTo);
+          store.promiseUpgradeAvailability(data.result, db.charms)
+          .then(function(latestId) {
+            // Redraw(?) the inspector.
+            service.set('upgrade_available', !!latestId);
+            service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
           }, function(error) {
             db.notifications.create({
               title: 'Error retrieving charm.',
               message: error,
               level: 'error'
             });
-          })
-          .then(function(latestId) {
-            // Redraw(?) the inspector.
-            service.set('upgrade_available', !!latestid);
-            service.set('upgrade_to', serviceCharm.get('scheme') + latestId);
-            debugger;
-          }, function() {debugger;});
+          });
+        });
       });
     },
 

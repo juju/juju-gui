@@ -423,7 +423,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         }
       },
       units: {
-        depends: ['aggregated_status'],
+        depends: ['aggregated_status', 'upgrade_to'],
         'update': function(node, value) {
           // Called under the databinding context.
           // Subordinates may not have a value.
