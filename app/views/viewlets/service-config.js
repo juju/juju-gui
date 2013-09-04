@@ -62,8 +62,10 @@ YUI.add('viewlet-service-config', function(Y) {
       },
       'config': {
         'update': function(node, val) {
-          var newVal = (val['default'] === undefined) ? '' : val['default'];
-          node.set('value', newVal);
+          if (val === undefined) {
+            val = "";
+          }
+          node.set('value', val);
         }
       },
     }

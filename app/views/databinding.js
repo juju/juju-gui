@@ -719,6 +719,7 @@ YUI.add('juju-databinding', function(Y) {
         });
 
         var value = binding.get(viewletModel);
+
         if (binding.format) {
           value = binding.format.call(binding, value);
         }
