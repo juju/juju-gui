@@ -212,6 +212,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'Exposed': false,
             'CharmURL': 'cs:precise/wordpress-15',
             'Life': 'alive',
+            'Config': {
+              debug: 'no',
+              engine: 'nginx',
+              tuning: 'single',
+              'wp-content': ''
+            },
             'Constraints': {}
           }],
           ['machine', 'change', {'Status': 'running'}],
@@ -238,7 +244,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Params: {
           CharmUrl: 'cs:precise/wordpress-15',
           ServiceName: 'kumquat',
-          ConfigYAML: 'funny: business',
+          ConfigYAML: 'engine: apache',
           NumUnits: 2
         },
         RequestId: 42
@@ -252,7 +258,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var service = state.db.services.getById('kumquat');
         assert.isObject(service);
         assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        assert.deepEqual(service.get('config'), {funny: 'business'});
+        assert.deepEqual(service.get('config'), {
+          debug: 'no',
+          engine: 'apache',
+          tuning: 'single',
+          'wp-content': ''
+        });
         var units = state.db.units.get_units_for_service(service);
         assert.lengthOf(units, 2);
         done();
@@ -269,12 +280,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(result.charm_url, 'cs:precise/wordpress-15');
         var service = state.db.services.getById('kumquat');
         assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        assert.deepEqual(service.get('config'), {llama: 'pajama'});
+        assert.deepEqual(service.get('config'), {
+          debug: 'no',
+          engine: 'apache',
+          tuning: 'single',
+          'wp-content': ''
+        });
       };
       env.deploy(
           'cs:precise/wordpress-15',
           'kumquat',
-          {llama: 'pajama'},
+          {engine: 'apache'},
           null,
           1,
           null,
@@ -440,7 +456,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSet',
           Params: {
             ServiceName: 'wordpress',
-            Config: { llama: 'pajama' }
+            Config: { engine: 'apache' }
           },
           RequestId: 42
         };
@@ -448,7 +464,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         client.open();
@@ -462,10 +483,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
-        env.set_config('wordpress', {llama: 'pajama'}, undefined, callback);
+        env.set_config('wordpress', {
+          engine: 'apache'
+        }, undefined, {}, callback);
       });
     });
 
@@ -476,7 +504,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSetYAML',
           Params: {
             ServiceName: 'wordpress',
-            ConfigYAML: 'wordpress:\n  llama: pajama'
+            ConfigYAML: 'wordpress:\n  engine: apache'
           },
           RequestId: 42
         };
@@ -484,7 +512,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var receivedData = Y.JSON.parse(received.data);
           assert.isUndefined(receivedData.Error);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         client.open();
@@ -498,11 +531,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var callback = function(result) {
           assert.isUndefined(result.err);
           var service = state.db.services.getById('wordpress');
-          assert.deepEqual(service.get('config'), { llama: 'pajama' });
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         env.set_config('wordpress', undefined,
-            'wordpress:\n  llama: pajama', callback);
+            'wordpress:\n  engine: apache', {}, callback);
       });
     });
 
@@ -917,6 +955,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var recData = Y.JSON.parse(received.data);
             assert.equal(recData.RequestId, data.RequestId);
             assert.equal(recData.Error, undefined);
+            assert.isObject(
+                state.db.relations.getById('wordpress:db mysql:db'));
             var recEndpoints = recData.Response.Endpoints;
             assert.equal(recEndpoints.wordpress.Name, 'db');
             assert.equal(recEndpoints.wordpress.Scope, 'global');
@@ -943,6 +983,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     assert.equal(recData.endpoint_a, 'wordpress:db');
                     assert.equal(recData.endpoint_b, 'mysql:db');
                     assert.isObject(recData.result);
+                    assert.isObject(
+                       state.db.relations.getById('wordpress:db mysql:db'));
                     done();
                   });
                 }

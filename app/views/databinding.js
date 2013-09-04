@@ -35,6 +35,18 @@ YUI.add('juju-databinding', function(Y) {
 
   views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
+      'input[type=checkbox]': {
+        'get': function(node) {
+          return node.get('checked');
+        },
+        'set': function(node, value) {
+          if (value === 'false' || value === false) {
+            node.set('checked', false);
+          } else {
+            node.set('checked', true);
+          }
+        }
+      },
       input: {
         'get': function(node) { return node.get('value');},
         'set': function(node, value) { node.set('value', value);}
@@ -55,9 +67,14 @@ YUI.add('juju-databinding', function(Y) {
      @method _getFieldHandler
      */
     function _getNodeHandler(node) {
+      var field;
       /* jshint -W040 */
       // Ignore 'possible strict violation'
-      var field = this._fieldHandlers[node.tagName.toLowerCase()];
+      if (node.getAttribute('type') === 'checkbox') {
+        field = this._fieldHandlers['input[type=checkbox]'];
+      } else {
+        field = this._fieldHandlers[node.tagName.toLowerCase()];
+      }
       if (!field) {
         field = this._fieldHandlers['default'];
       }

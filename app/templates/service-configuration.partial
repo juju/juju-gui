@@ -1,3 +1,4 @@
+{{! Expecting the generated data from extractServiceSettings utility. }}
 {{#settings}}
   <div class="settings-wrapper">
     {{#if isBool}}

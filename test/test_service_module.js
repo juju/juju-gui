@@ -393,9 +393,9 @@ describe('service module events', function() {
     var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
       eventHandle.detach();
       // After the translation and calculations the above x and y coords should
-      // place the element at 305, 157
+      // place the element at 320, 392
       assert.deepEqual(ghostAttributes, {
-        coordinates: [305, 157],
+        coordinates: [320, 392],
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.

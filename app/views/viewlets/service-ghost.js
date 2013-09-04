@@ -41,6 +41,11 @@ YUI.add('viewlet-service-ghost', function(Y) {
           var newVal = (val['default'] === undefined) ? '' : val['default'];
           node.set('value', newVal);
         }
+      },
+      'constraints': {
+        'update': function(node, val) {
+          node.set('value', val || '');
+        }
       }
     },
     'render': function(model, viewletMgrAttrs) {
