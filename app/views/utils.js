@@ -1172,10 +1172,6 @@ YUI.add('juju-view-utils', function(Y) {
       }
       return 'running';
     }
-    if (state === 'error') {
-      // This will only be triggerd with the Go backend and simulator.
-      return 'error';
-    }
     if ((/-?error$/).test(state)) {
       return 'error';
     }
