@@ -630,6 +630,7 @@ YUI.add('juju-view-service', function(Y) {
                 service.get('id'),
                 new_values,
                 null,
+                service.get('config'),
                 Y.bind(this._setConfigCallback, this, container)
             );
 

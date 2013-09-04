@@ -140,7 +140,7 @@ describe('utilities', function() {
     before(function() {
       getConstraints = utils.getConstraints;
       serviceConstraints = {arch: 'lcars', cpu: 'quantum', mem: 'teraflop'};
-      customConstraints = {foo: 'bar', arch: 'amd64', mem: '1GB'};
+      customConstraints = {foo: 'bar', arch: 'amd64', mem: '1MB'};
       genericConstraints = ['cpu', 'mem', 'arch'];
       readOnlyConstraints = utils.readOnlyConstraints;
       constraintDescriptions = utils.constraintDescriptions;
@@ -149,7 +149,7 @@ describe('utilities', function() {
     it('correctly returns constraints for a service', function() {
       var expected = [
         {name: 'cpu', value: 'quantum', title: 'CPU', unit: 'GHz'},
-        {name: 'mem', value: 'teraflop', title: 'Memory', unit: 'GB'},
+        {name: 'mem', value: 'teraflop', title: 'Memory', unit: 'MB'},
         {name: 'arch', value: 'lcars', title: 'Architecture'}
       ];
       var obtained = getConstraints(serviceConstraints, genericConstraints);
@@ -161,7 +161,7 @@ describe('utilities', function() {
     it('handles missing service constraints', function() {
       var expected = [
         {name: 'cpu', value: '', title: 'CPU', unit: 'GHz'},
-        {name: 'mem', value: '', title: 'Memory', unit: 'GB'},
+        {name: 'mem', value: '', title: 'Memory', unit: 'MB'},
         {name: 'arch', value: '', title: 'Architecture'}
       ];
       var obtained = getConstraints({}, genericConstraints);
@@ -171,7 +171,7 @@ describe('utilities', function() {
     it('includes unexpected service constraints', function() {
       var expected = [
         {name: 'cpu', value: '', title: 'CPU', unit: 'GHz'},
-        {name: 'mem', value: '1GB', title: 'Memory', unit: 'GB'},
+        {name: 'mem', value: '1MB', title: 'Memory', unit: 'MB'},
         {name: 'arch', value: 'amd64', title: 'Architecture'},
         {name: 'foo', value: 'bar', title: 'foo'}
       ];
