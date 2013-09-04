@@ -4,6 +4,9 @@
         <ul class="unit-stats content">
             <li>IP Address: {{ unit.private_address }}</li>
             <li>Status: {{ unit.agent_state }}</li>
+            {{#if unit.agent_state_info}}
+              <li>Status Info: {{ unit.agent_state_info }}</li>
+            {{/if}}
             <li>Public Address: {{ unitIPDescription }}</li>
         </ul>
     </div>
