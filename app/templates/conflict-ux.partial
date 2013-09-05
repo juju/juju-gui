@@ -1,5 +1,5 @@
 {{#if isBool}}
-    <span class="hidden resolver">
+    <span class="hidden resolver boolean">
     <span class="config-field conflicted-env" id="input-{{name}}-env"></span>
     </span>
 {{else}}
