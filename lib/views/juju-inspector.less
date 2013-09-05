@@ -631,6 +631,12 @@
                 position: relative;
                 padding: 0 @inspector-main-padding;
 
+                span.resolver .conflicted-env {
+                  display: inline-block;
+                  min-width: 25px;
+                  min-height: 25px;
+                }
+
                 label {
                     font-size: 14px;
                     margin: 20px 0 10px 0;
@@ -694,10 +700,12 @@
 
                   &.boolean {
                     display: inline-block;
-                    min-width: 13px;
-                    min-height: 13px;
+                    min-width: 25px;
+                    min-height: 25px;
                   }
                  }
+
+
             }
             .toggle {
                 padding: 10px @inspector-main-padding;

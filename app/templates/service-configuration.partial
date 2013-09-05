@@ -13,8 +13,8 @@
           {{value}}
           {{#if ../../ghost}}disabled{{/if}}
         />
-      </label>
       {{>conflict-ux}}
+      </label>
     {{else}}
       {{#if isNumeric}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
