@@ -14,6 +14,7 @@
           {{#if ../../ghost}}disabled{{/if}}
         />
       </label>
+      {{>conflict-ux}}
     {{else}}
       {{#if isNumeric}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
@@ -28,6 +29,7 @@
             {{#if ../../../ghost}}disabled{{/if}}
           />
         </div>
+        {{>conflict-ux}}
       {{else}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div>
@@ -40,8 +42,8 @@
           >{{value}}</textarea>
         </div>
       {{/if}}
+      {{>conflict-ux}}
     {{/if}}
-    {{>conflict-ux}}
    <div class="settings-description">
       {{description}}
     </div>

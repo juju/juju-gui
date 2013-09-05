@@ -1066,13 +1066,13 @@ YUI.add('juju-view-inspector', function(Y) {
   var ConflictMixin = {
     '_clearModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        var modifiedNode = node.get('parentNode').one('.modified');
-        if (modifiedNode) {
-          modifiedNode.remove();
+        var n = node.get('parentNode').one('.modified');
+        if (n) {
+          n.remove();
         }
-        node.removeClass('conflict');
-        node.removeClass('conflict-env');
-        node.removeClass('conflict-pending');
+
+        // If the value isn't modified it can't be in conflict.
+        this._clearConflictPending(node);
       } else {
         node.removeClass('modified');
       }
@@ -1081,13 +1081,38 @@ YUI.add('juju-view-inspector', function(Y) {
       if (node.getAttribute('type') === 'checkbox') {
         node.get('parentNode').append(
             Y.Node.create('<span class="modified boolean"/>'));
+        this._clearConflictPending(node);
       } else {
         node.addClass('modified');
       }
     },
-    '_makeConflictPending': function(node) {
-
+    '_clearConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var n = node.get('parentNode').one('.conflict-pending');
+        if (n) {
+          n.remove();
+        }
+      } else {
+        node.removeClass('.conflict-pending');
+      }
     },
+    '_makeConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="conflict-pending boolean"/>'));
+      } else {
+        node.addClass('.conflict-pending');
+      }
+    },
+    '_clearConflict': function(node) {
+      // Checkboxes don't go to full conflict as there's no UX to choose a
+      // value to keep.
+      node.removeClass('.conflict');
+    },
+    '_makeConflict': function(node) {
+      node.addClass('.conflict');
+    },
+
     'changed': function(node, key, field) {
       var modelValue = this.model.get(key);
       var fieldValue = field.get(node);
@@ -1097,6 +1122,7 @@ YUI.add('juju-view-inspector', function(Y) {
         this._clearModified(node);
       }
     },
+
     'conflict': function(node, model, viewletName, resolve, binding) {
       /**
        Calls the databinding resolve method
@@ -1109,25 +1135,23 @@ YUI.add('juju-view-inspector', function(Y) {
       var resolver = wrapper.one('.resolver');
       var option = resolver.one('.config-field');
       var handlers = [];
+      debugger;
 
       /**
        User selects one of the two conflicting values.
        @method sendResolve
        */
       function sendResolve(e) {
+        debugger;
         e.halt(true);
         var formValue = field.get(node);
         handlers.forEach(function(h) { h.detach();});
 
-        if (node.getAttribute('type') === 'checkbox') {
-          var modifiedNode = node.get('parentNode').one('.modified');
-          if (modifiedNode) {
-            modifiedNode.remove();
-          }
-        } else {
-          node.removeClass('modified');
-        }
-        node.removeClass('conflict');
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearModified(node);
+        this._clearConflict(node);
+
         resolver.addClass('hidden');
 
         if (e.currentTarget.hasClass('conflicted-env')) {
@@ -1143,31 +1167,27 @@ YUI.add('juju-view-inspector', function(Y) {
        @method setupResolver
       */
       function setupResolver(e) {
+        debugger;
         e.halt(true);
-        node.removeClass('conflict-pending');
-        node.addClass('conflict');
-        option.addClass('conflict');
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearConflictPending(node);
+        this._makeConflict(node);
+        this._makeConflict(option);
         option.setStyle('width', node.get('offsetWidth'));
         option.setHTML(modelValue);
         resolver.removeClass('hidden');
       }
 
       // On conflict just indicate.
-      if (node.getAttribute('type') === 'checkbox') {
-        var modifiedNode = node.get('parentNode').one('.modified');
-        if (modifiedNode) {
-          modifiedNode.remove();
-        }
-        node.get('parentNode').append(
-            Y.Node.create('<span class="conflict-pending boolean"/>'));
+      this._clearModified(node);
+      this._makeConflictPending(node);
 
-      } else {
-        node.removeClass('modified');
-        node.addClass('conflict-pending');
-      }
-
-      handlers.push(wrapper.delegate('click', setupResolver,
-          '.conflict-pending', this));
+      handlers.push(wrapper.delegate(
+          'click',
+          setupResolver,
+          '.conflict-pending',
+          this));
 
       handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
