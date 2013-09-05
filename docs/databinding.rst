@@ -146,7 +146,8 @@ is to have a particular viewlet depend on some related (or child) model. Prior
 to the event listener(s) being bound to bind()'s model argument we see if the 
 viewlet provides a 'selectBindModel' function. This will be called with the 
 passed in model and can then return a new model to which databindings will 
-actually bind.
+actually bind. If this method fails to return a model nothing will 
+be bound for that particular viewlet.
 
 Example::
 
@@ -173,12 +174,12 @@ Binding Dependencies
 ====================
 
 Bindings allow for triggering of other bindings when they change. This tool is
-used when we to trigger particular bindings to update even though the bound
-model element might not fire change notifications as expected. For example in
-Juju GUI service models include a LazyModelList of units belonging to that
-service. Changes to service.units.item(n) don't trigger the binding 'units' to
-update. By adding a 'depends' binding entry we can ask that changes to another
-field trigger this binding.
+used when we trigger bindings to update even though the bound model element
+might not fire change notifications as expected. For example, Juju GUI service
+models include a LazyModelList of units belonging to that service.  Changes to
+service.units.item(n) don't trigger the binding 'units' to update.  By adding a
+'depends' binding entry we can ask that changes to another field trigger this
+binding.
 
 Example::
   
@@ -189,7 +190,7 @@ Example::
     }
   }
 
-In this example when the property aggregated_status is set() we will also call
+In this example, when the property aggregated_status is set() we will also call
 the update method of units.
 
 
