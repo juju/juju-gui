@@ -23,6 +23,24 @@ YUI.add('juju-topology-utils', function(Y) {
   var utils = Y.namespace('juju.topology.utils');
 
   /**
+    Safely find the convex hull of a set of vertices - it is a TypeError to 
+    try to find a hull of a line of services, rather than a polygon.
+
+    @method safeHull
+    @param {array} vertices A list of vertices.
+    @return {array} The convex hull of vertices.
+  */
+  utils.safeHull = function(vertices) {
+    var hull;
+    try {
+      hull = d3.geom.hull(vertices);
+    } catch (e) {
+      hull = vertices;
+    }
+    return hull;
+  };
+
+  /**
     Find a point outside of a given list of vertices. This is used for placing
     a new service block on an existing environment.
 
@@ -42,12 +60,7 @@ YUI.add('juju-topology-utils', function(Y) {
       @return {array} An x/y coordinate pair.
     */
     function _exteriorToHull(vertices, padding) {
-      var hull;
-      try {
-        hull = d3.geom.hull(vertices);
-      } catch (e) {
-        hull = vertices;
-      }
+      var hull = utils.safeHull(vertices);
 
       // Find the node furthest from the origin in the set of hull vertices.
       var furthestDistance = 0, furthestVertex = [0, 0];
@@ -127,7 +140,7 @@ YUI.add('juju-topology-utils', function(Y) {
         ];
         break;
       default:
-        centroid = d3.geom.polygon(d3.geom.hull(vertices)).centroid();
+        centroid = d3.geom.polygon(utils.safeHull(vertices)).centroid();
     }
     return centroid;
   };
