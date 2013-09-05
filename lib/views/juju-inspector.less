@@ -631,6 +631,12 @@
                 position: relative;
                 padding: 0 @inspector-main-padding;
 
+                span.resolver .conflicted-env {
+                  display: inline-block;
+                  min-width: 25px;
+                  min-height: 25px;
+                }
+
                 label {
                     font-size: 14px;
                     margin: 20px 0 10px 0;
@@ -656,6 +662,7 @@
 
                   &.boolean {
                     width: auto;
+                    display: inline-block;
                   }
                 }
                 .resolver {
@@ -671,15 +678,47 @@
                 .modified {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
+
+                  &.boolean {
+                    background-color: inherit;
+                    display: inline-block;
+                    min-width: 13px;
+                    min-height: 13px;
+                  }
                 }
                 .conflict-pending {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
+
+                  &.boolean {
+                    background-color: inherit;
+                    display: inline-block;
+                    min-width: 25px;
+                    min-height: 25px;
+                  }
                 }
+
                 .conflict {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
-                 }
+                }
+
+                /* Inputs does not need to have the background-image */
+                input.conflict {
+                  background-image: none;
+                }
+
+                /* When on a boolean state we don't have the grey background
+                 * of an input to put the background icon against, just make
+                 * it transparent to display on the black background */
+                .resolver.boolean {
+                  background-color: transparent;
+                  border: none;
+
+                  .conflict {
+                    background-color: transparent;
+                  }
+                }
             }
             .toggle {
                 padding: 10px @inspector-main-padding;

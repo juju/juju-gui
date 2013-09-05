@@ -54,6 +54,10 @@ describe('topology utils', function() {
     // Three or more vertices pad on x on the furthest vertex from the origin.
     existing.push([200, 200]);
     assert.deepEqual(utils.pointOutside(existing, 100), [300, 200]);
+    // Three or more services in a line do not fail.
+    existing.pop();
+    existing.push([100, 300]);
+    assert.deepEqual(utils.pointOutside(existing, 100), [200, 300]);
   });
 
   it('should generate a centroid for one or more points', function() {
@@ -71,5 +75,10 @@ describe('topology utils', function() {
     existing.push([100, 200]);
     existing.push([200, 100]);
     assert.deepEqual(utils.centroid(existing), [150, 150]);
+    // Three or more vertices in a line returns the center of the line.
+    existing.pop();
+    existing.pop();
+    existing.push([300, 300]);
+    assert.deepEqual(utils.centroid(existing), [200, 200]);
   });
 });
