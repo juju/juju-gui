@@ -661,7 +661,8 @@
                   width: 100%;
 
                   &.boolean {
-                    width: 25px;
+                    width: auto;
+                    display: inline-block;
                   }
                 }
                 .resolver {
@@ -697,15 +698,7 @@
                 .conflict {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
-
-                  &.boolean {
-                    display: inline-block;
-                    min-width: 25px;
-                    min-height: 25px;
-                  }
                  }
-
-
             }
             .toggle {
                 padding: 10px @inspector-main-padding;
