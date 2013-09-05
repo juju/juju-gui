@@ -362,7 +362,7 @@ describe('Inspector Overview', function() {
 
     var statuses = overview.updateStatusList(units);
 
-    overview.generateAndBindStatusHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses, db);
 
     var unitListWrappers = newContainer.all('.unit-list-wrapper');
     var SUH = '.status-unit-header',
@@ -410,7 +410,7 @@ describe('Inspector Overview', function() {
 
     statuses = overview.updateStatusList(units);
 
-    overview.generateAndBindStatusHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses, db);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
@@ -459,7 +459,7 @@ describe('Inspector Overview', function() {
 
     var statuses = overview.updateStatusList(units);
 
-    overview.generateAndBindStatusHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses, db);
 
     var unitListWrappers = newContainer.all('.unit-list-wrapper');
     var SUH = '.status-unit-header',
@@ -484,7 +484,7 @@ describe('Inspector Overview', function() {
     newContainer.remove(true);
     newContainer = utils.makeContainer();
 
-    overview.generateAndBindStatusHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses, db);
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
@@ -520,7 +520,7 @@ describe('Inspector Overview', function() {
 
     var statuses = overview.updateStatusList(service.get('units'));
 
-    overview.generateAndBindStatusHeaders(newContainer, statuses);
+    overview.generateAndBindStatusHeaders(newContainer, statuses, db);
 
     newContainer.one('.upgrade-link').simulate('click');
   });
