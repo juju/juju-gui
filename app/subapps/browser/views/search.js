@@ -60,7 +60,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
           var reviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
-                name: 'Reviewed charms',
+                name: 'Recommended charms',
                 cutoff: 5,
                 children: results.reviewed.map(function(charm) {
                   return charm.getAttrs();
@@ -73,7 +73,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
           var unreviewedContainer = new widgets.browser.CharmContainer(
               Y.merge({
-                name: 'Unreviewed charms',
+                name: 'More charms',
                 cutoff: 5,
                 children: results.unreviewed.map(function(charm) {
                   return charm.getAttrs();
@@ -155,6 +155,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (cachedResults) {
             this._renderSearchResults(cachedResults);
           } else {
+            var env_series = app.env.get('defaultSeries');
+            if (!env_series) {
+              env_series = 'precise';
+            }
             this.get('store').search(this.get('filters'), {
               'success': function(data) {
                 var results = this.get('store').resultsToCharmlist(
@@ -163,7 +167,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                     unreviewed = [];
                 results.map(function(charm) {
                   if (charm.get('is_approved') &&
-                      charm.get('series') === 'precise') {
+                      charm.get('series') === env_series) {
                     reviewed.push(charm);
                   } else {
                     unreviewed.push(charm);
