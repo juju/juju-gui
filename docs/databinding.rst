@@ -38,7 +38,7 @@ ViewletManager
 
 
 Overview
-===================
+========
 
 Given a DOM fragment and a model the binding engine will scan the DOM fragment
 looking for data-bind attributes. Each of these attributes will internally be
@@ -88,7 +88,8 @@ Example::
                }
            }
        }
-   }).bind(model, viewlet);
+   };
+   b.bind(model, viewlet);
 
 This example introduces a number of new concepts. The model introduces
 'constraints' which is itself a mapping object. The DOM fragment sets up a
@@ -137,6 +138,30 @@ object (context) will have a 'field' property which has both 'get' and 'set'
 methods. Calling this.field.set(node, value) should properly set the value
 based on the type the node.
 
+selectBindModel
+===============
+
+Sometimes it is convenient to pass a model to bind() when the real intention 
+is to have a particular viewlet depend on some related (or child) model. Prior
+to the event listener(s) being bound to bind()'s model argument we see if the 
+viewlet provides a 'selectBindModel' function. This will be called with the 
+passed in model and can then return a new model to which databindings will 
+actually bind.
+
+Example::
+
+  var model = new Y.Model({units: new models.LazyModelList()});
+  var dom = new Y.Node.create(...);
+  var b = new BindingEngine().bind(model, {
+  container: dom,
+  selectBindModel: function(model) {
+    return model.get('units');
+  }});
+
+This minimal example indicates that we wish to bind to the units model list.
+
+
+
 Before/After Methods
 ====================
 
@@ -151,9 +176,9 @@ Bindings allow for triggering of other bindings when they change. This tool is
 used when we to trigger particular bindings to update even though the bound
 model element might not fire change notifications as expected. For example in
 Juju GUI service models include a LazyModelList of units belonging to that
-service. Changes to service.units.item(n) don't trigger the binding 'units'
-to update. By adding a 'depends' binding entry we can ask that changes to 
-another field trigger this binding.
+service. Changes to service.units.item(n) don't trigger the binding 'units' to
+update. By adding a 'depends' binding entry we can ask that changes to another
+field trigger this binding.
 
 Example::
   
@@ -164,8 +189,8 @@ Example::
     }
   }
 
-In this example when the property aggregated_status is set() we 
-will also call the update method of units.
+In this example when the property aggregated_status is set() we will also call
+the update method of units.
 
 
 
@@ -222,10 +247,10 @@ Example::
             afterUpdate: function() {
                 console.log("this._changing", this._changing);
             }
-          }
-       }
+        }
      }
-   }).bind(model, viewlet);
+   };
+   b.bind(model, viewlet);
 
 In this example we suppose that we want to record the keys that have changed
 on any given update cycle. Here we create a list before doing updates, add the
@@ -248,7 +273,8 @@ Example::
             this.container.setHTML(Templates['renderList'](modellist));
        }
      }
-   }).bind(model, viewlet);
+   };
+   b.bind(model, viewlet);
 
 In this example we take advantage of the viewlets ability to specify an
 'update' method for handling model lists. We assume there is a compiled
