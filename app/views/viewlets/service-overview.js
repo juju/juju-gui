@@ -299,14 +299,20 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     unitStatusContentForm.append('ul');
 
+    // The Landscape view is used in order to generate Landscape URLs.
+    var landscape = new views.Landscape({db: db});
+
     unitStatusContentForm.append('div')
     .classed('action-button-wrapper', true)
     .html(
         function(d) {
-          var tmpl = templates['unit-action-buttons'](
-            generateActionButtonList(d.category));
-          buttonHeight = tmpl.offsetHeight;
-          return tmpl;
+          var context = generateActionButtonList(d.category);
+          if (context.landscape) {
+            context.landscapeURL = landscape.getLandscapeURL(self.model);
+          }
+          var template = templates['unit-action-buttons'](context);
+          buttonHeight = template.offsetHeight;
+          return template;
         });
 
     categoryStatusHeader
@@ -372,20 +378,23 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         });
 
     // Handle Landscape actions.
-    var landscape = new views.Landscape({db: db});
-
     unitItem.filter(function() {
       return Y.Node(this).ancestor('.landscape-needs-reboot');
-    }).append('a').classed('right-link', true).attr('href', function(d) {
-      return landscape.getLandscapeURL(d, 'reboot');
+    }).append('a').classed('right-link', true).attr({
+      href: function(d) {
+        return landscape.getLandscapeURL(d, 'reboot');
+      },
+      target: '_blank'
     }).text('Reboot');
 
     unitItem.filter(function() {
       return Y.Node(this).ancestor('.landscape-security-upgrades');
-    }).append('a').classed('right-link', true).attr('href', function(d) {
-      return landscape.getLandscapeURL(d, 'security');
+    }).append('a').classed('right-link', true).attr({
+      href: function(d) {
+        return landscape.getLandscapeURL(d, 'security');
+      },
+      target: '_blank'
     }).text('Upgrade');
-
 
     // D3 content update section
     unitsList.sort(

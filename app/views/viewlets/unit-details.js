@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('viewlet-unit-details', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
-      templates = Y.namespace('juju.views').Templates,
+      views = Y.namespace('juju.views'),
+      templates = views.Templates,
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
@@ -33,6 +34,7 @@ YUI.add('viewlet-unit-details', function(Y) {
     'render': function(unit, viewletManagerAttrs) {
       var db = viewletManagerAttrs.db,
           service = db.services.getById(unit.service);
+      var landscape = new views.Landscape({db: db});
 
       var ip_description_chunks = [];
       if (unit.public_address) {
@@ -64,7 +66,8 @@ YUI.add('viewlet-unit-details', function(Y) {
       var templateData = {
         unit: unit,
         unitIPDescription: unit_ip_description,
-        relations: relations
+        relations: relations,
+        landscapeURL: landscape.getLandscapeURL(unit)
       };
       this.container = Y.Node.create(this.templateWrapper({}));
       this.container.one('.content').setHTML(this.template(templateData));
