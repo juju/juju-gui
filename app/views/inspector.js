@@ -1076,6 +1076,12 @@ YUI.add('juju-view-inspector', function(Y) {
         }
       } else {
         if (node.getAttribute('type') === 'checkbox') {
+
+          // @TODO
+          // Need helpers for adding/removing the modified, conflict, etc.
+          // Duplicating too much code.
+
+
           var modifiedNode = node.get('parentNode').one('.modified');
           if (modifiedNode) {
             modifiedNode.remove();
@@ -1144,8 +1150,18 @@ YUI.add('juju-view-inspector', function(Y) {
       }
 
       // On conflict just indicate.
-      node.removeClass('modified');
-      node.addClass('conflict-pending');
+      if (node.getAttribute('type') === 'checkbox') {
+        var modifiedNode = node.get('parentNode').one('.modified');
+        if (modifiedNode) {
+          modifiedNode.remove();
+        }
+        node.get('parentNode').append(
+            Y.Node.create('<span class="conflict-pending boolean"/>'));
+
+      } else {
+        node.removeClass('modified');
+        node.addClass('conflict-pending');
+      }
 
       handlers.push(wrapper.delegate('click', setupResolver,
           '.conflict-pending', this));

@@ -681,10 +681,22 @@
                 .conflict-pending {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
+
+                  &.boolean {
+                    display: inline-block;
+                    min-width: 13px;
+                    min-height: 13px;
+                  }
                 }
                 .conflict {
                   background-color: #dedede;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
+
+                  &.boolean {
+                    display: inline-block;
+                    min-width: 13px;
+                    min-height: 13px;
+                  }
                  }
             }
             .toggle {
