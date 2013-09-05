@@ -1064,6 +1064,16 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   var ConflictMixin = {
+    /**
+     * Reset the given node to not be marked as 'modified' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearModified
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
     '_clearModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
         var n = node.get('parentNode').one('.modified');
@@ -1077,6 +1087,13 @@ YUI.add('juju-view-inspector', function(Y) {
         node.removeClass('modified');
       }
     },
+    /**
+     * Mark the given node to not be marked as 'modified' in the UX.
+     *
+     * @method _markModified
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
     '_makeModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
         node.get('parentNode').append(
@@ -1086,6 +1103,16 @@ YUI.add('juju-view-inspector', function(Y) {
         node.addClass('modified');
       }
     },
+    /**
+     * Reset the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflictPending
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
     '_clearConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
         var n = node.get('parentNode').one('.conflict-pending');
@@ -1096,6 +1123,16 @@ YUI.add('juju-view-inspector', function(Y) {
         node.removeClass('conflict-pending');
       }
     },
+    /**
+     * Mark the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflictPending
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
     '_makeConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
         node.get('parentNode').append(
@@ -1104,11 +1141,31 @@ YUI.add('juju-view-inspector', function(Y) {
         node.addClass('conflict-pending');
       }
     },
+    /**
+     * Reset the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflict
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
     '_clearConflict': function(node) {
       // Checkboxes don't go to full conflict as there's no UX to choose a
       // value to keep.
       node.removeClass('conflict');
     },
+    /**
+     * Mark the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflict
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
     '_makeConflict': function(node) {
       node.addClass('conflict');
     },
