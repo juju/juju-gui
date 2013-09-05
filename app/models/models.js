@@ -86,6 +86,83 @@ YUI.add('juju-models', function(Y) {
   };
 
   /**
+    Utility method to return the services involved in the delta.
+
+    @param {Object | null} modelInstance a reference to the model instance
+      to use to extract the service information from.
+    @param {Object | String} data The delta data.
+    @param {Object} db A reference to the database Model.
+    @return {Object | Array | undefined} A reference to a service instance
+      or an array of service instances in the case where it is a
+      relation delta or undefined if there is no service in the system.
+  */
+  var getServicesfromDelta = function(modelInstance, data, db) {
+    var services;
+    if (modelInstance && modelInstance.service) {
+      services = db.services.getById(modelInstance.service);
+    } else if (typeof data === 'string') {
+      services = db.services.getById(data.split('/')[0]);
+    } else if (data.service) {
+      services = db.services.getById(data.service);
+    } else if (data.endpoints) {
+      // It is a relation delta
+      services = [];
+      services.push(db.services.getById(data.endpoints[0][0]));
+      services.push(db.services.getById(data.endpoints[1][0]));
+    }
+
+    if (!services) { return; }
+    return services;
+  };
+
+  /**
+    Utility method to add a 'type' of Model/ModelList to the service Model.
+
+    @param {Object | null} modelInstance a reference to the model instance
+                           to use to extract the service information from.
+    @param {String} type A string name of the type of Model to copy or
+                    create on the service Model.
+    @param {Object | String} data The delta data.
+    @param {Object} db A reference to the database Model.
+    @return {Object} Reference to the modellist which was added to the service.
+  */
+  var augmentServiceModel = function(modelInstance, type, data, db) {
+    // Apply this action for this instance to all service models as well.
+    // In the future we can transition from using db[type] to always
+    // looking at db.services[serviceId][type].  Note that, in the case of
+    // `action === 'remove'`, instance will be null, so we retrieve the
+    // service name from `data`, which is the removed unit's name.
+
+    var services = getServicesfromDelta(modelInstance, data, db);
+    var typeKeys = {
+      ServiceUnitList: 'units',
+      RelationList: 'relations'
+    };
+
+    if (Y.Lang.isArray(services)) {
+      // If there are multiple services then it's a relation
+      var modelList = [], tmp;
+      services.forEach(function(service) {
+        tmp = service.get(typeKeys[type]);
+        if (!tmp) {
+          tmp = new models[type]();
+          service.set(typeKeys[type], tmp);
+          modelList.push(tmp);
+        }
+      });
+      return modelList;
+    } else {
+      // If there is a single service then it's a unit(or other)
+      var modelList = services.get(typeKeys[type]);
+      if (!modelList) {
+        modelList = new models[type]();
+        services.set(typeKeys[type], modelList);
+      }
+      return modelList;
+    }
+  };
+
+  /**
    * Model a single Environment. Serves as a place to collect
    * Environment level annotations.
    *
@@ -320,35 +397,12 @@ YUI.add('juju-models', function(Y) {
     },
 
     process_delta: function(action, data, db) {
-      var instance = _process_delta(this, action, data, {relation_errors: {}});
+      var instance = _process_delta(this, action, data, {});
       if (!db) {
         return;
       }
-      // Apply this action for this instance to all service models as well.
-      // In the future we can transition from using db.units to always
-      // looking at db.services[serviceId].units.  Note that, in the case of
-      // `action === 'remove'`, instance will be null, so we retrieve the
-      // service name from `data`, which is the removed unit's name.
-      var service;
-      if (!instance) {
-        if (typeof data === 'string') {
-          service = db.services.getById(data.split('/')[0]);
-        } else if (data.service) {
-          service = db.services.getById(data.service);
-        } else {
-          return;
-        }
-      } else {
-        service = db.services.getById(instance.service);
-      }
-      if (!service) { return; }
-      // Get the unit list for this service. (lazy)
-      var unitList = service.get('units');
-      if (!unitList) {
-        unitList = new models.ServiceUnitList();
-        service.set('units', unitList);
-      }
-      _process_delta(unitList, action, data, {relation_errors: {}});
+      var unitList = augmentServiceModel(instance, 'ServiceUnitList', data, db);
+      _process_delta(unitList, action, data, {});
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -524,8 +578,13 @@ YUI.add('juju-models', function(Y) {
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     model: Relation,
 
-    process_delta: function(action, data) {
-      _process_delta(this, action, data, {});
+    process_delta: function(action, data, db) {
+      var instance = _process_delta(this, action, data, {});
+      var relationLists =
+            augmentServiceModel(instance, 'RelationList', data, db);
+      relationLists.forEach(function(relationList) {
+        _process_delta(relationList, action, data, {});
+      });
     },
 
     /**
