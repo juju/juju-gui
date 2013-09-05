@@ -3,7 +3,7 @@
   <div class="settings-wrapper">
     {{#if isBool}}
       <label for="input-{{name}}">
-        <div>{{name}}</div>
+        <span>{{name}}</span>
         <input
           class="config-field boolean"
           type="checkbox"
