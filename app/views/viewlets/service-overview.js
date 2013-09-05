@@ -381,7 +381,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     unitItem.filter(function() {
       return Y.Node(this).ancestor('.landscape-needs-reboot');
     }).append('a').classed('right-link', true).attr({
-      href: function(d) {
+      // Retrieve the Landscape reboot URL for the unit.
+      'href': function(d) {
         return landscape.getLandscapeURL(d, 'reboot');
       },
       target: '_blank'
@@ -390,7 +391,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     unitItem.filter(function() {
       return Y.Node(this).ancestor('.landscape-security-upgrades');
     }).append('a').classed('right-link', true).attr({
-      href: function(d) {
+      // Retrieve the Landscape security upgrade URL for the unit.
+      'href': function(d) {
         return landscape.getLandscapeURL(d, 'security');
       },
       target: '_blank'
