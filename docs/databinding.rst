@@ -144,6 +144,30 @@ The 'update' callback allows for 'beforeUpdate' and 'afterUpdate' methods to
 trigger as well. These will optionally be called when present with the same
 arguments.
 
+Binding Dependencies
+====================
+
+Bindings allow for triggering of other bindings when they change. This tool is
+used when we to trigger particular bindings to update even though the bound
+model element might not fire change notifications as expected. For example in
+Juju GUI service models include a LazyModelList of units belonging to that
+service. Changes to service.units.item(n) don't trigger the binding 'units'
+to update. By adding a 'depends' binding entry we can ask that changes to 
+another field trigger this binding.
+
+Example::
+  
+  bindings: {
+    units: {
+        depends: ['aggregated_status'],
+        update: function() {}
+    }
+  }
+
+In this example when the property aggregated_status is set() we 
+will also call the update method of units.
+
+
 
 Method Wildcarding
 ==================
