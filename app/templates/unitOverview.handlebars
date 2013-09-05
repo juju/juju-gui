@@ -8,6 +8,9 @@
               <li>Status Info: {{ unit.agent_state_info }}</li>
             {{/if}}
             <li>Public Address: {{ unitIPDescription }}</li>
+            {{#if landscapeURL}}
+              <li><a href="{{landscapeURL}}" class="landscape" target="_blank">Open Landscape</a></li>
+            {{/if}}
         </ul>
     </div>
     <div class="unit-info-tabs content">
