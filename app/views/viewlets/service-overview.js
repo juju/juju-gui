@@ -185,7 +185,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     @method generateAndBindStatusHeaders
     @param {Array} statuses A key value pair of categories to unit list.
     */
-  function generateAndBindStatusHeaders(node, statuses) {
+  function generateAndBindStatusHeaders(node, statuses, db) {
     /* jshint -W040 */
     // Ignore 'possible strict violation'
     var self = this,
@@ -231,7 +231,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       .text(function(d) { return d.upgradeTo; });
 
     serviceUpgradeLi.append('a')
-      .classed('upgrade-link', true)
+      .classed('upgrade-link right-link', true)
       .attr('data-upgradeto', function(d) { return d.upgradeTo; })
       .text('Upgrade');
 
@@ -241,7 +241,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         })
       .append('li')
       .append('a')
-      .classed('upgrade-link', true)
+      .classed('right-link', true)
       .text(function(d) {
           return d.downgrades.length + ' hidden upgrades';
         })
@@ -279,7 +279,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceUpgradeOtherCharms
       .append('a')
-      .classed('upgrade-link', true)
+      .classed('upgrade-link right-link', true)
       .attr('data-upgradeto', function(d) { return d; })
       .text('Upgrade');
 
@@ -371,6 +371,22 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           return d.service + '/' + d.number;
         });
 
+    // Handle Landscape actions.
+    var landscape = new views.Landscape({db: db});
+
+    unitItem.filter(function() {
+      return Y.Node(this).ancestor('.landscape-needs-reboot');
+    }).append('a').classed('right-link', true).attr('href', function(d) {
+      return landscape.getLandscapeURL(d, 'reboot');
+    }).text('Reboot');
+
+    unitItem.filter(function() {
+      return Y.Node(this).ancestor('.landscape-security-upgrades');
+    }).append('a').classed('right-link', true).attr('href', function(d) {
+      return landscape.getLandscapeURL(d, 'security');
+    }).text('Upgrade');
+
+
     // D3 content update section
     unitsList.sort(
         function(a, b) {
@@ -430,7 +446,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           // Subordinates may not have a value.
           if (value) {
             var statuses = this.viewlet.updateStatusList(value);
-            this.viewlet.generateAndBindStatusHeaders(node, statuses);
+            this.viewlet.generateAndBindStatusHeaders(
+              node, statuses, this.viewlet.options.db);
           }
         }
       }
