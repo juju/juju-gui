@@ -95,7 +95,7 @@ describe('views.ViewportModule (Topology module)', function() {
 
 describe('views.ViewportModule.setAllTheDimensions', function() {
   var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane,
-      eventFired;
+      eventFired, dimentions;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
         function(Y) {
@@ -110,6 +110,9 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     width = Math.floor(Math.random() * 1000);
     // Build test doubles that record height and width settings.
     topo = {
+      get: function() {
+        return [width + 1, height + 1]
+      },
       vis: {},
       fire: function(evt) {
         eventFired = evt;
@@ -126,7 +129,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     zoomPlane.setAttribute = testUtils.setter(zoomPlane);
     svg = {};
     svg.setAttribute = testUtils.setter(svg);
-    var dimentions = {
+    dimentions = {
       height: height,
       width: width
     };
@@ -161,5 +164,14 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
 
   it('should center canvas', function() {
     assert.equal(eventFired, 'panToCenter');
+  });
+
+  it('should not center canvas if no changes', function() {
+    topo.get = function() {
+      return [width, height];
+    };
+    eventFired = false;
+    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
+    assert.equal(eventFired, false);
   });
 });
