@@ -75,5 +75,10 @@ describe('topology utils', function() {
     existing.push([100, 200]);
     existing.push([200, 100]);
     assert.deepEqual(utils.centroid(existing), [150, 150]);
+    // Three or more vertices in a line returns the center of the line.
+    existing.pop();
+    existing.pop();
+    existing.push([300, 300]);
+    assert.deepEqual(utils.centroid(existing), [200, 200]);
   });
 });
