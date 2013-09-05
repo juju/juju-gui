@@ -132,7 +132,6 @@ YUI.add('juju-models', function(Y) {
     // looking at db.services[serviceId][type].  Note that, in the case of
     // `action === 'remove'`, instance will be null, so we retrieve the
     // service name from `data`, which is the removed unit's name.
-
     var services = getServicesfromDelta(modelInstance, data, db);
     var typeKeys = {
       ServiceUnitList: 'units',
@@ -147,6 +146,8 @@ YUI.add('juju-models', function(Y) {
         if (!tmp) {
           tmp = new models[type]();
           service.set(typeKeys[type], tmp);
+          modelList.push(tmp);
+        } else {
           modelList.push(tmp);
         }
       });
