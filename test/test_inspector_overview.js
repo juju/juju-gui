@@ -525,6 +525,23 @@ describe('Inspector Overview', function() {
     newContainer.one('.upgrade-link').simulate('click');
   });
 
+  it('reflects that a service was upgraded', function() {
+    var unitId = 'mediawiki/1';
+
+    db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
+    db.units.create({id: unitId, charm_url: 'cs:precise/mediawiki-7'});
+
+    var service = db.services.getById('mediawiki');
+
+    db.onDelta({data: {result: [
+      ['unit', 'change', {id: unitId, charm_url: 'cs:precise/mediawiki-8'}]
+    ]}});
+
+    assert.isTrue(service.get('charm_changed'));
+    // TODO Makyo Sept 5 - Next branch will take care of reflecting the
+    // changes in the inspector.
+  });
+
   describe('Unit action buttons', function() {
     it('sends the resolve cmd to the env for the selected units', function() {
       inspector = setUpInspector();
