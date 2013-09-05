@@ -155,7 +155,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (cachedResults) {
             this._renderSearchResults(cachedResults);
           } else {
+            // App isn't defined in this scope, but is available. Tell JSHINT to
+            // ignore this for this line.
+            /* jshint -W117 */
             var env_series = app.env.get('defaultSeries');
+            /* jshint +W117 */
             if (!env_series) {
               env_series = 'precise';
             }
