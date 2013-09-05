@@ -52,17 +52,17 @@ YUI.add('subapp-browser-searchview', function(Y) {
         _renderSearchResults: function(results) {
           var target = this.get('renderTo'),
               tpl = this.template({
-                count: results.reviewed.length + results.unreviewed.length,
+                count: results.recommended.length + results.more.length,
                 isFullscreen: this.get('isFullscreen')
               }),
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
 
-          var reviewedContainer = new widgets.browser.CharmContainer(
+          var recommendedContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Recommended charms',
                 cutoff: 5,
-                children: results.reviewed.map(function(charm) {
+                children: results.recommended.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
@@ -71,11 +71,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }
               }));
 
-          var unreviewedContainer = new widgets.browser.CharmContainer(
+          var moreContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'More charms',
                 cutoff: 5,
-                children: results.unreviewed.map(function(charm) {
+                children: results.more.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
@@ -84,8 +84,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }
               }));
 
-          reviewedContainer.render(results_container.one('.reviewed'));
-          unreviewedContainer.render(results_container.one('.unreviewed'));
+          var recommend_node = results_container.one('.recommended'),
+              more_node = results_container.one('.more');
+          recommendedContainer.render(recommend_node);
+          moreContainer.render(more_node);
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending
@@ -107,12 +109,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
             search: results,
             charms: new models.BrowserCharmList()
           };
-          cache.charms.add(results.reviewed);
-          cache.charms.add(results.unreviewed);
+          cache.charms.add(results.recommended);
+          cache.charms.add(results.more);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
           this.charmContainers = [
-            reviewedContainer,
-            unreviewedContainer
+            recommendedContainer,
+            moreContainer
           ];
         },
 
@@ -155,31 +157,27 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (cachedResults) {
             this._renderSearchResults(cachedResults);
           } else {
-            // App isn't defined in this scope, but is available. Tell JSHINT to
-            // ignore this for this line.
-            /* jshint -W117 */
-            var env_series = app.env.get('defaultSeries');
-            /* jshint +W117 */
-            if (!env_series) {
-              env_series = 'precise';
-            }
             this.get('store').search(this.get('filters'), {
               'success': function(data) {
                 var results = this.get('store').resultsToCharmlist(
                     data.result);
-                var reviewed = [],
-                    unreviewed = [];
+                var recommended = [],
+                    more = [];
+                var series = this.get('envSeries');
+                if (!series) {
+                  series = 'precise';
+                }
                 results.map(function(charm) {
                   if (charm.get('is_approved') &&
-                      charm.get('series') === env_series) {
-                    reviewed.push(charm);
+                      charm.get('series') === series) {
+                    recommended.push(charm);
                   } else {
-                    unreviewed.push(charm);
+                    more.push(charm);
                   }
                 }, this);
                 this._renderSearchResults({
-                  reviewed: reviewed,
-                  unreviewed: unreviewed
+                  recommended: recommended,
+                  more: more
                 });
               },
               'failure': this.apiFailure

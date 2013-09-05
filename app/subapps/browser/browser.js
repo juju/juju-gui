@@ -631,6 +631,7 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
+      extraCfg.envSeries = this.get('envSeries');
       this._search = new views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
@@ -1045,6 +1046,15 @@ YUI.add('subapp-browser', function(Y) {
       container: {
         value: '#subapp-browser'
       },
+
+      /**
+         The series in the environment, e.g. 'precise'
+         
+         @attribute envSeries
+         @default undefined
+         @type {String}
+       */
+      envSeries: {},
 
       /**
          @attribute store

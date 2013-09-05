@@ -135,11 +135,55 @@ describe('search view', function() {
     container.one('.charm-token').simulate('click');
   });
 
-  it('organizes results into best and remainder', function(done) {
+  it('organizes results by approval status', function(done) {
     view._renderSearchResults = function(results) {
-      assert.equal(results.reviewed.length, 1);
-      assert.equal(results.reviewed[0].get('id'), 'precise/bar-2');
-      assert.equal(results.unreviewed.length, 2);
+      assert.equal(results.recommended.length, 1);
+      assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
+      assert.equal(results.more.length, 1);
+      done();
+    };
+    var sampleData = {
+      result: [{
+        charm: {
+          id: 'precise/bar-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: true
+        }
+      }, {
+        charm: {
+          id: 'precise/flim-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: false
+        }
+      }]
+    };
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: Y.JSON.stringify(sampleData)
+            }]
+          }
+        });
+      }
+    });
+    view.set('store', fakeStore);
+    view.render();
+  });
+
+  it('organizes results by the environment series', function(done) {
+    view.set('envSeries', 'lucid');
+    view._renderSearchResults = function(results) {
+      assert.equal(results.recommended.length, 1);
+      assert.equal(results.recommended[0].get('id'), 'lucid/flim-2');
+      assert.equal(results.more.length, 1);
       done();
     };
     var sampleData = {
@@ -159,13 +203,49 @@ describe('search view', function() {
           files: [],
           is_approved: true
         }
-      }, {
+      }]
+    };
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: Y.JSON.stringify(sampleData)
+            }]
+          }
+        });
+      }
+    });
+    view.set('store', fakeStore);
+    view.render();
+  });
+
+  it('organizes results by a default if there is no envSeries', function(done) {
+    assert.isUndefined(view.get('envSeries'));
+    view._renderSearchResults = function(results) {
+      assert.equal(results.recommended.length, 1);
+      assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
+      assert.equal(results.more.length, 1);
+      done();
+    };
+    var sampleData = {
+      result: [{
         charm: {
-          id: 'precise/shazbot-2',
+          id: 'precise/bar-2',
           name: 'foo',
           description: 'some charm named bar',
           files: [],
-          is_approved: false
+          is_approved: true
+        }
+      }, {
+        charm: {
+          id: 'lucid/flim-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: true
         }
       }]
     };
@@ -207,8 +287,8 @@ describe('search view', function() {
   it('uses passed in cache data if available', function() {
     var search_called = false,
         results = {
-          reviewed: new Y.juju.models.BrowserCharmList(),
-          unreviewed: new Y.juju.models.BrowserCharmList()
+          recommended: new Y.juju.models.BrowserCharmList(),
+          more: new Y.juju.models.BrowserCharmList()
         };
 
     view.get('store').search = function() {
