@@ -111,7 +111,7 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     // Build test doubles that record height and width settings.
     topo = {
       get: function() {
-        return [width + 1, height + 1]
+        return [width + 1, height + 1];
       },
       vis: {},
       fire: function(evt) {
