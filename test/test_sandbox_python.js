@@ -341,7 +341,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         op: 'deploy',
         charm_url: 'cs:precise/wordpress-15',
         service_name: 'kumquat',
-        config_raw: 'funny: business',
+        config_raw: 'engine: apache',
         num_units: 2,
         request_id: 42
       };
@@ -358,7 +358,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           var service = state.db.services.getById('kumquat');
           assert.isObject(service);
           assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-          assert.deepEqual(service.get('config'), {funny: 'business'});
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           var units = state.db.units.get_units_for_service(service);
           assert.lengthOf(units, 2);
           done();
@@ -376,13 +381,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.equal(result.charm_url, 'cs:precise/wordpress-15');
           var service = state.db.services.getById('kumquat');
           assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-          assert.deepEqual(service.get('config'), {llama: 'pajama'});
+          assert.deepEqual(service.get('config'), {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           done();
         };
         env.deploy(
             'cs:precise/wordpress-15',
             'kumquat',
-            {llama: 'pajama'},
+            {engine: 'apache'},
             null,
             1,
             null,
@@ -799,14 +809,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var op = {
           op: 'set_config',
           service_name: 'wordpress',
-          config: {'blog-title': 'Inimical'},
+          config: {'engine': 'apache'},
           request_id: 99
         };
         client.onmessage = function(received) {
           var parsed = Y.JSON.parse(received.data);
-          assert.deepEqual(parsed.result, {'blog-title': 'Inimical'});
+          assert.deepEqual(parsed.result, {
+            debug: 'no',
+            engine: 'apache',
+            tuning: 'single',
+            'wp-content': ''
+          });
           var service = state.db.services.getById('wordpress');
-          assert.equal(service.get('config')['blog-title'], 'Inimical');
+          assert.equal(service.get('config').engine, 'apache');
           // Error should be undefined.
           done(parsed.error);
         };

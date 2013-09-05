@@ -734,11 +734,13 @@ YUI.add('juju-view-inspector', function(Y) {
 
       var newVals = utils.getElementsValuesMapping(container, '.config-field');
       var errors = utils.validate(newVals, schema);
+
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
             newVals,
             null,
+            service.get('config'),
             Y.bind(this._setConfigCallback, this, container)
         );
       } else {
@@ -883,6 +885,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var viewletManager = this.viewletManager,
           db = this.viewletManager.get('db'),
           env = this.viewletManager.get('env'),
+          store = this.viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -900,16 +903,36 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
-          db.notifications.add(new db.models.Notification({
+          db.notifications.create({
             title: 'Error setting charm.',
             message: result.err,
             level: 'error'
-          }));
+          });
           return;
         }
-        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
-        // the service with the new charm, set info as needed - juju will not
-        // report new charm URL properly with GetService. - Bug: #1218447
+        env.get_charm(upgradeTo, function(data) {
+          if(data.err) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: data.err,
+              level: 'error'
+            });
+          }
+          // Set the charm on the service.
+          service.set('charm', upgradeTo);
+          store.promiseUpgradeAvailability(data.result, db.charms)
+          .then(function(latestId) {
+            // Redraw(?) the inspector.
+            service.set('upgrade_available', !!latestId);
+            service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
+          }, function(error) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: error,
+              level: 'error'
+            });
+          });
+        });
       });
     },
 

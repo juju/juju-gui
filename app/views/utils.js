@@ -568,7 +568,7 @@ YUI.add('juju-view-utils', function(Y) {
     'cpu': {title: 'CPU', unit: 'GHz'},
     'cpu-cores': {title: 'CPU Cores'},
     'cpu-power': {title: 'CPU Power', unit: 'GHz'},
-    'mem': {title: 'Memory', unit: 'GB'}
+    'mem': {title: 'Memory', unit: 'MB'}
   };
 
   /**
@@ -659,7 +659,43 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-   Return a template-friendly array of settings
+    Removes unchanged config options from a collection of config values and
+    returns only those that are different from the supplied charm or service
+    defaults at the time of parsing.
+
+    @method removeUnchangedConfigOptions
+    @param {Object} config is a reference to service config values in the GUI.
+    @param {Object} options is a reference to the charm or
+                    service configuration options.
+    @return {Object} An object containing the key/value pairs of config options.
+  */
+  utils.removeUnchangedConfigOptions = function(config, options) {
+    // This method is always called even if the config is provided by
+    // a configuration file - in this case, return;
+    if (!config) { return; }
+    Object.keys(config).forEach(function(key) {
+      // Remove config options which are not different from the charm defaults
+      // Intentionally letting the browser do the type coersion.
+      // The || check is to allow empty inputs to match an undefined default
+      /* jshint -W116 */
+      if (Y.Lang.isObject(options[key])) {
+        // If options is the charm config
+        if (config[key] == (options[key].default || '')) {
+          delete config[key];
+        }
+      } else {
+        // If options is a service config
+        if (config[key] == (options[key] || '')) {
+          delete config[key];
+        }
+      }
+      /* jshint +W116 */
+    });
+    return config;
+  };
+
+  /**
+   Return a template-friendly array of settings.
 
    Used for service-configuration.partial adding isBool, isNumeric metadata.
 
@@ -1129,6 +1165,7 @@ YUI.add('juju-view-utils', function(Y) {
     var state = unit.agent_state;
     if (state === 'started') {
       if (!ignoreRelationErrors &&
+          // No longer used in the Go back end.
           unit.relation_errors &&
           Y.Object.size(unit.relation_errors)) {
         return 'error';

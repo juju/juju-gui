@@ -1,10 +1,11 @@
 @inspector-background-color: #221e1c;
-@inspector-region-background-color: #282828;
+@inspector-controls-height: 67px;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 @inspector-width: 292px;
+@inspector-main-padding: 20px;
 @confirm-button-color: #DD4814;
 @deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
@@ -112,7 +113,7 @@
     }
 
     .juju-inspector {
-        .create-border-radius(@border-radius);
+        .create-border-radius(2px);
         position: absolute;
         top: 20px;
         right: 70px;
@@ -123,16 +124,33 @@
         color: #fff;
         /* Can be removed once the old inspector styles are removed. */
         margin: 0;
+        font-size: 14px;
 
         h1, h2, h3, h4, h5, h6 {
-            background-color: @inspector-region-background-color;
             padding-left: 1em;
         }
-
+        hr {
+            border-width: 1px 0;
+            border-style: solid;
+            border-top-color: @inspector-divider-bottom;
+            border-bottom-color: @inspector-divider-top;
+        }
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
-
+        input[type=text] {
+            min-height: 20px;
+            font-size: 14px;
+        }
+        .text-in-input {
+            display: block;
+            margin: -24px 10px 0 0;
+            color: #b5b5b5;
+            text-align: right;
+        }
+        .config-field.boolean {
+            margin-right: 10px;
+        }
         .toggle {
             font-size: 12px;
 
@@ -149,15 +167,12 @@
                 label {
                     height: 26px;
                     width: 50px;
-                    background-color: @inspector-background-color;
+                    background-color: #282828;
                     .create-border-radius(@border-radius);
                     display: block;
                     position: relative;
                     margin: 0;
 
-                    &.light {
-                        background-color: @inspector-region-background-color;
-                    }
                     .handle {
                         height: 18px;
                         width: 18px;
@@ -189,27 +204,28 @@
                 }
             }
         }
-
         .controls {
+            margin-top: 20px;
+            border-top: 1px solid @inspector-divider-top;
+            border-bottom: 1px solid @inspector-divider-bottom;
 
             button {
                 .create-border-radius(@border-radius);
-                width: 130px;
-                height: 25px;
-                margin: 10px 0;
+                width: 120px;
+                height: 30px;
+                margin: 20px 0;
                 border: none;
-                color: white;
-                font-weight: bold;
+                color: #fff;
 
                 &.cancel {
                     background-color: #A3A3A3;
-                    margin-left: 10px;
+                    margin-left: @inspector-main-padding;
                 }
 
                 &.confirm {
                     background-color: @confirm-button-color;
                     float: right;
-                    margin-right: 10px;
+                    margin-right: @inspector-main-padding;
                     &:disabled {
                         background-color: #802E0E;
                         color: #eee;
@@ -223,7 +239,6 @@
 
             .current-unit-num-wrapper {
                 width: 95px;
-                background-color: @inspector-region-background-color;
                 height: 30px;
                 .create-border-radius(@border-radius);
                 line-height: 30px;
@@ -235,7 +250,10 @@
                 right: 10px;
             }
             input.num-units-control {
-                width: 107px;
+                width: 87px;
+                margin: 0 0 0 10px;
+                padding-left: 10px;
+                font-size: 14px;
             }
             span {
                 padding: 0 10px;
@@ -255,7 +273,6 @@
                 overflow: hidden;
                 height: 130px;
                 letter-spacing: normal;
-                background-color: @inspector-region-background-color;
                 -moz-transition: .3s, height .3s;
                 -webkit-transition: .25s, height .3s;
                 transition: .3s, height .3s;
@@ -290,7 +307,7 @@
             }
             label {
                 font-size: 14px;
-                margin: 14px 0 7px 0;
+                margin: 20px 0 10px 0;
                 font-weight: bold;
             }
             textarea {
@@ -298,6 +315,9 @@
             }
             input[type=text] {
                 width: 150px;
+            }
+            .constraint-label {
+                margin: -25px 95px 0 0;
             }
             .settings-description {
                 font-size: 12px;
@@ -321,7 +341,7 @@
        }
 
         .config-file {
-            padding: 10px 5px 10px 5px;
+            padding: 10px @inspector-main-padding;
 
             input {
                 position: absolute;
@@ -355,33 +375,36 @@
                     border-bottom: none;
                 }
             }
+            .controls {
+                margin-top: 0;
+            }
+            .config-file {
+                padding-right: 0;
+                padding-left: 0;
+            }
             .ghost-config-header {
-                font-size: 17px;
                 height: 35px;
+                border-top: 1px solid @inspector-divider-top;
+                font-size: 16px;
                 line-height: 35px;
-                padding-left: 35px;
+                padding-left: @inspector-main-padding;
             }
             .ghost-config-content {
-                padding: 15px 10px;
-                background-color: @inspector-region-background-color;
+                padding: @inspector-main-padding;
+                border-bottom: 1px solid @inspector-divider-bottom;
 
                 input[name=number-units] {
+                    .border-box;
                     display: inline-block;
-                    width: 120px;
+                    width: 100%;
                     margin-bottom: 0;
+                    padding-left: 10px;
                 }
-                label[for=number-units] {
-                    display: inline-block;
-                    margin-left: 25px;
-                    vertical-align: middle;
+                .constraint-label {
+                    margin-top: -34px;
                 }
                 &.use-defaults {
-                    textarea {
-                        background-color: @disabled-input-background-color;
-                        border-color: @inspector-background-color;
-                        cursor: not-allowed;
-                        color: @disabled-input-text-color;
-                    }
+                    textarea,
                     input[type=text] {
                         background-color: @disabled-input-background-color;
                         border-color: @inspector-background-color;
@@ -394,6 +417,9 @@
                         cursor: default;
                     }
                 }
+            }
+            .destroy-service-trigger {
+                padding-top: 10px;
             }
         }
 
@@ -460,10 +486,7 @@
 
         .header-slot {
             header {
-                background-color: @inspector-region-background-color;
-                border-bottom: 1px solid #1C1817;
-                padding: 15px;
-                margin-bottom: 6px;
+                padding: @inspector-main-padding;
 
                 .service-charm {
                     color: @charm-panel-background-color;
@@ -474,24 +497,33 @@
                         font-weight: 300;
                         line-height: 1.2;
                     }
+                    span.service-name {
+                        display: inline-block;
+                        margin-top: -0.1em;
+                    }
                     input.service-name {
-                        width: 125px;
+                        width: 170px;
+                        height: 20px;
+                        font-size: 14px;
                     }
                     .icon {
-                        width: 64px;
-                        height: 64px;
-                        margin-right: 1em;
+                        margin-right: 10px;
+                        vertical-align: top;
 
                         img {
                             /* bootstrap sets this to middle */
                             vertical-align: baseline;
-                            /* Required for sizing images in IE10 */
-                            width: 64px;
-                            height: 64px;
                         }
                     }
+                    .icon,
+                    .icon img {
+                        /* Required for sizing images in IE10 */
+                        width: 30px;
+                        height: 30px;
+                    
+                    }
                     .details-wrapper {
-                        width: 135px;
+                        width: 180px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
@@ -506,12 +538,14 @@
                     .close {
                         /* required to overwrite bootstrap styles */
                         text-shadow: none;
-                        color: #cbcbcb;
-                        font-weight: normal;
+                        color: #a0a0a0;
+                        font-weight: 200;
                         opacity: 1;
-                        font-size: 30px;
+                        font-size: 17px;
+                        line-height: 17px;
                         /* not overwriting */
                         vertical-align: top;
+                        margin-top: -6px;
                     }
                     div {
                         display: inline-block;
@@ -521,13 +555,14 @@
         }
 
         .viewlet-manager-navigation {
+            min-height: 9px;
             margin: 0;
-            padding-left: 65px;
-            background-color: @inspector-region-background-color;
+            padding-left: @inspector-main-padding;
+            background-color: #1c1817;
+            border-top: 1px solid #12110f;
 
             li {
                 display: inline-block;
-                margin-right: 40px;
 
                 &:last-child {
                     margin-right: 0;
@@ -536,13 +571,14 @@
                     .border-box;
                     display: block;
                     height: 50px;
-                    padding-top: 13px;
+                    padding: 13px 20px 0 20px;
 
                     &:hover {
                         text-decoration: none;
                     }
                     &.active {
-                        border-bottom: 2px solid @charm-panel-orange;
+                        background-color: #12110f;
+                        border-bottom: 3px solid @charm-panel-orange;
 
                         .normal {
                             display: none;
@@ -585,7 +621,7 @@
             overflow: auto;
 
             &.settings-config {
-                margin-bottom: 45px;
+                margin-bottom: @inspector-controls-height + 20px;
             }
             h2 {
                 font-size: 18px;
@@ -593,11 +629,11 @@
             }
             .settings-wrapper {
                 position: relative;
-                padding: 0 10px;
+                padding: 0 @inspector-main-padding;
 
                 label {
                     font-size: 14px;
-                    margin: 14px 0 7px 0;
+                    margin: 20px 0 10px 0;
                     font-weight: bold;
                 }
                 .settings-description {
@@ -613,7 +649,9 @@
                   background-position: right center;
                   background-url: none;
                   margin-bottom: 0px;
-                  min-height: 26px;
+                  min-height: 20px;
+                }
+                .config-field {
                   width: 100%;
 
                   &.boolean {
@@ -625,6 +663,7 @@
                   background-color: white;
                   border: 1px solid #dedede;
                   border-radius: 1px;
+
                   div {
                     width: 270px;
                   }
@@ -643,20 +682,18 @@
                  }
             }
             .toggle {
-                padding: 10px;
+                padding: 10px @inspector-main-padding;
 
                 label {
                    margin: 0;
                 }
             }
-
         }
-
-
         .status {
             display: inline-block;
             width: 33%;
             text-align: center;
+
             &.running {
                 background-color: #00b711;
             }
@@ -667,13 +704,12 @@
                 background-color: #ba0000;
             }
         }
-        .destroy-service-trigger{
-            padding-left: 10px;
-            height: 20px;
+        .destroy-service-trigger {
+            padding-left: @inspector-main-padding;
+            padding: 20px;
+            border-top: 1px solid @inspector-divider-top;
 
             span {
-                font-size: 11px;
-                font-weight: bold;
                 cursor: pointer;
             }
         }
@@ -681,7 +717,6 @@
         .destroy-service-prompt {
             overflow: hidden;
             height: 95px;
-            background-color: @inspector-region-background-color;
             -moz-transition: .3s, height .3s;
             -webkit-transition: .25s, height .3s;
             transition: .3s, height .3s;
@@ -696,19 +731,20 @@
         .destroy-service-prompt.closed {
             height: 0;
         }
-
-
-
         .viewlet-wrapper{
             h3, h2, legend {
+                .border-box;
                 border-bottom: 1px solid @inspector-divider-bottom;
                 border-top: 1px solid @inspector-divider-top;
                 font-size: 14px;
                 font-weight: 400;
                 line-height: 1.5;
-                padding: 10px 20px;
+                padding: 10px @inspector-main-padding;
                 color: @charm-panel-configure-title-color;
                 margin-bottom: 0;
+            }
+            h3,
+            h2 {
                 width: auto;
             }
 
@@ -716,7 +752,7 @@
                 border-bottom: 1px solid @inspector-divider-bottom;
                 border-top: 1px solid @inspector-divider-top;
                 margin: 0;
-                padding: 10px;
+                padding: @inspector-main-padding;
             }
         }
 
@@ -729,7 +765,6 @@
             }
 
             .status-unit-header {
-                background-color: @inspector-region-background-color;
                 padding: 15px 15px 15px 40px;
                 font-size: 14px;
                 cursor: pointer;
@@ -737,6 +772,7 @@
                 border-top: 1px solid @inspector-divider-top;
                 background-position: 20px center;
                 background-repeat: no-repeat;
+
                 span {
                     margin-right: 5px;
                 }

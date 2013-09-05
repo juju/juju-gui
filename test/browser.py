@@ -183,6 +183,16 @@ def get_platform(driver):
     return '{} {} ({})'.format(name, caps['version'], caps['platform'].title())
 
 
+def format_subprocess_error(error):
+    """Return an error message string including the subprocess output."""
+    return '{}: {}'.format(error, error.output)
+
+
+retry_process_error = retry(
+    subprocess.CalledProcessError, tries=2,
+    format_error=format_subprocess_error)
+
+
 class TestCase(unittest.TestCase):
     """Helper base class that supports running browser tests."""
 
@@ -392,14 +402,14 @@ class TestCase(unittest.TestCase):
             raise
 
     @classmethod
-    @retry(subprocess.CalledProcessError, tries=2)
+    @retry_process_error
     def change_options(cls, options):
         """Change the charm config options."""
         args = ['{}={}'.format(key, value) for key, value in options.items()]
         printerr('- setting new options:', ', '.join(args))
         juju('set', '-e', 'juju-gui-testing', 'juju-gui', *args)
 
-    @retry(subprocess.CalledProcessError, tries=2)
+    @retry_process_error
     def restart_api(self):
         """Restart the staging API backend.
 

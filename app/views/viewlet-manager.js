@@ -500,7 +500,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // only the base config which causes things to fail further down the
         // line and is difficult to debug.
         if (viewlet === undefined) {
-          console.warning('no viewlet config defined for viewlet', key);
+          console.warn('no viewlet config defined for viewlet', key);
           return;
         }
         // create viewlet instances using the base and supplied config

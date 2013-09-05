@@ -374,14 +374,40 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraints = options.constraints;
       }
 
+      // In order for the constraints to support the python back end this
+      // needs to be an array, so we are converting it back to an object
+      // here so that the GUI displays it properly.
+      var constraintsMap = {}, vals;
+      if (Y.Lang.isArray(constraints)) {
+        constraints.forEach(function(cons) {
+          vals = cons.split('=');
+          constraintsMap[vals[0]] = vals[1];
+        });
+      } else {
+        constraintsMap = constraints;
+      }
+
       var service = this.db.services.add({
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
-        constraints: constraints,
+        constraints: constraintsMap,
         exposed: false,
         subordinate: charm.get('is_subordinate'),
-        config: options.config
+        // Because we only send the user changed options now
+        // we need to mix those values in to the charm config
+        // options when creating a new model.
+        config: (function() {
+          var charmOptions = charm.get('options');
+          var config = {};
+          if (!options.config) { options.config = {}; }
+          Object.keys(charmOptions).forEach(function(key) {
+            config[key] =
+                options.config[key] ||
+                (charmOptions[key] ? charmOptions[key].default : undefined);
+          });
+          return config;
+        })()
       });
       this.changes.services[service.get('id')] = [service, true];
       var response = this.addUnit(options.name, options.unitCount);
@@ -445,6 +471,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!serviceData.constraints) {
         serviceData.constraints = {};
       }
+
       var relations = this.db.relations.get_relations_for_service(service);
       var rels = relations.map(function(r) {return r.getAttrs();});
       // TODO: properly map relations to expected format rather

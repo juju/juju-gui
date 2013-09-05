@@ -2,9 +2,9 @@
   <div class="settings-wrapper">
    <label for="{{name}}">{{title}}</label>
     <div>
-      <input class="constraint-field" type="text" name="{{name}}"
+      <input class="constraint-field {{name}}" type="text" name="{{name}}"
           value="{{value}}" data-bind="constraints.{{name}}" />
-          {{unit}}
+      {{#if unit }}<span class="text-in-input constraint-label">{{unit}}</span>{{/if}}
     </div>
     {{>conflict-ux}}
   </div>

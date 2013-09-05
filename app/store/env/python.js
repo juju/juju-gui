@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-python', function(Y) {
 
   var environments = Y.namespace('juju.environments');
+  var utils = Y.namespace('juju.views.utils');
 
   var endpointToName = function(endpoint) {
     return endpoint[0] + ':' + endpoint[1].name;
@@ -250,14 +251,21 @@ YUI.add('juju-env-python', function(Y) {
          configuration options. Only one of `config` and `config_raw` should be
          provided, though `config_raw` takes precedence if it is given.
      * @param {Integer} num_units The number of units to be deployed.
+     * @param {Object} constraintMap The constraints object.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     constraints, callback) {
-      if (!constraints) {
-        constraints = {};
+                     constraintMap, callback) {
+
+      if (!constraintMap) { constraintMap = {}; }
+      // Format the constraints properly for the pyjuju backend
+      var constraints = [];
+      /* jshint -W089 */
+      // Tell jshint to ignore the lack of hasOwnProperty in forloops
+      for (var constr in constraintMap) {
+        constraints.push(constr + '=' + constraintMap[constr]);
       }
 
       this._send_rpc(
@@ -391,20 +399,25 @@ YUI.add('juju-env-python', function(Y) {
      * @param {String} data The YAML representation of the charm
          configuration options. Only one of `config` and `data` should be
          provided, though `data` takes precedence if it is given.
+     * @param {Object} serviceConfig the current configuration object
+                       of the service.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    set_config: function(service, config, data, callback) {
+    set_config: function(service, config, data, serviceConfig, callback) {
       if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
           (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
         throw 'Exactly one of config and data must be provided';
       }
+      config = utils.removeUnchangedConfigOptions(config, serviceConfig);
+
       this._send_rpc({
         op: 'set_config',
         service_name: service,
         config: config,
-        data: data}, callback, true);
+        data: data
+      }, callback, true);
     },
 
     // The constraints that the backend understands.  Used to generate forms.

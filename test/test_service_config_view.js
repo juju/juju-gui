@@ -160,7 +160,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal('ServiceSet', message.Request);
       assert.equal('mysql', params.ServiceName);
       assert.equal('new value', params.Config.option0);
-      assert.equal('true', params.Config.option1);
+      // undefined because it should only set the changed values
+      assert.equal(undefined, params.Config.option1);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
@@ -168,7 +169,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var save_button = container.one('#save-service-config');
         save_button.get('disabled').should.equal(shouldBe);
       };
-      env.set_config = function(service, config, data, callback) {
+      env.set_config = function(service, config, data, serviceCfg, callback) {
         assertButtonDisabled(true);
         callback(ev);
       };
@@ -226,7 +227,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Mock function
         // view.saveConfig() calls it as part of its internal
         // "success" callback
-        env.set_config = function(service, config, data, callback) {
+        env.set_config = function(service, config, data, serviceCfg, callback) {
           callback(ev);
         };
         var ev = {err: false},
