@@ -408,6 +408,11 @@
                 font-size: 16px;
                 line-height: 35px;
                 padding-left: @inspector-main-padding;
+
+                .sprite {
+                    vertical-align: -2%;
+                    margin-right: 7px;
+                }
             }
             .ghost-config-content {
                 padding: @inspector-main-padding;
@@ -578,7 +583,7 @@
                 a {
                     .border-box;
                     display: block;
-                    height: 50px;
+                    height: 48px;
                     padding: 13px 20px 0 20px;
 
                     &:hover {
@@ -587,16 +592,6 @@
                     &.active {
                         background-color: #12110f;
                         border-bottom: 3px solid @charm-panel-orange;
-
-                        .normal {
-                            display: none;
-                        }
-                        .selected {
-                            display: inline-block;
-                        }
-                    }
-                    .selected {
-                        display: none;
                     }
                 }
             }
@@ -710,6 +705,11 @@
 
             span {
                 cursor: pointer;
+
+                .sprite {
+                    vertical-align: -10%;
+                    margin-right: 7px;
+                }
             }
         }
 
