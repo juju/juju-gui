@@ -1093,7 +1093,7 @@ YUI.add('juju-view-inspector', function(Y) {
           n.remove();
         }
       } else {
-        node.removeClass('.conflict-pending');
+        node.removeClass('conflict-pending');
       }
     },
     '_makeConflictPending': function(node) {
@@ -1101,16 +1101,16 @@ YUI.add('juju-view-inspector', function(Y) {
         node.get('parentNode').append(
             Y.Node.create('<span class="conflict-pending boolean"/>'));
       } else {
-        node.addClass('.conflict-pending');
+        node.addClass('conflict-pending');
       }
     },
     '_clearConflict': function(node) {
       // Checkboxes don't go to full conflict as there's no UX to choose a
       // value to keep.
-      node.removeClass('.conflict');
+      node.removeClass('conflict');
     },
     '_makeConflict': function(node) {
-      node.addClass('.conflict');
+      node.addClass('conflict');
     },
 
     'changed': function(node, key, field) {
@@ -1135,14 +1135,12 @@ YUI.add('juju-view-inspector', function(Y) {
       var resolver = wrapper.one('.resolver');
       var option = resolver.one('.config-field');
       var handlers = [];
-      debugger;
 
       /**
        User selects one of the two conflicting values.
        @method sendResolve
        */
       function sendResolve(e) {
-        debugger;
         e.halt(true);
         var formValue = field.get(node);
         handlers.forEach(function(h) { h.detach();});
@@ -1167,7 +1165,6 @@ YUI.add('juju-view-inspector', function(Y) {
        @method setupResolver
       */
       function setupResolver(e) {
-        debugger;
         e.halt(true);
         /* jshint -W040 */
         // Ignore 'possible strict violation'
