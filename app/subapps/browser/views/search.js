@@ -61,7 +61,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           var recommendedContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'Recommended charms',
-                cutoff: 5,
+                cutoff: 4,
                 children: results.recommended.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
@@ -74,7 +74,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           var moreContainer = new widgets.browser.CharmContainer(
               Y.merge({
                 name: 'More charms',
-                cutoff: 5,
+                cutoff: 4,
                 children: results.more.map(function(charm) {
                   return charm.getAttrs();
                 })}, {
