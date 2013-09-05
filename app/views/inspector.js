@@ -1064,34 +1064,37 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   var ConflictMixin = {
+    '_clearModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var modifiedNode = node.get('parentNode').one('.modified');
+        if (modifiedNode) {
+          modifiedNode.remove();
+        }
+        node.removeClass('conflict');
+        node.removeClass('conflict-env');
+        node.removeClass('conflict-pending');
+      } else {
+        node.removeClass('modified');
+      }
+    },
+    '_makeModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="modified boolean"/>'));
+      } else {
+        node.addClass('modified');
+      }
+    },
+    '_makeConflictPending': function(node) {
+
+    },
     'changed': function(node, key, field) {
       var modelValue = this.model.get(key);
       var fieldValue = field.get(node);
       if (modelValue !== fieldValue) {
-        if (node.getAttribute('type') === 'checkbox') {
-          node.get('parentNode').append(
-              Y.Node.create('<span class="modified boolean"/>'));
-        } else {
-          node.addClass('modified');
-        }
+        this._makeModified(node);
       } else {
-        if (node.getAttribute('type') === 'checkbox') {
-
-          // @TODO
-          // Need helpers for adding/removing the modified, conflict, etc.
-          // Duplicating too much code.
-
-
-          var modifiedNode = node.get('parentNode').one('.modified');
-          if (modifiedNode) {
-            modifiedNode.remove();
-          }
-          node.removeClass('conflict');
-          node.removeClass('conflict-env');
-          node.removeClass('conflict-pending');
-        } else {
-          node.removeClass('modified');
-        }
+        this._clearModified(node);
       }
     },
     'conflict': function(node, model, viewletName, resolve, binding) {
