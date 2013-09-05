@@ -335,7 +335,7 @@ YUI.add('juju-models', function(Y) {
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
       var oldModelCharm;
-      if (action === "change" && data.charm_url && db) {
+      if (action === 'change' && data.charm_url && db) {
         var oldModel = db.units.getById(data.id);
         if (oldModel) {
           oldModelCharm = oldModel.charm_url;
@@ -376,7 +376,7 @@ YUI.add('juju-models', function(Y) {
       // someone else watching the GUI as a service's charm changes, differ in 
       // the amount of information the GUI has originally.  By setting this
       // flag, both cases can react in the same way.
-      if (oldModelCharm && oldModelCharm !== instance.charm_url && 
+      if (oldModelCharm && oldModelCharm !== instance.charm_url &&
           !service.get('charm_changed')) {
         service.set('charm_changed', true);
       }
