@@ -151,6 +151,7 @@ YUI.add('juju-delta-handlers', function(Y) {
     unitInfo: function(db, action, change) {
       var unitData = {
         id: change.Name,
+        charm_url: change.CharmURL,
         service: change.Service,
         machine: change.MachineId,
         agent_state: change.Status,
