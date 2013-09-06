@@ -218,9 +218,9 @@ YUI.add('juju-databinding', function(Y) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
       var delta = deltaFromChange.call(this, Object.keys(
-        viewlet.model.getAttrs()));
+          viewlet.model.getAttrs()));
       delta.bindings = delta.bindings.filter(function(b) {
-          return b.viewlet === viewlet;
+        return b.viewlet === viewlet;
       });
       return delta;
     }
