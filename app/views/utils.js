@@ -198,10 +198,10 @@ YUI.add('juju-view-utils', function(Y) {
   utils.removeSVGClass = removeSVGClass;
 
   var consoleManager = function() {
+    var noop = function() {};
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        noop = function() {},
         consoleNoop = {
           group: noop,
           groupEnd: noop,
@@ -680,7 +680,7 @@ YUI.add('juju-view-utils', function(Y) {
       /* jshint -W116 */
       if (Y.Lang.isObject(options[key])) {
         // If options is the charm config
-        if (config[key] == (options[key].default || '')) {
+        if (config[key] == (options[key]['default'] || '')) {
           delete config[key];
         }
       } else {

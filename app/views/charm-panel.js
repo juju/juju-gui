@@ -36,175 +36,131 @@ YUI.add('juju-charm-panel', function(Y) {
       // when the charm panel is destroyed.
       subscriptions = [],
       // Singleton
-      _instance,
+      _instance;
 
-      // See https://github.com/yui/yuidoc/issues/25 for issue tracking
-      // missing @function tag.
-      /**
-       * A shared listener for click events on headers that open and close
-       * associated divs.
-       *
-       * It expects the event target to contain an i tag used as a bootstrap
-       * icon, and to have a parent with the 'charm-section' class.  The parent
-       * must contain an element with the 'collapsible' class.  The i switches
-       * back and forth between up and down icons, and the collapsible element
-       * opens and closes.
-       *
-       * @method toggleSectionVisibility
-       * @static
-       * @private
-       * @return {undefined} Mutates only.
-       */
-      toggleSectionVisibility = function(ev) {
-        var el = ev.currentTarget.ancestor('.charm-section')
-                .one('.collapsible'),
-            icon = ev.currentTarget.one('i');
-        // clientHeight and offsetHeight are not as reliable in tests.
-        if (parseInt(el.getStyle('height'), 10) === 0) {
-          el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('chevron_down', 'chevron_up');
-        } else {
-          el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('chevron_up', 'chevron_down');
-        }
-      },
+  // See https://github.com/yui/yuidoc/issues/25 for issue tracking
+  // missing @function tag.
+  /**
+   * A shared listener for click events on headers that open and close
+   * associated divs.
+   *
+   * It expects the event target to contain an i tag used as a bootstrap
+   * icon, and to have a parent with the 'charm-section' class.  The parent
+   * must contain an element with the 'collapsible' class.  The i switches
+   * back and forth between up and down icons, and the collapsible element
+   * opens and closes.
+   *
+   * @method toggleSectionVisibility
+   * @static
+   * @private
+   * @return {undefined} Mutates only.
+   */
+  var toggleSectionVisibility = function(ev) {
+    var el = ev.currentTarget.ancestor('.charm-section')
+            .one('.collapsible'),
+        icon = ev.currentTarget.one('i');
+    // clientHeight and offsetHeight are not as reliable in tests.
+    if (parseInt(el.getStyle('height'), 10) === 0) {
+      el.show('sizeIn', {duration: 0.25, width: null});
+      icon.replaceClass('chevron_down', 'chevron_up');
+    } else {
+      el.hide('sizeOut', {duration: 0.25, width: null});
+      icon.replaceClass('chevron_up', 'chevron_down');
+    }
+  };
 
-      /**
-       * Given a container node and a total height available, set the height of
-       * a '.charm-panel' node to fill the remaining height available to it
-       * within the container.  This expects '.charm-panel' node to possibly
-       * have siblings before it, but not any siblings after it.
-       *
-       * @method setScroll
-       * @static
-       * @private
-       * @return {undefined} Mutates only.
-       */
-      setScroll = function(container, height) {
-        var scrollContainer = container.one('.charm-panel');
-        if (scrollContainer && height) {
-          var diff = scrollContainer.getY() - container.getY(),
-              clientDiff = (
-              scrollContainer.get('clientHeight') -
-              parseInt(scrollContainer.getComputedStyle('height'), 10)),
-              scrollHeight = height - diff - clientDiff - 576;
-          scrollContainer.setStyle('height', scrollHeight + 'px');
-        }
-      },
+  /**
+   * Given a container node and a total height available, set the height of
+   * a '.charm-panel' node to fill the remaining height available to it
+   * within the container.  This expects '.charm-panel' node to possibly
+   * have siblings before it, but not any siblings after it.
+   *
+   * @method setScroll
+   * @static
+   * @private
+   * @return {undefined} Mutates only.
+   */
+  var setScroll = function(container, height) {
+    var scrollContainer = container.one('.charm-panel');
+    if (scrollContainer && height) {
+      var diff = scrollContainer.getY() - container.getY(),
+          clientDiff = (
+          scrollContainer.get('clientHeight') -
+          parseInt(scrollContainer.getComputedStyle('height'), 10)),
+          scrollHeight = height - diff - clientDiff - 576;
+      scrollContainer.setStyle('height', scrollHeight + 'px');
+    }
+  };
 
-      /**
-       * Given a set of entries as returned by the charm store "find"
-       * method (charms grouped by series), return the list filtered
-       * by 'filter'.
-       *
-       * @method filterEntries
-       * @static
-       * @private
-       * @param {Array} entries An ordered collection of groups of charms, as
-       *   returned by the charm store "find" method.
-       * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
-       * @param {Object} services The db.services model list.
-       * @return {Array} A filtered, grouped set of entries.
-       */
-      filterEntries = function(entries, filter, services) {
-        var deployedCharms;
+  /**
+   * Given a set of entries as returned by the charm store "find"
+   * method (charms grouped by series), return the list filtered
+   * by 'filter'.
+   *
+   * @method filterEntries
+   * @static
+   * @private
+   * @param {Array} entries An ordered collection of groups of charms, as
+   *   returned by the charm store "find" method.
+   * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
+   * @param {Object} services The db.services model list.
+   * @return {Array} A filtered, grouped set of entries.
+   */
+  var filterEntries = function(entries, filter, services) {
+    var deployedCharms;
 
-        /**
-         * Filter to determine if a charm is a subordinate.
-         *
-         * @method isSubFilter
-         * @param {Object} charm The charm to test.
-         * @return {Boolean} True if the charm is a subordinate.
-         */
-        function isSubFilter(charm) {
-          return !!charm.get('is_subordinate');
-        }
+    /**
+     * Filter to determine if a charm is a subordinate.
+     *
+     * @method isSubFilter
+     * @param {Object} charm The charm to test.
+     * @return {Boolean} True if the charm is a subordinate.
+     */
+    function isSubFilter(charm) {
+      return !!charm.get('is_subordinate');
+    }
 
-        /**
-         * Filter to determine if a charm is the same as any
-         * deployed services.
-         *
-         * @method isDeployedFilter
-         * @param {Object} charm The charm to test.
-         * @return {Boolean} True if the charm matches a deployed service.
-         */
-        function isDeployedFilter(charm) {
-              return deployedCharms.indexOf(charm.get('id')) !== -1;
-        }
+    /**
+     * Filter to determine if a charm is the same as any
+     * deployed services.
+     *
+     * @method isDeployedFilter
+     * @param {Object} charm The charm to test.
+     * @return {Boolean} True if the charm matches a deployed service.
+     */
+    function isDeployedFilter(charm) {
+      return deployedCharms.indexOf(charm.get('id')) !== -1;
+    }
 
-        var filter_fcn;
+    var filter_fcn;
 
-        if (filter === 'all') {
-          return entries;
-        } else if (filter === 'subordinates') {
-          filter_fcn = isSubFilter;
-        } else if (filter === 'deployed') {
-          filter_fcn = isDeployedFilter;
-          if (!Y.Lang.isValue(services)) {
-            deployedCharms = [];
-          } else {
-            deployedCharms = services.get('charm');
-          }
-        } else {
-          // This case should not happen.
-          return entries;
-        }
+    if (filter === 'all') {
+      return entries;
+    } else if (filter === 'subordinates') {
+      filter_fcn = isSubFilter;
+    } else if (filter === 'deployed') {
+      filter_fcn = isDeployedFilter;
+      if (!Y.Lang.isValue(services)) {
+        deployedCharms = [];
+      } else {
+        deployedCharms = services.get('charm');
+      }
+    } else {
+      // This case should not happen.
+      return entries;
+    }
 
-        var filtered = Y.clone(entries);
-        // Filter the charms based on the filter function.
-        filtered.forEach(function(series_group) {
-          series_group.charms = series_group.charms.filter(filter_fcn);
-        });
-        // Filter the series group based on the existence of any
-        // filtered charms.
-        return filtered.filter(function(series_group) {
-          return series_group.charms.length > 0;
-        });
-      },
-
-      /**
-       * Given a set of grouped entries as returned by the charm store "find"
-       * method, return the same data but with the charms converted into data
-       * objects that are more amenable to rendering with handlebars.
-       *
-       * @method makeRenderableResults
-       * @static
-       * @private
-       * @param {Array} entries An ordered collection of groups of charms, as
-       *   returned by the charm store "find" method.
-       * @return {Array} An ordered collection of groups of charm data.
-       */
-      makeRenderableResults = function(entries) {
-        return entries.map(
-            function(data) {
-              return {
-                series: data.series,
-                charms: data.charms.map(
-                    function(charm) { return charm.getAttrs(); })
-              };
-            });
-      },
-
-      /**
-       * Given an array of interface data as stored in a charm's "required"
-       * and "provided" attributes, return an array of interface names.
-       *
-       * @method getInterfaces
-       * @static
-       * @private
-       * @param {Array} data A collection of interfaces as stored in a charm's
-       *   "required" and "provided" attributes.
-       * @return {Array} A collection of interface names extracted from the
-       *   input.
-       */
-      getInterfaces = function(data) {
-        if (data) {
-          return Y.Array.map(
-              Y.Object.values(data),
-              function(val) { return val['interface']; });
-        }
-        return undefined;
-      };
+    var filtered = Y.clone(entries);
+    // Filter the charms based on the filter function.
+    filtered.forEach(function(series_group) {
+      series_group.charms = series_group.charms.filter(filter_fcn);
+    });
+    // Filter the series group based on the existence of any
+    // filtered charms.
+    return filtered.filter(function(series_group) {
+      return series_group.charms.length > 0;
+    });
+  };
 
   /**
    * Display a charm's configuration panel. It shows editable fields for

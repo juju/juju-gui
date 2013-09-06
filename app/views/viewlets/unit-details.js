@@ -49,7 +49,6 @@ YUI.add('viewlet-unit-details', function(Y) {
         unitIPDescription = ipDescriptionChunks.join(' | ');
       }
       // Ignore relations errors.
-      var state = utils.simplifyState(unit, true);
       var relation_errors = unit.relation_errors || {},
           relations = utils.getRelationDataForService(db, service);
       Y.each(relations, function(rel) {

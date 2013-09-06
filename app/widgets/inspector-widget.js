@@ -28,8 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 YUI.add('juju-inspector-widget', function(Y) {
 
-  var jujuViews = Y.namespace('juju.views');
-
   /**
     Service inspector widget and view manager
 
