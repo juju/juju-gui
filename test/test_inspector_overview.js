@@ -526,6 +526,8 @@ describe('Inspector Overview', function() {
   });
 
   it('reflects that a service was upgraded', function() {
+    window.flags.upgradeCharm = true;
+
     var unitId = 'mediawiki/1';
 
     db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
