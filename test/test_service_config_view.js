@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// Turn off jshint complaints about the "expect" interface.  Please treat the
+// "expect" interface as legacy.  Use asserts instead.
+/* jshint -W030 */
+
 (function() {
   describe('juju service config view', function() {
     var charm, conn, container, db, ENTER, env, makeView, models, service,
@@ -130,8 +134,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should display the configuration', function() {
-      var view = makeView(),
-          config = service.get('config'),
+      makeView();
+      var config = service.get('config'),
           serviceConfigDiv = container.one('#service-config');
 
       Y.Object.each(config, function(value, name) {
@@ -165,6 +169,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
+      var ev = {err: true},
+          view = makeView();
+
       var assertButtonDisabled = function(shouldBe) {
         var save_button = container.one('#save-service-config');
         save_button.get('disabled').should.equal(shouldBe);
@@ -173,9 +180,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assertButtonDisabled(true);
         callback(ev);
       };
-
-      var ev = {err: true},
-          view = makeView();
 
       // Clicking on the "Update" button disables it until the RPC
       // callback returns, then it is re-enabled.
@@ -193,7 +197,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Before an erroneous event is processed, no alert exists.
-      var _ = expect(alert_).to.not.exist;
+      expect(alert_).to.not.exist;
       // Handle the error event.
       utils.buildRpcHandler({
         container: container
@@ -205,12 +209,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should display an error when addErrorMessage is called',
        function() {
-         var view = makeView(),
-             error_message = utils.SERVER_ERROR_MESSAGE,
+         makeView();
+         var error_message = utils.SERVER_ERROR_MESSAGE,
          alert_ = container.one('#message-area>.alert');
 
          // Before an erroneous event is processed, no alert exists.
-         var _ = expect(alert_).to.not.exist;
+         expect(alert_).to.not.exist;
          // Display the error message.
          utils.buildRpcHandler({
            container: container
@@ -224,14 +228,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should display an error when a validation error occurs', function() {
       var assertError = function(key, value, message) {
+        var ev = {err: false},
+            view = makeView();
+
         // Mock function
         // view.saveConfig() calls it as part of its internal
         // "success" callback
         env.set_config = function(service, config, data, serviceCfg, callback) {
           callback(ev);
         };
-        var ev = {err: false},
-            view = makeView();
 
         container.one('#input-' + key).set('value', value);
 

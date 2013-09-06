@@ -508,7 +508,6 @@ YUI.add('juju-topology-relation', function(Y) {
                         .attr('class',
                               'relation pending-relation dragline dragging');
       var self = this;
-      var container = this.get('container');
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
@@ -822,10 +821,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Get the vis, and links, build the new relation.
       var topo = module.get('component');
-      var vis = topo.vis;
       var env = topo.get('env');
       var db = topo.get('db');
-      var source = module.get('addRelationStart_service');
       var relation_id = 'pending-' + endpoints[0][0] + endpoints[1][0];
 
       if (endpoints[0][0] === endpoints[1][0]) {

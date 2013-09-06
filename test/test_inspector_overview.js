@@ -145,7 +145,7 @@ describe('Inspector Overview', function() {
        var control = container.one('.num-units-control');
        control.set('value', 0);
        control.simulate('keydown', { keyCode: ENTER });
-       var _ = expect(conn.last_message()).to.not.exist;
+       assert.isUndefined(conn.last_message());
        control.get('value').should.equal('3');
      });
 
@@ -523,6 +523,25 @@ describe('Inspector Overview', function() {
     overview.generateAndBindStatusHeaders(newContainer, statuses);
 
     newContainer.one('.upgrade-link').simulate('click');
+  });
+
+  it('reflects that a service was upgraded', function() {
+    window.flags.upgradeCharm = true;
+
+    var unitId = 'mediawiki/1';
+
+    db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
+    db.units.create({id: unitId, charmUrl: 'cs:precise/mediawiki-7'});
+
+    var service = db.services.getById('mediawiki');
+
+    db.onDelta({data: {result: [
+      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-8'}]
+    ]}});
+
+    assert.isTrue(service.get('charmChanged'));
+    // TODO Makyo Sept 5 - Next branch will take care of reflecting the
+    // changes in the inspector.
   });
 
   describe('Unit action buttons', function() {

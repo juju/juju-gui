@@ -281,13 +281,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var service = state.db.services.getById('kumquat');
         assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
         assert.deepEqual(
-          service.get('config'), {
-            admins: undefined,
-            debug: false,
-            logo: 'test logo',
-            name: 'Please set name of wiki',
-            skin: 'vector'
-          }
+            service.get('config'), {
+              admins: undefined,
+              debug: false,
+              logo: 'test logo',
+              name: 'Please set name of wiki',
+              skin: 'vector'
+            }
         );
         done();
       };
@@ -420,13 +420,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/mediawiki-15', function() {});
       var callback = function(result) {
         assert.deepEqual(
-          result.result.config, {
-            admins: undefined,
-            debug: false,
-            logo: undefined,
-            name: 'Please set name of wiki',
-            skin: 'vector'
-          }
+            result.result.config, {
+              admins: undefined,
+              debug: false,
+              logo: undefined,
+              name: 'Please set name of wiki',
+              skin: 'vector'
+            }
         );
         // We also make sure that we get some object of data for constraints.
         assert.deepEqual(result.result.constraints, {});
@@ -945,12 +945,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails with error when unexposing an invalid service name',
         function(done) {
           function unexposeService(rec) {
-            var data = Y.JSON.parse(rec.data),
-                command = {
-                  Type: 'Client',
-                  Request: 'ServiceUnexpose',
-                  Params: {ServiceName: 'foobar'}
-                };
+            var command = {
+              Type: 'Client',
+              Request: 'ServiceUnexpose',
+              Params: {ServiceName: 'foobar'}
+            };
             state.nextChanges();
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);

@@ -289,7 +289,7 @@ YUI.add('juju-env-go', function(Y) {
 
       @method filterConstraints
       @param {Object} constraints key:value pairs.
-      @return an object of valid constraint values.
+      @return {Object} an object of valid constraint values.
     */
     filterConstraints: function(constraints) {
       // Some of the constraints have to be integers.
@@ -300,9 +300,9 @@ YUI.add('juju-env-go', function(Y) {
       // else the go back end has issues.
       Object.keys(constraints).forEach(function(key) {
         if (constraints[key] === undefined ||
-           (constraints[key].trim && constraints[key].trim() === '')) {
-             delete constraints[key];
-           }
+            (constraints[key].trim && constraints[key].trim() === '')) {
+          delete constraints[key];
+        }
       });
       return constraints;
     },

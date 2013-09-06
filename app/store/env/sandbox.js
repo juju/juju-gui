@@ -27,7 +27,6 @@ Sandbox APIs mimicking communications with the Go and Python backends.
 
 YUI.add('juju-env-sandbox', function(Y) {
 
-  var environments = Y.namespace('juju.environments');
   var sandboxModule = Y.namespace('juju.environments.sandbox');
   var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
 
@@ -667,7 +666,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       // Normalize endpoints so that they are in the format
       // serviceName: { name: 'interface-name' }
-      var normalizedEndpoints, epA = {}, epB = {};
+      var epA = {}, epB = {};
       epA[relation.endpoints[0][0]] = relation.endpoints[0][1];
       epB[relation.endpoints[1][0]] = relation.endpoints[1][1];
 
@@ -1193,7 +1192,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientServiceGet: function(data, client, state) {
       var reply = state.getService(data.Params.ServiceName);
       var response = {
-        RequestId: data.RequestId,
+        RequestId: data.RequestId
       };
       if (reply.error) {
         response.Error = reply.error;

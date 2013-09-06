@@ -21,51 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Constraints', function() {
   var container, env, inspector, juju, models, utils, view, views, Y, viewUtils;
 
-  before(function(done) {
-    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
-      'node-event-simulate', 'juju-charm-store', 'juju-charm-models'];
-    Y = YUI(GlobalConfig).use(requirements, function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
-      views = Y.namespace('juju.views');
-      viewUtils = Y.namespace('juju.views.utils');
-      done();
-    });
-  });
-
-  beforeEach(function(done) {
-    container = utils.makeContainer('container');
-    var conn = new utils.SocketStub();
-    var db = new models.Database();
-    var service = makeService(db);
-    var fakeStore = new Y.juju.Charmworld2({});
-    fakeStore.iconpath = function() {
-      return 'charm icon url';
-    };
-    env = juju.newEnvironment({conn: conn});
-    env.connect();
-    view = new views.environment({
-      container: container,
-      db: db,
-      env: env,
-      store: fakeStore
-    });
-    view.render();
-    inspector = makeInspector(view, service);
-    window.flags.serviceInspector = true;
-    done();
-  });
-
-  afterEach(function(done) {
-    view.setInspector(inspector, true);
-    view.destroy();
-    env.after('destroy', function() { done(); });
-    env.destroy();
-    container.remove(true);
-    window.flags = {};
-  });
-
   // Create a service model instance.
   var makeService = function(db) {
     var charmId = 'precise/django-42';
@@ -110,6 +65,51 @@ describe('Inspector Constraints', function() {
     viewlet._changedValues = ['constraints.' + key];
     return node;
   };
+
+  before(function(done) {
+    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
+      'node-event-simulate', 'juju-charm-store', 'juju-charm-models'];
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      viewUtils = Y.namespace('juju.views.utils');
+      done();
+    });
+  });
+
+  beforeEach(function(done) {
+    container = utils.makeContainer('container');
+    var conn = new utils.SocketStub();
+    var db = new models.Database();
+    var service = makeService(db);
+    var fakeStore = new Y.juju.Charmworld2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
+    env = juju.newEnvironment({conn: conn});
+    env.connect();
+    view = new views.environment({
+      container: container,
+      db: db,
+      env: env,
+      store: fakeStore
+    });
+    view.render();
+    inspector = makeInspector(view, service);
+    window.flags.serviceInspector = true;
+    done();
+  });
+
+  afterEach(function(done) {
+    view.setInspector(inspector, true);
+    view.destroy();
+    env.after('destroy', function() { done(); });
+    env.destroy();
+    container.remove(true);
+    window.flags = {};
+  });
 
   it('renders the constraints form correctly', function() {
     assert.notEqual(
@@ -170,7 +170,6 @@ describe('Inspector Constraints', function() {
     // The set_constraint API method is correctly called.
     assert.equal('SetServiceConstraints', lastMessage.Request);
     // The expected constraints are passed in the API call.
-    var obtained = Object.create(null);
     assert.deepEqual(expected, lastMessage.Params.Constraints);
   });
 

@@ -27,8 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('juju-browser-models', function(Y) {
 
-  var models = Y.namespace('juju.models'),
-      ns = Y.namespace('juju.models.browser');
+  var ns = Y.namespace('juju.models.browser');
 
   /*
    * The filters are hard coded for now but will need to be updated. The

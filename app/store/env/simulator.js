@@ -34,7 +34,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-fakebackend-simulator', function(Y) {
 
-  var models = Y.namespace('juju.models');
   // How often should we run by default (ms).
   var DEFAULT_INTERVAL = 3000;
   var RAND = function(prob) {
@@ -169,14 +168,14 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             if (relations.length > 0) {
               unit.agent_state = 'error';
               var relation = relations[
-                Math.floor(Math.random() * relations.length)];
+                  Math.floor(Math.random() * relations.length)];
               var interfaceName;
               relation.get('endpoints').forEach(function(endpoint) {
                 if (endpoint[0] !== serviceName) { return; }
                 interfaceName = endpoint[1].name;
               });
               unit.agent_state_info = 'hook failed: ' +
-                interfaceName + '-relation-changed';
+                  interfaceName + '-relation-changed';
             }
           }
           // Put in delta since there is no API for this.

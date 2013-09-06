@@ -124,7 +124,7 @@ describe('charm token drag and drop', function() {
   });
 
   it('can set up drag and drop configuration', function() {
-    var setAttributeCalled, getCalled, stopPropagationCalled;
+    var stopPropagationCalled;
     var UNIQUE_ID = 'UNIQUE ID';
     var DRAG_IMAGE_DOM_NODE = 'DRAG IMAGE DOM NODE';
     var fauxIcon = {
