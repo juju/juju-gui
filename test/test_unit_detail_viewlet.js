@@ -57,8 +57,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('includes the unit description in the template context', function() {
       var context = unitDetails.getContext(db, service, unit);
       assert.equal(
-        context.unitIPDescription,
-        'public-address | private-address | 80, 443'
+          context.unitIPDescription,
+          'public-address | private-address | 80, 443'
       );
     });
 
@@ -94,9 +94,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       var context = unitDetails.getContext(db, service, unit);
       assert.deepEqual(
-        context.landscapeURL,
-        'http://landscape.example.com/computers/criteria/environment' +
-        ':test+unit:haproxy-42/'
+          context.landscapeURL,
+          'http://landscape.example.com/computers/criteria/environment' +
+          ':test+unit:haproxy-42/'
       );
     });
 

@@ -458,7 +458,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           if (value) {
             var statuses = this.viewlet.updateStatusList(value);
             this.viewlet.generateAndBindStatusHeaders(
-              node, statuses, this.viewlet.options.db.environment);
+                node, statuses, this.viewlet.options.db.environment);
           }
         }
       }

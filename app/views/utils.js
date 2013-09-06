@@ -1245,7 +1245,7 @@ YUI.add('juju-view-utils', function(Y) {
         annotation = (
             serviceOrUnit.annotations &&
             serviceOrUnit.annotations['landscape-computer']
-        );
+            );
         if (!annotation) {
           console.warn('Unit missing the landscape-computer annotation!');
           return undefined;

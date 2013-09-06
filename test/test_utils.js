@@ -1075,7 +1075,7 @@ describe('utilities', function() {
           'landscape-computers': '/computers/criteria/environment:test',
           'landscape-reboot-alert-url': '+alert:computer-reboot/info#power',
           'landscape-security-alert-url':
-            '+alert:security-upgrades/packages/list?filter=security'
+              '+alert:security-upgrades/packages/list?filter=security'
         });
         // Create the Service and a Unit model instances for testing.
         service = db.services.add({
@@ -1112,7 +1112,7 @@ describe('utilities', function() {
     it('returns the security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, null, 'security');
       var expected = makeURL(
-        '+alert:security-upgrades/packages/list?filter=security');
+          '+alert:security-upgrades/packages/list?filter=security');
       assert.strictEqual(url, expected);
     });
 
@@ -1125,15 +1125,15 @@ describe('utilities', function() {
     it('returns the service reboot Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, service, 'reboot');
       var expected = makeURL(
-        '+service:django/+alert:computer-reboot/info#power');
+          '+service:django/+alert:computer-reboot/info#power');
       assert.strictEqual(url, expected);
     });
 
     it('returns the service security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, service, 'security');
       var expected = makeURL(
-        '+service:django/+alert:security-upgrades/packages/list' +
-        '?filter=security');
+          '+service:django/+alert:security-upgrades/packages/list' +
+          '?filter=security');
       assert.strictEqual(url, expected);
     });
 
@@ -1146,15 +1146,15 @@ describe('utilities', function() {
     it('returns the unit reboot Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, unit, 'reboot');
       var expected = makeURL(
-        '+unit:django-42/+alert:computer-reboot/info#power');
+          '+unit:django-42/+alert:computer-reboot/info#power');
       assert.strictEqual(url, expected);
     });
 
     it('returns the unit security upgrade Landscape URL', function() {
       var url = utils.getLandscapeURL(environment, unit, 'security');
       var expected = makeURL(
-        '+unit:django-42/+alert:security-upgrades/packages/list' +
-        '?filter=security');
+          '+unit:django-42/+alert:security-upgrades/packages/list' +
+          '?filter=security');
       assert.strictEqual(url, expected);
     });
 
