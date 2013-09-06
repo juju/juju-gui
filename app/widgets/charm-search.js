@@ -107,6 +107,11 @@ YUI.add('browser-search-widget', function(Y) {
       var form = this.get('boundingBox').one('form'),
           value = form.one('input').get('value');
 
+      // Make sure we close the suggestions container.
+      if (this.ac) {
+        this.ac.hide();
+      }
+
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
       });
@@ -120,8 +125,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _onHome: function(ev) {
-      var form = this.get('boundingBox').one('form');
-      form.one('input').set('value', '');
+      this.get('boundingBox').one('form input').set('value', '');
       ev.halt();
       this.fire(this.EVT_SEARCH_GOHOME);
     },
@@ -134,7 +138,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _setActive: function() {
-      var form = this.get('boundingBox').one('form').addClass('active');
+      this.get('boundingBox').one('form').addClass('active');
     },
 
     /**

@@ -505,8 +505,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
         }
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        viewlets[key]._changedValues = [];
-        viewlets[key]._eventHandles = [];
+        var resultingViewlet = viewlets[key];
+        resultingViewlet._changedValues = [];
+        resultingViewlet._eventHandles = [];
+        resultingViewlet.options = this.getAttrs();
       }, this);
 
       return viewlets;

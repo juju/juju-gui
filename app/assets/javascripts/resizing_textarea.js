@@ -276,7 +276,6 @@ YUI.add('resizing-textarea', function(Y) {
       // On focus ensure the area is big enough to accomodate the addition of
       // another line so that it won't bounce around.
       this.t_area.on('focus', function(e) {
-        var value = this.t_area.get('value');
         this.hasFocus = true;
         this.resize();
       }, this);

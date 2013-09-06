@@ -134,7 +134,7 @@ describe('utilities', function() {
 
 
   describe('getConstraints', function() {
-    var constraintDescriptions, customConstraints, genericConstraints,
+    var customConstraints, genericConstraints,
         getConstraints, serviceConstraints, readOnlyConstraints;
 
     before(function() {
@@ -143,7 +143,6 @@ describe('utilities', function() {
       customConstraints = {foo: 'bar', arch: 'amd64', mem: '1MB'};
       genericConstraints = ['cpu', 'mem', 'arch'];
       readOnlyConstraints = utils.readOnlyConstraints;
-      constraintDescriptions = utils.constraintDescriptions;
     });
 
     it('correctly returns constraints for a service', function() {
@@ -724,11 +723,10 @@ describe('utilities', function() {
 (function() {
   describe('DecoratedRelation', function() {
 
-    var utils, views, Y, inputRelation, source, target;
+    var views, Y, inputRelation, source, target;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', function(Y) {
-        utils = Y.namespace('juju.views.utils');
         views = Y.namespace('juju.views');
         done();
       });
@@ -1011,12 +1009,11 @@ describe('utilities', function() {
 })();
 
 (function() {
-  describe('utils.landscapeAnnotations', function() {
-
+  describe('landscape.landscapeAnnotations', function() {
     var Y, utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
         utils = Y.namespace('juju.views.utils');
         done();
       });
@@ -1036,5 +1033,131 @@ describe('utilities', function() {
       assert.equal(annotations[0], 'landscape-needs-reboot');
       assert.equal(annotations[1], 'landscape-security-upgrades');
     });
+
   });
+
+
+  describe('utils.ensureTrailingSlash', function() {
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-view-utils'], function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('adds a trailing slash if not already there', function() {
+      var text = utils.ensureTrailingSlash('/foo/bar');
+      assert.strictEqual(text, '/foo/bar/');
+    });
+
+    it('avoids adding a trailing slash if not required', function() {
+      var text = utils.ensureTrailingSlash('/foo/bar/');
+      assert.strictEqual(text, '/foo/bar/');
+    });
+
+  });
+
+  describe('utils.getLandscapeURL', function() {
+    var environment, models, service, unit, utils, Y;
+    var requirements = ['juju-models', 'juju-view-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        models = Y.namespace('juju.models');
+        utils = Y.namespace('juju.views.utils');
+        var db = new models.Database();
+        // Set up environment annotations for testing.
+        environment = db.environment;
+        environment.set('annotations', {
+          'landscape-url': 'http://landscape.example.com',
+          'landscape-computers': '/computers/criteria/environment:test',
+          'landscape-reboot-alert-url': '+alert:computer-reboot/info#power',
+          'landscape-security-alert-url':
+              '+alert:security-upgrades/packages/list?filter=security'
+        });
+        // Create the Service and a Unit model instances for testing.
+        service = db.services.add({
+          id: 'django',
+          annotations: {'landscape-computers': '+service:django'}
+        });
+        unit = db.units.add({
+          id: 'django/42',
+          annotations: {'landscape-computer': '+unit:django-42'}
+        });
+        done();
+      });
+    });
+
+    // Create and return a Landscape URL including the given path.
+    var makeURL = function(path) {
+      var address = 'http://landscape.example.com';
+      var lastSegment = path || '/';
+      return address + '/computers/criteria/environment:test' + lastSegment;
+    };
+
+    it('returns the generic Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment);
+      var expected = makeURL();
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the reboot Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, null, 'reboot');
+      var expected = makeURL('+alert:computer-reboot/info#power');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the security upgrade Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, null, 'security');
+      var expected = makeURL(
+          '+alert:security-upgrades/packages/list?filter=security');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the service generic Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, service);
+      var expected = makeURL('+service:django/');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the service reboot Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, service, 'reboot');
+      var expected = makeURL(
+          '+service:django/+alert:computer-reboot/info#power');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the service security upgrade Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, service, 'security');
+      var expected = makeURL(
+          '+service:django/+alert:security-upgrades/packages/list' +
+          '?filter=security');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the unit generic Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, unit);
+      var expected = makeURL('+unit:django-42/');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the unit reboot Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, unit, 'reboot');
+      var expected = makeURL(
+          '+unit:django-42/+alert:computer-reboot/info#power');
+      assert.strictEqual(url, expected);
+    });
+
+    it('returns the unit security upgrade Landscape URL', function() {
+      var url = utils.getLandscapeURL(environment, unit, 'security');
+      var expected = makeURL(
+          '+unit:django-42/+alert:security-upgrades/packages/list' +
+          '?filter=security');
+      assert.strictEqual(url, expected);
+    });
+
+  });
+
 })();

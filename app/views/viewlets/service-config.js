@@ -37,7 +37,6 @@ YUI.add('viewlet-service-config', function(Y) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
-      var charmOptions = charm.get('options');
       var templatedSettings = utils.extractServiceSettings(
           charm.get('options'));
 
@@ -67,7 +66,7 @@ YUI.add('viewlet-service-config', function(Y) {
           }
           node.set('value', val);
         }
-      },
+      }
     }
 
   };

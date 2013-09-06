@@ -151,12 +151,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should allow for the user to specify a service name', function(done) {
       // Initializing a CharmView renders it
-      var charmView = new CharmView({
+      /* jshint -W031 */
+      new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
         container: container,
         env: env
       });
+      /* jshint +W031 */
       var serviceName = 'my custom service name';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.
@@ -175,12 +177,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should allow for the user to specify a config', function(done) {
       // Initializing a CharmView renders it
-      var charmView = new CharmView({
+      /* jshint -W031 */
+      new CharmView({
         charm_data_url: charmQuery,
         store: fakeStore,
         container: container,
         env: env
       });
+      /* jshint +W031 */
       var option0Value = 'the value for option0';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.

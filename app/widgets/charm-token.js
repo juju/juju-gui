@@ -153,8 +153,7 @@ YUI.add('browser-charm-token', function(Y) {
     renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
-      var outerContainer = container.ancestor('.yui3-charmtoken')
-        .addClass('yui3-u');
+      container.ancestor('.yui3-charmtoken').addClass('yui3-u');
       container.setHTML(content);
       if (this.get('isDraggable')) {
         this._addDraggability();

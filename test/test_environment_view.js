@@ -161,10 +161,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Use a db w/o the delta loaded
       db = new models.Database();
       view.set('db', db);
-      var topo,
-          beforeResizeEventFired = false;
       view.render().rendered();
-      topo = view.topo;
 
       // Verify we have help text.
       var help = Y.one('#environment-help');
@@ -173,10 +170,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('should not display help text when canvas is populated', function() {
-      var topo,
-          beforeResizeEventFired = false;
       view.render().rendered();
-      topo = view.topo;
 
       // Verify we do not have help text.
       var help = Y.one('#environment-help');
@@ -185,10 +179,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('must handle the window resize event', function(done) {
-      var topo,
-          beforeResizeEventFired = false;
+      var beforeResizeEventFired = false;
       view.render();
-      topo = view.topo;
 
       Y.once('beforePageSizeRecalculation', function() {
         // This event must be fired.
@@ -386,30 +378,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must resize the service health graph properly when units are added',
         function() {
-          var view = new views.environment({
+          /* jshint -W031 */
+          new views.environment({
             container: container,
             db: db,
             env: env,
             store: fakeStore
-          }),
-              tmp_data = {
-                result: [
-                  ['machine', 'add', {
-                    'agent-state': 'running',
-                    'instance-state': 'running',
-                    'id': 1,
-                    'instance-id': 'local',
-                    'dns-name': 'localhost'
-                  }],
-                  ['unit', 'add', {
-                    'machine': 1,
-                    'agent-state': 'started',
-                    'public-address': '192.168.122.114',
-                    'id': 'wordpress/1'
-                  }]
-                ],
-                op: 'delta'
-              };
+          });
+          /* jshint +W031 */
+          var tmp_data = {
+            result: [
+              ['machine', 'add', {
+                'agent-state': 'running',
+                'instance-state': 'running',
+                'id': 1,
+                'instance-id': 'local',
+                'dns-name': 'localhost'
+              }],
+              ['unit', 'add', {
+                'machine': 1,
+                'agent-state': 'started',
+                'public-address': '192.168.122.114',
+                'id': 'wordpress/1'
+              }]
+            ],
+            op: 'delta'
+          };
 
           function chartSizedProperly(serviceNode) {
             var node = d3.select(serviceNode);
@@ -433,7 +427,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must recalculate relation endpoints when services are resized',
         function() {
-          var view = new views.environment({
+          new views.environment({
             container: container,
             db: db,
             env: env,
@@ -640,7 +634,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must be able to render subordinate relation indicators',
        function() {
-         var view = new views.environment({
+         new views.environment({
            container: container,
            db: db,
            env: env,
@@ -820,9 +814,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          db.charms.add(charm);
 
          // Toggle the service menu for the Add Relation button.
-         var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
-
          sm.toggleServiceMenu(service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
@@ -954,7 +946,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must not allow removing a subordinate relation between services',
         function() {
-         var view = new views.environment({
+         new views.environment({
            container: container,
            db: db,
            env: env,
