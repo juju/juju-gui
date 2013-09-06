@@ -135,8 +135,7 @@ YUI.add('juju-notification-controller', function(Y) {
             },
             message: function(change_type, change_op, change_data,
                               notify_data) {
-              var level = notify_data.level,
-                  astate = change_data['agent-state'],
+              var astate = change_data['agent-state'],
                   msg = '';
               if (astate !== undefined) {
                 msg = 'Agent-state = ' + astate + '.';
@@ -178,8 +177,7 @@ YUI.add('juju-notification-controller', function(Y) {
          * @method generate_notices
          */
         generate_notices: function(delta_evt) {
-          var self = this,
-              rules = this.ingest_rules,
+          var rules = this.ingest_rules,
               app = this.get('app'),
               notifications = this.get('notifications');
 

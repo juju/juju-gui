@@ -50,8 +50,6 @@ YUI.add('viewlet-unit-details', function(Y) {
       }
 
       // Ignore relations errors.
-      var state = utils.simplifyState(unit, true);
-
       var relation_errors = unit.relation_errors || {},
           relations = utils.getRelationDataForService(db, service);
 

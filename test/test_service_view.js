@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// Turn off jshint complaints about the "expect" interface.  Please treat the
+// "expect" interface as legacy.  Use asserts instead.
+/* jshint -W030 */
+
 (function() {
   describe('Service config view (views.service_config)', function() {
     var models, Y, container, service, db, conn, env, charm, views, view;
@@ -236,16 +240,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should show controls to modify units by default', function() {
-      var view = makeServiceView();
+      makeServiceView();
       container.one('.num-units-control').should.not.equal(null);
     });
 
     it('should not show controls if the charm is subordinate', function() {
       // The _set forces a change to a writeOnly attribute.
       charm._set('is_subordinate', true);
-      var view = makeServiceView();
-      // "var _ =" makes the linter happy.
-      var _ = expect(container.one('.num-units-control')).to.not.exist;
+      makeServiceView();
+      expect(container.one('.num-units-control')).to.not.exist;
     });
 
     it('should show Landscape controls if needed', function() {
@@ -261,7 +264,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var landscape = new views.Landscape();
       landscape.set('db', db);
 
-      var view = new views.service({
+      new views.service({
         container: container,
         model: service,
         db: db,
@@ -280,7 +283,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should show the service units ordered by number', function() {
       // Note that the units are added in beforeEach in an ordered manner.
-      var view = makeServiceView();
+      makeServiceView();
       var rendered_names = container.one(
           'ul.thumbnails').all('div.unit').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
@@ -304,7 +307,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should use the show_units_large template if required', function() {
       // Note that the units are added in beforeEach in an ordered manner.
-      var view = makeServiceView();
+      makeServiceView();
       assert.equal('unit-large', container.one('ul.thumbnails').get('id'));
     });
 
@@ -321,21 +324,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should use the show_units_medium template if required', function() {
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(30);
-      var view = makeServiceView();
+      makeServiceView();
       assert.equal('unit-medium', container.one('ul.thumbnails').get('id'));
     });
 
     it('should use the show_units_small template if required', function() {
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(60);
-      var view = makeServiceView();
+      makeServiceView();
       assert.equal('unit-small', container.one('ul.thumbnails').get('id'));
     });
 
     it('should use the show_units_tiny template if required', function() {
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(260);
-      var view = makeServiceView();
+      makeServiceView();
       assert.equal('unit-tiny', container.one('ul.thumbnails').get('id'));
     });
 
@@ -344,7 +347,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // with ``pending`` status.
       addUnits(1, 'started');
       addUnits(2, 'start-error');
-      var view = makeServiceView();
+      makeServiceView();
       var thumbnails = container.one('ul.thumbnails');
       assert.equal(1, thumbnails.all('.state-started').size());
       assert.equal(2, thumbnails.all('.state-error').size());
@@ -353,14 +356,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should start with the proper number of units shown in the text field',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.get('value').should.equal('3');
        });
 
     it('should remove multiple units when the text input changes',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 1);
          control.simulate('keydown', {keyCode: ENTER}); // Simulate Enter.
@@ -371,11 +374,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should not do anything if requested is < 1',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
-         var _ = expect(conn.last_message()).to.not.exist;
+         expect(conn.last_message()).to.not.exist;
          control.get('value').should.equal('3');
        });
 
@@ -383,17 +386,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        function() {
          service.set('unit_count', 1);
          db.units.remove([1, 2]);
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
-         var _ = expect(conn.last_message()).to.not.exist;
+         expect(conn.last_message()).to.not.exist;
          control.get('value').should.equal('1');
        });
 
     it('should add the correct number of units when entered via text field',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 7);
          control.simulate('keydown', { keyCode: ENTER });
@@ -432,19 +435,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should remove units as soon as it gets a ' +
        'reply back from the server',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ENTER });
          var callbacks = Y.Object.values(env._txn_callbacks);
          callbacks.length.should.equal(1);
          callbacks[0]({unit_names: ['mysql/2']});
-         var _ = expect(db.units.getById('mysql/2')).to.not.exist;
+         expect(db.units.getById('mysql/2')).to.not.exist;
        });
 
     it('should reset values on the control when you press escape',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ESC });
@@ -457,7 +460,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            // TODO: blur simulate broken in IE
            return;
          }
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
          control.set('value', 2);
          control.simulate('blur');
@@ -466,7 +469,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should reset values on the control when you type invalid value',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('.num-units-control');
 
          var pressKey = function(key) {
@@ -527,8 +530,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
 
     it('should show proper tabs initially', function() {
-      var view = makeServiceView(),
-          active_navtabs = [];
+      makeServiceView();
+      var active_navtabs = [];
       container.all('.state-title').each(
           function(n) {
             active_navtabs.push([n.get('text').trim(),
@@ -543,8 +546,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should show zero running units when filtered', function() {
       // All units are pending.
-      var view = makeServiceView({state: 'running'}),
-          active_navtabs = [];
+      makeServiceView({state: 'running'});
+      var active_navtabs = [];
       container.all('.state-title').each(
           function(n) {
             active_navtabs.push([n.get('text').trim(),
@@ -562,7 +565,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.units.getById('mysql/0').agent_state = 'started';
       // 1 is pending.
       db.units.getById('mysql/2').agent_state = 'started';
-      var view = makeServiceView({state: 'running'});
+      makeServiceView({state: 'running'});
       var rendered_names = container.one(
           'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
@@ -572,8 +575,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.units.getById('mysql/0').agent_state = 'install-error';
       db.units.getById('mysql/1').agent_state = 'error';
       db.units.getById('mysql/2').agent_state = 'started';
-      var view = makeServiceView({state: 'pending'}),
-          active_navtabs = [];
+      makeServiceView({state: 'pending'});
+      var active_navtabs = [];
       container.all('.state-title').each(
           function(n) {
             active_navtabs.push([n.get('text').trim(),
@@ -592,15 +595,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.units.getById('mysql/1').agent_state = 'started';
       // We include  installed with pending.
       db.units.getById('mysql/2').agent_state = 'installed';
-      var view = makeServiceView({state: 'pending'});
+      makeServiceView({state: 'pending'});
       var rendered_names = container.one(
           'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
     it('should show zero error units when filtered', function() {
-      var view = makeServiceView({state: 'error'}),
-          active_navtabs = [];
+      makeServiceView({state: 'error'});
+      var active_navtabs = [];
       container.all('.state-title').each(
           function(n) {
             active_navtabs.push([n.get('text').trim(),
@@ -619,8 +622,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.units.getById('mysql/0').agent_state = 'install-error';
       // 1 is pending.
       db.units.getById('mysql/2').agent_state = 'foo-error';
-      var view = makeServiceView({state: 'error'}),
-          rendered_names = container.one(
+      makeServiceView({state: 'error'});
+      var rendered_names = container.one(
           'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
@@ -646,8 +649,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          db.relations.add([rel0, rel1]);
 
-         var view = makeServiceRelationsView(),
-             control = container.one('button[value=relation-0]');
+         makeServiceRelationsView();
+         var control = container.one('button[value=relation-0]');
          control.simulate('click');
          var remove = container.one('#remove-modal-panel .btn-danger');
          remove.simulate('click');
@@ -677,8 +680,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           db.relations.add([rel0, rel1]);
 
-          var view = makeServiceRelationsView(),
-              control = container.one('button[value=relation-1]');
+          makeServiceRelationsView();
+          var control = container.one('button[value=relation-1]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -711,8 +714,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           db.relations.get_relations_for_service(
          service).length.should.equal(2);
 
-          var view = makeServiceRelationsView(),
-              control = container.one('button[value=relation-0]');
+          makeServiceRelationsView();
+          var control = container.one('button[value=relation-0]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -775,8 +778,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     scope: 'global'
                   });
           db.relations.add([rel0, rel1]);
-          var view = makeServiceRelationsView(),
-              control = container.one('button[value=relation-0]');
+          makeServiceRelationsView();
+          var control = container.one('button[value=relation-0]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -788,7 +791,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isFalse(remove.get('disabled'));
           assert.equal(existing_notice_count + 1, db.notifications.size());
           var row = control.ancestor('tr');
-          var _ = expect(row.one('.highlighted')).to.not.exist;
+          expect(row.one('.highlighted')).to.not.exist;
         });
 
     it('should filter units with relation errors', function() {
@@ -853,12 +856,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Test for destroying services.
     it('should destroy the service when "Destroy Service" is clicked',
        function() {
-         var view = makeServiceView();
+         makeServiceView();
          var control = container.one('#destroy-service');
          control.simulate('click');
          var destroy = container.one('#destroy-modal-panel .btn-danger');
          destroy.simulate('click');
-         var message = conn.last_message();
          assert.equal('ServiceDestroy', conn.last_message().Request);
          assert.isTrue(destroy.get('disabled'));
        });
@@ -887,7 +889,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            dbUpdated = true;
          });
          callbacks[0]({result: true});
-         var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
+         expect(db.services.getById(service.get('id'))).to.not.exist;
          db.relations.map(function(u) {return u.get('id');})
         .should.eql(['relation-0000000001']);
          // Catch show environment event.

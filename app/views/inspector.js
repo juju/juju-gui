@@ -883,9 +883,9 @@ YUI.add('juju-view-inspector', function(Y) {
     upgradeService: function(ev) {
       ev.halt();
       var viewletManager = this.viewletManager,
-          db = this.viewletManager.get('db'),
-          env = this.viewletManager.get('env'),
-          store = this.viewletManager.get('store'),
+          db = viewletManager.get('db'),
+          env = viewletManager.get('env'),
+          store = viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -911,7 +911,7 @@ YUI.add('juju-view-inspector', function(Y) {
           return;
         }
         env.get_charm(upgradeTo, function(data) {
-          if(data.err) {
+          if (data.err) {
             db.notifications.create({
               title: 'Error retrieving charm.',
               message: data.err,
@@ -920,18 +920,19 @@ YUI.add('juju-view-inspector', function(Y) {
           }
           // Set the charm on the service.
           service.set('charm', upgradeTo);
-          store.promiseUpgradeAvailability(data.result, db.charms)
-          .then(function(latestId) {
-            // Redraw(?) the inspector.
-            service.set('upgrade_available', !!latestId);
-            service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
-          }, function(error) {
-            db.notifications.create({
-              title: 'Error retrieving charm.',
-              message: error,
-              level: 'error'
-            });
-          });
+          store.promiseUpgradeAvailability(data.result, db.charms).then(
+              function(latestId) {
+                // Redraw(?) the inspector.
+                service.set('upgrade_available', !!latestId);
+                service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
+              },
+              function(error) {
+                db.notifications.create({
+                  title: 'Error retrieving charm.',
+                  message: error,
+                  level: 'error'
+                });
+              });
         });
       });
     },
@@ -1266,7 +1267,6 @@ YUI.add('juju-view-inspector', function(Y) {
     @class ServiceInspector
    */
   views.ServiceInspector = (function() {
-    var juju = Y.namespace('juju');
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
     // ServiceInspector constructor.

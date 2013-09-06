@@ -20,8 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 YUI.add('browser-overlay-indicator', function(Y) {
-  var sub = Y.Lang.sub,
-      ns = Y.namespace('juju.widgets.browser');
+  var ns = Y.namespace('juju.widgets.browser');
   ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
 
     /**
