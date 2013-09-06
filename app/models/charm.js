@@ -178,7 +178,11 @@ YUI.add('juju-charm-models', function(Y) {
             this.set('requires', cfg.relations.requires);
           }
         }
+        if (cfg.distro_series) {
+          this.set('series', cfg.distro_series);
+        }
       }
+
     },
 
     sync: function(action, options, callback) {

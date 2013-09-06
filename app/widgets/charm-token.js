@@ -151,6 +151,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
+
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
       container.ancestor('.yui3-charmtoken').addClass('yui3-u');
@@ -209,6 +210,22 @@ YUI.add('browser-charm-token', function(Y) {
       name: {
         value: ''
       },
+
+      /**
+       * @attribute owner
+       * @default undefined
+       * @type {String}
+       *
+       */
+      owner: {},
+
+      /**
+       * @attribute series
+       * @default undefined
+       * @type {String}
+       *
+       */
+      series: {},
 
       /**
        * @attribute shouldShowIcon

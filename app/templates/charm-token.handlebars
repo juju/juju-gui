@@ -16,7 +16,7 @@
     </span>
     {{#unless_eq size 'tiny'}}
       <span class="metadata">
-          <div>Deployed {{pluralize 'download' downloads}} times</div>
+          <div>Deployed {{downloads}} {{pluralize 'time' downloads}}</div>
           <div>{{series}} | {{#if is_approved}}Recommended{{else}}{{owner}}{{/if}}</div>
       </span>
     {{/unless_eq}}
