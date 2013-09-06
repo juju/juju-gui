@@ -89,8 +89,7 @@ YUI.add('juju-topology', function(Y) {
 
 
     renderOnce: function() {
-      var self = this,
-          svg,
+      var svg,
           vis,
           width = this.get('width'),
           height = this.get('height'),

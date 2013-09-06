@@ -113,9 +113,8 @@ YUI.add('juju-view-bundle', function(Y) {
       if (node.empty()) {
         return;
       }
-      var self = this,
-              topo = this.get('component'),
-              landscape = topo.get('landscape');
+      var topo = this.get('component'),
+          landscape = topo.get('landscape');
 
       // Apply Position Annotations
       // This is done after the services_boxes

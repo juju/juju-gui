@@ -72,7 +72,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
-      var sidebar = api.interesting({
+      api.interesting({
         success: function(data) {
           data.summary.should.equal('wowza');
           done();
@@ -105,7 +105,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       api.set('datasource', datasource);
-      var result = api.search({text: 'foo'}, {
+      api.search({text: 'foo'}, {
         success: function(data) {
           assert.equal('charms?text=foo', url);
           assert.equal('foo', data.name);

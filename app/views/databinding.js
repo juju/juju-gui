@@ -167,7 +167,6 @@ YUI.add('juju-databinding', function(Y) {
     function deltaFromChange(modelChangeKeys) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
-      var self = this;
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};
       var index = _indexBindings(bindings);
@@ -544,7 +543,6 @@ YUI.add('juju-databinding', function(Y) {
       @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
-      var self = this;
       var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
       modelEventHandles.forEach(function(handle) {

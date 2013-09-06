@@ -68,7 +68,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
         // stored in annotations as well as on the service box.
         ghostService.set('hasBeenPositioned', true);
       }
-      var self = this;
       var environment = this.views.environment.instance,
           ghostInspector = environment.createServiceInspector(ghostService);
     }

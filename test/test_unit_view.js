@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// Turn off jshint complaints about the "expect" interface.  Please treat the
+// "expect" interface as legacy.  Use asserts instead.
+/* jshint -W030 */
+
 (function() {
   describe('juju unit view', function() {
     var views, machine, models, Y, container, service, unit, db,
@@ -111,22 +115,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should include unit identifier', function() {
-      var view = makeView();
+      makeView();
       container.one('#unit-id').getHTML().should.contain('mysql/0');
     });
 
     it('should include charm URI', function() {
-      var view = makeView();
+      makeView();
       container.one('#charm-uri').getHTML().should.contain('cs:precise/mysql');
     });
 
     it('should include unit status', function() {
-      var view = makeView();
+      makeView();
       container.one('#unit-status').getHTML().should.contain('pending');
     });
 
     it('should include machine info', function() {
-      var view = makeView();
+      makeView();
       container.one('#machine-name').getHTML().should.contain(
           'Machine machine-0');
       container.one('#machine-agent-state').getHTML().should.contain(
@@ -138,7 +142,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should include relation info', function() {
-      var view = makeView();
+      makeView();
       container.one('#relations').getHTML().should.contain('Relations');
       container.one('.relation-ident').get('text').trim().should.equal('db:2');
       container.one('.relation-endpoint').get('text').trim().should.equal(
@@ -163,7 +167,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var landscape = new views.Landscape();
       landscape.set('db', db);
 
-      var view = new views.unit({
+      new views.unit({
         container: container,
         unit: unit,
         db: db,
@@ -183,15 +187,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should not display Retry and Resolved buttons when ' +
        'there is no error', function() {
-          var view = makeView();
-          var _ = expect(container.one('#retry-unit-button')).to.not.exist;
-          _ = expect(container.one('#resolved-unit-button')).to.not.exist;
+          makeView();
+          expect(container.one('#retry-unit-button')).to.not.exist;
+          expect(container.one('#resolved-unit-button')).to.not.exist;
        });
 
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
           unit.agent_state = 'foo-error';
-          var view = makeView();
+          makeView();
           container.one('#retry-unit-button').getHTML().should.equal('Retry');
           container.one('#resolved-unit-button').getHTML().should.equal(
               'Resolved');
@@ -199,8 +203,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
 
     it('should always display Remove button', function() {
-      var view = makeView(),
-          button = container.one('#remove-unit-button');
+      makeView();
+      var button = container.one('#remove-unit-button');
       button.getHTML().should.equal('Remove');
       // Control is disabled with only one unit for the given service.
       button.get('disabled').should.equal(true);
@@ -208,7 +212,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should send resolved op when confirmation button clicked', function() {
       unit.agent_state = 'foo-error';
-      var view = makeView();
+      makeView();
       container.one('#resolved-unit-button').simulate('click');
       container.one('#resolved-modal-panel .btn-danger').simulate('click');
       var msg = conn.last_message();
@@ -218,7 +222,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should send resolved op with retry when retry clicked', function() {
       unit.agent_state = 'foo-error';
-      var view = makeView();
+      makeView();
       container.one('#retry-unit-button').simulate('click');
       var msg = conn.last_message();
       assert.equal('Resolved', msg.Request);
@@ -228,7 +232,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should send remove_units op when confirmation clicked', function() {
       // Enable removal button by giving the service more than one unit.
       service.set('unit_count', 2);
-      var view = makeView();
+      makeView();
       container.one('#remove-unit-button').simulate('click');
       container.one('#remove-modal-panel .btn-danger').simulate('click');
       assert.equal('DestroyServiceUnits', conn.last_message().Request);
@@ -247,12 +251,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var msg = conn.last_message();
       msg.result = true;
       env.dispatch_result(msg);
-      var _ = expect(db.units.getById(unit.id)).to.not.exist;
+      expect(db.units.getById(unit.id)).to.not.exist;
     });
 
     it('should show unit errors on the page with action buttons', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = makeView();
+      makeView();
       container.one('.relation-status').get('text').trim().should.contain(
           'error');
       container.one('.relation-status').all('button').get('text')
@@ -268,7 +272,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should be able to send a resolve relation message', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = makeView();
+      makeView();
       container.one('.resolved-relation-button').simulate('click');
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
@@ -280,7 +284,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should be able to send a retry relation message', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = makeView();
+      makeView();
       container.one('.retry-relation-button').simulate('click');
       var msg = conn.last_message();
       assert.equal('Resolved', msg.Request);
@@ -290,7 +294,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should create an error notification if a resolve fails', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = makeView();
+      makeView();
       container.one('.resolved-relation-button').simulate('click');
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
@@ -308,7 +312,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should create an error notification if a retry fails', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = makeView();
+      makeView();
       container.one('.retry-relation-button').simulate('click');
       var response = {
         RequestId: conn.last_message().RequestId,
