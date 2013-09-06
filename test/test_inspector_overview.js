@@ -529,15 +529,15 @@ describe('Inspector Overview', function() {
     var unitId = 'mediawiki/1';
 
     db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
-    db.units.create({id: unitId, charm_url: 'cs:precise/mediawiki-7'});
+    db.units.create({id: unitId, charmUrl: 'cs:precise/mediawiki-7'});
 
     var service = db.services.getById('mediawiki');
 
     db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId, charm_url: 'cs:precise/mediawiki-8'}]
+      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-8'}]
     ]}});
 
-    assert.isTrue(service.get('charm_changed'));
+    assert.isTrue(service.get('charmChanged'));
     // TODO Makyo Sept 5 - Next branch will take care of reflecting the
     // changes in the inspector.
   });

@@ -121,7 +121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         annotations: {},
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-15',
-        charm_changed: false,
+        charmChanged: false,
         config: {
           debug: 'no',
           engine: 'nginx',

@@ -173,11 +173,11 @@ YUI.add('juju-models', function(Y) {
       /**
         Whether or not the service's charm has changed recently.
 
-        @attribute charm_changed
+        @attribute charmChanged
         @type {Boolean}
         @default false
       */
-      charm_changed: {
+      charmChanged: {
         value: false
       },
       constraints: {},
@@ -294,7 +294,7 @@ YUI.add('juju-models', function(Y) {
       {
         ATTRS: {
           displayName: {},
-          charm_url: {},
+          charmUrl: {},
           machine: {},
           agent_state: {},
           agent_state_info: {},
@@ -335,10 +335,10 @@ YUI.add('juju-models', function(Y) {
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
       var oldModelCharm;
-      if (action === 'change' && data.charm_url && db) {
+      if (action === 'change' && data.charmUrl && db) {
         var oldModel = db.units.getById(data.id);
         if (oldModel) {
-          oldModelCharm = oldModel.charm_url;
+          oldModelCharm = oldModel.charmUrl;
         }
       }
       var instance = _process_delta(this, action, data, {relation_errors: {}});
@@ -376,9 +376,9 @@ YUI.add('juju-models', function(Y) {
       // someone else watching the GUI as a service's charm changes, differ in 
       // the amount of information the GUI has originally.  By setting this
       // flag, both cases can react in the same way.
-      if (oldModelCharm && oldModelCharm !== instance.charm_url &&
-          !service.get('charm_changed')) {
-        service.set('charm_changed', true);
+      if (oldModelCharm && oldModelCharm !== instance.charmUrl &&
+          !service.get('charmChanged')) {
+        service.set('charmChanged', true);
       }
       _process_delta(unitList, action, data, {relation_errors: {}});
     },
