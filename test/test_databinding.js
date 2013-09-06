@@ -417,10 +417,52 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').get('value'), 'b');
       });
 
+      it('supports eq for string inputs', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<input type="text" data-bind="a"></input>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+      });
+
       it('binds strings to textareas', function() {
         generateEngine('<textarea data-bind="g"/></textarea>');
         engine.bind(new Y.Model({g: 'g'}), viewlet);
         assert.equal(container.one('[data-bind=g]').get('value'), 'g');
+      });
+
+      it('supports eq for textarea inputs', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<textarea data-bind="a"></textarea>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
       });
 
       it('binds numbers to inputs', function() {
@@ -437,6 +479,46 @@ describe('data binding library', function() {
         assert.equal(input.get('checked'), false);
         model.set('e', true);
         assert.equal(input.get('checked'), true);
+      });
+
+      it('supports eq for checkboxes', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<input type="checkbox" data-bind="a"></input>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, false));
+        assert.isFalse(handler.eq(input, true));
+        model.set('a', true);
+        assert.isTrue(handler.eq(input, true));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, false));
+        model.set('a', false);
+        assert.isTrue(handler.eq(input, false));
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, true));
+      });
+
+      it('supports eq for text', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<div data-bind="a"></div>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
       });
 
     });

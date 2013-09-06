@@ -35,51 +35,51 @@ YUI.add('juju-databinding', function(Y) {
 
   views.BindingEngine = (function() {
     var DEFAULT_FIELD_HANDLERS = {
-      'input[type=checkbox]': {
+      'input[type=checkbox]': Object.create({
         'get': function(node) {
           return node.get('checked');
         },
         'set': function(node, value) {
-          if (value === 'false' || value === false) {
+          if (value === 'false' || !value) {
             node.set('checked', false);
           } else {
             node.set('checked', true);
           }
+        },
+        'eq': function(node, value) {
+          var currentValue = !! this.get(node);
+          var normalizedValue = !! value;
+          return (normalizedValue === currentValue);
         }
-      },
-      input: {
+      }),
+      input: Object.create({
         'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value);}
-      },
-      textarea: {
+        'set': function(node, value) { node.set('value', value || '');},
+        'eq': function(node, value) {
+          var currentValue = this.get(node);
+          var normalizedValue = value ? value.toString() : '';
+          return (normalizedValue === currentValue);
+        }
+      }),
+      textarea: Object.create({
         'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value);}
-      },
-      'default': {
+        'set': function(node, value) { node.set('value', value || '');},
+        'eq': function(node, value) {
+          var currentValue = this.get(node);
+          var normalizedValue = value ? value.toString() : '';
+          return (normalizedValue === currentValue);
+        }
+      }),
+      'default': Object.create({
         'get': function(node) { return node.get('text');},
-        'set': function(node, value) { node.setHTML(value);}
-      }
+        'set': function(node, value) { node.setHTML(value);},
+        'eq': function(node, value) {
+          var currentValue = this.get(node);
+          var normalizedValue = value ? value.toString() : '';
+          return (normalizedValue === currentValue);
+        }
+      })
     };
-
-    /**
-     Get the field handler for a given node with a fallback.
-
-     @method _getFieldHandler
-     */
-    function _getNodeHandler(node) {
-      var field;
-      /* jshint -W040 */
-      // Ignore 'possible strict violation'
-      if (node.getAttribute('type') === 'checkbox') {
-        field = this._fieldHandlers['input[type=checkbox]'];
-      } else {
-        field = this._fieldHandlers[node.tagName.toLowerCase()];
-      }
-      if (!field) {
-        field = this._fieldHandlers['default'];
-      }
-      return field;
-    }
 
     function _indexBindings(bindings, keyfunc, multiple) {
       var index = {};
@@ -248,6 +248,28 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     /**
+     Get the field handler for a given node with a fallback.
+
+     @method getFieldHandler
+     @param {Object} node A DOM node (not a YUI node).
+     @return {Object} An associated field handler for the node.
+     */
+    BindingEngine.prototype.getNodeHandler = function(node) {
+      var field;
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
+      if (node.getAttribute('type') === 'checkbox') {
+        field = this._fieldHandlers['input[type=checkbox]'];
+      } else {
+        field = this._fieldHandlers[node.tagName.toLowerCase()];
+      }
+      if (!field) {
+        field = this._fieldHandlers['default'];
+      }
+      return field;
+    };
+
+    /**
      * @method addBinding
      * @param {Object} config A bindings Object, see description in `bind`.
      * @param {Object} viewlet A reference to the viewlet being bound.
@@ -271,7 +293,7 @@ YUI.add('juju-databinding', function(Y) {
       // we allow very flexible DOM mutation out of band. Revisit if
       // this shows up on a profile.
       if (binding.target) {
-        binding.field = _getNodeHandler.call(this, binding.target.getDOMNode());
+        binding.field = this.getNodeHandler(binding.target.getDOMNode());
       }
 
       binding.viewlet = viewlet;
@@ -627,7 +649,7 @@ YUI.add('juju-databinding', function(Y) {
       }
       if (viewlet.changed) {
         viewlet.changed(e.target, key,
-            _getNodeHandler.call(this, e.target.getDOMNode()));
+            this.getNodeHandler(e.target.getDOMNode()));
       }
     };
 
@@ -784,7 +806,7 @@ YUI.add('juju-databinding', function(Y) {
             return false;
           });
       viewlet._changedValues = changedValues;
-      var field = _getNodeHandler.call(this, node.getDOMNode());
+      var field = this.getNodeHandler(node.getDOMNode());
       field.set.call(this, node, value);
       // If there are no more changed values then tell the
       // the viewlet to update accordingly
