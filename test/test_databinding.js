@@ -108,13 +108,16 @@ describe('data binding library', function() {
         assert.equal(node.get('value'), 'b');
         assert.equal(model.get('a'), 'b');
 
-       // Bindings continue to work after reset.
+        // Bindings continue to work after reset.
         model.set('a', 'c');
         assert.equal(node.get('value'), 'c');
         done();
       });
 
       it('can reset a viewlet back to model values', function(done) {
+        // Very similar  to the previous test, this checks
+        // that the binding filtering by viewlet runs and produces
+        // the expected outcome.
         engine = new BindingEngine({interval: 0});
         container = utils.makeContainer();
         container.append('<input data-bind="a"/>');
@@ -139,7 +142,7 @@ describe('data binding library', function() {
         assert.equal(node.get('value'), 'b');
         assert.equal(model.get('a'), 'b');
 
-       // Bindings continue to work after reset.
+        // Bindings continue to work after reset.
         model.set('a', 'c');
         assert.equal(node.get('value'), 'c');
         done();

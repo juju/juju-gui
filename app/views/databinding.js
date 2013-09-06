@@ -212,6 +212,7 @@ YUI.add('juju-databinding', function(Y) {
       Return only those bindings that apply to a single viewlet.
 
      @method deltaForViewlet
+     @param {Object} viewlet The viewlet for which a delta will be generated.
      @return {Object} delta.
     */
     function deltaForViewlet(viewlet) {
@@ -583,7 +584,7 @@ YUI.add('juju-databinding', function(Y) {
       only the bindings of that viewlet will reset.
 
       @method resetDOMToModel
-      @param {String} viewletName (optional)
+      @param {String} name (optional) viewlet name to reset.
       @chainable
     */
     BindingEngine.prototype.resetDOMToModel = function(name) {
