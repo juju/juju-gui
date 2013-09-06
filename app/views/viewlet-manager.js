@@ -169,8 +169,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
       offer a conflict resolution.
 
       @property changedValues
-      @type {Array}
-      @default empty array
+      @type {Object}
+      @default empty object
     */
 
     /**
@@ -504,7 +504,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         }
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        viewlets[key].changedValues = [];
+        viewlets[key].changedValues = {};
         viewlets[key]._eventHandles = [];
       }, this);
 

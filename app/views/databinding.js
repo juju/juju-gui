@@ -636,17 +636,9 @@ YUI.add('juju-databinding', function(Y) {
       @param {Object} viewlet reference.
     */
     BindingEngine.prototype._storeChanged = function(e, viewlet) {
-      var key = e.currentTarget.getData('bind'),
-          save = true;
+      var key = e.currentTarget.getData('bind');
 
-      viewlet.changedValues.forEach(function(value) {
-        if (value === key) {
-          save = false;
-        }
-      });
-      if (save) {
-        viewlet.changedValues.push(key);
-      }
+      viewlet.changedValues[key] = true;
       if (viewlet.changed) {
         viewlet.changed(e.target, key,
             this.getNodeHandler(e.target.getDOMNode()));
@@ -737,15 +729,13 @@ YUI.add('juju-databinding', function(Y) {
         }
 
         // If the field has been changed while the user was editing it
-        viewlet.changedValues.forEach(function(changeKey) {
-          if (changeKey === binding.name) {
-            conflicted = binding.target;
-            viewlet.unsyncedFields();
-            binding.viewlet.conflict(
-                binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self), binding);
-          }
-        });
+        if (viewlet.changedValues[binding.name]) {
+          conflicted = binding.target;
+          viewlet.unsyncedFields();
+          binding.viewlet.conflict(
+              binding.target, viewletModel, binding.viewlet.name,
+              Y.bind(resolve, self), binding);
+        }
 
         var value = binding.get(viewletModel);
 
@@ -798,19 +788,12 @@ YUI.add('juju-databinding', function(Y) {
       var key = node.getData('bind'),
           viewlet = this._viewlets[viewletName];
 
-      var changedValues = Y.Array.filter(
-          viewlet.changedValues, function(value) {
-            if (value !== key) {
-              return true;
-            }
-            return false;
-          });
-      viewlet.changedValues = changedValues;
+      delete viewlet.changedValues[key];
       var field = this.getNodeHandler(node.getDOMNode());
       field.set.call(this, node, value);
       // If there are no more changed values then tell the
       // the viewlet to update accordingly
-      if (viewlet.changedValues.length === 0) {
+      if (Object.keys(viewlet.changedValues).length === 0) {
         viewlet.syncedFields();
       }
     };
@@ -826,7 +809,7 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
       var viewlet = this._viewlets[viewletName];
-      viewlet.changedValues = [];
+      viewlet.changedValues = {};
       viewlet.syncedFields();
     };
 

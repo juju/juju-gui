@@ -62,7 +62,8 @@ describe('Inspector Constraints', function() {
     var selector = 'input[name=' + key + '].constraint-field';
     var node = viewlet.container.one(selector);
     node.set('value', value);
-    viewlet.changedValues = ['constraints.' + key];
+    viewlet.changedValues = {};
+    viewlet.changedValues['constraints.' + key] = true;
     return node;
   };
 
@@ -214,7 +215,10 @@ describe('Inspector Constraints', function() {
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    assert.lengthOf(viewlet.changedValues, 0, 'changedValues is not empty');
+    assert.lengthOf(
+      Object.keys(viewlet.changedValues),
+      0,
+      'changedValues is not empty');
   });
 
 });
