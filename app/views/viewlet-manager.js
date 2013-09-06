@@ -168,10 +168,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       viewlet we store a reference of the element key here so that we know to
       offer a conflict resolution.
 
-      @property _changedValues
+      @property changedValues
       @type {Array}
       @default empty array
-      @private
     */
 
     /**
@@ -505,7 +504,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         }
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        viewlets[key]._changedValues = [];
+        viewlets[key].changedValues = [];
         viewlets[key]._eventHandles = [];
       }, this);
 

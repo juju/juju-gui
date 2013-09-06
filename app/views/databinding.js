@@ -639,13 +639,13 @@ YUI.add('juju-databinding', function(Y) {
       var key = e.currentTarget.getData('bind'),
           save = true;
 
-      viewlet._changedValues.forEach(function(value) {
+      viewlet.changedValues.forEach(function(value) {
         if (value === key) {
           save = false;
         }
       });
       if (save) {
-        viewlet._changedValues.push(key);
+        viewlet.changedValues.push(key);
       }
       if (viewlet.changed) {
         viewlet.changed(e.target, key,
@@ -737,7 +737,7 @@ YUI.add('juju-databinding', function(Y) {
         }
 
         // If the field has been changed while the user was editing it
-        viewlet._changedValues.forEach(function(changeKey) {
+        viewlet.changedValues.forEach(function(changeKey) {
           if (changeKey === binding.name) {
             conflicted = binding.target;
             viewlet.unsyncedFields();
@@ -799,18 +799,18 @@ YUI.add('juju-databinding', function(Y) {
           viewlet = this._viewlets[viewletName];
 
       var changedValues = Y.Array.filter(
-          viewlet._changedValues, function(value) {
+          viewlet.changedValues, function(value) {
             if (value !== key) {
               return true;
             }
             return false;
           });
-      viewlet._changedValues = changedValues;
+      viewlet.changedValues = changedValues;
       var field = this.getNodeHandler(node.getDOMNode());
       field.set.call(this, node, value);
       // If there are no more changed values then tell the
       // the viewlet to update accordingly
-      if (viewlet._changedValues.length === 0) {
+      if (viewlet.changedValues.length === 0) {
         viewlet.syncedFields();
       }
     };
@@ -826,7 +826,7 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
       var viewlet = this._viewlets[viewletName];
-      viewlet._changedValues = [];
+      viewlet.changedValues = [];
       viewlet.syncedFields();
     };
 

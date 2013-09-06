@@ -49,7 +49,7 @@ describe('data binding library', function() {
 
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -69,7 +69,7 @@ describe('data binding library', function() {
             container.append('<input data-bind="a"/>');
             var viewlet = {
               container: container,
-              _changedValues: [],
+              changedValues: [],
               _eventHandles: []
             };
             var model = new Y.Model({a: 'b'});
@@ -94,7 +94,7 @@ describe('data binding library', function() {
         container.append('<input data-bind="a"/>');
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         var model = new Y.Model({a: 'b'});
@@ -115,7 +115,7 @@ describe('data binding library', function() {
 
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -134,7 +134,7 @@ describe('data binding library', function() {
 
            var viewlet = {
              container: container,
-             _changedValues: [],
+             changedValues: [],
              _eventHandles: [],
              bindings: {
                a: {
@@ -156,7 +156,7 @@ describe('data binding library', function() {
 
            var viewlet = {
              container: container,
-             _changedValues: [],
+             changedValues: [],
              _eventHandles: [],
              bindings: {
                a: {
@@ -188,7 +188,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: []
+          changedValues: []
         };
         engine = new BindingEngine({interval: 0});
         engine.bind(new Y.Model({a: 'b'}), viewlet);
@@ -208,7 +208,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -236,7 +236,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -259,7 +259,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -290,7 +290,7 @@ describe('data binding library', function() {
                 }
               }
             },
-            _changedValues: [],
+            changedValues: [],
             _eventHandles: []
           };
           engine = new BindingEngine({interval: 0});
@@ -319,7 +319,7 @@ describe('data binding library', function() {
                 }
               }
             },
-            _changedValues: [],
+            changedValues: [],
             _eventHandles: []
           };
           engine = new BindingEngine({interval: 0});
@@ -346,7 +346,7 @@ describe('data binding library', function() {
           get: function(m) { return m[this.name];},
           name: 'testViewlet',
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: [],
           bindings: {
             name: {
@@ -375,7 +375,7 @@ describe('data binding library', function() {
         var model = {id: 'test', name: 'this'};
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine.bind(model, viewlet);
@@ -399,7 +399,7 @@ describe('data binding library', function() {
         container.setHTML(input);
         viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: [],
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -547,7 +547,7 @@ describe('data binding library', function() {
             depends: ['first', 'last']
           }
         },
-        _changedValues: [],
+        changedValues: [],
         _eventHandles: []
       };
     });
