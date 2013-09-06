@@ -1218,9 +1218,9 @@ YUI.add('juju-view-utils', function(Y) {
      *
      * @method getLandscapeURL
      * @param {Model} environment The Environment model instance.
-     * @param {Model} serviceOrUnit A Service or Unit model instance
+     * @param {Model} serviceOrUnit A Service or Unit instance (optional).
      * @param {String} intent Can be 'security' or 'reboot' (optional).
-     * @return {String} URL to access the model entity in landscape.
+     * @return {String} URL to access the model entity in Landscape.
      */
   utils.getLandscapeURL = function(environment, serviceOrUnit, intent) {
     var envAnnotations = environment.get('annotations');
@@ -1232,24 +1232,26 @@ YUI.add('juju-view-utils', function(Y) {
     }
     url += envAnnotations['landscape-computers'];
 
-    var annotation;
-    if (serviceOrUnit.name === 'service') {
-      annotation = serviceOrUnit.get('annotations')['landscape-computers'];
-      if (!annotation) {
-        console.warn('Service missing the landscape-computers annotation!');
-        return undefined;
+    if (serviceOrUnit) {
+      var annotation;
+      if (serviceOrUnit.name === 'service') {
+        annotation = serviceOrUnit.get('annotations')['landscape-computers'];
+        if (!annotation) {
+          console.warn('Service missing the landscape-computers annotation!');
+          return undefined;
+        }
+        url += utils.ensureTrailingSlash(annotation);
+      } else if (serviceOrUnit.name === 'serviceUnit') {
+        annotation = (
+            serviceOrUnit.annotations &&
+            serviceOrUnit.annotations['landscape-computer']
+        );
+        if (!annotation) {
+          console.warn('Unit missing the landscape-computer annotation!');
+          return undefined;
+        }
+        url += utils.ensureTrailingSlash(annotation);
       }
-      url += utils.ensureTrailingSlash(annotation);
-    } else if (serviceOrUnit.name === 'serviceUnit') {
-      annotation = (
-          serviceOrUnit.annotations &&
-          serviceOrUnit.annotations['landscape-computer']
-      );
-      if (!annotation) {
-        console.warn('Unit missing the landscape-computer annotation!');
-        return undefined;
-      }
-      url += utils.ensureTrailingSlash(annotation);
     }
 
     if (!intent) {
