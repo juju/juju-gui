@@ -535,6 +535,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe.only('FakeBackend deployer support', function() {
+
+      it('should support YAML imports', function(done) {
+        fakebackend.importDeployer(
+          utils.loadFixture('data/blog.yaml'),
+          'wordpress-prod', function(result) {
+            console.log("result", result);
+//            assert.equal(result.RequestId, 1);
+//            assert.equal(result.Error, undefined);
+            assert.isNotNull(fakebackend.db.services.getById('db'));
+            assert.isNotNull(fakebackend.db.services.getById('blog'));
+            done();
+          });
+
+      });
+
+      it('should provide status of imports', function(done) {
+         fakebackend.importDeployer(
+          utils.loadFixture('data/blog.yaml'),
+          'wordpress-prod', function() {
+            fakebackend.statusDeployer(
+              function(data) {
+              console.log('data', data);
+              done();
+            });
+          });
+      });
+
+
+    });
+
     describe('FakeBackend.importEnvironment', function(done) {
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();

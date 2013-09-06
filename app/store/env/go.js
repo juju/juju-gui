@@ -395,6 +395,78 @@ YUI.add('juju-env-go', function(Y) {
       }, this.handleEnvironmentInfo);
     },
 
+    /*
+    Deployer support
+
+    The deployer integration introduces a number of calls,
+
+    Deployer:Import takes a YAML blob and returns a import request Id.
+    Deployer:Watch can watch a request Id returning status information
+    Deployer:Status asks for status information across all running and queued
+    imports.
+    */
+    /**
+     * Send a request for details about the current Juju environment: default
+     * series and provider type.
+     *
+     * @method deployerImport
+     * @param {String} yamlData
+     * @param {Function} callback
+     * @return {Number} Request Id.
+     */
+    deployerImport: function(yamlData, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(
+          function(userCallback, data) {
+          var transformedData = {
+            err: data.Error,
+            DeploymentId: data.Response.DeploymentId
+          };
+          userCallback(transformedData);
+        }, this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Import',
+        Params: {
+          YAML: yamlData
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     Gather the status of all changes, the callback will be triggered
+     with LastChanges in the response which will be an Array of
+     {DeploymentId: ...,
+      Status: 'status string',
+      Time: timestamp,
+      Error: 'optional error',
+      Queue: optional depth in queue
+     }
+
+     @method deployerStatus
+     @param {Function} callback
+    */
+    deployerStatus: function(callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(
+          function(userCallback, data) {
+          var transformedData = {
+            err: data.Error,
+            DeploymentId: data.Response.LastChanges
+          };
+          userCallback(transformedData);
+        }, this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Status'
+      }, intermediateCallback);
+
+    },
+
     /**
        Deploy a charm.
 
@@ -1324,6 +1396,8 @@ YUI.add('juju-env-go', function(Y) {
     }
 
   });
+
+
 
   environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;

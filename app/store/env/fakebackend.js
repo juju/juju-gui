@@ -64,6 +64,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._resetAnnotations();
       // used for relation id's
       this._relationCount = 0;
+      // used for deployer import tracking
+      this._importId = 0;
+      this._importChanges = [];
     },
 
     /**
@@ -1182,6 +1185,66 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
 
       return {result: result};
+    },
+
+    /**
+     Import Deployer from YAML files
+
+     @method importDeployer
+     @param {String} YAMLData
+     @param {String} name (optional) of bundle to import.
+     @param {Function} callback
+     */
+    importDeployer: function(YAMLData, name, callback) {
+      var self = this;
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATED_ERROR);
+      }
+      var data;
+      try {
+        data = jsyaml.safeLoad(YAMLData);
+      } catch (e) {
+        console.log('error parsing deployer bundle');
+        return callback(VALUE_ERROR);
+      }
+      var options = {};
+      if (name) {
+        options.targetBundle = name;
+      }
+      this.db.importDeployer(data, this.get('store'), options)
+      .then(function() {
+        var deploymentId = self._deploymentId += 1;
+        self._importChanges.push({
+          DeploymentId: deploymentId,
+          Status: 'completed',
+          Timestamp: Date.now()
+        });
+        console.log("pushed", self._importChanges);
+        // Keep the list limited to the last 5
+        if (self._importChanges.length > 5) {
+          self._importChanges = self._importChanges.slice(
+            self._importChanges.length - 5);
+        }
+        callback({DeploymentId: deploymentId});
+      }, function(err) {
+        callback({Error: err.toString()});
+      });
+    },
+
+    /**
+     Query the deployer import code for global status of
+     the last 5 imports. We don't currently queue but this a
+     real impl would need to always include every pending import
+     regardless of queue length
+
+     @method statusDeployer
+     @param {Function} callback
+    */
+    statusDeployer: function(callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATED_ERROR);
+      }
+      callback({LastChanges: this._importChanges});
     },
 
     /**
