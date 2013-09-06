@@ -217,10 +217,7 @@ describe('Ghost Inspector', function() {
           inputs.each(function(input) {
             // The import config field is not disabled.
             var id = input.get('id');
-
-            if (id === 'config-file') {
-              continue;
-            } else if (id !== 'use-default-toggle') {
+            if (id != 'config-file' || id !== 'use-default-toggle') {
               assert.equal(input.hasAttribute('disabled'), hasAttr,
                            'input missing disabled');
             }
