@@ -170,6 +170,16 @@ YUI.add('juju-models', function(Y) {
       // Units still default to undefined as a way
       // to help support scale.
       annotations: {value: {}},
+      /**
+        Whether or not the service's charm has changed recently.
+
+        @attribute charmChanged
+        @type {Boolean}
+        @default false
+      */
+      charmChanged: {
+        value: false
+      },
       constraints: {},
       constraintsStr: {
         'getter': function() {
@@ -284,6 +294,7 @@ YUI.add('juju-models', function(Y) {
       {
         ATTRS: {
           displayName: {},
+          charmUrl: {},
           machine: {},
           agent_state: {},
           agent_state_info: {},
@@ -320,6 +331,17 @@ YUI.add('juju-models', function(Y) {
     },
 
     process_delta: function(action, data, db) {
+      // If a charm_url is included in the data (that is, the Go backend
+      // provides it), get the old charm so that we can compare charm URLs
+      // in the future.
+      var oldModelCharm,
+          flags = window.flags;
+      if (flags.upgradeCharm && action === 'change' && data.charmUrl && db) {
+        var oldModel = db.units.getById(data.id);
+        if (oldModel) {
+          oldModelCharm = oldModel.charmUrl;
+        }
+      }
       var instance = _process_delta(this, action, data, {relation_errors: {}});
       if (!db) {
         return;
@@ -347,6 +369,17 @@ YUI.add('juju-models', function(Y) {
       if (!unitList) {
         unitList = new models.ServiceUnitList();
         service.set('units', unitList);
+      }
+      // If the charm has changed on this unit in the delta, inform the service
+      // of the change (but only if it doesn't already know, so as not to fire
+      // a change event).  This is required because the two instances of a)
+      // someone watching the GUI after setting a charm on a service, and b)
+      // someone else watching the GUI as a service's charm changes, differ in
+      // the amount of information the GUI has originally.  By setting this
+      // flag, both cases can react in the same way.
+      if (flags.upgradeCharm && oldModelCharm &&
+          oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
+        service.set('charmChanged', true);
       }
       _process_delta(unitList, action, data, {relation_errors: {}});
     },
