@@ -1072,14 +1072,13 @@ describe('utilities', function() {
         var db = new models.Database();
         // Set up environment annotations for testing.
         environment = db.environment;
-        var envAnnotations = environment.get('annotations');
-        envAnnotations['landscape-url'] = 'http://landscape.example.com';
-        envAnnotations['landscape-computers'] =
-            '/computers/criteria/environment:test';
-        envAnnotations['landscape-reboot-alert-url'] =
-            '+alert:computer-reboot/info#power';
-        envAnnotations['landscape-security-alert-url'] =
-            '+alert:security-upgrades/packages/list?filter=security';
+        environment.set('annotations', {
+          'landscape-url': 'http://landscape.example.com',
+          'landscape-computers': '/computers/criteria/environment:test',
+          'landscape-reboot-alert-url': '+alert:computer-reboot/info#power',
+          'landscape-security-alert-url':
+            '+alert:security-upgrades/packages/list?filter=security'
+        });
         // Create the Service and a Unit model instances for testing.
         service = db.services.add({
           id: 'django',
