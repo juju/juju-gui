@@ -216,6 +216,7 @@
                         .create-border-radius(@border-radius);
                         .create-box-shadow(inset 0 0 4px rgba(0, 0, 0, 0.4));
                         position: absolute;
+                        z-index: 501;
                         left: 0;
                         height: 24px;
                         width: 24px;
@@ -232,17 +233,43 @@
                         -ms-user-select: none;
                         user-select: none;
                     }
-                    .handle:before {
-                        
-                        content: '\78';
+                    &:after,
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        display: block;
+                        top: 4px;
+                        left: 4px;
+                        width: 24px;
+                        height: 24px;
+                        background-position: center center;
+                        background-repeat: no-repeat;
+                    }
+                    &:before {
+                        z-index: 502;
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-off.png);
+                    }
+                    &:after {
+                        z-index: 502;
+                        left: 29px;
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-on-inactive.png);
                     }
                 }
-                input.hidden-checkbox:checked ~ label .handle {
-                    left: 25px;
-                    background-color: @confirm-button-color;
-                }
-                input.hidden-checkbox:checked ~ label .handle:before {
-                    content: '\2713';
+                input.hidden-checkbox:checked ~ label {
+                    .handle {
+                        left: 25px;
+                        background-color: @confirm-button-color;
+                    }
+                    &:before {
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-off-inactive.png);
+                    }
+                    &:after {
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-on.png);
+                    }
                 }
             }
         }
@@ -391,10 +418,13 @@
 
             .fakebutton {
                 .create-border-radius(@border-radius);
+                z-index: 2;
+                padding: 5px;
+                background: transparent
+                    url(/juju-ui/assets/images/import.png)
+                    right center no-repeat;
                 border: 1px solid #6B6B6B;
                 color: #fff;
-                padding: 5px;
-                z-index: 2;
             }
         }
 
@@ -794,9 +824,10 @@
 
                 .chevron {
                     display: inline-block;
-                    height: 9px;
+                    vertical-align: 15%;
+                    width: 10px;
+                    height: 3px;
                     margin-left: 5px;
-                    width: 12px;
                     background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
                 }
             }
