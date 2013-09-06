@@ -1222,10 +1222,9 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.subordinate) {
           d3.select(this).property('status_bar',
               new views.StatusBar({
-                resize: false,
                 width: 160,
                 target: this,
-                fontSize: 8,
+                height: 10,
                 labels: false
               }).render());
         }

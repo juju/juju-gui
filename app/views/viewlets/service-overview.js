@@ -417,7 +417,9 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           if (!bar) {
             bar = this._statusbar = new views.StatusBar({
               width: 250,
-              target: node.getDOMNode()
+              target: node.getDOMNode(),
+              labels: false,
+              height: 30
             }).render();
           }
           bar.update(value);
