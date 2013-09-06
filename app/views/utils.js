@@ -1199,6 +1199,68 @@ YUI.add('juju-view-utils', function(Y) {
     return ids;
   };
 
+  /**
+   * Ensure a trailing slash on a string.
+   * @method ensureTrailingSlash
+   * @param {String} text The input string to check.
+   * @return {String} The output string with trailing slash.
+   */
+  utils.ensureTrailingSlash = function(text) {
+    if (text.lastIndexOf('/') !== text.length - 1) {
+      text += '/';
+    }
+    return text;
+  };
+
+  /**
+     * Return the Landscape URL for a given service or unit, and for the given
+     * optional intent (reboot or security upgrade).
+     *
+     * @method getLandscapeURL
+     * @param {Model} environment The Environment model instance.
+     * @param {Model} serviceOrUnit A Service or Unit model instance
+     * @param {String} intent Can be 'security' or 'reboot' (optional).
+     * @return {String} URL to access the model entity in landscape.
+     */
+  utils.getLandscapeURL = function(environment, serviceOrUnit, intent) {
+    var envAnnotations = environment.get('annotations');
+    var url = envAnnotations['landscape-url'];
+
+    if (!url) {
+      // If this environment annotation doesn't exist we cannot generate URLs.
+      return undefined;
+    }
+    url += envAnnotations['landscape-computers'];
+
+    var annotation;
+    if (serviceOrUnit.name === 'service') {
+      annotation = serviceOrUnit.get('annotations')['landscape-computers'];
+      if (!annotation) {
+        console.warn('Service missing the landscape-computers annotation!');
+        return undefined;
+      }
+      url += utils.ensureTrailingSlash(annotation);
+    } else if (serviceOrUnit.name === 'serviceUnit') {
+      annotation = (
+          serviceOrUnit.annotations &&
+          serviceOrUnit.annotations['landscape-computer']
+      );
+      if (!annotation) {
+        console.warn('Unit missing the landscape-computer annotation!');
+        return undefined;
+      }
+      url += utils.ensureTrailingSlash(annotation);
+    }
+
+    if (!intent) {
+      return utils.ensureTrailingSlash(url);
+    } else if (intent === 'reboot') {
+      return url + envAnnotations['landscape-reboot-alert-url'];
+    } else if (intent === 'security') {
+      return url + envAnnotations['landscape-security-alert-url'];
+    }
+  };
+
   utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.

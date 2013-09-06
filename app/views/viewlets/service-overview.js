@@ -183,9 +183,11 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     Binds the statuses data set to d3
 
     @method generateAndBindStatusHeaders
+    @param {Y.Node} node The YUI node object.
     @param {Array} statuses A key value pair of categories to unit list.
+    @param {Model} environment The Environment model instance.
     */
-  function generateAndBindStatusHeaders(node, statuses, db) {
+  function generateAndBindStatusHeaders(node, statuses, environment) {
     /* jshint -W040 */
     // Ignore 'possible strict violation'
     var self = this,
@@ -299,16 +301,14 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     unitStatusContentForm.append('ul');
 
-    // The Landscape view is used in order to generate Landscape URLs.
-    var landscape = new views.Landscape({db: db});
-
     unitStatusContentForm.append('div')
     .classed('action-button-wrapper', true)
     .html(
         function(d) {
           var context = generateActionButtonList(d.category);
           if (context.landscape) {
-            context.landscapeURL = landscape.getLandscapeURL(self.model);
+            context.landscapeURL = utils.getLandscapeURL(
+              environment, self.model);
           }
           var template = templates['unit-action-buttons'](context);
           buttonHeight = template.offsetHeight;
@@ -383,7 +383,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     }).append('a').classed('right-link', true).attr({
       // Retrieve the Landscape reboot URL for the unit.
       'href': function(d) {
-        return landscape.getLandscapeURL(d, 'reboot');
+        return utils.getLandscapeURL(environment, d, 'reboot');
       },
       target: '_blank'
     }).text('Reboot');
@@ -393,7 +393,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     }).append('a').classed('right-link', true).attr({
       // Retrieve the Landscape security upgrade URL for the unit.
       'href': function(d) {
-        return landscape.getLandscapeURL(d, 'security');
+        return utils.getLandscapeURL(environment, d, 'security');
       },
       target: '_blank'
     }).text('Upgrade');
@@ -458,7 +458,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           if (value) {
             var statuses = this.viewlet.updateStatusList(value);
             this.viewlet.generateAndBindStatusHeaders(
-              node, statuses, this.viewlet.options.db);
+              node, statuses, this.viewlet.options.db.environment);
           }
         }
       }

@@ -34,7 +34,6 @@ YUI.add('viewlet-unit-details', function(Y) {
     'render': function(unit, viewletManagerAttrs) {
       var db = viewletManagerAttrs.db,
           service = db.services.getById(unit.service);
-      var landscape = new views.Landscape({db: db});
 
       var ip_description_chunks = [];
       if (unit.public_address) {
@@ -67,7 +66,7 @@ YUI.add('viewlet-unit-details', function(Y) {
         unit: unit,
         unitIPDescription: unit_ip_description,
         relations: relations,
-        landscapeURL: landscape.getLandscapeURL(unit)
+        landscapeURL: utils.getLandscapeURL(db.environment, unit)
       };
       this.container = Y.Node.create(this.templateWrapper({}));
       this.container.one('.content').setHTML(this.template(templateData));

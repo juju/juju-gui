@@ -27,18 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-landscape', function(Y) {
   var views = Y.namespace('juju.views');
-
-  /**
-   * Ensure a trailing slash on a string.
-   * @method slash
-   * @return {String} string with trailing slash.
-   */
-  function slash(u) {
-    if (u.lastIndexOf('/') !== u.length - 1) {
-      u += '/';
-    }
-    return u;
-  }
+  var utils = Y.namespace('juju.views.utils');
 
   /**
    * Collect annotation data about landscape integration
@@ -127,41 +116,7 @@ YUI.add('juju-landscape', function(Y) {
      * @return {String} URL to access model entity in landscape.
      */
     getLandscapeURL: function(model, intent) {
-      var env = this.get('db').environment.get('annotations');
-      var url = env['landscape-url'];
-      var modelAnnotation;
-
-      if (!url) {
-        // If this environment annotation doesn't exist
-        // we cannot generate URLs.
-        return undefined;
-      }
-
-      url += env['landscape-computers'];
-      if (model.name === 'service') {
-        modelAnnotation = model.get('annotations')['landscape-computers'];
-        if (!modelAnnotation) {
-          console.warn('Service missing the landscape-computers annotation!');
-          return undefined;
-        }
-        url += slash(modelAnnotation);
-      } else if (model.name === 'serviceUnit') {
-        modelAnnotation = (
-            model.annotations && model.annotations['landscape-computer']);
-        if (!modelAnnotation) {
-          console.warn('Unit missing the landscape-computer annotation!');
-          return undefined;
-        }
-        url += slash(modelAnnotation);
-      }
-
-      if (!intent) {
-        return slash(url);
-      } else if (intent === 'reboot') {
-        return url + env['landscape-reboot-alert-url'];
-      } else if (intent === 'security') {
-        return url + env['landscape-security-alert-url'];
-      }
+      return utils.getLandscapeURL(this.get('db').environment, model, intent);
     },
 
     /**
@@ -213,6 +168,7 @@ YUI.add('juju-landscape', function(Y) {
 }, '0.1.0', {
   requires: [
     'juju-models',
+    'juju-view',
     'base'
   ]
 });
