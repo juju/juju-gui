@@ -112,6 +112,16 @@ describe('Viewlet Manager', function() {
     });
   });
 
+  it('includes the manager attrs in the viewlet instances', function() {
+    generateViewletManager();
+    var expected = viewletManager.getAttrs();
+    // At the time the viewlet options are set, the manager is not yet
+    // initialized.
+    expected.initialized = false;
+    assert.deepEqual(viewletManager.viewlets.serviceConfig.options, expected);
+    assert.deepEqual(viewletManager.viewlets.constraints.options, expected);
+  });
+
   it('fails silently when generating invalid viewlet configs', function() {
     // 'foo' does not have a config defined
     generateViewletManager({}, ['serviceConfig', 'foo']);
