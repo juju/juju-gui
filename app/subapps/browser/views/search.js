@@ -30,7 +30,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      DEFAULT_SEARCH_SERIES = 'precise';
 
   /**
      Search results display view.
@@ -165,7 +166,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                     more = [];
                 var series = this.get('envSeries');
                 if (!series) {
-                  series = 'precise';
+                  series = DEFAULT_SEARCH_SERIES;
                 }
                 results.map(function(charm) {
                   if (charm.get('is_approved') &&

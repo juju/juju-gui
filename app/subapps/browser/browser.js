@@ -182,6 +182,7 @@ YUI.add('subapp-browser', function(Y) {
       // input and later the charm details will need to know for selecting
       // the proper backup icon.
       return Y.merge(cfg, {
+        envSeries: this.get('envSeries'),
         db: this.get('db'),
         filters: this._filter.getFilterData(),
         store: this.get('store')
@@ -631,7 +632,6 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.activeID = this._viewState.charmID;
       }
 
-      extraCfg.envSeries = this.get('envSeries');
       this._search = new views.BrowserSearchView(
           this._getViewCfg(extraCfg));
 
