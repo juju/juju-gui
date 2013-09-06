@@ -111,6 +111,10 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
     // Build test doubles that record height and width settings.
     topo = {
       get: function() {
+        // Default to adding 1 to each width and height so that the size
+        // returned is always different than the size as viewed by the
+        // setAllTheDimensions method; this will cause the viewport to be
+        // centered.
         return [width + 1, height + 1];
       },
       vis: {},
@@ -168,6 +172,8 @@ describe('views.ViewportModule.setAllTheDimensions', function() {
 
   it('should not center canvas if no changes', function() {
     topo.get = function() {
+      // Return just the width and height so that the viewport appears not to
+      // have been resized, ensuring that the panToCenter event is not fired.
       return [width, height];
     };
     eventFired = false;

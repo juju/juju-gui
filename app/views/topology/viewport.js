@@ -94,7 +94,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       // Reset the scale parameters
       var oldSize = topo.get('size');
       topo.set('size', [dimensions.width, dimensions.height]);
-      // if the size has actually changed (as this method is sometimes called
+      // If the size has actually changed (as this method is sometimes called
       // on deltas through the render method), pan to the center; otherwise,
       // leave the pan alone.
       if (oldSize[0] !== dimensions.width ||
