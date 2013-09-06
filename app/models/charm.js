@@ -275,7 +275,7 @@ YUI.add('juju-charm-models', function(Y) {
       },
       code_source: {},
       options: {
-        setter: 'unsetIfNoValue'
+        setter: unsetIfNoValue
       },
       description: {},
       full_name: {
@@ -782,7 +782,7 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       options: {
-        setter: 'unsetIfNoValue'
+        setter: unsetIfNoValue
       },
       owner: {},
       peers: {},

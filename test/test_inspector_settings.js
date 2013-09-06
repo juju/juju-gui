@@ -151,7 +151,6 @@ describe('Inspector Settings', function() {
     assert.isFalse(unexposeCalled);
     var vmContainer = inspector.viewletManager.get('container');
     var expose = vmContainer.one('label[for=expose-toggle]');
-    var exposeLabel = expose.one('.handle');
     expose.simulate('click');
     assert.isTrue(service.get('exposed'));
     assert.isTrue(exposeCalled);

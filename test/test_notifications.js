@@ -142,23 +142,25 @@ describe('notifications', function() {
      });
 
   it('must be able to render its view with sample data',
-     function() {
-       var note1 = new models.Notification({
-         title: 'test1', message: 'Hello'}),
-           note2 = new models.Notification({
-         title: 'test2', message: 'I said goodnight!'}),
-           notifications = new models.NotificationList(),
-           container = Y.Node.create('<div id="test">'),
-           env = juju.newEnvironment(),
-           view = new views.NotificationsView({
-                   container: container,
-                   notifications: notifications,
-                   env: env,
-                   nsRouter: nsRouter});
-       view.render();
-       // Verify the expected elements appear in the view
-       container.one('#notify-list').should.not.equal(undefined);
-       container.destroy();
+      function() {
+        /* jshint -W031 */
+        new models.Notification({
+          title: 'test1', message: 'Hello'});
+        new models.Notification({
+          title: 'test2', message: 'I said goodnight!'});
+        /* jshint +W031 */
+        var notifications = new models.NotificationList(),
+            container = Y.Node.create('<div id="test">'),
+            env = juju.newEnvironment(),
+            view = new views.NotificationsView({
+                    container: container,
+                    notifications: notifications,
+                    env: env,
+                    nsRouter: nsRouter});
+        view.render();
+        // Verify the expected elements appear in the view
+        container.one('#notify-list').should.not.equal(undefined);
+        container.destroy();
      });
 
   it('must be able to limit the size of notification events',

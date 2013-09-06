@@ -59,7 +59,9 @@ describe('BrowserCharm initialization', function() {
 
   it('must reject bad charm ids.', function() {
     try {
-      var charm = new models.BrowserCharm({id: 'foobar'});
+      /* jshint -W031 */
+      new models.BrowserCharm({id: 'foobar'});
+      /* jshint +W031 */
       assert.fail('Should have thrown an error');
     } catch (e) {
       e.should.equal(
@@ -70,7 +72,9 @@ describe('BrowserCharm initialization', function() {
 
   it('must reject missing charm ids at initialization.', function() {
     try {
-      var charm = new models.BrowserCharm();
+      /* jshint -W031 */
+      new models.BrowserCharm();
+      /* jshint +W031 */
       assert.fail('Should have thrown an error');
     } catch (e) {
       e.should.equal(
@@ -760,7 +764,6 @@ describe('BrowserCharm test', function() {
 describe('database import/export', function() {
   var Y, models, utils;
   var fakeStore, db;
-  var charmConfig;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
@@ -770,8 +773,6 @@ describe('database import/export', function() {
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
-      charmConfig = utils
-        .loadFixture('data/mediawiki-api-response.json', true);
       done();
     });
   });
@@ -958,14 +959,14 @@ describe('database import/export', function() {
   });
 
   it('can export in deployer format', function() {
-    var mysql = db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
-    var wordpress = db.services.add({
+    db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
+    db.services.add({
       id: 'wordpress',
       charm: 'precise/wordpress-1',
       config: {debug: 'no', username: 'admin'},
       annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
     });
-    var rel0 = db.relations.add({
+    db.relations.add({
       id: 'relation-0',
       endpoints: [
         ['mysql', {name: 'db', role: 'server'}],

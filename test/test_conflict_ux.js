@@ -75,7 +75,7 @@ describe('Inspector Conflict UX', function() {
       charm: charmId,
       config: {
         logo: 'foo',
-        debug: 'false',
+        debug: 'false'
       }});
     db.services.add(service);
     db.onDelta({data: {result: [
@@ -101,7 +101,7 @@ describe('Inspector Conflict UX', function() {
   function modifyAndWait(node, value, callback) {
     var event,
         prop;
-    var isCheckbox = node.getAttribute('type') ==='checkbox' ? true: false;
+    var isCheckbox = node.getAttribute('type') === 'checkbox' ? true : false;
     if (isCheckbox) {
       event = 'change';
     } else {
@@ -180,11 +180,6 @@ describe('Inspector Conflict UX', function() {
   });
 
   it('should indicate conflict of boolean config values', function(done) {
-    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
-    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
-    if (Y.UA.ie === 10) {
-      done();
-    }
     var input = container.one('#input-debug');
     assert.equal(input.get('checked'), false);
 
@@ -192,15 +187,15 @@ describe('Inspector Conflict UX', function() {
       // See that the modified node is placed next to it.
       var parentNode = input.get('parentNode');
       assert.equal(
-        parentNode.all('.modified').size(),
-        1,
-        'missing modified node');
+          parentNode.all('.modified').size(),
+          1,
+          'missing modified node');
 
       service.set('config', {debug: false});
       assert.equal(
-        parentNode.all('.conflict-pending').size(),
-        1,
-        'missing conflict-pending node');
+          parentNode.all('.conflict-pending').size(),
+          1,
+          'missing conflict-pending node');
 
       // In the checkbox form we don't open up values to display and choose
       // from. You may simply check/uncheck again to resolve the conflict.
@@ -217,14 +212,14 @@ describe('Inspector Conflict UX', function() {
 
       // Verify the form is updated.
       assert.equal(
-        parentNode.all('.modified').size(),
-        0,
-        'found a modified node');
+          parentNode.all('.modified').size(),
+          0,
+          'found a modified node');
 
       assert.equal(
-        parentNode.all('.conflict-pending').size(),
-        0,
-        'found a conflict-pending node');
+          parentNode.all('.conflict-pending').size(),
+          0,
+          'found a conflict-pending node');
       done();
     });
   });

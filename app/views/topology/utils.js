@@ -23,7 +23,7 @@ YUI.add('juju-topology-utils', function(Y) {
   var utils = Y.namespace('juju.topology.utils');
 
   /**
-    Safely find the convex hull of a set of vertices - it is a TypeError to 
+    Safely find the convex hull of a set of vertices - it is a TypeError to
     try to find a hull of a line of services, rather than a polygon.
 
     @method safeHull

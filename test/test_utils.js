@@ -134,7 +134,7 @@ describe('utilities', function() {
 
 
   describe('getConstraints', function() {
-    var constraintDescriptions, customConstraints, genericConstraints,
+    var customConstraints, genericConstraints,
         getConstraints, serviceConstraints, readOnlyConstraints;
 
     before(function() {
@@ -143,7 +143,6 @@ describe('utilities', function() {
       customConstraints = {foo: 'bar', arch: 'amd64', mem: '1MB'};
       genericConstraints = ['cpu', 'mem', 'arch'];
       readOnlyConstraints = utils.readOnlyConstraints;
-      constraintDescriptions = utils.constraintDescriptions;
     });
 
     it('correctly returns constraints for a service', function() {
@@ -724,11 +723,10 @@ describe('utilities', function() {
 (function() {
   describe('DecoratedRelation', function() {
 
-    var utils, views, Y, inputRelation, source, target;
+    var views, Y, inputRelation, source, target;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', function(Y) {
-        utils = Y.namespace('juju.views.utils');
         views = Y.namespace('juju.views');
         done();
       });
