@@ -1,5 +1,5 @@
 @inspector-background-color: #221e1c;
-@inspector-controls-height: 67px;
+@inspector-controls-height: 72px;
 @inspector-dark: #1c1817;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
@@ -111,6 +111,9 @@
         h1, h2, h3, h4, h5, h6 {
             padding-left: 1em;
         }
+        form {
+            margin: 0;
+        }
         textarea,
         input[type=text],
         label {
@@ -127,8 +130,8 @@
             display: none;
         }
         input[type=text] {
-            .create-border-radius(@border-radius);
             .border-box;
+            .create-border-radius(@border-radius);
             .create-box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.7));
             width: 100%;
             min-height: 30px;
@@ -139,6 +142,7 @@
         }
         textarea {
             margin: 0;
+            width: 96%;
         }
         /* Buttons */
         .toggle label,
@@ -340,20 +344,8 @@
                 padding-bottom: 0;
                 border-bottom: none;
             }
-            & > div {
-                padding-right: 10px;
-            }
             label {
                 margin: 20px 0 10px 0;
-            }
-            textarea {
-                width: 100%;
-            }
-            input[type=text] {
-                width: 150px;
-            }
-            .constraint-label {
-                margin-right: 95px;
             }
             .settings-description {
                 margin-top: 12px;
@@ -631,19 +623,22 @@
         }
 
         .view-container {
-            border-top: 1px solid @inspector-divider-top;
             overflow: auto;
 
             &.settings-config {
-                margin-bottom: @inspector-controls-height + 5px;
+                margin-bottom: @inspector-controls-height;
             }
             h2 {
                 padding-left: 0;
             }
-            .settings-wrapper {
-                position: relative;
+            .view-content {
+                padding-bottom: 20px;
                 padding-left: @inspector-main-padding;
                 padding-right: @inspector-main-padding;
+                border-top: 1px solid @inspector-divider-top;
+            }
+            .settings-wrapper {
+                position: relative;
 
                 .config-field,
                 .constraint-field {
@@ -657,8 +652,6 @@
                   margin-bottom: 0px;
                 }
                 .config-field {
-                  width: 100%;
-
                   &.boolean {
                     width: auto;
                   }
