@@ -261,7 +261,8 @@
             margin-right: 10px;
         }
         .unit-scaling {
-            width: 255px;
+            padding-top: 20px;
+            border-bottom: 1px solid @inspector-divider-bottom;
 
             .unit-label,
             .current-unit-num {
@@ -325,7 +326,7 @@
                 height: 0;
             }
             .unit-constraints-confirm.editing {
-                max-height: 450px;
+                max-height: 500px;
             }
         }
 
@@ -442,6 +443,9 @@
             .service-config {
                 border-top: 1px solid @inspector-divider-top;
             }
+            .viewlet-container {
+                margin-top: -1px;
+            }
         }
 
         /* Resetting panel styles. Can be removed after old inspector styles are
@@ -494,15 +498,10 @@
         .viewlet-container {
             overflow-x: hidden;
             overflow-y: auto;
-            border-top: 1px solid @inspector-divider-top;
             /* overwritten by the recalculateHeight() method in
                viewlet-manager.js. Important to avoid flash of incorrectly
                calculated height */
             max-height: 250px;
-        }
-
-        .content {
-            margin: 1em;
         }
 
         .header-slot {
@@ -575,7 +574,8 @@
             margin: 0;
             padding-left: @inspector-main-padding;
             background-color: @inspector-dark;
-            border-top: 1px solid #12110f;
+            border-top: 1px solid @inspector-divider-bottom;
+            border-bottom: 1px solid @inspector-divider-top;
 
             li {
                 display: inline-block;
@@ -623,7 +623,7 @@
         }
 
         .view-container {
-            overflow: auto;
+            margin-top: -1px;
 
             &.settings-config {
                 margin-bottom: @inspector-controls-height;
@@ -750,17 +750,11 @@
             h2 {
                 width: auto;
             }
-
-            .content {
-                border-bottom: 1px solid @inspector-divider-bottom;
-                border-top: 1px solid @inspector-divider-top;
-                margin: 0;
-                padding: @inspector-main-padding;
-            }
             .statusbar {
                 .create-border-radius(@border-radius);
                 width: 250px;
                 height: 30px;
+                margin-top: 12px;
             }
         }
 
@@ -768,8 +762,8 @@
             margin: 0;
 
             .action-button-wrapper {
-                height: 50px;
                 text-align: center;
+                padding: 20px 0;
             }
 
             .status-unit-header {
@@ -862,7 +856,7 @@
 
                 button.unit-action-button {
                     width: 70px;
-                    margin: 20px 3px 0;
+                    margin: 0 3px 0;
                     background: @charm-panel-series-color;
                 }
                 &.pending {

@@ -1,20 +1,19 @@
-<div class="content">
-  <div class="notifications"></div>
-  <!-- without setting the height of the svg element here it defaults
-   to 100% of the available space causing an undesirable flash of
-   incorrectly calculated height -->
-  <svg class="statusbar" data-bind="aggregated_status"></svg>
-</div>
-<div class="content unit-scaling">
-  <div class="units-input">
-    <div class="unit-label">of</div>
-    <input type="text" class="num-units-control" value="{{unit_count}}"/>
-    <span class="text-in-input">Units</span>
+<div class="view-container">
+  <div class="view-content unit-scaling">
+    <div class="units-input">
+      <div class="unit-label">of</div>
+      <input type="text" class="num-units-control" value="{{unit_count}}"/>
+      <span class="text-in-input">Units</span>
+    </div>
+    <div class="current-unit-num" data-bind="unit_count"></div>
+    <div class="unit-constraints-confirm closed"></div>
+    <!-- without setting the height of the svg element here it defaults
+     to 100% of the available space causing an undesirable flash of
+     incorrectly calculated height -->
+    <svg class="statusbar" data-bind="aggregated_status"></svg>
   </div>
-  <div class="current-unit-num" data-bind="unit_count"></div>
-  <div class="unit-constraints-confirm closed"></div>
+  <h3>Units</h3>
+  <ul class="overview-unit-list" data-bind="units">
+  </ul>
+  {{>service-destroy}}
 </div>
-<h3>Units</h3>
-<ul class="overview-unit-list" data-bind="units">
-</ul>
-{{>service-destroy}}
