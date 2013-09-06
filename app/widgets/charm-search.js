@@ -107,6 +107,11 @@ YUI.add('browser-search-widget', function(Y) {
       var form = this.get('boundingBox').one('form'),
           value = form.one('input').get('value');
 
+      // Make sure we close the suggestions container.
+      if (this.ac) {
+        this.ac.hide();
+      }
+
       this.fire(this.EVT_SEARCH_CHANGED, {
         newVal: value
       });
