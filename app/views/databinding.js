@@ -208,6 +208,12 @@ YUI.add('juju-databinding', function(Y) {
       return result;
     }
 
+    /**
+      Return only those bindings that apply to a single viewlet.
+
+     @method deltaForViewlet
+     @return {Object} delta.
+    */
     function deltaForViewlet(viewlet) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
