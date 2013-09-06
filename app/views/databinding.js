@@ -167,7 +167,6 @@ YUI.add('juju-databinding', function(Y) {
     function deltaFromChange(modelChangeKeys) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
-      var self = this;
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};
       var index = _indexBindings(bindings);
@@ -206,6 +205,24 @@ YUI.add('juju-databinding', function(Y) {
       });
 
       return result;
+    }
+
+    /**
+      Return only those bindings that apply to a single viewlet.
+
+     @method deltaForViewlet
+     @param {Object} viewlet The viewlet for which a delta will be generated.
+     @return {Object} delta.
+    */
+    function deltaForViewlet(viewlet) {
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
+      var delta = deltaFromChange.call(this, Object.keys(
+          viewlet.model.getAttrs()));
+      delta.bindings = delta.bindings.filter(function(b) {
+        return b.viewlet === viewlet;
+      });
+      return delta;
     }
 
     /**
@@ -395,8 +412,17 @@ YUI.add('juju-databinding', function(Y) {
           name: node.getData('bind'),
           target: node
         }, viewlet);
-        viewlet._eventHandles.push(
-            node.on('valueChange', this._storeChanged, this, viewlet));
+        // Checkboxes are not supported in a valueChange event.
+        if (node.getAttribute('type') === 'checkbox') {
+          viewlet._eventHandles.push(
+              node.on('change', this._storeChanged, this, viewlet));
+        } else {
+          // The other elements (input, textarea) are supported in valueChange
+          // YUI event.
+          viewlet._eventHandles.push(
+              node.on('valueChange', this._storeChanged, this, viewlet));
+        }
+
       }, this);
 
       this._setupHeirarchicalBindings();
@@ -535,7 +561,6 @@ YUI.add('juju-databinding', function(Y) {
       @return {Array} modelEventHandles (empty but appendable).
      */
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
-      var self = this;
       var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
       modelEventHandles.forEach(function(handle) {
@@ -549,6 +574,27 @@ YUI.add('juju-databinding', function(Y) {
       modelEventHandles.splice(0, modelEventHandles.length);
       this._models[mID] = modelEventHandles;
       return modelEventHandles;
+    };
+
+    /**
+      Reset the bound view to the _current_ values of the model.  Resets all
+      viewlets to the contents of their bound model. If a name is provided
+      only the bindings of that viewlet will reset.
+
+      @method resetDOMToModel
+      @param {String} name (optional) viewlet name to reset.
+      @chainable
+    */
+    BindingEngine.prototype.resetDOMToModel = function(name) {
+      // Construct an explicit update of everything.
+      var delta;
+      if (name && name in this._viewlets) {
+        delta = deltaForViewlet.call(this, this._viewlets[name]);
+      } else {
+        delta = deltaFromChange.call(this);
+      }
+      this._updateDOM(delta);
+      return this;
     };
 
     /**
@@ -719,6 +765,7 @@ YUI.add('juju-databinding', function(Y) {
         });
 
         var value = binding.get(viewletModel);
+
         if (binding.format) {
           value = binding.format.call(binding, value);
         }
@@ -767,6 +814,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
       var key = node.getData('bind'),
           viewlet = this._viewlets[viewletName];
+
       var changedValues = Y.Array.filter(
           viewlet._changedValues, function(value) {
             if (value !== key) {

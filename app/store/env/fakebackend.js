@@ -407,7 +407,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           Object.keys(charmOptions).forEach(function(key) {
             config[key] =
                 options.config[key] ||
-                (charmOptions[key] ? charmOptions[key].default : undefined);
+                (charmOptions[key] ? charmOptions[key]['default'] : undefined);
           });
           return config;
         })()
@@ -474,6 +474,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!serviceData.constraints) {
         serviceData.constraints = {};
       }
+
       var relations = this.db.relations.get_relations_for_service(service);
       var rels = relations.map(function(r) {return r.getAttrs();});
       // TODO: properly map relations to expected format rather

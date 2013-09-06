@@ -288,8 +288,7 @@ YUI.add('juju-view-service', function(Y) {
          * @return {Object} The data the template will render.
          */
         gatherRenderData: function() {
-          var container = this.get('container'),
-              service = this.get('model'),
+          var service = this.get('model'),
               db = this.get('db'),
               querystring = this.get('querystring');
           var relation_data = utils.getRelationDataForService(db, service);
@@ -529,15 +528,12 @@ YUI.add('juju-view-service', function(Y) {
          * @return {Object} The data the template will render.
          */
         gatherRenderData: function() {
-          var container = this.get('container');
           var db = this.get('db');
           var service = this.get('model');
           var charm = db.charms.getById(service.get('charm'));
           var config = service.get('config');
-          var getModelURL = this.get('getModelURL');
           var schema = charm.get('options');
           var charm_id = service.get('charm');
-          var field_def;
 
           var settings = utils.extractServiceSettings(schema, config);
 

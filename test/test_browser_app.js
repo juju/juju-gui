@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser fullscreen view', function() {
-      var browser, container, FullScreen, view, views, Y;
+      var container, FullScreen, view, views, Y;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -42,7 +42,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-browser',
             'juju-tests-utils',
             'subapp-browser-fullscreen', function(Y) {
-              browser = Y.namespace('juju.browser');
               views = Y.namespace('juju.browser.views');
               FullScreen = views.FullScreen;
               done();
@@ -182,7 +181,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser minimzed view', function() {
-      var Y, browser, container, view, views, Minimized;
+      var Y, container, view, views, Minimized;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -192,7 +191,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-tests-utils',
             'subapp-browser-minimized',
             function(Y) {
-              browser = Y.namespace('juju.browser');
               views = Y.namespace('juju.browser.views');
               Minimized = views.MinimizedView;
               done();
@@ -230,7 +228,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser sidebar view', function() {
-      var Y, browser, container, view, views, Sidebar;
+      var Y, container, view, views, Sidebar;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -241,7 +239,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'node-event-simulate',
             'subapp-browser-sidebar',
             function(Y) {
-              browser = Y.namespace('juju.browser');
               views = Y.namespace('juju.browser.views');
               Sidebar = views.Sidebar;
               done();

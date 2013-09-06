@@ -4,7 +4,7 @@
     <div class="ghost-config-header">Service details</div>
     <div class="ghost-config-content">
       <input class="config-field" type="text" name="number-units" value="1"/>
-      <label for="number-units">Minimum units</label>
+      <label for="number-units" class="text-in-input">Minimum units</label>
     </div>
   </div>
   {{/unless}}
@@ -13,7 +13,7 @@
   <!-- Service Constraints added in -->
   <div class="ghost-config-wrapper service-constraints">
     <div class="ghost-config-header">Constraints</div>
-    <div class="ghost-config-content use-defaults">
+    <div class="ghost-config-content">
       {{> service-constraints-viewlet}}
     </div>
   </div>
@@ -24,6 +24,11 @@
   <div class="ghost-config-wrapper service-configuration">
     <div class="ghost-config-header">Configuration</div>
     <div class="ghost-config-content use-defaults">
+      <div class="config-file">
+        <input type="file" id="config-file">
+        <div class="fakebutton">Import config file...</div>
+      </div>
+
       <div class="toggle">
         <span>Use the default configuration?</span>
         <div class="toggle-switch">
@@ -33,10 +38,7 @@
           </label>
         </div>
       </div>
-      <div class="config-file">
-        <input type="file" disabled>
-        <div class="fakebutton">Import config file...</div>
-      </div>
+      <hr />
 
       <form class="charm-settings">
         <div class="service-config">

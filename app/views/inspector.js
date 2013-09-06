@@ -883,8 +883,9 @@ YUI.add('juju-view-inspector', function(Y) {
     upgradeService: function(ev) {
       ev.halt();
       var viewletManager = this.viewletManager,
-          db = this.viewletManager.get('db'),
-          env = this.viewletManager.get('env'),
+          db = viewletManager.get('db'),
+          env = viewletManager.get('env'),
+          store = viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -902,16 +903,37 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
-          db.notifications.add(new db.models.Notification({
+          db.notifications.create({
             title: 'Error setting charm.',
             message: result.err,
             level: 'error'
-          }));
+          });
           return;
         }
-        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
-        // the service with the new charm, set info as needed - juju will not
-        // report new charm URL properly with GetService. - Bug: #1218447
+        env.get_charm(upgradeTo, function(data) {
+          if (data.err) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: data.err,
+              level: 'error'
+            });
+          }
+          // Set the charm on the service.
+          service.set('charm', upgradeTo);
+          store.promiseUpgradeAvailability(data.result, db.charms).then(
+              function(latestId) {
+                // Redraw(?) the inspector.
+                service.set('upgrade_available', !!latestId);
+                service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
+              },
+              function(error) {
+                db.notifications.create({
+                  title: 'Error retrieving charm.',
+                  message: error,
+                  level: 'error'
+                });
+              });
+        });
       });
     },
 
@@ -1043,15 +1065,122 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   var ConflictMixin = {
-    'changed': function(node, key, field) {
-      var modelValue = this.model.get(key);
-      var fieldValue = field.get(node);
-      if (modelValue !== fieldValue) {
-        node.addClass('modified');
+    /**
+     * Reset the given node to not be marked as 'modified' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearModified
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var n = node.get('parentNode').one('.modified');
+        if (n) {
+          n.remove();
+        }
+
+        // If the value isn't modified it can't be in conflict.
+        this._clearConflictPending(node);
       } else {
         node.removeClass('modified');
       }
     },
+    /**
+     * Mark the given node to not be marked as 'modified' in the UX.
+     *
+     * @method _markModified
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="modified boolean"/>'));
+        this._clearConflictPending(node);
+      } else {
+        node.addClass('modified');
+      }
+    },
+    /**
+     * Reset the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflictPending
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var n = node.get('parentNode').one('.conflict-pending');
+        if (n) {
+          n.remove();
+        }
+      } else {
+        node.removeClass('conflict-pending');
+      }
+    },
+    /**
+     * Mark the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflictPending
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="conflict-pending boolean"/>'));
+      } else {
+        node.addClass('conflict-pending');
+      }
+    },
+    /**
+     * Reset the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflict
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearConflict': function(node) {
+      // Checkboxes don't go to full conflict as there's no UX to choose a
+      // value to keep.
+      node.removeClass('conflict');
+    },
+    /**
+     * Mark the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflict
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeConflict': function(node) {
+      node.addClass('conflict');
+    },
+
+    'changed': function(node, key, field) {
+      var modelValue = this.model.get(key);
+      var fieldValue = field.get(node);
+      if (modelValue !== fieldValue) {
+        this._makeModified(node);
+      } else {
+        this._clearModified(node);
+      }
+    },
+
     'conflict': function(node, model, viewletName, resolve, binding) {
       /**
        Calls the databinding resolve method
@@ -1073,8 +1202,12 @@ YUI.add('juju-view-inspector', function(Y) {
         e.halt(true);
         var formValue = field.get(node);
         handlers.forEach(function(h) { h.detach();});
-        node.removeClass('modified');
-        node.removeClass('conflict');
+
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearModified(node);
+        this._clearConflict(node);
+
         resolver.addClass('hidden');
 
         if (e.currentTarget.hasClass('conflicted-env')) {
@@ -1091,20 +1224,25 @@ YUI.add('juju-view-inspector', function(Y) {
       */
       function setupResolver(e) {
         e.halt(true);
-        node.removeClass('conflict-pending');
-        node.addClass('conflict');
-        option.addClass('conflict');
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearConflictPending(node);
+        this._makeConflict(node);
+        this._makeConflict(option);
         option.setStyle('width', node.get('offsetWidth'));
         option.setHTML(modelValue);
         resolver.removeClass('hidden');
       }
 
       // On conflict just indicate.
-      node.removeClass('modified');
-      node.addClass('conflict-pending');
+      this._clearModified(node);
+      this._makeConflictPending(node);
 
-      handlers.push(wrapper.delegate('click', setupResolver,
-          '.conflict-pending', this));
+      handlers.push(wrapper.delegate(
+          'click',
+          setupResolver,
+          '.conflict-pending',
+          this));
 
       handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
@@ -1129,7 +1267,6 @@ YUI.add('juju-view-inspector', function(Y) {
     @class ServiceInspector
    */
   views.ServiceInspector = (function() {
-    var juju = Y.namespace('juju');
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
     // ServiceInspector constructor.
