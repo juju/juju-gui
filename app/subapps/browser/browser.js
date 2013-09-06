@@ -1049,7 +1049,7 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          The series in the environment, e.g. 'precise'
-         
+
          @attribute envSeries
          @default undefined
          @type {String}
