@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('charm token', function() {
+describe.only('charm token', function() {
   var charm_container, CharmToken, cleanIconHelper, token, utils, Y;
 
   before(function(done) {
@@ -53,20 +53,44 @@ describe('charm token', function() {
     assert.isObject(token);
   });
 
-  it('renders with correct metadata', function() {
+  it('renders with correct metadata as approved charm', function() {
     var cfg = {
       id: 'test',
       name: 'some-charm',
       description: 'some description',
       commitCount: 1,
       downloads: 3,
+      is_approved: true,
+      owner: 'rharding',
+      series: 'precise',
       tested_providers: ['ec2']
     };
     var token = new CharmToken(cfg);
     token.render(charm_container);
     var metadata = charm_container.one('.metadata');
     assert.equal(
-        ' 3 downloads, 1 commit ',
+        ' Deployed 3 times precise | Recommended ',
+        metadata.get('text').replace(/\s+/g, ' '));
+    token.get('boundingBox').getAttribute('id').should.not.eql('test');
+  });
+
+  it('renders with correct metadata as non approved charm', function() {
+    var cfg = {
+      id: 'test',
+      name: 'some-charm',
+      description: 'some description',
+      commitCount: 1,
+      downloads: 3,
+      is_approved: false,
+      owner: 'rharding',
+      series: 'precise',
+      tested_providers: ['ec2']
+    };
+    var token = new CharmToken(cfg);
+    token.render(charm_container);
+    var metadata = charm_container.one('.metadata');
+    assert.equal(
+        ' Deployed 3 times precise | rharding ',
         metadata.get('text').replace(/\s+/g, ' '));
     token.get('boundingBox').getAttribute('id').should.not.eql('test');
   });
