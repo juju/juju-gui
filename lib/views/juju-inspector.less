@@ -246,9 +246,20 @@
                 }
             }
         }
+        .destroy-service-prompt,
         .controls {
-            border-top: 1px solid @inspector-divider-top;
+            overflow: hidden;
+            background-color: @inspector-background-color;
+            border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
+
+            &:before {
+                content: "";
+                display: block;
+                height: 9px;
+                background-color: @inspector-dark;
+                border-bottom: 1px solid @inspector-divider-top;
+            }
         }
         .text-in-input {
             display: block;
@@ -619,7 +630,6 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: @inspector-background-color;
         }
 
         .view-container {
@@ -719,21 +729,20 @@
 
         .destroy-service-prompt {
             overflow: hidden;
-            height: 117px;
-            -moz-transition: .3s, height .3s;
-            -webkit-transition: .25s, height .3s;
-            transition: .3s, height .3s;
+            max-height: 200px;
+            -moz-transition: .3s, max-height .3s;
+            -webkit-transition: .3s, max-height .3s;
+            transition: .3s, max-height .3s;
             position: absolute;
             bottom: 0;
-            background-color: @inspector-background-color;
 
             .message {
-                margin: 5px 15px;
+                margin: 20px 20px 0 20px;
             }
         }
 
         .destroy-service-prompt.closed {
-            height: 0;
+            max-height: 0;
         }
         .viewlet-wrapper{
             h3, h2, legend {
