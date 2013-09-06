@@ -53,7 +53,6 @@ describe('filter widget', function() {
 
   it('initializes correctly', function() {
     assert.isObject(instance.get('filters'));
-    var categories = instance.get('categories');
 
     instance.get('categories')[0].value.should.eql('app-servers');
     instance.get('categories')[0].name.should.eql('App Servers');

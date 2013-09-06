@@ -14,6 +14,11 @@
 
 
 YUI.add('unscaled-pack-layout', function(Y) {
+
+  // For backwards-compatibility, don't enable inlining by default.
+  // Taken from d3.layout.hierarchy
+  d3_layout_hierarchyInline = false;
+
   // A method assignment helper for hierarchy subclasses.
   // Taken from d3.layout.hierarchy
   function d3_layout_hierarchyRebind(object, hierarchy) {
@@ -40,10 +45,6 @@ YUI.add('unscaled-pack-layout', function(Y) {
       });
     }));
   }
-
-  // For backwards-compatibility, don't enable inlining by default.
-  // Taken from d3.layout.hierarchy
-  var d3_layout_hierarchyInline = false;
 
   // Taken from d3.layout.tree
   function d3_layout_treeVisitAfter(node, callback) {

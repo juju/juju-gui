@@ -777,7 +777,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isNull(service);
           done();
         }
-        var result = env.destroy_service(rec.service_name, localCb);
+        env.destroy_service(rec.service_name, localCb);
       }
       generateAndExposeIntegrationService(destroyService);
     });

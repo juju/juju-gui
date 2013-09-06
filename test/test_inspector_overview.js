@@ -145,7 +145,7 @@ describe('Inspector Overview', function() {
        var control = container.one('.num-units-control');
        control.set('value', 0);
        control.simulate('keydown', { keyCode: ENTER });
-       var _ = expect(conn.last_message()).to.not.exist;
+       assert.isUndefined(conn.last_message());
        control.get('value').should.equal('3');
      });
 

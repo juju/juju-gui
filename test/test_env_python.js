@@ -71,12 +71,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service with constraints', function() {
-      var constraints =  { cpu: '1', mem: '512M', arch: 'i386'};
+      var constraints = { cpu: '1', mem: '512M', arch: 'i386'};
       env.deploy('precise/mysql', null, null, null, 1, constraints);
       msg = conn.last_message();
       // The python backend needs to format them differently than the go
       // backend to support rapi.
-      assert.deepEqual(msg.constraints, [ 'cpu=1', 'mem=512M', 'arch=i386' ]);
+      assert.deepEqual(msg.constraints, ['cpu=1', 'mem=512M', 'arch=i386']);
     });
 
     it('can add a unit', function() {
@@ -109,7 +109,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       msg.op.should.equal('resolved');
       msg.unit_name.should.equal(unit_name);
-      var _ = expect(msg.relation_name).to.not.exist;
+      assert.isNull(msg.relation_name);
       msg.retry.should.equal(false);
     });
 
@@ -130,7 +130,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg = conn.last_message();
       msg.op.should.equal('resolved');
       msg.unit_name.should.equal(unit_name);
-      var _ = expect(msg.relation_name).to.not.exist;
+      assert.isNull(msg.relation_name);
       msg.retry.should.equal(true);
     });
 
@@ -308,7 +308,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully removes a relation', function(done) {
-      var endpoints;
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.remove_relation(endpointA, endpointB, function(ev) {
