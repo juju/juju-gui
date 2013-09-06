@@ -152,13 +152,13 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       run: function(context) {
         context.selection.each(function(unit) {
           var roll = Math.random();
-          if (roll <= 0.25) {
+          if (roll <= 0.1) {
             unit.agent_state = 'started';
             unit.agent_state_info = undefined;
-          } else if (roll <= 0.5) {
+          } else if (roll <= 0.2) {
             unit.agent_state = 'install-error';
             unit.agent_state_info = undefined;
-          } else if (roll <= 0.75) {
+          } else if (roll <= 0.3) {
             unit.agent_state = 'pending';
             unit.agent_state_info = undefined;
           } else if (roll <= 1) {

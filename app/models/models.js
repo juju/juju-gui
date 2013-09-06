@@ -191,6 +191,21 @@ YUI.add('juju-models', function(Y) {
 
   var Service = Y.Base.create('service', Y.Model, [], {
 
+    initializer: function() {
+      var relations = new models.RelationList();
+      this.set('relations', relations);
+      this._events = [];
+      this._bindAttributes();
+    },
+
+    _bindAttributes: function() {
+      this._events.push(
+          this.get('relations').on(
+              ['*:change', '*:add', '*:remove'], function(e) {
+                this.set('aggregateRelations', e);
+              }, this));
+    },
+
     /**
       Return true if this service life is "alive", false otherwise.
 
@@ -218,6 +233,12 @@ YUI.add('juju-models', function(Y) {
       var aggregates = this.get('aggregated_status') || {},
           errors = aggregates.error || false;
       return errors && errors >= 1;
+    },
+
+    destructor: function() {
+      this._events.forEach(function(event) {
+        event.detach();
+      });
     }
 
   }, {
@@ -270,6 +291,9 @@ YUI.add('juju-models', function(Y) {
         value: ALIVE
       },
       unit_count: {},
+      relations: { },
+      aggregateRelations: {},
+      aggregateRelationError: {},
 
       /**
         Whether or not an upgrade is available.
@@ -441,21 +465,33 @@ YUI.add('juju-models', function(Y) {
      *  state => number of units in that state
      */
     get_informative_states_for_service: function(service) {
-      var aggregate_map = {}, aggregate_list = [],
+      var aggregate_map = {},
+          relationError = {},
           units_for_service = this.get_units_for_service(service);
 
       units_for_service.forEach(function(unit) {
         var state = utils.simplifyState(unit);
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
-        }
-        else {
+        } else {
           aggregate_map[state] += 1;
+          if (state === 'error') {
+            // If in error status then we need to parse out why it's in error.
+            var info = unit.agent_state_info;
+            if (info !== undefined && info.indexOf('failed') > -1) {
+              // If we parse more than the relation info then split this out
+              if (info.indexOf('relation') > -1) {
+                var hook = info.split(':')[1].split('-'),
+                    interfaceName = hook.slice(0, hook.length - 2)[0].trim();
+                relationError[unit.service] = interfaceName;
+              }
+            }
+          }
         }
 
       });
 
-      return aggregate_map;
+      return [aggregate_map, relationError];
     },
 
     /*
@@ -464,12 +500,13 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
+console.log(aggregate);
       var sum = Y.Array.reduce(
-          Y.Object.values(aggregate), 0, function(a, b) {return a + b;});
+          Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
-      service.set('aggregated_status', aggregate);
-
+      service.set('aggregated_status', aggregate[0]);
+      service.set('aggregateRelationError', aggregate[1]);
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',

@@ -31,15 +31,21 @@ YUI.add('viewlet-service-relations', function(Y) {
   ns.relations = {
     name: 'relations',
     template: templates['service-relations-viewlet'],
-    selectBindModel: function(model) {
-      debugger;
-      return model.get('relations');
+
+    bindings: {
+      aggregateRelations: {
+        update: function(node, value) {
+          debugger;
+        }
+      },
+      aggregateRelationError: {
+        update: function(node, value) {
+          debugger;
+        }
+      }
     },
 
-    bindings: { },
-
     'render': function(service, options) {
-      console.log(service, options);
       var relations = utils.getRelationDataForService(options.db, service);
       var contents = this.template({
         relations: relations
@@ -47,7 +53,6 @@ YUI.add('viewlet-service-relations', function(Y) {
       this.container = Y.Node.create(this.templateWrapper);
       this.container.setHTML(contents);
     }
-
 
   };
 
