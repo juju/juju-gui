@@ -306,5 +306,4 @@ describe('search widget autocomplete functional checks', function() {
     });
   });
 
-
 });
