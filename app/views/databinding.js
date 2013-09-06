@@ -208,6 +208,17 @@ YUI.add('juju-databinding', function(Y) {
       return result;
     }
 
+    function deltaForViewlet(viewlet) {
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
+      var delta = deltaFromChange.call(this, Object.keys(
+        viewlet.model.getAttrs()));
+      delta.bindings = delta.bindings.filter(function(b) {
+          return b.viewlet === viewlet;
+      });
+      return delta;
+    }
+
     /**
      * Check if a target name is in classes bases
      *
@@ -558,6 +569,27 @@ YUI.add('juju-databinding', function(Y) {
       modelEventHandles.splice(0, modelEventHandles.length);
       this._models[mID] = modelEventHandles;
       return modelEventHandles;
+    };
+
+    /**
+      Reset the bound view to the _current_ values of the model.  Resets all
+      viewlets to the contents of their bound model. If a name is provided
+      only the bindings of that viewlet will reset.
+
+      @method resetDOMToModel
+      @param {String} viewletName (optional)
+      @chainable
+    */
+    BindingEngine.prototype.resetDOMToModel = function(name) {
+      // Construct an explicit update of everything.
+      var delta;
+      if (name && name in this._viewlets) {
+        delta = deltaForViewlet.call(this, this._viewlets[name]);
+      } else {
+        delta = deltaFromChange.call(this);
+      }
+      this._updateDOM(delta);
+      return this;
     };
 
     /**

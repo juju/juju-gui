@@ -84,13 +84,9 @@ describe('data binding library', function() {
             }, 100);
           });
 
-      it('supports gt one binding to a single model element', function(done) {
-        // We intentionally run this test with an interval, and thus need a
-        // wait.  This is because the change interval can mask certain types of
-        // errors and we want the space to see that this actually works.
-        engine = new BindingEngine({interval: 50});
+      it('can reset viewlets back to model values', function(done) {
+        engine = new BindingEngine({interval: 0});
         container = utils.makeContainer();
-        container.append('<input data-bind="a"/>');
         container.append('<input data-bind="a"/>');
         var viewlet = {
           container: container,
@@ -99,15 +95,56 @@ describe('data binding library', function() {
         };
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
-        // Trigger the change event.
+        // It renders with the model value
+        var node = container.one('input');
+        assert.equal(node.get('value'), 'b');
+
+        // We manually change the form
+        node.set('value', 'the new newness');
+        assert.equal(node.get('value'), 'the new newness');
+
+        // But then we reset
+        engine.resetDOMToModel();
+        assert.equal(node.get('value'), 'b');
+        assert.equal(model.get('a'), 'b');
+
+       // Bindings continue to work after reset.
         model.set('a', 'c');
-        setTimeout(function() {
-          var nodes = container.all('input');
-          assert.equal(nodes.item(0).get('value'), 'c');
-          assert.equal(nodes.item(1).get('value'), 'c');
-          done();
-        }, 100);
+        assert.equal(node.get('value'), 'c');
+        done();
       });
+
+      it('can reset a viewlet back to model values', function(done) {
+        engine = new BindingEngine({interval: 0});
+        container = utils.makeContainer();
+        container.append('<input data-bind="a"/>');
+        var viewlet = {
+          name: 'testViewlet',
+          container: container,
+          _changedValues: [],
+          _eventHandles: []
+        };
+        var model = new Y.Model({a: 'b'});
+        engine.bind(model, viewlet);
+        // It renders with the model value
+        var node = container.one('input');
+        assert.equal(node.get('value'), 'b');
+
+        // We manually change the form
+        node.set('value', 'the new newness');
+        assert.equal(node.get('value'), 'the new newness');
+
+        // But then we reset
+        engine.resetDOMToModel('testViewlet');
+        assert.equal(node.get('value'), 'b');
+        assert.equal(model.get('a'), 'b');
+
+       // Bindings continue to work after reset.
+        model.set('a', 'c');
+        assert.equal(node.get('value'), 'c');
+        done();
+      });
+
 
       it('supports nested model bindings', function() {
         container = utils.makeContainer();
