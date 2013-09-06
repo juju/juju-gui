@@ -87,12 +87,11 @@ describe('Landscape integration', function() {
 
 
   it('should summarize landscape annotations at object parents', function() {
-    var anno, unit1, unit2;
+    var unit1, unit2;
     var env = db.environment;
     var mysql = db.services.getById('mysql');
 
     landscape.update();
-    anno = db.environment.get('annotations');
 
     unit1 = db.units.item(0);
     unit2 = db.units.item(1);
@@ -130,7 +129,7 @@ describe('Landscape integration', function() {
     // Add a second service with a unit in a flagged state
     // and make sure the environment reflects this.
     var wordpress = db.services.add({id: 'wordpress'});
-    var unit3 = db.units.add({
+    db.units.add({
       id: 'wordpress/0',
       annotations: {'landscape-security-upgrades': true}
     });

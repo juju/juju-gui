@@ -136,8 +136,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Template: service.handlebars', function() {
     var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-    var warningMessage = 'Warning: Changing the settings';
-    var divider = '<img class="divider"';
     var Y, conn, env, template;
 
     before(function(done) {

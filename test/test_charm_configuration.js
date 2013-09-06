@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// Turn off jshint complaints about the "expect" interface.  Please treat the
+// "expect" interface as legacy.  Use asserts instead.
+/* jshint -W030 */
+
 describe('charm configuration', function() {
   var Y, juju, db, models, views, makeView, container,
       charmConfig = {
@@ -78,7 +82,7 @@ describe('charm configuration', function() {
   });
 
   it('must show loading message if the charm is not loaded', function() {
-    var view = makeView();
+    makeView();
     container.one('div.alert').get('text').trim().should.equal(
         'Waiting on charm data...');
   });
@@ -109,11 +113,9 @@ describe('charm configuration', function() {
   });
 
   it('must deploy a charm with default value', function() {
-    var deployed = false,
-        received_charm_url,
+    var received_charm_url,
         received_service_name,
         env = {deploy: function(charm_url, service_name) {
-          deployed = true;
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
@@ -183,14 +185,12 @@ describe('charm configuration', function() {
   });
 
   it('must deploy a charm with the custom configuration', function() {
-    var deployed = false,
-        received_charm_url,
+    var received_charm_url,
         received_service_name,
         received_config,
         received_num_units,
         env = {deploy: function(charm_url, service_name, config, config_raw,
                                 num_units) {
-            deployed = true;
             received_charm_url = charm_url;
             received_service_name = service_name;
             received_config = config;
@@ -343,8 +343,8 @@ describe('charm configuration', function() {
          db: db,
          tooltipDelay: 0 });
        view.render();
-       var _ = expect(container.one('.config-file-upload')).to.not.exist;
-       _ = expect(container.one('.remove-config-file')).to.not.exist;
+       expect(container.one('.config-file-upload')).to.not.exist;
+       expect(container.one('.remove-config-file')).to.not.exist;
      });
 
   it('must show a configuration file upload button if the charm ' +
@@ -367,7 +367,7 @@ describe('charm configuration', function() {
        );
        charm.loaded = true;
        view.render();
-       var _ = expect(container.one('.config-file-upload')).to.exist;
+       expect(container.one('.config-file-upload')).to.exist;
        // The config file name should be ''.
        container.one('.config-file-name').getContent().should.equal('');
      });
@@ -418,7 +418,7 @@ describe('charm configuration', function() {
     view.configFileContent = 'how now brown cow';
     container.one('.config-file-name').setContent('a.yaml');
     container.one('.config-file-upload-overlay').simulate('click');
-    var _ = expect(view.configFileContent).to.not.exist;
+    expect(view.configFileContent).to.not.exist;
     container.one('.config-file-name').getContent().should.equal('');
     container.one('.config-file-upload-widget').get('files').size()
          .should.equal(0);
@@ -449,7 +449,7 @@ describe('charm configuration', function() {
     var config_raw = 'tuning-level: \n expert';
     view.configFileContent = config_raw;
     container.one('#charm-deploy').simulate('click');
-    var _ = expect(received_config).to.not.exist;
+    expect(received_config).to.not.exist;
     received_config_raw.should.equal(config_raw);
   });
 

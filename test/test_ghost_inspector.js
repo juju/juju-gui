@@ -286,7 +286,6 @@ describe('Ghost Inspector', function() {
       node.getStyle('display').should.equal('none');
     });
     // Load the file.
-    var fileInput = container.one('.config-file input');
     inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
 
     // And then click to remove it.

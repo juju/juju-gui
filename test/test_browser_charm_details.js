@@ -87,6 +87,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.render();
       assert.isNull(view.get('container').one('.heading'));
+      // There is no 'related charms' tab to display.
+      assert.equal(view.get('container').all('.bws-related-charms').size(), 0);
     });
 
     // Return the charm heading node included in the charm detail view.
