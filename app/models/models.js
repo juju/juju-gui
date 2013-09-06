@@ -116,51 +116,47 @@ YUI.add('juju-models', function(Y) {
   };
 
   /**
-    Utility method to add a 'type' of Model/ModelList to the service Model.
+    Utility method to add a copied Unit Model to the service Model.
 
     @param {Object | null} modelInstance a reference to the model instance
                            to use to extract the service information from.
-    @param {String} type A string name of the type of Model to copy or
-                    create on the service Model.
     @param {Object | String} data The delta data.
     @param {Object} db A reference to the database Model.
     @return {Object} Reference to the modellist which was added to the service.
   */
-  var augmentServiceModel = function(modelInstance, type, data, db) {
-    // Apply this action for this instance to all service models as well.
-    // In the future we can transition from using db[type] to always
-    // looking at db.services[serviceId][type].  Note that, in the case of
-    // `action === 'remove'`, instance will be null, so we retrieve the
-    // service name from `data`, which is the removed unit's name.
-    var services = getServicesfromDelta(modelInstance, data, db);
-    var typeKeys = {
-      ServiceUnitList: 'units',
-      RelationList: 'relations'
-    };
-
-    if (Y.Lang.isArray(services)) {
-      // If there are multiple services then it's a relation
-      var modelList = [], tmp;
-      services.forEach(function(service) {
-        tmp = service.get(typeKeys[type]);
-        if (!tmp) {
-          tmp = new models[type]();
-          service.set(typeKeys[type], tmp);
-          modelList.push(tmp);
-        } else {
-          modelList.push(tmp);
-        }
-      });
-      return modelList;
-    } else {
-      // If there is a single service then it's a unit(or other)
-      var modelList = services.get(typeKeys[type]);
-      if (!modelList) {
-        modelList = new models[type]();
-        services.set(typeKeys[type], modelList);
-      }
-      return modelList;
+  var addUnitToServiceModel = function(modelInstance, data, db) {
+    var service = getServicesfromDelta(modelInstance, data, db);
+    var modelList = service.get('units');
+    if (!modelList) {
+      modelList = new models.ServiceUnitList();
+      service.set('units', modelList);
     }
+    return modelList;
+  };
+
+  /**
+    Utility method to add a copied Relation Model to the service Model.
+
+    @param {Object | null} modelInstance a reference to the model instance
+                           to use to extract the service information from.
+    @param {Object | String} data The delta data.
+    @param {Object} db A reference to the database Model.
+    @return {Object} Reference to the modellist which was added to the service.
+  */
+  var addRelationToServiceModel = function(modelInstance, data, db) {
+    var services = getServicesfromDelta(modelInstance, data, db);
+    var modelList = [], tmp;
+    services.forEach(function(service) {
+      tmp = service.get('relations');
+      if (!tmp) {
+        tmp = new models.RelationList();
+        service.set('relations', tmp);
+        modelList.push(tmp);
+      } else {
+        modelList.push(tmp);
+      }
+    });
+    return modelList;
   };
 
   /**
@@ -402,7 +398,7 @@ YUI.add('juju-models', function(Y) {
       if (!db) {
         return;
       }
-      var unitList = augmentServiceModel(instance, 'ServiceUnitList', data, db);
+      var unitList = addUnitToServiceModel(instance, data, db);
       _process_delta(unitList, action, data, {});
     },
 
@@ -581,8 +577,7 @@ YUI.add('juju-models', function(Y) {
 
     process_delta: function(action, data, db) {
       var instance = _process_delta(this, action, data, {});
-      var relationLists =
-            augmentServiceModel(instance, 'RelationList', data, db);
+      var relationLists = addRelationToServiceModel(instance, data, db);
       relationLists.forEach(function(relationList) {
         _process_delta(relationList, action, data, {});
       });
