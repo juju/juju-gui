@@ -647,7 +647,7 @@ YUI.add('juju-databinding', function(Y) {
         }
       });
       if (nodeHandler.eq(e.target, binding.get(model))) {
-        delete viewlet.changedValues[key];        
+        delete viewlet.changedValues[key];
       } else {
         viewlet.changedValues[key] = true;
       }

@@ -578,7 +578,7 @@ describe('data binding library', function() {
           input.after('valueChange', function(e) {
             assert.deepEqual(viewlet.changedValues, {});
             done();
-          })
+          });
           // Make valueChange work.
           input.simulate('focus');
           input.set('value', '');

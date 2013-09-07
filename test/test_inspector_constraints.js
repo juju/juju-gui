@@ -216,9 +216,9 @@ describe('Inspector Constraints', function() {
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
     assert.lengthOf(
-      Object.keys(viewlet.changedValues),
-      0,
-      'changedValues is not empty');
+        Object.keys(viewlet.changedValues),
+        0,
+        'changedValues is not empty');
   });
 
 });
