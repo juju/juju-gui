@@ -147,7 +147,7 @@ YUI.add('subapp-browser', function(Y) {
         urlParts.push('search');
       } else if (this._oldState.search) {
         // We had a search, but are moving away; clear the old search.
-        this._filter.reset();
+        this._filter.clear();
       }
 
       if (this._viewState.charmID) {
@@ -182,6 +182,7 @@ YUI.add('subapp-browser', function(Y) {
       // input and later the charm details will need to know for selecting
       // the proper backup icon.
       return Y.merge(cfg, {
+        envSeries: this.get('envSeries'),
         db: this.get('db'),
         filters: this._filter.getFilterData(),
         store: this.get('store')
@@ -264,8 +265,8 @@ YUI.add('subapp-browser', function(Y) {
           this._viewState.search &&
           (
            this._hasStateChanged('search') ||
-           this._hasStateChanged('viewmode') ||
            this._hasStateChanged('querystring') ||
+           this._hasStateChanged('viewmode') ||
            (this._hasStateChanged('charmID') && !this._viewState.charmID)
           )
       ) {
@@ -687,20 +688,15 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
-      // If we have a _search and we're not showing it, then destroy it.
-      if (this._search && !this._shouldShowSearch()) {
-        this._search.destroy();
-      }
-
-      // Clean up any old editorial content. If we need it, we'll reset it up
-      // below.
-      if (this._editorial) {
-        this._editorial.destroy();
-      }
-
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
+        if (this._search) {
+          this._search.destroy();
+        }
+        if (this._editorial) {
+          this._editorial.destroy();
+        }
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       } else if (this._shouldShowSearch()) {
@@ -709,6 +705,9 @@ YUI.add('subapp-browser', function(Y) {
         this.renderSearchResults(req, res, next);
       } else if (!this._viewState.search && !this._viewState.charmID) {
         // Render the editorial in fullscreen only if we don't have a charmid
+        if (this._search) {
+          this._search.destroy();
+        }
         this.renderEditorial(req, res, next);
       }
 
@@ -1047,6 +1046,15 @@ YUI.add('subapp-browser', function(Y) {
       container: {
         value: '#subapp-browser'
       },
+
+      /**
+         The series in the environment, e.g. 'precise'
+
+         @attribute envSeries
+         @default undefined
+         @type {String}
+       */
+      envSeries: {},
 
       /**
          @attribute store

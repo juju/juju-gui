@@ -74,28 +74,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    // Ensure the search results are rendered inside the container.
-    it('defaults to an initial filter set', function() {
-      var filter = new Filter();
-      filter.get('series').should.eql(['precise']);
-      filter.get('type').should.eql(['approved']);
-    });
-
     it('can reset to its initial defaults', function() {
       var filter = new Filter();
       filter.set('text', 'foo');
       filter.set('provider', ['ec2']);
-      filter.reset();
+      filter.clear();
       assert.equal(0, filter.get('provider').length);
       assert.equal('', filter.get('text'));
     });
 
     it('constructs a valid query string based on settings.', function() {
       var filter = new Filter();
-      filter.genQueryString().should.equal(
-          'series=precise&text=&type=approved');
+      filter.set('text', 'foo');
 
-      filter.set('series', []);
       // Google and Firefox think that the string should start with the first
       // param. PhantomJS thinks it starts with a &. Removing the & if it's at
       // the start of the string and checking the rest of it for validity.
@@ -104,7 +95,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         qstring = qstring.slice(1);
       }
 
-      qstring.should.equal('text=&type=approved');
+      qstring.should.equal('text=foo');
     });
 
     it('updates string values into an array', function() {

@@ -661,7 +661,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // We'll hit the default renderEditorial so stub that out as the catch
         // that out test is done.
-        app.renderEditorial = function() {
+        app._shouldShowCharm = function() { return true; };
+        app.renderCharmDetails = function() {
           assert.equal(searchCleaned, true);
           assert.equal(editorialCleaned, true);
           done();
@@ -1287,7 +1288,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
         // We have a good valid search.
-        assert.equal(url, '/search?series=precise&text=apache&type=approved');
+        assert.equal(url, '/search?text=apache');
 
         // Now let's clear it and make sure it's emptied.
         url = browser._getStateUrl({
@@ -1309,7 +1310,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // We have a good valid search.
         assert.equal(
             url,
-            '/search?categories=app-servers&series=precise&text=apache&type=approved');
+            '/search?categories=app-servers&text=apache');
 
         // Now let's update it and force all the rest to go away.
         url = browser._getStateUrl({
