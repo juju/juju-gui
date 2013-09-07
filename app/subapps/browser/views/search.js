@@ -30,7 +30,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      DEFAULT_SEARCH_SERIES = 'precise';
 
   /**
      Search results display view.
@@ -44,61 +45,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
         template: views.Templates.search,
 
         /**
-           Watch for changes to the filters to update results.
-
-           @method _bindEvents
-
-         */
-        _bindEvents: function() {
-          this.events['.filterControl a'] = {
-            click: '_toggleFilters'
-          };
-        },
-
-        /**
-           When a filter is changed, catch the event and build a change object
-           for the subapp to generate a new route for.
-
-           @method _filterChanged
-           @param {Event} ev the change event detected from the widget.
-
-         */
-        _filterChanged: function(ev) {
-          var filters = this.get('filters');
-          filters[ev.change.field] = ev.change.value;
-          var change = {
-            search: true,
-            filter: {}
-          };
-          change.filter[ev.change.field] = ev.change.value;
-          this.fire('viewNavigate', {change: change});
-        },
-
-        /**
-           Show/hide the filters based on the click of this control.
-
-           @method _toggleFilters
-           @param {Event} ev The click event from YUI.
-
-         */
-        _toggleFilters: function(ev) {
-          ev.halt();
-
-          var control = ev.currentTarget;
-          var newTarget = control.hasClass('less') ? 'more' : 'less';
-          newTarget = this.get('container').one('.filterControl .' + newTarget);
-
-          control.hide();
-          newTarget.show();
-
-          if (newTarget.hasClass('less')) {
-            this.get('container').one('.search-filters').show();
-          } else {
-            this.get('container').one('.search-filters').hide();
-          }
-        },
-
-        /**
            Renders the search results from the the store query.
 
            @method _renderSearchResults
@@ -107,21 +53,42 @@ YUI.add('subapp-browser-searchview', function(Y) {
         _renderSearchResults: function(results) {
           var target = this.get('renderTo'),
               tpl = this.template({
-                count: results.size(),
+                count: results.recommended.length + results.more.length,
                 isFullscreen: this.get('isFullscreen')
               }),
               tplNode = Y.Node.create(tpl),
-              results_container = tplNode.one('.search-results'),
-              filter_container = tplNode.one('.search-filters');
+              results_container = tplNode.one('.search-results');
 
-          results.map(function(charm) {
-            var ct = new widgets.browser.CharmToken(Y.merge(
-                charm.getAttrs(), {
-                  size: 'small'
-                }));
-            ct.render(results_container);
-          }, this);
-          this._renderFilterWidget(filter_container);
+          var recommendedContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Recommended charms',
+                cutoff: 4,
+                children: results.recommended.map(function(charm) {
+                  return charm.getAttrs();
+                })}, {
+                additionalChildConfig: {
+                  size: this.get('isFullscreen') ? 'large' : 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
+
+          var moreContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'More charms',
+                cutoff: 4,
+                children: results.more.map(function(charm) {
+                  return charm.getAttrs();
+                })}, {
+                additionalChildConfig: {
+                  size: this.get('isFullscreen') ? 'large' : 'small',
+                  isDraggable: !this.get('isFullscreen')
+                }
+              }));
+
+          var recommend_node = results_container.one('.recommended'),
+              more_node = results_container.one('.more');
+          recommendedContainer.render(recommend_node);
+          moreContainer.render(more_node);
           this.get('container').setHTML(tplNode);
           target.setHTML(this.get('container'));
           // XXX: We shouldn't have to do this; calling .empty before rending
@@ -143,27 +110,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
             search: results,
             charms: new models.BrowserCharmList()
           };
-          cache.charms.add(results);
+          cache.charms.add(results.recommended);
+          cache.charms.add(results.more);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
-        },
-
-        /**
-           Render the filter controls widget into the search page.
-
-           @method _renderfilterWidget
-           @param {Node} container the node to drop the filter control into.
-
-         */
-        _renderFilterWidget: function(container) {
-          this.filters = new widgets.browser.Filter({
-            filters: this.get('filters')
-          });
-
-          this.filters.render(container);
-          this.addEvent(
-              this.filters.on(
-                  this.filters.EV_FILTER_CHANGED, this._filterChanged, this)
-          );
+          this.charmContainers = [
+            recommendedContainer,
+            moreContainer
+          ];
         },
 
         /**
@@ -174,6 +127,19 @@ YUI.add('subapp-browser-searchview', function(Y) {
          */
         apiFailure: function(data, request) {
           this._apiFailure(data, request, 'Failed to load search results.');
+        },
+
+        /**
+           Destroy this view and clear from the dom world.
+
+           @method destructor
+         */
+        destructor: function() {
+          if (this.charmContainers) {
+            Y.Array.each(this.charmContainers, function(container) {
+              container.destroy();
+            });
+          }
         },
 
         /**
@@ -196,7 +162,24 @@ YUI.add('subapp-browser-searchview', function(Y) {
               'success': function(data) {
                 var results = this.get('store').resultsToCharmlist(
                     data.result);
-                this._renderSearchResults(results);
+                var recommended = [],
+                    more = [];
+                var series = this.get('envSeries');
+                if (!series) {
+                  series = DEFAULT_SEARCH_SERIES;
+                }
+                results.map(function(charm) {
+                  if (charm.get('is_approved') &&
+                      charm.get('series') === series) {
+                    recommended.push(charm);
+                  } else {
+                    more.push(charm);
+                  }
+                }, this);
+                this._renderSearchResults({
+                  recommended: recommended,
+                  more: more
+                });
               },
               'failure': this.apiFailure
             }, this);
@@ -219,6 +202,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
   requires: [
     'base-build',
     'browser-charm-token',
+    'browser-charm-container',
     'browser-filter-widget',
     'event-tracker',
     'juju-browser-models',

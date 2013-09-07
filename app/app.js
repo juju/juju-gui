@@ -593,6 +593,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
+      cfg.envSeries = this.env.get('defaultSeries');
       this.addSubApplications(cfg);
 
       // When someone wants a charm to be deployed they fire an event and we
