@@ -35,25 +35,20 @@ YUI.add('viewlet-service-relations', function(Y) {
     bindings: {
       aggregateRelations: {
         update: function(node, value) {
-          debugger;
+          var db = this.viewlet.options.db;
+          var service = this.viewlet.model;
+          var relations = utils.getRelationDataForService(db, service);
+          node.setHTML(templates['service-relations-list']({
+            relations: relations
+          }));
         }
       },
       aggregateRelationError: {
         update: function(node, value) {
-          debugger;
+          // Aggregate the unit statuses here to display the relation status
         }
       }
-    },
-
-    'render': function(service, options) {
-      var relations = utils.getRelationDataForService(options.db, service);
-      var contents = this.template({
-        relations: relations
-      });
-      this.container = Y.Node.create(this.templateWrapper);
-      this.container.setHTML(contents);
     }
-
   };
 
 }, '0.0.1', {
