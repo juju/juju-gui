@@ -267,11 +267,11 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     /**
-     Get the field handler for a given node with a fallback.
+     Get the node handler for a given node with a fallback.
 
-     @method getFieldHandler
+     @method getNodeHandler
      @param {Object} node A DOM node (not a YUI node).
-     @return {Object} An associated field handler for the node.
+     @return {Object} An associated node handler for the node.
      */
     BindingEngine.prototype.getNodeHandler = function(node) {
       var field;
