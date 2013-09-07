@@ -23,7 +23,7 @@ describe('data binding library', function() {
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
                     'base', 'handlebars',
-                    'model', 'model-list'];
+                    'model', 'model-list', 'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       BindingEngine = Y.namespace('juju.views').BindingEngine;
@@ -522,6 +522,72 @@ describe('data binding library', function() {
       });
 
     });
+
+    describe('changedValues tests', function() {
+      var viewlet, engine, container, model, input;
+
+      function generateEngine(input) {
+        container = utils.makeContainer();
+        container.setHTML(input);
+        viewlet = {
+          container: container,
+          changedValues: {},
+          _eventHandles: []
+        };
+        engine = new BindingEngine({interval: 0});
+      }
+
+      beforeEach(function() {
+        model = new Y.Model({a: undefined});
+        generateEngine('<textarea data-bind="a"></textarea>');
+        input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+      });
+
+      afterEach(function() {
+        container.remove().destroy(true);
+        model.destroy(true);
+        input.destroy(true);
+      });
+
+      it('should update changedValues when inputs change', function(done) {
+        // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+        // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+        if (Y.UA.ie === 10) {
+          done();
+        }
+        assert.deepEqual(viewlet.changedValues, {});
+        input.after('valueChange', function(e) {
+          assert.deepEqual(viewlet.changedValues, {a: true});
+          done();
+        });
+        // Make valueChange work.
+        input.simulate('focus');
+        input.set('value', 'kumquat');
+      });
+
+      it('should clear changedValues when inputs reset', function(done) {
+        // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+        // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+        if (Y.UA.ie === 10) {
+          done();
+        }
+        assert.deepEqual(viewlet.changedValues, {});
+        var handler = input.after('valueChange', function(e) {
+          handler.detach();
+          input.after('valueChange', function(e) {
+            assert.deepEqual(viewlet.changedValues, {});
+            done();
+          })
+          // Make valueChange work.
+          input.simulate('focus');
+          input.set('value', '');
+        });
+        // Make valueChange work.
+        input.simulate('focus');
+        input.set('value', 'kumquat');
+      });
+    });
   });
 
   describe('dependencies in bindings', function() {
@@ -568,7 +634,7 @@ describe('data binding library', function() {
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Stark');
 
-      // Last name isn't bound the DOM fragment but is a dep
+      // Last name isn't bound to the DOM fragment but is a dep
       // of full. The system should allow for this
       model.set('last', 'Lannister');
       assert.equal(container.one('[data-bind="full"]')

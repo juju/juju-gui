@@ -39,17 +39,18 @@ YUI.add('juju-databinding', function(Y) {
         'get': function(node) {
           return node.get('checked');
         },
-        'set': function(node, value) {
-          if (value === 'false' || !value) {
-            node.set('checked', false);
-          } else {
-            node.set('checked', true);
+        '_normalizeValue': function(value) {
+          if (value === 'false') {
+            return false;
           }
+          return !! value;
+        },
+        'set': function(node, value) {
+          node.set('checked', this._normalizeValue(value));
         },
         'eq': function(node, value) {
           var currentValue = !! this.get(node);
-          var normalizedValue = !! value;
-          return (normalizedValue === currentValue);
+          return (this._normalizeValue(value) === currentValue);
         }
       }),
       input: Object.create({
@@ -636,12 +637,22 @@ YUI.add('juju-databinding', function(Y) {
       @param {Object} viewlet reference.
     */
     BindingEngine.prototype._storeChanged = function(e, viewlet) {
-      var key = e.currentTarget.getData('bind');
-
-      viewlet.changedValues[key] = true;
+      var key = e.target.getData('bind');
+      var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
+      var binding;
+      var model = viewlet.model;
+      this._bindings.forEach(function(b) {
+        if (b.name === key) {
+          binding = b;
+        }
+      });
+      if (nodeHandler.eq(e.target, binding.get(model))) {
+        delete viewlet.changedValues[key];        
+      } else {
+        viewlet.changedValues[key] = true;
+      }
       if (viewlet.changed) {
-        viewlet.changed(e.target, key,
-            this.getNodeHandler(e.target.getDOMNode()));
+        viewlet.changed(e.target, key, nodeHandler);
       }
     };
 
@@ -755,7 +766,7 @@ YUI.add('juju-databinding', function(Y) {
           if (binding.update) {
             binding.update.call(binding, binding.target, value);
           } else {
-            binding.field.set.call(binding, binding.target, value);
+            binding.field.set(binding.target, value);
           }
           optionalCallbacks(delta.wildcards['+'],
                             'update', binding.target, value);
@@ -821,5 +832,6 @@ YUI.add('juju-databinding', function(Y) {
              'juju-models',
              'yui-later',
              'observe',
-             'node']
+             'node',
+             'event-valuechange']
 });
