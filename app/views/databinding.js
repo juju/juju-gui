@@ -34,7 +34,7 @@ YUI.add('juju-databinding', function(Y) {
       slice = [].slice;
 
   views.BindingEngine = (function() {
-    var _textEq = function(node, value) {
+    var textEq = function(node, value) {
       var currentValue = this.get(node);
       var normalizedValue = value ? value.toString() : '';
       return (normalizedValue === currentValue);
@@ -42,7 +42,7 @@ YUI.add('juju-databinding', function(Y) {
     var textInputFieldHandler = Object.create({
       'get': function(node) { return node.get('value');},
       'set': function(node, value) { node.set('value', value || '');},
-      'eq': _textEq
+      'eq': textEq
     });
     var DEFAULT_FIELD_HANDLERS = {
       'input[type=checkbox]': Object.create({
@@ -53,7 +53,7 @@ YUI.add('juju-databinding', function(Y) {
           if (value === 'false') {
             return false;
           }
-          return !! value;
+          return !!value;
         },
         'set': function(node, value) {
           node.set('checked', this._normalizeValue(value));
@@ -71,11 +71,11 @@ YUI.add('juju-databinding', function(Y) {
       'default': Object.create({
         'get': function(node) { return node.get('text');},
         'set': function(node, value) { node.setHTML(value);},
-        'eq': _textEq
+        'eq': textEq
       })
     };
 
-    var _indexBindings = function(bindings, keyfunc, multiple) {
+    var indexBindings = function(bindings, keyfunc, multiple) {
       var index = {};
       if (!keyfunc) {
         keyfunc = function(b) {
@@ -163,9 +163,9 @@ YUI.add('juju-databinding', function(Y) {
       // Ignore 'possible strict violation'
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};
-      var index = _indexBindings(bindings);
+      var index = indexBindings(bindings);
       // Handle wildcards (before we filter down bindings)
-      result.wildcards = _indexBindings(bindings, function(binding) {
+      result.wildcards = indexBindings(bindings, function(binding) {
         if (binding.name !== '*' && binding.name !== '+') {
           return;
         }
@@ -491,7 +491,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._setupDependencies = function() {
       var self = this;
       var bindings = this._bindings;
-      var index = _indexBindings(bindings);
+      var index = indexBindings(bindings);
 
       bindings.forEach(function(binding) {
         if (binding.depends) {
@@ -673,7 +673,7 @@ YUI.add('juju-databinding', function(Y) {
       var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
       var binding;
       var model = viewlet.model;
-      if (
+      if ( // Find the binding for the key, and break when found.
           !this._bindings.some(function(b) {
             if (b.name === key) {
               binding = b;

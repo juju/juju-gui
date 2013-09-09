@@ -665,7 +665,7 @@ describe('data binding library', function() {
       engine.bind(model, viewlet);
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Ned Stark');
-      // Update something full depends on.
+      // Update something "full" depends on.
       model.setAttrs({first: 'Sansa'});
       assert.equal(container.one('[data-bind="first"]')
                    .get('value'), 'Sansa');
@@ -673,8 +673,8 @@ describe('data binding library', function() {
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Stark');
 
-      // Last name isn't bound to the DOM fragment but is a dep
-      // of full. The system should allow for this
+      // The last name isn't bound to the DOM fragment but is a dependency
+      // of "full". The system should allow for this.
       model.set('last', 'Lannister');
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Lannister');
