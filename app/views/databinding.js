@@ -34,6 +34,16 @@ YUI.add('juju-databinding', function(Y) {
       slice = [].slice;
 
   views.BindingEngine = (function() {
+    var _textEq = function(node, value) {
+      var currentValue = this.get(node);
+      var normalizedValue = value ? value.toString() : '';
+      return (normalizedValue === currentValue);
+    };
+    var textInputFieldHandler = Object.create({
+      'get': function(node) { return node.get('value');},
+      'set': function(node, value) { node.set('value', value || '');},
+      'eq': _textEq
+    });
     var DEFAULT_FIELD_HANDLERS = {
       'input[type=checkbox]': Object.create({
         'get': function(node) {
@@ -53,36 +63,19 @@ YUI.add('juju-databinding', function(Y) {
           return (this._normalizeValue(value) === currentValue);
         }
       }),
-      input: Object.create({
-        'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value || '');},
-        'eq': function(node, value) {
-          var currentValue = this.get(node);
-          var normalizedValue = value ? value.toString() : '';
-          return (normalizedValue === currentValue);
-        }
-      }),
-      textarea: Object.create({
-        'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value || '');},
-        'eq': function(node, value) {
-          var currentValue = this.get(node);
-          var normalizedValue = value ? value.toString() : '';
-          return (normalizedValue === currentValue);
-        }
-      }),
+      // The textInputFieldHandler is good for input[type=text], textareas,
+      // and many other HTML5 inputs.
+      input: textInputFieldHandler,
+      textarea: textInputFieldHandler,
+      // This is good for non-form-field HTML nodes (e.g. span).
       'default': Object.create({
         'get': function(node) { return node.get('text');},
         'set': function(node, value) { node.setHTML(value);},
-        'eq': function(node, value) {
-          var currentValue = this.get(node);
-          var normalizedValue = value ? value.toString() : '';
-          return (normalizedValue === currentValue);
-        }
+        'eq': _textEq
       })
     };
 
-    function _indexBindings(bindings, keyfunc, multiple) {
+    var _indexBindings = function(bindings, keyfunc, multiple) {
       var index = {};
       if (!keyfunc) {
         keyfunc = function(b) {
@@ -109,7 +102,7 @@ YUI.add('juju-databinding', function(Y) {
         }
       });
       return index;
-    }
+    };
 
     /**
       Trigger callback when present on context. Passes additional arguments to
@@ -680,11 +673,14 @@ YUI.add('juju-databinding', function(Y) {
       var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
       var binding;
       var model = viewlet.model;
-      this._bindings.forEach(function(b) {
-        if (b.name === key) {
-          binding = b;
-        }
-      });
+      if (
+          !this._bindings.some(function(b) {
+            if (b.name === key) {
+              binding = b;
+              return true;
+            }})) {
+        throw 'Programmer error: no binding found for ' + key;
+      }
       if (nodeHandler.eq(e.target, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
