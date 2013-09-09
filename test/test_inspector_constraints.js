@@ -62,7 +62,8 @@ describe('Inspector Constraints', function() {
     var selector = 'input[name=' + key + '].constraint-field';
     var node = viewlet.container.one(selector);
     node.set('value', value);
-    viewlet._changedValues = ['constraints.' + key];
+    viewlet.changedValues = {};
+    viewlet.changedValues['constraints.' + key] = true;
     return node;
   };
 
@@ -215,7 +216,10 @@ describe('Inspector Constraints', function() {
     assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    assert.lengthOf(viewlet._changedValues, 0, 'changedValues is not empty');
+    assert.lengthOf(
+        Object.keys(viewlet.changedValues),
+        0,
+        'changedValues is not empty');
     // There was an odd bug that caused this assertion to fail at one point.
     assert.equal(saveButton.getHTML(), 'Confirm');
   });
