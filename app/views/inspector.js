@@ -714,6 +714,34 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Highlight modified fields to show they have been saved.
+      Note that the "modified" class is removed in the syncedFields method.
+
+      @method _highlightSaved
+      @param {Y.Node} container The affected viewlet container.
+      @return {undefined} Nothing.
+    */
+    _highlightSaved: function(container) {
+      var modified = container.all('.modified');
+      modified.addClass('change-saved');
+      // If you don't remove the class later, the animation runs every time
+      // you switch back to the tab with these fields. Unfortunately,
+      // animationend handlers don't work reliably, once you hook them up with
+      // the associated custom browser names (e.g. webkitAnimationEnd) on the
+      // raw DOM node, so we don't even bother with them.  We just make a
+      // timer to remove the class.
+      var parentContainer = this.viewletManager.get('container');
+      Y.later(1000, modified, function() {
+        // Use the modified collection that we originally found, but double
+        // check that our expected context is still around.
+        if (parentContainer.inDoc() &&
+            !container.all('.change-saved').isEmpty()) {
+          this.removeClass('change-saved');
+        }
+      });
+    },
+
+    /**
       Pulls the content from each configuration field and sends the values
       to the environment
 
@@ -765,31 +793,23 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e yui event object.
     */
     _setConfigCallback: function(container, e) {
-      container.one('.controls .confirm').removeAttribute('disabled');
-      // If the user has conflicted fields and still choose to
-      // save then we will be overwriting the values in Juju.
-      var bindingEngine = this.viewletManager.bindingEngine;
-      bindingEngine.clearChangedValues('config');
-      var db = this.viewletManager.get('db');
+      // If the user has conflicted fields and still chooses to
+      // save, then we will be overwriting the values in Juju.
       if (e.err) {
+        var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
-              title: 'Error setting service config',
+              title: 'Error setting service configuration',
               message: 'Service name: ' + e.service_name,
               level: 'error'
             })
         );
       } else {
-        // XXX show saved notification
-        // we have no story for this yet
-        db.notifications.add(
-            new models.Notification({
-              title: 'Config saved successfully ',
-              message: e.service_name + ' config set successfully.',
-              level: 'info'
-            })
-        );
+        this._highlightSaved(container);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.clearChangedValues('config');
       }
+      container.one('.controls .confirm').removeAttribute('disabled');
     },
 
     /**
@@ -827,13 +847,10 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     _saveConstraintsCallback: function(container, ev) {
-      var inspector = this.viewletManager;
-      var bindingEngine = inspector.bindingEngine;
-      bindingEngine.clearChangedValues('constraints');
-      var db = inspector.get('db');
-      var service = inspector.get('model');
       if (ev.err) {
         // Notify an error occurred while updating constraints.
+        var db = this.viewletManager.get('db');
+        var service = this.viewletManager.get('model');
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service constraints',
@@ -843,15 +860,9 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        // XXX frankban: show success notification.
-        // We have no story for this yet.
-        db.notifications.add(
-            new models.Notification({
-              title: 'Constraints saved successfully',
-              message: ev.service_name + ' constraints set successfully.',
-              level: 'info'
-            })
-        );
+        this._highlightSaved(container);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.clearChangedValues('constraints');
       }
       container.one('.save-constraints').removeAttribute('disabled');
     },
@@ -1088,6 +1099,7 @@ YUI.add('juju-view-inspector', function(Y) {
         node.removeClass('modified');
       }
     },
+
     /**
      * Mark the given node to not be marked as 'modified' in the UX.
      *
@@ -1104,6 +1116,7 @@ YUI.add('juju-view-inspector', function(Y) {
         node.addClass('modified');
       }
     },
+
     /**
      * Reset the given node to not be marked as 'conflict-pending' in the UX.
      *
@@ -1124,6 +1137,7 @@ YUI.add('juju-view-inspector', function(Y) {
         node.removeClass('conflict-pending');
       }
     },
+
     /**
      * Mark the given node to not be marked as 'conflict-pending' in the UX.
      *
@@ -1142,6 +1156,7 @@ YUI.add('juju-view-inspector', function(Y) {
         node.addClass('conflict-pending');
       }
     },
+
     /**
      * Reset the given node to not be marked as 'conflict' in the UX.
      *
@@ -1157,6 +1172,7 @@ YUI.add('juju-view-inspector', function(Y) {
       // value to keep.
       node.removeClass('conflict');
     },
+
     /**
      * Mark the given node to not be marked as 'conflict' in the UX.
      *
