@@ -213,12 +213,15 @@ describe('Inspector Constraints', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
     var saveButton = container.one('button.save-constraints');
+    assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
     assert.lengthOf(
         Object.keys(viewlet.changedValues),
         0,
         'changedValues is not empty');
+    // There was an odd bug that caused this assertion to fail at one point.
+    assert.equal(saveButton.getHTML(), 'Confirm');
   });
 
 });

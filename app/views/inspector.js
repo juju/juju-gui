@@ -1248,11 +1248,19 @@ YUI.add('juju-view-inspector', function(Y) {
           '.conflict', this));
     },
     'unsyncedFields': function(dirtyFields) {
-      this.container.one('.controls .confirm').setHTML('Overwrite');
+      var node = this.container.one('.controls .confirm');
+      if (!node.getData('originalText')) {
+        node.setData('originalText', node.getHTML());
+      }
+      node.setHTML('Overwrite');
     },
     'syncedFields': function() {
-      this.container.one('.controls .confirm').setHTML('Save Changes');
+      var node = this.container.one('.controls .confirm');
+      var title = node.getData('originalText');
       this.container.all('.modified').removeClass('modified');
+      if (title) {
+        node.setHTML(title);
+      }
     }
   };
 
