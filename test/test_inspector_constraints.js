@@ -62,7 +62,9 @@ describe('Inspector Constraints', function() {
     var selector = 'input[name=' + key + '].constraint-field';
     var node = viewlet.container.one(selector);
     node.set('value', value);
-    viewlet._changedValues = ['constraints.' + key];
+    // Trigger bindingEngine to notice change.
+    var bindingEngine = inspector.viewletManager.bindingEngine;
+    bindingEngine._storeChanged({target: node}, viewlet);
     return node;
   };
 
@@ -188,15 +190,13 @@ describe('Inspector Constraints', function() {
   });
 
   it('handles success responses from the environment', function() {
+    var viewlet = getViewlet(inspector);
+    changeForm(viewlet, 'arch', 'i386');
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    var db = inspector.viewletManager.get('db');
-    // A success notification is correctly generated.
-    assert.strictEqual(1, db.notifications.size());
-    var msg = db.notifications.item(0);
-    assert.strictEqual('info', msg.get('level'));
-    assert.strictEqual('Constraints saved successfully', msg.get('title'));
+    var input = container.one('input[name=arch].constraint-field');
+    assert.isTrue(input.hasClass('change-saved'));
   });
 
   it('disables and re-enables the save button during the process', function() {
@@ -211,10 +211,17 @@ describe('Inspector Constraints', function() {
   it('clears changed values on save', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
+    assert.lengthOf(Object.keys(viewlet.changedValues), 1);
     var saveButton = container.one('button.save-constraints');
+    assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    assert.lengthOf(viewlet._changedValues, 0, 'changedValues is not empty');
+    assert.lengthOf(
+        Object.keys(viewlet.changedValues),
+        0,
+        'changedValues is not empty after a save.');
+    // There was an odd bug that caused this assertion to fail at one point.
+    assert.equal(saveButton.getHTML(), 'Confirm');
   });
 
 });

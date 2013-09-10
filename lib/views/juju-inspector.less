@@ -1,4 +1,5 @@
 @inspector-background-color: #221e1c;
+@inspector-changed-field: #dedede;
 @inspector-controls-height: 67px;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
@@ -10,6 +11,48 @@
 @deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
+
+.pulse-green-frames-mixin () {
+    0% {
+      background-color: @inspector-changed-field;
+    }
+    10% {
+      background-color: #38b44a;
+    }
+    100% {
+      background-color: white;
+    }
+}
+
+.animation (...) {
+    -webkit-animation: @arguments;
+    -moz-animation: @arguments;
+    -ms-animation: @arguments;
+    -o-animation: @arguments;
+    animation: @arguments;
+}
+
+.animation-fill-mode (...) {
+    -webkit-animation-fill-mode: @arguments;
+    -moz-animation-fill-mode: @arguments;
+    -ms-animation-fill-mode: @arguments;
+    -o-animation-fill-mode: @arguments;
+    animation-fill-mode: @arguments;
+}
+
+.transition (...) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -ms-transition: @arguments;
+    -o-transition: @arguments;
+    transition: @arguments;
+}
+
+@-webkit-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-moz-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-ms-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-o-keyframes pulse-green {.pulse-green-frames-mixin;}
+@keyframes pulse-green {.pulse-green-frames-mixin;}
 
 .yui3-juju-inspector {
     input[type=text]::-ms-clear { display: none; }
@@ -192,9 +235,7 @@
                         cursor: pointer;
                         text-align: center;
                         left: 0;
-                        -moz-transition: left .1s ease-in-out;
-                        -webkit-transition: left .1s ease-in-out;
-                        transition: left .1s ease-in-out;
+                        .transition(left .1s ease-in-out);
                         -moz-user-select: none;
                         -webkit-user-select: none;
                         -ms-user-select: none;
@@ -282,9 +323,7 @@
                 overflow: hidden;
                 height: 130px;
                 letter-spacing: normal;
-                -moz-transition: .3s, height .3s;
-                -webkit-transition: .25s, height .3s;
-                transition: .3s, height .3s;
+                .transition(.25s, height .3s);
 
                 .constraint-details {
                     display: block;
@@ -657,10 +696,7 @@
                 }
                 .config-field,
                 .constraint-field {
-                  -webkit-transition: background 1s linear;
-                  -moz-transition: background 1s linear;
-                  -o-transition: background 1s linear;
-                  transition: background 1s linear;
+                  .transition(background 1s linear);
                   background-repeat: no-repeat;
                   background-position: right center;
                   background-url: none;
@@ -678,7 +714,7 @@
                 .resolver {
                   color: black;
                   background-color: white;
-                  border: 1px solid #dedede;
+                  border: 1px solid @inspector-changed-field;
                   border-radius: 1px;
 
                   div {
@@ -686,7 +722,7 @@
                   }
                 }
                 .modified {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
 
                   &.boolean {
@@ -698,7 +734,7 @@
                   }
                 }
                 .conflict-pending {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
 
                   &.boolean {
@@ -713,7 +749,7 @@
                 }
 
                 .conflict {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
                 }
 
@@ -732,6 +768,12 @@
                   .conflict {
                     background-color: transparent;
                   }
+                }
+
+                .change-saved {
+                    .animation(pulse-green 1s);
+                    .animation-fill-mode(forwards);
+                    .transition(none);
                 }
             }
             .toggle {
@@ -770,9 +812,7 @@
         .destroy-service-prompt {
             overflow: hidden;
             height: 95px;
-            -moz-transition: .3s, height .3s;
-            -webkit-transition: .25s, height .3s;
-            transition: .3s, height .3s;
+            .transition(.25s, height .3s);
             position: absolute;
             bottom: 0;
 
@@ -865,9 +905,7 @@
             }
 
             .status-unit-content {
-                -moz-transition: .3s, max-height .3s;
-                -webkit-transition: .25s, max-height .3s;
-                transition: .3s, max-height .3s;
+                .transition(.25s, max-height .3s);
                 overflow: hidden;
                 background: @charm-panel-background-color;
                 /*
