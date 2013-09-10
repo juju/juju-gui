@@ -170,13 +170,6 @@
         label {
             font-size: 14px;
         }
-        hr {
-            margin: 20px 0;
-            border-width: 1px 0;
-            border-style: solid;
-            border-top-color: @inspector-divider-bottom;
-            border-bottom-color: @inspector-divider-top;
-        }
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
@@ -243,6 +236,8 @@
             }
         }
         .toggle {
+            padding: 20px @inspector-main-padding;
+
             span {
                 display: inline-block;
                 vertical-align: top;
@@ -386,7 +381,7 @@
                 margin-top: 2px;
                 padding-top: 20px;
                 letter-spacing: normal;
-                .transition(.25s, height .3s);
+                .transition(.25s, max-height .3s);
 
                 &.closed {
                     padding-top: 0;
@@ -407,7 +402,7 @@
                 }
             }
             .unit-constraints-confirm.closed {
-                height: 0;
+                max-height: 0;
             }
             .unit-constraints-confirm.editing {
                 max-height: 500px;
@@ -532,6 +527,12 @@
             }
             .viewlet-container {
                 margin-top: -1px;
+            }
+            .toggle {
+                padding-left: 0;
+                padding-right: 0;
+                border-top: 1px solid @inspector-divider-top;
+                border-bottom: 1px solid @inspector-divider-bottom;
             }
         }
 
@@ -806,13 +807,6 @@
                     .transition(none);
                 }
             }
-            .toggle {
-                padding: 10px @inspector-main-padding;
-
-                label {
-                   margin: 0;
-                }
-            }
         }
         .status {
             display: inline-block;
@@ -847,7 +841,7 @@
         .destroy-service-prompt {
             overflow: hidden;
             max-height: 200px;
-            .transition(.25s, height .3s);
+            .transition(.25s, max-height .3s);
             position: absolute;
             bottom: 0;
 
