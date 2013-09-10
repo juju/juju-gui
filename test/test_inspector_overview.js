@@ -19,10 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Overview', function() {
 
-  var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, ENTER, charmConfig,
-
-      client, backendJuju, state;
+  var view, service, db, models, utils, juju, env, conn, container, inspector,
+  Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -76,7 +74,7 @@ describe('Inspector Overview', function() {
   });
 
   var setUpInspector = function() {
-    var charmId = 'precise/mediawiki-4';
+    var charmId = 'precise/mediawiki-14';
     charmConfig.id = charmId;
     var charm = new models.BrowserCharm(charmConfig);
     db.charms.add(charm);
@@ -85,8 +83,15 @@ describe('Inspector Overview', function() {
       charm: charmId,
       exposed: false,
       upgrade_available: true,
-      upgrade_to: 'cs:precise/mediawiki-5'
+      upgrade_to: 'cs:precise/mediawiki-15'
     });
+    downgrades = (function() {
+      var versions = [];
+      for (var version = 13; version > 0; version = version - 1) {
+        versions.push('precise/mediawiki-' + version);
+      }
+      return versions;
+    })();
     db.services.add(service);
     db.onDelta({data: {result: [
       ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
@@ -117,7 +122,7 @@ describe('Inspector Overview', function() {
     var icon = container.one('.icon img');
 
     // The icon url comes from the fake store and the service charm attribute.
-    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-4');
+    assert.equal(icon.getAttribute('src'), '/icon/precise/mediawiki-14');
   });
 
   it('should start with the proper number of units shown in the text field',
@@ -252,12 +257,8 @@ describe('Inspector Overview', function() {
       { type: 'unit', category: 'error', units: [a, b] },
       { type: 'unit', category: 'pending', units: [c] },
       { type: 'service', category: 'upgrade-service',
-        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-5',
-        downgrades: [
-          'precise/mediawiki-3',
-          'precise/mediawiki-2',
-          'precise/mediawiki-1'
-        ]
+        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
+        downgrades: downgrades 
       },
       { type: 'unit', category: 'running', units: [d, e] },
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
@@ -301,11 +302,7 @@ describe('Inspector Overview', function() {
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
       { type: 'unit', category: 'landscape-security-upgrades', units: {}},
       { type: 'service', category: 'upgrade-service',
-        upgradeAvailable: false, upgradeTo: undefined, downgrades: [
-          'precise/mediawiki-3',
-          'precise/mediawiki-2',
-          'precise/mediawiki-1'
-        ]
+        upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades 
       }
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
@@ -477,7 +474,7 @@ describe('Inspector Overview', function() {
         'A new upgrade is available');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
     assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 1);
-    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 3);
+    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 13);
 
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
@@ -503,8 +500,8 @@ describe('Inspector Overview', function() {
     assert.equal(serviceWrapper.one('.category-label').getHTML(),
         'Upgrade service');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
-    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 3);
-    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 0);
+    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 5);
+    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 8);
 
     newContainer.remove(true);
   });
