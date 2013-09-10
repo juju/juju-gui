@@ -690,9 +690,37 @@ YUI.add('juju-models', function(Y) {
     model: Relation,
 
     process_delta: function(action, data, db) {
+      // If the action is remove we need to parse the models before they are
+      // removed from the db so that we can remove them from the relation
+      // models that are cloned in each of the services.
+      if (action === 'remove') {
+        var endpoints;
+        db.relations.each(function(relation) {
+          if (relation.get('id') === data) {
+            endpoints = relation.get('endpoints');
+          }
+        });
+        // Because we keep a copy of the relation models on each service we
+        // also need to remove the relation from those models.
+        // If the user adds then removes an endpoint before the deltas return
+        // then the db's will be out of sync so this check is necessary.
+        if (endpoints) {
+          var service, serviceRelations;
+          endpoints.forEach(function(endpoint) {
+            service = db.services.getById(endpoint[0]);
+            serviceRelations = service.get('relations');
+            serviceRelations.some(function(rel) {
+              if (rel.get('relation_id') === data) {
+                serviceRelations.remove(rel);
+                return true;
+              }
+            });
+          });
+        }
+      }
       var instance = _process_delta(this, action, data, {});
+      // When removing a relation instance is null
       if (instance) {
-        // When removing a relation instance is null
         var relationLists = addRelationToServiceModel(instance, data, db);
         // If the relationLists weren't added to the services
         // we don't need to process the delta on them.
