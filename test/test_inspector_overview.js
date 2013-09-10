@@ -476,6 +476,8 @@ describe('Inspector Overview', function() {
     assert.equal(serviceWrapper.one('.category-label').getHTML(),
         'A new upgrade is available');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
+    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 1);
+    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 3);
 
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
@@ -501,6 +503,8 @@ describe('Inspector Overview', function() {
     assert.equal(serviceWrapper.one('.category-label').getHTML(),
         'Upgrade service');
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
+    assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 3);
+    assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 0);
 
     newContainer.remove(true);
   });
