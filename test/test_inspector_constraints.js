@@ -64,7 +64,7 @@ describe('Inspector Constraints', function() {
     node.set('value', value);
     // Trigger bindingEngine to notice change.
     var bindingEngine = inspector.viewletManager.bindingEngine;
-    bindingEngine._storeChanged({target: node}, viewlet);
+    bindingEngine._nodeChangeHandler({target: node}, viewlet);
     return node;
   };
 

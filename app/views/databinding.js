@@ -430,12 +430,12 @@ YUI.add('juju-databinding', function(Y) {
         // Checkboxes are not supported in a valueChange event.
         if (node.getAttribute('type') === 'checkbox') {
           viewlet._eventHandles.push(
-              node.on('change', this._storeChanged, this, viewlet));
+              node.on('change', this._nodeChangeHandler, this, viewlet));
         } else {
           // The other elements (input, textarea) are supported in valueChange
           // YUI event.
           viewlet._eventHandles.push(
-              node.on('valueChange', this._storeChanged, this, viewlet));
+              node.on('valueChange', this._nodeChangeHandler, this, viewlet));
         }
 
       }, this);
@@ -663,11 +663,11 @@ YUI.add('juju-databinding', function(Y) {
     /**
       Called on valueChange on a bound input to store dirty input references
 
-      @method _storeChanged
+      @method _nodeChangeHandler
       @param {Event} e event object.
       @param {Object} viewlet reference.
     */
-    BindingEngine.prototype._storeChanged = function(e, viewlet) {
+    BindingEngine.prototype._nodeChangeHandler = function(e, viewlet) {
       var key = e.target.getData('bind');
       var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
       var binding;
