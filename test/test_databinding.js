@@ -568,11 +568,14 @@ describe('data binding library', function() {
       function generateEngine(input) {
         container = utils.makeContainer();
         container.setHTML(input);
-        viewlet = {
+        viewlet = Object.create({
           container: container,
           changedValues: {},
-          _eventHandles: []
-        };
+          _eventHandles: [],
+          syncedFields: function() {
+            this.calledSyncedFields = true;
+          }
+        });
         engine = new BindingEngine({interval: 0});
       }
 
@@ -616,6 +619,7 @@ describe('data binding library', function() {
           handler.detach();
           input.after('valueChange', function(e) {
             assert.deepEqual(viewlet.changedValues, {});
+            assert.isTrue(viewlet.calledSyncedFields);
             done();
           });
           // Make valueChange work.
