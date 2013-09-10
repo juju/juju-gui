@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container, inspector,
-  Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades;
+      Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -258,7 +258,7 @@ describe('Inspector Overview', function() {
       { type: 'unit', category: 'pending', units: [c] },
       { type: 'service', category: 'upgrade-service',
         upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
-        downgrades: downgrades 
+        downgrades: downgrades
       },
       { type: 'unit', category: 'running', units: [d, e] },
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
@@ -302,7 +302,7 @@ describe('Inspector Overview', function() {
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
       { type: 'unit', category: 'landscape-security-upgrades', units: {}},
       { type: 'service', category: 'upgrade-service',
-        upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades 
+        upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades
       }
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
