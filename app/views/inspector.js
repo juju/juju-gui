@@ -1188,12 +1188,14 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     'changed': function(node, key, field) {
-      var modelValue = this.model.get(key);
-      var fieldValue = field.get(node);
-      if (modelValue !== fieldValue) {
+      var controls = this.container.one('.controls');
+      if (this.changedValues[key]) {
         this._makeModified(node);
+        controls.removeClass('closed');
       } else {
         this._clearModified(node);
+        // Databinding calls syncedFields if there are no more changed
+        // values, and that method is responsible for closing the controls.
       }
     },
 
@@ -1271,12 +1273,14 @@ YUI.add('juju-view-inspector', function(Y) {
       node.setHTML('Overwrite');
     },
     'syncedFields': function() {
-      var node = this.container.one('.controls .confirm');
+      var controls = this.container.one('.controls');
+      var node = controls.one('.confirm');
       var title = node.getData('originalText');
       this.container.all('.modified').removeClass('modified');
       if (title) {
         node.setHTML(title);
       }
+      controls.addClass('closed');
     }
   };
 

@@ -54,8 +54,4 @@
 {{/settings}}
 {{#unless ghost}}
   </div>
-  <div class="controls configuration-buttons">
-    <button class="cancel">Cancel</button>
-    <button class="confirm">Save Changes</button>
-  </div>
 {{/unless}}

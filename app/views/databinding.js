@@ -59,7 +59,7 @@ YUI.add('juju-databinding', function(Y) {
           node.set('checked', this._normalizeValue(value));
         },
         'eq': function(node, value) {
-          var currentValue = !! this.get(node);
+          var currentValue = !!this.get(node);
           return (this._normalizeValue(value) === currentValue);
         }
       }),
@@ -155,7 +155,6 @@ YUI.add('juju-databinding', function(Y) {
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
-      @param {Y.EventFacade | Object} e an event change object.
       @return {Array} bindings array filtered by keys when present.
     */
     function deltaFromChange(modelChangeKeys) {
@@ -688,6 +687,10 @@ YUI.add('juju-databinding', function(Y) {
       }
       if (viewlet.changed) {
         viewlet.changed(e.target, key, nodeHandler);
+      }
+      // If there are no more changes, the viewlet has been synced manually.
+      if (Object.keys(viewlet.changedValues).length === 0) {
+        viewlet.syncedFields();
       }
     };
 

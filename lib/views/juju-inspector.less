@@ -13,18 +13,6 @@
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
-.pulse-green-frames-mixin () {
-    0% {
-      background-color: @inspector-changed-field;
-    }
-    10% {
-      background-color: #38b44a;
-    }
-    100% {
-      background-color: white;
-    }
-}
-
 .animation (...) {
     -webkit-animation: @arguments;
     -moz-animation: @arguments;
@@ -47,6 +35,18 @@
     -ms-transition: @arguments;
     -o-transition: @arguments;
     transition: @arguments;
+}
+
+.pulse-green-frames-mixin () {
+    0% {
+      background-color: @inspector-changed-field;
+    }
+    10% {
+      background-color: #38b44a;
+    }
+    100% {
+      background-color: white;
+    }
 }
 
 @-webkit-keyframes pulse-green {.pulse-green-frames-mixin;}
@@ -322,6 +322,13 @@
             background-color: @inspector-background-color;
             border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
+            overflow: hidden;
+            height: @inspector-controls-height;
+            .transition(.25s, height .3s);
+
+            &.closed {
+                height: 0;
+            }
 
             &:before {
                 content: "";
@@ -712,6 +719,7 @@
         .view-container {
             margin-top: -1px;
 
+            &.settings-constraints,
             &.settings-config {
                 margin-bottom: @inspector-controls-height;
             }
