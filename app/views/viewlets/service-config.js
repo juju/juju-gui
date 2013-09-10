@@ -1,5 +1,3 @@
-
-
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -33,7 +31,32 @@ YUI.add('viewlet-service-config', function(Y) {
   ns.config = {
     name: 'config',
     template: templates['service-configuration'],
-    'render': function(service, viewContainerAttrs) {
+    bindings: {
+      exposed: {
+        update: function(node, value) {
+          node.one('input').set('checked', value);
+        }
+      },
+      config: {
+        update: function(node, val) {
+          if (val === undefined) {
+            val = '';
+          }
+          node.set('value', val);
+        }
+      }
+    },
+    _bindDOMEvents: function() {
+      // Keep the textual representation of the checkbox in sync with the
+      // input node.
+      this.events.push(
+        this.container.all('.hidden-checkbox').on('change', function(ev) {
+          var checked = ev.target.get('checked');
+          ev.target.ancestor('.toggle').one('.textvalue').set('text', checked);
+        })
+      );
+    },
+    render: function(service, viewContainerAttrs) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
@@ -52,21 +75,7 @@ YUI.add('viewlet-service-config', function(Y) {
                 { max_height: 200,
                   min_height: 18,
                   single_line: 18});
-    },
-    bindings: {
-      exposed: {
-        'update': function(node, value) {
-          node.one('input').set('checked', value);
-        }
-      },
-      'config': {
-        'update': function(node, val) {
-          if (val === undefined) {
-            val = '';
-          }
-          node.set('value', val);
-        }
-      }
+      this._bindDOMEvents();
     }
 
   };

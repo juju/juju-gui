@@ -98,7 +98,7 @@ YUI.add('juju-databinding', function(Y) {
         if (!key) {
           return;
         }
-        if (multiple) 
+        if (multiple) {
           if (!index[key]) {
             index[key] = [];
           }

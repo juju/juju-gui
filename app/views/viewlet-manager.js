@@ -76,6 +76,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
     container: null,
 
     /**
+      The list of events the viewlet has bound so we can clean up on destroy.
+
+      @attribute events
+      @default []
+      @type {Array}
+
+     */
+    events: [],
+
+    /**
       Optional logical slot name for this viewlet to fill.
 
       @property slot
@@ -144,7 +154,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method destroy
       @return {undefined} nothing.
      */
-    destroy: function() {},
+    destroy: function() {
+      this.events.forEach(function(ev) {
+        ev.detach();
+      });
+      this.events = [];
+    },
 
     /**
       Called by the databinding engine when fields drop out of sync with

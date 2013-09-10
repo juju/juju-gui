@@ -1077,7 +1077,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_clearModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        var n = node.get('parentNode').one('.modified');
+        var n = node.ancestor('.toggle').one('.modified');
         if (n) {
           n.remove();
         }
@@ -1097,7 +1097,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_makeModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        node.get('parentNode').append(
+        node.ancestor('.toggle').one('label').append(
             Y.Node.create('<span class="modified boolean"/>'));
         this._clearConflictPending(node);
       } else {
@@ -1116,7 +1116,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_clearConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        var n = node.get('parentNode').one('.conflict-pending');
+        var n = node.ancestor('.toggle').one('.conflict-pending');
         if (n) {
           n.remove();
         }
@@ -1136,7 +1136,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_makeConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        node.get('parentNode').append(
+        node.get('parentNode').prepend(
             Y.Node.create('<span class="conflict-pending boolean"/>'));
       } else {
         node.addClass('conflict-pending');
@@ -1182,16 +1182,25 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     'conflict': function(node, model, viewletName, resolve, binding) {
+      // Not all nodes need to show the conflict ux. This is true when
+      // multiple binds to a single model field are set, such as in pretty
+      // toggle checkbox UI.
+      if (node.getData('skipconflictux')) {
+        return;
+      }
       /**
        Calls the databinding resolve method
        @method sendResolve
       */
+      var option;
       var key = node.getData('bind');
       var modelValue = model.get(key);
       var field = binding.field;
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
-      var option = resolver.one('.config-field');
+      if (resolver) {
+        option = resolver.one('.config-field');
+      }
       var handlers = [];
 
       /**
@@ -1228,10 +1237,15 @@ YUI.add('juju-view-inspector', function(Y) {
         // Ignore 'possible strict violation'
         this._clearConflictPending(node);
         this._makeConflict(node);
-        this._makeConflict(option);
-        option.setStyle('width', node.get('offsetWidth'));
-        option.setHTML(modelValue);
-        resolver.removeClass('hidden');
+        // Checkboxes don't have the option node to select a value.
+        if (option) {
+          this._makeConflict(option);
+          option.setStyle('width', node.get('offsetWidth'));
+          option.setHTML(modelValue);
+        }
+        if (resolver) {
+          resolver.removeClass('hidden');
+        }
       }
 
       // On conflict just indicate.

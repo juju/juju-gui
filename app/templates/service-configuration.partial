@@ -2,19 +2,22 @@
 {{#settings}}
     {{#if isBool}}
         <div class="toggle settings-wrapper">
-        <span for="{{name}}-toggle">{{name}}</span>
+            <label for="{{name}}-toggle">{{name}}</label>
 
-        <div class="toggle-switch toggle-{{name}}"
-             data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}">
-            <input type="checkbox"
-                   name="{{name}}-toggle"
-                   class="hidden-checkbox {{name}}-toggle"
-                   id="{{name}}-toggle">
-            <label for="{{name}}-toggle" class="light">
-              <div class="handle"></div>
-            </label>
-        </div>
-        {{>conflict-ux}}
+            <div class="toggle-switch toggle-{{name}}">
+                <input type="checkbox"
+                       name="{{name}}-toggle"
+                       class="hidden-checkbox {{name}}-toggle"
+                        data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
+                       id="{{name}}-toggle">
+                <label for="{{name}}-toggle" class="light">
+                  <div class="handle"></div>
+                </label>
+            </div>
+            <div class="textvalue"
+                 data-skipconflictux=true
+                 data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}">
+                 {{#if_eq value 'checked'}}True{{else}}False{{/if_eq}}</div>
     {{else}}
       {{#if isNumeric}}
         <div class="settings-wrapper">
