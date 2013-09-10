@@ -79,6 +79,9 @@ YUI.add('d3-statusbar', function(Y) {
         this.node.append('g')
         .classed('statusbar', true);
       }
+      this.node.attr({
+        width: this.options.width
+      });
 
       this.scale = d3.scale.linear()
       .domain([0, 100])
