@@ -15,6 +15,14 @@
 .yui3-juju-inspector {
     .customize-scrollbar;
 
+    ::-webkit-scrollbar-track {
+        background-color: #1c1815;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #505050;
+        border-width: 0 1px;
+        border-color: #1c1815;
+    }
     /* Hide IE input clear control */
     input[type=text]::-ms-clear {
         display: none;
@@ -162,7 +170,7 @@
         .inspector-buttons a {
             display: inline-block;
             vertical-align: middle;
-            width: 120px;
+            width: 47%;
             margin: 20px 0;
             padding: 0;
             border: none;
@@ -178,13 +186,11 @@
             &.cancel-button,
             &.cancel {
                 background:  @inspector-dark;
-                margin-left: @inspector-main-padding;
             }
             &.initiate-destroy,
             &.confirm-num-units,
             &.confirm {
                 float: right;
-                margin-right: @inspector-main-padding;
                 background-color: @confirm-button-color;
 
                 &:disabled {
@@ -276,6 +282,7 @@
         .destroy-service-prompt,
         .controls {
             overflow: hidden;
+            padding: 0 20px;
             background-color: @inspector-background-color;
             border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
@@ -284,6 +291,7 @@
                 content: "";
                 display: block;
                 height: 9px;
+                margin: 0 -20px;
                 background-color: @inspector-dark;
                 border-bottom: 1px solid @inspector-divider-top;
             }
@@ -330,7 +338,6 @@
             }
             .editable-constraints {
                 margin-top: 10px;
-                padding-right: 10px;
             }
             .unit-constraints-confirm {
                 overflow: hidden;
@@ -767,7 +774,7 @@
             bottom: 0;
 
             .message {
-                margin: 20px 20px 0 20px;
+                margin: 20px 0 0 0;
             }
         }
 
