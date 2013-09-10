@@ -1,13 +1,26 @@
 <div class="view-container settings-config">
   <h2>Expose</h2>
+
   <div class="toggle settings-wrapper">
-    <span>Expose this service?</span>
-    <div class="toggle-switch toggle-expose" data-bind="exposed">
-      <input type="checkbox" class="hidden-checkbox expose-toggle" id="expose-toggle">
-      <label for="expose-toggle" class="light">
-        <div class="handle"></div>
-      </label>
-    </div>
+      <label for="expose-toggle">Expose this service?</label>
+
+      <div class="toggle-switch toggle-expose">
+          <input type="checkbox"
+                 name="expose-toggle"
+                 class="hidden-checkbox expose-toggle"
+                 data-skipconflictux=true
+                 data-bind="exposed"
+                 id="expose-toggle">
+          <label for="expose-toggle" class="light">
+            <div class="handle"></div>
+          </label>
+      </div>
+      <div class="textvalue"
+           data-skipconflictux=true
+           data-bind="exposed">
+           {{#if exposed}}True{{else}}False{{/if}}</div>
+
+      <div class="settings-description"></div>
   </div>
 
   <h2>Service Settings</h2>

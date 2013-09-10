@@ -33,12 +33,14 @@ YUI.add('viewlet-service-config', function(Y) {
     template: templates['service-configuration'],
     bindings: {
       exposed: {
-        update: function(node, value) {
-          node.one('input').set('checked', value);
+        'update': function(node, val) {
+          debugger;
         }
       },
       config: {
-        update: function(node, val) {
+        // On update make sure undefined isn't sent to the user as viewable
+        // input.
+        'update': function(node, val) {
           if (val === undefined) {
             val = '';
           }
@@ -46,16 +48,33 @@ YUI.add('viewlet-service-config', function(Y) {
         }
       }
     },
+    /**
+     * Bind DOM related events to keep checkboxes in sync with their textual
+     * reprensetation.
+     *
+     * @method _bindDOMEvents
+     *
+     */
     _bindDOMEvents: function() {
       // Keep the textual representation of the checkbox in sync with the
       // input node.
       this.events.push(
-        this.container.all('.hidden-checkbox').on('change', function(ev) {
-          var checked = ev.target.get('checked');
-          ev.target.ancestor('.toggle').one('.textvalue').set('text', checked);
-        })
+          this.container.all('.hidden-checkbox').on('change', function(ev) {
+            var checked = ev.target.get('checked');
+            ev.target.ancestor('.toggle').one('.textvalue').set('text',
+                                                                checked);
+          })
       );
     },
+    /**
+     * Viewlet standard render call.
+     *
+     * @method rener
+     * @param {Service} service the model of the service in the inspector.
+     * @param {Object} viewContainerAttrs an object of helper data from the
+     * viewlet manager.
+     *
+     */
     render: function(service, viewContainerAttrs) {
       var settings = [];
       var db = viewContainerAttrs.db;

@@ -1217,7 +1217,9 @@ YUI.add('juju-view-inspector', function(Y) {
         this._clearModified(node);
         this._clearConflict(node);
 
-        resolver.addClass('hidden');
+        if (resolver) {
+          resolver.addClass('hidden');
+        }
 
         if (e.currentTarget.hasClass('conflicted-env')) {
           resolve(node, viewletName, modelValue);
