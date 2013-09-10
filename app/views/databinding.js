@@ -661,6 +661,29 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
+      Find the binding for the given key (binding name).
+
+      @method _getBinding
+      @param {String} key Binding key
+      @return {Binding} Binding reference.
+    */
+    BindingEngine.prototype._getBinding = function(key) {
+      var binding;
+      if ( // Find the binding for the key, and break when found.
+          !this._bindings.some(function(b) {
+            if (b.name === key) {
+              binding = b;
+              return true;
+            }})) {
+        // We don't expect this to ever happen.  We should only be asking for
+        // a key that has been bound.  If this does fail, let's be loud about
+        // it ASAP so that we can fix it.
+        throw 'Programmer error: no binding found for ' + key;
+      }
+      return binding;
+    };
+
+    /**
       Called on valueChange on a bound input to store dirty input references
 
       @method _nodeChangeHandler
@@ -670,16 +693,8 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._nodeChangeHandler = function(e, viewlet) {
       var key = e.target.getData('bind');
       var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
-      var binding;
       var model = viewlet.model;
-      if ( // Find the binding for the key, and break when found.
-          !this._bindings.some(function(b) {
-            if (b.name === key) {
-              binding = b;
-              return true;
-            }})) {
-        throw 'Programmer error: no binding found for ' + key;
-      }
+      var binding = this._getBinding(key);
       if (nodeHandler.eq(e.target, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
