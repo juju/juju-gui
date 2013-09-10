@@ -133,7 +133,7 @@ describe('Inspector Settings', function() {
 
     // One boolean checkbox
     assert.equal(
-        container.all('.config-field.boolean').size(),
+        container.all('input.config-field').size(),
         1,
         'did not render one boolean field');
 

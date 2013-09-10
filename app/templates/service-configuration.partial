@@ -10,7 +10,8 @@
                        class="hidden-checkbox {{name}}-toggle config-field"
                        data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
                        {{#if_eq value 'checked'}}checked="checked"{{/if_eq}}
-                       id="{{name}}-toggle">
+                       {{#if ../../ghost}}disabled{{/if}}
+                       id="input-{{name}}">
                 <label for="{{name}}-toggle" class="light">
                   <div class="handle"></div>
                 </label>

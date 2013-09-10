@@ -75,7 +75,7 @@ describe('Inspector Conflict UX', function() {
       charm: charmId,
       config: {
         logo: 'foo',
-        debug: 'false'
+        debug: false
       }});
     db.services.add(service);
     db.onDelta({data: {result: [
@@ -185,7 +185,7 @@ describe('Inspector Conflict UX', function() {
 
     modifyAndWait(input, true, function() {
       // See that the modified node is placed next to it.
-      var parentNode = input.get('parentNode');
+      var parentNode = input.ancestor('.toggle');
       assert.equal(
           parentNode.all('.modified').size(),
           1,
