@@ -214,7 +214,6 @@ describe('Ghost Inspector', function() {
                          'textarea missing disabled');
           });
           inputs = settings.all('input');
-          debugger;
           inputs.each(function(input) {
             // The import config field is not disabled.
             var id = input.getAttribute('id');
