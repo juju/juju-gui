@@ -1194,9 +1194,8 @@ YUI.add('juju-view-inspector', function(Y) {
         controls.removeClass('closed');
       } else {
         this._clearModified(node);
-        if (Object.keys(this.changedValues).length === 0) {
-          controls.addClass('closed');
-        }
+        // Databinding calls syncedFields if there are no more changed
+        // values, and that method is responsible for closing the controls.
       }
     },
 
