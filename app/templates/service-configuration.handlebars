@@ -4,12 +4,12 @@
   <div class="toggle settings-wrapper">
       <label for="expose-toggle">Expose this service?</label>
 
-      <div class="toggle-switch toggle-expose">
+      <div class="toggle-switch toggle-expose"
+           data-bind="exposed">
           <input type="checkbox"
                  name="expose-toggle"
                  class="hidden-checkbox expose-toggle"
                  data-skipconflictux=true
-                 data-bind="exposed"
                  id="expose-toggle">
           <label for="expose-toggle" class="light">
             <div class="handle"></div>

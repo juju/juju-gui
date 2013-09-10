@@ -34,17 +34,31 @@ YUI.add('viewlet-service-config', function(Y) {
     bindings: {
       exposed: {
         'update': function(node, val) {
-          debugger;
+          // On exposed, the node is the container of the input we want to
+          // change.
+          var input = node.one('input');
+          if (input) {
+            input.set('checked', val);
+          }
         }
       },
       config: {
         // On update make sure undefined isn't sent to the user as viewable
         // input.
         'update': function(node, val) {
-          if (val === undefined) {
-            val = '';
+          if (node.getAttribute('type') === 'checkbox') {
+              debugger;
+            if (val !== node.get('checked')) {
+              node.set('checked', val);
+              // Trigger a manual change so that the textual value updates.
+              node.simulate('change');
+            }
+          } else {
+            if (val === undefined) {
+              val = '';
+            }
+            node.set('value', val);
           }
-          node.set('value', val);
         }
       }
     },
@@ -80,7 +94,7 @@ YUI.add('viewlet-service-config', function(Y) {
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
       var templatedSettings = utils.extractServiceSettings(
-          charm.get('options'));
+          charm.get('options'), service.get('config'));
 
       this.container = Y.Node.create(this.templateWrapper);
 
@@ -100,9 +114,10 @@ YUI.add('viewlet-service-config', function(Y) {
   };
 }, '0.0.1', {
   requires: [
-    'node',
-    'resizing-textarea',
+    'event-simulate',
     'juju-charm-models',
-    'juju-view'
+    'juju-view',
+    'node',
+    'resizing-textarea'
   ]
 });
