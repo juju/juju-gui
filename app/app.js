@@ -230,7 +230,6 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          var yaml;
           var result = this.db.exportDeployer();
           var exportData = jsyaml.dump(result);
           var exportBlob = new Blob([exportData],
@@ -266,7 +265,6 @@ YUI.add('juju-gui', function(Y) {
          * @method behaviors.timestamp.callback
          */
         callback: function() {
-          var self = this;
           Y.later(6000, this, function(o) {
             Y.one('body')
               .all('[data-timestamp]')
@@ -595,6 +593,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
+      cfg.envSeries = this.env.get('defaultSeries');
       this.addSubApplications(cfg);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -1220,17 +1219,15 @@ YUI.add('juju-gui', function(Y) {
         next(); return;
       }
       this.hideMask();
-      var self = this,
-          view = this.getViewInfo('environment'),
-          options = {
-            getModelURL: Y.bind(this.getModelURL, this),
-            nsRouter: this.nsRouter,
-            landscape: this.landscape,
-            endpointsController: this.endpointsController,
-            useDragDropImport: this.get('sandbox'),
-            db: this.db,
-            env: this.env,
-            store: this.get('store')};
+      var options = {
+        getModelURL: Y.bind(this.getModelURL, this),
+        nsRouter: this.nsRouter,
+        landscape: this.landscape,
+        endpointsController: this.endpointsController,
+        useDragDropImport: this.get('sandbox'),
+        db: this.db,
+        env: this.env,
+        store: this.get('store')};
 
       this.showView('environment', options, {
         /**

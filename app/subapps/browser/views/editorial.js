@@ -186,14 +186,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
           if (cachedResults) {
             this._renderInteresting(cachedResults);
           } else {
-            this.get('store').interesting({
+            store.interesting({
               'success': function(data) {
                 var results = {
-                  featuredCharms: this.get('store').resultsToCharmlist(
+                  featuredCharms: store.resultsToCharmlist(
                       data.result.featured),
-                  newCharms: this.get('store').resultsToCharmlist(
+                  newCharms: store.resultsToCharmlist(
                       data.result['new']),
-                  popularCharms: this.get('store').resultsToCharmlist(
+                  popularCharms: store.resultsToCharmlist(
                       data.result.popular)
                 };
                 this._renderInteresting(results);

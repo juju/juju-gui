@@ -168,10 +168,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       viewlet we store a reference of the element key here so that we know to
       offer a conflict resolution.
 
-      @property _changedValues
-      @type {Array}
-      @default empty array
-      @private
+      @property changedValues
+      @type {Object}
+      @default empty object
     */
 
     /**
@@ -500,13 +499,15 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // only the base config which causes things to fail further down the
         // line and is difficult to debug.
         if (viewlet === undefined) {
-          console.warning('no viewlet config defined for viewlet', key);
+          console.warn('no viewlet config defined for viewlet', key);
           return;
         }
         // create viewlet instances using the base and supplied config
         viewlets[key] = Object.create(ViewletBase, viewlet);
-        viewlets[key]._changedValues = [];
-        viewlets[key]._eventHandles = [];
+        var resultingViewlet = viewlets[key];
+        resultingViewlet.changedValues = {};
+        resultingViewlet._eventHandles = [];
+        resultingViewlet.options = this.getAttrs();
       }, this);
 
       return viewlets;

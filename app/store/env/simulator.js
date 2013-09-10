@@ -34,7 +34,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-fakebackend-simulator', function(Y) {
 
-  var models = Y.namespace('juju.models');
   // How often should we run by default (ms).
   var DEFAULT_INTERVAL = 3000;
   var RAND = function(prob) {
@@ -154,15 +153,31 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           var roll = Math.random();
           if (roll <= 0.25) {
             unit.agent_state = 'started';
+            unit.agent_state_info = undefined;
           } else if (roll <= 0.5) {
             unit.agent_state = 'install-error';
+            unit.agent_state_info = undefined;
           } else if (roll <= 0.75) {
             unit.agent_state = 'pending';
+            unit.agent_state_info = undefined;
+          } else if (roll <= 1) {
+            var db = context.state.db;
+            var serviceName = this.service;
+            var relations = db.relations.get_relations_for_service(
+                db.services.getById(serviceName));
+            if (relations.length > 0) {
+              unit.agent_state = 'error';
+              var relation = relations[
+                  Math.floor(Math.random() * relations.length)];
+              var interfaceName;
+              relation.get('endpoints').forEach(function(endpoint) {
+                if (endpoint[0] !== serviceName) { return; }
+                interfaceName = endpoint[1].name;
+              });
+              unit.agent_state_info = 'hook failed: ' +
+                  interfaceName + '-relation-changed';
+            }
           }
-          //TODO: get_relations_for_service()
-          // choose one and set it as a unit.relation_errors entry.
-          // update the changes['relations'];
-
           // Put in delta since there is no API for this.
           context.state.changes.units[unit.id] = [unit, true];
         });

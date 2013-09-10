@@ -135,7 +135,8 @@ class DeployTestMixin(object):
             return driver.find_element_by_css_selector('.bws-view-data .add')
 
         def get_deploy_button(driver):
-            return driver.find_element_by_id('charm-deploy')
+            return driver.find_element_by_css_selector(
+                '.viewlet-manager-wrapper .confirm')
 
         # Search for the charm
         search_box = self.wait_for(

@@ -714,6 +714,34 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Highlight modified fields to show they have been saved.
+      Note that the "modified" class is removed in the syncedFields method.
+
+      @method _highlightSaved
+      @param {Y.Node} container The affected viewlet container.
+      @return {undefined} Nothing.
+    */
+    _highlightSaved: function(container) {
+      var modified = container.all('.modified');
+      modified.addClass('change-saved');
+      // If you don't remove the class later, the animation runs every time
+      // you switch back to the tab with these fields. Unfortunately,
+      // animationend handlers don't work reliably, once you hook them up with
+      // the associated custom browser names (e.g. webkitAnimationEnd) on the
+      // raw DOM node, so we don't even bother with them.  We just make a
+      // timer to remove the class.
+      var parentContainer = this.viewletManager.get('container');
+      Y.later(1000, modified, function() {
+        // Use the modified collection that we originally found, but double
+        // check that our expected context is still around.
+        if (parentContainer.inDoc() &&
+            !container.all('.change-saved').isEmpty()) {
+          this.removeClass('change-saved');
+        }
+      });
+    },
+
+    /**
       Pulls the content from each configuration field and sends the values
       to the environment
 
@@ -765,31 +793,23 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} e yui event object.
     */
     _setConfigCallback: function(container, e) {
-      container.one('.controls .confirm').removeAttribute('disabled');
-      // If the user has conflicted fields and still choose to
-      // save then we will be overwriting the values in Juju.
-      var bindingEngine = this.viewletManager.bindingEngine;
-      bindingEngine.clearChangedValues('config');
-      var db = this.viewletManager.get('db');
+      // If the user has conflicted fields and still chooses to
+      // save, then we will be overwriting the values in Juju.
       if (e.err) {
+        var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
-              title: 'Error setting service config',
+              title: 'Error setting service configuration',
               message: 'Service name: ' + e.service_name,
               level: 'error'
             })
         );
       } else {
-        // XXX show saved notification
-        // we have no story for this yet
-        db.notifications.add(
-            new models.Notification({
-              title: 'Config saved successfully ',
-              message: e.service_name + ' config set successfully.',
-              level: 'info'
-            })
-        );
+        this._highlightSaved(container);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.clearChangedValues('config');
       }
+      container.one('.controls .confirm').removeAttribute('disabled');
     },
 
     /**
@@ -827,13 +847,10 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     _saveConstraintsCallback: function(container, ev) {
-      var inspector = this.viewletManager;
-      var bindingEngine = inspector.bindingEngine;
-      bindingEngine.clearChangedValues('constraints');
-      var db = inspector.get('db');
-      var service = inspector.get('model');
       if (ev.err) {
         // Notify an error occurred while updating constraints.
+        var db = this.viewletManager.get('db');
+        var service = this.viewletManager.get('model');
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service constraints',
@@ -843,15 +860,9 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        // XXX frankban: show success notification.
-        // We have no story for this yet.
-        db.notifications.add(
-            new models.Notification({
-              title: 'Constraints saved successfully',
-              message: ev.service_name + ' constraints set successfully.',
-              level: 'info'
-            })
-        );
+        this._highlightSaved(container);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.clearChangedValues('constraints');
       }
       container.one('.save-constraints').removeAttribute('disabled');
     },
@@ -883,8 +894,9 @@ YUI.add('juju-view-inspector', function(Y) {
     upgradeService: function(ev) {
       ev.halt();
       var viewletManager = this.viewletManager,
-          db = this.viewletManager.get('db'),
-          env = this.viewletManager.get('env'),
+          db = viewletManager.get('db'),
+          env = viewletManager.get('env'),
+          store = viewletManager.get('store'),
           service = this.model,
           upgradeTo = ev.currentTarget.getData('upgradeto');
       if (!upgradeTo) {
@@ -902,16 +914,37 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       env.setCharm(service.get('id'), upgradeTo, false, function(result) {
         if (result.err) {
-          db.notifications.add(new db.models.Notification({
+          db.notifications.create({
             title: 'Error setting charm.',
             message: result.err,
             level: 'error'
-          }));
+          });
           return;
         }
-        // TODO Makyo Aug 28 - figure out if there's an upgrade available for
-        // the service with the new charm, set info as needed - juju will not
-        // report new charm URL properly with GetService. - Bug: #1218447
+        env.get_charm(upgradeTo, function(data) {
+          if (data.err) {
+            db.notifications.create({
+              title: 'Error retrieving charm.',
+              message: data.err,
+              level: 'error'
+            });
+          }
+          // Set the charm on the service.
+          service.set('charm', upgradeTo);
+          store.promiseUpgradeAvailability(data.result, db.charms).then(
+              function(latestId) {
+                // Redraw(?) the inspector.
+                service.set('upgrade_available', !!latestId);
+                service.set('upgrade_to', !!latestId ? 'cs:' + latestId : '');
+              },
+              function(error) {
+                db.notifications.create({
+                  title: 'Error retrieving charm.',
+                  message: error,
+                  level: 'error'
+                });
+              });
+        });
       });
     },
 
@@ -1043,15 +1076,127 @@ YUI.add('juju-view-inspector', function(Y) {
   };
 
   var ConflictMixin = {
-    'changed': function(node, key, field) {
-      var modelValue = this.model.get(key);
-      var fieldValue = field.get(node);
-      if (modelValue !== fieldValue) {
-        node.addClass('modified');
+    /**
+     * Reset the given node to not be marked as 'modified' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearModified
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var n = node.get('parentNode').one('.modified');
+        if (n) {
+          n.remove();
+        }
+
+        // If the value isn't modified it can't be in conflict.
+        this._clearConflictPending(node);
       } else {
         node.removeClass('modified');
       }
     },
+
+    /**
+     * Mark the given node to not be marked as 'modified' in the UX.
+     *
+     * @method _markModified
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeModified': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="modified boolean"/>'));
+        this._clearConflictPending(node);
+      } else {
+        node.addClass('modified');
+      }
+    },
+
+    /**
+     * Reset the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflictPending
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        var n = node.get('parentNode').one('.conflict-pending');
+        if (n) {
+          n.remove();
+        }
+      } else {
+        node.removeClass('conflict-pending');
+      }
+    },
+
+    /**
+     * Mark the given node to not be marked as 'conflict-pending' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflictPending
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeConflictPending': function(node) {
+      if (node.getAttribute('type') === 'checkbox') {
+        node.get('parentNode').append(
+            Y.Node.create('<span class="conflict-pending boolean"/>'));
+      } else {
+        node.addClass('conflict-pending');
+      }
+    },
+
+    /**
+     * Reset the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _clearConflict
+     * @param {Y.Node} node of the input to clear.
+     *
+     */
+    '_clearConflict': function(node) {
+      // Checkboxes don't go to full conflict as there's no UX to choose a
+      // value to keep.
+      node.removeClass('conflict');
+    },
+
+    /**
+     * Mark the given node to not be marked as 'conflict' in the UX.
+     *
+     * Marking checkboxes in the UI is done a little differently and requires
+     * condition checking in these helpers.
+     *
+     * @method _makeConflict
+     * @param {Y.Node} node of the input to mark.
+     *
+     */
+    '_makeConflict': function(node) {
+      node.addClass('conflict');
+    },
+
+    'changed': function(node, key, field) {
+      var modelValue = this.model.get(key);
+      var fieldValue = field.get(node);
+      if (modelValue !== fieldValue) {
+        this._makeModified(node);
+      } else {
+        this._clearModified(node);
+      }
+    },
+
     'conflict': function(node, model, viewletName, resolve, binding) {
       /**
        Calls the databinding resolve method
@@ -1073,8 +1218,12 @@ YUI.add('juju-view-inspector', function(Y) {
         e.halt(true);
         var formValue = field.get(node);
         handlers.forEach(function(h) { h.detach();});
-        node.removeClass('modified');
-        node.removeClass('conflict');
+
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearModified(node);
+        this._clearConflict(node);
+
         resolver.addClass('hidden');
 
         if (e.currentTarget.hasClass('conflicted-env')) {
@@ -1091,30 +1240,43 @@ YUI.add('juju-view-inspector', function(Y) {
       */
       function setupResolver(e) {
         e.halt(true);
-        node.removeClass('conflict-pending');
-        node.addClass('conflict');
-        option.addClass('conflict');
+        /* jshint -W040 */
+        // Ignore 'possible strict violation'
+        this._clearConflictPending(node);
+        this._makeConflict(node);
+        this._makeConflict(option);
         option.setStyle('width', node.get('offsetWidth'));
         option.setHTML(modelValue);
         resolver.removeClass('hidden');
       }
 
       // On conflict just indicate.
-      node.removeClass('modified');
-      node.addClass('conflict-pending');
+      this._clearModified(node);
+      this._makeConflictPending(node);
 
-      handlers.push(wrapper.delegate('click', setupResolver,
-          '.conflict-pending', this));
+      handlers.push(wrapper.delegate(
+          'click',
+          setupResolver,
+          '.conflict-pending',
+          this));
 
       handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
     },
     'unsyncedFields': function(dirtyFields) {
-      this.container.one('.controls .confirm').setHTML('Overwrite');
+      var node = this.container.one('.controls .confirm');
+      if (!node.getData('originalText')) {
+        node.setData('originalText', node.getHTML());
+      }
+      node.setHTML('Overwrite');
     },
     'syncedFields': function() {
-      this.container.one('.controls .confirm').setHTML('Save Changes');
+      var node = this.container.one('.controls .confirm');
+      var title = node.getData('originalText');
       this.container.all('.modified').removeClass('modified');
+      if (title) {
+        node.setHTML(title);
+      }
     }
   };
 
@@ -1129,7 +1291,6 @@ YUI.add('juju-view-inspector', function(Y) {
     @class ServiceInspector
    */
   views.ServiceInspector = (function() {
-    var juju = Y.namespace('juju');
     // This variable is assigned an aggregate collection of methods and
     // properties provided by various controller objects in the
     // ServiceInspector constructor.

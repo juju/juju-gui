@@ -52,7 +52,6 @@ describe('viewmode controls widgets', function() {
   });
 
   it('activates the correct div on init', function() {
-    var triggered = false;
     controls = new ViewmodeControls({
       currentViewmode: 'fullscreen'
     });

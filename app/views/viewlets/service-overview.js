@@ -183,9 +183,11 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     Binds the statuses data set to d3
 
     @method generateAndBindStatusHeaders
+    @param {Y.Node} node The YUI node object.
     @param {Array} statuses A key value pair of categories to unit list.
+    @param {Model} environment The Environment model instance.
     */
-  function generateAndBindStatusHeaders(node, statuses) {
+  function generateAndBindStatusHeaders(node, statuses, environment) {
     /* jshint -W040 */
     // Ignore 'possible strict violation'
     var self = this,
@@ -231,7 +233,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       .text(function(d) { return d.upgradeTo; });
 
     serviceUpgradeLi.append('a')
-      .classed('upgrade-link', true)
+      .classed('upgrade-link right-link', true)
       .attr('data-upgradeto', function(d) { return d.upgradeTo; })
       .text('Upgrade');
 
@@ -241,7 +243,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         })
       .append('li')
       .append('a')
-      .classed('upgrade-link', true)
+      .classed('right-link', true)
       .text(function(d) {
           return d.downgrades.length + ' hidden upgrades';
         })
@@ -279,7 +281,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceUpgradeOtherCharms
       .append('a')
-      .classed('upgrade-link', true)
+      .classed('upgrade-link right-link', true)
       .attr('data-upgradeto', function(d) { return d; })
       .text('Upgrade');
 
@@ -303,10 +305,14 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     .classed('action-button-wrapper', true)
     .html(
         function(d) {
-          var tmpl = templates['unit-action-buttons'](
-            generateActionButtonList(d.category));
-          buttonHeight = tmpl.offsetHeight;
-          return tmpl;
+          var context = generateActionButtonList(d.category);
+          if (context.landscape) {
+            context.landscapeURL = utils.getLandscapeURL(
+              environment, self.model);
+          }
+          var template = templates['unit-action-buttons'](context);
+          buttonHeight = template.offsetHeight;
+          return template;
         });
 
     categoryStatusHeader
@@ -371,6 +377,27 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           return d.service + '/' + d.number;
         });
 
+    // Handle Landscape actions.
+    unitItem.filter(function() {
+      return Y.Node(this).ancestor('.landscape-needs-reboot');
+    }).append('a').classed('right-link', true).attr({
+      // Retrieve the Landscape reboot URL for the unit.
+      'href': function(d) {
+        return utils.getLandscapeURL(environment, d, 'reboot');
+      },
+      target: '_blank'
+    }).text('Reboot');
+
+    unitItem.filter(function() {
+      return Y.Node(this).ancestor('.landscape-security-upgrades');
+    }).append('a').classed('right-link', true).attr({
+      // Retrieve the Landscape security upgrade URL for the unit.
+      'href': function(d) {
+        return utils.getLandscapeURL(environment, d, 'security');
+      },
+      target: '_blank'
+    }).text('Upgrade');
+
     // D3 content update section
     unitsList.sort(
         function(a, b) {
@@ -426,13 +453,14 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         }
       },
       units: {
-        depends: ['aggregated_status'],
+        depends: ['aggregated_status', 'upgrade_to'],
         'update': function(node, value) {
           // Called under the databinding context.
           // Subordinates may not have a value.
           if (value) {
             var statuses = this.viewlet.updateStatusList(value);
-            this.viewlet.generateAndBindStatusHeaders(node, statuses);
+            this.viewlet.generateAndBindStatusHeaders(
+                node, statuses, this.viewlet.options.db.environment);
           }
         }
       }

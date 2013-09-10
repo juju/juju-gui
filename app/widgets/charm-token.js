@@ -151,10 +151,10 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
+
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
-      var outerContainer = container.ancestor('.yui3-charmtoken')
-        .addClass('yui3-u');
+      container.ancestor('.yui3-charmtoken').addClass('yui3-u');
       container.setHTML(content);
       if (this.get('isDraggable')) {
         this._addDraggability();
@@ -164,61 +164,11 @@ YUI.add('browser-charm-token', function(Y) {
   }, {
     ATTRS: {
       /**
-        The id used for querying the charmworld data store.
-        @attribute id
-        @default undefined
-        @type {String}
-      */
-      storeId: {},
-
-      /**
-       * @attribute description
-       * @default ''
-       * @type {String}
-       */
-      description: {
-        value: ''
-      },
-
-      /**
        * @attribute downloads
        * @default undefined
        * @type {Number}
        */
       downloads: {},
-
-      /**
-       * @attribute shouldShowIcon
-       * @default false
-       * @type {Boolean}
-       */
-      shouldShowIcon: {
-        value: false
-      },
-
-      /**
-         @attribute is_approved
-         @default undefined
-         @type {Boolean}
-
-       */
-      is_approved: {},
-
-      /**
-       * @attribute name
-       * @default ''
-       * @type {String}
-       */
-      name: {
-        value: ''
-      },
-
-      /**
-       * @attribute commitCount
-       * @default undefined
-       * @type {Number}
-       */
-      commitCount: {},
 
       /**
        * Force a specific icon url to be used.
@@ -233,11 +183,58 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-       * @attribute recent_commit_count
-       * @default undefined
-       * @type {Number}
+         @attribute is_approved
+         @default undefined
+         @type {Boolean}
+
        */
-      recent_commit_count: {},
+      is_approved: {},
+
+      /**
+       * Should the charm token be draggable?
+       *
+       * @attribute isDraggable
+       * @default true
+       * @type {Boolean}
+       *
+       */
+      isDraggable: {
+        value: true
+      },
+
+      /**
+       * @attribute name
+       * @default ''
+       * @type {String}
+       */
+      name: {
+        value: ''
+      },
+
+      /**
+       * @attribute owner
+       * @default undefined
+       * @type {String}
+       *
+       */
+      owner: {},
+
+      /**
+       * @attribute series
+       * @default undefined
+       * @type {String}
+       *
+       */
+      series: {},
+
+      /**
+       * @attribute shouldShowIcon
+       * @default false
+       * @type {Boolean}
+       */
+      shouldShowIcon: {
+        value: false
+      },
 
       /**
          Supports size attributes of small and large that turn into the css
@@ -253,17 +250,15 @@ YUI.add('browser-charm-token', function(Y) {
       size: {
         value: 'small'
       },
+
       /**
-       * Should the charm token be draggable?
-       *
-       * @attribute isDraggable
-       * @default true
-       * @type {Boolean}
-       *
-       */
-      isDraggable: {
-        value: true
-      }
+        The id used for querying the charmworld data store.
+        @attribute id
+        @default undefined
+        @type {String}
+      */
+      storeId: {}
+
     }
   });
 

@@ -1,4 +1,5 @@
 @inspector-background-color: #221e1c;
+@inspector-changed-field: #dedede;
 @inspector-controls-height: 82px;
 @inspector-dark: #1c1817;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
@@ -11,6 +12,48 @@
 @deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
+
+.pulse-green-frames-mixin () {
+    0% {
+      background-color: @inspector-changed-field;
+    }
+    10% {
+      background-color: #38b44a;
+    }
+    100% {
+      background-color: white;
+    }
+}
+
+.animation (...) {
+    -webkit-animation: @arguments;
+    -moz-animation: @arguments;
+    -ms-animation: @arguments;
+    -o-animation: @arguments;
+    animation: @arguments;
+}
+
+.animation-fill-mode (...) {
+    -webkit-animation-fill-mode: @arguments;
+    -moz-animation-fill-mode: @arguments;
+    -ms-animation-fill-mode: @arguments;
+    -o-animation-fill-mode: @arguments;
+    animation-fill-mode: @arguments;
+}
+
+.transition (...) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -ms-transition: @arguments;
+    -o-transition: @arguments;
+    transition: @arguments;
+}
+
+@-webkit-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-moz-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-ms-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-o-keyframes pulse-green {.pulse-green-frames-mixin;}
+@keyframes pulse-green {.pulse-green-frames-mixin;}
 
 .yui3-juju-inspector {
     .customize-scrollbar;
@@ -231,9 +274,7 @@
                         text-align: center;
                         line-height: 20px;
                         font-size: 16px;
-                        -moz-transition: left .1s ease-in-out;
-                        -webkit-transition: left .1s ease-in-out;
-                        transition: left .1s ease-in-out;
+                        .transition(left .1s ease-in-out);
                         -moz-user-select: none;
                         -webkit-user-select: none;
                         -ms-user-select: none;
@@ -345,9 +386,7 @@
                 margin-top: 2px;
                 padding-top: 20px;
                 letter-spacing: normal;
-                -moz-transition: .3s, max-height .3s;
-                -webkit-transition: .25s, max-height .3s;
-                transition: .3s, max-height .3s;
+                .transition(.25s, height .3s);
 
                 &.closed {
                     padding-top: 0;
@@ -574,7 +613,7 @@
                         /* Required for sizing images in IE10 */
                         width: 30px;
                         height: 30px;
-                    
+
                     }
                     .details-wrapper {
                         width: 180px;
@@ -687,12 +726,14 @@
             .settings-wrapper {
                 position: relative;
 
+                span.resolver .conflicted-env {
+                  display: inline-block;
+                  min-width: 25px;
+                  min-height: 25px;
+                }
                 .config-field,
                 .constraint-field {
-                  -webkit-transition: background 1s linear;
-                  -moz-transition: background 1s linear;
-                  -o-transition: background 1s linear;
-                  transition: background 1s linear;
+                  .transition(background 1s linear);
                   background-repeat: no-repeat;
                   background-position: right center;
                   background-url: none;
@@ -701,12 +742,13 @@
                 .config-field {
                   &.boolean {
                     width: auto;
+                    display: inline-block;
                   }
                 }
                 .resolver {
                   color: black;
                   background-color: white;
-                  border: 1px solid #dedede;
+                  border: 1px solid @inspector-changed-field;
                   border-radius: 1px;
 
                   div {
@@ -714,17 +756,55 @@
                   }
                 }
                 .modified {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
+
+                  &.boolean {
+                    background-color: inherit;
+                    display: inline-block;
+                    min-width: 13px;
+                    min-height: 13px;
+                  }
                 }
                 .conflict-pending {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
+
+                  &.boolean {
+                    background-color: inherit;
+                    display: inline-block;
+                    min-width: 25px;
+                    min-height: 25px;
+                  }
                 }
+
                 .conflict {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
-                 }
+                }
+
+                /* Inputs does not need to have the background-image */
+                input.conflict {
+                  background-image: none;
+                }
+
+                /* When on a boolean state we don't have the grey background
+                 * of an input to put the background icon against, just make
+                 * it transparent to display on the black background */
+                .resolver.boolean {
+                  background-color: transparent;
+                  border: none;
+
+                  .conflict {
+                    background-color: transparent;
+                  }
+                }
+
+                .change-saved {
+                    .animation(pulse-green 1s);
+                    .animation-fill-mode(forwards);
+                    .transition(none);
+                }
             }
             .toggle {
                 padding: 10px @inspector-main-padding;
@@ -767,9 +847,7 @@
         .destroy-service-prompt {
             overflow: hidden;
             max-height: 200px;
-            -moz-transition: .3s, max-height .3s;
-            -webkit-transition: .3s, max-height .3s;
-            transition: .3s, max-height .3s;
+            .transition(.25s, height .3s);
             position: absolute;
             bottom: 0;
 
@@ -861,9 +939,7 @@
             }
 
             .status-unit-content {
-                -moz-transition: .3s, max-height .3s;
-                -webkit-transition: .25s, max-height .3s;
-                transition: .3s, max-height .3s;
+                .transition(.25s, max-height .3s);
                 overflow: hidden;
                 background: @charm-panel-background-color;
 
@@ -891,7 +967,7 @@
                     border-top: 1px solid @inspector-status-border-color;
                     clear: both;
 
-                    .upgrade-link {
+                    .right-link {
                         float: right;
                         color: @confirm-button-color;
                     }

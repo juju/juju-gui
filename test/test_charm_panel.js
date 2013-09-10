@@ -149,13 +149,6 @@ describe('charm panel', function() {
       panel.show();
     });
 
-    // Search for a charm using the charm search input.
-    var search = function(contents) {
-      var field = Y.one('#charm-search-field');
-      field.set('value', contents);
-      field.simulate('keydown', {keyCode: ENTER});
-    };
-
     // Start deploying a charm, without confirming.
     var startDeployment = function(ghostXY) {
       panel.deploy(

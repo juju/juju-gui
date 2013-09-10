@@ -178,7 +178,11 @@ YUI.add('juju-charm-models', function(Y) {
             this.set('requires', cfg.relations.requires);
           }
         }
+        if (cfg.distro_series) {
+          this.set('series', cfg.distro_series);
+        }
       }
+
     },
 
     sync: function(action, options, callback) {
@@ -275,7 +279,7 @@ YUI.add('juju-charm-models', function(Y) {
       },
       code_source: {},
       options: {
-        setter: 'unsetIfNoValue'
+        setter: unsetIfNoValue
       },
       description: {},
       full_name: {
@@ -450,13 +454,15 @@ YUI.add('juju-charm-models', function(Y) {
         // Only show the icon if it has one and the charm has been reviewed to
         // have a safe icon.
         shouldShowIcon: data.has_icon && data.is_approved,
-        storeId: data.id,
-        is_approved: data.is_approved,
-        name: data.name,
         commitCount: parseInt(data.code_source.revision, 10),
         downloads: data.downloads,
+        is_approved: data.is_approved,
+        name: data.name,
+        owner: data.owner,
         recent_commit_count: data.commits_in_past_30_days,
         recent_download_count: data.downloads_in_past_30_days,
+        series: data.distro_series,
+        storeId: data.id,
         weight: data.weight
       };
     },
@@ -782,7 +788,7 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       options: {
-        setter: 'unsetIfNoValue'
+        setter: unsetIfNoValue
       },
       owner: {},
       peers: {},

@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('viewlet-unit-details', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
-      templates = Y.namespace('juju.views').Templates,
+      views = Y.namespace('juju.views'),
+      templates = views.Templates,
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
@@ -30,44 +31,45 @@ YUI.add('viewlet-unit-details', function(Y) {
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
-    'render': function(unit, viewletManagerAttrs) {
-      var db = viewletManagerAttrs.db,
-          service = db.services.getById(unit.service);
 
-      var ip_description_chunks = [];
+    // Return the template context for the unit detail view.
+    'getContext': function(db, service, unit) {
+      var ipDescriptionChunks = [];
       if (unit.public_address) {
-        ip_description_chunks.push(unit.public_address);
+        ipDescriptionChunks.push(unit.public_address);
       }
       if (unit.private_address) {
-        ip_description_chunks.push(unit.private_address);
+        ipDescriptionChunks.push(unit.private_address);
       }
       if (unit.open_ports) {
-        ip_description_chunks.push(unit.open_ports.join());
+        ipDescriptionChunks.push(unit.open_ports.join(', '));
       }
-      var unit_ip_description;
-      if (ip_description_chunks.length) {
-        unit_ip_description = ip_description_chunks.join(' | ');
+      var unitIPDescription;
+      if (ipDescriptionChunks.length) {
+        unitIPDescription = ipDescriptionChunks.join(' | ');
       }
-
       // Ignore relations errors.
-      var state = utils.simplifyState(unit, true);
-
       var relation_errors = unit.relation_errors || {},
           relations = utils.getRelationDataForService(db, service);
-
       Y.each(relations, function(rel) {
         var match = relation_errors[rel.near.name],
             far = rel.far || rel.near;
         rel.has_error = !!(match && match.indexOf(far.service) > -1);
       });
-
-      var templateData = {
+      return {
         unit: unit,
-        unitIPDescription: unit_ip_description,
-        relations: relations
+        unitIPDescription: unitIPDescription,
+        relations: relations,
+        landscapeURL: utils.getLandscapeURL(db.environment, unit)
       };
+    },
+
+    'render': function(unit, viewletManagerAttrs) {
+      var db = viewletManagerAttrs.db;
+      var service = db.services.getById(unit.service);
+      var context = this.getContext(db, service, unit);
       this.container = Y.Node.create(this.templateWrapper({}));
-      this.container.one('.content').setHTML(this.template(templateData));
+      this.container.one('.content').setHTML(this.template(context));
     }
   };
 }, '0.0.1', {

@@ -151,7 +151,6 @@ describe('Inspector Settings', function() {
     assert.isFalse(unexposeCalled);
     var vmContainer = inspector.viewletManager.get('container');
     var expose = vmContainer.one('label[for=expose-toggle]');
-    var exposeLabel = expose.one('.handle');
     expose.simulate('click');
     assert.isTrue(service.get('exposed'));
     assert.isTrue(exposeCalled);
@@ -324,11 +323,16 @@ describe('Inspector Settings', function() {
 
     assert.equal(db.services.item(0).get('config').admins, '');
     input.set('value', 'foo');
-
+    // Force the databinding to notice the change in-line.
+    inspector.viewletManager.bindingEngine._storeChanged(
+        {target: input}, inspector.viewletManager.viewlets.config);
     button.simulate('click');
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Config.admins);
+    // Send back a success message.
+    env.ws.msg({RequestId: message.RequestId});
     assert.equal(button.getHTML(), 'Save Changes');
+    assert.isTrue(input.hasClass('change-saved'));
   });
 
 });

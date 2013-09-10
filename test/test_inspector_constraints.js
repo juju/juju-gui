@@ -21,6 +21,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Constraints', function() {
   var container, env, inspector, juju, models, utils, view, views, Y, viewUtils;
 
+  // Create a service model instance.
+  var makeService = function(db) {
+    var charmId = 'precise/django-42';
+    db.charms.add({id: charmId, config: {}});
+    var service = db.services.add({id: 'django', charm: charmId});
+    db.onDelta({data: {result: [
+      ['unit', 'add', {id: 'django/0', agent_state: 'pending'}]
+    ]}});
+    return service;
+  };
+
+  // Create a service inspector.
+  var makeInspector = function(environmentView, service) {
+    Y.Node.create('<div id="content">').appendTo(container);
+    inspector = environmentView.createServiceInspector(service,
+        {databinding: {interval: 0}});
+    return inspector;
+  };
+
+  // Create a fake response from the juju-core API server.
+  var makeResponse = function(service, error) {
+    var response = {RequestId: 1};
+    if (error) {
+      response.Error = 'bad wolf';
+    } else {
+      response.Response = {};
+    }
+    return response;
+  };
+
+  // Retrieve and return the constraints viewlet.
+  var getViewlet = function(inspector) {
+    return inspector.viewletManager.viewlets.constraints;
+  };
+
+  // Change the value of the given key in the constraints form.
+  // Return the corresponding node.
+  var changeForm = function(viewlet, key, value) {
+    var selector = 'input[name=' + key + '].constraint-field';
+    var node = viewlet.container.one(selector);
+    node.set('value', value);
+    // Trigger bindingEngine to notice change.
+    var bindingEngine = inspector.viewletManager.bindingEngine;
+    bindingEngine._storeChanged({target: node}, viewlet);
+    return node;
+  };
+
   before(function(done) {
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views',
       'node-event-simulate', 'juju-charm-store', 'juju-charm-models'];
@@ -65,51 +112,6 @@ describe('Inspector Constraints', function() {
     container.remove(true);
     window.flags = {};
   });
-
-  // Create a service model instance.
-  var makeService = function(db) {
-    var charmId = 'precise/django-42';
-    db.charms.add({id: charmId, config: {}});
-    var service = db.services.add({id: 'django', charm: charmId});
-    db.onDelta({data: {result: [
-      ['unit', 'add', {id: 'django/0', agent_state: 'pending'}]
-    ]}});
-    return service;
-  };
-
-  // Create a service inspector.
-  var makeInspector = function(environmentView, service) {
-    Y.Node.create('<div id="content">').appendTo(container);
-    inspector = environmentView.createServiceInspector(service,
-        {databinding: {interval: 0}});
-    return inspector;
-  };
-
-  // Create a fake response from the juju-core API server.
-  var makeResponse = function(service, error) {
-    var response = {RequestId: 1};
-    if (error) {
-      response.Error = 'bad wolf';
-    } else {
-      response.Response = {};
-    }
-    return response;
-  };
-
-  // Retrieve and return the constraints viewlet.
-  var getViewlet = function(inspector) {
-    return inspector.viewletManager.viewlets.constraints;
-  };
-
-  // Change the value of the given key in the constraints form.
-  // Return the corresponding node.
-  var changeForm = function(viewlet, key, value) {
-    var selector = 'input[name=' + key + '].constraint-field';
-    var node = viewlet.container.one(selector);
-    node.set('value', value);
-    viewlet._changedValues = ['constraints.' + key];
-    return node;
-  };
 
   it('renders the constraints form correctly', function() {
     assert.notEqual(
@@ -170,7 +172,6 @@ describe('Inspector Constraints', function() {
     // The set_constraint API method is correctly called.
     assert.equal('SetServiceConstraints', lastMessage.Request);
     // The expected constraints are passed in the API call.
-    var obtained = Object.create(null);
     assert.deepEqual(expected, lastMessage.Params.Constraints);
   });
 
@@ -189,15 +190,13 @@ describe('Inspector Constraints', function() {
   });
 
   it('handles success responses from the environment', function() {
+    var viewlet = getViewlet(inspector);
+    changeForm(viewlet, 'arch', 'i386');
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    var db = inspector.viewletManager.get('db');
-    // A success notification is correctly generated.
-    assert.strictEqual(1, db.notifications.size());
-    var msg = db.notifications.item(0);
-    assert.strictEqual('info', msg.get('level'));
-    assert.strictEqual('Constraints saved successfully', msg.get('title'));
+    var input = container.one('input[name=arch].constraint-field');
+    assert.isTrue(input.hasClass('change-saved'));
   });
 
   it('disables and re-enables the save button during the process', function() {
@@ -212,10 +211,17 @@ describe('Inspector Constraints', function() {
   it('clears changed values on save', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
+    assert.lengthOf(Object.keys(viewlet.changedValues), 1);
     var saveButton = container.one('button.save-constraints');
+    assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
     env.ws.msg(makeResponse(inspector.model, false));
-    assert.lengthOf(viewlet._changedValues, 0, 'changedValues is not empty');
+    assert.lengthOf(
+        Object.keys(viewlet.changedValues),
+        0,
+        'changedValues is not empty after a save.');
+    // There was an odd bug that caused this assertion to fail at one point.
+    assert.equal(saveButton.getHTML(), 'Confirm');
   });
 
 });

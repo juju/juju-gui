@@ -117,7 +117,10 @@ function injectData(app, data) {
         sandbox: true,
         apiBackend: 'not really a backend'};
       assert.throws(
-          function() {var stupidLinter = new Y.juju.App(config);},
+          function() {
+            /* jshint -W031*/
+            new Y.juju.App(config);
+          },
           'unrecognized backend type: not really a backend');
     });
 
@@ -284,7 +287,7 @@ function injectData(app, data) {
 (function() {
 
   describe('Application authentication', function() {
-    var ENV_VIEW_NAME, FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
+    var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
     var conn, container, destroyMe, env, juju, utils, Y;
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
 
@@ -292,7 +295,6 @@ function injectData(app, data) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
-        ENV_VIEW_NAME = 'EnvironmentView';
         FAKE_VIEW_NAME = 'FakeView';
         LOGIN_VIEW_NAME = 'LoginView';
         done();

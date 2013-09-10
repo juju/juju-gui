@@ -21,12 +21,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Environment factory', function() {
-    var environments, juju, Y;
+    var juju, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env'], function(Y) {
         juju = Y.namespace('juju');
-        environments = juju.environments;
         done();
       });
     });

@@ -37,7 +37,6 @@ YUI.add('viewlet-service-config', function(Y) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
-      var charmOptions = charm.get('options');
       var templatedSettings = utils.extractServiceSettings(
           charm.get('options'));
 
@@ -58,6 +57,14 @@ YUI.add('viewlet-service-config', function(Y) {
       exposed: {
         'update': function(node, value) {
           node.one('input').set('checked', value);
+        }
+      },
+      'config': {
+        'update': function(node, val) {
+          if (val === undefined) {
+            val = '';
+          }
+          node.set('value', val);
         }
       }
     }

@@ -26,8 +26,8 @@ if (!Object.observe) {
           } :
           function(f) {
             return s === toString.call(f);
-          }
-;
+          };
+
     })(extend.prototype.toString);
     var isNumeric = function(n) {
       return !isNaN(parseFloat(n)) && isFinite(n);

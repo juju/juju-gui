@@ -596,7 +596,6 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
       // Just show the service on double-click.
-      var topo = self.get('component');
       var service = box.model;
       // The browser sends a click event right before the dblclick one, and
       // it opens the service menu: close it before moving to the service
@@ -878,7 +877,6 @@ YUI.add('juju-topology-service', function(Y) {
      * @method dragstart
      */
     dragstart: function(box, self) {
-      var topo = self.get('component');
       box.oldX = box.x;
       box.oldY = box.y;
       box.inDrag = views.DRAG_START;
@@ -1430,10 +1428,7 @@ YUI.add('juju-topology-service', function(Y) {
      */
     show_service: function(service) {
       var topo = this.get('component');
-      var setInspector = topo.get('setInspector');
-      var getInspector = topo.get('getInspector');
       var createServiceInspector = topo.get('createServiceInspector');
-      var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
       // to satisfy linter;
       var flags = window.flags;
