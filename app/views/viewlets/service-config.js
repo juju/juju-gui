@@ -47,11 +47,15 @@ YUI.add('viewlet-service-config', function(Y) {
         // input.
         'update': function(node, val) {
           if (node.getAttribute('type') === 'checkbox') {
-              debugger;
             if (val !== node.get('checked')) {
               node.set('checked', val);
-              // Trigger a manual change so that the textual value updates.
-              node.simulate('change');
+              // We cannot simulate a change event here to trigger the textual
+              // value to update or else we'll cause databinding to think
+              // there's a conflict the next time this is changed via anyone
+              // else.
+              // We manually set the html content in order to avoid this.
+              node.ancestor('.toggle').one('.textvalue').set('text',
+                                                             val);
             }
           } else {
             if (val === undefined) {

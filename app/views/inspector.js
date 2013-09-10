@@ -1188,7 +1188,6 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     'conflict': function(node, model, viewletName, resolve, binding) {
-      debugger;
       // Not all nodes need to show the conflict ux. This is true when
       // multiple binds to a single model field are set, such as in pretty
       // toggle checkbox UI.
