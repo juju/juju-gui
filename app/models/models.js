@@ -88,6 +88,7 @@ YUI.add('juju-models', function(Y) {
   /**
     Utility method to return the services involved in the delta.
 
+    @method getServicesfromDelta
     @param {Object | null} modelInstance a reference to the model instance
       to use to extract the service information from.
     @param {Object | String} data The delta data.
@@ -108,7 +109,10 @@ YUI.add('juju-models', function(Y) {
       // It is a relation delta
       services = [];
       services.push(db.services.getById(data.endpoints[0][0]));
-      services.push(db.services.getById(data.endpoints[1][0]));
+      if (data.endpoints[1]) {
+        // Peer relationships only have a single endpoint
+        services.push(db.services.getById(data.endpoints[1][0]));
+      }
     }
 
     if (!services) { return; }
@@ -118,6 +122,7 @@ YUI.add('juju-models', function(Y) {
   /**
     Utility method to add a copied Unit Model to the service Model.
 
+    @method addUnitToServiceModel
     @param {Object | null} modelInstance a reference to the model instance
                            to use to extract the service information from.
     @param {Object | String} data The delta data.
@@ -126,17 +131,22 @@ YUI.add('juju-models', function(Y) {
   */
   var addUnitToServiceModel = function(modelInstance, data, db) {
     var service = getServicesfromDelta(modelInstance, data, db);
-    var modelList = service.get('units');
-    if (!modelList) {
-      modelList = new models.ServiceUnitList();
-      service.set('units', modelList);
+    // Because the tests add units via the delta without
+    // creating services we need this check.
+    if (service) {
+      var modelList = service.get('units');
+      if (!modelList) {
+        modelList = new models.ServiceUnitList();
+        service.set('units', modelList);
+      }
+      return modelList;
     }
-    return modelList;
   };
 
   /**
     Utility method to add a copied Relation Model to the service Model.
 
+    @method addRelationToServiceModel
     @param {Object | null} modelInstance a reference to the model instance
                            to use to extract the service information from.
     @param {Object | String} data The delta data.
@@ -146,17 +156,25 @@ YUI.add('juju-models', function(Y) {
   var addRelationToServiceModel = function(modelInstance, data, db) {
     var services = getServicesfromDelta(modelInstance, data, db);
     var modelList = [], tmp;
-    services.forEach(function(service) {
-      tmp = service.get('relations');
-      if (!tmp) {
-        tmp = new models.RelationList();
-        service.set('relations', tmp);
-        modelList.push(tmp);
-      } else {
-        modelList.push(tmp);
-      }
-    });
-    return modelList;
+    // Because the tests add units via the delta without
+    // creating services we need this check.
+    if (services) {
+      services.forEach(function(service) {
+        // Because some of the tests add relations without services
+        // it's possible that a service will be null
+        if (service) {
+          tmp = service.get('relations');
+          if (!tmp) {
+            tmp = new models.RelationList();
+            service.set('relations', tmp);
+            modelList.push(tmp);
+          } else {
+            modelList.push(tmp);
+          }
+        }
+      });
+      return modelList;
+    }
   };
 
   /**
@@ -191,14 +209,31 @@ YUI.add('juju-models', function(Y) {
 
   var Service = Y.Base.create('service', Y.Model, [], {
 
+    /**
+      Adds a new instance of a relations list to the services attributes and
+      creates a holder for this services event listeners.
+
+      @method initializer
+      @private
+    */
     initializer: function() {
+      // We create the relation model list here so that the databinding
+      // engine can bind to it and react on changes which may come in
+      // on the deltas.
       var relations = new models.RelationList();
       this.set('relations', relations);
       this._events = [];
       this._bindAttributes();
     },
 
+    /**
+      Sets up the attribute event listeners
+
+      @method _bindAttributes
+    */
     _bindAttributes: function() {
+      // This allows the databinding engine to react to a relation change on
+      // any of this services relations.
       this._events.push(
           this.get('relations').on(
               ['*:change', '*:add', '*:remove'], function(e) {
@@ -235,6 +270,11 @@ YUI.add('juju-models', function(Y) {
       return errors && errors >= 1;
     },
 
+    /**
+      Detaches all of the events in the models _event property
+
+      @method destructor
+    */
     destructor: function() {
       this._events.forEach(function(event) {
         event.detach();
@@ -456,9 +496,12 @@ YUI.add('juju-models', function(Y) {
           oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }
-
       var unitList = addUnitToServiceModel(instance, data, db);
-      _process_delta(unitList, action, data, {});
+      // If no unitList was added to the service model then we
+      // don't need to process the delta on it.
+      if (unitList) {
+        _process_delta(unitList, action, data, {});
+      }
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -535,7 +578,6 @@ YUI.add('juju-models', function(Y) {
      */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
-console.log(aggregate);
       var sum = Y.Array.reduce(
           Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});
       var previous_unit_count = service.get('unit_count');
@@ -649,10 +691,17 @@ console.log(aggregate);
 
     process_delta: function(action, data, db) {
       var instance = _process_delta(this, action, data, {});
-      var relationLists = addRelationToServiceModel(instance, data, db);
-      relationLists.forEach(function(relationList) {
-        _process_delta(relationList, action, data, {});
-      });
+      if (instance) {
+        // When removing a relation instance is null
+        var relationLists = addRelationToServiceModel(instance, data, db);
+        // If the relationLists weren't added to the services
+        // we don't need to process the delta on them.
+        if (relationLists) {
+          relationLists.forEach(function(relationList) {
+            _process_delta(relationList, action, data, {});
+          });
+        }
+      }
     },
 
     /**

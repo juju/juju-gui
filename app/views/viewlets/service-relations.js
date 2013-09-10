@@ -34,7 +34,7 @@ YUI.add('viewlet-service-relations', function(Y) {
 
     bindings: {
       aggregateRelations: {
-        update: function(node, value) {
+        'update': function(node, value) {
           var db = this.viewlet.options.db;
           var service = this.viewlet.model;
           var relations = utils.getRelationDataForService(db, service);
@@ -44,7 +44,7 @@ YUI.add('viewlet-service-relations', function(Y) {
         }
       },
       aggregateRelationError: {
-        update: function(node, value) {
+        'update': function(node, value) {
           // Aggregate the unit statuses here to display the relation status
         }
       }

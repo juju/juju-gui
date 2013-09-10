@@ -153,10 +153,10 @@ describe('juju models', function() {
           agent_state: 'error'});
         sul.add([wp0, wp1]);
 
-        sul.get_informative_states_for_service(mysql).should.eql(
-            {'pending': 2});
-        sul.get_informative_states_for_service(wordpress).should.eql(
-            {'pending': 1, 'error': 1});
+        assert.deepEqual(sul.get_informative_states_for_service(mysql),
+            [{'pending': 2}, {}]);
+        assert.deepEqual(sul.get_informative_states_for_service(wordpress),
+            [{'pending': 1, 'error': 1}, {}]);
       });
 
   it('service unit list should update analytics when units are added',
@@ -300,7 +300,9 @@ describe('juju models', function() {
         my0.agent_state.should.equal('another');
       });
 
-  it('onDelta should reset relation_errors',
+  // We no longer use relation_errors but this test should remain until it's
+  // completely removed from the codebase.
+  it.skip('onDelta should reset relation_errors',
       function() {
         var db = new models.Database();
         var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
