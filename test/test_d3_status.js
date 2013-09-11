@@ -53,7 +53,7 @@ describe('D3 StatusBar', function() {
     var bar = new views.StatusBar({
       container: container.getDOMNode(),
       width: 300,
-      fontSize: 18
+      height: 20
     }).render();
 
     bar.update({'running': 4, 'pending': 4, 'error': 2});

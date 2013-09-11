@@ -1,4 +1,4 @@
-<span>Scale up with the following constraints?</span>
+<span>Scale up with these constraints?</span>
 <span class="constraint-details hide-on-edit">
   {{#srvConstraints}}
     {{#if cpu}}
@@ -6,22 +6,23 @@
     {{else}}
       Default CPU
     {{/if}}
-    &nbsp;
+    ,&nbsp;
     {{#if mem}}
       {{mem}}GB
     {{else}}
-      Default Mem
+      default Mem
     {{/if}}
-    &nbsp;
+    ,&nbsp;
     {{#if arch}}
       {{arch}}
     {{else}}
-      Default Arch
+      default Arch
     {{/if}}
   {{/srvConstraints}}
+  &nbsp;
+  <a class="edit-constraints hide-on-edit">Edit this</a>
 </span>
 <div class="edit-constraints-wrapper">
-  <a class="edit-constraints hide-on-edit">Edit</a>
   <div class="editable-constraints" style="display: none;">
     {{> service-constraints-viewlet}}
   </div>

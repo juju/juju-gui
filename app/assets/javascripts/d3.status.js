@@ -41,9 +41,9 @@ YUI.add('d3-statusbar', function(Y) {
       target: A node to render directly into or a specific selector.
       container: A container to build the status graph into.
       width: Rendered width in pixels. Scales accordingly.
-      fontSize: Label size, used to determine height of graph.
+      height: Rendered height in pixels.
+      fontSize: Label size.
       transitionTime: How long in ms for transition effects.
-      resize: {Boolean} resize target to width/fontSize derived height.
       sort: {Function} comparator for dataMap results.
 
       @class StatusBar
@@ -53,9 +53,9 @@ YUI.add('d3-statusbar', function(Y) {
         container: 'body',
         target: 'svg',
         width: 250,
+        height: 18,
         fontSize: 16,
         transitionTime: 750,
-        resize: true,
         labels: true,
         'sort': function(a, b) {
           return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
@@ -79,13 +79,9 @@ YUI.add('d3-statusbar', function(Y) {
         this.node.append('g')
         .classed('statusbar', true);
       }
-
-      if (this.options.resize) {
-        this.node.attr({
-          width: this.options.width,
-          height: this.options.fontSize + 2
-        });
-      }
+      this.node.attr({
+        width: this.options.width
+      });
 
       this.scale = d3.scale.linear()
       .domain([0, 100])
@@ -191,7 +187,7 @@ YUI.add('d3-statusbar', function(Y) {
             node.classed(d.key, true);
           })
       .attr({
-            height: self.options.fontSize + 2
+            height: self.options.height
           });
 
       rects
