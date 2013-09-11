@@ -26,6 +26,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  var SHOWCOUNT = 5;
+
   var unitListNameMap = {
     error: 'Error',
     pending: 'Pending',
@@ -229,7 +231,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           if (d.upgradeAvailable) {
             return [d.upgradeTo];
           } else {
-            return d.downgrades.slice(0, 5);
+            return d.downgrades.slice(0, SHOWCOUNT);
           }
         })
     .enter()
@@ -250,13 +252,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     serviceStatusContentForm
       .filter(function(d) {
           return d.category === 'upgrade-service' && (d.upgradeAvailable ||
-              d.downgrades.length - 5 > 0);
+              d.downgrades.length - SHOWCOUNT > 0);
         })
       .append('li')
       .append('a')
       .classed('right-link', true)
       .text(function(d) {
-          return (d.downgrades.length - (d.upgradeAvailable ? 0 : 5)) +
+          return (d.downgrades.length - (d.upgradeAvailable ? 0 : SHOWCOUNT)) +
               ' hidden upgrades';
         })
       .on('click', function(d) {
@@ -276,7 +278,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       .classed('hidden', true)
       .selectAll('.other-charm')
       .data(function(d) {
-          return d.downgrades.slice(d.upgradeAvailable ? 0 : 5);
+          return d.downgrades.slice(d.upgradeAvailable ? 0 : SHOWCOUNT);
         })
       .enter()
       .append('li')
