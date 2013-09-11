@@ -691,17 +691,30 @@ YUI.add('juju-databinding', function(Y) {
       @param {Object} viewlet reference.
     */
     BindingEngine.prototype._nodeChangeHandler = function(e, viewlet) {
-      var key = e.target.getData('bind');
-      var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
+      this._nodeChanged(e.target, viewlet);
+    };
+
+    /**
+      Update data structures and call viewlet hooks after a DOM node changes.
+      The source of the change might be user input or the BindingEngine
+      itself.
+
+      @method _nodeChanged
+      @param {Y.Node} node The node that changed.
+      @param {Object} viewlet The node's associated viewlet.
+    */
+    BindingEngine.prototype._nodeChanged = function(node, viewlet) {
+      var key = node.getData('bind');
+      var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
       var binding = this._getBinding(key);
-      if (nodeHandler.eq(e.target, binding.get(model))) {
+      if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
         viewlet.changedValues[key] = true;
       }
       if (viewlet.changed) {
-        viewlet.changed(e.target, key, nodeHandler);
+        viewlet.changed(node, key, nodeHandler);
       }
       // If there are no more changes, the viewlet has been synced manually.
       if (Object.keys(viewlet.changedValues).length === 0) {

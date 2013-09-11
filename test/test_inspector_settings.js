@@ -324,8 +324,8 @@ describe('Inspector Settings', function() {
     assert.equal(db.services.item(0).get('config').admins, '');
     input.set('value', 'foo');
     // Force the databinding to notice the change in-line.
-    inspector.viewletManager.bindingEngine._nodeChangeHandler(
-        {target: input}, inspector.viewletManager.viewlets.config);
+    inspector.viewletManager.bindingEngine._nodeChanged(
+        input, inspector.viewletManager.viewlets.config);
     button.simulate('click');
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Config.admins);

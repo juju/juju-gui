@@ -46,7 +46,7 @@ describe('data binding library', function() {
   });
 
   describe('supports declarative bindings', function() {
-    var form, model;
+    var model;
 
     describe('binding tests', function() {
 
@@ -714,10 +714,10 @@ describe('data binding library', function() {
     var model;
 
     beforeEach(function() {
-      model = new Y.Model({a: undefined, b:undefined});
+      model = new Y.Model({a: undefined, b: undefined});
       generateEngine(
-        '<textarea data-bind="a"></textarea>' +
-        '<textarea data-bind="b"></textarea>');
+          '<textarea data-bind="a"></textarea>' +
+          '<textarea data-bind="b"></textarea>');
       engine.bind(model, viewlet);
     });
 
@@ -733,8 +733,8 @@ describe('data binding library', function() {
 
     it('should throw an error when a binding is not found', function() {
       assert.throws(
-        function() {engine._getBinding('c');},
-        'Programmer error: no binding found for c');
+          function() {engine._getBinding('c');},
+          'Programmer error: no binding found for c');
     });
   });
 
