@@ -1194,8 +1194,6 @@ YUI.add('juju-view-inspector', function(Y) {
       if (node.getData('skipconflictux')) {
         return;
       }
-      var modelValue = this.model.get(key);
-      var fieldValue = field.get(node);
       var controls = this.container.one('.controls');
       if (this.changedValues[key]) {
         this._makeModified(node);
