@@ -222,30 +222,42 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     var serviceUpgradeLi = serviceStatusContentForm
     .filter(function(d) {
-          return d.category === 'upgrade-service' && d.upgradeAvailable;
+          return d.category === 'upgrade-service';
         })
-    .append('li');
+    .selectAll('li.top-upgrade')
+    .data(function(d) {
+          if (d.upgradeAvailable) {
+            return [d.upgradeTo];
+          } else {
+            return d.downgrades.slice(0, 5);
+          }
+        })
+    .enter()
+    .append('li')
+    .classed('top-upgrade', true);
 
     serviceUpgradeLi.append('a')
       .attr('href', function(d) {
-          return '/' + d.upgradeTo.replace(/^cs:/, '');
+          return '/' + d.replace(/^cs:/, '');
         })
-      .text(function(d) { return d.upgradeTo; });
+      .text(function(d) { return d; });
 
     serviceUpgradeLi.append('a')
       .classed('upgrade-link right-link', true)
-      .attr('data-upgradeto', function(d) { return d.upgradeTo; })
+      .attr('data-upgradeto', function(d) { return d; })
       .text('Upgrade');
 
     serviceStatusContentForm
       .filter(function(d) {
-          return d.category === 'upgrade-service' && d.upgradeAvailable;
+          return d.category === 'upgrade-service' && (d.upgradeAvailable ||
+              d.downgrades.length - 5 > 0);
         })
       .append('li')
       .append('a')
       .classed('right-link', true)
       .text(function(d) {
-          return d.downgrades.length + ' hidden upgrades';
+          return (d.downgrades.length - (d.upgradeAvailable ? 0 : 5)) +
+              ' hidden upgrades';
         })
       .on('click', function(d) {
           // Toggle the 'hidden' class.
@@ -261,12 +273,10 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         })
       .append('div')
       .classed('other-charms', true)
-      .classed('hidden', function(d) {
-          return d.upgradeAvailable;
-        })
+      .classed('hidden', true)
       .selectAll('.other-charm')
       .data(function(d) {
-          return d.downgrades;
+          return d.downgrades.slice(d.upgradeAvailable ? 0 : 5);
         })
       .enter()
       .append('li')
