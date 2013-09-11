@@ -18,7 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('data binding library', function() {
-  var Y, BindingEngine, utils, container;
+  var Y, BindingEngine, utils, viewlet, engine, container;
+
+  var generateEngine = function(input) {
+    container = utils.makeContainer();
+    container.setHTML(input);
+    viewlet = Object.create({
+      container: container,
+      changedValues: {},
+      _eventHandles: [],
+      syncedFields: function() {
+        this.calledSyncedFields = true;
+      }
+    });
+    engine = new BindingEngine({interval: 0});
+  };
 
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
@@ -32,10 +46,9 @@ describe('data binding library', function() {
   });
 
   describe('supports declarative bindings', function() {
-    var engine, form, model;
+    var model;
 
     describe('binding tests', function() {
-      var engine;
 
       it('bind should fail on invalid DOM', function() {
         engine = new BindingEngine({interval: 0});
@@ -380,7 +393,7 @@ describe('data binding library', function() {
         container.append('<div data-bind="name"></div>');
         var called = false;
 
-        var engine = new BindingEngine({interval: 0});
+        engine = new BindingEngine({interval: 0});
         engine.bind(pojo, {
           get: function(m) { return m[this.name];},
           name: 'testViewlet',
@@ -410,9 +423,9 @@ describe('data binding library', function() {
 
       it('unbind method unbinds models and pojos (unit test)', function() {
         container = utils.makeContainer();
-        var engine = new BindingEngine({interval: 0});
+        engine = new BindingEngine({interval: 0});
         var model = {id: 'test', name: 'this'};
-        var viewlet = {
+        viewlet = {
           container: container,
           changedValues: {},
           _eventHandles: []
@@ -431,18 +444,6 @@ describe('data binding library', function() {
     });
 
     describe('field types', function() {
-      var viewlet, engine, container;
-
-      function generateEngine(input) {
-        container = utils.makeContainer();
-        container.setHTML(input);
-        viewlet = {
-          container: container,
-          changedValues: {},
-          _eventHandles: []
-        };
-        engine = new BindingEngine({interval: 0});
-      }
 
       afterEach(function() {
         container.remove().destroy(true);
@@ -563,21 +564,7 @@ describe('data binding library', function() {
     });
 
     describe('changedValues tests', function() {
-      var viewlet, engine, container, model, input;
-
-      function generateEngine(input) {
-        container = utils.makeContainer();
-        container.setHTML(input);
-        viewlet = Object.create({
-          container: container,
-          changedValues: {},
-          _eventHandles: [],
-          syncedFields: function() {
-            this.calledSyncedFields = true;
-          }
-        });
-        engine = new BindingEngine({interval: 0});
-      }
+      var model, input;
 
       beforeEach(function() {
         model = new Y.Model({a: undefined});
@@ -634,7 +621,7 @@ describe('data binding library', function() {
   });
 
   describe('dependencies in bindings', function() {
-    var TestModel, engine, viewlet, container;
+    var TestModel;
 
     beforeEach(function() {
       TestModel = Y.Base.create('tester', Y.Model, [], {}, {
@@ -687,7 +674,6 @@ describe('data binding library', function() {
   });
 
   describe('modellist tests', function() {
-    var engine;
     beforeEach(function(done) {
       engine = new BindingEngine({interval: 0});
       done();
@@ -722,6 +708,46 @@ describe('data binding library', function() {
       assert.deepEqual(output, ['alpha', 'beta']);
     });
 
+  });
+
+  describe('_getBinding tests', function() {
+    var model;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined, b: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>' +
+          '<input type="text" data-bind="a"></input>' +
+          '<textarea data-bind="b"></textarea>');
+      engine.bind(model, viewlet);
+    });
+
+    afterEach(function() {
+      container.remove().destroy(true);
+      model.destroy(true);
+    });
+
+    it('should find a binding', function() {
+      var nodeA1 = container.one('textarea[data-bind="a"]');
+      var nodeA2 = container.one('input[data-bind="a"]');
+      var nodeB = container.one('[data-bind="b"]');
+      var bindingA1 = engine._getBinding('a', nodeA1);
+      var bindingA2 = engine._getBinding('a', nodeA2);
+      var bindingB = engine._getBinding('b', nodeB);
+      assert.equal(bindingA1.name, 'a');
+      assert.strictEqual(bindingA1.target, nodeA1);
+      assert.equal(bindingA2.name, 'a');
+      assert.strictEqual(bindingA2.target, nodeA2);
+      assert.equal(bindingB.name, 'b');
+      assert.strictEqual(bindingB.target, nodeB);
+    });
+
+    it('should throw an error when a binding is not found', function() {
+      var nodeA1 = container.one('textarea[data-bind="a"]');
+      assert.throws(
+          function() {engine._getBinding('c', nodeA1);},
+          'Programmer error: no binding found for c');
+    });
   });
 
 });

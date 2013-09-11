@@ -1265,7 +1265,7 @@ YUI.add('juju-view-inspector', function(Y) {
       handlers.push(wrapper.delegate('click', sendResolve,
           '.conflict', this));
     },
-    'unsyncedFields': function(dirtyFields) {
+    'unsyncedFields': function() {
       var node = this.container.one('.controls .confirm');
       if (!node.getData('originalText')) {
         node.setData('originalText', node.getHTML());

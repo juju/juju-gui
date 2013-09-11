@@ -430,12 +430,12 @@ YUI.add('juju-databinding', function(Y) {
         // Checkboxes are not supported in a valueChange event.
         if (node.getAttribute('type') === 'checkbox') {
           viewlet._eventHandles.push(
-              node.on('change', this._storeChanged, this, viewlet));
+              node.on('change', this._nodeChangeHandler, this, viewlet));
         } else {
           // The other elements (input, textarea) are supported in valueChange
           // YUI event.
           viewlet._eventHandles.push(
-              node.on('valueChange', this._storeChanged, this, viewlet));
+              node.on('valueChange', this._nodeChangeHandler, this, viewlet));
         }
 
       }, this);
@@ -661,32 +661,61 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-      Called on valueChange on a bound input to store dirty input references
+      Find the binding for the given key (binding name).
 
-      @method _storeChanged
-      @param {Event} e event object.
-      @param {Object} viewlet reference.
+      @method _getBinding
+      @param {String} key Binding key.
+      @param {Y.Node} node The binding's target node.
+      @return {Binding} Binding reference.
     */
-    BindingEngine.prototype._storeChanged = function(e, viewlet) {
-      var key = e.target.getData('bind');
-      var nodeHandler = this.getNodeHandler(e.target.getDOMNode());
+    BindingEngine.prototype._getBinding = function(key, node) {
       var binding;
-      var model = viewlet.model;
       if ( // Find the binding for the key, and break when found.
           !this._bindings.some(function(b) {
-            if (b.name === key) {
+            if (b.name === key && b.target === node) {
               binding = b;
               return true;
             }})) {
+        // We don't expect this to ever happen.  We should only be asking for
+        // a key that has been bound.  If this does fail, let's be loud about
+        // it ASAP so that we can fix it.
         throw 'Programmer error: no binding found for ' + key;
       }
-      if (nodeHandler.eq(e.target, binding.get(model))) {
+      return binding;
+    };
+
+    /**
+      Called on valueChange on a bound input to store dirty input references
+
+      @method _nodeChangeHandler
+      @param {Event} e event object.
+      @param {Object} viewlet reference.
+    */
+    BindingEngine.prototype._nodeChangeHandler = function(e, viewlet) {
+      this._nodeChanged(e.target, viewlet);
+    };
+
+    /**
+      Update data structures and call viewlet hooks after a DOM node changes.
+      The source of the change might be user input or the BindingEngine
+      itself.
+
+      @method _nodeChanged
+      @param {Y.Node} node The node that changed.
+      @param {Object} viewlet The node's associated viewlet.
+    */
+    BindingEngine.prototype._nodeChanged = function(node, viewlet) {
+      var key = node.getData('bind');
+      var nodeHandler = this.getNodeHandler(node.getDOMNode());
+      var model = viewlet.model;
+      var binding = this._getBinding(key, node);
+      if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
         viewlet.changedValues[key] = true;
       }
       if (viewlet.changed) {
-        viewlet.changed(e.target, key, nodeHandler);
+        viewlet.changed(node, key, nodeHandler);
       }
       // If there are no more changes, the viewlet has been synced manually.
       if (Object.keys(viewlet.changedValues).length === 0) {
