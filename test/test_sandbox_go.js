@@ -22,6 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
+      'jsyaml',
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
       'juju-models', 'promise'];
     var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
@@ -1138,6 +1139,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
       );
     });
+
+    it('should support deployer import', function(done) {
+      var fixture = utils.loadFixture('data/wp-deployer.yaml');
+
+      client.onmessage = function() {
+        client.onmessage = function(result) {
+          debugger;
+          var data = jsyaml.safeLoad(result.data).result;
+          assert.isTrue(data);
+
+          // Verify that we can now find an expected entry
+          // in the database.
+          assert.isNotNull(state.db.services.getById('wordpress'));
+
+          var changes = state.nextChanges();
+          // Validate the delta includes imported services.
+          assert.include(Y.Object.keys(changes.services), 'wordpress');
+          assert.include(Y.Object.keys(changes.services), 'mysql');
+          // validate relation was added/updated.
+          assert.include(Y.Object.keys(changes.relations), 'relation-0');
+          done();
+        };
+        client.send(Y.JSON.stringify({op: 'importEnvironment',
+                             envData: fixture}));
+      };
+      client.open();
+    });
+
 
   });
 

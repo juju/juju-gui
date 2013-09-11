@@ -594,6 +594,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+     * Perform 'importDeployer' operation.
+     * @method performOp_importDeployer
+     */
+    performOp_importDeployer: function(data) {
+      ASYNC_OP(this, 'importDeployer', ['YAMLData', 'name'])(data);
+    },
+
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit

@@ -67,6 +67,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // used for deployer import tracking
       this._importId = 0;
       this._importChanges = [];
+      this._deploymentId = 0;
     },
 
     /**
@@ -1214,19 +1215,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       this.db.importDeployer(data, this.get('store'), options)
       .then(function() {
-        var deploymentId = self._deploymentId += 1;
+        self._deploymentId += 1;
         self._importChanges.push({
-          DeploymentId: deploymentId,
+          DeploymentId: self._deploymentId,
           Status: 'completed',
           Timestamp: Date.now()
         });
-        console.log("pushed", self._importChanges);
         // Keep the list limited to the last 5
         if (self._importChanges.length > 5) {
           self._importChanges = self._importChanges.slice(
             self._importChanges.length - 5);
         }
-        callback({DeploymentId: deploymentId});
+        callback({DeploymentId: self._deploymentId});
       }, function(err) {
         callback({Error: err.toString()});
       });
