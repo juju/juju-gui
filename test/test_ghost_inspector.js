@@ -271,15 +271,25 @@ describe('Ghost Inspector', function() {
   it('syncs checkbox state with the visible ui', function() {
     inspector = setUpInspector();
     assert.isObject(container.one('.ghost-config-wrapper'));
+    // We need to enable the checkboxes before we can test them because
+    // disabled checkboxes fire no events.
+    var input = container.one('input[name=debug]');
+    input.removeAttribute('disabled');
 
     var debugContainer = container.one('.toggle-debug').get('parentNode');
     var stateText = debugContainer.one('.textvalue');
 
     // The CSS is what capitalizes the text so the assertion values are lower
     // case.
-    assert.equal(stateText.get('text').replace(/\s/g, ''), 'false');
-    container.one('input[name=debug]').simulate('click');
-    assert.equal(stateText.get('text'), 'true');
+    assert.equal(
+        stateText.get('text').replace(/\s/g, ''),
+        'false',
+        'state did not start out false');
+    input.simulate('click');
+    assert.equal(
+        stateText.get('text').replace(/\s/g, ''),
+        'true',
+        'state did not update to true');
   });
 
   it('properly renders a service without charm options', function() {
