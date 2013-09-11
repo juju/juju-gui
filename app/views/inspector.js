@@ -1400,7 +1400,8 @@ YUI.add('juju-view-inspector', function(Y) {
     'viewlet-service-config',
     'viewlet-service-constraints',
     'viewlet-service-ghost',
-    'viewlet-unit-details'
+    'viewlet-unit-details',
+    'viewlet-service-relations'
   ]
 });
 
