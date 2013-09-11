@@ -360,6 +360,9 @@ YUI.add('juju-databinding', function(Y) {
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
+      this._setupHeirarchicalBindings();
+      this._setupDependencies();
+      this._modelChangeHandler();
       return this;
     };
 
@@ -440,11 +443,7 @@ YUI.add('juju-databinding', function(Y) {
 
       }, this);
 
-      this._setupHeirarchicalBindings();
-      this._setupDependencies();
       this._setupWildcarding(viewlet);
-      this._modelChangeHandler();
-
       return this;
     };
 
