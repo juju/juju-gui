@@ -1,7 +1,10 @@
 <div>
   {{#unless is_subordinate}}
   <div class="ghost-config-wrapper">
-    <div class="ghost-config-header">Service details</div>
+    <div class="ghost-config-header">
+        <i class="sprite inspector_status"></i>
+        Service details
+    </div>
     <div class="ghost-config-content">
       <input class="config-field" type="text" name="number-units" value="1"/>
       <label for="number-units" class="text-in-input">Minimum units</label>
@@ -12,7 +15,10 @@
   {{#if constraints}}
   <!-- Service Constraints added in -->
   <div class="ghost-config-wrapper service-constraints">
-    <div class="ghost-config-header">Constraints</div>
+    <div class="ghost-config-header">
+        <i class="sprite inspector_constraints"></i>
+        Constraints
+    </div>
     <div class="ghost-config-content">
       {{> service-constraints-viewlet}}
     </div>
@@ -22,7 +28,10 @@
   {{#if settings}}
   <!-- Service configuration form -->
   <div class="ghost-config-wrapper service-configuration">
-    <div class="ghost-config-header">Configuration</div>
+    <div class="ghost-config-header">
+        <i class="sprite inspector_configuration"></i>
+        Configuration
+    </div>
     <div class="ghost-config-content use-defaults">
       <div class="config-file">
         <input type="file" id="config-file">
@@ -30,7 +39,7 @@
       </div>
 
       <div class="toggle">
-        <span>Use the default configuration?</span>
+        <span>Use default configuration?</span>
         <div class="toggle-switch">
           <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
           <label for="use-default-toggle">
@@ -38,8 +47,6 @@
           </label>
         </div>
       </div>
-      <hr />
-
       <form class="charm-settings">
         <div class="service-config">
           {{> service-configuration}}

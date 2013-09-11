@@ -1,5 +1,8 @@
 <div class="destroy-service-trigger">
-  <span>Destroy service</span>
+  <span>
+    <i class="sprite inspector-destroy-service"></i>
+    Destroy service
+  </span>
 </div>
 <div class="destroy-service-prompt closed">
   <div class="message">

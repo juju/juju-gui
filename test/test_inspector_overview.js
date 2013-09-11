@@ -159,7 +159,7 @@ describe('Inspector Overview', function() {
        container.one('.confirm-num-units').simulate('click');
        assert.equal(container.one('.unit-constraints-confirm')
                        .one('span:first-child')
-                       .getHTML(), 'Scale up with the following constraints?');
+                       .getHTML(), 'Scale up with these constraints?');
        var message = conn.last_message();
        assert.equal('AddServiceUnits', message.Request);
        assert.equal('mediawiki', message.Params.ServiceName);

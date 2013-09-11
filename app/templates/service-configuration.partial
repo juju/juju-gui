@@ -1,4 +1,7 @@
 {{! Expecting the generated data from extractServiceSettings utility. }}
+{{#unless ghost}}
+  <div class="view-content">
+{{/unless}}
 {{#settings}}
   <div class="settings-wrapper">
     {{#if isBool}}
@@ -49,3 +52,6 @@
     </div>
   </div>
 {{/settings}}
+{{#unless ghost}}
+  </div>
+{{/unless}}
