@@ -145,7 +145,7 @@ describe('Inspector Conflict UX', function() {
     });
   });
 
-  it('should respect that some fields do not need indicating', function() {
+  it('should respect that some fields do not need indicating', function(done) {
     // For instance, in multiple items bound to a single model field, we might
     // choose to only have one indicate a changed value.
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
