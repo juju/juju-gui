@@ -1,42 +1,75 @@
 @inspector-background-color: #221e1c;
-@inspector-controls-height: 67px;
+@inspector-changed-field: #dedede;
+@inspector-controls-height: 82px;
+@inspector-dark: #1c1817;
 @inspector-divider-bottom: rgba(0, 0, 0, 0.3);
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
 @inspector-width: 292px;
 @inspector-main-padding: 20px;
-@confirm-button-color: #DD4814;
+@confirm-button-color: @charm-panel-orange;
 @deny-button-color: #BBB;
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
-.yui3-juju-inspector {
-    input[type=text]::-ms-clear { display: none; }
+.animation (...) {
+    -webkit-animation: @arguments;
+    -moz-animation: @arguments;
+    -ms-animation: @arguments;
+    -o-animation: @arguments;
+    animation: @arguments;
+}
 
+.animation-fill-mode (...) {
+    -webkit-animation-fill-mode: @arguments;
+    -moz-animation-fill-mode: @arguments;
+    -ms-animation-fill-mode: @arguments;
+    -o-animation-fill-mode: @arguments;
+    animation-fill-mode: @arguments;
+}
+
+.transition (...) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -ms-transition: @arguments;
+    -o-transition: @arguments;
+    transition: @arguments;
+}
+
+.pulse-green-frames-mixin () {
+    0% {
+      background-color: @inspector-changed-field;
+    }
+    10% {
+      background-color: #38b44a;
+    }
+    100% {
+      background-color: white;
+    }
+}
+
+@-webkit-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-moz-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-ms-keyframes pulse-green {.pulse-green-frames-mixin;}
+@-o-keyframes pulse-green {.pulse-green-frames-mixin;}
+@keyframes pulse-green {.pulse-green-frames-mixin;}
+
+.yui3-juju-inspector {
     .customize-scrollbar;
 
-    .inspector-buttons {
-        a {
-            .create-border-radius(@border-radius);
-            .create-box-shadow(0 2px 2px -2px #777 inset);
-            box-shadow: 0 2px 2px -2px #777777 inset;
-            color: #fff;
-            background: @confirm-button-color;
-            padding: 5px 0;
-            text-decoration: none;
-            text-align: center;
-            margin-top: 10px;
-            width: 110px;
-            float: left;
-            margin-left: 13px;
-            cursor: pointer;
-        }
-        .cancel-button {
-            background: #999;
-        }
+    ::-webkit-scrollbar-track {
+        background-color: #1c1815;
     }
-
+    ::-webkit-scrollbar-thumb {
+        background-color: #505050;
+        border-width: 0 1px;
+        border-color: #1c1815;
+    }
+    /* Hide IE input clear control */
+    input[type=text]::-ms-clear {
+        display: none;
+    }
     .left-breakout {
         .type9;
         position: absolute;
@@ -113,7 +146,7 @@
     }
 
     .juju-inspector {
-        .create-border-radius(2px);
+        .create-border-radius(@border-radius);
         position: absolute;
         top: 20px;
         right: 70px;
@@ -129,30 +162,81 @@
         h1, h2, h3, h4, h5, h6 {
             padding-left: 1em;
         }
-        hr {
-            border-width: 1px 0;
-            border-style: solid;
-            border-top-color: @inspector-divider-bottom;
-            border-bottom-color: @inspector-divider-top;
+        form {
+            margin: 0;
+        }
+        textarea,
+        input[type=text],
+        label {
+            font-size: 14px;
         }
         input[type=checkbox].hidden-checkbox {
             display: none;
         }
         input[type=text] {
-            min-height: 20px;
-            font-size: 14px;
+            .border-box;
+            .create-border-radius(@border-radius);
+            .create-box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.7));
+            width: 100%;
+            min-height: 30px;
+            margin: 0;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: none;
         }
-        .text-in-input {
-            display: block;
-            margin: -24px 10px 0 0;
-            color: #b5b5b5;
-            text-align: right;
+        textarea {
+            margin: 0;
+            width: 96%;
         }
-        .config-field.boolean {
-            margin-right: 10px;
+        /* Buttons */
+        .toggle label,
+        button.unit-action-button,
+        .controls button,
+        .inspector-buttons a {
+            .create-border-radius(@border-radius);
+            // Using a variable here because LESS strips commas in mixin args.
+            @box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+            .create-box-shadow(@box-shadow);
+            cursor: pointer;
+            height: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        button.unit-action-button,
+        .controls button,
+        .inspector-buttons a {
+            display: inline-block;
+            vertical-align: middle;
+            width: 47%;
+            margin: 20px 0;
+            padding: 0;
+            border: none;
+            color: #505050;
+            text-align: center;
+            text-decoration: none;
+            line-height: 30px;
+        }
+        .controls button,
+        .inspector-buttons a {
+            color: #fff;
+
+            &.cancel-button,
+            &.cancel {
+                background:  @inspector-dark;
+            }
+            &.initiate-destroy,
+            &.confirm-num-units,
+            &.confirm {
+                float: right;
+                background-color: @confirm-button-color;
+
+                &:disabled {
+                    background-color: #802E0E;
+                    color: #eee;
+                }
+            }
         }
         .toggle {
-            font-size: 12px;
+            padding: 20px @inspector-main-padding;
 
             span {
                 display: inline-block;
@@ -165,135 +249,170 @@
                 float: right;
 
                 label {
-                    height: 26px;
-                    width: 50px;
-                    background-color: #282828;
                     .create-border-radius(@border-radius);
+                    width: 56px;
+                    background-color: #282828;
                     display: block;
                     position: relative;
                     margin: 0;
 
                     .handle {
-                        height: 18px;
-                        width: 18px;
-                        background-color: @deny-button-color;
                         .create-border-radius(@border-radius);
+                        .create-box-shadow(inset 0 0 4px rgba(0, 0, 0, 0.4));
                         position: absolute;
-                        margin: 4px;
-                        cursor: pointer;
-                        text-align: center;
+                        z-index: 501;
                         left: 0;
-                        -moz-transition: left .1s ease-in-out;
-                        -webkit-transition: left .1s ease-in-out;
-                        transition: left .1s ease-in-out;
+                        height: 24px;
+                        width: 24px;
+                        margin: 4px;
+                        background-color: #505050;
+                        text-align: center;
+                        line-height: 20px;
+                        font-size: 16px;
+                        .transition(left .1s ease-in-out);
                         -moz-user-select: none;
                         -webkit-user-select: none;
                         -ms-user-select: none;
                         user-select: none;
                     }
-                    .handle:before {
-                        content: '\2717';
+                    &:after,
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        display: block;
+                        top: 4px;
+                        left: 4px;
+                        width: 24px;
+                        height: 24px;
+                        background-position: center center;
+                        background-repeat: no-repeat;
+                    }
+                    &:before {
+                        z-index: 502;
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-off.png);
+                    }
+                    &:after {
+                        z-index: 502;
+                        left: 29px;
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-on-inactive.png);
                     }
                 }
-                input.hidden-checkbox:checked ~ label .handle {
-                    left: 25px;
-                    background-color: @confirm-button-color;
-                }
-                input.hidden-checkbox:checked ~ label .handle:before {
-                    content: '\2713';
+                input.hidden-checkbox:checked ~ label {
+                    .handle {
+                        left: 25px;
+                        background-color: @confirm-button-color;
+                    }
+                    &:before {
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-off-inactive.png);
+                    }
+                    &:after {
+                        background-image: 
+                            url(/juju-ui/assets/images/toggle-on.png);
+                    }
                 }
             }
         }
+        .destroy-service-prompt,
         .controls {
-            margin-top: 20px;
-            border-top: 1px solid @inspector-divider-top;
+            overflow: hidden;
+            max-height: @inspector-controls-height;
+            padding: 0 20px;
+            background-color: @inspector-background-color;
+            border-top: 1px solid @inspector-divider-bottom;
+            border-bottom: 1px solid @inspector-divider-bottom;
+            overflow: hidden;
+            .transition(.25s, max-height .3s);
+
+            &.closed {
+                max-height: 0;
+            }
+
+            &:before {
+                content: "";
+                display: block;
+                height: 9px;
+                margin: 0 -20px;
+                background-color: @inspector-dark;
+                border-bottom: 1px solid @inspector-divider-top;
+            }
+        }
+        .text-in-input {
+            display: block;
+            height: 25px;
+            margin: -25px 10px 0 0;
+            color: #b5b5b5;
+            text-align: right;
+        }
+        .config-field.boolean {
+            margin-right: 10px;
+        }
+        .unit-scaling {
+            padding-top: 20px;
             border-bottom: 1px solid @inspector-divider-bottom;
 
-            button {
-                .create-border-radius(@border-radius);
-                width: 120px;
+            .unit-label,
+            .current-unit-num {
+                display: inline-block;
+            }
+            .unit-label,
+            .current-unit-num {
                 height: 30px;
-                margin: 20px 0;
-                border: none;
-                color: #fff;
-
-                &.cancel {
-                    background-color: #A3A3A3;
-                    margin-left: @inspector-main-padding;
-                }
-
-                &.confirm {
-                    background-color: @confirm-button-color;
-                    float: right;
-                    margin-right: @inspector-main-padding;
-                    &:disabled {
-                        background-color: #802E0E;
-                        color: #eee;
-                    }
-                }
-            }
-        }
-
-        .unit-scaling {
-            width: 255px;
-
-            .current-unit-num-wrapper {
-                width: 95px;
-                height: 30px;
-                .create-border-radius(@border-radius);
                 line-height: 30px;
-                padding-left: 10px;
-                position: relative;
             }
-            .units-starting-spinner {
-                position: absolute;
-                right: 10px;
-            }
-            input.num-units-control {
-                width: 87px;
-                margin: 0 0 0 10px;
-                padding-left: 10px;
-                font-size: 14px;
-            }
-            span {
-                padding: 0 10px;
-                line-height: 30px;
+            .units-input {
+                float: right;
+
+                input.num-units-control {
+                    width: 101px;
+                }
+                .unit-label {
+                    padding: 0 20px 0 0;
+                }
             }
             .constraint-details {
-                font-size: 11px;
+                margin-top: 10px;
             }
-            a.edit-constraints {
-                padding-left: 10px;
-                cursor: pointer;
+            .edit-constraints {
+                color: #625f5a;
+                text-decoration: underline;
             }
             .editable-constraints {
-                padding-left: 10px;
+                margin-top: 10px;
             }
             .unit-constraints-confirm {
                 overflow: hidden;
-                height: 130px;
+                max-height: 200px;
+                margin-top: 2px;
+                padding-top: 20px;
                 letter-spacing: normal;
-                -moz-transition: .3s, height .3s;
-                -webkit-transition: .25s, height .3s;
-                transition: .3s, height .3s;
+                .transition(.25s, max-height .3s);
 
+                &.closed {
+                    padding-top: 0;
+                }
                 .constraint-details {
                     display: block;
                 }
                 .inspector-buttons {
-                    padding-bottom: 10px;
-
                     a {
-                        display: inline-block;
-                        float: none;
+                        margin-bottom: 0;
+                    }
+                    .cancel-num-units {
+                        margin-left: 0;
+                    }
+                    .confirm-num-units {
+                        margin-right: 0;
                     }
                 }
             }
             .unit-constraints-confirm.closed {
-                height: 0;
+                max-height: 0;
             }
             .unit-constraints-confirm.editing {
-                height: 300px;
+                max-height: 500px;
             }
         }
 
@@ -301,39 +420,31 @@
             .border-box;
             position: relative;
             width: 100%;
+            padding-bottom: 20px;
+            border-top: 1px solid @inspector-divider-top;
+            border-bottom: 1px solid @inspector-divider-bottom;
 
-            & > div {
-                padding-right: 10px;
+            &:first-child {
+                border-top: none;
+            }
+            &:last-child {
+                padding-bottom: 0;
+                border-bottom: none;
             }
             label {
-                font-size: 14px;
                 margin: 20px 0 10px 0;
-                font-weight: bold;
-            }
-            textarea {
-                width: 100%;
-            }
-            input[type=text] {
-                width: 150px;
-            }
-            .constraint-label {
-                margin: -25px 95px 0 0;
             }
             .settings-description {
-                font-size: 12px;
-
+                margin-top: 12px;
                 /* below hyphenation code was taken from:
                 http://www.newnet-soft.com/blog/csstypography */
                 -ms-word-break: break-all;
                 word-break: break-all;
-
                 // Non standard for webkit
                 word-break: break-word;
-
                 -webkit-hyphens: auto;
                 -moz-hyphens: auto;
                 hyphens: auto;
-
                 -webkit-hyphenate-before: 2;
                 -webkit-hyphenate-after: 3;
                 hyphenate-lines: 3;
@@ -341,7 +452,9 @@
        }
 
         .config-file {
-            padding: 10px @inspector-main-padding;
+            padding: 20px @inspector-main-padding;
+            border-top: 1px solid @inspector-divider-top;
+            border-bottom: 1px solid @inspector-divider-bottom;
 
             input {
                 position: absolute;
@@ -353,14 +466,13 @@
 
             .fakebutton {
                 .create-border-radius(@border-radius);
-                font-family: @font-family-medium;
-                border: 1px solid #6B6B6B;
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
                 z-index: 2;
-                cursor: pointer;
+                padding: 5px;
+                background: transparent
+                    url(/juju-ui/assets/images/import.png)
+                    right center no-repeat;
+                border: 1px solid #6B6B6B;
+                color: #fff;
             }
         }
 
@@ -375,34 +487,27 @@
                     border-bottom: none;
                 }
             }
-            .controls {
-                margin-top: 0;
-            }
             .config-file {
-                padding-right: 0;
-                padding-left: 0;
+                padding: 0 0 20px 0;
+                border-top: none;
             }
             .ghost-config-header {
                 height: 35px;
                 border-top: 1px solid @inspector-divider-top;
                 font-size: 16px;
+                font-weight: 200;
                 line-height: 35px;
                 padding-left: @inspector-main-padding;
+
+                .sprite {
+                    vertical-align: -2%;
+                    margin-right: 7px;
+                }
             }
             .ghost-config-content {
                 padding: @inspector-main-padding;
                 border-bottom: 1px solid @inspector-divider-bottom;
 
-                input[name=number-units] {
-                    .border-box;
-                    display: inline-block;
-                    width: 100%;
-                    margin-bottom: 0;
-                    padding-left: 10px;
-                }
-                .constraint-label {
-                    margin-top: -34px;
-                }
                 &.use-defaults {
                     textarea,
                     input[type=text] {
@@ -418,8 +523,23 @@
                     }
                 }
             }
+            .ghost-config-wrapper.service-constraints .ghost-config-content {
+                padding-top: 0;
+            }
             .destroy-service-trigger {
                 padding-top: 10px;
+            }
+            .service-config {
+                border-top: 1px solid @inspector-divider-top;
+            }
+            .viewlet-container {
+                margin-top: -1px;
+            }
+            .toggle {
+                padding-left: 0;
+                padding-right: 0;
+                border-top: 1px solid @inspector-divider-top;
+                border-bottom: 1px solid @inspector-divider-bottom;
             }
         }
 
@@ -473,15 +593,10 @@
         .viewlet-container {
             overflow-x: hidden;
             overflow-y: auto;
-            border-top: 1px solid @inspector-divider-top;
             /* overwritten by the recalculateHeight() method in
                viewlet-manager.js. Important to avoid flash of incorrectly
                calculated height */
             max-height: 250px;
-        }
-
-        .content {
-            margin: 1em;
         }
 
         .header-slot {
@@ -492,20 +607,6 @@
                     color: @charm-panel-background-color;
                     width: 100%;
 
-                    .service-name {
-                        font-size: 20px;
-                        font-weight: 300;
-                        line-height: 1.2;
-                    }
-                    span.service-name {
-                        display: inline-block;
-                        margin-top: -0.1em;
-                    }
-                    input.service-name {
-                        width: 170px;
-                        height: 20px;
-                        font-size: 14px;
-                    }
                     .icon {
                         margin-right: 10px;
                         vertical-align: top;
@@ -520,18 +621,27 @@
                         /* Required for sizing images in IE10 */
                         width: 30px;
                         height: 30px;
-                    
+
                     }
                     .details-wrapper {
                         width: 180px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
+
+                        div.service-name {
+                            margin-top: -0.1em;
+                            font-size: 20px;
+                            font-weight: 300;
+                            line-height: 1.2;
+                        }
+                        input.service-name {
+                            display: block;
+                            width: 170px;
+                            margin-bottom: 5px;
+                        }
                     }
                     .charm-url {
-                        font-size: 14px;
-                        font-weight: 400;
-                        line-height: 1.3;
                         cursor: pointer;
                         text-decoration: underline;
                     }
@@ -547,7 +657,7 @@
                         vertical-align: top;
                         margin-top: -6px;
                     }
-                    div {
+                    & > div {
                         display: inline-block;
                     }
                 }
@@ -558,8 +668,9 @@
             min-height: 9px;
             margin: 0;
             padding-left: @inspector-main-padding;
-            background-color: #1c1817;
-            border-top: 1px solid #12110f;
+            background-color: @inspector-dark;
+            border-top: 1px solid @inspector-divider-bottom;
+            border-bottom: 1px solid @inspector-divider-top;
 
             li {
                 display: inline-block;
@@ -570,7 +681,7 @@
                 a {
                     .border-box;
                     display: block;
-                    height: 50px;
+                    height: 48px;
                     padding: 13px 20px 0 20px;
 
                     &:hover {
@@ -579,16 +690,6 @@
                     &.active {
                         background-color: #12110f;
                         border-bottom: 3px solid @charm-panel-orange;
-
-                        .normal {
-                            display: none;
-                        }
-                        .selected {
-                            display: inline-block;
-                        }
-                    }
-                    .selected {
-                        display: none;
                     }
                 }
             }
@@ -613,53 +714,41 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: @inspector-background-color;
         }
 
         .view-container {
-            border-top: 1px solid @inspector-divider-top;
-            overflow: auto;
+            margin-top: -1px;
 
+            &.settings-constraints,
             &.settings-config {
-                margin-bottom: @inspector-controls-height + 20px;
+                margin-bottom: @inspector-controls-height;
             }
             h2 {
-                font-size: 18px;
                 padding-left: 0;
+            }
+            .view-content {
+                padding-bottom: 20px;
+                padding-left: @inspector-main-padding;
+                padding-right: @inspector-main-padding;
+                border-top: 1px solid @inspector-divider-top;
             }
             .settings-wrapper {
                 position: relative;
-                padding: 0 @inspector-main-padding;
 
                 span.resolver .conflicted-env {
                   display: inline-block;
                   min-width: 25px;
                   min-height: 25px;
                 }
-
-                label {
-                    font-size: 14px;
-                    margin: 20px 0 10px 0;
-                    font-weight: bold;
-                }
-                .settings-description {
-                    font-size: 12px;
-                }
                 .config-field,
                 .constraint-field {
-                  -webkit-transition: background 1s linear;
-                  -moz-transition: background 1s linear;
-                  -o-transition: background 1s linear;
-                  transition: background 1s linear;
+                  .transition(background 1s linear);
                   background-repeat: no-repeat;
                   background-position: right center;
                   background-url: none;
                   margin-bottom: 0px;
-                  min-height: 20px;
                 }
                 .config-field {
-                  width: 100%;
-
                   &.boolean {
                     width: auto;
                     display: inline-block;
@@ -668,7 +757,7 @@
                 .resolver {
                   color: black;
                   background-color: white;
-                  border: 1px solid #dedede;
+                  border: 1px solid @inspector-changed-field;
                   border-radius: 1px;
 
                   div {
@@ -676,7 +765,7 @@
                   }
                 }
                 .modified {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
 
                   &.boolean {
@@ -687,7 +776,7 @@
                   }
                 }
                 .conflict-pending {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-conflict.png);
 
                   &.boolean {
@@ -699,7 +788,7 @@
                 }
 
                 .conflict {
-                  background-color: #dedede;
+                  background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-resolved.png);
                 }
 
@@ -719,12 +808,11 @@
                     background-color: transparent;
                   }
                 }
-            }
-            .toggle {
-                padding: 10px @inspector-main-padding;
 
-                label {
-                   margin: 0;
+                .change-saved {
+                    .animation(pulse-green 1s);
+                    .animation-fill-mode(forwards);
+                    .transition(none);
                 }
             }
         }
@@ -750,48 +838,49 @@
 
             span {
                 cursor: pointer;
+
+                .sprite {
+                    vertical-align: -10%;
+                    margin-right: 7px;
+                }
             }
         }
 
         .destroy-service-prompt {
             overflow: hidden;
-            height: 95px;
-            -moz-transition: .3s, height .3s;
-            -webkit-transition: .25s, height .3s;
-            transition: .3s, height .3s;
+            max-height: 200px;
+            .transition(.25s, max-height .3s);
             position: absolute;
             bottom: 0;
 
             .message {
-                margin: 5px 15px;
+                margin: 20px 0 0 0;
             }
         }
 
         .destroy-service-prompt.closed {
-            height: 0;
+            max-height: 0;
         }
         .viewlet-wrapper{
             h3, h2, legend {
                 .border-box;
+                margin-bottom: 0;
+                padding: 10px @inspector-main-padding;
                 border-bottom: 1px solid @inspector-divider-bottom;
                 border-top: 1px solid @inspector-divider-top;
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 1.5;
-                padding: 10px @inspector-main-padding;
+                font-size: 16px;
+                font-weight: 200;
                 color: @charm-panel-configure-title-color;
-                margin-bottom: 0;
             }
             h3,
             h2 {
                 width: auto;
             }
-
-            .content {
-                border-bottom: 1px solid @inspector-divider-bottom;
-                border-top: 1px solid @inspector-divider-top;
-                margin: 0;
-                padding: @inspector-main-padding;
+            .statusbar {
+                .create-border-radius(@border-radius);
+                width: 250px;
+                height: 30px;
+                margin-top: 12px;
             }
         }
 
@@ -799,8 +888,8 @@
             margin: 0;
 
             .action-button-wrapper {
-                height: 50px;
                 text-align: center;
+                padding: 20px 0;
             }
 
             .status-unit-header {
@@ -822,9 +911,10 @@
 
                 .chevron {
                     display: inline-block;
-                    height: 9px;
+                    vertical-align: 15%;
+                    width: 10px;
+                    height: 3px;
                     margin-left: 5px;
-                    width: 12px;
                     background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
                 }
             }
@@ -851,24 +941,15 @@
             }
 
             .status-unit-content {
-                -moz-transition: .3s, max-height .3s;
-                -webkit-transition: .25s, max-height .3s;
-                transition: .3s, max-height .3s;
+                .transition(.25s, max-height .3s);
                 overflow: hidden;
                 background: @charm-panel-background-color;
-                /*
-                 * The height of each list is 35px so setting this to help the auto max height script.
-                 */
-                font-size: 35px;
-                /* max height is being set inline in views/service.js.
-                It is calculated on the number of units in the list.  */
 
                 &.close-unit {
                     max-height: 0px !important;
                 }
 
                 a {
-                    cursor: pointer;
                     color: @text-colour;
                     text-decoration: underline;
                 }
@@ -886,10 +967,9 @@
                     list-style-type: none;
                     padding: 7px 10px 7px 10px;
                     border-top: 1px solid @inspector-status-border-color;
-                    font-size: 13px;
                     clear: both;
 
-                    .upgrade-link {
+                    .right-link {
                         float: right;
                         color: @confirm-button-color;
                     }
@@ -899,22 +979,10 @@
                     margin-right: 30px;
                 }
 
-                button.unit-action-button,
-                input[type="checkbox"] {
-                    .create-border-radius(@border-radius);
-                    .create-box-shadow(0 2px 2px -2px #777 inset);
-                    background: @charm-panel-series-color;
-                }
-
                 button.unit-action-button {
-                    border: 0;
-                    padding: 5px;
                     width: 70px;
-                    text-align: center;
-                    margin: 20px 3px 0;
-                }
-                button.resolve {
-                    margin-left: 25px;
+                    margin: 0 3px 0;
+                    background: @charm-panel-series-color;
                 }
                 &.pending {
                     .action-button-wrapper {

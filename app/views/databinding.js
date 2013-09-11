@@ -34,54 +34,48 @@ YUI.add('juju-databinding', function(Y) {
       slice = [].slice;
 
   views.BindingEngine = (function() {
+    var textEq = function(node, value) {
+      var currentValue = this.get(node);
+      var normalizedValue = value ? value.toString() : '';
+      return (normalizedValue === currentValue);
+    };
+    var textInputFieldHandler = Object.create({
+      'get': function(node) { return node.get('value');},
+      'set': function(node, value) { node.set('value', value || '');},
+      'eq': textEq
+    });
     var DEFAULT_FIELD_HANDLERS = {
-      'input[type=checkbox]': {
+      'input[type=checkbox]': Object.create({
         'get': function(node) {
           return node.get('checked');
         },
-        'set': function(node, value) {
-          if (value === 'false' || value === false) {
-            node.set('checked', false);
-          } else {
-            node.set('checked', true);
+        '_normalizeValue': function(value) {
+          if (value === 'false') {
+            return false;
           }
+          return !!value;
+        },
+        'set': function(node, value) {
+          node.set('checked', this._normalizeValue(value));
+        },
+        'eq': function(node, value) {
+          var currentValue = !!this.get(node);
+          return (this._normalizeValue(value) === currentValue);
         }
-      },
-      input: {
-        'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value);}
-      },
-      textarea: {
-        'get': function(node) { return node.get('value');},
-        'set': function(node, value) { node.set('value', value);}
-      },
-      'default': {
+      }),
+      // The textInputFieldHandler is good for input[type=text], textareas,
+      // and many other HTML5 inputs.
+      input: textInputFieldHandler,
+      textarea: textInputFieldHandler,
+      // This is good for non-form-field HTML nodes (e.g. span).
+      'default': Object.create({
         'get': function(node) { return node.get('text');},
-        'set': function(node, value) { node.setHTML(value);}
-      }
+        'set': function(node, value) { node.setHTML(value);},
+        'eq': textEq
+      })
     };
 
-    /**
-     Get the field handler for a given node with a fallback.
-
-     @method _getFieldHandler
-     */
-    function _getNodeHandler(node) {
-      var field;
-      /* jshint -W040 */
-      // Ignore 'possible strict violation'
-      if (node.getAttribute('type') === 'checkbox') {
-        field = this._fieldHandlers['input[type=checkbox]'];
-      } else {
-        field = this._fieldHandlers[node.tagName.toLowerCase()];
-      }
-      if (!field) {
-        field = this._fieldHandlers['default'];
-      }
-      return field;
-    }
-
-    function _indexBindings(bindings, keyfunc, multiple) {
+    var indexBindings = function(bindings, keyfunc, multiple) {
       var index = {};
       if (!keyfunc) {
         keyfunc = function(b) {
@@ -108,7 +102,7 @@ YUI.add('juju-databinding', function(Y) {
         }
       });
       return index;
-    }
+    };
 
     /**
       Trigger callback when present on context. Passes additional arguments to
@@ -161,7 +155,6 @@ YUI.add('juju-databinding', function(Y) {
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
-      @param {Y.EventFacade | Object} e an event change object.
       @return {Array} bindings array filtered by keys when present.
     */
     function deltaFromChange(modelChangeKeys) {
@@ -169,9 +162,8 @@ YUI.add('juju-databinding', function(Y) {
       // Ignore 'possible strict violation'
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};
-      var index = _indexBindings(bindings);
-      // Handle wildcards (before we filter down bindings)
-      result.wildcards = _indexBindings(bindings, function(binding) {
+      // Handle wildcards.
+      result.wildcards = indexBindings(bindings, function(binding) {
         if (binding.name !== '*' && binding.name !== '+') {
           return;
         }
@@ -179,30 +171,44 @@ YUI.add('juju-databinding', function(Y) {
       }, true);
 
       if (modelChangeKeys !== undefined && modelChangeKeys.length !== 0) {
-        bindings = bindings.filter(function(binding) {
+        // In this branch of the the conditional, we only have a specific set
+        // of keys that have changed, so we want to limit the resulting
+        // bindings appropriately.
+        // Find the bindings that match the modelChangeKeys.
+        var filteredBindings = bindings.filter(function(binding) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
           return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
         });
+        // Add dependents.
+        // We make an index of all bindings to help with this.
+        var index = indexBindings(bindings, null, true);
+        var added = {};
+        filteredBindings.forEach(function(binding) {
+          if (binding.name === '*' ||
+              binding.name === '+') {
+            return;
+          }
+          result.bindings.push(binding);
+          if (binding.dependents) {
+            binding.dependents.forEach(function(dep) {
+              if (!added[dep]) {
+                added[dep] = true;
+                var depends = index[dep];
+                if (depends) {
+                  result.bindings.push.apply(result.bindings, depends);
+                }
+              }
+            });
+          }
+        });
+      } else {
+        // If we don't have modelChangeKeys, we simply want all of the
+        // existing bindings.
+        result.bindings.push.apply(result.bindings, bindings);
       }
 
-      // Handle deps
-      bindings.forEach(function(binding) {
-        if (binding.name === '*' ||
-            binding.name === '+') {
-          return;
-        }
-        result.bindings.push(binding);
-        if (binding.dependents) {
-          binding.dependents.forEach(function(dep) {
-            var depends = index[dep];
-            if (depends) {
-              result.bindings.push(depends);
-            }
-          });
-        }
-      });
 
       return result;
     }
@@ -266,10 +272,61 @@ YUI.add('juju-databinding', function(Y) {
     }
 
     /**
-     * @method addBinding
-     * @param {Object} config A bindings Object, see description in `bind`.
-     * @param {Object} viewlet A reference to the viewlet being bound.
-     * @return {Object} binding.
+     Get the node handler for a given node with a fallback.
+
+     @method getNodeHandler
+     @param {Object} node A DOM node (not a YUI node).
+     @return {Object} An associated node handler for the node.
+     */
+    BindingEngine.prototype.getNodeHandler = function(node) {
+      var field;
+      /* jshint -W040 */
+      // Ignore 'possible strict violation'
+      if (node.getAttribute('type') === 'checkbox') {
+        field = this._fieldHandlers['input[type=checkbox]'];
+      } else {
+        field = this._fieldHandlers[node.tagName.toLowerCase()];
+      }
+      if (!field) {
+        field = this._fieldHandlers['default'];
+      }
+      return field;
+    };
+
+    /**
+      Add a binding from a configuration and a viewlet.
+
+      A binding has the following attributes.
+
+       * name: A string that is the binding name.  It references a (possibly
+               nested) attribute of the associated viewlet's model.
+       * viewlet: (optional) The viewlet that is matched with this binding.
+       * target: (optional) Associated DOM node.  If this exists, then it is
+                 unique: no other binding in this engine shares it.
+       * field: (optional) Associated NodeHandler, typically used to connect
+                           values with nodes.
+       * dependents: (optional) Array of binding names that should be updated
+                     when this one is.
+
+      Note that there is no completely unique key for a binding.  As described
+      above, if a binding has a target, that should be unique.  If it does not,
+      the combination of the name and the viewlet should be unique.  The
+      uniqueness guarantees here are not high at the moment.
+
+      A binding has the following methods.
+
+       * get(model): Get the value of the associated attribute for this
+                     binding from the model.
+       * format(value): (optional) Format the value before passing it to the
+                        binding.field.set method (or binding.update, below).
+       * update(node, value): (optional) If this is included, it is used
+                              instead of the binding.field.set method to set
+                              the value on the node.
+
+      @method addBinding
+      @param {Object} config A bindings Object, see description in `bind`.
+      @param {Object} viewlet A reference to the viewlet being bound.
+      @return {Object} binding.
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
@@ -289,7 +346,7 @@ YUI.add('juju-databinding', function(Y) {
       // we allow very flexible DOM mutation out of band. Revisit if
       // this shows up on a profile.
       if (binding.target) {
-        binding.field = _getNodeHandler.call(this, binding.target.getDOMNode());
+        binding.field = this.getNodeHandler(binding.target.getDOMNode());
       }
 
       binding.viewlet = viewlet;
@@ -306,8 +363,8 @@ YUI.add('juju-databinding', function(Y) {
       From within the DOM, data-bind='model key' attributes can be used to
       associate bindings from the model into the DOM. Nested keys are supported
       by using '.' (dotted) paths. As an important development/debug tip when
-      trying to use YUI to select a dotted path name make sure to quote the
-      entire path. For example Y.one('[data-bind="a.b.c."]').
+      trying to use YUI to select a dotted path name, make sure to quote the
+      entire path. For example Y.one('[data-bind="a.b.c"]').
 
       Viewlets can provide a number of configuration options
       for use here:
@@ -345,6 +402,10 @@ YUI.add('juju-databinding', function(Y) {
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
+      this._setupHeirarchicalBindings();
+      this._setupDependencies();
+      // Initialize viewlets with starting values.
+      this._modelChangeHandler();
       return this;
     };
 
@@ -415,21 +476,17 @@ YUI.add('juju-databinding', function(Y) {
         // Checkboxes are not supported in a valueChange event.
         if (node.getAttribute('type') === 'checkbox') {
           viewlet._eventHandles.push(
-              node.on('change', this._storeChanged, this, viewlet));
+              node.on('change', this._nodeChangeHandler, this, viewlet));
         } else {
           // The other elements (input, textarea) are supported in valueChange
           // YUI event.
           viewlet._eventHandles.push(
-              node.on('valueChange', this._storeChanged, this, viewlet));
+              node.on('valueChange', this._nodeChangeHandler, this, viewlet));
         }
 
       }, this);
 
-      this._setupHeirarchicalBindings();
-      this._setupDependencies();
       this._setupWildcarding(viewlet);
-      this._modelChangeHandler();
-
       return this;
     };
 
@@ -475,7 +532,7 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype._setupDependencies = function() {
       var self = this;
       var bindings = this._bindings;
-      var index = _indexBindings(bindings);
+      var index = indexBindings(bindings);
 
       bindings.forEach(function(binding) {
         if (binding.depends) {
@@ -488,6 +545,7 @@ YUI.add('juju-databinding', function(Y) {
               source = self.addBinding({
                 name: dep,
                 dependents: []}, binding.viewlet);
+              index[dep] = source;
             }
             if (source.dependents === undefined) {
               source.dependents = [];
@@ -646,27 +704,64 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
+      Find the binding for the given node.
+
+      @method _getBindingForNode
+      @param {Y.Node} node The binding's target node.
+      @return {Binding} Binding reference.
+    */
+    BindingEngine.prototype._getBindingForNode = function(node) {
+      var binding;
+      if ( // Find the binding for the node, and break when found.
+          !this._bindings.some(function(b) {
+            if (b.target === node) {
+              binding = b;
+              return true;
+            }})) {
+        // We don't expect this to ever happen.  We should only be asking for
+        // a key that has been bound.  If this does fail, let's be loud about
+        // it ASAP so that we can fix it.
+        throw 'Programmer error: no binding found for node';
+      }
+      return binding;
+    };
+
+    /**
       Called on valueChange on a bound input to store dirty input references
 
-      @method _storeChanged
+      @method _nodeChangeHandler
       @param {Event} e event object.
       @param {Object} viewlet reference.
     */
-    BindingEngine.prototype._storeChanged = function(e, viewlet) {
-      var key = e.currentTarget.getData('bind'),
-          save = true;
+    BindingEngine.prototype._nodeChangeHandler = function(e, viewlet) {
+      this._nodeChanged(e.target, viewlet);
+    };
 
-      viewlet._changedValues.forEach(function(value) {
-        if (value === key) {
-          save = false;
-        }
-      });
-      if (save) {
-        viewlet._changedValues.push(key);
+    /**
+      Update data structures and call viewlet hooks after a DOM node changes.
+      The source of the change might be user input or the BindingEngine
+      itself.
+
+      @method _nodeChanged
+      @param {Y.Node} node The node that changed.
+      @param {Object} viewlet The node's associated viewlet.
+    */
+    BindingEngine.prototype._nodeChanged = function(node, viewlet) {
+      var key = node.getData('bind');
+      var nodeHandler = this.getNodeHandler(node.getDOMNode());
+      var model = viewlet.model;
+      var binding = this._getBindingForNode(node);
+      if (nodeHandler.eq(node, binding.get(model))) {
+        delete viewlet.changedValues[key];
+      } else {
+        viewlet.changedValues[key] = true;
       }
       if (viewlet.changed) {
-        viewlet.changed(e.target, key,
-            _getNodeHandler.call(this, e.target.getDOMNode()));
+        viewlet.changed(node, key, nodeHandler);
+      }
+      // If there are no more changes, the viewlet has been synced manually.
+      if (Object.keys(viewlet.changedValues).length === 0) {
+        viewlet.syncedFields();
       }
     };
 
@@ -754,15 +849,14 @@ YUI.add('juju-databinding', function(Y) {
         }
 
         // If the field has been changed while the user was editing it
-        viewlet._changedValues.forEach(function(changeKey) {
-          if (changeKey === binding.name) {
-            conflicted = binding.target;
-            viewlet.unsyncedFields();
-            binding.viewlet.conflict(
-                binding.target, viewletModel, binding.viewlet.name,
-                Y.bind(resolve, self), binding);
-          }
-        });
+        if (viewlet.changedValues[binding.name]) {
+          conflicted = binding.target;
+          viewlet.unsyncedFields();
+          binding.viewlet.conflict(
+              binding.target, viewletModel, binding.viewlet.name,
+              Y.bind(resolve, self, binding.target, binding.viewlet.name),
+              binding);
+        }
 
         var value = binding.get(viewletModel);
 
@@ -782,7 +876,7 @@ YUI.add('juju-databinding', function(Y) {
           if (binding.update) {
             binding.update.call(binding, binding.target, value);
           } else {
-            binding.field.set.call(binding, binding.target, value);
+            binding.field.set(binding.target, value);
           }
           optionalCallbacks(delta.wildcards['+'],
                             'update', binding.target, value);
@@ -812,24 +906,19 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = node.getData('bind'),
-          viewlet = this._viewlets[viewletName];
-
-      var changedValues = Y.Array.filter(
-          viewlet._changedValues, function(value) {
-            if (value !== key) {
-              return true;
-            }
-            return false;
-          });
-      viewlet._changedValues = changedValues;
-      var field = _getNodeHandler.call(this, node.getDOMNode());
-      field.set.call(this, node, value);
-      // If there are no more changed values then tell the
-      // the viewlet to update accordingly
-      if (viewlet._changedValues.length === 0) {
-        viewlet.syncedFields();
+      var nodeHandler = this.getNodeHandler(node.getDOMNode());
+      if (!nodeHandler.eq(node, value)) {
+        nodeHandler.set(node, value);
       }
+      // Case 1:
+      // The user chose the node value. It is still modified, so let the
+      // viewlet have a chance to reflect this again, using _nodeChanged.
+      // Case 2:
+      // The user chose the model value, or some other value.  Let
+      // _nodeChanged have a chance to update changedValues and possibly call
+      // syncedFields.
+      var viewlet = this._viewlets[viewletName];
+      this._nodeChanged(node, viewlet);
     };
 
     /**
@@ -843,7 +932,7 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
       var viewlet = this._viewlets[viewletName];
-      viewlet._changedValues = [];
+      viewlet.changedValues = {};
       viewlet.syncedFields();
     };
 
@@ -855,5 +944,6 @@ YUI.add('juju-databinding', function(Y) {
              'juju-models',
              'yui-later',
              'observe',
-             'node']
+             'node',
+             'event-valuechange']
 });

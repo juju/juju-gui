@@ -18,12 +18,36 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('data binding library', function() {
-  var Y, BindingEngine, utils, container;
+  var Y, BindingEngine, utils, viewlet, engine, container;
+
+  var generateEngine = function(input) {
+    container = utils.makeContainer();
+    container.setHTML(input);
+    viewlet = Object.create({
+      name: 'testViewlet',
+      container: container,
+      changedValues: {},
+      _eventHandles: [],
+      syncedFields: function() {
+        this.calledSyncedFields = true;
+      },
+      unsyncedFields: function() {
+        this.calledUnsyncedFields = true;
+      },
+      conflict: function() {
+        this.conflictArgs = Array.prototype.slice.call(arguments);
+      },
+      changed: function() {
+        this.changedArgs = Array.prototype.slice.call(arguments);
+      }
+    });
+    engine = new BindingEngine({interval: 0});
+  };
 
   before(function(done) {
     var requires = ['juju-databinding', 'juju-tests-utils',
                     'base', 'handlebars',
-                    'model', 'model-list'];
+                    'model', 'model-list', 'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
       utils = Y.namespace('juju-tests.utils');
       BindingEngine = Y.namespace('juju.views').BindingEngine;
@@ -32,10 +56,9 @@ describe('data binding library', function() {
   });
 
   describe('supports declarative bindings', function() {
-    var engine, form, model;
+    var model;
 
     describe('binding tests', function() {
-      var engine;
 
       it('bind should fail on invalid DOM', function() {
         engine = new BindingEngine({interval: 0});
@@ -49,7 +72,7 @@ describe('data binding library', function() {
 
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -69,7 +92,7 @@ describe('data binding library', function() {
             container.append('<input data-bind="a"/>');
             var viewlet = {
               container: container,
-              _changedValues: [],
+              changedValues: {},
               _eventHandles: []
             };
             var model = new Y.Model({a: 'b'});
@@ -90,7 +113,7 @@ describe('data binding library', function() {
         container.append('<input data-bind="a"/>');
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         var model = new Y.Model({a: 'b'});
@@ -124,7 +147,7 @@ describe('data binding library', function() {
         var viewlet = {
           name: 'testViewlet',
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         var model = new Y.Model({a: 'b'});
@@ -148,14 +171,13 @@ describe('data binding library', function() {
         done();
       });
 
-
       it('supports nested model bindings', function() {
         container = utils.makeContainer();
         container.append('<div data-bind="a.b.c.d"></div>');
 
         var viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -174,7 +196,7 @@ describe('data binding library', function() {
 
            var viewlet = {
              container: container,
-             _changedValues: [],
+             changedValues: {},
              _eventHandles: [],
              bindings: {
                a: {
@@ -196,7 +218,7 @@ describe('data binding library', function() {
 
            var viewlet = {
              container: container,
-             _changedValues: [],
+             changedValues: {},
              _eventHandles: [],
              bindings: {
                a: {
@@ -228,7 +250,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: []
+          changedValues: {}
         };
         engine = new BindingEngine({interval: 0});
         engine.bind(new Y.Model({a: 'b'}), viewlet);
@@ -248,7 +270,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -276,7 +298,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -299,7 +321,7 @@ describe('data binding library', function() {
               }
             }
           },
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine = new BindingEngine({interval: 0});
@@ -330,7 +352,7 @@ describe('data binding library', function() {
                 }
               }
             },
-            _changedValues: [],
+            changedValues: {},
             _eventHandles: []
           };
           engine = new BindingEngine({interval: 0});
@@ -359,7 +381,7 @@ describe('data binding library', function() {
                 }
               }
             },
-            _changedValues: [],
+            changedValues: {},
             _eventHandles: []
           };
           engine = new BindingEngine({interval: 0});
@@ -381,12 +403,12 @@ describe('data binding library', function() {
         container.append('<div data-bind="name"></div>');
         var called = false;
 
-        var engine = new BindingEngine({interval: 0});
+        engine = new BindingEngine({interval: 0});
         engine.bind(pojo, {
           get: function(m) { return m[this.name];},
           name: 'testViewlet',
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: [],
           bindings: {
             name: {
@@ -411,11 +433,11 @@ describe('data binding library', function() {
 
       it('unbind method unbinds models and pojos (unit test)', function() {
         container = utils.makeContainer();
-        var engine = new BindingEngine({interval: 0});
+        engine = new BindingEngine({interval: 0});
         var model = {id: 'test', name: 'this'};
-        var viewlet = {
+        viewlet = {
           container: container,
-          _changedValues: [],
+          changedValues: {},
           _eventHandles: []
         };
         engine.bind(model, viewlet);
@@ -432,18 +454,6 @@ describe('data binding library', function() {
     });
 
     describe('field types', function() {
-      var viewlet, engine, container;
-
-      function generateEngine(input) {
-        container = utils.makeContainer();
-        container.setHTML(input);
-        viewlet = {
-          container: container,
-          _changedValues: [],
-          _eventHandles: []
-        };
-        engine = new BindingEngine({interval: 0});
-      }
 
       afterEach(function() {
         container.remove().destroy(true);
@@ -457,10 +467,52 @@ describe('data binding library', function() {
         assert.equal(container.one('[data-bind=a]').get('value'), 'b');
       });
 
+      it('supports eq for string inputs', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<input type="text" data-bind="a"></input>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+      });
+
       it('binds strings to textareas', function() {
         generateEngine('<textarea data-bind="g"/></textarea>');
         engine.bind(new Y.Model({g: 'g'}), viewlet);
         assert.equal(container.one('[data-bind=g]').get('value'), 'g');
+      });
+
+      it('supports eq for textarea inputs', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<textarea data-bind="a"></textarea>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
       });
 
       it('binds numbers to inputs', function() {
@@ -479,11 +531,107 @@ describe('data binding library', function() {
         assert.equal(input.get('checked'), true);
       });
 
+      it('supports eq for checkboxes', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<input type="checkbox" data-bind="a"></input>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, false));
+        assert.isFalse(handler.eq(input, true));
+        model.set('a', true);
+        assert.isTrue(handler.eq(input, true));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, false));
+        model.set('a', false);
+        assert.isTrue(handler.eq(input, false));
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, true));
+      });
+
+      it('supports eq for text', function() {
+        var model = new Y.Model({a: undefined});
+        generateEngine('<div data-bind="a"></div>');
+        var input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+        var handler = engine.getNodeHandler(input.getDOMNode());
+        assert.isTrue(handler.eq(input, undefined));
+        assert.isTrue(handler.eq(input, ''));
+        assert.isFalse(handler.eq(input, 42));
+        model.set('a', 42);
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+        model.set('a', '42');
+        assert.isTrue(handler.eq(input, 42));
+        assert.isTrue(handler.eq(input, '42'));
+        assert.isFalse(handler.eq(input, undefined));
+        assert.isFalse(handler.eq(input, ''));
+      });
+
+    });
+
+    describe('changedValues tests', function() {
+      var model, input;
+
+      beforeEach(function() {
+        model = new Y.Model({a: undefined});
+        generateEngine('<textarea data-bind="a"></textarea>');
+        input = container.one('[data-bind=a]');
+        engine.bind(model, viewlet);
+      });
+
+      afterEach(function() {
+        container.remove().destroy(true);
+        model.destroy(true);
+        input.destroy(true);
+      });
+
+      it('should update changedValues when inputs change', function(done) {
+        // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+        // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+        if (Y.UA.ie === 10) {
+          done();
+        }
+        assert.deepEqual(viewlet.changedValues, {});
+        input.after('valueChange', function(e) {
+          assert.deepEqual(viewlet.changedValues, {a: true});
+          done();
+        });
+        // Make valueChange work.
+        input.simulate('focus');
+        input.set('value', 'kumquat');
+      });
+
+      it('should clear changedValues when inputs reset', function(done) {
+        // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+        // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+        if (Y.UA.ie === 10) {
+          done();
+        }
+        assert.deepEqual(viewlet.changedValues, {});
+        var handler = input.after('valueChange', function(e) {
+          handler.detach();
+          input.after('valueChange', function(e) {
+            assert.deepEqual(viewlet.changedValues, {});
+            assert.isTrue(viewlet.calledSyncedFields);
+            done();
+          });
+          // Make valueChange work.
+          input.simulate('focus');
+          input.set('value', '');
+        });
+        // Make valueChange work.
+        input.simulate('focus');
+        input.set('value', 'kumquat');
+      });
     });
   });
 
   describe('dependencies in bindings', function() {
-    var TestModel, engine, viewlet, container;
+    var TestModel;
 
     beforeEach(function() {
       TestModel = Y.Base.create('tester', Y.Model, [], {}, {
@@ -505,7 +653,7 @@ describe('data binding library', function() {
             depends: ['first', 'last']
           }
         },
-        _changedValues: [],
+        changedValues: {},
         _eventHandles: []
       };
     });
@@ -518,7 +666,7 @@ describe('data binding library', function() {
       engine.bind(model, viewlet);
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Ned Stark');
-      // Update something full depends on.
+      // Update something "full" depends on.
       model.setAttrs({first: 'Sansa'});
       assert.equal(container.one('[data-bind="first"]')
                    .get('value'), 'Sansa');
@@ -526,17 +674,28 @@ describe('data binding library', function() {
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Stark');
 
-      // Last name isn't bound the DOM fragment but is a dep
-      // of full. The system should allow for this
+      // The last name isn't bound to the DOM fragment but is a dependency
+      // of "full". The system should allow for this.
       model.set('last', 'Lannister');
       assert.equal(container.one('[data-bind="full"]')
                    .get('value'), 'Sansa Lannister');
     });
 
+    it('should handle multiple dependents', function() {
+      var model = new TestModel({first: 'Ned', last: 'Stark'});
+      container.setHTML(
+          '<input data-bind="full"><span data-bind="full"></span>');
+      engine = new BindingEngine({interval: 0});
+      engine.bind(model, viewlet);
+      assert.equal(container.one('input[data-bind="full"]')
+                   .get('value'), 'Ned Stark');
+      assert.equal(container.one('span[data-bind="full"]')
+                   .get('text'), 'Ned Stark');
+    });
+
   });
 
   describe('modellist tests', function() {
-    var engine;
     beforeEach(function(done) {
       engine = new BindingEngine({interval: 0});
       done();
@@ -571,6 +730,116 @@ describe('data binding library', function() {
       assert.deepEqual(output, ['alpha', 'beta']);
     });
 
+  });
+
+  describe('_getBindingForNode tests', function() {
+    var model;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined, b: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>' +
+          '<input type="text" data-bind="a"></input>' +
+          '<textarea data-bind="b"></textarea>');
+      engine.bind(model, viewlet);
+    });
+
+    afterEach(function() {
+      container.remove().destroy(true);
+      model.destroy(true);
+    });
+
+    it('should find a binding', function() {
+      var nodeA1 = container.one('textarea[data-bind="a"]');
+      var nodeA2 = container.one('input[data-bind="a"]');
+      var nodeB = container.one('[data-bind="b"]');
+      var bindingA1 = engine._getBindingForNode(nodeA1);
+      var bindingA2 = engine._getBindingForNode(nodeA2);
+      var bindingB = engine._getBindingForNode(nodeB);
+      assert.equal(bindingA1.name, 'a');
+      assert.strictEqual(bindingA1.target, nodeA1);
+      assert.equal(bindingA2.name, 'a');
+      assert.strictEqual(bindingA2.target, nodeA2);
+      assert.equal(bindingB.name, 'b');
+      assert.strictEqual(bindingB.target, nodeB);
+    });
+
+    it('should throw an error when a binding is not found', function() {
+      assert.throws(
+          function() {engine._getBindingForNode(container);},
+          'Programmer error: no binding found for node');
+    });
+  });
+
+  describe('_updateDOM tests', function() {
+    var model, node;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+    });
+
+    it('reports conflicts', function() {
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      assert.isUndefined(viewlet.conflictArgs);
+      model.set('a', 'rutebega');
+      // We have a conflict!
+      assert.isTrue(viewlet.calledUnsyncedFields);
+      assert.isDefined(viewlet.conflictArgs);
+      assert.strictEqual(viewlet.conflictArgs[0], node);
+      assert.strictEqual(viewlet.conflictArgs[1], model);
+      assert.strictEqual(viewlet.conflictArgs[2], 'testViewlet');
+      // argument 3 should be the bound resolve function.
+      // We'll assert this by showing that it works.
+      viewlet.conflictArgs[3]('rutebega');
+      assert.equal(node.get('value'), 'rutebega');
+      assert.strictEqual(viewlet.conflictArgs[4],
+                         engine._getBindingForNode(node));
+    });
+
+  });
+
+  describe('resolve tests', function() {
+    var model, node;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      model.set('a', 'rutebega');
+      // Now we have a conflict.
+      delete viewlet.changedArgs;
+    });
+
+    afterEach(function() {
+      container.remove().destroy(true);
+      model.destroy(true);
+    });
+
+    it('resolves to model value', function() {
+      engine.resolve(node, viewlet.name, 'rutebega');
+      assert.equal(node.get('value'), 'rutebega');
+      assert.deepEqual(viewlet.changedValues, {});
+      assert.isDefined(viewlet.changedArgs);
+      assert.isTrue(viewlet.calledSyncedFields);
+    });
+
+    it('resolves to input value', function() {
+      engine.resolve(node, viewlet.name, 'kumquat');
+      assert.equal(node.get('value'), 'kumquat');
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      assert.isDefined(viewlet.changedArgs);
+      assert.isUndefined(viewlet.calledSyncedFields);
+    });
   });
 
 });

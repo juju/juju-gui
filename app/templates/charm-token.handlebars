@@ -3,10 +3,6 @@
     one too! }}
 <a href="/{{storeId}}" class="charm-token {{size}}" data-charmid="{{storeId}}">
     <span class="block-icon">
-        {{#if is_approved}}
-            <span class="badge-approved"
-                title="This charm has been reviewed."></span>
-        {{/if}}
         <div class="icon">
             {{#unless iconUrl}}
                 <img src="{{charmIconPath storeId 'icon.svg'}}" alt="{{ name }} icon">
@@ -20,10 +16,8 @@
     </span>
     {{#unless_eq size 'tiny'}}
       <span class="metadata">
-              {{ downloads }} {{pluralize 'download' downloads}},
-              {{ commitCount }}
-              {{pluralize 'commit' commitCount}}
+          <div><strong>Deployed {{downloads}} {{pluralize 'time' downloads}}</strong></div>
+          <div>{{#if series}}{{series}} |{{/if}} {{#if is_approved}}Recommended{{else}}{{owner}}{{/if}}</div>
       </span>
-      <span class="description">{{truncate description 110 }}</span>
     {{/unless_eq}}
 </a>
