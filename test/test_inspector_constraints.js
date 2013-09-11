@@ -247,4 +247,28 @@ describe('Inspector Constraints', function() {
     assert.isTrue(controls.hasClass('closed'));
   });
 
+  it('handles conflicts correctly', function() {
+    var viewlet = getViewlet(inspector);
+    changeForm(viewlet, 'arch', 'i386');
+    inspector.model.set('constraints', {arch: 'lcars'});
+    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    node.simulate('click');
+    var wrapper = node.ancestor('.settings-wrapper');
+    var option = wrapper.one('.resolver .config-field');
+    assert.equal(option.getHTML(), 'lcars');
+  })
+
+  it('handles successive conflicts correctly', function() {
+    var viewlet = getViewlet(inspector);
+    changeForm(viewlet, 'arch', 'i386');
+    inspector.model.set('constraints', {arch: 'lcars'});
+    // This is the successive change.
+    inspector.model.set('constraints', {arch: 'arm64'});
+    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    node.simulate('click');
+    var wrapper = node.ancestor('.settings-wrapper');
+    var option = wrapper.one('.resolver .config-field');
+    assert.equal(option.getHTML(), 'arm64');
+  })
+
 });
