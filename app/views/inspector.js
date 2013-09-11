@@ -1229,9 +1229,9 @@ YUI.add('juju-view-inspector', function(Y) {
         resolver.addClass('hidden');
 
         if (e.currentTarget.hasClass('conflicted-env')) {
-          resolve(node, viewletName, modelValue);
+          resolve(modelValue);
         } else {
-          resolve(node, viewletName, formValue);
+          resolve(formValue);
         }
       }
 
