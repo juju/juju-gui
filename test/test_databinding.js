@@ -732,7 +732,7 @@ describe('data binding library', function() {
 
   });
 
-  describe('_getBinding tests', function() {
+  describe('_getBindingForNode tests', function() {
     var model;
 
     beforeEach(function() {
@@ -753,9 +753,9 @@ describe('data binding library', function() {
       var nodeA1 = container.one('textarea[data-bind="a"]');
       var nodeA2 = container.one('input[data-bind="a"]');
       var nodeB = container.one('[data-bind="b"]');
-      var bindingA1 = engine._getBinding(nodeA1);
-      var bindingA2 = engine._getBinding(nodeA2);
-      var bindingB = engine._getBinding(nodeB);
+      var bindingA1 = engine._getBindingForNode(nodeA1);
+      var bindingA2 = engine._getBindingForNode(nodeA2);
+      var bindingB = engine._getBindingForNode(nodeB);
       assert.equal(bindingA1.name, 'a');
       assert.strictEqual(bindingA1.target, nodeA1);
       assert.equal(bindingA2.name, 'a');
@@ -766,7 +766,7 @@ describe('data binding library', function() {
 
     it('should throw an error when a binding is not found', function() {
       assert.throws(
-          function() {engine._getBinding(container);},
+          function() {engine._getBindingForNode(container);},
           'Programmer error: no binding found for node');
     });
   });
@@ -799,7 +799,7 @@ describe('data binding library', function() {
       viewlet.conflictArgs[3]('rutebega');
       assert.equal(node.get('value'), 'rutebega');
       assert.strictEqual(viewlet.conflictArgs[4],
-                         engine._getBinding(node));
+                         engine._getBindingForNode(node));
     });
 
   });

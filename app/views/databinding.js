@@ -296,17 +296,32 @@ YUI.add('juju-databinding', function(Y) {
     /**
       Add a binding from a configuration and a viewlet.
 
-      A binding has the following attributes and methods.
+      A binding has the following attributes.
 
-       * name: String
-       * get(model):
-       * target: (optional) Associated DOM node
-       * field: (optional) Associated NodeHandler
+       * name: A string that is the binding name.  It references a (possibly
+               nested) attribute of the associated viewlet's model.
+       * viewlet: (optional) The viewlet that is matched with this binding.
+       * target: (optional) Associated DOM node.  If this exists, then it is
+                 unique: no other binding in this engine shares it.
+       * field: (optional) Associated NodeHandler, typically used to connect
+                           values with nodes.
        * dependents: (optional) Array of binding names that should be updated
                      when this one is.
-       * format(value): (optional)
-       * update(node, value): (optional)
 
+      Note that there is no completely unique key for a binding.  As described
+      above, if a binding has a target, that should be unique.  If it does not,
+      the combination of the name and the viewlet should be unique.  The
+      uniqueness guarantees here are not high at the moment.
+
+      A binding has the following methods.
+
+       * get(model): Get the value of the associated attribute for this
+                     binding from the model.
+       * format(value): (optional) Format the value before passing it to the
+                        binding.field.set method (or binding.update, below).
+       * update(node, value): (optional) If this is included, it is used
+                              instead of the binding.field.set method to set
+                              the value on the node.
 
       @method addBinding
       @param {Object} config A bindings Object, see description in `bind`.
@@ -689,13 +704,13 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-      Find the binding for the given key (binding name).
+      Find the binding for the given node.
 
-      @method _getBinding
+      @method _getBindingForNode
       @param {Y.Node} node The binding's target node.
       @return {Binding} Binding reference.
     */
-    BindingEngine.prototype._getBinding = function(node) {
+    BindingEngine.prototype._getBindingForNode = function(node) {
       var binding;
       if ( // Find the binding for the node, and break when found.
           !this._bindings.some(function(b) {
@@ -735,7 +750,7 @@ YUI.add('juju-databinding', function(Y) {
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
-      var binding = this._getBinding(node);
+      var binding = this._getBindingForNode(node);
       if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
