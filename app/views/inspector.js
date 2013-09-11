@@ -1218,6 +1218,11 @@ YUI.add('juju-view-inspector', function(Y) {
       }
 
       binding.annotations.conflict = {
+        /**
+          Cancel this conflict handling UX.
+
+          @method cancel
+        */
         cancel: function() {
           handlers.forEach(function(h) { h.detach();});
           viewlet._clearModified(node);
@@ -1228,9 +1233,9 @@ YUI.add('juju-view-inspector', function(Y) {
         }
       };
       /**
-       User selects one of the two conflicting values.
+        User selects one of the two conflicting values.
 
-       @method sendResolve
+        @method sendResolve
        */
       function sendResolve(e) {
         e.halt(true);
@@ -1244,9 +1249,9 @@ YUI.add('juju-view-inspector', function(Y) {
       }
 
       /**
-       User selects a conflicting field, show the resolution UI
+        User selects a conflicting field, show the resolution UI
 
-       @method setupResolver
+        @method setupResolver
       */
       function setupResolver(e) {
         e.halt(true);
