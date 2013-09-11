@@ -580,7 +580,11 @@ YUI.add('juju-topology-relation', function(Y) {
       relation.endpoints.forEach(function(endpoint) {
         // Some of the tests pass fake data with invalid endpoints
         // this check just makes sure it doesn't blow up.
-        if (!endpoint) { return; }
+        // fixTests
+        if (!endpoint) {
+          console.error('invalid endpoints on relation');
+          return;
+        }
         service = db.services.getById(endpoint[0]);
         serviceRelations = service.get('relations');
         serviceRelations.some(function(rel) {

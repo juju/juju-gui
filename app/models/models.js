@@ -287,8 +287,45 @@ YUI.add('juju-models', function(Y) {
         value: ALIVE
       },
       unit_count: {},
-      relations: { },
+
+      /**
+        The services current units. This is kept in sync with the db.units
+        modellist
+
+        @attribute units
+        @default {}
+        @type {ServiceUnitList}
+      */
+      units: {},
+
+      /**
+        The services current relations. This is kept in sync with the
+        db.relations modellist
+
+        @attribute relations
+        @default {}
+        @type {RelationList}
+      */
+      relations: {},
+
+      /**
+        An aggregate of the relations statuses that we use to trigger
+        databinding changes
+
+        @attribute aggregateRelations
+        @default {}
+        @type {Object}
+      */
       aggregateRelations: {},
+
+      /**
+        An aggregate of the relation errors that we use to trigger
+        databinding changes
+
+        @attribute aggregateRelationError
+        @default {}
+        @type {Object}
+      */
       aggregateRelationError: {},
 
       /**
@@ -446,6 +483,9 @@ YUI.add('juju-models', function(Y) {
       // for a valid service here.
       if (service) {
         _process_delta(service.get('units'), action, data, {});
+      } else {
+        // fixTests
+        console.error('Units added without matching Service');
       }
     },
 
@@ -670,6 +710,9 @@ YUI.add('juju-models', function(Y) {
                   return true;
                 }
               });
+            } else {
+              // fixTests
+              console.error('Relation added without matching service');
             }
           });
         }
@@ -683,6 +726,9 @@ YUI.add('juju-models', function(Y) {
           // it's possible that a service will be null
           if (service) {
             _process_delta(service.get('relations'), action, data, {});
+          } else {
+            // fixTests
+            console.error('Relation added without matching service');
           }
         });
       }
