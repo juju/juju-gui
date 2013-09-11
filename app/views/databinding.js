@@ -664,22 +664,21 @@ YUI.add('juju-databinding', function(Y) {
       Find the binding for the given key (binding name).
 
       @method _getBinding
-      @param {String} key Binding key.
       @param {Y.Node} node The binding's target node.
       @return {Binding} Binding reference.
     */
-    BindingEngine.prototype._getBinding = function(key, node) {
+    BindingEngine.prototype._getBinding = function(node) {
       var binding;
-      if ( // Find the binding for the key, and break when found.
+      if ( // Find the binding for the node, and break when found.
           !this._bindings.some(function(b) {
-            if (b.name === key && b.target === node) {
+            if (b.target === node) {
               binding = b;
               return true;
             }})) {
         // We don't expect this to ever happen.  We should only be asking for
         // a key that has been bound.  If this does fail, let's be loud about
         // it ASAP so that we can fix it.
-        throw 'Programmer error: no binding found for ' + key;
+        throw 'Programmer error: no binding found for node';
       }
       return binding;
     };
@@ -708,7 +707,7 @@ YUI.add('juju-databinding', function(Y) {
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
-      var binding = this._getBinding(key, node);
+      var binding = this._getBinding(node);
       if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
@@ -812,7 +811,8 @@ YUI.add('juju-databinding', function(Y) {
           viewlet.unsyncedFields();
           binding.viewlet.conflict(
               binding.target, viewletModel, binding.viewlet.name,
-              Y.bind(resolve, self), binding);
+              Y.bind(resolve, self, binding.target, binding.viewlet.name),
+              binding);
         }
 
         var value = binding.get(viewletModel);
@@ -863,17 +863,19 @@ YUI.add('juju-databinding', function(Y) {
       @param {Any} value that the user has accepted to resolve with.
     */
     BindingEngine.prototype.resolve = function(node, viewletName, value) {
-      var key = node.getData('bind'),
-          viewlet = this._viewlets[viewletName];
-
-      delete viewlet.changedValues[key];
-      var field = this.getNodeHandler(node.getDOMNode());
-      field.set.call(this, node, value);
-      // If there are no more changed values then tell the
-      // the viewlet to update accordingly
-      if (Object.keys(viewlet.changedValues).length === 0) {
-        viewlet.syncedFields();
+      var nodeHandler = this.getNodeHandler(node.getDOMNode());
+      if (!nodeHandler.eq(node, value)) {
+        nodeHandler.set(node, value);
       }
+      // Case 1:
+      // The user chose the node value. It is still modified, so let the
+      // viewlet have a chance to reflect this again, using _nodeChanged.
+      // Case 2:
+      // The user chose the model value, or some other value.  Let
+      // _nodeChanged have a chance to update changedValues and possibly call
+      // syncedFields.
+      var viewlet = this._viewlets[viewletName];
+      this._nodeChanged(node, viewlet);
     };
 
     /**

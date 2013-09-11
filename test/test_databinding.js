@@ -24,11 +24,21 @@ describe('data binding library', function() {
     container = utils.makeContainer();
     container.setHTML(input);
     viewlet = Object.create({
+      name: 'testViewlet',
       container: container,
       changedValues: {},
       _eventHandles: [],
       syncedFields: function() {
         this.calledSyncedFields = true;
+      },
+      unsyncedFields: function() {
+        this.calledUnsyncedFields = true;
+      },
+      conflict: function() {
+        this.conflictArgs = Array.prototype.slice.call(arguments);
+      },
+      changed: function() {
+        this.changedArgs = Array.prototype.slice.call(arguments);
       }
     });
     engine = new BindingEngine({interval: 0});
@@ -731,9 +741,9 @@ describe('data binding library', function() {
       var nodeA1 = container.one('textarea[data-bind="a"]');
       var nodeA2 = container.one('input[data-bind="a"]');
       var nodeB = container.one('[data-bind="b"]');
-      var bindingA1 = engine._getBinding('a', nodeA1);
-      var bindingA2 = engine._getBinding('a', nodeA2);
-      var bindingB = engine._getBinding('b', nodeB);
+      var bindingA1 = engine._getBinding(nodeA1);
+      var bindingA2 = engine._getBinding(nodeA2);
+      var bindingB = engine._getBinding(nodeB);
       assert.equal(bindingA1.name, 'a');
       assert.strictEqual(bindingA1.target, nodeA1);
       assert.equal(bindingA2.name, 'a');
@@ -743,10 +753,80 @@ describe('data binding library', function() {
     });
 
     it('should throw an error when a binding is not found', function() {
-      var nodeA1 = container.one('textarea[data-bind="a"]');
       assert.throws(
-          function() {engine._getBinding('c', nodeA1);},
-          'Programmer error: no binding found for c');
+          function() {engine._getBinding(container);},
+          'Programmer error: no binding found for node');
+    });
+  });
+
+  describe('_updateDOM tests', function() {
+    var model, node;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+    });
+
+    it('reports conflicts', function() {
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      assert.isUndefined(viewlet.conflictArgs);
+      model.set('a', 'rutebega');
+      // We have a conflict!
+      assert.isTrue(viewlet.calledUnsyncedFields);
+      assert.isDefined(viewlet.conflictArgs);
+      assert.strictEqual(viewlet.conflictArgs[0], node);
+      assert.strictEqual(viewlet.conflictArgs[1], model);
+      assert.strictEqual(viewlet.conflictArgs[2], 'testViewlet');
+      // argument 3 should be the bound resolve function.
+      // We'll assert this by showing that it works.
+      viewlet.conflictArgs[3]('rutebega');
+      assert.equal(node.get('value'), 'rutebega');
+      assert.strictEqual(viewlet.conflictArgs[4],
+                         engine._getBinding(node));
+    });
+
+  });
+
+  describe('resolve tests', function() {
+    var model, node;
+
+    beforeEach(function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      model.set('a', 'rutebega');
+      // Now we have a conflict.
+      delete viewlet.changedArgs;
+    });
+
+    afterEach(function() {
+      container.remove().destroy(true);
+      model.destroy(true);
+    });
+
+    it('resolves to model value', function() {
+      engine.resolve(node, viewlet.name, 'rutebega');
+      assert.equal(node.get('value'), 'rutebega');
+      assert.deepEqual(viewlet.changedValues, {});
+      assert.isDefined(viewlet.changedArgs);
+      assert.isTrue(viewlet.calledSyncedFields);
+    });
+
+    it('resolves to input value', function() {
+      engine.resolve(node, viewlet.name, 'kumquat');
+      assert.equal(node.get('value'), 'kumquat');
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      assert.isDefined(viewlet.changedArgs);
+      assert.isUndefined(viewlet.calledSyncedFields);
     });
   });
 
