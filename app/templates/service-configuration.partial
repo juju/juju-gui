@@ -12,7 +12,7 @@
                        {{#if_eq value 'checked'}}checked="checked"{{/if_eq}}
                        {{#if ../../ghost}}disabled{{/if}}
                        id="input-{{name}}">
-                <label for="{{name}}-toggle" class="light">
+                <label for="input-{{name}}" class="light">
                   <div class="handle"></div>
                 </label>
             </div>

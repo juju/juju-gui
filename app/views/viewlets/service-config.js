@@ -78,7 +78,7 @@ YUI.add('viewlet-service-config', function(Y) {
       // input node.
       this.events.push(
           this.container.delegate('change', function(ev) {
-            var checked = ev.target.get('checked');
+            var checked = ev.currentTarget.get('checked');
             ev.target.ancestor('.toggle').one('.textvalue').set('text',
                                                                 checked);
 
