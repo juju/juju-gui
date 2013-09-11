@@ -162,8 +162,7 @@ YUI.add('juju-databinding', function(Y) {
       // Ignore 'possible strict violation'
       var bindings = this._bindings;
       var result = {bindings: [], wildcards: {}};
-      var index = indexBindings(bindings);
-      // Handle wildcards (before we filter down bindings)
+      // Handle wildcards.
       result.wildcards = indexBindings(bindings, function(binding) {
         if (binding.name !== '*' && binding.name !== '+') {
           return;
@@ -172,30 +171,44 @@ YUI.add('juju-databinding', function(Y) {
       }, true);
 
       if (modelChangeKeys !== undefined && modelChangeKeys.length !== 0) {
-        bindings = bindings.filter(function(binding) {
+        // In this branch of the the conditional, we only have a specific set
+        // of keys that have changed, so we want to limit the resulting
+        // bindings appropriately.
+        // Find the bindings that match the modelChangeKeys.
+        var filteredBindings = bindings.filter(function(binding) {
           // Change events don't honor nested key paths. This means
           // we may update bindings that impact multiple DOM nodes
           // (our granularity is too low).
           return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
         });
+        // Add dependents.
+        // We make an index of all bindings to help with this.
+        var index = indexBindings(bindings, null, true);
+        var added = {};
+        filteredBindings.forEach(function(binding) {
+          if (binding.name === '*' ||
+              binding.name === '+') {
+            return;
+          }
+          result.bindings.push(binding);
+          if (binding.dependents) {
+            binding.dependents.forEach(function(dep) {
+              if (!added[dep]) {
+                added[dep] = true;
+                var depends = index[dep];
+                if (depends) {
+                  result.bindings.push.apply(result.bindings, depends);
+                }
+              }
+            });
+          }
+        });
+      } else {
+        // If we don't have modelChangeKeys, we simply want all of the
+        // existing bindings.
+        result.bindings.push.apply(result.bindings, bindings);
       }
 
-      // Handle deps
-      bindings.forEach(function(binding) {
-        if (binding.name === '*' ||
-            binding.name === '+') {
-          return;
-        }
-        result.bindings.push(binding);
-        if (binding.dependents) {
-          binding.dependents.forEach(function(dep) {
-            var depends = index[dep];
-            if (depends) {
-              result.bindings.push(depends);
-            }
-          });
-        }
-      });
 
       return result;
     }
@@ -281,10 +294,39 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-     * @method addBinding
-     * @param {Object} config A bindings Object, see description in `bind`.
-     * @param {Object} viewlet A reference to the viewlet being bound.
-     * @return {Object} binding.
+      Add a binding from a configuration and a viewlet.
+
+      A binding has the following attributes.
+
+       * name: A string that is the binding name.  It references a (possibly
+               nested) attribute of the associated viewlet's model.
+       * viewlet: (optional) The viewlet that is matched with this binding.
+       * target: (optional) Associated DOM node.  If this exists, then it is
+                 unique: no other binding in this engine shares it.
+       * field: (optional) Associated NodeHandler, typically used to connect
+                           values with nodes.
+       * dependents: (optional) Array of binding names that should be updated
+                     when this one is.
+
+      Note that there is no completely unique key for a binding.  As described
+      above, if a binding has a target, that should be unique.  If it does not,
+      the combination of the name and the viewlet should be unique.  The
+      uniqueness guarantees here are not high at the moment.
+
+      A binding has the following methods.
+
+       * get(model): Get the value of the associated attribute for this
+                     binding from the model.
+       * format(value): (optional) Format the value before passing it to the
+                        binding.field.set method (or binding.update, below).
+       * update(node, value): (optional) If this is included, it is used
+                              instead of the binding.field.set method to set
+                              the value on the node.
+
+      @method addBinding
+      @param {Object} config A bindings Object, see description in `bind`.
+      @param {Object} viewlet A reference to the viewlet being bound.
+      @return {Object} binding.
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
@@ -321,8 +363,8 @@ YUI.add('juju-databinding', function(Y) {
       From within the DOM, data-bind='model key' attributes can be used to
       associate bindings from the model into the DOM. Nested keys are supported
       by using '.' (dotted) paths. As an important development/debug tip when
-      trying to use YUI to select a dotted path name make sure to quote the
-      entire path. For example Y.one('[data-bind="a.b.c."]').
+      trying to use YUI to select a dotted path name, make sure to quote the
+      entire path. For example Y.one('[data-bind="a.b.c"]').
 
       Viewlets can provide a number of configuration options
       for use here:
@@ -360,6 +402,10 @@ YUI.add('juju-databinding', function(Y) {
       if (!Y.Lang.isArray(viewlets)) { viewlets = [viewlets]; }
       Y.each(viewlets, function(v) {
         this._bind(model, v);}, this);
+      this._setupHeirarchicalBindings();
+      this._setupDependencies();
+      // Initialize viewlets with starting values.
+      this._modelChangeHandler();
       return this;
     };
 
@@ -440,11 +486,7 @@ YUI.add('juju-databinding', function(Y) {
 
       }, this);
 
-      this._setupHeirarchicalBindings();
-      this._setupDependencies();
       this._setupWildcarding(viewlet);
-      this._modelChangeHandler();
-
       return this;
     };
 
@@ -503,6 +545,7 @@ YUI.add('juju-databinding', function(Y) {
               source = self.addBinding({
                 name: dep,
                 dependents: []}, binding.viewlet);
+              index[dep] = source;
             }
             if (source.dependents === undefined) {
               source.dependents = [];
@@ -661,13 +704,13 @@ YUI.add('juju-databinding', function(Y) {
     };
 
     /**
-      Find the binding for the given key (binding name).
+      Find the binding for the given node.
 
-      @method _getBinding
+      @method _getBindingForNode
       @param {Y.Node} node The binding's target node.
       @return {Binding} Binding reference.
     */
-    BindingEngine.prototype._getBinding = function(node) {
+    BindingEngine.prototype._getBindingForNode = function(node) {
       var binding;
       if ( // Find the binding for the node, and break when found.
           !this._bindings.some(function(b) {
@@ -707,7 +750,7 @@ YUI.add('juju-databinding', function(Y) {
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
-      var binding = this._getBinding(node);
+      var binding = this._getBindingForNode(node);
       if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {
