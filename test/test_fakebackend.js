@@ -120,6 +120,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // when doing a deep equals on an object which contains a LazyModelList
       // call toArray() on it first else it will fail and it won't tell you why.
       attrs.relations = attrs.relations.toArray();
+      attrs.units = attrs.units.toArray();
       // deepEquals compares order, even though that's not guaranteed by any
       // JS engine - if there are failures here check the order first.
       assert.deepEqual(attrs, {
@@ -150,6 +151,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         relations: [],
         unit_count: undefined,
         upgrade_available: false,
+        units: [],
         upgrade_to: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);

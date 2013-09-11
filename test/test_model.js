@@ -248,7 +248,7 @@ describe('juju models', function() {
     var db = new models.Database();
     var mysql = new models.Service({id: 'mysql'});
     db.services.add([mysql]);
-    assert.isUndefined(mysql.get('units'));
+    assert.equal(mysql.get('units') instanceof models.ServiceUnitList, true);
     db.onDelta({data: {result: [
       ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
       ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]

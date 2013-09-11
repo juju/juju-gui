@@ -442,8 +442,11 @@ YUI.add('juju-models', function(Y) {
           oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }
-
-      _process_delta(service.get('units'), action, data, {});
+      // Some tests add units without creating a service so we need to check
+      // for a valid service here.
+      if (service) {
+        _process_delta(service.get('units'), action, data, {});
+      }
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -637,11 +640,18 @@ YUI.add('juju-models', function(Y) {
       // models that are cloned in each of the services.
       if (action === 'remove') {
         var endpoints;
-        db.relations.each(function(relation) {
-          if (relation.get('id') === data) {
-            endpoints = relation.get('endpoints');
-          }
-        });
+        // PyJuju returns a single string as data to remove relations
+        if (Y.Lang.isString(data)) {
+          db.relations.each(function(relation) {
+            if (relation.get('id') === data) {
+              endpoints = relation.get('endpoints');
+            }
+          });
+        } else {
+          // juju-core returns an object
+          endpoints = data.endpoints;
+        }
+
         // Because we keep a copy of the relation models on each service we
         // also need to remove the relation from those models.
         // If the user adds then removes an endpoint before the deltas return
@@ -650,15 +660,20 @@ YUI.add('juju-models', function(Y) {
           var service, serviceRelations;
           endpoints.forEach(function(endpoint) {
             service = db.services.getById(endpoint[0]);
-            serviceRelations = service.get('relations');
-            serviceRelations.some(function(rel) {
-              if (rel.get('relation_id') === data) {
-                serviceRelations.remove(rel);
-                return true;
-              }
-            });
+            // The tests don't always add services so we check if they exist
+            // first before trying to remove them
+            if (service) {
+              serviceRelations = service.get('relations');
+              serviceRelations.some(function(rel) {
+                if (rel.get('relation_id') === data) {
+                  serviceRelations.remove(rel);
+                  return true;
+                }
+              });
+            }
           });
         }
+        _process_delta(this, action, data, {});
       } else {
         // When removing a relation instance is null
         var instance = _process_delta(this, action, data, {});

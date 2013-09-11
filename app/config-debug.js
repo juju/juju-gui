@@ -40,8 +40,8 @@ var juju_config = {
   socket_port: 8081,
   user: 'admin',
   password: 'admin',
-  apiBackend: 'go', // Value can be 'python' or 'go'.
-  sandbox: true,
+  apiBackend: 'python', // Value can be 'python' or 'go'.
+  sandbox: false,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
   // There is also a hotkey to toggle the simulator.
