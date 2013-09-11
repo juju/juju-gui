@@ -681,6 +681,18 @@ describe('data binding library', function() {
                    .get('value'), 'Sansa Lannister');
     });
 
+    it('should handle multiple dependents', function() {
+      var model = new TestModel({first: 'Ned', last: 'Stark'});
+      container.setHTML(
+          '<input data-bind="full"><span data-bind="full"></span>');
+      engine = new BindingEngine({interval: 0});
+      engine.bind(model, viewlet);
+      assert.equal(container.one('input[data-bind="full"]')
+                   .get('value'), 'Ned Stark');
+      assert.equal(container.one('span[data-bind="full"]')
+                   .get('text'), 'Ned Stark');
+    });
+
   });
 
   describe('modellist tests', function() {
