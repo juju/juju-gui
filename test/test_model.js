@@ -92,11 +92,12 @@ describe('BrowserCharm initialization', function() {
 });
 
 describe('juju models', function() {
-  var models;
+  var models, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
       models = Y.namespace('juju.models');
+      yui = Y;
       done();
     });
   });
@@ -185,6 +186,27 @@ describe('juju models', function() {
         sul.update_service_unit_aggregates(mysql);
         window._gaq.should.eql([]);
       });
+
+  it('services have unit and relation modellists', function() {
+    var service = new models.Service();
+    assert.equal(service.get('units') instanceof models.ServiceUnitList, true);
+    assert.equal(service.get('relations') instanceof models.RelationList, true);
+  });
+
+  it('relation changes on service update aggregateRelations', function(done) {
+    var service = new models.Service();
+    var relations = service.get('relations');
+    var handler = relations.on(
+        '*:add', function() {
+          // This means that it will update the aggregate
+          // relations for databinding
+          handler.detach();
+          var isObject = yui.Lang.isObject;
+          assert.equal(isObject(service.get('aggregateRelations')), true);
+          done();
+        });
+    relations.add(new models.Relation());
+  });
 
   it('service unit objects should parse the service name from unit id',
       function() {
