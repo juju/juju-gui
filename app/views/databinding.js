@@ -664,14 +664,15 @@ YUI.add('juju-databinding', function(Y) {
       Find the binding for the given key (binding name).
 
       @method _getBinding
-      @param {String} key Binding key
+      @param {String} key Binding key.
+      @param {Y.Node} node The binding's target node.
       @return {Binding} Binding reference.
     */
-    BindingEngine.prototype._getBinding = function(key) {
+    BindingEngine.prototype._getBinding = function(key, node) {
       var binding;
       if ( // Find the binding for the key, and break when found.
           !this._bindings.some(function(b) {
-            if (b.name === key) {
+            if (b.name === key && b.target === node) {
               binding = b;
               return true;
             }})) {
@@ -707,7 +708,7 @@ YUI.add('juju-databinding', function(Y) {
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
-      var binding = this._getBinding(key);
+      var binding = this._getBinding(key, node);
       if (nodeHandler.eq(node, binding.get(model))) {
         delete viewlet.changedValues[key];
       } else {

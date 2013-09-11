@@ -717,6 +717,7 @@ describe('data binding library', function() {
       model = new Y.Model({a: undefined, b: undefined});
       generateEngine(
           '<textarea data-bind="a"></textarea>' +
+          '<input type="text" data-bind="a"></input>' +
           '<textarea data-bind="b"></textarea>');
       engine.bind(model, viewlet);
     });
@@ -727,13 +728,24 @@ describe('data binding library', function() {
     });
 
     it('should find a binding', function() {
-      assert.equal(engine._getBinding('a').name, 'a');
-      assert.equal(engine._getBinding('b').name, 'b');
+      var nodeA1 = container.one('textarea[data-bind="a"]');
+      var nodeA2 = container.one('input[data-bind="a"]');
+      var nodeB = container.one('[data-bind="b"]');
+      var bindingA1 = engine._getBinding('a', nodeA1);
+      var bindingA2 = engine._getBinding('a', nodeA2);
+      var bindingB = engine._getBinding('b', nodeB);
+      assert.equal(bindingA1.name, 'a');
+      assert.strictEqual(bindingA1.target, nodeA1);
+      assert.equal(bindingA2.name, 'a');
+      assert.strictEqual(bindingA2.target, nodeA2);
+      assert.equal(bindingB.name, 'b');
+      assert.strictEqual(bindingB.target, nodeB);
     });
 
     it('should throw an error when a binding is not found', function() {
+      var nodeA1 = container.one('textarea[data-bind="a"]');
       assert.throws(
-          function() {engine._getBinding('c');},
+          function() {engine._getBinding('c', nodeA1);},
           'Programmer error: no binding found for c');
     });
   });
