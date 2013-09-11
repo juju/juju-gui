@@ -318,16 +318,16 @@
         .destroy-service-prompt,
         .controls {
             overflow: hidden;
+            max-height: @inspector-controls-height;
             padding: 0 20px;
             background-color: @inspector-background-color;
             border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
             overflow: hidden;
-            height: @inspector-controls-height;
-            .transition(.25s, height .3s);
+            .transition(.25s, max-height .3s);
 
             &.closed {
-                height: 0;
+                max-height: 0;
             }
 
             &:before {
