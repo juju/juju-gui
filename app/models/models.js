@@ -217,6 +217,23 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Removes a relation from the internal relation model list
+      using the supplied relationId.
+
+      @method removeRelations
+      @param {String} relationId of the relation to remove;
+    */
+    removeRelations: function(relationId) {
+      var relations = this.get('relations');
+      relations.some(function(rel) {
+        if (rel.get('relation_id') === relationId) {
+          relations.remove(rel);
+          return true;
+        }
+      });
+    },
+
+    /**
       Detaches all of the events in the models _event property
 
       @method destructor
@@ -703,13 +720,7 @@ YUI.add('juju-models', function(Y) {
             // The tests don't always add services so we check if they exist
             // first before trying to remove them
             if (service) {
-              serviceRelations = service.get('relations');
-              serviceRelations.some(function(rel) {
-                if (rel.get('relation_id') === data) {
-                  serviceRelations.remove(rel);
-                  return true;
-                }
-              });
+              service.removeRelations(data);
             } else {
               // fixTests
               console.error('Relation added without matching service');

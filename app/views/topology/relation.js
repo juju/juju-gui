@@ -586,13 +586,7 @@ YUI.add('juju-topology-relation', function(Y) {
           return;
         }
         service = db.services.getById(endpoint[0]);
-        serviceRelations = service.get('relations');
-        serviceRelations.some(function(rel) {
-          if (rel.get('relation_id') === relation.relation_id) {
-            serviceRelations.remove(rel);
-            return true;
-          }
-        });
+        service.removeRelations(relation.relation_id);
       });
       env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
