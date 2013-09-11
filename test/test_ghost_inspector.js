@@ -253,6 +253,33 @@ describe('Ghost Inspector', function() {
   it('renders into the dom when instantiated', function() {
     inspector = setUpInspector();
     assert.isObject(container.one('.ghost-config-wrapper'));
+
+    // Basic sanity checks of the rendering
+    // The debug checkbox is disabled
+    assert(
+        container.one('input[name=debug]').hasAttribute('disabled'),
+        'debug checkbox is not disabled'
+    );
+
+    // The default config checkbox is a slider
+    assert(
+        container.one('input#use-default-toggle').hasClass('hidden-checkbox'),
+        'Use default checkbox is not a hidden checkbox - slider');
+
+  });
+
+  it('syncs checkbox state with the visible ui', function() {
+    inspector = setUpInspector();
+    assert.isObject(container.one('.ghost-config-wrapper'));
+
+    var debugContainer = container.one('.toggle-debug').get('parentNode');
+    var stateText = debugContainer.one('.textvalue');
+
+    // The CSS is what capitalizes the text so the assertion values are lower
+    // case.
+    assert.equal(stateText.get('text').replace(/\s/g, ''), 'false');
+    container.one('input[name=debug]').simulate('click');
+    assert.equal(stateText.get('text'), 'true');
   });
 
   it('properly renders a service without charm options', function() {

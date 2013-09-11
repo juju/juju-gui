@@ -81,7 +81,13 @@ describe('Inspector Settings', function() {
       // stop it from falling over.
       if (charm.get('options')) {
         Y.Object.each(charm.get('options'), function(val, key) {
-          parsedConfig[key] = val['default'] || '';
+          // For boolean fields the default is false, so we need to check
+          // undefined directly.
+          if (val['default'] !== undefined) {
+            parsedConfig[key] = val['default'];
+          } else {
+            parsedConfig[key] = '';
+          }
         });
       }
       service = new models.Service({
@@ -131,17 +137,30 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // One boolean checkbox
+    // One boolean checkbox even though two show up (one is the expose button)
+    // Also note that it's hidden because we're using the slider widget for
+    // boolean fields.
     assert.equal(
-        container.all('input.config-field').size(),
-        1,
+        container.all('input.hidden-checkbox').size(),
+        2,
         'did not render one boolean field');
 
-    // One numeric input field
+    // Verify that the textual representation is there.
+    // Again, there are two because of the expose button.
     assert.equal(
-        container.all('input.config-field').size(),
-        1,
-        'did not render one numeric field');
+        container.all('.textvalue').size(),
+        2,
+        'can not find the textual value for the checkbox.');
+
+    // And the value will toggle with the checkbox
+    var debugContainer = container.one('.toggle-debug').get('parentNode');
+    assert.equal(
+        debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
+        'false');
+    container.one('input[name=debug]').simulate('click');
+    assert.equal(
+        debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
+        'true');
   });
 
   it('toggles exposure', function() {

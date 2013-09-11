@@ -19,7 +19,7 @@
             <div class="textvalue"
                  data-skipconflictux=true
                  data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}">
-                 {{#if_eq value 'checked'}}True{{else}}False{{/if_eq}}</div>
+                 {{#if_eq value 'checked'}}true{{else}}false{{/if_eq}}</div>
     {{else}}
       {{#if isNumeric}}
         <div class="settings-wrapper">
