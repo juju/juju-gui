@@ -256,7 +256,7 @@ describe('Inspector Constraints', function() {
     var wrapper = node.ancestor('.settings-wrapper');
     var option = wrapper.one('.resolver .config-field');
     assert.equal(option.getHTML(), 'lcars');
-  })
+  });
 
   it('handles successive conflicts correctly', function() {
     var viewlet = getViewlet(inspector);
@@ -269,6 +269,6 @@ describe('Inspector Constraints', function() {
     var wrapper = node.ancestor('.settings-wrapper');
     var option = wrapper.one('.resolver .config-field');
     assert.equal(option.getHTML(), 'arm64');
-  })
+  });
 
 });
