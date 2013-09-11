@@ -64,7 +64,7 @@ describe('Inspector Constraints', function() {
     node.set('value', value);
     // Trigger bindingEngine to notice change.
     var bindingEngine = inspector.viewletManager.bindingEngine;
-    bindingEngine._storeChanged({target: node}, viewlet);
+    bindingEngine._nodeChanged(node, viewlet);
     return node;
   };
 
@@ -222,6 +222,29 @@ describe('Inspector Constraints', function() {
         'changedValues is not empty after a save.');
     // There was an odd bug that caused this assertion to fail at one point.
     assert.equal(saveButton.getHTML(), 'Confirm');
+  });
+
+  it('shows and hides save controls appropriately', function() {
+    var viewlet = getViewlet(inspector);
+    var controls = container.one('.settings-constraints .controls');
+    // Controls are hidden initially.
+    assert.isTrue(controls.hasClass('closed'));
+    // When the user changes a value, controls appear.
+    changeForm(viewlet, 'arch', 'i386');
+    assert.isFalse(controls.hasClass('closed'));
+    // When the user manually changes back to an original value, controls
+    // disappear.
+    changeForm(viewlet, 'arch', '');
+    assert.isTrue(controls.hasClass('closed'));
+    // Controls reappear once again after making the change.
+    changeForm(viewlet, 'arch', 'i386');
+    assert.isFalse(controls.hasClass('closed'));
+    // Saving the model will sync it, and the controls will disappear again.
+    var saveButton = container.one('button.save-constraints');
+    assert.equal(saveButton.getHTML(), 'Confirm');
+    saveButton.simulate('click');
+    env.ws.msg(makeResponse(inspector.model, false));
+    assert.isTrue(controls.hasClass('closed'));
   });
 
 });

@@ -1,4 +1,7 @@
 {{! Expecting the generated data from extractServiceSettings utility. }}
+{{#unless ghost}}
+  <div class="view-content">
+{{/unless}}
 {{#settings}}
     {{#if isBool}}
         <div class="toggle settings-wrapper">
@@ -57,12 +60,5 @@
   </div>
 {{/settings}}
 {{#unless ghost}}
-<div class="yui3-g controls configuration-buttons">
-  <div class="yui3-u-1-2">
-    <button class="cancel">Cancel</button>
   </div>
-  <div class="yui3-u-1-2">
-    <button class="confirm">Save Changes</button>
-  </div>
-</div>
 {{/unless}}
