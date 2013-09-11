@@ -4,7 +4,7 @@
     <div>
       <input class="constraint-field {{name}}" type="text" name="{{name}}"
           value="{{value}}" data-bind="constraints.{{name}}" />
-      {{#if unit }}<span class="text-in-input constraint-label">{{unit}}</span>{{/if}}
+      {{#if unit }}<span class="text-in-input">{{unit}}</span>{{/if}}
     </div>
     {{>conflict-ux}}
   </div>

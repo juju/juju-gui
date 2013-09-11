@@ -3,27 +3,24 @@
   <div class="toggle settings-wrapper">
     <span>Expose this service?</span>
     <div class="toggle-switch toggle-expose" data-bind="exposed">
-      <input type="checkbox" class="hidden-checkbox expose-toggle" id="expose-toggle">
+      <input type="checkbox" class="hidden-checkbox expose-toggle"
+             id="expose-toggle">
       <label for="expose-toggle" class="light">
         <div class="handle"></div>
       </label>
     </div>
   </div>
 
-  <h2>Service Settings</h2>
+  <h2>Service settings</h2>
   <div class="config-file">
     <input type="file">
     <div class="fakebutton">Import config file...</div>
   </div>
   {{> service-configuration}}
   {{#unless ghost}}
-  <div class="yui3-g controls configuration-buttons closed">
-    <div class="yui3-u-1-2">
+    <div class="controls configuration-buttons closed">
       <button class="cancel">Cancel</button>
-    </div>
-    <div class="yui3-u-1-2">
       <button class="confirm">Save Changes</button>
     </div>
-  </div>
   {{/unless}}
 </div>
