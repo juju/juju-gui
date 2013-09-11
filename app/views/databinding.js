@@ -300,6 +300,8 @@ YUI.add('juju-databinding', function(Y) {
 
        * name: A string that is the binding name.  It references a (possibly
                nested) attribute of the associated viewlet's model.
+       * annotations: A hash on which viewlets can scribble whatever they want
+                      to.
        * viewlet: (optional) The viewlet that is matched with this binding.
        * target: (optional) Associated DOM node.  If this exists, then it is
                  unique: no other binding in this engine shares it.
@@ -350,6 +352,9 @@ YUI.add('juju-databinding', function(Y) {
       }
 
       binding.viewlet = viewlet;
+      if (binding.annotations === undefined) {
+        binding.annotations = {};
+      }
       this._bindings.push(binding);
       return binding;
     };
