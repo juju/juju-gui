@@ -302,6 +302,11 @@ YUI.add('juju-databinding', function(Y) {
                nested) attribute of the associated viewlet's model.
        * annotations: A hash on which viewlets can scribble whatever they want
                       to.
+       * values: A hash of the values currently being used by the binding.
+                 Keys are binding.name plus the dependents, if any.  Read-only.
+       * conflicted: true if the binding is currently conflicted (the input
+                     changed and then the model changed).  Otherwise false or
+                     undefined.  Read-only.
        * viewlet: (optional) The viewlet that is matched with this binding.
        * target: (optional) Associated DOM node.  If this exists, then it is
                  unique: no other binding in this engine shares it.
@@ -324,6 +329,15 @@ YUI.add('juju-databinding', function(Y) {
        * update(node, value): (optional) If this is included, it is used
                               instead of the binding.field.set method to set
                               the value on the node.
+       * resolve(value): This method is only present if the binding is
+                         "conflicted" (see attribute above).  It resolves
+                         the conflict in favor of the given value.  Viewlets
+                         may attach a "cleanup" attribute to the method and
+                         it will be called initially to let the viewlet clean
+                         up any conflict UX.  The viewlet's "changed" method
+                         will later receive the selected value, after the
+                         binding engine sets the selected value on the bound
+                         node.
 
       @method addBinding
       @param {Object} config A bindings Object, see description in `bind`.
@@ -650,13 +664,14 @@ YUI.add('juju-databinding', function(Y) {
     */
     BindingEngine.prototype.resetDOMToModel = function(name) {
       // Construct an explicit update of everything.
+      this.clearChangedValues(name);
       var delta;
       if (name && name in this._viewlets) {
         delta = deltaForViewlet.call(this, this._viewlets[name]);
       } else {
         delta = deltaFromChange.call(this);
       }
-      this._updateDOM(delta);
+      this._updateDOM(delta, true);
       return this;
     };
 
@@ -783,6 +798,7 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype._modelChangeHandler = function(evt) {
       var keys, delta;
+      var fullUpdate = !evt; // If there is no event, this is a full update.
       if (Y.Lang.isArray(evt)) {
         // Object.observe updates
         keys = evt.map(function(update) { return update.name; });
@@ -800,21 +816,21 @@ YUI.add('juju-databinding', function(Y) {
           }
         }, this);
       }
-      delta = deltaFromChange.call(this, this._unappliedChanges, evt);
+      delta = deltaFromChange.call(this, this._unappliedChanges);
 
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
         this._updateTimeout = null;
       }
 
-      if (this.interval) {
+      if (this.interval && !fullUpdate) {
         this._updateTimeout = Y.later(
             this.interval,
             this,
             this._updateDOM,
             [delta]);
       } else {
-        this._updateDOM(delta);
+        this._updateDOM(delta, fullUpdate);
       }
     };
 
@@ -825,12 +841,29 @@ YUI.add('juju-databinding', function(Y) {
 
       @method _updateDOM
       @param {Object} delta Those bindings which should be updated.
-                     When omitted defaults to all bindings. See
-                     deltaFromChange.
+          When omitted defaults to all bindings. See
+          deltaFromChange.
+      @param {Boolean} fullUpdate If true, then _updateDOM should update
+          all fields, not just those that have changed values.  This
+          is useful for initializing and resetting.
      */
-    BindingEngine.prototype._updateDOM = function(delta) {
-      var self = this;
-      var resolve = self.resolve;
+    BindingEngine.prototype._updateDOM = function(delta, fullUpdate) {
+      // _updateDOM is called in three situations.  First, it is called
+      // to initialize the viewlets with bound values.  If fullUpdate is true,
+      // that might be the case, or the second scenario might be in play: the
+      // user requested that some or all of the viewets be reset (see
+      // resetDOMToModel).  The third possibility is that one of our models
+      // has changed, and we need to tell the viewlet what to do.
+      //
+      // For the first two options, we just want to show the model's values,
+      // and make old conflicts disappear.
+      //
+      // For the third option, we have an additional wrinkle: we have to
+      // identify conflicts and handle them.
+      //
+      // This is all done per-binding in the forEach loop below.
+
+      var bindingEngine = this;
 
       // updateDOM applies all the changes clearing the buffer.
       this._unappliedChanges = [];
@@ -840,11 +873,10 @@ YUI.add('juju-databinding', function(Y) {
         return;
       }
 
+      var index = indexBindings(this._bindings);
+
       // Iterate bindings and updating each element as needed.
       delta.bindings.forEach(function(binding) {
-        var viewlet = binding.viewlet;
-        var viewletModel = viewlet.model;
-        var conflicted;
         // With the introduction of dependencies in the binding
         // layer, its possible to depend on a dependent value
         // but not on its trigger (which in turn might have no
@@ -852,43 +884,126 @@ YUI.add('juju-databinding', function(Y) {
         if (!binding.target) {
           return;
         }
-
-        // If the field has been changed while the user was editing it
-        if (viewlet.changedValues[binding.name]) {
-          conflicted = binding.target;
-          viewlet.unsyncedFields();
-          binding.viewlet.conflict(
-              binding.target, viewletModel, binding.viewlet.name,
-              Y.bind(resolve, self, binding.target, binding.viewlet.name),
-              binding);
+        // We have to double check that the new value is actually different
+        // than the previousValue, because of indirect bindings.  For instance,
+        // some of our bindings are triggered from parent objects, so all
+        // children of the parent will be included in this delta, and
+        // conflicts will be reported incorrectly.
+        //
+        // In some cases, both the value and the previousValue will be
+        // undefined.  If this is an initial update (fullUpdate) then
+        // we still need to update the DOM, even though the values are the
+        // same.
+        //
+        // We have to compare dependencies too.
+        var viewlet = binding.viewlet;
+        var model = viewlet.model;
+        if (!binding.values) {
+          binding.values = {};
+        }
+        var previousValue = binding.values[binding.name];
+        var value = binding.values[binding.name] = binding.get(model);
+        var dependenciesDiffer = false;
+        if (binding.depends) {
+          binding.depends.forEach(function(depName) {
+            var previous = binding.values[depName];
+            var current = index[depName].get(model);
+            dependenciesDiffer = dependenciesDiffer || (previous !== current);
+            binding.values[depName] = current;
+          });
+        }
+        if (value === previousValue && !dependenciesDiffer && !fullUpdate) {
+          // We have nothing to do.
+          return;
         }
 
-        var value = binding.get(viewletModel);
-
-        if (binding.format) {
-          value = binding.format.call(binding, value);
-        }
-
-        // Do conflict detection
-        if (binding.target !== conflicted) {
+        // Now it is time to figure out what to do.  These are the basic
+        // options.
+        //  * The binding used to be conflicted, but isn't any more, either
+        //    because the model changed or because we have a resetDOMToModel
+        //    request (so we don't care about the user's old data).  Resolve
+        //    the conflict.
+        //  * The model changed to match the changed value.  There is no
+        //    conflict, but we need to give the viewlet a chance to notice
+        //    that the user value is no longer a change from the model, and
+        //    reflect this in the UX.
+        //  * The model changed, making a conflict.  If there was a previous
+        //    one, resolve it.  Tell the viewlet about the new conflict.
+        //  * The model has changed, but the user hasn't edited it.  No
+        //    conflict; just update the field.
+        //
+        // The code below considers and handles those options, in the order
+        // listed above.
+        var node = binding.target;
+        var nodeHandler = bindingEngine.getNodeHandler(
+            node.getDOMNode());
+        var modifiedEqualsValue = nodeHandler.eq(node, value);
+        var edited = viewlet.changedValues[binding.name];
+        if (binding.conflicted && (modifiedEqualsValue || !edited)) {
+          // We were conflicted but are no longer.  This can happen even if
+          // changedValues is empty, because of resetDOMToModel.  The resolve
+          // method can handle it.
+          binding.resolve(value);
+        } else if (edited) {
+          // If the field has been changed while the user was editing it, then
+          // it may be conflicted.
+          if (modifiedEqualsValue) {
+            // The model has changed to the value we have now.  Note that we
+            // already handled the previously-conflicted case above.
+            // _nodeChanged can handle it.
+            bindingEngine._nodeChanged(node, viewlet);
+          } else {
+            // Yes, it is conflicted.  Alert the viewlet.  Note that the
+            // viewlet's "conflict" method should be able to handle the
+            // situation of being in conflict and then having another conflict
+            // arrive.
+            if (binding.conflicted) {
+              // It was previously conflicted.  Resolve the old one in favor
+              // of the modified value just before we create a new conflict.
+              binding.resolve(nodeHandler.get(node));
+            }
+            binding.conflicted = true;
+            viewlet.unsyncedFields();
+            // This closure lets viewlets attach a cleanup function to it.
+            // This is a hook point that lets viewlets define what should
+            // happen when either participant (user or engine) resolves the
+            // conflict.
+            binding.resolve = function(value) {
+              if (binding.resolve.cleanup) {
+                binding.resolve.cleanup();
+              }
+              bindingEngine.resolve(node, binding.viewlet.name, value);
+              delete binding.resolve;
+              delete binding.conflicted;
+            };
+            binding.viewlet.conflict(
+                node, model, binding.viewlet.name,
+                binding.resolve, binding);
+          }
+        } else {
+          // The user has not edited the field and there is no pre-existing
+          // conflict.
+          if (binding.format) {
+            value = binding.format.call(binding, value);
+          }
           optionalCallback(binding,
-                           'beforeUpdate', binding.target, value);
+                           'beforeUpdate', node, value);
           optionalCallbacks(delta.wildcards['+'],
-                            'beforeUpdate', binding.target, value);
+                            'beforeUpdate', node, value);
 
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
           if (binding.update) {
-            binding.update.call(binding, binding.target, value);
+            binding.update.call(binding, node, value);
           } else {
-            binding.field.set(binding.target, value);
+            binding.field.set(node, value);
           }
           optionalCallbacks(delta.wildcards['+'],
-                            'update', binding.target, value);
+                            'update', node, value);
           optionalCallback(binding,
-                           'afterUpdate', binding.target, value);
+                           'afterUpdate', node, value);
           optionalCallbacks(delta.wildcards['+'],
-                            'afterUpdate', binding.target, value);
+                            'afterUpdate', node, value);
         }
       });
 
@@ -933,12 +1048,20 @@ YUI.add('juju-databinding', function(Y) {
       defined values with the user's values.
 
       @method clearChangedValues
-      @param {String} viewletName viewlet name to clear the changed values.
+      @param {String} viewletName viewlet name to clear the changed values, or
+          undefined for all.
     */
     BindingEngine.prototype.clearChangedValues = function(viewletName) {
-      var viewlet = this._viewlets[viewletName];
-      viewlet.changedValues = {};
-      viewlet.syncedFields();
+      var viewlets;
+      if (viewletName !== undefined) {
+        viewlets = [this._viewlets[viewletName]];
+      } else {
+        viewlets = Y.Object.values(this._viewlets);
+      }
+      viewlets.forEach(function(viewlet) {
+        viewlet.changedValues = {};
+        viewlet.syncedFields();
+      });
     };
 
     return BindingEngine;

@@ -1213,24 +1213,12 @@ YUI.add('juju-view-inspector', function(Y) {
       var option = resolver.one('.config-field');
       var handlers = [];
 
-      if (binding.annotations.conflict) {
-        binding.annotations.conflict.cancel();
-      }
-
-      binding.annotations.conflict = {
-        /**
-          Cancel this conflict handling UX.
-
-          @method cancel
-        */
-        cancel: function() {
-          handlers.forEach(function(h) { h.detach();});
-          viewlet._clearModified(node);
-          viewlet._clearConflictPending(node);
-          viewlet._clearConflict(node);
-          resolver.addClass('hidden');
-          delete binding.annotations.conflict;
-        }
+      resolve.cleanup = function() {
+        handlers.forEach(function(h) { h.detach();});
+        viewlet._clearModified(node);
+        viewlet._clearConflictPending(node);
+        viewlet._clearConflict(node);
+        resolver.addClass('hidden');
       };
       /**
         User selects one of the two conflicting values.
@@ -1239,7 +1227,6 @@ YUI.add('juju-view-inspector', function(Y) {
        */
       function sendResolve(e) {
         e.halt(true);
-        binding.annotations.conflict.cancel();
         if (e.currentTarget.hasClass('conflicted-env')) {
           resolve(modelValue);
         } else {
