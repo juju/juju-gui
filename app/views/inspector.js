@@ -1218,7 +1218,9 @@ YUI.add('juju-view-inspector', function(Y) {
         viewlet._clearModified(node);
         viewlet._clearConflictPending(node);
         viewlet._clearConflict(node);
-        resolver.addClass('hidden');
+        if (resolver) {
+          resolver.addClass('hidden');
+        }
       };
       /**
         User selects one of the two conflicting values.
