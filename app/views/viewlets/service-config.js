@@ -1,5 +1,3 @@
-
-
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -33,12 +31,57 @@ YUI.add('viewlet-service-config', function(Y) {
   ns.config = {
     name: 'config',
     template: templates['service-configuration'],
-    'render': function(service, viewContainerAttrs) {
+    bindings: {
+      exposed: {
+        'update': function(node, val) {
+          // On exposed, the node is the container of the input we want to
+          // change.
+          var input = node.one('input');
+          if (input) {
+            input.set('checked', val);
+          }
+        }
+      },
+      config: {
+        // On update make sure undefined isn't sent to the user as viewable
+        // input.
+        'update': function(node, val) {
+          if (node.getAttribute('type') === 'checkbox') {
+            if (val !== node.get('checked')) {
+              node.set('checked', val);
+              // We cannot simulate a change event here to trigger the textual
+              // value to update or else we'll cause databinding to think
+              // there's a conflict the next time this is changed via anyone
+              // else.
+              // We manually set the html content in order to avoid this.
+              node.ancestor('.toggle').one('.textvalue').set('text',
+                                                             val);
+            }
+          } else {
+            if (val === undefined) {
+              val = '';
+            }
+            node.set('value', val);
+          }
+        }
+      }
+    },
+
+    /**
+     * Viewlet standard render call.
+     *
+     * @method rener
+     * @param {Service} service the model of the service in the inspector.
+     * @param {Object} viewContainerAttrs an object of helper data from the
+     * viewlet manager.
+     *
+     */
+    render: function(service, viewContainerAttrs) {
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
       var templatedSettings = utils.extractServiceSettings(
-          charm.get('options'));
+          charm.get('options'), service.get('config'));
 
       this.container = Y.Node.create(this.templateWrapper);
 
@@ -52,29 +95,15 @@ YUI.add('viewlet-service-config', function(Y) {
                 { max_height: 200,
                   min_height: 18,
                   single_line: 18});
-    },
-    bindings: {
-      exposed: {
-        'update': function(node, value) {
-          node.one('input').set('checked', value);
-        }
-      },
-      'config': {
-        'update': function(node, val) {
-          if (val === undefined) {
-            val = '';
-          }
-          node.set('value', val);
-        }
-      }
     }
 
   };
 }, '0.0.1', {
   requires: [
-    'node',
-    'resizing-textarea',
+    'event-simulate',
     'juju-charm-models',
-    'juju-view'
+    'juju-view',
+    'node',
+    'resizing-textarea'
   ]
 });

@@ -75,7 +75,7 @@ describe('Inspector Conflict UX', function() {
       charm: charmId,
       config: {
         logo: 'foo',
-        debug: 'false'
+        debug: false
       }});
     db.services.add(service);
     db.onDelta({data: {result: [
@@ -145,6 +145,27 @@ describe('Inspector Conflict UX', function() {
     });
   });
 
+  it('should respect that some fields do not need indicating', function(done) {
+    // For instance, in multiple items bound to a single model field, we might
+    // choose to only have one indicate a changed value.
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) {
+      done();
+    }
+    var input = container.one('#input-logo');
+    // Indicate this should not show conflict ux via a data- attribute.
+    input.setData('skipconflictux', true);
+    assert.equal(input.get('value'), 'foo');
+
+    // Simulate editing.
+    modifyAndWait(input, 'something new', function(node) {
+      // It does not get the conflict css classes.
+      assert.equal(node.hasClass('modified'), false);
+      done();
+    });
+  });
+
   it('should indicate conflict and allow resolution of config', function(done) {
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
     // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
@@ -185,7 +206,7 @@ describe('Inspector Conflict UX', function() {
 
     modifyAndWait(input, true, function() {
       // See that the modified node is placed next to it.
-      var parentNode = input.get('parentNode');
+      var parentNode = input.ancestor('.toggle');
       assert.equal(
           parentNode.all('.modified').size(),
           1,

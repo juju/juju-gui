@@ -144,7 +144,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method destroy
       @return {undefined} nothing.
      */
-    destroy: function() {},
+    destroy: function() {
+    },
 
     /**
       Called by the databinding engine when fields drop out of sync with

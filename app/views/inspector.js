@@ -582,6 +582,19 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Keep checkboxes in sync with their textual representation.
+
+      @method onCheckboxUpdate
+      @param {Y.Event} ev the event from the change triggered.
+
+     */
+    onCheckboxUpdate: function(ev) {
+      var checked = ev.currentTarget.get('checked');
+      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
+                                                                 checked);
+    },
+
+    /**
       Handles exposing the service.
 
       @method toggleExpose
@@ -1088,7 +1101,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_clearModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        var n = node.get('parentNode').one('.modified');
+        var n = node.ancestor('.toggle').one('.modified');
         if (n) {
           n.remove();
         }
@@ -1109,7 +1122,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_makeModified': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        node.get('parentNode').append(
+        node.ancestor('.toggle').one('label').append(
             Y.Node.create('<span class="modified boolean"/>'));
         this._clearConflictPending(node);
       } else {
@@ -1129,7 +1142,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_clearConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        var n = node.get('parentNode').one('.conflict-pending');
+        var n = node.ancestor('.toggle').one('.conflict-pending');
         if (n) {
           n.remove();
         }
@@ -1150,7 +1163,7 @@ YUI.add('juju-view-inspector', function(Y) {
      */
     '_makeConflictPending': function(node) {
       if (node.getAttribute('type') === 'checkbox') {
-        node.get('parentNode').append(
+        node.get('parentNode').prepend(
             Y.Node.create('<span class="conflict-pending boolean"/>'));
       } else {
         node.addClass('conflict-pending');
@@ -1188,6 +1201,12 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     'changed': function(node, key, field) {
+      // Not all nodes need to show the conflict ux. This is true when
+      // multiple binds to a single model field are set, such as in the
+      // checkbox widgets used in the inspector.
+      if (node.getData('skipconflictux')) {
+        return;
+      }
       var controls = this.container.one('.controls');
       if (this.changedValues[key]) {
         this._makeModified(node);
@@ -1200,17 +1219,26 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     'conflict': function(node, model, viewletName, resolve, binding) {
+      // Not all nodes need to show the conflict ux. This is true when
+      // multiple binds to a single model field are set, such as in the
+      // checkbox widgets used in the inspector.
+      if (node.getData('skipconflictux')) {
+        return;
+      }
       /**
        Calls the databinding resolve method
        @method sendResolve
       */
+      var option;
       var viewlet = this;
       var key = node.getData('bind');
       var modelValue = model.get(key);
       var field = binding.field;
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
-      var option = resolver.one('.config-field');
+      if (resolver) {
+        option = resolver.one('.config-field');
+      }
       var handlers = [];
 
       if (binding.annotations.conflict) {
@@ -1284,6 +1312,9 @@ YUI.add('juju-view-inspector', function(Y) {
       var controls = this.container.one('.controls');
       var node = controls.one('.confirm');
       var title = node.getData('originalText');
+      // For checkboxes remove their modified nodes.
+      this.container.all('.modified.boolean').remove();
+      // All else remove their modified class
       this.container.all('.modified').removeClass('modified');
       if (title) {
         node.setHTML(title);

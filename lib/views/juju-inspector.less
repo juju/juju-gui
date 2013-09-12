@@ -236,20 +236,29 @@
             padding: 20px @inspector-main-padding;
 
             span {
-                display: inline-block;
+                display: block;
                 vertical-align: top;
                 line-height: 30px;
             }
+
+            .textvalue {
+              float: left;
+              height: 26px;
+              padding-top: 5px;
+              text-transform: capitalize;
+            }
+
             .toggle-switch {
                 display: inline-block;
                 vertical-align: top;
                 float: right;
+                padding-left: 15px;
 
                 label {
                     .create-border-radius(@border-radius);
                     width: 56px;
                     background-color: #282828;
-                    display: block;
+                    display: inline-block;
                     position: relative;
                     margin: 0;
 
@@ -432,6 +441,8 @@
                 margin: 20px 0 10px 0;
             }
             .settings-description {
+                clear: both;
+                font-size: 12px;
                 margin-top: 12px;
                 /* below hyphenation code was taken from:
                 http://www.newnet-soft.com/blog/csstypography */
@@ -776,6 +787,7 @@
                   background-image: url(/juju-ui/assets/images/field-changed.png);
 
                   &.boolean {
+                    margin: 2px 0 0 10px;
                     background-color: inherit;
                     display: inline-block;
                     min-width: 13px;
@@ -788,9 +800,12 @@
 
                   &.boolean {
                     background-color: inherit;
+                    background-image: url(/juju-ui/assets/images/field-conflict-14.png);
                     display: inline-block;
-                    min-width: 25px;
-                    min-height: 25px;
+                    width: 14px;
+                    height: 14px;
+                    margin-top: 5px;
+                    margin-right: 5px;
                   }
                 }
 
