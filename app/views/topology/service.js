@@ -710,19 +710,19 @@ YUI.add('juju-topology-service', function(Y) {
             // Import each into the environment
             env.deployerImport(e.target.result, null, function(result) {
               if (!result.err) {
-                  notifications.add({
-                    title: 'Imported Environment',
-                    message: 'Import from "' + file.name + '" successful',
-                    level: 'important'
-                  });
-                } else {
-                  notifications.add({
-                    title: 'Import Environment Failed',
-                    message: 'Import from "' + file.name +
-                                    '" failed.<br/>' + result.err,
-                    level: 'error'
-                  });
-                }
+                notifications.add({
+                  title: 'Imported Environment',
+                  message: 'Import from "' + file.name + '" successful',
+                  level: 'important'
+                });
+              } else {
+                notifications.add({
+                  title: 'Import Environment Failed',
+                  message: 'Import from "' + file.name +
+                      '" failed.<br/>' + result.err,
+                  level: 'error'
+                });
+              }
             });
           };
           reader.readAsText(file);

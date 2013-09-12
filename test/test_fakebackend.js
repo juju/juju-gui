@@ -541,32 +541,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('should support YAML imports', function(done) {
         fakebackend.db.environment.set('defaultSeries', 'precise');
         fakebackend.importDeployer(
-          utils.loadFixture('data/wp-deployer.yaml'),
-          'wordpress-prod', function(result) {
-            assert.equal(result.Error, undefined);
-            assert.equal(result.DeploymentId, 1);
-            assert.isNotNull(fakebackend.db.services.getById('wordpress'));
-            assert.isNotNull(fakebackend.db.services.getById('mysql'));
-            assert.equal(fakebackend.db.relations.size(), 1);
-            done();
-          });
+            utils.loadFixture('data/wp-deployer.yaml'),
+            'wordpress-prod', function(result) {
+              assert.equal(result.Error, undefined);
+              assert.equal(result.DeploymentId, 1);
+              assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+              assert.isNotNull(fakebackend.db.services.getById('mysql'));
+              assert.equal(fakebackend.db.relations.size(), 1);
+              done();
+            });
 
       });
 
       it('should provide status of imports', function(done) {
         fakebackend.db.environment.set('defaultSeries', 'precise');
-         fakebackend.importDeployer(
-          utils.loadFixture('data/wp-deployer.yaml'),
-          'wordpress-prod', function() {
-            fakebackend.statusDeployer(
-              function(status) {
-              assert.equal(status.LastChanges.length, 1);
-              assert.equal(status.LastChanges[0].Status, 'completed');
-              assert.equal(status.LastChanges[0].DeploymentId, 1);
-              assert.isNumber(status.LastChanges[0].Timestamp);
-              done();
+        fakebackend.importDeployer(
+            utils.loadFixture('data/wp-deployer.yaml'),
+            'wordpress-prod', function() {
+              fakebackend.statusDeployer(
+                  function(status) {
+                    assert.equal(status.LastChanges.length, 1);
+                    assert.equal(status.LastChanges[0].Status, 'completed');
+                    assert.equal(status.LastChanges[0].DeploymentId, 1);
+                    assert.isNumber(status.LastChanges[0].Timestamp);
+                    done();
+                  });
             });
-          });
       });
 
 

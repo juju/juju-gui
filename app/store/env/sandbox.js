@@ -1202,6 +1202,34 @@ YUI.add('juju-env-sandbox', function(Y) {
                            Y.bind(callback, this));
     },
 
+    /**
+    Handle DeployerStatus messages
+
+    @method handleDeployerStatus
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleDeployerStatus: function(data, client, state) {
+      var request = data;
+      var self = this;
+      var callback = function(reply) {
+        var response = {
+          RequestId: request.RequestId,
+          Response: {
+            LastChanges: reply.LastChanges
+          }
+        };
+        if (reply.Error) {
+          response.Error = reply.Error;
+        }
+        client.receive(response);
+      };
+      state.statusDeployer(Y.bind(callback, this));
+    },
+
+
 
     /**
     Handle SetAnnotations messages

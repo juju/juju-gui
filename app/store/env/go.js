@@ -412,7 +412,7 @@ YUI.add('juju-env-go', function(Y) {
      * @method deployerImport
      * @param {String} yamlData to import.
      * @param {String} bundleName optional.
-     * @param {Function} callback
+     * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
     deployerImport: function(yamlData, bundleName, callback) {
@@ -431,6 +431,13 @@ YUI.add('juju-env-go', function(Y) {
       }, intermediateCallback);
     },
 
+    /**
+     Callback to map data from deployerImport back to caller.
+
+     @method handleDeployerImport
+     @param {Function} userCallback to trigger.
+     @param {Object} data from backend to transform.
+    */
     handleDeployerImport: function(userCallback, data) {
       var transformedData = {
         err: data.Error,
@@ -450,12 +457,12 @@ YUI.add('juju-env-go', function(Y) {
      }
 
      @method deployerStatus
-     @param {Function} callback
+     @param {Function} callback to trigger.
     */
     deployerStatus: function(callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployStatus,
+        intermediateCallback = Y.bind(this.handleDeployerStatus,
                                       this, callback);
       }
       this._send_rpc({
@@ -464,6 +471,13 @@ YUI.add('juju-env-go', function(Y) {
       }, intermediateCallback);
     },
 
+    /**
+     Callback to map data from deployerStatus back to caller.
+
+     @method handleDeployerStatus
+     @param {Function} userCallback to trigger.
+     @param {Object} data from backend to transform.
+    */
     handleDeployerStatus: function(userCallback, data) {
       var transformedData = {
         err: data.Error,

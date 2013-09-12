@@ -1195,7 +1195,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      @method importDeployer
      @param {String} YAMLData to import.
      @param {String} name (optional) of bundle to import.
-     @param {Function} callback
+     @param {Function} callback to trigger.
      */
     importDeployer: function(YAMLData, name, callback) {
       var self = this;
@@ -1215,21 +1215,21 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       this.db.importDeployer(data, this.get('store'), options)
       .then(function() {
-        self._deploymentId += 1;
-        self._importChanges.push({
-          DeploymentId: self._deploymentId,
-          Status: 'completed',
-          Timestamp: Date.now()
-        });
-        // Keep the list limited to the last 5
-        if (self._importChanges.length > 5) {
-          self._importChanges = self._importChanges.slice(
-            self._importChanges.length - 5);
-        }
-        callback({DeploymentId: self._deploymentId});
-      }, function(err) {
-        callback({Error: err.toString()});
-      });
+            self._deploymentId += 1;
+            self._importChanges.push({
+              DeploymentId: self._deploymentId,
+              Status: 'completed',
+              Timestamp: Date.now()
+            });
+            // Keep the list limited to the last 5
+            if (self._importChanges.length > 5) {
+              self._importChanges = self._importChanges.slice(
+                  self._importChanges.length - 5);
+            }
+            callback({DeploymentId: self._deploymentId});
+          }, function(err) {
+            callback({Error: err.toString()});
+          });
     },
 
     /**
@@ -1239,7 +1239,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      regardless of queue length
 
      @method statusDeployer
-     @param {Function} callback
+     @param {Function} callback to trigger.
     */
     statusDeployer: function(callback) {
       if (!this.get('authenticated')) {
