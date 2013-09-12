@@ -159,9 +159,6 @@
         margin: 0;
         font-size: 14px;
 
-        h1, h2, h3, h4, h5, h6 {
-            padding-left: 1em;
-        }
         form {
             margin: 0;
         }
@@ -690,6 +687,16 @@
                     &.active {
                         background-color: #12110f;
                         border-bottom: 3px solid @charm-panel-orange;
+
+                        .normal {
+                            display: none;
+                        }
+                        .selected {
+                            display: inline-block;
+                        }
+                    }
+                    .selected {
+                        display: none;
                     }
                 }
             }
@@ -862,7 +869,10 @@
             max-height: 0;
         }
         .viewlet-wrapper{
-            h3, h2, legend {
+            h4,
+            h3,
+            h2,
+            legend {
                 .border-box;
                 margin-bottom: 0;
                 padding: 10px @inspector-main-padding;
@@ -872,9 +882,16 @@
                 font-weight: 200;
                 color: @charm-panel-configure-title-color;
             }
+            h4,
             h3,
             h2 {
                 width: auto;
+            }
+            h4 {
+                padding: 7px 10px;
+                background-color: #000;
+                border-top-color: #262626;
+                font-size: 14px;
             }
             .statusbar {
                 .create-border-radius(@border-radius);
