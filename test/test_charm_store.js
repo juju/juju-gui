@@ -45,13 +45,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var api = new Y.juju.Charmworld2({apiHost: hostname}),
           ds = api.get('datasource');
 
-      ds.get('source').should.eql(hostname+'api/2/');
+      ds.get('source').should.eql(hostname + 'api/2/');
 
       // And it should work without a trailing / as well.
       hostname = hostname.slice(0, -1);
       api = new Y.juju.Charmworld2({apiHost: hostname});
       ds = api.get('datasource');
-      ds.get('source').should.eql(hostname+'/api/2/');
+      ds.get('source').should.eql(hostname + '/api/2/');
     });
 
     it('handles loading interesting content correctly', function(done) {
@@ -104,7 +104,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       assert.equal(
           iconPath,
-          hostname+'api/2/charm/precise/mysql-1/file/icon.svg');
+          hostname + 'api/2/charm/precise/mysql-1/file/icon.svg');
     });
 
     it('constructs cateogry icon paths correctly', function() {
@@ -113,7 +113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var iconPath = api.categoryIconPath('app-servers');
       assert.equal(
           iconPath,
-          hostname+'static/img/category-app-servers-bw.svg');
+          hostname + 'static/img/category-app-servers-bw.svg');
     });
 
     it('makes charm requests to correct URL', function(done) {
@@ -214,20 +214,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var iconPath = api.iconpath('precise/mysql-1');
-      assert.equal(iconPath, hostname+'api/2/charm/precise/mysql-1/icon.svg');
+      assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('constructs an icon path for local charms', function() {
       var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var iconPath = api.iconpath('local:precise/mysql-1');
-      assert.equal(iconPath, hostname+'static/img/charm_160.svg');
+      assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
     });
 
     it('splits the charm id to remove cs: when necessary', function() {
       var api = new Y.juju.Charmworld2({apiHost: hostname});
       var iconPath = api.iconpath('cs:precise/mysql-1');
-      assert.equal(iconPath, hostname+'api/2/charm/precise/mysql-1/icon.svg');
+      assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('can normalize charm names for lookup', function() {
@@ -259,9 +259,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       api.promiseCharm('CHARM-ID', null, 'precise')
         .then(function(data) {
-          assert.equal(data, DATA);
-          done();
-      });
+            assert.equal(data, DATA);
+            done();
+          });
     });
 
     it('finds upgrades for charms - upgrade available', function(done) {
