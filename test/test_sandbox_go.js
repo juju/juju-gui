@@ -1161,11 +1161,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.send(Y.JSON.stringify(data));
     });
 
-    it.only('can import deployer files ( integration).', function(done) {
+    it('can import deployer files ( integration).', function(done) {
       var fixture = utils.loadFixture('data/wp-deployer.yaml');
       env.connect();
       var callback = function(result) {
-        debugger;
         assert.isUndefined(result.err);
         var service = state.db.services.getById('wordpress');
         assert.equal(service.get('charm'), 'cs:precise/wordpress-15');

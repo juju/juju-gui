@@ -410,14 +410,15 @@ YUI.add('juju-env-go', function(Y) {
      * series and provider type.
      *
      * @method deployerImport
-     * @param {String} yamlData
+     * @param {String} yamlData to import.
+     * @param {String} bundleName optional.
      * @param {Function} callback
      * @return {Number} Request Id.
      */
-    deployerImport: function(yamlData, callback) {
+    deployerImport: function(yamlData, bundleName, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handlerDeployerImport,
+        intermediateCallback = Y.bind(this.handleDeployerImport,
                                       this, callback);
       }
       this._send_rpc({
@@ -431,7 +432,6 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     handleDeployerImport: function(userCallback, data) {
-      debugger;
       var transformedData = {
         err: data.Error,
         DeploymentId: data.Response.DeploymentId

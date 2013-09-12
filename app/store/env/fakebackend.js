@@ -1193,7 +1193,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      Import Deployer from YAML files
 
      @method importDeployer
-     @param {String} YAMLData
+     @param {String} YAMLData to import.
      @param {String} name (optional) of bundle to import.
      @param {Function} callback
      */
