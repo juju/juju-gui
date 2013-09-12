@@ -844,7 +844,8 @@ describe('data binding library', function() {
       // We'll assert this by showing that it works.
       viewlet.conflictArgs[3]('rutebega');
       assert.equal(node.get('value'), 'rutebega');
-      assert.strictEqual(viewlet.conflictArgs[4],
+      assert.equal(viewlet.conflictArgs[4], 'rutebega');
+      assert.strictEqual(viewlet.conflictArgs[5],
                          engine._getBindingForNode(node));
     });
 
@@ -888,6 +889,33 @@ describe('data binding library', function() {
       assert.isDefined(viewlet.calledSyncedFields,
           'syncedFields was not called');
       assert.isUndefined(viewlet.conflictArgs, 'conflict was called');
+    });
+
+    it('supports formatted values when working with conflicts', function() {
+      model = new Y.Model({a: 'CARROT'});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      // Our formatter lower cases all values.
+      viewlet.bindings = {
+        a: {format: function(v) {return v && v.toLowerCase();}}
+      };
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+      // Our initial value is properly lower-cased.
+      assert.equal(node.get('value'), 'carrot');
+      // Checks for conflicts check using formatters.
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      model.set('a', 'KUMQUAT');
+      assert.deepEqual(viewlet.changedValues, {});
+      assert.equal(node.get('value'), 'kumquat');
+      // The viewlet.conflict method receives the formatted version of the
+      // model's value for display.
+      node.set('value', 'rutebega');
+      engine._nodeChanged(node, viewlet);
+      model.set('a', 'BRUSSEL SPROUT');
+      assert.equal(viewlet.conflictArgs[4], 'brussel sprout');
     });
 
   });

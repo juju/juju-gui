@@ -768,11 +768,19 @@ YUI.add('juju-databinding', function(Y) {
       @param {Object} viewlet The node's associated viewlet.
     */
     BindingEngine.prototype._nodeChanged = function(node, viewlet) {
+      // This assumes that each viewlet will only have one binding with an
+      // input node per model attribute.  If that's ever not the case, this
+      // will have problems.
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
       var model = viewlet.model;
       var binding = this._getBindingForNode(node);
-      if (nodeHandler.eq(node, binding.get(model))) {
+      var value = binding.get(model);
+      var formattedValue = value;
+      if (binding.format) {
+        formattedValue = binding.format.call(binding, value);
+      }
+      if (nodeHandler.eq(node, formattedValue)) {
         delete viewlet.changedValues[key];
       } else {
         viewlet.changedValues[key] = true;
@@ -938,13 +946,17 @@ YUI.add('juju-databinding', function(Y) {
         var node = binding.target;
         var nodeHandler = bindingEngine.getNodeHandler(
             node.getDOMNode());
-        var modifiedEqualsValue = nodeHandler.eq(node, value);
+        var formattedValue = value;
+        if (binding.format) {
+          formattedValue = binding.format.call(binding, value);
+        }
+        var modifiedEqualsValue = nodeHandler.eq(node, formattedValue);
         var edited = viewlet.changedValues[binding.name];
         if (binding.conflicted && (modifiedEqualsValue || !edited)) {
           // We were conflicted but are no longer.  This can happen even if
           // changedValues is empty, because of resetDOMToModel.  The resolve
           // method can handle it.
-          binding.resolve(value);
+          binding.resolve(formattedValue);
         } else if (edited) {
           // If the field has been changed while the user was editing it, then
           // it may be conflicted.
@@ -969,42 +981,40 @@ YUI.add('juju-databinding', function(Y) {
             // This is a hook point that lets viewlets define what should
             // happen when either participant (user or engine) resolves the
             // conflict.
-            binding.resolve = function(value) {
+            binding.resolve = function(formattedValue) {
               if (binding.resolve.cleanup) {
                 binding.resolve.cleanup();
               }
-              bindingEngine.resolve(node, binding.viewlet.name, value);
+              bindingEngine.resolve(
+                  node, binding.viewlet.name, formattedValue);
               delete binding.resolve;
               delete binding.conflicted;
             };
             binding.viewlet.conflict(
                 node, model, binding.viewlet.name,
-                binding.resolve, binding);
+                binding.resolve, formattedValue, binding);
           }
         } else {
           // The user has not edited the field and there is no pre-existing
           // conflict.
-          if (binding.format) {
-            value = binding.format.call(binding, value);
-          }
           optionalCallback(binding,
-                           'beforeUpdate', node, value);
+                           'beforeUpdate', node, formattedValue);
           optionalCallbacks(delta.wildcards['+'],
-                            'beforeUpdate', node, value);
+                            'beforeUpdate', node, formattedValue);
 
           // If an apply callback was provided use it to update
           // the DOM otherwise used the field type default.
           if (binding.update) {
-            binding.update.call(binding, node, value);
+            binding.update.call(binding, node, formattedValue);
           } else {
-            binding.field.set(node, value);
+            binding.field.set(node, formattedValue);
           }
           optionalCallbacks(delta.wildcards['+'],
-                            'update', node, value);
+                            'update', node, formattedValue);
           optionalCallback(binding,
-                           'afterUpdate', node, value);
+                           'afterUpdate', node, formattedValue);
           optionalCallbacks(delta.wildcards['+'],
-                            'afterUpdate', node, value);
+                            'afterUpdate', node, formattedValue);
         }
       });
 
@@ -1026,10 +1036,11 @@ YUI.add('juju-databinding', function(Y) {
       @param {String} viewletName of the viewlet.
       @param {Any} value that the user has accepted to resolve with.
     */
-    BindingEngine.prototype.resolve = function(node, viewletName, value) {
+    BindingEngine.prototype.resolve = function(
+        node, viewletName, formattedValue) {
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
-      if (!nodeHandler.eq(node, value)) {
-        nodeHandler.set(node, value);
+      if (!nodeHandler.eq(node, formattedValue)) {
+        nodeHandler.set(node, formattedValue);
       }
       // Case 1:
       // The user chose the node value. It is still modified, so let the

@@ -1199,14 +1199,13 @@ YUI.add('juju-view-inspector', function(Y) {
       }
     },
 
-    'conflict': function(node, model, viewletName, resolve, binding) {
+    'conflict': function(
+        node, model, viewletName, resolve, formattedModelValue, binding) {
       /**
        Calls the databinding resolve method
        @method sendResolve
       */
       var viewlet = this;
-      var key = node.getData('bind');
-      var modelValue = model.get(key);
       var field = binding.field;
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
@@ -1230,7 +1229,7 @@ YUI.add('juju-view-inspector', function(Y) {
       function sendResolve(e) {
         e.halt(true);
         if (e.currentTarget.hasClass('conflicted-env')) {
-          resolve(modelValue);
+          resolve(formattedModelValue);
         } else {
           var formValue = field.get(node);
           resolve(formValue);
@@ -1248,7 +1247,7 @@ YUI.add('juju-view-inspector', function(Y) {
         viewlet._makeConflict(node);
         viewlet._makeConflict(option);
         option.setStyle('width', node.get('offsetWidth'));
-        option.setHTML(modelValue);
+        option.setHTML(formattedModelValue);
         resolver.removeClass('hidden');
       }
 
