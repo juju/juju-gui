@@ -20,8 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('juju Charmworld2 api', function() {
-    var Y, models, conn, env, app, container, data, juju, utils;
+  describe('Charmworld API v2 interface', function() {
+    var Y, models, conn, env, app, container, data, juju, utils, hostname;
+
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -37,39 +38,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
+      hostname = 'http://charmworld.example/';
     });
 
     it('constructs the api url correctly based on apiHost', function() {
-      var hostname = 'http://localhost/',
-          api = new Y.juju.Charmworld2({
-            apiHost: hostname
-          }),
+      var api = new Y.juju.Charmworld2({apiHost: hostname}),
           ds = api.get('datasource');
 
-      ds.get('source').should.eql('http://localhost/api/2/');
+      ds.get('source').should.eql(hostname+'api/2/');
 
       // And it should work without a trailing / as well.
-      hostname = 'http://localhost';
-      api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
+      hostname = hostname.slice(0, -1);
+      api = new Y.juju.Charmworld2({apiHost: hostname});
       ds = api.get('datasource');
-      ds.get('source').should.eql('http://localhost/api/2/');
-
+      ds.get('source').should.eql(hostname+'/api/2/');
     });
 
     it('handles loading interesting content correctly', function(done) {
-      var hostname = 'http://localhost',
-          api = new Y.juju.Charmworld2({
-            apiHost: hostname
-          }),
+      var api = new Y.juju.Charmworld2({apiHost: hostname}),
           data = [];
 
-      data.push({
-        responseText: Y.JSON.stringify({
-          summary: 'wowza'
-        })
-      });
+      data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
       api.interesting({
@@ -84,17 +73,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles searching correctly', function(done) {
-      var hostname = 'http://localhost',
+      var api = new Y.juju.Charmworld2({apiHost: hostname}),
           data = [],
           url;
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
-      data.push({
-        responseText: Y.JSON.stringify({
-          name: 'foo'
-        })
-      });
+      data.push({responseText: Y.JSON.stringify({name: 'foo'})});
       // Create a monkeypatched datasource we can use to track the generated
       // apiEndpoint
       var datasource = new Y.DataSource.Local({source: data});
@@ -118,89 +100,138 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs filepaths correctly', function() {
-      var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
-
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       assert.equal(
           iconPath,
-          'http://localhost/api/2/charm/precise/mysql-1/file/icon.svg');
+          hostname+'api/2/charm/precise/mysql-1/file/icon.svg');
     });
 
     it('constructs cateogry icon paths correctly', function() {
-      var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var iconPath = api.categoryIconPath('app-servers');
       assert.equal(
           iconPath,
-          'http://localhost/static/img/category-app-servers-bw.svg');
+          hostname+'static/img/category-app-servers-bw.svg');
+    });
+
+    it('makes charm requests to correct URL', function(done) {
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
+
+      api._makeRequest = function(endpoint, callbacks, filters) {
+        assert.equal(endpoint, 'charm/CHARM-ID');
+        done();
+      };
+
+      api._charm('CHARM-ID');
+    });
+
+    it('can use a cache to avoid requesting charm data', function(done) {
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
+
+      var should_not_happen = function() {
+        assert.isTrue(false, 'Oops, this should not have been called.')
+        done();
+      };
+      var CACHED_CHARM = 'CACHED-CHARM';
+
+      var callbacks = {
+        success: function(data, charm) {
+          assert.equal(charm, CACHED_CHARM);
+          done();
+        },
+        failure: should_not_happen
+      };
+
+      api._makeRequest = should_not_happen;
+
+      var cache = {
+        getById: function(charmID) {
+          return CACHED_CHARM;
+        }};
+
+      api.charm('CHARM-ID', callbacks, false, cache);
+
+    });
+
+    it('will make a request on a cache miss', function(done) {
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
+
+      var should_not_happen = function() {
+        assert.isTrue(false, 'Oops, this should not have been called.')
+        done();
+      };
+      var CACHED_CHARM = 'CACHED-CHARM';
+
+      var callbacks = {
+        success: function(data, charm) {
+          assert.equal(charm, CACHED_CHARM);
+          done();
+        },
+        failure: should_not_happen
+      };
+
+      api._makeRequest = function() {
+        // If this was called, then the test is successful.
+        done();
+      };
+
+      var cache = {
+        getById: function(charmID) {
+          return null;
+        }};
+
+      api.charm('CHARM-ID', callbacks, false, cache);
+
+    });
+
+    it('makes autocomplete requests to correct URL', function(done) {
+      var noop = function() {};
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
+
+      api._makeRequest = function(endpoint, callbacks, filters) {
+        assert.equal(endpoint, 'charms');
+        done();
+      };
+
+      api.autocomplete({text: 'mys'}, {'success': noop});
     });
 
     it('makes autocomplete requests with right query flag', function(done) {
-      var hostname = 'http://localhost',
-          data = [],
-          url;
-      var dummyfunc = function() {};
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
+      var noop = function() {};
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(filters.autocomplete, 'true');
         done();
       };
 
-      api.autocomplete(
-          {text: 'mys'}, {
-            'success': dummyfunc,
-            'failure': dummyfunc
-          }
-      );
+      api.autocomplete({text: 'mys'}, {'success': noop});
     });
 
     it('constructs iconpaths correctly', function() {
-      var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var iconPath = api.iconpath('precise/mysql-1');
-      assert.equal(
-          iconPath,
-          'http://localhost/api/2/charm/precise/mysql-1/icon.svg');
+      assert.equal(iconPath, hostname+'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('constructs an icon path for local charms', function() {
-      var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var iconPath = api.iconpath('local:precise/mysql-1');
-      assert.equal(
-          iconPath,
-          'http://localhost/static/img/charm_160.svg');
+      assert.equal(iconPath, hostname+'static/img/charm_160.svg');
     });
 
     it('splits the charm id to remove cs: when necessary', function() {
-      var hostname = 'http://localhost';
-      var api = new Y.juju.Charmworld2({
-        apiHost: hostname
-      });
-
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
       var iconPath = api.iconpath('cs:precise/mysql-1');
-      assert.equal(
-          iconPath,
-          'http://localhost/api/2/charm/precise/mysql-1/icon.svg');
+      assert.equal(iconPath, hostname+'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('can normalize charm names for lookup', function() {
-      var api = new Y.juju.Charmworld2({apiHost: 'http://localhost'});
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
       assert.equal(api.normalizeCharmId('wordpress', 'precise'),
           'precise/wordpress-1');
       assert.equal(api.normalizeCharmId('precise/wordpress', 'precise'),
@@ -211,6 +242,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'precise/wordpress-10');
       assert.equal(api.normalizeCharmId('cs:precise/wordpress-10'),
           'precise/wordpress-10');
+      assert.equal(api.normalizeCharmId('precise/wordpress-HEAD'),
+          'precise/wordpress-HEAD');
+      assert.equal(api.normalizeCharmId('cs:precise/wordpress-HEAD'),
+          'precise/wordpress-HEAD');
+    });
+
+    it('can fetch a charm via a promise', function(done) {
+      // The "promiseCharm" method is just a promise-wrapped version of the
+      // "charm" method.
+      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var DATA = 'DATA';
+      var CHARM = 'CHARM';
+      api.charm = function(charmID, callbacks) {
+        callbacks.success(DATA, CHARM);
+      }
+      api.promiseCharm('CHARM-ID', null, 'precise')
+        .then(function(data) {
+          assert.equal(data, DATA);
+          done();
+      });
     });
 
     it('finds upgrades for charms - upgrade available', function(done) {
@@ -221,7 +272,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(upgrade, 'precise/wordpress-15');
             done();
           }, function(error) {
-            assert.isTrue(false, 'We should not get here');
+            assert.isTrue(false, 'We should not get here.');
             done();
           });
     });
