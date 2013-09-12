@@ -131,7 +131,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var should_not_happen = function() {
-        assert.isTrue(false, 'Oops, this should not have been called.')
+        assert.isTrue(false, 'Oops, this should not have been called.');
         done();
       };
       var CACHED_CHARM = 'CACHED-CHARM';
@@ -159,7 +159,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var api = new Y.juju.Charmworld2({apiHost: hostname});
 
       var should_not_happen = function() {
-        assert.isTrue(false, 'Oops, this should not have been called.')
+        assert.isTrue(false, 'Oops, this should not have been called.');
         done();
       };
       var CACHED_CHARM = 'CACHED-CHARM';
@@ -256,7 +256,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var CHARM = 'CHARM';
       api.charm = function(charmID, callbacks) {
         callbacks.success(DATA, CHARM);
-      }
+      };
       api.promiseCharm('CHARM-ID', null, 'precise')
         .then(function(data) {
           assert.equal(data, DATA);
