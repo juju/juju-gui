@@ -20,7 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Overview', function() {
 
   var view, service, db, models, utils, juju, env, conn, container, inspector,
-      Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades;
+      Y, jujuViews, ENTER, charmConfig, client, backendJuju, state, downgrades,
+      exposeCalled, unexposeCalled;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -40,10 +41,20 @@ describe('Inspector Overview', function() {
   });
 
   beforeEach(function() {
+    exposeCalled = false;
+    unexposeCalled = false;
     container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
+    env.expose = function(s) {
+      exposeCalled = true;
+      service.set('exposed', true);
+    };
+    env.unexpose = function(s) {
+      unexposeCalled = true;
+      service.set('exposed', false);
+    };
     env.connect();
     conn.open();
     window.flags.serviceInspector = true;
@@ -548,6 +559,28 @@ describe('Inspector Overview', function() {
     assert.isTrue(service.get('charmChanged'));
     // TODO Makyo Sept 5 - Next branch will take care of reflecting the
     // changes in the inspector.
+  });
+
+  it('toggles exposure', function() {
+    inspector = setUpInspector();
+    assert.isFalse(service.get('exposed'));
+    assert.isFalse(exposeCalled);
+    assert.isFalse(unexposeCalled);
+    var vmContainer = inspector.viewletManager.get('container');
+    var expose = vmContainer.one('label[for=expose-toggle]');
+    expose.simulate('click');
+    assert.isTrue(service.get('exposed'));
+    assert.isTrue(exposeCalled);
+    assert.isFalse(unexposeCalled);
+    var checkedSelector = 'input.expose-toggle:checked ~ label .handle';
+    var handle = vmContainer.one(checkedSelector);
+    assert.equal(handle instanceof Y.Node, true);
+
+    expose.simulate('click');
+    assert.isTrue(unexposeCalled);
+    assert.isFalse(service.get('exposed'));
+    handle = vmContainer.one(checkedSelector);
+    assert.equal(handle instanceof Y.Node, false);
   });
 
   describe('Unit action buttons', function() {
