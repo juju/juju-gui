@@ -92,11 +92,12 @@ describe('BrowserCharm initialization', function() {
 });
 
 describe('juju models', function() {
-  var models;
+  var models, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
       models = Y.namespace('juju.models');
+      yui = Y;
       done();
     });
   });
@@ -153,10 +154,10 @@ describe('juju models', function() {
           agent_state: 'error'});
         sul.add([wp0, wp1]);
 
-        sul.get_informative_states_for_service(mysql).should.eql(
-            {'pending': 2});
-        sul.get_informative_states_for_service(wordpress).should.eql(
-            {'pending': 1, 'error': 1});
+        assert.deepEqual(sul.get_informative_states_for_service(mysql),
+            [{'pending': 2}, {}]);
+        assert.deepEqual(sul.get_informative_states_for_service(wordpress),
+            [{'pending': 1, 'error': 1}, {}]);
       });
 
   it('service unit list should update analytics when units are added',
@@ -185,6 +186,27 @@ describe('juju models', function() {
         sul.update_service_unit_aggregates(mysql);
         window._gaq.should.eql([]);
       });
+
+  it('services have unit and relation modellists', function() {
+    var service = new models.Service();
+    assert.equal(service.get('units') instanceof models.ServiceUnitList, true);
+    assert.equal(service.get('relations') instanceof models.RelationList, true);
+  });
+
+  it('relation changes on service update aggregateRelations', function(done) {
+    var service = new models.Service();
+    var relations = service.get('relations');
+    var handler = relations.on(
+        '*:add', function() {
+          // This means that it will update the aggregate
+          // relations for databinding
+          handler.detach();
+          var isObject = yui.Lang.isObject;
+          assert.equal(isObject(service.get('aggregateRelations')), true);
+          done();
+        });
+    relations.add(new models.Relation());
+  });
 
   it('service unit objects should parse the service name from unit id',
       function() {
@@ -248,7 +270,7 @@ describe('juju models', function() {
     var db = new models.Database();
     var mysql = new models.Service({id: 'mysql'});
     db.services.add([mysql]);
-    assert.isUndefined(mysql.get('units'));
+    assert.equal(mysql.get('units') instanceof models.ServiceUnitList, true);
     db.onDelta({data: {result: [
       ['unit', 'add', {id: 'mysql/0', agent_state: 'pending'}],
       ['unit', 'add', {id: 'mysql/1', agent_state: 'pending'}]
@@ -300,7 +322,9 @@ describe('juju models', function() {
         my0.agent_state.should.equal('another');
       });
 
-  it('onDelta should reset relation_errors',
+  // We no longer use relation_errors but this test should remain until it's
+  // completely removed from the codebase.
+  it.skip('onDelta should reset relation_errors',
       function() {
         var db = new models.Database();
         var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
