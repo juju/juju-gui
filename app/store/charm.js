@@ -126,11 +126,13 @@ YUI.add('juju-charm-store', function(Y) {
      * Api call to fetch a charm's details, with an optional local cache.
      *
      * @method charmWithCache
-     * @param {String} charmID the charm to fetch This is the fully qualified
-     * charm name in the format scheme:series/charm-revision..
-     * @param {Object} callbacks the success/failure callbacks to use.
-     * @param {Object} bindScope the scope of *this* in the callbacks.
-     * @param {ModelList} cache a local cache of browser charms.
+     * @param {String} charmID The charm to fetch This is the fully qualified
+     *   charm name in the format scheme:series/charm-revision.
+     * @param {Object} callbacks The success/failure callbacks to use.
+     * @param {Object} bindScope The scope of "this" in the callbacks.
+     * @param {ModelList} [cache] a local cache of browser charms.
+     * @param {String} [defaultSeries='precise'] The series to use if none is
+     *  specified in the charm ID.
      */
     charm: function(charmID, callbacks, bindScope, cache, defaultSeries) {
       if (bindScope) {
@@ -139,8 +141,11 @@ YUI.add('juju-charm-store', function(Y) {
       if (cache) {
         var charm = cache.getById(charmID);
         if (charm) {
-          // Defer the success callback to prevent race conditions.
+          // If the charm was found in the cache, then we can declare success
+          // without ever making a request to charmworld.
           Y.soon(function() {
+            // Since there wasn't really a request, there is no data, so we
+            // pass an empty object as the "data" parameter.
             callbacks.success({}, charm);
           });
           return;
@@ -161,14 +166,15 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     Like the charm method but returning a Promise.
+     Like the "charm" method but returning a Promise.
 
      @method promiseCharm
-     @param {String} charmId to fetch.
-     @param {ModelList} cache a local cache of browser charms.
-     @param {String} defaultSeries to resolve.
-     @return {Promise} to load charm. Triggered with same result
-             as this.charm.
+     @param {String} charmId The ID of the charm to fetch.
+     @param {ModelList} cache A local cache of browser charms.
+     @param {String} [defaultSeries='precise'] The series to use if none is
+       specified in the charm ID.
+     @return {Promise} Returns a promise. Triggered with the result of calling
+       this.charm.
     */
     promiseCharm: function(charmId, cache, defaultSeries) {
       var self = this;
@@ -184,11 +190,12 @@ YUI.add('juju-charm-store', function(Y) {
 
      series/charm-revision
 
-     where revision can currently be any numeric placeholder.
+     where revision can currently (API v2) be any numeric placeholder.
 
      @method normalizeCharmId
      @param {String} charmId to normalize.
-     @param {String} defaultSeries to resolve.
+     @param {String} [defaultSeries='precise'] The series to use if none is
+       specified in the charm ID.
      @return {String} normalized id.
      */
     normalizeCharmId: function(charmId, defaultSeries) {
@@ -199,7 +206,8 @@ YUI.add('juju-charm-store', function(Y) {
 
       if (result.indexOf('/') === -1) {
         if (!defaultSeries) {
-          console.warn('Unable to normalize charm id, no defaultSeries');
+          console.warn('No default series provided when normalizing charm ' +
+              'ID.  Using "precise".');
           defaultSeries = 'precise';
         }
         result = defaultSeries + '/' + result;
@@ -216,9 +224,9 @@ YUI.add('juju-charm-store', function(Y) {
       exists; this also caches the newer charm if one is available.
 
       @method promiseUpgradeAvailability
-      @param {Charm} charm an existing charm potentially in need of an upgrade.
-      @param {ModelList} cache a local cache of browser charms.
-      @return {Promise} with an id or undefined.
+      @param {Charm} charm An existing charm potentially in need of an upgrade.
+      @param {ModelList} cache A local cache of browser charms.
+      @return {Promise} A promise for a newer charm ID or undefined.
     */
     promiseUpgradeAvailability: function(charm, cache) {
       // Get the charm's store ID, then replace the version number
@@ -232,6 +240,8 @@ YUI.add('juju-charm-store', function(Y) {
         revision = parseInt(charm.revision, 10);
       }
       storeId = storeId.replace(/-\d+$/, '-HEAD');
+      // XXX By using a cache we hide charm versions that have become available
+      // since we last requested the most recent version.
       return this.promiseCharm(storeId, cache)
         .then(function(latest) {
             var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10);
@@ -264,10 +274,10 @@ YUI.add('juju-charm-store', function(Y) {
      * Fetch the contents of a charm's file.
      *
      * @method file
-     * @param {String} charmID the id of the charm's file we want.
-     * @param {String} filename the path/name of the file to fetch content.
-     * @param {Object} callbacks the success/failure callbacks.
-     * @param {Object} bindScope the scope for this in the callbacks.
+     * @param {String} charmID The id of the charm's file we want.
+     * @param {String} filename The path/name of the file to fetch content.
+     * @param {Object} callbacks The success/failure callbacks.
+     * @param {Object} bindScope The scope for this in the callbacks.
      *
      */
     file: function(charmID, filename, callbacks, bindScope) {
@@ -328,7 +338,7 @@ YUI.add('juju-charm-store', function(Y) {
 
       @method iconpath
       @param {String} charmID The id of the charm to grab the icon for.
-
+      @return {String} The URL of the charm's icon.
      */
     iconpath: function(charmID) {
       // If this is a local charm, then we need use a hard coded path to the
