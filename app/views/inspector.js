@@ -1230,6 +1230,7 @@ YUI.add('juju-view-inspector', function(Y) {
        @method sendResolve
       */
       var option;
+      var viewlet = this;
       var key = node.getData('bind');
       var modelValue = model.get(key);
       var field = binding.field;
@@ -1240,51 +1241,54 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       var handlers = [];
 
+      if (binding.annotations.conflict) {
+        binding.annotations.conflict.cancel();
+      }
+
+      binding.annotations.conflict = {
+        /**
+          Cancel this conflict handling UX.
+
+          @method cancel
+        */
+        cancel: function() {
+          handlers.forEach(function(h) { h.detach();});
+          viewlet._clearModified(node);
+          viewlet._clearConflictPending(node);
+          viewlet._clearConflict(node);
+          resolver.addClass('hidden');
+          delete binding.annotations.conflict;
+        }
+      };
       /**
-       User selects one of the two conflicting values.
-       @method sendResolve
+        User selects one of the two conflicting values.
+
+        @method sendResolve
        */
       function sendResolve(e) {
         e.halt(true);
-        var formValue = field.get(node);
-        handlers.forEach(function(h) { h.detach();});
-
-        /* jshint -W040 */
-        // Ignore 'possible strict violation'
-        this._clearModified(node);
-        this._clearConflict(node);
-
-        if (resolver) {
-          resolver.addClass('hidden');
-        }
-
+        binding.annotations.conflict.cancel();
         if (e.currentTarget.hasClass('conflicted-env')) {
           resolve(modelValue);
         } else {
+          var formValue = field.get(node);
           resolve(formValue);
         }
       }
 
       /**
-       User selects a conflicting field, show the resolution UI
+        User selects a conflicting field, show the resolution UI
 
-       @method setupResolver
+        @method setupResolver
       */
       function setupResolver(e) {
         e.halt(true);
-        /* jshint -W040 */
-        // Ignore 'possible strict violation'
-        this._clearConflictPending(node);
-        this._makeConflict(node);
-        // Checkboxes don't have the option node to select a value.
-        if (option) {
-          this._makeConflict(option);
-          option.setStyle('width', node.get('offsetWidth'));
-          option.setHTML(modelValue);
-        }
-        if (resolver) {
-          resolver.removeClass('hidden');
-        }
+        viewlet._clearConflictPending(node);
+        viewlet._makeConflict(node);
+        viewlet._makeConflict(option);
+        option.setStyle('width', node.get('offsetWidth'));
+        option.setHTML(modelValue);
+        resolver.removeClass('hidden');
       }
 
       // On conflict just indicate.
@@ -1292,14 +1296,10 @@ YUI.add('juju-view-inspector', function(Y) {
       this._makeConflictPending(node);
 
       handlers.push(wrapper.delegate(
-          'click',
-          setupResolver,
-          '.conflict-pending',
-          this));
-
-      handlers.push(wrapper.delegate('click', sendResolve,
-          '.conflict', this));
+          'click', setupResolver, '.conflict-pending'));
+      handlers.push(wrapper.delegate('click', sendResolve, '.conflict'));
     },
+
     'unsyncedFields': function() {
       var node = this.container.one('.controls .confirm');
       if (!node.getData('originalText')) {
@@ -1307,6 +1307,7 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       node.setHTML('Overwrite');
     },
+
     'syncedFields': function() {
       var controls = this.container.one('.controls');
       var node = controls.one('.confirm');
@@ -1430,7 +1431,8 @@ YUI.add('juju-view-inspector', function(Y) {
     'viewlet-service-config',
     'viewlet-service-constraints',
     'viewlet-service-ghost',
-    'viewlet-unit-details'
+    'viewlet-unit-details',
+    'viewlet-service-relations'
   ]
 });
 

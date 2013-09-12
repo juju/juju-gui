@@ -218,7 +218,8 @@ YUI.add('juju-view-environment', function(Y) {
                 'config',
                 'constraints',
                 'unitDetails',
-                'inspectorHeader'
+                'inspectorHeader',
+                'relations'
               ],
               template: Y.juju.views.Templates['service-config-wrapper']
             },

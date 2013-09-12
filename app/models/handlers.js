@@ -219,7 +219,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         scope: firstRelation.Scope,
         endpoints: utils.createEndpoints(endpoints)
       };
-      db.relations.process_delta(action, data);
+      db.relations.process_delta(action, data, db);
     },
 
     /**
