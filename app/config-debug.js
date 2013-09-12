@@ -47,10 +47,10 @@ var juju_config = {
   // There is also a hotkey to toggle the simulator.
   simulateEvents: true,
   readOnly: false,
-  // Enable Google Analytics usage and calls. Also implies using cookies.
-  // For the debug configuration, analytics should generally be false to
-  // prevent muddying the gathered statistics.
-  useAnalytics: false,
+  // Set the GA_key to enable Google Analytics usage and calls. Also implies using cookies.
+  // For the debug configuration, the GA_key should be blank to prevent
+  // muddying the gathered statistics.
+  GA_key: '',
   login_help: 'For this demonstration, use the password "admin" to connect.',
   isJujucharms: false,
   defaultViewmode: 'sidebar',
