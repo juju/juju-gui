@@ -137,9 +137,9 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // Verify we find our checkbox (even though two show up, one is the expose button).
-    // Also note that it's hidden because we're using the slider widget for
-    // boolean fields.
+    // Verify we find our checkbox (even though two show up, one is the expose
+    // button).  Also note that it's hidden because we're using the slider
+    // widget for boolean fields.
     assert.equal(
         container.all('input.hidden-checkbox').size(),
         2,
@@ -157,7 +157,7 @@ describe('Inspector Settings', function() {
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'false');
-    container.one('label').simulate('click');
+    debugContainer.one('label').simulate('click');
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'true');
