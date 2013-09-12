@@ -160,7 +160,7 @@ describe('Inspector Conflict UX', function() {
 
     // Simulate editing.
     modifyAndWait(input, 'something new', function(node) {
-      // See that it got the proper style added
+      // It does not get the conflict css classes.
       assert.equal(node.hasClass('modified'), false);
       done();
     });

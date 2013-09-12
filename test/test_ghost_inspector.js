@@ -254,8 +254,8 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     assert.isObject(container.one('.ghost-config-wrapper'));
 
-    // Basic sanity checks of the rendering
-    // The debug checkbox is disabled
+    // Basic sanity checks of the rendering.
+    // The debug checkbox must start out disabled.
     assert(
         container.one('input[name=debug]').hasAttribute('disabled'),
         'debug checkbox is not disabled'

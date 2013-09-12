@@ -1189,8 +1189,8 @@ YUI.add('juju-view-inspector', function(Y) {
 
     'changed': function(node, key, field) {
       // Not all nodes need to show the conflict ux. This is true when
-      // multiple binds to a single model field are set, such as in pretty
-      // toggle checkbox UI.
+      // multiple binds to a single model field are set, such as in the
+      // checkbox widgets used in the inspector.
       if (node.getData('skipconflictux')) {
         return;
       }
@@ -1207,8 +1207,8 @@ YUI.add('juju-view-inspector', function(Y) {
 
     'conflict': function(node, model, viewletName, resolve, binding) {
       // Not all nodes need to show the conflict ux. This is true when
-      // multiple binds to a single model field are set, such as in pretty
-      // toggle checkbox UI.
+      // multiple binds to a single model field are set, such as in the
+      // checkbox widgets used in the inspector.
       if (node.getData('skipconflictux')) {
         return;
       }

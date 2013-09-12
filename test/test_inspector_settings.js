@@ -137,7 +137,7 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // One boolean checkbox even though two show up (one is the expose button)
+    // Verify we find our checkbox (even though two show up, one is the expose button).
     // Also note that it's hidden because we're using the slider widget for
     // boolean fields.
     assert.equal(
