@@ -66,25 +66,7 @@ YUI.add('viewlet-service-config', function(Y) {
         }
       }
     },
-    /**
-     * Bind DOM related events to keep checkboxes in sync with their textual
-     * reprensetation.
-     *
-     * @method _bindDOMEvents
-     *
-     */
-    _bindDOMEvents: function() {
-      // Keep the textual representation of the checkbox in sync with the
-      // input node.
-      this.events.push(
-          this.container.delegate('change', function(ev) {
-            var checked = ev.currentTarget.get('checked');
-            ev.target.ancestor('.toggle').one('.textvalue').set('text',
-                                                                checked);
 
-          }, '.hidden-checkbox')
-      );
-    },
     /**
      * Viewlet standard render call.
      *
@@ -113,7 +95,6 @@ YUI.add('viewlet-service-config', function(Y) {
                 { max_height: 200,
                   min_height: 18,
                   single_line: 18});
-      this._bindDOMEvents();
     }
 
   };
