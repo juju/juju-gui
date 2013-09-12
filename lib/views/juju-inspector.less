@@ -316,7 +316,8 @@
                             url(/juju-ui/assets/images/toggle-on-inactive.png);
                     }
                 }
-                input.hidden-checkbox:checked ~ label {
+                input.hidden-checkbox:checked ~ label,
+                input.expose-toggle:checked ~ label {
                     .handle {
                         left: 25px;
                         background-color: @confirm-button-color;
@@ -740,6 +741,9 @@
             bottom: 0;
             left: 0;
             right: 0;
+            /* One index higher than the toggle
+            handle which it sometimes covers */
+            z-index: 502;
         }
 
         .view-container {
@@ -793,6 +797,7 @@
                 .modified {
                   background-color: @inspector-changed-field;
                   background-image: url(/juju-ui/assets/images/field-changed.png);
+                  background-repeat: no-repeat;
 
                   &.boolean {
                     margin: 2px 0 0 10px;

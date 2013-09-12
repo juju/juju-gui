@@ -4,7 +4,7 @@
     <div class="toggle-switch toggle-expose" data-bind="exposed">
         <input type="checkbox"
                name="expose-toggle"
-               class="hidden-checkbox expose-toggle"
+               class="expose-toggle hidden"
                data-skipconflictux=true
                id="expose-toggle">
         <label for="expose-toggle" class="light">
