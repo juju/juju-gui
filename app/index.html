@@ -390,15 +390,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           app.activateHotkeys();
 
           window.ga_id = juju_config.GA_key || '';
-          if (window.ga_id) {
+          if (window.ga_id != '') {
             _gaq.push(['_setAccount', window.ga_id]);
             _gaq.push (['_gat._anonymizeIp']);
             _gaq.push(['_setDomainName', 'none']);
             _gaq.push(['_setAllowLinker', true]);
             _gaq.push(['_trackPageview']);
-            if (!juju_config.useAnalytics) {
-              window['ga-disable-' + window.ga_id] = true;
-            }
           }
         });
 

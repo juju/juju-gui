@@ -86,9 +86,9 @@ The Juju GUI can now be installed and run with::
 It may take a while for the server to start the first time as npm will
 need to download packages.  When ready, the server will print::
 
-  Server listening on http://localhost:8888
+  Server listening on http://<local ip>:8888
 
-You can then access the GUI at <http://localhost:8888/>.
+You can then access the GUI at <http://<local ip>:8888/>.
 
 If you receive an error like::
 
