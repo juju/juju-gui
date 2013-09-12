@@ -46,10 +46,13 @@ var juju_config = {
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
   readOnly: false,
-  // Enable Google Analytics usage and calls. Also implies using cookies.
-  // XXX: BradCrittenden 2013-06-10 bug=1189502: set to 'true' by default
-  // only after this bug is resolved, exposing the setting in the charm.
+  // Enable Google Analytics usage and calls. Also implies using cookies.  GA
+  // is used to log anonymized statistics about how the charm is used.  To
+  // turn off this data collection set the following to 'false' and blank out
+  // the GA_key;
   useAnalytics: false,
+  // Google Analytics key.  Configurable in the charm.
+  GA_key: 'UA-41463568-2',
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
       'often be found by looking in ~/.juju/environments.yaml.'),

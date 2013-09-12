@@ -51,6 +51,7 @@ var juju_config = {
   // For the debug configuration, analytics should generally be false to
   // prevent muddying the gathered statistics.
   useAnalytics: false,
+  GA_key: 'brad',
   login_help: 'For this demonstration, use the password "admin" to connect.',
   isJujucharms: false,
   defaultViewmode: 'sidebar',

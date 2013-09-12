@@ -52,19 +52,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Set up Google analytics async tracking.
-         If the domain is set to 'jujucharms.com' as you'd expect, the tracker
-         does not work for deployments outside of our demo site.
-    -->
+    <!-- Set up Google analytics async tracking. -->
     <script type="text/javascript">
       var _gaq = _gaq || [];
       window._gaq = _gaq;
-      window.ga_id = 'UA-41463568-2';
-      _gaq.push(['_setAccount', window.ga_id]);
-      _gaq.push (['_gat._anonymizeIp']);
-      _gaq.push(['_setDomainName', 'none']);
-      _gaq.push(['_setAllowLinker', true]);
-      _gaq.push(['_trackPageview']);
+      // Do not call _setAccount as we need to get the key from
+      // the config file which is not yet available.
     </script>
   </head>
 
@@ -396,8 +389,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
 
-          if (!juju_config.useAnalytics) {
-            window['ga-disable-' + window.ga_id] = true;
+          window.ga_id = juju_config.GA_key || '';
+          if (window.ga_id) {
+            _gaq.push(['_setAccount', window.ga_id]);
+            _gaq.push (['_gat._anonymizeIp']);
+            _gaq.push(['_setDomainName', 'none']);
+            _gaq.push(['_setAllowLinker', true]);
+            _gaq.push(['_trackPageview']);
+            if (!juju_config.useAnalytics) {
+              window['ga-disable-' + window.ga_id] = true;
+            }
           }
         });
 
