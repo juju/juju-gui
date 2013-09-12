@@ -302,8 +302,9 @@ YUI.add('juju-databinding', function(Y) {
                nested) attribute of the associated viewlet's model.
        * annotations: A hash on which viewlets can scribble whatever they want
                       to.
-       * values: A hash of the values currently being used by the binding.
-                 Keys are binding.name plus the dependents, if any.  Read-only.
+       * values: A hash of the model values currently being used by the
+                 binding. Keys are binding.name plus the dependents, if any.
+                 Read-only.
        * conflicted: true if the binding is currently conflicted (the input
                      changed and then the model changed).  Otherwise false or
                      undefined.  Read-only.
