@@ -1142,30 +1142,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should support deployer import', function(done) {
       var fixture = utils.loadFixture('data/wp-deployer.yaml');
-
-      client.onmessage = function() {
-        client.onmessage = function(result) {
-          debugger;
-          var data = jsyaml.safeLoad(result.data).result;
-          assert.isTrue(data);
-
-          // Verify that we can now find an expected entry
-          // in the database.
-          assert.isNotNull(state.db.services.getById('wordpress'));
-
-          var changes = state.nextChanges();
-          // Validate the delta includes imported services.
-          assert.include(Y.Object.keys(changes.services), 'wordpress');
-          assert.include(Y.Object.keys(changes.services), 'mysql');
-          // validate relation was added/updated.
-          assert.include(Y.Object.keys(changes.relations), 'relation-0');
-          done();
-        };
-        client.send(Y.JSON.stringify({op: 'importEnvironment',
-                             envData: fixture}));
+      var data = {
+        Type: 'Deployer',
+        Request: 'Import',
+        Params: {
+          YAML: fixture,
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        assert.isUndefined(receivedData.err);
+        var service = state.db.services.getById('wordpress');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
+        done();
       };
       client.open();
+      client.send(Y.JSON.stringify(data));
     });
+
+    it.only('can import deployer files ( integration).', function(done) {
+      var fixture = utils.loadFixture('data/wp-deployer.yaml');
+      env.connect();
+      var callback = function(result) {
+        debugger;
+        assert.isUndefined(result.err);
+        var service = state.db.services.getById('wordpress');
+        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
+        done();
+      };
+      env.deployerImport(fixture, callback);
+    });
+
 
 
   });

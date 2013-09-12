@@ -417,22 +417,26 @@ YUI.add('juju-env-go', function(Y) {
     deployerImport: function(yamlData, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(
-          function(userCallback, data) {
-          var transformedData = {
-            err: data.Error,
-            DeploymentId: data.Response.DeploymentId
-          };
-          userCallback(transformedData);
-        }, this, callback);
+        intermediateCallback = Y.bind(this.handlerDeployerImport,
+                                      this, callback);
       }
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Import',
         Params: {
-          YAML: yamlData
+          YAML: yamlData,
+          Name: undefined
         }
       }, intermediateCallback);
+    },
+
+    handleDeployerImport: function(userCallback, data) {
+      debugger;
+      var transformedData = {
+        err: data.Error,
+        DeploymentId: data.Response.DeploymentId
+      };
+      userCallback(transformedData);
     },
 
     /**
@@ -451,21 +455,23 @@ YUI.add('juju-env-go', function(Y) {
     deployerStatus: function(callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(
-          function(userCallback, data) {
-          var transformedData = {
-            err: data.Error,
-            DeploymentId: data.Response.LastChanges
-          };
-          userCallback(transformedData);
-        }, this, callback);
+        intermediateCallback = Y.bind(this.handleDeployStatus,
+                                      this, callback);
       }
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Status'
       }, intermediateCallback);
-
     },
+
+    handleDeployerStatus: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        DeploymentId: data.Response.LastChanges
+      };
+      userCallback(transformedData);
+    },
+
 
     /**
        Deploy a charm.

@@ -536,7 +536,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe.only('FakeBackend deployer support', function() {
+    describe('FakeBackend deployer support', function() {
 
       it('should support YAML imports', function(done) {
         fakebackend.db.environment.set('defaultSeries', 'precise');

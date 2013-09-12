@@ -708,7 +708,7 @@ YUI.add('juju-topology-service', function(Y) {
           var reader = new FileReader();
           reader.onload = function(e) {
             // Import each into the environment
-            env.importDeployer(e.target.result, null, function(result) {
+            env.deployerImport(e.target.result, null, function(result) {
               if (!result.err) {
                   notifications.add({
                     title: 'Imported Environment',
