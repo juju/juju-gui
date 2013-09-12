@@ -157,7 +157,7 @@ describe('Inspector Settings', function() {
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'false');
-    container.one('input[name=debug]').simulate('click');
+    container.one('label').simulate('click');
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'true');

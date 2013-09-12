@@ -285,7 +285,7 @@ describe('Ghost Inspector', function() {
         stateText.get('text').replace(/\s/g, ''),
         'false',
         'state did not start out false');
-    input.simulate('click');
+    debugContainer.one('label').simulate('click');
     assert.equal(
         stateText.get('text').replace(/\s/g, ''),
         'true',

@@ -74,7 +74,7 @@ YUI.add('viewlet-service-ghost', function(Y) {
     /**
      * Viewlet standard render call.
      *
-     * @method rener
+     * @method render
      * @param {Service} service the model of the service in the inspector.
      * @param {Object} viewletMgrAttrs an object of helper data from the
      * viewlet manager.
