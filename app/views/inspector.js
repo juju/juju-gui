@@ -1311,6 +1311,9 @@ YUI.add('juju-view-inspector', function(Y) {
       var controls = this.container.one('.controls');
       var node = controls.one('.confirm');
       var title = node.getData('originalText');
+      // For checkboxes remove their modified nodes.
+      this.container.all('.modified.boolean').remove();
+      // All else remove their modified class
       this.container.all('.modified').removeClass('modified');
       if (title) {
         node.setHTML(title);
