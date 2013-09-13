@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmData;
+      inspector, Y, jujuViews, charmData;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -39,20 +39,10 @@ describe('Inspector Settings', function() {
   });
 
   beforeEach(function() {
-    exposeCalled = false;
-    unexposeCalled = false;
     container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    env.expose = function(s) {
-      exposeCalled = true;
-      service.set('exposed', true);
-    };
-    env.unexpose = function(s) {
-      unexposeCalled = true;
-      service.set('exposed', false);
-    };
     window.flags.serviceInspector = true;
   });
 
@@ -137,19 +127,17 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // Verify we find our checkbox (even though two show up, one is the expose
-    // button).  Also note that it's hidden because we're using the slider
-    // widget for boolean fields.
+    // Verify we find our checkbox Also note that it's hidden because we're
+    // using the slider markup and styling for boolean fields.
     assert.equal(
         container.all('input.hidden-checkbox').size(),
-        2,
+        1,
         'did not render one boolean field');
 
     // Verify that the textual representation is there.
-    // Again, there are two because of the expose button.
     assert.equal(
         container.all('.textvalue').size(),
-        2,
+        1,
         'can not find the textual value for the checkbox.');
 
     // And the value will toggle with the checkbox
@@ -161,28 +149,6 @@ describe('Inspector Settings', function() {
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'true');
-  });
-
-  it('toggles exposure', function() {
-    inspector = setUpInspector();
-    assert.isFalse(service.get('exposed'));
-    assert.isFalse(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var vmContainer = inspector.viewletManager.get('container');
-    var expose = vmContainer.one('label[for=expose-toggle]');
-    expose.simulate('click');
-    assert.isTrue(service.get('exposed'));
-    assert.isTrue(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var checkedSelector = 'input.hidden-checkbox:checked ~ label .handle';
-    var handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, true);
-
-    expose.simulate('click');
-    assert.isTrue(unexposeCalled);
-    assert.isFalse(service.get('exposed'));
-    handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, false);
   });
 
   /**** Begin service destroy UI tests. ****/
