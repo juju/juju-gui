@@ -122,9 +122,9 @@ YUI.add('juju-charm-store', function(Y) {
   });
 
   /**
-   * Api helper for the updated charmworld api v2.
+   * Api helper for the charmworld API v2.
    *
-   * @class Charmworld2
+   * @class APIv2
    * @extends {Base}
    *
    */

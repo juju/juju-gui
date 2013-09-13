@@ -1356,8 +1356,8 @@ YUI.add('juju-gui', function(Y) {
       },
       /**
          @attribute store
-         @default Charmworld2
-         @type {Charmworld2}
+         @default Y.juju.charmworld.APIv2
+         @type {Y.juju.charmworld.APIv2}
        */
       store: {
         /**
