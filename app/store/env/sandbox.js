@@ -1036,6 +1036,20 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle DestroyServiceUnits messages
+
+      @method handleClientDestroyServiceUnits
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+      @return {undefined} Side effects only.
+     */
+    handleClientDestroyServiceUnits: function(data, client, state) {
+      var res = state.removeUnits(data.Params.UnitNames);
+      this._basicReceive(data, client, res);
+    },
+
+    /**
     Handle CharmInfo messages
 
     @method handleClientCharmInfo

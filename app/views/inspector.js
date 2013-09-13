@@ -1037,6 +1037,7 @@ YUI.add('juju-view-inspector', function(Y) {
           handlerName = e.currentTarget.getData('type'),
           handlerFn = handlers[handlerName];
 
+      debugger;
       if (Y.Lang.isFunction(handlerFn)) {
         handlerFn(unitNames, env);
       } else {
