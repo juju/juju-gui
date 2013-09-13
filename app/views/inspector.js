@@ -827,6 +827,17 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Cancel any configuration changes.
+
+      @method cancelConfig
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConfig: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('config');
+    },
+
+    /**
       Handle saving the service constraints.
       Make the corresponding environment call, passing _saveConstraintsCallback
       as callback (see below).
@@ -881,6 +892,17 @@ YUI.add('juju-view-inspector', function(Y) {
         bindingEngine.resetDOMToModel('constraints');
       }
       container.one('.save-constraints').removeAttribute('disabled');
+    },
+
+    /**
+      Cancel any constraint changes.
+
+      @method cancelConstraints
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConstraints: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('constraints');
     },
 
     /**
