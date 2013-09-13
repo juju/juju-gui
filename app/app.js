@@ -1324,7 +1324,7 @@ YUI.add('juju-gui', function(Y) {
      */
     authorizeCookieUse: function(req, res, next) {
       var ga_key = this.get('GA_key');
-      if (ga_key != '') {
+      if (ga_key) {
         this.cookieHandler = this.cookieHandler || new Y.juju.Cookies();
         this.cookieHandler.check();
       }
