@@ -69,7 +69,7 @@ describe('Ghost Inspector', function() {
     // Create a ghost service with the fake charm.
     service = db.services.ghostService(charm);
 
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function(id) {
       return '/icon/' + id;
     };

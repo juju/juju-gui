@@ -74,7 +74,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('must correctly render the initial browser ui', function() {
         var container = Y.one('#subapp-browser');
         view = new FullScreen({
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           })
         });
@@ -107,7 +107,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('must show the home icons when withHome is set', function() {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
 
         view = new FullScreen({
           store: fakeStore,
@@ -121,7 +121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('shows the home icons if the withHome is changed', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
 
         view = new FullScreen({
           store: fakeStore
@@ -139,7 +139,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new FullScreen({
           store: fakeStore
         });
@@ -158,7 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('resets charmid and hash on search', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new FullScreen({
           charmID: 'precise/jenkins-13'
         });
@@ -281,7 +281,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
           container: container,
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           })
         });
@@ -324,7 +324,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('shows the home icon when instructed', function() {
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           }),
           withHome: true
@@ -355,7 +355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new Sidebar({
           store: fakeStore
         });

@@ -26,40 +26,40 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 YUI.add('juju-charm-store', function(Y) {
-  var ns = Y.namespace('juju'),
+  var juju = Y.namespace('juju'),
+      ns = Y.namespace('juju.charmworld'),
       models = Y.namespace('juju.models');
 
-  /**
-   * Api helper for the updated charmworld api v2.
-   *
-   * @class Charmworld2
-   * @extends {Base}
-   *
-   */
-  ns.Charmworld2 = Y.Base.create('charmworld2', Y.Base, [], {
-    _apiRoot: 'api/2',
+  // Make Y.juju.charmworld refernce the "juju.charmworld" namespace.
+  juju.charmworld = ns;
+
+  ns.ApiHelper = Y.Base.create('ApiHelper', Y.Base, [], {
 
     /**
-     * Send the actual request and handle response from the api.
-     *
-     * @method _makeRequest
-     * @param {Object} args any query params and arguments required.
-     * @private
-     *
-     */
-    _makeRequest: function(apiEndpoint, callbacks, args) {
-      // If we're in the noop state, just call the error callback.
-      if (this.get('noop')) {
-        callbacks.failure('noop failure');
-        return;
-      }
+      Initializer for the class.
 
+      @method initializer
+      @param {Object} cfg The configuration for the API interface.
+      @return {undefined} Nothing.
+    */
+    initializer: function(cfg) {
+      this.sendRequest = cfg.sendRequest;
+    },
+
+    /**
+      Send a request and handle the response from the API.
+
+      @method makeRequest
+      @param {Object} args any query params and arguments required.
+      @return {undefined} Nothing.
+    */
+    makeRequest: function(apiEndpoint, callbacks, args) {
       // Any query string args need to be put onto the endpoint for calling.
       if (args) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
       }
 
-      this.get('datasource').sendRequest({
+      this.sendRequest({
         request: apiEndpoint,
         callback: {
           success: function(io_request) {
@@ -79,6 +79,74 @@ YUI.add('juju-charm-store', function(Y) {
           }
         }
       });
+    },
+
+    /**
+      Normalize a charm name so we can request its full data. Charm lookup
+      requires a very specific form of the charm identifier.
+
+      series/charm-revision
+
+      where revision can currently (API v2) be any numeric placeholder.
+
+      @method normalizeCharmId
+      @param {String} charmId to normalize.
+      @param {String} [defaultSeries='precise'] The series to use if none is
+        specified in the charm ID.
+      @return {String} normalized id.
+    */
+    normalizeCharmId: function(charmId, defaultSeries) {
+      var result = charmId;
+      if (/^(cs:|local:)/.exec(result)) {
+        result = result.slice(result.indexOf(':') + 1);
+      }
+
+      if (result.indexOf('/') === -1) {
+        if (!defaultSeries) {
+          console.warn('No default series provided when normalizing charm ' +
+              'ID.  Using "precise".');
+          defaultSeries = 'precise';
+        }
+        result = defaultSeries + '/' + result;
+      }
+      if (/\-(\d+|HEAD)/.exec(result) === null) {
+        // Add in a revision placeholder
+        result = result + '-1';
+      }
+      return result;
+    },
+
+  }, {
+    ATTRS: {
+    }
+  });
+
+  /**
+   * Api helper for the updated charmworld api v2.
+   *
+   * @class Charmworld2
+   * @extends {Base}
+   *
+   */
+  ns.APIv2 = Y.Base.create('APIv2', Y.Base, [], {
+    _apiRoot: 'api/2',
+
+    /**
+      * Send the actual request and handle response from the api.
+      *
+      * @method _makeRequest
+      * @param {Object} args any query params and arguments required.
+      * @private
+      *
+      */
+    _makeRequest: function(apiEndpoint, callbacks, args) {
+      // If we're in the noop state, just call the error callback.
+      if (this.get('noop')) {
+        callbacks.failure('noop failure');
+        return;
+      }
+      // Delegate the request making to the helper object.
+      this.apiHelper.makeRequest(apiEndpoint, callbacks, args);
     },
 
     /**
@@ -102,6 +170,7 @@ YUI.add('juju-charm-store', function(Y) {
       }
       this._makeRequest(endpoint, callbacks, filters);
     },
+
 
     /**
      * Api call to fetch a charm's details.
@@ -161,7 +230,7 @@ YUI.add('juju-charm-store', function(Y) {
           };
         }
       }
-      this._charm(this.normalizeCharmId(charmID, defaultSeries),
+      this._charm(this.apiHelper.normalizeCharmId(charmID, defaultSeries),
                   callbacks, bindScope);
     },
 
@@ -182,41 +251,6 @@ YUI.add('juju-charm-store', function(Y) {
         self.charm(charmId, { 'success': resolve, 'failure': reject },
             self, cache, defaultSeries);
       });
-    },
-
-    /**
-     Normalize a charm name so we can request its full data. Charm lookup
-     requires a very specific form of the charm identifier.
-
-     series/charm-revision
-
-     where revision can currently (API v2) be any numeric placeholder.
-
-     @method normalizeCharmId
-     @param {String} charmId to normalize.
-     @param {String} [defaultSeries='precise'] The series to use if none is
-       specified in the charm ID.
-     @return {String} normalized id.
-     */
-    normalizeCharmId: function(charmId, defaultSeries) {
-      var result = charmId;
-      if (/^(cs:|local:)/.exec(result)) {
-        result = result.slice(result.indexOf(':') + 1);
-      }
-
-      if (result.indexOf('/') === -1) {
-        if (!defaultSeries) {
-          console.warn('No default series provided when normalizing charm ' +
-              'ID.  Using "precise".');
-          defaultSeries = 'precise';
-        }
-        result = defaultSeries + '/' + result;
-      }
-      if (/\-(\d+|HEAD)/.exec(result) === null) {
-        // Add in a revision placeholder
-        result = result + '-1';
-      }
-      return result;
     },
 
     /**
@@ -498,7 +532,15 @@ YUI.add('juju-charm-store', function(Y) {
        * @type {Datasource}
        *
        */
-      datasource: {},
+      datasource: {
+        setter: function(datasource) {
+          // Construct an API helper using the new datasource.
+          this.apiHelper = new ns.ApiHelper({
+            sendRequest: Y.bind(datasource.sendRequest, datasource)
+          });
+          return datasource;
+        }
+      },
 
       /**
         If there's no config we end up setting noop on the store so that tests
