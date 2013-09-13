@@ -556,11 +556,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               assert.equal(result.Error, undefined);
               assert.equal(result.DeploymentId, 1, 'deployment id incorrect');
               assert.isNotNull(fakebackend.db.services.getById('wordpress'),
-                              'failed to import wordpress');
+                               'failed to import wordpress');
               assert.isNotNull(fakebackend.db.services.getById('mysql'),
-                              'failed to import mysql');
+                               'failed to import mysql');
               assert.equal(fakebackend.db.relations.size(), 1,
-                          'failed to import relations');
+                           'failed to import relations');
               done();
             });
 
