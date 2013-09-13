@@ -114,7 +114,7 @@ YUI.add('juju-charm-store', function(Y) {
         result = result + '-1';
       }
       return result;
-    },
+    }
 
   }, {
     ATTRS: {
