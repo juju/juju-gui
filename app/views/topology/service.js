@@ -722,8 +722,9 @@ YUI.add('juju-topology-service', function(Y) {
             env.deployerImport(e.target.result, null, function(result) {
               if (!result.err) {
                 notifications.add({
-                  title: 'Imported Environment',
-                  message: 'Import from "' + file.name + '" successful',
+                  title: 'Imported Deployer file',
+                  message: 'Import from "' + file.name + '" successful. This ' +
+                      'can take some time to complete.',
                   level: 'important'
                 });
               } else {

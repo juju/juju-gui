@@ -878,7 +878,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       },
       relation: {
         Key: 'relation_id',
-        'Endpoints': function(relation, goAPI) {
+        Endpoints: function(relation, goAPI) {
           var result = [];
           if (relation.endpoints.length === 1) {
             return;
