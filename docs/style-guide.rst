@@ -189,12 +189,12 @@ item type" warnings.
 Multi-line YUIDoc comment blocks like this will be needed::
 
     /**
-     * Frob the thingy.
-     *
-     * @param {object} type How the thingy should be frobbed.
-     * @return {undefined} Side-effects only, eturns nothing.
-     * @method frob
-     */
+      Frob the thingy.
+
+      @method frob
+      @param {object} type How the thingy should be frobbed.
+      @return {undefined} Side-effects only, eturns nothing.
+    */
 
 In this case, the type directive is the ``@method`` one. It is placed at
 the end of the comment block, because it is little more than noise

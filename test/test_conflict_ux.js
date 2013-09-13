@@ -82,7 +82,7 @@ describe('Inspector Conflict UX', function() {
       ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}]
     ]}});
 
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };

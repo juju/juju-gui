@@ -68,7 +68,7 @@ describe('Inspector Charm', function() {
     testContainer = utils.makeContainer();
     testContainer.setHTML('<div class="left-breakout"></div>');
 
-    fakeStore = new Y.juju.Charmworld2({});
+    fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -107,7 +107,7 @@ describe('Inspector Charm', function() {
     testContainer = utils.makeContainer();
     testContainer.setHTML('<div class="left-breakout"></div>');
 
-    fakeStore = new Y.juju.Charmworld2({});
+    fakeStore = new Y.juju.charmworld.APIv2({});
     var cache = new Y.juju.models.BrowserCharmList();
     var charm = new Y.juju.models.BrowserCharm(data.charm);
     charm.set('cached', true);

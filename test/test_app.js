@@ -541,7 +541,7 @@ function injectData(app, data) {
             consoleEnabled: true,
             user: 'admin',
             password: 'admin',
-            store: new Y.juju.Charmworld2({})
+            store: new Y.juju.charmworld.APIv2({})
           });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the

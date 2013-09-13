@@ -53,7 +53,7 @@ describe('search view', function() {
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     var sampleData = {
       result: [{
         charm: {
@@ -161,7 +161,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -205,7 +205,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -249,7 +249,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
