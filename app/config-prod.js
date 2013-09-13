@@ -46,7 +46,8 @@ var juju_config = {
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
   readOnly: false,
-  // Set the GA_key to enable Google Analytics usage and calls. Also implies using cookies.
+  // Set the GA_key to enable Google Analytics usage and calls. Also implies
+  // using cookies.
   GA_key: 'UA-41463568-2',
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
