@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Charmworld API v2 interface', function() {
     var Y, models, conn, env, app, container, data, juju, utils, charmworld,
-      hostname;
+        hostname;
 
 
     before(function(done) {
@@ -278,7 +278,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Charmworld API Helper', function() {
     var Y, models, conn, env, app, container, data, juju, utils, charmworld,
-      hostname;
+        hostname;
 
 
     before(function(done) {

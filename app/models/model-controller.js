@@ -197,7 +197,7 @@ YUI.add('model-controller', function(Y) {
         Reference to the client charm store.
 
         @attribute store
-        @type {Charmworld2}
+        @type {Object}
         @default undefined
       */
       store: {}

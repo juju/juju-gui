@@ -300,7 +300,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld2}
+       * @type {Object}
        *
        */
       store: {},

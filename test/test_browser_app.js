@@ -377,7 +377,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, Charmworld2, container, next;
+      var Y, app, browser, charmworldAPI, container, next;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -388,7 +388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              Charmworld2 = Y.namespace('juju').Charmworld2;
+              charmworldAPI = Y.namespace('juju').charmworld.APIv2;
               next = function() {};
               done();
             });
@@ -516,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id routes to the default view correctly', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new charmworldAPI({
             'apiHost': 'http://localhost'
           })
         });
@@ -534,7 +534,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id handles routes for new charms correctly', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new charmworldAPI({
             'apiHost': 'http://localhost'
           })
         });
@@ -613,7 +613,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id router ignores other urls', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new charmworldAPI({
             'apiHost': 'http://localhost',
             'noop': true
           })
@@ -642,7 +642,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             editorialCleaned = false;
 
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new charmworldAPI({
             'apiHost': 'http://localhost',
             'noop': true
           })
