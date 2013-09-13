@@ -781,7 +781,6 @@ YUI.add('juju-databinding', function(Y) {
       // will have problems.
       var key = node.getData('bind');
       var nodeHandler = this.getNodeHandler(node.getDOMNode());
-      var model = viewlet.model;
       var binding = this._getBindingForNode(node);
       if (nodeHandler.eq(node, binding.formattedValue)) {
         delete viewlet.changedValues[key];
