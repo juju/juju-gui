@@ -1117,6 +1117,10 @@ YUI.add('juju-env-go', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     resolved: function(unitName, relationName, retry, callback) {
+      // unitName must be a string value.
+      if (typeof unitName !== 'string') {
+        console.error('unitName must be a string value to resolve.');
+      }
       // Resolving a unit/relation pair is not supported by the Go back-end, so
       // relationName is ignored here.
       var intermediateCallback, sendData;
@@ -1151,7 +1155,6 @@ YUI.add('juju-env-go', function(Y) {
     */
     handleResolved: function(userCallback, unitName, data) {
       // Translate the callback data and call the user's callback.
-      console.log(userCallback);
       userCallback({
         op: 'resolved',
         err: data.Error,

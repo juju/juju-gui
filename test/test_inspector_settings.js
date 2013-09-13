@@ -110,6 +110,23 @@ describe('Inspector Settings', function() {
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
+  // Retrieve and return the config viewlet.
+  var getViewlet = function(inspector) {
+    return inspector.viewletManager.viewlets.config;
+  };
+
+  // Change the value of the given key in the constraints form.
+  // Return the corresponding node.
+  var changeForm = function(viewlet, key, value) {
+    var selector = 'textarea[name=' + key + '].config-field';
+    var node = viewlet.container.one(selector);
+    node.set('value', value);
+    // Trigger bindingEngine to notice change.
+    var bindingEngine = inspector.viewletManager.bindingEngine;
+    bindingEngine._nodeChanged(node, viewlet);
+    return node;
+  };
+
   it('properly renders a service without charm options', function() {
     // Mutate charmData before the render.
     delete charmData.charm.options;
@@ -318,6 +335,92 @@ describe('Inspector Settings', function() {
     env.ws.msg({RequestId: message.RequestId});
     assert.equal(button.getHTML(), 'Save Changes');
     assert.isTrue(input.hasClass('change-saved'));
+  });
+
+  it('can cancel changes', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[data-bind="config.admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    inspector.model.set('config', {admins: 'g:s'});
+    changeForm(viewlet, 'admins', 'k:t');
+    assert.equal(
+        parentNode.all('.modified').size(),
+        1,
+        'did not find a modified node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No modified markers are shown.
+    // Verify the form is updated.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+  });
+
+  it('can cancel pending conflicts', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[name="admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'admins', 'k:t');
+    inspector.model.set('config', {admins: 'g:s'});
+    assert.equal(
+        parentNode.all('[name=admins].conflict-pending').size(),
+        1,
+        'did not find a conflict-pending node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+  });
+
+  it('can cancel conflicts that are being resolved', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[name="admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'admins', 'k:t');
+    inspector.model.set('config', {admins: 'g:s'});
+    node.simulate('click');
+    assert.equal(
+        parentNode.all('[name=admins].conflict').size(),
+        1,
+        'did not find the conflict node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+    assert.equal(
+        parentNode.all('[name=admins].conflict').size(),
+        0,
+        'found the conflict node');
   });
 
 });
