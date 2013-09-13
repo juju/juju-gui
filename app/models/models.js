@@ -221,7 +221,7 @@ YUI.add('juju-models', function(Y) {
       using the supplied relationId.
 
       @method removeRelations
-      @param {String} relationId of the relation to remove.
+      @param {String} relationId The id of the relation to remove.
     */
     removeRelations: function(relationId) {
       var relations = this.get('relations');
