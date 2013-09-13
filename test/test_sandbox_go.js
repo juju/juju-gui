@@ -1174,7 +1174,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.deployerImport(fixture, null, callback);
     });
 
-    it('should support deployer status (w/import)', function(done) {
+    it('should support deployer status with imports', function(done) {
       var fixture = utils.loadFixture('data/wp-deployer.yaml');
       var callback = function(ignored) {
         var data = {
@@ -1200,7 +1200,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
 
-    it('should support deployer status (empty)', function(done) {
+    it('should support deployer status without imports', function(done) {
       var fixture = utils.loadFixture('data/wp-deployer.yaml');
       var data = {
         Type: 'Deployer',
@@ -1218,20 +1218,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.open();
       client.send(Y.JSON.stringify(data));
     });
-
-    it('can import deployer status (integration).', function(done) {
-      var fixture = utils.loadFixture('data/wp-deployer.yaml');
-      env.connect();
-      var callback = function(result) {
-        assert.isUndefined(result.err);
-        var service = state.db.services.getById('wordpress');
-        assert.equal(service.get('charm'), 'cs:precise/wordpress-15');
-        done();
-      };
-      env.deployerImport(fixture, null, callback);
-    });
-
-
 
   });
 

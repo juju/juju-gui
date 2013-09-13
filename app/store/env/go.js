@@ -411,12 +411,17 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method deployerImport
      * @param {String} yamlData to import.
-     * @param {String} bundleName optional.
+     * @param {String} [bundleName] Bundle name to import.
      * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
     deployerImport: function(yamlData, bundleName, callback) {
       var intermediateCallback;
+
+      if (Y.Lang.isFunction(bundleName) && callback === undefined) {
+        callback = bundleName;
+        bundleName = undefined;
+      }
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeployerImport,
                                       this, callback);

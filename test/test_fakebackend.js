@@ -544,10 +544,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             utils.loadFixture('data/wp-deployer.yaml'),
             'wordpress-prod', function(result) {
               assert.equal(result.Error, undefined);
-              assert.equal(result.DeploymentId, 1);
-              assert.isNotNull(fakebackend.db.services.getById('wordpress'));
-              assert.isNotNull(fakebackend.db.services.getById('mysql'));
-              assert.equal(fakebackend.db.relations.size(), 1);
+              assert.equal(result.DeploymentId, 1, 'deployment id incorrect');
+              assert.isNotNull(fakebackend.db.services.getById('wordpress'),
+                              'failed to import wordpress');
+              assert.isNotNull(fakebackend.db.services.getById('mysql'),
+                              'failed to import mysql');
+              assert.equal(fakebackend.db.relations.size(), 1,
+                          'failed to import relations');
               done();
             });
 
@@ -560,7 +563,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'wordpress-prod', function() {
               fakebackend.statusDeployer(
                   function(status) {
-                    assert.equal(status.LastChanges.length, 1);
+                    assert.lengthOf(status.LastChanges, 1);
                     assert.equal(status.LastChanges[0].Status, 'completed');
                     assert.equal(status.LastChanges[0].DeploymentId, 1);
                     assert.isNumber(status.LastChanges[0].Timestamp);

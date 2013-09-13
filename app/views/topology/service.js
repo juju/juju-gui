@@ -700,6 +700,17 @@ YUI.add('juju-topology-service', function(Y) {
       var dataTransfer = evt.dataTransfer;
       var fileSources = dataTransfer.files;
       if (fileSources && fileSources.length) {
+        if (!Y.Lang.isFunction(env.deployerImport)) {
+          // notify and return
+          notifications.add({
+            title: 'Deployer Import Unsupported',
+            message: 'Your environment is too old to support deployer file' +
+                     ' imports directly. Please consider upgrading to use' +
+                     ' this feature.',
+            level: 'important'
+          });
+         return;
+        }
         // Path for dumping Deployer files on canvas.
         var env = topo.get('env');
         var db = topo.get('db');
@@ -708,7 +719,7 @@ YUI.add('juju-topology-service', function(Y) {
           var reader = new FileReader();
           reader.onload = function(e) {
             // Import each into the environment
-            env.deployerImport(e.target.result, null, function(result) {
+           env.deployerImport(e.target.result, null, function(result) {
               if (!result.err) {
                 notifications.add({
                   title: 'Imported Environment',
@@ -716,6 +727,7 @@ YUI.add('juju-topology-service', function(Y) {
                   level: 'important'
                 });
               } else {
+                console.log('import failed', file, result);
                 notifications.add({
                   title: 'Import Environment Failed',
                   message: 'Import from "' + file.name +

@@ -1193,9 +1193,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
      Import Deployer from YAML files
 
      @method importDeployer
-     @param {String} YAMLData to import.
-     @param {String} name (optional) of bundle to import.
-     @param {Function} callback to trigger.
+     @param {String} YAMLData YAML string data to import.
+     @param {String} [name] Name of bundle within deployer file to import.
+     @param {Function} callback Triggered on completion of the import.
+     @return {undefined} Callback only.
      */
     importDeployer: function(YAMLData, name, callback) {
       var self = this;
@@ -1223,9 +1224,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
             });
             // Keep the list limited to the last 5
             if (self._importChanges.length > 5) {
-              self._importChanges = self._importChanges.slice(
-                  self._importChanges.length - 5);
+              self._importChanges = self._importChanges.slice(-5);
             }
+
+            // Fakebackend needs an extra little push for imported relations to
+            // make it on the wire. This code currently indicates _all_
+            // relations have changes, not just those from the import. It may
+            // make sense down the road to have the db.importDeployer return a
+            // mapping of new object ids.
+            self.db.relations.each(function(r) {
+              self.changes.relations[r.get('relation_id')] = [r, true];
+            });
+
             callback({DeploymentId: self._deploymentId});
           }, function(err) {
             callback({Error: err.toString()});
@@ -1233,13 +1243,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-     Query the deployer import code for global status of
-     the last 5 imports. We don't currently queue but this a
-     real impl would need to always include every pending import
-     regardless of queue length
+     Query the deployer import code for global status of the last 5 imports. We
+     don't currently queue but a real impl would need to always include every
+     pending import regardless of queue length
 
      @method statusDeployer
-     @param {Function} callback to trigger.
+     @param {Function} callback Triggered with completion information.
+     @return {undefined} Callback only.
     */
     statusDeployer: function(callback) {
       if (!this.get('authenticated')) {

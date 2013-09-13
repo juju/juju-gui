@@ -1213,7 +1213,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleDeployerStatus: function(data, client, state) {
       var request = data;
-      var self = this;
       var callback = function(reply) {
         var response = {
           RequestId: request.RequestId,
@@ -1271,7 +1270,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         state.getCharm(charmName, function(payload) {
           var charmData = payload.result;
           var formattedConfig = {};
-          var backendConfig = reply.result.config;
+          var backendConfig = reply.result.options || reply.result.config;
 
           Y.Object.each(charmData.options, function(value, key) {
             formattedConfig[key] = charmData.options[key];
