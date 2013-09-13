@@ -603,7 +603,10 @@ describe('Inspector Overview', function() {
       retryButton.simulate('click');
 
       var expected = {
-        Params: {Retry: false, UnitName: ['mediawiki/7']},
+        Params: {
+          Retry: false,
+          UnitName: 'mediawiki/7'
+        },
         Request: 'Resolved',
         RequestId: 1,
         Type: 'Client'
@@ -630,7 +633,10 @@ describe('Inspector Overview', function() {
       retryButton.simulate('click');
 
       var expected = {
-        Params: {Retry: true, UnitName: ['mediawiki/7']},
+        Params: {
+          Retry: true,
+          UnitName: 'mediawiki/7'
+        },
         Request: 'Resolved',
         RequestId: 1,
         Type: 'Client'
@@ -659,7 +665,7 @@ describe('Inspector Overview', function() {
       removeButton.simulate('click');
 
       var expected = {
-        Params: {UnitNames: ['mediawiki/7']},
+        Params: {UnitNames: 'mediawiki/7'},
         Request: 'DestroyServiceUnits',
         RequestId: 1,
         Type: 'Client'

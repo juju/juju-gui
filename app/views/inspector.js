@@ -1029,7 +1029,10 @@ YUI.add('juju-view-inspector', function(Y) {
       var unitNames = [];
       units.each(function(unit) {
         if (unit.get('checked')) {
-          unitNames.push(unit.siblings('a').get('innerHTML'));
+          var siblings = unit.siblings('a');
+          if (siblings.size() > 0) {
+            unitNames.push(siblings.item(0).get('innerHTML'));
+          }
         }
       });
 
