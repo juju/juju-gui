@@ -36,19 +36,33 @@ YUI.add('viewlet-service-ghost', function(Y) {
     name: 'ghostConfig',
     template: templates['ghost-config-viewlet'],
     bindings: {
-      'options': {
+      options: {
+        // On update make sure undefined isn't sent to the user as viewable
+        // input.
         'update': function(node, val) {
           var newVal = (val['default'] === undefined) ? '' : val['default'];
           node.set('value', newVal);
         }
       },
-      'constraints': {
+      constraints: {
+        // Make sure that the constraints don't show undefined to the user as
+        // visible input in the field.
         'update': function(node, val) {
           node.set('value', val || '');
         }
       }
     },
-    'render': function(model, viewletMgrAttrs) {
+
+    /**
+     * Viewlet standard render call.
+     *
+     * @method render
+     * @param {Service} service the model of the service in the inspector.
+     * @param {Object} viewletMgrAttrs an object of helper data from the
+     * viewlet manager.
+     *
+     */
+    render: function(model, viewletMgrAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
 
       // This is to allow for data binding on the ghost settings

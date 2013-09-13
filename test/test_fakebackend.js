@@ -117,31 +117,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // clientId varies.
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
+      // when doing a deep equals on an object which contains a LazyModelList
+      // call toArray() on it first else it will fail and it won't tell you why.
+      attrs.relations = attrs.relations.toArray();
+      attrs.units = attrs.units.toArray();
+      // deepEquals compares order, even though that's not guaranteed by any
+      // JS engine - if there are failures here check the order first.
       assert.deepEqual(attrs, {
-        annotations: {},
+        initialized: true,
+        destroyed: false,
+        id: 'wordpress',
+        displayName: 'wordpress',
+        name: 'wordpress',
+        aggregateRelationError: undefined,
+        aggregateRelations: undefined,
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-15',
-        charmChanged: false,
         config: {
           debug: 'no',
           engine: 'nginx',
           tuning: 'single',
           'wp-content': ''
         },
+        annotations: {},
+        charmChanged: false,
         constraints: {},
         constraintsStr: undefined,
-        destroyed: false,
-        displayName: 'wordpress',
         exposed: false,
+        subordinate: false,
         icon: undefined,
-        id: 'wordpress',
-        initialized: true,
-        name: 'wordpress',
         pending: false,
         life: 'alive',
-        subordinate: false,
+        relations: [],
         unit_count: undefined,
         upgrade_available: false,
+        units: [],
         upgrade_to: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);

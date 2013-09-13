@@ -445,7 +445,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Endpoints: deltaEndpoints
         };
         relationInfo(db, 'remove', change);
-        assert.strictEqual(0, db.relations.size());
+        assert.strictEqual(db.relations.size(), 0);
       });
 
     });

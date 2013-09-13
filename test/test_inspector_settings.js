@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmData;
+      inspector, Y, jujuViews, charmData;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -39,20 +39,10 @@ describe('Inspector Settings', function() {
   });
 
   beforeEach(function() {
-    exposeCalled = false;
-    unexposeCalled = false;
     container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    env.expose = function(s) {
-      exposeCalled = true;
-      service.set('exposed', true);
-    };
-    env.unexpose = function(s) {
-      unexposeCalled = true;
-      service.set('exposed', false);
-    };
     window.flags.serviceInspector = true;
   });
 
@@ -81,7 +71,13 @@ describe('Inspector Settings', function() {
       // stop it from falling over.
       if (charm.get('options')) {
         Y.Object.each(charm.get('options'), function(val, key) {
-          parsedConfig[key] = val['default'] || '';
+          // For boolean fields the default is false, so we need to check
+          // undefined directly.
+          if (val['default'] !== undefined) {
+            parsedConfig[key] = val['default'];
+          } else {
+            parsedConfig[key] = '';
+          }
         });
       }
       service = new models.Service({
@@ -131,39 +127,28 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // One boolean checkbox
+    // Verify we find our checkbox Also note that it's hidden because we're
+    // using the slider markup and styling for boolean fields.
     assert.equal(
-        container.all('.config-field.boolean').size(),
+        container.all('input.hidden-checkbox').size(),
         1,
         'did not render one boolean field');
 
-    // One numeric input field
+    // Verify that the textual representation is there.
     assert.equal(
-        container.all('input.config-field').size(),
+        container.all('.textvalue').size(),
         1,
-        'did not render one numeric field');
-  });
+        'can not find the textual value for the checkbox.');
 
-  it('toggles exposure', function() {
-    inspector = setUpInspector();
-    assert.isFalse(service.get('exposed'));
-    assert.isFalse(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var vmContainer = inspector.viewletManager.get('container');
-    var expose = vmContainer.one('label[for=expose-toggle]');
-    expose.simulate('click');
-    assert.isTrue(service.get('exposed'));
-    assert.isTrue(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var checkedSelector = 'input.hidden-checkbox:checked ~ label .handle';
-    var handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, true);
-
-    expose.simulate('click');
-    assert.isTrue(unexposeCalled);
-    assert.isFalse(service.get('exposed'));
-    handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, false);
+    // And the value will toggle with the checkbox
+    var debugContainer = container.one('.toggle-debug').get('parentNode');
+    assert.equal(
+        debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
+        'false');
+    debugContainer.one('label').simulate('click');
+    assert.equal(
+        debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
+        'true');
   });
 
   /**** Begin service destroy UI tests. ****/

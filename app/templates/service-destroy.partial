@@ -1,15 +1,17 @@
-<div class="destroy-service-trigger">
-  <span>
-    <i class="sprite inspector-destroy-service"></i>
-    Destroy service
-  </span>
-</div>
-<div class="destroy-service-prompt closed">
-  <div class="message">
-  Are you sure you want to destroy the service? This cannot be undone.
+<div class="overview-footer-item">
+  <div class="destroy-service-trigger">
+    <span>
+      <i class="sprite inspector-destroy-service"></i>
+      Destroy service
+    </span>
   </div>
-  <div class="inspector-buttons">
-    <a class="cancel-destroy cancel-button">Cancel</a>
-    <a class="initiate-destroy">Destroy</a>
+  <div class="destroy-service-prompt closed">
+    <div class="message">
+    Are you sure you want to destroy the service? This cannot be undone.
+    </div>
+    <div class="inspector-buttons">
+      <a class="cancel-destroy cancel-button">Cancel</a>
+      <a class="initiate-destroy">Destroy</a>
+    </div>
   </div>
 </div>

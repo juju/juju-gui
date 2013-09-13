@@ -207,7 +207,10 @@ YUI.add('juju-view-environment', function(Y) {
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
                 'a[data-unit]': { click: 'showUnitDetails'},
                 'button.unit-action-button': { click: '_unitActionButtonClick'},
-                '.upgrade-link': { click: 'upgradeService' }
+                '.upgrade-link': { click: 'upgradeService' },
+                // Used by the config viewlet for keeping the checkbox values
+                // in sync across the slider/checkbox/text representation.
+                '.hidden-checkbox': {change: 'onCheckboxUpdate'}
               },
               viewletList: [
                 'overview', // Default viewlet first.
@@ -215,7 +218,8 @@ YUI.add('juju-view-environment', function(Y) {
                 'config',
                 'constraints',
                 'unitDetails',
-                'inspectorHeader'
+                'inspectorHeader',
+                'relations'
               ],
               template: Y.juju.views.Templates['service-config-wrapper']
             },
@@ -233,14 +237,17 @@ YUI.add('juju-view-environment', function(Y) {
               // manager's events for final binding
               viewletEvents: {
                 '.charm-url': {click: 'onShowCharmDetails'},
-                '.confirm': { 'click': 'deployCharm' },
+                '.confirm': { click: 'deployCharm' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.initiate-destroy': {'click': '_onInitiateDestroy'},
-                '.cancel-destroy': {'click': '_onCancelDestroy'},
-                '.destroy-service-trigger span': {'click': '_onDestroyClick'},
-                'input#use-default-toggle': {'change': 'setDefaultSettings'}
+                '.initiate-destroy': {click: '_onInitiateDestroy'},
+                '.cancel-destroy': {click: '_onCancelDestroy'},
+                '.destroy-service-trigger span': {click: '_onDestroyClick'},
+                'input#use-default-toggle': {change: 'setDefaultSettings'},
+                // Used by the config viewlet for keeping the checkbox values
+                // in sync across the slider/checkbox/text representation.
+                '.hidden-checkbox': {change: 'onCheckboxUpdate'}
               },
               // the configuration for the view manager template
               templateConfig: {

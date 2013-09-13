@@ -217,10 +217,12 @@ YUI.add('juju-ghost-inspector', function(Y) {
           var newVal = (opt['default'] === undefined) ? '' : opt['default'];
           var input = viewletContainer.one('#input-' + key);
 
-          if (input.get('type') !== 'checkbox') {
-            input.set('value', newVal);
-          } else {
-            input.set('checked', newVal);
+          if (input) {
+            if (input.get('type') !== 'checkbox') {
+              input.set('value', newVal);
+            } else {
+              input.set('checked', newVal);
+            }
           }
         });
       } else {

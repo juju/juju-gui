@@ -86,6 +86,40 @@ YUI.add('juju-models', function(Y) {
   };
 
   /**
+    Utility method to return the services involved in the delta.
+
+    @method getServicesfromDelta
+    @param {Object | null} modelInstance a reference to the model instance
+      to use to extract the service information from.
+    @param {Object | String} data The delta data.
+    @param {Object} db A reference to the database Model.
+    @return {Object | Array | undefined} A reference to a service instance
+      or an array of service instances in the case where it is a
+      relation delta or undefined if there is no service in the system.
+  */
+  var getServicesfromDelta = function(modelInstance, data, db) {
+    var services;
+    if (modelInstance && modelInstance.service) {
+      services = db.services.getById(modelInstance.service);
+    } else if (typeof data === 'string') {
+      services = db.services.getById(data.split('/')[0]);
+    } else if (data.service) {
+      services = db.services.getById(data.service);
+    } else if (data.endpoints) {
+      // It is a relation delta
+      services = [];
+      services.push(db.services.getById(data.endpoints[0][0]));
+      if (data.endpoints[1]) {
+        // Peer relationships only have a single endpoint
+        services.push(db.services.getById(data.endpoints[1][0]));
+      }
+    }
+
+    if (!services) { return; }
+    return services;
+  };
+
+  /**
    * Model a single Environment. Serves as a place to collect
    * Environment level annotations.
    *
@@ -118,6 +152,42 @@ YUI.add('juju-models', function(Y) {
   var Service = Y.Base.create('service', Y.Model, [], {
 
     /**
+      Adds a new instance of a relations list to the services attributes and
+      creates a holder for this services event listeners.
+
+      @method initializer
+      @private
+    */
+    initializer: function() {
+      // We create the relation model list here so that the databinding
+      // engine can bind to it and react on changes which may come in
+      // on the deltas.
+      // The units model list is also created here to avoid having to check
+      // for it's existence in multiple places in the app.
+      this.setAttrs({
+        units: new models.ServiceUnitList(),
+        relations: new models.RelationList()
+      });
+      this._events = [];
+      this._bindAttributes();
+    },
+
+    /**
+      Sets up the attribute event listeners
+
+      @method _bindAttributes
+    */
+    _bindAttributes: function() {
+      // This allows the databinding engine to react to a relation change on
+      // any of this services relations.
+      this._events.push(
+          this.get('relations').on(
+              ['*:change', '*:add', '*:remove'], function(e) {
+                this.set('aggregateRelations', e);
+              }, this));
+    },
+
+    /**
       Return true if this service life is "alive", false otherwise.
 
       A model instance is alive if its life cycle (i.e. the "life" attribute)
@@ -144,6 +214,34 @@ YUI.add('juju-models', function(Y) {
       var aggregates = this.get('aggregated_status') || {},
           errors = aggregates.error || false;
       return errors && errors >= 1;
+    },
+
+    /**
+      Removes a relation from the internal relation model list
+      using the supplied relationId.
+
+      @method removeRelations
+      @param {String} relationId The id of the relation to remove.
+    */
+    removeRelations: function(relationId) {
+      var relations = this.get('relations');
+      relations.some(function(rel) {
+        if (rel.get('relation_id') === relationId) {
+          relations.remove(rel);
+          return true;
+        }
+      });
+    },
+
+    /**
+      Detaches all of the events in the models _event property
+
+      @method destructor
+    */
+    destructor: function() {
+      this._events.forEach(function(event) {
+        event.detach();
+      });
     }
 
   }, {
@@ -206,6 +304,46 @@ YUI.add('juju-models', function(Y) {
         value: ALIVE
       },
       unit_count: {},
+
+      /**
+        The services current units. This is kept in sync with the db.units
+        modellist
+
+        @attribute units
+        @default {}
+        @type {ServiceUnitList}
+      */
+      units: {},
+
+      /**
+        The services current relations. This is kept in sync with the
+        db.relations modellist
+
+        @attribute relations
+        @default {}
+        @type {RelationList}
+      */
+      relations: {},
+
+      /**
+        An aggregate of the relations statuses that we use to trigger
+        databinding changes
+
+        @attribute aggregateRelations
+        @default {}
+        @type {Object}
+      */
+      aggregateRelations: {},
+
+      /**
+        An aggregate of the relation errors that we use to trigger
+        databinding changes
+
+        @attribute aggregateRelationError
+        @default {}
+        @type {Object}
+      */
+      aggregateRelationError: {},
 
       /**
         Whether or not an upgrade is available.
@@ -342,34 +480,11 @@ YUI.add('juju-models', function(Y) {
           oldModelCharm = oldModel.charmUrl;
         }
       }
-      var instance = _process_delta(this, action, data, {relation_errors: {}});
+      var instance = _process_delta(this, action, data, {});
       if (!db) {
         return;
       }
-      // Apply this action for this instance to all service models as well.
-      // In the future we can transition from using db.units to always
-      // looking at db.services[serviceId].units.  Note that, in the case of
-      // `action === 'remove'`, instance will be null, so we retrieve the
-      // service name from `data`, which is the removed unit's name.
-      var service;
-      if (!instance) {
-        if (typeof data === 'string') {
-          service = db.services.getById(data.split('/')[0]);
-        } else if (data.service) {
-          service = db.services.getById(data.service);
-        } else {
-          return;
-        }
-      } else {
-        service = db.services.getById(instance.service);
-      }
-      if (!service) { return; }
-      // Get the unit list for this service. (lazy)
-      var unitList = service.get('units');
-      if (!unitList) {
-        unitList = new models.ServiceUnitList();
-        service.set('units', unitList);
-      }
+      var service = getServicesfromDelta(instance, data, db);
       // If the charm has changed on this unit in the delta, inform the service
       // of the change (but only if it doesn't already know, so as not to fire
       // a change event).  This is required because the two instances of a)
@@ -381,7 +496,14 @@ YUI.add('juju-models', function(Y) {
           oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }
-      _process_delta(unitList, action, data, {relation_errors: {}});
+      // Some tests add units without creating a service so we need to check
+      // for a valid service here.
+      if (service) {
+        _process_delta(service.get('units'), action, data, {});
+      } else {
+        // fixTests
+        console.error('Units added without matching Service');
+      }
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -423,21 +545,33 @@ YUI.add('juju-models', function(Y) {
      *  state => number of units in that state
      */
     get_informative_states_for_service: function(service) {
-      var aggregate_map = {}, aggregate_list = [],
+      var aggregate_map = {},
+          relationError = {},
           units_for_service = this.get_units_for_service(service);
 
       units_for_service.forEach(function(unit) {
         var state = utils.simplifyState(unit);
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
-        }
-        else {
+        } else {
           aggregate_map[state] += 1;
+          if (state === 'error') {
+            // If in error status then we need to parse out why it's in error.
+            var info = unit.agent_state_info;
+            if (info !== undefined && info.indexOf('failed') > -1) {
+              // If we parse more than the relation info then split this out
+              if (info.indexOf('relation') > -1) {
+                var hook = info.split(':')[1].split('-'),
+                    interfaceName = hook.slice(0, hook.length - 2)[0].trim();
+                relationError[unit.service] = interfaceName;
+              }
+            }
+          }
         }
 
       });
 
-      return aggregate_map;
+      return [aggregate_map, relationError];
     },
 
     /*
@@ -447,11 +581,11 @@ YUI.add('juju-models', function(Y) {
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
-          Y.Object.values(aggregate), 0, function(a, b) {return a + b;});
+          Y.Object.values(aggregate[0]), 0, function(a, b) {return a + b;});
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
-      service.set('aggregated_status', aggregate);
-
+      service.set('aggregated_status', aggregate[0]);
+      service.set('aggregateRelationError', aggregate[1]);
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',
@@ -557,8 +691,59 @@ YUI.add('juju-models', function(Y) {
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     model: Relation,
 
-    process_delta: function(action, data) {
-      _process_delta(this, action, data, {});
+    process_delta: function(action, data, db) {
+      // If the action is remove we need to parse the models before they are
+      // removed from the db so that we can remove them from the relation
+      // models that are cloned in each of the services.
+      if (action === 'remove') {
+        var endpoints;
+        // PyJuju returns a single string as data to remove relations
+        if (Y.Lang.isString(data)) {
+          db.relations.each(function(relation) {
+            if (relation.get('id') === data) {
+              endpoints = relation.get('endpoints');
+            }
+          });
+        } else {
+          // juju-core returns an object
+          endpoints = data.endpoints;
+        }
+
+        // Because we keep a copy of the relation models on each service we
+        // also need to remove the relation from those models.
+        // If the user adds then removes an endpoint before the deltas return
+        // then the db's will be out of sync so this check is necessary.
+        if (endpoints) {
+          var service, serviceRelations;
+          endpoints.forEach(function(endpoint) {
+            service = db.services.getById(endpoint[0]);
+            // The tests don't always add services so we check if they exist
+            // first before trying to remove them
+            if (service) {
+              service.removeRelations(data);
+            } else {
+              // fixTests
+              console.error('Relation added without matching service');
+            }
+          });
+        }
+        _process_delta(this, action, data, {});
+      } else {
+        // When removing a relation instance is null
+        var instance = _process_delta(this, action, data, {});
+        var services = getServicesfromDelta(instance, data, db);
+        services.forEach(function(service) {
+          // Because some of the tests add relations without services
+          // it's possible that a service will be null
+          if (service) {
+            _process_delta(service.get('relations'), action, data, {});
+          } else {
+            // fixTests
+            console.error('Relation added without matching service');
+          }
+        });
+      }
+
     },
 
     /**

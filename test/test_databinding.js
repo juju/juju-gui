@@ -82,7 +82,7 @@ describe('data binding library', function() {
       });
 
       it('supports more than one binding to a single model attr',
-         function(done) {
+          function(done) {
             // We intentionally run this test with an interval, so we need to
             // wait. This is because the change interval can mask certain types
             // of errors and we want the space to see that this acutally works.
@@ -107,15 +107,8 @@ describe('data binding library', function() {
             }, 100);
           });
 
-      it('can reset viewlets back to model values', function(done) {
-        engine = new BindingEngine({interval: 0});
-        container = utils.makeContainer();
-        container.append('<input data-bind="a"/>');
-        var viewlet = {
-          container: container,
-          changedValues: {},
-          _eventHandles: []
-        };
+      it('can reset viewlets back to model values', function() {
+        generateEngine('<input data-bind="a"/>');
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
         // It renders with the model value
@@ -125,31 +118,25 @@ describe('data binding library', function() {
         // We manually change the form
         node.set('value', 'the new newness');
         assert.equal(node.get('value'), 'the new newness');
+        engine._nodeChanged(node, viewlet);
+        assert.deepEqual(viewlet.changedValues, {a: true});
 
         // But then we reset
         engine.resetDOMToModel();
+        assert.lengthOf(Object.keys(viewlet.changedValues), 0);
         assert.equal(node.get('value'), 'b');
         assert.equal(model.get('a'), 'b');
 
         // Bindings continue to work after reset.
         model.set('a', 'c');
         assert.equal(node.get('value'), 'c');
-        done();
       });
 
-      it('can reset a viewlet back to model values', function(done) {
+      it('can reset a viewlet back to model values', function() {
         // Very similar  to the previous test, this checks
         // that the binding filtering by viewlet runs and produces
         // the expected outcome.
-        engine = new BindingEngine({interval: 0});
-        container = utils.makeContainer();
-        container.append('<input data-bind="a"/>');
-        var viewlet = {
-          name: 'testViewlet',
-          container: container,
-          changedValues: {},
-          _eventHandles: []
-        };
+        generateEngine('<input data-bind="a"/>');
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
         // It renders with the model value
@@ -168,7 +155,37 @@ describe('data binding library', function() {
         // Bindings continue to work after reset.
         model.set('a', 'c');
         assert.equal(node.get('value'), 'c');
-        done();
+      });
+
+      it('can reset viewlets with conflicts back to model values', function() {
+        generateEngine('<input data-bind="a"/>');
+        var model = new Y.Model({a: 'b'});
+        engine.bind(model, viewlet);
+        // It renders with the model value.
+        var node = container.one('input');
+        assert.equal(node.get('value'), 'b');
+        // We manually change the form.
+        node.set('value', 'the new newness');
+        assert.equal(node.get('value'), 'the new newness');
+        // We create a conflict...
+        engine._nodeChanged(node, viewlet);
+        model.set('a', 'conflict from model');
+        var binding = engine._getBindingForNode(node);
+        assert.isTrue(binding.conflicted);
+        assert.isUndefined(viewlet.calledSyncedFields);
+        // ...but then we reset.  These are the key assertions for this test.
+        delete viewlet.changedArgs;
+        engine.resetDOMToModel();
+        assert.isUndefined(binding.conflicted);
+        assert.equal(node.get('value'), 'conflict from model');
+        assert.equal(model.get('a'), 'conflict from model');
+        assert.isTrue(viewlet.calledSyncedFields, 'did not call syncedFields');
+        // viewlet.changed must be called so that the viewlet has a chance to
+        // clear conflict markers.
+        assert.isDefined(viewlet.changedArgs, 'viewlet.changed was not called');
+        // Bindings continue to work after reset.
+        model.set('a', 'c');
+        assert.equal(node.get('value'), 'c');
       });
 
       it('supports nested model bindings', function() {
@@ -681,6 +698,33 @@ describe('data binding library', function() {
                    .get('value'), 'Sansa Lannister');
     });
 
+    it('should update from dependent fields only', function() {
+      // This is like the one above, but the value itself doesn't change, only
+      // the dependents.  This example is artifical, but real examples
+      // exist.  The use case is for bindings that have complex
+      // representations based only peripherally on a given attribute.
+      var model = new Y.Model({a: {something: 'wicked'}, b: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      viewlet.bindings = {
+        a: {
+          depends: ['b'],
+          update: function(node, value) {
+            node.set('value', value.something);
+          }
+        }
+      };
+      engine.bind(model, viewlet);
+      var node = container.one('[data-bind="a"]');
+      assert.equal(node.get('value'), 'wicked');
+      // This does not trigger an update...
+      model.get('a').something = 'comes';
+      assert.equal(node.get('value'), 'wicked');
+      // ...but this does.
+      model.set('b', 'this way');
+      assert.equal(node.get('value'), 'comes');
+    });
+
     it('should handle multiple dependents', function() {
       var model = new TestModel({first: 'Ned', last: 'Stark'});
       container.setHTML(
@@ -774,15 +818,17 @@ describe('data binding library', function() {
   describe('_updateDOM tests', function() {
     var model, node;
 
-    beforeEach(function() {
+    afterEach(function() {
+      container.remove().destroy(true);
+      model.destroy(true);
+    });
+
+    it('reports conflicts', function() {
       model = new Y.Model({a: undefined});
       generateEngine(
           '<textarea data-bind="a"></textarea>');
       engine.bind(model, viewlet);
       node = container.one('[data-bind="a"]');
-    });
-
-    it('reports conflicts', function() {
       node.set('value', 'kumquat');
       engine._nodeChanged(node, viewlet);
       assert.deepEqual(viewlet.changedValues, {a: true});
@@ -792,20 +838,94 @@ describe('data binding library', function() {
       assert.isTrue(viewlet.calledUnsyncedFields);
       assert.isDefined(viewlet.conflictArgs);
       assert.strictEqual(viewlet.conflictArgs[0], node);
-      assert.strictEqual(viewlet.conflictArgs[1], model);
-      assert.strictEqual(viewlet.conflictArgs[2], 'testViewlet');
+      assert.strictEqual(viewlet.conflictArgs[1], 'kumquat');
+      assert.strictEqual(viewlet.conflictArgs[2], 'rutebega');
       // argument 3 should be the bound resolve function.
       // We'll assert this by showing that it works.
       viewlet.conflictArgs[3]('rutebega');
       assert.equal(node.get('value'), 'rutebega');
+      assert.deepEqual(viewlet.changedValues, {});
       assert.strictEqual(viewlet.conflictArgs[4],
                          engine._getBindingForNode(node));
+    });
+
+    it('does not report conflicts triggered by parent change', function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a.child"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a.child"]');
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {'a.child': true});
+      assert.isUndefined(viewlet.conflictArgs);
+      model.set('a', {other: 42});
+      // We should not have a conflict!
+      assert.isUndefined(viewlet.calledUnsyncedFields);
+      assert.isUndefined(viewlet.conflictArgs);
+    });
+
+    it('does not auto-resolve conflict when model matches', function() {
+      model = new Y.Model({a: undefined});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      model.set('a', 'rutebega');
+      // We have a conflict.
+      assert.isDefined(viewlet.conflictArgs, 'conflict was not called');
+      assert.isDefined(viewlet.calledUnsyncedFields,
+          'unsyncedFields was not called');
+      assert.isUndefined(viewlet.calledSyncedFields,
+          'syncedFields was called');
+      // If the model changes to match the input...
+      viewlet.conflictArgs = viewlet.calledUnsyncedFields = undefined;
+      model.set('a', 'kumquat');
+      // We have a new conflict.
+      assert.isDefined(viewlet.conflictArgs, 'conflict was not called');
+      assert.isDefined(viewlet.calledUnsyncedFields,
+          'unsyncedFields was not called');
+      assert.isUndefined(viewlet.calledSyncedFields,
+          'syncedFields was called');
+      // Yup, they are the same values.
+      assert.equal(viewlet.conflictArgs[1], 'kumquat');
+      assert.equal(viewlet.conflictArgs[2], 'kumquat');
+    });
+
+    it('supports formatted values when working with conflicts', function() {
+      model = new Y.Model({a: 'CARROT'});
+      generateEngine(
+          '<textarea data-bind="a"></textarea>');
+      // Our formatter lower cases all values.
+      viewlet.bindings = {
+        a: {format: function(v) {return v && v.toLowerCase();}}
+      };
+      engine.bind(model, viewlet);
+      node = container.one('[data-bind="a"]');
+      // Our initial value is properly lower-cased.
+      assert.equal(node.get('value'), 'carrot');
+      // Manually resetting notices that we have returned to the formatted
+      // value.
+      node.set('value', 'kumquat');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {a: true});
+      node.set('value', 'carrot');
+      engine._nodeChanged(node, viewlet);
+      assert.deepEqual(viewlet.changedValues, {});
+      // The viewlet.conflict method receives the formatted version of the
+      // model's value for display.
+      node.set('value', 'rutebega');
+      engine._nodeChanged(node, viewlet);
+      model.set('a', 'BRUSSEL SPROUT');
+      assert.equal(viewlet.conflictArgs[2], 'brussel sprout');
     });
 
   });
 
   describe('resolve tests', function() {
-    var model, node;
+    var model, node, resolve;
 
     beforeEach(function() {
       model = new Y.Model({a: undefined});
@@ -817,7 +937,8 @@ describe('data binding library', function() {
       engine._nodeChanged(node, viewlet);
       model.set('a', 'rutebega');
       // Now we have a conflict.
-      delete viewlet.changedArgs;
+      resolve = viewlet.conflictArgs[3];
+      delete viewlet.conflictArgs;
     });
 
     afterEach(function() {
@@ -826,7 +947,7 @@ describe('data binding library', function() {
     });
 
     it('resolves to model value', function() {
-      engine.resolve(node, viewlet.name, 'rutebega');
+      resolve('rutebega');
       assert.equal(node.get('value'), 'rutebega');
       assert.deepEqual(viewlet.changedValues, {});
       assert.isDefined(viewlet.changedArgs);
@@ -834,7 +955,7 @@ describe('data binding library', function() {
     });
 
     it('resolves to input value', function() {
-      engine.resolve(node, viewlet.name, 'kumquat');
+      resolve('kumquat');
       assert.equal(node.get('value'), 'kumquat');
       assert.deepEqual(viewlet.changedValues, {a: true});
       assert.isDefined(viewlet.changedArgs);

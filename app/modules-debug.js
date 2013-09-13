@@ -328,6 +328,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-constraints.js'
         },
 
+        'viewlet-service-relations': {
+          fullpath: '/juju-ui/views/viewlets/service-relations.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
