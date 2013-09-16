@@ -1232,7 +1232,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // relations have changes, not just those from the import. It may
             // make sense down the road to have the db.importDeployer return a
             // mapping of new object ids.
-            self.db.services.each(function(s){
+            self.db.services.each(function(s) {
               self.changes.services[s.get('id')] = [s, true];
             });
             self.db.relations.each(function(r) {
