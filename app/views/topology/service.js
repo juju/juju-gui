@@ -106,9 +106,13 @@ YUI.add('juju-topology-service', function(Y) {
         delete annotations['gui-y'];
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
+        var localCreation = d.model.get('localCreation');
+        if (localCreation) {
+          d.model.set('localCreation', false);
+        }
         if (!d.inDrag) {
-          self.drag.call(this, d, self, {x: x, y: y},
-              self.get('useTransitions'));
+          var useTransitions = self.get('useTransitions') && !localCreation;
+          self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
         }
       }});
 
@@ -1049,6 +1053,7 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. This has the side effect that service blocks can overlap
       // and will be fixed later.
       var vertices;
+      var localCreation = false;
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             return !Y.Lang.isNumber(boundingBox.x);
@@ -1087,6 +1092,10 @@ YUI.add('juju-topology-service', function(Y) {
           vertices = [];
         }
         Y.each(new_services, function(box) {
+          if (box.model.get('localCreation')) {
+            // box.model.set('localCreation', false);
+            localCreation = true;
+          }
           var existing = box.model.get('annotations') || {};
           if (!existing && !existing['gui-x']) {
             topo.get('env').update_annotations(
@@ -1111,7 +1120,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!vertices) {
           vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
         }
-        this.findAndSetCentroid(vertices);
+        this.findAndSetCentroid(vertices, localCreation);
       }
       // enter
       node
@@ -1157,14 +1166,16 @@ YUI.add('juju-topology-service', function(Y) {
     @param {array} vertices A list of vertices in the form [x, y].
     @return {undefined} Side effects only.
     */
-    findAndSetCentroid: function(vertices) {
+    findAndSetCentroid: function(vertices, preventPan) {
       var topo = this.get('component'),
               centroid = topoUtils.centroid(vertices);
       // The centroid is set on the topology object due to the fact that it is
       // used as a sigil to tell whether or not to pan to the point after the
       // first delta.
       topo.centroid = centroid;
-      topo.fire('panToPoint', {point: topo.centroid});
+      if (!preventPan) {
+        topo.fire('panToPoint', {point: topo.centroid});
+      }
     },
 
     /**
@@ -1374,6 +1385,7 @@ YUI.add('juju-topology-service', function(Y) {
       // The view option should not be used with the inspector.
       if (flags.serviceInspector) {
         serviceMenu.one('.view-service').hide();
+        serviceMenu.one('.destroy-service').hide();
       }
 
       if (box && !serviceMenu.hasClass('active')) {

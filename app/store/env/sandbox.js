@@ -852,13 +852,21 @@ YUI.add('juju-env-sandbox', function(Y) {
         'Series': function(attrs, self) {
           var db = self.get('state').db;
           var service = db.services.getById(attrs.service);
-          var charm = db.charms.getById(service.get('charm'));
-          return charm.get('series');
+          if (service) {
+            var charm = db.charms.getById(service.get('charm'));
+            return charm.get('series');
+          } else {
+            return null; // Probably unit/service was deleted.
+          }
         },
         'CharmURL': function(attrs, self) {
           var db = self.get('state').db;
           var service = db.services.getById(attrs.service);
-          return service.get('charm');
+          if (service) {
+            return service.get('charm');
+          } else {
+            return null; // Probably unit/service was deleted.
+          }
         },
         PublicAddress: 'public_address',
         PrivateAddress: 'private_address',

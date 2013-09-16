@@ -300,6 +300,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       });
 
       this.closeInspector();
+      ghostService.set('localCreation', true);
+      this.options.environment.createServiceInspector(ghostService);
     }
 
   };
