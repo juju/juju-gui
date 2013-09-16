@@ -193,7 +193,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var container = this.viewletManager.get('container'),
           ghostConfigNode = container.one(
-              '.service-configuration .ghost-config-content');
+              '.service-configuration');
 
       var textareas = ghostConfigNode.all('textarea'),
           inputs = ghostConfigNode.all('input');

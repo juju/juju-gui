@@ -236,7 +236,6 @@
             }
         }
         .toggle {
-            padding: 20px @inspector-main-padding;
 
             span {
                 display: inline-block;
@@ -420,11 +419,13 @@
             .border-box;
             position: relative;
             width: 100%;
+            padding-top: 20px;
             padding-bottom: 20px;
             border-top: 1px solid @inspector-divider-top;
             border-bottom: 1px solid @inspector-divider-bottom;
 
             &:first-child {
+                padding-top: 0;
                 border-top: none;
             }
             &:last-child {
@@ -432,7 +433,7 @@
                 border-bottom: none;
             }
             label {
-                margin: 20px 0 10px 0;
+                margin: 0 0 10px 0;
             }
             .settings-description {
                 margin-top: 12px;
@@ -452,10 +453,6 @@
        }
 
         .config-file {
-            padding: 20px @inspector-main-padding;
-            border-top: 1px solid @inspector-divider-top;
-            border-bottom: 1px solid @inspector-divider-bottom;
-
             input {
                 position: absolute;
                 top: 0;
@@ -473,6 +470,7 @@
                     right center no-repeat;
                 border: 1px solid #6B6B6B;
                 color: #fff;
+                cursor: pointer;
             }
         }
 
@@ -481,65 +479,23 @@
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
                 height: auto;
             }
-            .header-slot {
-                header {
-                    margin-bottom: 0;
-                    border-bottom: none;
+            &.use-defaults {
+                textarea,
+                input[type=text] {
+                    background-color: @disabled-input-background-color;
+                    border-color: @inspector-background-color;
+                    cursor: not-allowed;
+                    color: @disabled-input-text-color;
                 }
-            }
-            .config-file {
-                padding: 0 0 20px 0;
-                border-top: none;
-            }
-            .ghost-config-header {
-                height: 35px;
-                border-top: 1px solid @inspector-divider-top;
-                font-size: 16px;
-                font-weight: 200;
-                line-height: 35px;
-                padding-left: @inspector-main-padding;
-
-                .sprite {
-                    vertical-align: -2%;
-                    margin-right: 7px;
+                .fakebutton {
+                    color: @disabled-input-background-color;
+                    border-color: @disabled-input-background-color;
+                    cursor: default;
                 }
-            }
-            .ghost-config-content {
-                padding: @inspector-main-padding;
-                border-bottom: 1px solid @inspector-divider-bottom;
-
-                &.use-defaults {
-                    textarea,
-                    input[type=text] {
-                        background-color: @disabled-input-background-color;
-                        border-color: @inspector-background-color;
-                        cursor: not-allowed;
-                        color: @disabled-input-text-color;
-                    }
-                    .fakebutton {
-                        color: @disabled-input-background-color;
-                        border-color: @disabled-input-background-color;
-                        cursor: default;
-                    }
-                }
-            }
-            .ghost-config-wrapper.service-constraints .ghost-config-content {
-                padding-top: 0;
-            }
-            .destroy-service-trigger {
-                padding-top: 10px;
             }
             .service-config {
+                padding-top: 20px;
                 border-top: 1px solid @inspector-divider-top;
-            }
-            .viewlet-container {
-                margin-top: -1px;
-            }
-            .toggle {
-                padding-left: 0;
-                padding-right: 0;
-                border-top: 1px solid @inspector-divider-top;
-                border-bottom: 1px solid @inspector-divider-bottom;
             }
         }
 
@@ -723,14 +679,15 @@
             &.settings-config {
                 margin-bottom: @inspector-controls-height;
             }
-            h2 {
-                padding-left: 0;
-            }
             .view-content {
-                padding-bottom: 20px;
-                padding-left: @inspector-main-padding;
-                padding-right: @inspector-main-padding;
+                padding: 20px @inspector-main-padding;
                 border-top: 1px solid @inspector-divider-top;
+                border-bottom: 1px solid @inspector-divider-bottom;
+
+                &.join-top {
+                    padding-top: 10px;
+                    border-top: none;
+                }
             }
             .settings-wrapper {
                 position: relative;
@@ -832,8 +789,7 @@
             }
         }
         .destroy-service-trigger {
-            padding-left: @inspector-main-padding;
-            padding: 20px;
+            padding: 15px @inspector-main-padding;
             border-top: 1px solid @inspector-divider-top;
 
             span {
@@ -871,10 +827,20 @@
                 font-size: 16px;
                 font-weight: 200;
                 color: @charm-panel-configure-title-color;
+
+                .sprite {
+                    vertical-align: -2%;
+                    margin-right: 7px;
+                }
             }
             h3,
             h2 {
                 width: auto;
+            }
+            h2.join-bottom {
+                padding-top: 0;
+                padding-bottom: 0;
+                border-bottom: none;
             }
             .statusbar {
                 .create-border-radius(@border-radius);
