@@ -5,7 +5,7 @@
     </div>
     <div class="details-wrapper">
       {{#if ghost}}
-        <input type="text" class="service-name config-field" name="service-name"
+        <input type="text" class="service-name config-field {{invalidName}}" name="service-name"
                value="{{package_name}}">
       {{else}}
         <div data-bind="displayName" class="service-name">{{displayName}}</div>

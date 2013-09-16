@@ -774,6 +774,18 @@ YUI.add('juju-view-utils', function(Y) {
     return classes;
   };
 
+  /**
+    Checks the database for an existing service with the same name.
+
+    @method checkForExistingService
+    @param {String} serviceName of the new service to deploy.
+    @return {Boolean} true if it exists, false if doesn't.
+  */
+  utils.checkForExistingService = function(serviceName, db) {
+    var existingService = db.services.getById(serviceName);
+    return (existingService) ? true : false;
+  },
+
   utils.validate = function(values, schema) {
     var errors = {};
 
