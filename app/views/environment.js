@@ -183,7 +183,6 @@ YUI.add('juju-view-environment', function(Y) {
               },
               viewletEvents: {
                 // Viewlet wrapper viewlet.
-                '.settings-config button.confirm': { click: 'saveConfig'},
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
@@ -196,11 +195,15 @@ YUI.add('juju-view-environment', function(Y) {
                 '.confirm-num-units': { click: '_confirmUnitChange'},
                 'a.edit-constraints': { click: '_showEditUnitConstraints'},
                 // Settings viewlet.
+                '.settings-config button.confirm': { click: 'saveConfig'},
+                '.settings-config button.cancel': { click: 'cancelConfig'},
                 'input.expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 // Constraints viewlet.
                 '.save-constraints': {click: 'saveConstraints'},
+                '.settings-constraints button.cancel': {
+                  click: 'cancelConstraints'},
                 // Overview units viewlet.
                 '.status-unit-header': {click: 'toggleUnitHeader'},
                 '.unit-details': { click: 'showUnit'},
