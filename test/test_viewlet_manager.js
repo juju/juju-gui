@@ -176,17 +176,14 @@ describe('Viewlet Manager', function() {
   });
 
   it('allows you to define your own hide method', function(done) {
-    generateViewletManager({ hide: function() {
+    generateViewletManager();
+    viewletManager.viewlets.serviceConfig.hide = function() {
       // Test passes by hitting done and getting called.
       done();
-    }});
+    };
 
     viewletManager.render();
     viewletManager.showViewlet('serviceConfig');
-
-    // Now render the constraints viewlet which runs hide on the serviceConfig
-    // viewlet.
-    viewletManager.showViewlet('constraints');
   });
 
   it('provides a sane default hide method', function() {
