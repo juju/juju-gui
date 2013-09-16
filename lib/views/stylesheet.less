@@ -60,6 +60,27 @@ Go forth and see the typography.less file and use those.
 @import "typography.less";
 
 /* Mixins */
+.animation (...) {
+    -webkit-animation: @arguments;
+    -moz-animation: @arguments;
+    -ms-animation: @arguments;
+    -o-animation: @arguments;
+    animation: @arguments;
+}
+.animation-fill-mode (...) {
+    -webkit-animation-fill-mode: @arguments;
+    -moz-animation-fill-mode: @arguments;
+    -ms-animation-fill-mode: @arguments;
+    -o-animation-fill-mode: @arguments;
+    animation-fill-mode: @arguments;
+}
+.transition (...) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -ms-transition: @arguments;
+    -o-transition: @arguments;
+    transition: @arguments;
+}
 .create-border-radius(@radius) {
     -moz-border-radius: @radius;
     -webkit-border-radius: @radius;
