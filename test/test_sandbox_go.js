@@ -374,6 +374,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('can remove a unit', function(done) {
+      state.deploy('cs:precise/wordpress-15', function() {
+        var data = {
+          Type: 'Client',
+          Request: 'DestroyServiceUnits',
+          Params: {
+            ServiceName: 'wordpress/0'
+          },
+          RequestId: 42
+        };
+        client.onmessage = function(received) {
+          var receivedData = Y.JSON.parse(received.data);
+          assert.equal(receivedData.RequestId, data.RequestId);
+          assert.deepEqual(receivedData.Error, []);
+          assert.equal(state.db.services.item(0).get('units').size(), 0);
+          done();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(data));
+      });
+    });
+
     it('can get a charm', function(done) {
       var data = {
         Type: 'Client',

@@ -136,6 +136,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     // it('can remove a unit', function() {
     //   PSA: tested via integration test in test_sandbox_python
+    //   If 
     // });
 
     it('can retry a problem with a unit using a callback', function(done) {
