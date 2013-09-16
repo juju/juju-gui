@@ -21,7 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Charmworld API v2 interface', function() {
-    var Y, models, conn, env, app, container, data, juju, utils, hostname;
+    var Y, models, conn, env, app, container, data, juju, utils, charmworld,
+        hostname;
 
 
     before(function(done) {
@@ -31,6 +32,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'juju-tests-utils',
           function(Y) {
             juju = Y.namespace('juju');
+            charmworld = Y.namespace('juju.charmworld');
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests').utils;
             done();
@@ -42,20 +44,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs the api url correctly based on apiHost', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname}),
+      var api = new charmworld.APIv2({apiHost: hostname}),
           ds = api.get('datasource');
 
       ds.get('source').should.eql(hostname + 'api/2/');
 
       // And it should work without a trailing / as well.
       hostname = hostname.slice(0, -1);
-      api = new Y.juju.Charmworld2({apiHost: hostname});
+      api = new charmworld.APIv2({apiHost: hostname});
       ds = api.get('datasource');
       ds.get('source').should.eql(hostname + '/api/2/');
     });
 
     it('handles loading interesting content correctly', function(done) {
-      var api = new Y.juju.Charmworld2({apiHost: hostname}),
+      var api = new charmworld.APIv2({apiHost: hostname}),
           data = [];
 
       data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
@@ -73,7 +75,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles searching correctly', function(done) {
-      var api = new Y.juju.Charmworld2({apiHost: hostname}),
+      var api = new charmworld.APIv2({apiHost: hostname}),
           data = [],
           url;
       data.push({responseText: Y.JSON.stringify({name: 'foo'})});
@@ -100,7 +102,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs filepaths correctly', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       assert.equal(
           iconPath,
@@ -108,7 +110,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs cateogry icon paths correctly', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       var iconPath = api.categoryIconPath('app-servers');
       assert.equal(
@@ -117,7 +119,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('makes charm requests to correct URL', function(done) {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(endpoint, 'charm/CHARM-ID');
@@ -128,7 +130,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can use a cache to avoid requesting charm data', function(done) {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       var should_not_happen = function() {
         assert.isTrue(false, 'Oops, this should not have been called.');
@@ -156,7 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('will make a request on a cache miss', function(done) {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       var should_not_happen = function() {
         assert.isTrue(false, 'Oops, this should not have been called.');
@@ -188,7 +190,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('makes autocomplete requests to correct URL', function(done) {
       var noop = function() {};
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(endpoint, 'charms');
@@ -200,7 +202,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('makes autocomplete requests with right query flag', function(done) {
       var noop = function() {};
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(filters.autocomplete, 'true');
@@ -211,47 +213,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs iconpaths correctly', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       var iconPath = api.iconpath('precise/mysql-1');
       assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('constructs an icon path for local charms', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
 
       var iconPath = api.iconpath('local:precise/mysql-1');
       assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
     });
 
     it('splits the charm id to remove cs: when necessary', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
       var iconPath = api.iconpath('cs:precise/mysql-1');
       assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
-    });
-
-    it('can normalize charm names for lookup', function() {
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
-      assert.equal(api.normalizeCharmId('wordpress', 'precise'),
-          'precise/wordpress-1');
-      assert.equal(api.normalizeCharmId('precise/wordpress', 'precise'),
-          'precise/wordpress-1');
-      assert.equal(api.normalizeCharmId('precise/wordpress'),
-          'precise/wordpress-1');
-      assert.equal(api.normalizeCharmId('precise/wordpress-10'),
-          'precise/wordpress-10');
-      assert.equal(api.normalizeCharmId('cs:precise/wordpress-10'),
-          'precise/wordpress-10');
-      assert.equal(api.normalizeCharmId('precise/wordpress-HEAD'),
-          'precise/wordpress-HEAD');
-      assert.equal(api.normalizeCharmId('cs:precise/wordpress-HEAD'),
-          'precise/wordpress-HEAD');
     });
 
     it('can fetch a charm via a promise', function(done) {
       // The "promiseCharm" method is just a promise-wrapped version of the
       // "charm" method.
-      var api = new Y.juju.Charmworld2({apiHost: hostname});
+      var api = new charmworld.APIv2({apiHost: hostname});
       var DATA = 'DATA';
       var CHARM = 'CHARM';
       api.charm = function(charmID, callbacks) {
@@ -288,6 +272,49 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.isTrue(false, 'We should not get here');
             done();
           });
+    });
+
+  });
+
+  describe('Charmworld API Helper', function() {
+    var Y, models, conn, env, app, container, data, juju, utils, charmworld,
+        hostname;
+
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'datasource-local', 'json-stringify', 'juju-charm-store',
+          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
+          'juju-tests-utils',
+          function(Y) {
+            juju = Y.namespace('juju');
+            charmworld = Y.namespace('juju.charmworld');
+            models = Y.namespace('juju.models');
+            utils = Y.namespace('juju-tests').utils;
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      hostname = 'http://charmworld.example/';
+    });
+
+    it('can normalize charm names for lookup', function() {
+      var apiHelper = new charmworld.ApiHelper({});
+      assert.equal(apiHelper.normalizeCharmId('wordpress', 'precise'),
+          'precise/wordpress-1');
+      assert.equal(apiHelper.normalizeCharmId('precise/wordpress', 'precise'),
+          'precise/wordpress-1');
+      assert.equal(apiHelper.normalizeCharmId('precise/wordpress'),
+          'precise/wordpress-1');
+      assert.equal(apiHelper.normalizeCharmId('precise/wordpress-10'),
+          'precise/wordpress-10');
+      assert.equal(apiHelper.normalizeCharmId('cs:precise/wordpress-10'),
+          'precise/wordpress-10');
+      assert.equal(apiHelper.normalizeCharmId('precise/wordpress-HEAD'),
+          'precise/wordpress-HEAD');
+      assert.equal(apiHelper.normalizeCharmId('cs:precise/wordpress-HEAD'),
+          'precise/wordpress-HEAD');
     });
 
   });

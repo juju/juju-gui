@@ -182,11 +182,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       renderTo: {},
 
       /**
-       * The Charmworld2 Api store instance for loading content.
+       * The Charmworld API store instance for loading content.
        *
        * @attribute store
        * @default undefined
-       * @type {Charmworld2}
+       * @type {Object}
        */
       store: {}
     }

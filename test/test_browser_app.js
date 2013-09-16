@@ -74,7 +74,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('must correctly render the initial browser ui', function() {
         var container = Y.one('#subapp-browser');
         view = new FullScreen({
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           })
         });
@@ -107,7 +107,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('must show the home icons when withHome is set', function() {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
 
         view = new FullScreen({
           store: fakeStore,
@@ -121,7 +121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('shows the home icons if the withHome is changed', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
 
         view = new FullScreen({
           store: fakeStore
@@ -139,7 +139,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new FullScreen({
           store: fakeStore
         });
@@ -158,7 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('resets charmid and hash on search', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new FullScreen({
           charmID: 'precise/jenkins-13'
         });
@@ -281,7 +281,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
           container: container,
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           })
         });
@@ -324,7 +324,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('shows the home icon when instructed', function() {
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
-          store: new Y.juju.Charmworld2({
+          store: new Y.juju.charmworld.APIv2({
             apiHost: 'http://localhost'
           }),
           withHome: true
@@ -355,7 +355,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.Charmworld2({});
+            fakeStore = new Y.juju.charmworld.APIv2({});
         view = new Sidebar({
           store: fakeStore
         });
@@ -377,7 +377,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, Charmworld2, container, next;
+      var Y, app, browser, CharmworldAPI, container, next;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -388,7 +388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              Charmworld2 = Y.namespace('juju').Charmworld2;
+              CharmworldAPI = Y.namespace('juju').charmworld.APIv2;
               next = function() {};
               done();
             });
@@ -516,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id routes to the default view correctly', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new CharmworldAPI({
             'apiHost': 'http://localhost'
           })
         });
@@ -534,7 +534,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id handles routes for new charms correctly', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new CharmworldAPI({
             'apiHost': 'http://localhost'
           })
         });
@@ -613,7 +613,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('/charm/id router ignores other urls', function() {
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new CharmworldAPI({
             'apiHost': 'http://localhost',
             'noop': true
           })
@@ -642,7 +642,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             editorialCleaned = false;
 
         app = new browser.Browser({
-          store: new Charmworld2({
+          store: new CharmworldAPI({
             'apiHost': 'http://localhost',
             'noop': true
           })

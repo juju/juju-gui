@@ -1356,8 +1356,8 @@ YUI.add('juju-gui', function(Y) {
       },
       /**
          @attribute store
-         @default Charmworld2
-         @type {Charmworld2}
+         @default Y.juju.charmworld.APIv2
+         @type {Y.juju.charmworld.APIv2}
        */
       store: {
         /**
@@ -1379,7 +1379,7 @@ YUI.add('juju-gui', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld2(cfg);
+          return new Y.juju.charmworld.APIv2(cfg);
         }
       },
 

@@ -386,7 +386,7 @@ YUI.add('juju-charm-models', function(Y) {
 
 
   /**
-   * Model to represent the Charms from the Charmworld2 Api.
+   * Model to represent the Charms from the Charmworld API.
    *
    * @class BrowserCharm
    * @extends {Y.Model}
@@ -796,8 +796,9 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
-       * This can be removed when Charmworld2 is the one true model used in
-       * all Juju Gui code.
+       *
+       * This can be removed when juju.charmworld is the one true provider of
+       * models used in all Juju Gui code.
        *
        * @attribute provides
        * @default undefined
@@ -901,8 +902,8 @@ YUI.add('juju-charm-models', function(Y) {
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
        *
-       * This can be removed when Charmworld2 is the one true model used in
-       * all Juju Gui code.
+       * This can be removed when juju.charmworld is the one true provider of
+       * models used in all Juju Gui code.
        *
        * @attribute requires
        * @default undefined

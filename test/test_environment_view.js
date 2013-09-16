@@ -113,7 +113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = juju.newEnvironment({conn: conn});
         env.connect();
         conn.open();
-        fakeStore = new Y.juju.Charmworld2({});
+        fakeStore = new Y.juju.charmworld.APIv2({});
         fakeStore.iconpath = function() {
           return 'charm icon url';
         };
@@ -1195,7 +1195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets the default icon for local charms without an icon', function() {
-      var iconFakeStore = new Y.juju.Charmworld2({
+      var iconFakeStore = new Y.juju.charmworld.APIv2({
         apiHost: 'http://localhost'
       });
       var services = new models.ServiceList();
