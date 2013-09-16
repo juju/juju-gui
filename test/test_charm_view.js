@@ -90,7 +90,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       CharmView = juju.views.charm;
-      fakeStore = new Y.juju.Charmworld2({});
+      fakeStore = new Y.juju.charmworld.APIv2({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value

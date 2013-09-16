@@ -69,7 +69,7 @@ describe('Ghost Inspector', function() {
     // Create a ghost service with the fake charm.
     service = db.services.ghostService(charm);
 
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function(id) {
       return '/icon/' + id;
     };
@@ -207,7 +207,7 @@ describe('Ghost Inspector', function() {
       function() {
         function testDisabled(hasAttr) {
           var settings = vmContainer.one(
-              '.service-configuration .ghost-config-content');
+              '.service-configuration .service-config');
           var inputs = settings.all('textarea');
           inputs.each(function(input) {
             assert.equal(input.hasAttribute('disabled'), hasAttr,
@@ -252,7 +252,7 @@ describe('Ghost Inspector', function() {
 
   it('renders into the dom when instantiated', function() {
     inspector = setUpInspector();
-    assert.isObject(container.one('.ghost-config-wrapper'));
+    assert.isObject(container.one('.view-content'));
 
     // Basic sanity checks of the rendering.
     // The debug checkbox must start out disabled.
@@ -270,7 +270,7 @@ describe('Ghost Inspector', function() {
 
   it('syncs checkbox state with the visible ui', function() {
     inspector = setUpInspector();
-    assert.isObject(container.one('.ghost-config-wrapper'));
+    assert.isObject(container.one('.view-content'));
     // We need to enable the checkboxes before we can test them because
     // disabled checkboxes fire no events.
     var input = container.one('input[name=debug]');
@@ -297,7 +297,7 @@ describe('Ghost Inspector', function() {
     delete charmData.charm.options;
     inspector = setUpInspector();
     // Verify the viewlet rendered, previously it would raise.
-    assert.isObject(container.one('.ghost-config-wrapper'));
+    assert.isObject(container.one('.view-content'));
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
   });

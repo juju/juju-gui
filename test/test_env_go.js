@@ -1335,6 +1335,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(msg.Params.Retry);
     });
 
+    it('can remove a unit', function() {
+      var unit_name = 'mysql/0';
+      env.remove_units([unit_name]);
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'DestroyServiceUnits');
+      assert.deepEqual(msg.Params.UnitNames, ['mysql/0']);
+    });
+
     it('can provide a callback', function(done) {
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true, function(result) {

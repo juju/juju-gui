@@ -93,7 +93,7 @@ describe('Inspector Settings', function() {
         ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
       ]}});
     }
-    var fakeStore = new Y.juju.Charmworld2({});
+    var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };

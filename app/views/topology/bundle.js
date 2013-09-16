@@ -288,7 +288,7 @@ YUI.add('juju-view-bundle', function(Y) {
     }
     this.store = options.store;
     if (!this.store) {
-      this.store = new juju.Charmworld2({});
+      this.store = new juju.charmworld.APIv2({});
       this._cleanups.push(this.store.destroy);
     }
     this.container = options.container;

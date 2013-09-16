@@ -1,61 +1,54 @@
-<div>
+<div class="view-container">
   {{#unless is_subordinate}}
-  <div class="ghost-config-wrapper">
-    <div class="ghost-config-header">
-        <i class="sprite inspector_status"></i>
-        Service details
-    </div>
-    <div class="ghost-config-content">
-      <input class="config-field" type="text" name="number-units" value="1"/>
-      <label for="number-units" class="text-in-input">Minimum units</label>
-    </div>
+  <h2 class="join-bottom">
+      <i class="sprite inspector_status"></i>
+      Service details
+  </h2>
+  <div class="view-content join-top">
+    <input class="config-field" type="text" name="number-units" value="1"/>
+    <label for="number-units" class="text-in-input">Minimum units</label>
   </div>
   {{/unless}}
 
   {{#if constraints}}
   <!-- Service Constraints added in -->
-  <div class="ghost-config-wrapper service-constraints">
-    <div class="ghost-config-header">
-        <i class="sprite inspector_constraints"></i>
-        Constraints
-    </div>
-    <div class="ghost-config-content">
-      {{> service-constraints-viewlet}}
-    </div>
+  <h2 class="join-bottom">
+    <i class="sprite inspector_constraints"></i>
+    Constraints
+  </h2>
+  <div class="view-content join-top service-constraints">
+    {{> service-constraints-viewlet}}
   </div>
   {{/if}}
 
   {{#if settings}}
   <!-- Service configuration form -->
-  <div class="ghost-config-wrapper service-configuration">
-    <div class="ghost-config-header">
-        <i class="sprite inspector_configuration"></i>
-        Configuration
+  <h2 class="join-bottom">
+    <i class="sprite inspector_configuration"></i>
+    Configuration
+  </h2>
+  <div class="view-content join-top service-configuration use-defaults">
+    <div class="config-file settings-wrapper">
+      <input type="file" id="config-file">
+      <div class="fakebutton">Import config file...</div>
     </div>
-    <div class="ghost-config-content use-defaults">
-      <div class="config-file">
-        <input type="file" id="config-file">
-        <div class="fakebutton">Import config file...</div>
+    <div class="toggle settings-wrapper">
+      <label>Use the default configuration?</label>
+      <div class="toggle-switch">
+        <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
+        <label for="use-default-toggle">
+          <div class="handle"></div>
+        </label>
       </div>
-
-      <div class="toggle settings-wrapper">
-        <label>Use the default configuration?</label>
-        <div class="toggle-switch">
-          <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
-          <label for="use-default-toggle">
-            <div class="handle"></div>
-          </label>
-        </div>
-        <div class="textvalue">true</div>
-        <!-- Clear the floating slider/texvalue. -->
-        <div class="clearall"></div>
-      </div>
-      <form class="charm-settings">
-        <div class="service-config">
-          {{> service-configuration}}
-        </div>
-      </form>
+      <div class="textvalue">true</div>
+      <!-- Clear the floating slider/texvalue. -->
+      <div class="clearall"></div>
     </div>
+    <form class="charm-settings">
+      <div class="service-config">
+        {{> service-configuration}}
+      </div>
+    </form>
   </div>
   {{/if}}
 
