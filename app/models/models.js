@@ -1253,7 +1253,7 @@ YUI.add('juju-models', function(Y) {
             result.push({name: endpoint.type});
             return [endpoint.name, {name: endpoint.type}];
           });
-      var relation = this.relations.create({
+      var relation = this.relations.add({
         relation_id: relationId,
         type: match['interface'],
         endpoints: endpoints,

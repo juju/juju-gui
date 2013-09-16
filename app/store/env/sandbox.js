@@ -599,6 +599,8 @@ YUI.add('juju-env-sandbox', function(Y) {
      */
     performOp_importDeployer: function(data) {
       ASYNC_OP(this, 'importDeployer', ['YAMLData', 'name'])(data);
+      // Explicitly trigger a delta after an import.
+      this.sendDelta();
     },
 
 
