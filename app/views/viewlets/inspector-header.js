@@ -48,12 +48,12 @@ YUI.add('viewlet-inspector-header', function(Y) {
 
       // Check if there is already a service using the default name to
       // trigger the name ux.
-      if (utils.checkForExistingService(
-          pojoModel.name, viewContainerAttrs.db)) {
-            pojoModel.invalidName = 'invalid';
-          } else {
-            pojoModel.invalidName = 'valid';
-          }
+      if (utils.checkForExistingService(pojoModel.name,
+          viewContainerAttrs.db)) {
+        pojoModel.invalidName = 'invalid';
+      } else {
+        pojoModel.invalidName = 'valid';
+      }
 
       this.container.setHTML(this.template(pojoModel));
     }

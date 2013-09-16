@@ -784,7 +784,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.checkForExistingService = function(serviceName, db) {
     var existingService = db.services.getById(serviceName);
     return (existingService) ? true : false;
-  },
+  };
 
   utils.validate = function(values, schema) {
     var errors = {};

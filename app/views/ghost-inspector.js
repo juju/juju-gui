@@ -173,7 +173,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      var valid = utils.checkForExistingService(e.newVal, this.options.db)
+      var valid = utils.checkForExistingService(e.newVal, this.options.db);
       if (!valid) {
         // By updating the id of the ghost service model we are causing d3
         // to think that we have removed the old service and created a new
