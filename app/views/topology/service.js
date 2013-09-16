@@ -108,6 +108,9 @@ YUI.add('juju-topology-service', function(Y) {
         // current drag supercedes any previous annotations).
         var localCreation = d.model.get('localCreation');
         if (localCreation) {
+          // This flag has served its purpose, at initialization time on the
+          // canvas.  Remove it, so future changes will have the usual
+          // behavior.
           d.model.set('localCreation', false);
         }
         if (!d.inDrag) {
