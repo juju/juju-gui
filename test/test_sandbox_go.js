@@ -398,7 +398,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it.only('can remove a unit (environment integration)', function(done) {
+    it('can remove a unit (environment integration)', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-15', function() {
         var callback = function(result) {
