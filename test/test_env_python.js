@@ -134,6 +134,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       msg.retry.should.equal(true);
     });
 
+    it('can remove a unit', function() {
+        // tested via integration test in test_sandbox_python
+    });
+
     it('can retry a problem with a unit using a callback', function(done) {
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true, function(result) {
