@@ -32,14 +32,16 @@
       <input type="file" id="config-file">
       <div class="fakebutton">Import config file...</div>
     </div>
-
     <div class="toggle settings-wrapper">
-      <span>Use default configuration?</span>
+      <label>Use the default configuration?</label>
       <div class="toggle-switch">
         <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
         <label for="use-default-toggle">
           <div class="handle"></div>
         </label>
+        <div class="textvalue">true</div>
+        <!-- Clear the floating slider/texvalue. -->
+        <div class="clearall"></div>
       </div>
     </div>
     <form class="charm-settings">

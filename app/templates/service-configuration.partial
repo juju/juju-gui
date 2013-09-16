@@ -3,21 +3,26 @@
   <div class="view-content">
 {{/unless}}
 {{#settings}}
-  <div class="settings-wrapper">
+    <div class="{{#if isBool}}toggle{{/if}} settings-wrapper">
     {{#if isBool}}
-      <label for="input-{{name}}">
-        <span>{{name}}</span>
-        <input
-          class="config-field boolean"
-          type="checkbox"
-          name="{{name}}"
-          id="input-{{name}}"
-          data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
-          {{value}}
-          {{#if ../../ghost}}disabled{{/if}}
-        />
-      {{>conflict-ux}}
-      </label>
+            <label for="input-{{name}}">{{name}}</label>
+
+            <div class="toggle-switch toggle-{{name}}">
+                <input type="checkbox"
+                       name="{{name}}"
+                       class="hidden-checkbox {{name}}-toggle config-field"
+                       data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
+                       {{#if_eq value 'checked'}}checked="checked"{{/if_eq}}
+                       {{#if ../../ghost}}disabled{{/if}}
+                       id="input-{{name}}">
+                <label for="input-{{name}}" class="light">
+                  <div class="handle"></div>
+                </label>
+            </div>
+            <div class="textvalue"
+                 data-skipconflictux=true
+                 data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}">
+                 {{#if_eq value 'checked'}}true{{else}}false{{/if_eq}}</div>
     {{else}}
       {{#if isNumeric}}
         <label for="input-{{name}}">{{name}} ({{type}})</label>

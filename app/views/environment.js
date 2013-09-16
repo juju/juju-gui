@@ -183,7 +183,6 @@ YUI.add('juju-view-environment', function(Y) {
               },
               viewletEvents: {
                 // Viewlet wrapper viewlet.
-                '.settings-config button.confirm': { click: 'saveConfig'},
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
@@ -196,18 +195,25 @@ YUI.add('juju-view-environment', function(Y) {
                 '.confirm-num-units': { click: '_confirmUnitChange'},
                 'a.edit-constraints': { click: '_showEditUnitConstraints'},
                 // Settings viewlet.
+                '.settings-config button.confirm': { click: 'saveConfig'},
+                '.settings-config button.cancel': { click: 'cancelConfig'},
                 'input.expose-toggle': { click: 'toggleExpose' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 // Constraints viewlet.
                 '.save-constraints': {click: 'saveConstraints'},
+                '.settings-constraints button.cancel': {
+                  click: 'cancelConstraints'},
                 // Overview units viewlet.
                 '.status-unit-header': {click: 'toggleUnitHeader'},
                 '.unit-details': { click: 'showUnit'},
                 '.toggle-select-all': {click: 'toggleSelectAllUnits'},
                 'a[data-unit]': { click: 'showUnitDetails'},
                 'button.unit-action-button': { click: '_unitActionButtonClick'},
-                '.upgrade-link': { click: 'upgradeService' }
+                '.upgrade-link': { click: 'upgradeService' },
+                // Used by the config viewlet for keeping the checkbox values
+                // in sync across the slider/checkbox/text representation.
+                '.hidden-checkbox': {change: 'onCheckboxUpdate'}
               },
               viewletList: [
                 'overview', // Default viewlet first.
@@ -234,14 +240,17 @@ YUI.add('juju-view-environment', function(Y) {
               // manager's events for final binding
               viewletEvents: {
                 '.charm-url': {click: 'onShowCharmDetails'},
-                '.confirm': { 'click': 'deployCharm' },
+                '.confirm': { click: 'deployCharm' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},
                 '.config-file input[type=file]': { change: 'handleFileChange'},
                 'input[name=service-name]': { valuechange: 'updateGhostName' },
-                '.initiate-destroy': {'click': '_onInitiateDestroy'},
-                '.cancel-destroy': {'click': '_onCancelDestroy'},
-                '.destroy-service-trigger span': {'click': '_onDestroyClick'},
-                'input#use-default-toggle': {'change': 'setDefaultSettings'}
+                '.initiate-destroy': {click: '_onInitiateDestroy'},
+                '.cancel-destroy': {click: '_onCancelDestroy'},
+                '.destroy-service-trigger span': {click: '_onDestroyClick'},
+                'input#use-default-toggle': {change: 'setDefaultSettings'},
+                // Used by the config viewlet for keeping the checkbox values
+                // in sync across the slider/checkbox/text representation.
+                '.hidden-checkbox': {change: 'onCheckboxUpdate'}
               },
               // the configuration for the view manager template
               templateConfig: {

@@ -475,6 +475,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
                 node, statuses, this.viewlet.options.db.environment);
           }
         }
+      },
+      exposed: {
+        'update': function(node, val) {
+          // On exposed, the node is the container of the input we want to
+          // change.
+          var input = node.one('input');
+          if (input) {
+            input.set('checked', val);
+          }
+        }
       }
     },
     // These methods are exposed here to allow us access for testing.
