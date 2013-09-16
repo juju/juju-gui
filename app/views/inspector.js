@@ -782,7 +782,7 @@ YUI.add('juju-view-inspector', function(Y) {
             newVals,
             null,
             service.get('config'),
-            Y.bind(this._setConfigCallback, this, container)
+            Y.bind(this._setConfigCallback, this, container, newVals)
         );
       } else {
         db.notifications.add(
@@ -805,7 +805,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.Node} container of the viewlet-manager.
       @param {Y.EventFacade} e yui event object.
     */
-    _setConfigCallback: function(container, e) {
+    _setConfigCallback: function(container, config, e) {
       // If the user has conflicted fields and still chooses to
       // save, then we will be overwriting the values in Juju.
       if (e.err) {
@@ -819,10 +819,22 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         this._highlightSaved(container);
+        this.viewletManager.get('model').set('config', config);
         var bindingEngine = this.viewletManager.bindingEngine;
-        bindingEngine.clearChangedValues('config');
+        bindingEngine.resetDOMToModel('config');
       }
       container.one('.controls .confirm').removeAttribute('disabled');
+    },
+
+    /**
+      Cancel any configuration changes.
+
+      @method cancelConfig
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConfig: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('config');
     },
 
     /**
@@ -845,7 +857,8 @@ YUI.add('juju-view-inspector', function(Y) {
       // Disable the "Save" button while the RPC call is outstanding.
       container.one('.save-constraints').set('disabled', 'disabled');
       // Set up the set_constraints callback and execute the API call.
-      var callback = Y.bind(this._saveConstraintsCallback, this, container);
+      var callback = Y.bind(
+          this._saveConstraintsCallback, this, container, constraints);
       env.set_constraints(service.get('id'), constraints, callback);
     },
 
@@ -859,7 +872,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Y.EventFacade} ev An event object.
       @return {undefined} Nothing.
     */
-    _saveConstraintsCallback: function(container, ev) {
+    _saveConstraintsCallback: function(container, constraints, ev) {
       if (ev.err) {
         // Notify an error occurred while updating constraints.
         var db = this.viewletManager.get('db');
@@ -874,10 +887,22 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         this._highlightSaved(container);
+        this.viewletManager.get('model').set('constraints', constraints);
         var bindingEngine = this.viewletManager.bindingEngine;
-        bindingEngine.clearChangedValues('constraints');
+        bindingEngine.resetDOMToModel('constraints');
       }
       container.one('.save-constraints').removeAttribute('disabled');
+    },
+
+    /**
+      Cancel any constraint changes.
+
+      @method cancelConstraints
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConstraints: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('constraints');
     },
 
     /**
@@ -1026,7 +1051,10 @@ YUI.add('juju-view-inspector', function(Y) {
       var unitNames = [];
       units.each(function(unit) {
         if (unit.get('checked')) {
-          unitNames.push(unit.siblings('a').get('innerHTML'));
+          var siblings = unit.siblings('a');
+          if (siblings.size() > 0) {
+            unitNames.push(siblings.item(0).get('innerHTML'));
+          }
         }
       });
 
@@ -1218,11 +1246,13 @@ YUI.add('juju-view-inspector', function(Y) {
       }
     },
 
-    'conflict': function(node, model, viewletName, resolve, binding) {
+    'conflict': function(node, nodeValue, modelValue, resolve, binding) {
       // Not all nodes need to show the conflict ux. This is true when
       // multiple binds to a single model field are set, such as in the
       // checkbox widgets used in the inspector.
       if (node.getData('skipconflictux')) {
+        // We're assuming that another node will handle resolving the
+        // field.
         return;
       }
       /**
@@ -1231,9 +1261,6 @@ YUI.add('juju-view-inspector', function(Y) {
       */
       var option;
       var viewlet = this;
-      var key = node.getData('bind');
-      var modelValue = model.get(key);
-      var field = binding.field;
       var wrapper = node.ancestor('.settings-wrapper');
       var resolver = wrapper.one('.resolver');
       if (resolver) {
@@ -1241,23 +1268,13 @@ YUI.add('juju-view-inspector', function(Y) {
       }
       var handlers = [];
 
-      if (binding.annotations.conflict) {
-        binding.annotations.conflict.cancel();
-      }
-
-      binding.annotations.conflict = {
-        /**
-          Cancel this conflict handling UX.
-
-          @method cancel
-        */
-        cancel: function() {
-          handlers.forEach(function(h) { h.detach();});
-          viewlet._clearModified(node);
-          viewlet._clearConflictPending(node);
-          viewlet._clearConflict(node);
+      resolve.cleanup = function() {
+        handlers.forEach(function(h) { h.detach();});
+        viewlet._clearModified(node);
+        viewlet._clearConflictPending(node);
+        viewlet._clearConflict(node);
+        if (resolver) {
           resolver.addClass('hidden');
-          delete binding.annotations.conflict;
         }
       };
       /**
@@ -1267,12 +1284,10 @@ YUI.add('juju-view-inspector', function(Y) {
        */
       function sendResolve(e) {
         e.halt(true);
-        binding.annotations.conflict.cancel();
         if (e.currentTarget.hasClass('conflicted-env')) {
           resolve(modelValue);
         } else {
-          var formValue = field.get(node);
-          resolve(formValue);
+          resolve(binding.field.get(node));
         }
       }
 
@@ -1295,9 +1310,14 @@ YUI.add('juju-view-inspector', function(Y) {
       this._clearModified(node);
       this._makeConflictPending(node);
 
-      handlers.push(wrapper.delegate(
-          'click', setupResolver, '.conflict-pending'));
-      handlers.push(wrapper.delegate('click', sendResolve, '.conflict'));
+      if (option) {
+        handlers.push(wrapper.delegate(
+            'click', setupResolver, '.conflict-pending'));
+        handlers.push(wrapper.delegate('click', sendResolve, '.conflict'));
+      } else {
+        handlers.push(wrapper.delegate(
+            'click', sendResolve, '.conflict-pending'));
+      }
     },
 
     'unsyncedFields': function() {
@@ -1312,10 +1332,6 @@ YUI.add('juju-view-inspector', function(Y) {
       var controls = this.container.one('.controls');
       var node = controls.one('.confirm');
       var title = node.getData('originalText');
-      // For checkboxes remove their modified nodes.
-      this.container.all('.modified.boolean').remove();
-      // All else remove their modified class
-      this.container.all('.modified').removeClass('modified');
       if (title) {
         node.setHTML(title);
       }

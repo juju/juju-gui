@@ -212,7 +212,7 @@ describe('Inspector Conflict UX', function() {
           1,
           'missing modified node');
 
-      service.set('config', {debug: false});
+      service.set('config', {debug: true});
       assert.equal(
           parentNode.all('.conflict-pending').size(),
           1,
@@ -226,10 +226,8 @@ describe('Inspector Conflict UX', function() {
       // changing the checkbox again.
       modifyAndWaitHandler.detach();
 
-      input.simulate('click');
-      // Uncheck the box to match the conflict state.
-      input.set('checked', false);
-      input.simulate('change');
+      // Click the conflict-pending marker to clear the conflict.
+      parentNode.one('.conflict-pending').simulate('click');
 
       // Verify the form is updated.
       assert.equal(

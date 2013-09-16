@@ -32,16 +32,6 @@ YUI.add('viewlet-service-config', function(Y) {
     name: 'config',
     template: templates['service-configuration'],
     bindings: {
-      exposed: {
-        'update': function(node, val) {
-          // On exposed, the node is the container of the input we want to
-          // change.
-          var input = node.one('input');
-          if (input) {
-            input.set('checked', val);
-          }
-        }
-      },
       config: {
         // On update make sure undefined isn't sent to the user as viewable
         // input.
