@@ -156,6 +156,54 @@ describe('Viewlet Manager', function() {
     });
   });
 
+  it('allows you to define your own show method', function(done) {
+    generateViewletManager({ show: function() {
+      // Test passes by hitting done and getting called.
+      done();
+    }});
+    viewletManager.render();
+    viewletManager.showViewlet('serviceConfig');
+  });
+
+  it('provides a sane default show method', function() {
+    generateViewletManager();
+    viewletManager.render();
+    var managerContainer = viewletManager.get('container');
+    var wrapper = managerContainer.one('.viewlet-wrapper');
+    assert.equal(wrapper.getComputedStyle('display'), 'none');
+    viewletManager.showViewlet('serviceConfig');
+    assert.equal(wrapper.getComputedStyle('display'), 'block');
+  });
+
+  it('allows you to define your own hide method', function(done) {
+    generateViewletManager({ hide: function() {
+      // Test passes by hitting done and getting called.
+      done();
+    }});
+
+    viewletManager.render();
+    viewletManager.showViewlet('serviceConfig');
+
+    // Now render the constraints viewlet which runs hide on the serviceConfig
+    // viewlet.
+    viewletManager.showViewlet('constraints');
+  });
+
+  it('provides a sane default hide method', function() {
+    generateViewletManager();
+
+    viewletManager.render();
+    viewletManager.showViewlet('serviceConfig');
+
+    var container = viewletManager.viewlets.serviceConfig.container;
+    assert.equal(container.getComputedStyle('display'), 'block');
+
+    // Now render the constraints viewlet which runs hide on the serviceConfig
+    // viewlet.
+    viewletManager.showViewlet('constraints');
+    assert.equal(container.getComputedStyle('display'), 'none');
+  });
+
   it('passes model and attrs to the viewlet render method', function() {
     var render = function(model, attrs) {
       assert.deepEqual(viewletManager.get('model'), model);

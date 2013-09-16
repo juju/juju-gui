@@ -52,6 +52,15 @@ YUI.add('viewlet-service-config', function(Y) {
               val = '';
             }
             node.set('value', val);
+
+            if (node.resizingTextarea) {
+              // We're hacking into the private method because the extension
+              // wasn't designed with the idea that there could be a
+              // non-user interface driven change. If the databinding value
+              // changes we need to update/resize things and we can't simulate
+              // a valueChange event.
+              node.resizingTextarea._run_change(val);
+            }
           }
         }
       }
@@ -80,11 +89,33 @@ YUI.add('viewlet-service-config', function(Y) {
             service: service,
             settings: templatedSettings,
             exposed: service.get('exposed')}));
-      this.container.all('textarea.config-field')
-          .plug(plugins.ResizingTextarea,
-                { max_height: 200,
-                  min_height: 18,
-                  single_line: 18});
+      this.container.all('textarea.config-field').each(function(n) {
+        n.plug(plugins.ResizingTextarea, {
+          max_height: 200,
+          min_height: 18,
+          single_line: 18
+        });
+      });
+    },
+
+    /**
+     * Force resize the config textareas.
+     * ResizingTextarea needs the nodes to be visible to resize properly. We
+     * hook into the show() so that we can force the resize once the node is
+     * made visible via its viewlet container. Note that there are dupe hidden
+     * textarea nodes so we need to check if the node found has the plugin on
+     * it before running resize.
+     *
+     * @method show
+     *
+     */
+    show: function() {
+      this.container.show();
+      this.container.all('textarea.config-field').each(function(n) {
+        if (n.resizingTextarea) {
+          n.resizingTextarea.resize();
+        }
+      });
     }
 
   };
