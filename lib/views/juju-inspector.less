@@ -705,19 +705,21 @@
             handle which it sometimes covers */
             z-index: 502;
         }
-
+        .settings-constraints,
+        .settings-config {
+            margin-bottom: @inspector-controls-height;
+        }
         .view-container {
             margin-top: -1px;
 
-            &.settings-constraints,
-            &.settings-config {
-                margin-bottom: @inspector-controls-height;
-            }
             .view-content {
                 padding: 20px @inspector-main-padding;
                 border-top: 1px solid @inspector-divider-top;
                 border-bottom: 1px solid @inspector-divider-bottom;
 
+                &:last-child {
+                    border-bottom: none;
+                }
                 &.join-top {
                     padding-top: 10px;
                     border-top: none;
