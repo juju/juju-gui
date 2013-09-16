@@ -45,6 +45,16 @@ YUI.add('viewlet-inspector-header', function(Y) {
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
       pojoModel.icon = viewContainerAttrs.store.iconpath(pojoModel.charmUrl);
+
+      // Check if there is already a service using the default name to
+      // trigger the name ux.
+      if (utils.checkForExistingService(pojoModel.name,
+          viewContainerAttrs.db)) {
+        pojoModel.invalidName = 'invalid';
+      } else {
+        pojoModel.invalidName = 'valid';
+      }
+
       this.container.setHTML(this.template(pojoModel));
     }
   };

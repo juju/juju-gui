@@ -156,6 +156,16 @@
             padding-left: 10px;
             padding-right: 10px;
             border: none;
+            background-position: right;
+            background-repeat: no-repeat;
+
+            &.valid {
+                background-image: url(/juju-ui/assets/images/form-validation-tick.png);
+            }
+
+            &.invalid {
+                background-image: url(/juju-ui/assets/images/form-validation-cross.png);
+            }
         }
         textarea {
             margin: 0;
