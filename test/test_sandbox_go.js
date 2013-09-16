@@ -387,12 +387,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         client.onmessage = function(received) {
           var receivedData = Y.JSON.parse(received.data);
           assert.equal(receivedData.RequestId, data.RequestId);
+          // fakebackend defaults error and warning to [] which carries
+          // through.
           assert.deepEqual(receivedData.Error, []);
           assert.equal(state.db.services.item(0).get('units').size(), 0);
           done();
         };
         client.open();
         client.send(Y.JSON.stringify(data));
+      });
+    });
+
+    it.only('can remove a unit (environment integration)', function(done) {
+      env.connect();
+      state.deploy('cs:precise/wordpress-15', function() {
+        var callback = function(result) {
+          // fakebackend defaults error and warning to [] which carries
+          // through.
+          assert.deepEqual(result.err, []);
+          assert.equal(state.db.services.item(0).get('units').size(), 0);
+          done();
+        };
+        env.remove_units('wordpress/0', callback);
       });
     });
 
