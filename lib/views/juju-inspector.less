@@ -311,6 +311,7 @@
         }
         .destroy-service-prompt,
         .controls {
+            .transition(.25s, max-height .3s);
             overflow: hidden;
             max-height: @inspector-controls-height;
             padding: 0 20px;
@@ -318,12 +319,10 @@
             border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
             overflow: hidden;
-            .transition(.25s, max-height .3s);
 
             &.closed {
                 max-height: 0;
             }
-
             &:before {
                 content: "";
                 display: block;
@@ -447,8 +446,7 @@
                 -webkit-hyphenate-after: 3;
                 hyphenate-lines: 3;
             }
-       }
-
+        }
         .config-file {
             input {
                 position: absolute;
@@ -457,7 +455,6 @@
                 visibility: hidden;
                 z-index: 0;
             }
-
             .fakebutton {
                 .create-border-radius(@border-radius);
                 z-index: 2;
@@ -470,7 +467,6 @@
                 cursor: pointer;
             }
         }
-
         .ghost {
             input[type=text] {
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
@@ -495,7 +491,6 @@
                 border-top: 1px solid @inspector-divider-top;
             }
         }
-
         /* Resetting panel styles. Can be removed after old inspector styles are
            removed. (ServiceInspector) */
         .charm-panel-configure {
@@ -835,11 +830,10 @@
         .destroy-service-prompt.closed {
             max-height: 0;
         }
-        .viewlet-wrapper{
+        .viewlet-wrapper {
             h4,
             h3,
-            h2,
-            legend {
+            h2 {
                 .border-box;
                 margin-bottom: 0;
                 padding: 10px @inspector-main-padding;
@@ -853,11 +847,6 @@
                     vertical-align: -2%;
                     margin-right: 7px;
                 }
-            }
-            h4,
-            h3,
-            h2 {
-                width: auto;
             }
             h2.join-bottom {
                 padding-top: 0;
