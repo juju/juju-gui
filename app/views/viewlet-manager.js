@@ -395,7 +395,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
         });
       }
       viewlet.show();
-      viewlet.container.show();
       this.recalculateHeight();
     },
 

@@ -52,6 +52,7 @@ YUI.add('viewlet-service-ghost', function(Y) {
         }
       }
     },
+
     /**
      * Viewlet standard render call.
      *
