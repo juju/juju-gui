@@ -300,6 +300,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
       });
 
       this.closeInspector();
+      // This flag is used twice in the service topology module as a marker
+      // to know that it should not move the service or the canvas around
+      // (as opposed to services received from the environment).
       ghostService.set('localCreation', true);
       this.options.environment.createServiceInspector(ghostService);
     }
