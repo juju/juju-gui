@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Inspector Settings', function() {
 
   var view, service, db, models, utils, juju, env, conn, container,
-      inspector, Y, jujuViews, exposeCalled, unexposeCalled, charmData;
+      inspector, Y, jujuViews, charmData;
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
@@ -39,20 +39,10 @@ describe('Inspector Settings', function() {
   });
 
   beforeEach(function() {
-    exposeCalled = false;
-    unexposeCalled = false;
     container = utils.makeContainer('container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    env.expose = function(s) {
-      exposeCalled = true;
-      service.set('exposed', true);
-    };
-    env.unexpose = function(s) {
-      unexposeCalled = true;
-      service.set('exposed', false);
-    };
     window.flags.serviceInspector = true;
   });
 
@@ -120,6 +110,23 @@ describe('Inspector Settings', function() {
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
 
+  // Retrieve and return the config viewlet.
+  var getViewlet = function(inspector) {
+    return inspector.viewletManager.viewlets.config;
+  };
+
+  // Change the value of the given key in the constraints form.
+  // Return the corresponding node.
+  var changeForm = function(viewlet, key, value) {
+    var selector = 'textarea[name=' + key + '].config-field';
+    var node = viewlet.container.one(selector);
+    node.set('value', value);
+    // Trigger bindingEngine to notice change.
+    var bindingEngine = inspector.viewletManager.bindingEngine;
+    bindingEngine._nodeChanged(node, viewlet);
+    return node;
+  };
+
   it('properly renders a service without charm options', function() {
     // Mutate charmData before the render.
     delete charmData.charm.options;
@@ -137,19 +144,17 @@ describe('Inspector Settings', function() {
     // Restore the test global
     charmData = utils.loadFixture('data/mediawiki-api-response.json', true);
 
-    // Verify we find our checkbox (even though two show up, one is the expose
-    // button).  Also note that it's hidden because we're using the slider
-    // widget for boolean fields.
+    // Verify we find our checkbox Also note that it's hidden because we're
+    // using the slider markup and styling for boolean fields.
     assert.equal(
         container.all('input.hidden-checkbox').size(),
-        2,
+        1,
         'did not render one boolean field');
 
     // Verify that the textual representation is there.
-    // Again, there are two because of the expose button.
     assert.equal(
         container.all('.textvalue').size(),
-        2,
+        1,
         'can not find the textual value for the checkbox.');
 
     // And the value will toggle with the checkbox
@@ -161,28 +166,6 @@ describe('Inspector Settings', function() {
     assert.equal(
         debugContainer.one('.textvalue').get('text').replace(/\s/g, ''),
         'true');
-  });
-
-  it('toggles exposure', function() {
-    inspector = setUpInspector();
-    assert.isFalse(service.get('exposed'));
-    assert.isFalse(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var vmContainer = inspector.viewletManager.get('container');
-    var expose = vmContainer.one('label[for=expose-toggle]');
-    expose.simulate('click');
-    assert.isTrue(service.get('exposed'));
-    assert.isTrue(exposeCalled);
-    assert.isFalse(unexposeCalled);
-    var checkedSelector = 'input.hidden-checkbox:checked ~ label .handle';
-    var handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, true);
-
-    expose.simulate('click');
-    assert.isTrue(unexposeCalled);
-    assert.isFalse(service.get('exposed'));
-    handle = vmContainer.one(checkedSelector);
-    assert.equal(handle instanceof Y.Node, false);
   });
 
   /**** Begin service destroy UI tests. ****/
@@ -352,6 +335,92 @@ describe('Inspector Settings', function() {
     env.ws.msg({RequestId: message.RequestId});
     assert.equal(button.getHTML(), 'Save Changes');
     assert.isTrue(input.hasClass('change-saved'));
+  });
+
+  it('can cancel changes', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[data-bind="config.admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    inspector.model.set('config', {admins: 'g:s'});
+    changeForm(viewlet, 'admins', 'k:t');
+    assert.equal(
+        parentNode.all('.modified').size(),
+        1,
+        'did not find a modified node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No modified markers are shown.
+    // Verify the form is updated.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+  });
+
+  it('can cancel pending conflicts', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[name="admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'admins', 'k:t');
+    inspector.model.set('config', {admins: 'g:s'});
+    assert.equal(
+        parentNode.all('[name=admins].conflict-pending').size(),
+        1,
+        'did not find a conflict-pending node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+  });
+
+  it('can cancel conflicts that are being resolved', function() {
+    // Set up.
+    inspector = setUpInspector();
+    env.connect();
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('textarea[name="admins"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'admins', 'k:t');
+    inspector.model.set('config', {admins: 'g:s'});
+    node.simulate('click');
+    assert.equal(
+        parentNode.all('[name=admins].conflict').size(),
+        1,
+        'did not find the conflict node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'g:s');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+    assert.equal(
+        parentNode.all('[name=admins].conflict').size(),
+        0,
+        'found the conflict node');
   });
 
 });

@@ -1,0 +1,15 @@
+<div class="overview-footer-item expose">
+  <div class="toggle expose">
+    <label for="expose-toggle">Expose this service?</label>
+    <div class="toggle-switch toggle-expose" data-bind="exposed">
+        <input type="checkbox"
+               name="expose-toggle"
+               class="expose-toggle hidden"
+               data-skipconflictux=true
+               id="expose-toggle">
+        <label for="expose-toggle" class="light">
+          <div class="handle"></div>
+        </label>
+    </div>
+  </div>
+</div>

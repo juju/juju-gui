@@ -271,4 +271,84 @@ describe('Inspector Constraints', function() {
     assert.equal(option.getHTML(), 'arm64');
   });
 
+  it('can cancel changes', function() {
+    // Set up.
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    inspector.model.set('constraints', {arch: 'lcars'});
+    changeForm(viewlet, 'arch', 'i386');
+    assert.equal(
+        parentNode.all('.modified').size(),
+        1,
+        'did not find a modified node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'lcars');
+    // No modified markers are shown.
+    // Verify the form is updated.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+  });
+
+  it('can cancel pending conflicts', function() {
+    // Set up.
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'arch', 'i386');
+    inspector.model.set('constraints', {arch: 'lcars'});
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        1,
+        'did not find a conflict-pending node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'lcars');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+  });
+
+  it('can cancel conflicts that are being resolved', function() {
+    // Set up.
+    var viewlet = getViewlet(inspector);
+    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var parentNode = node.ancestor('.settings-wrapper');
+    changeForm(viewlet, 'arch', 'i386');
+    inspector.model.set('constraints', {arch: 'lcars'});
+    node.simulate('click');
+    assert.equal(
+        parentNode.all('input.conflict').size(),
+        1,
+        'did not find the conflict node');
+    // Act.
+    viewlet.container.one('button.cancel').simulate('click');
+    // Validate.
+    assert.equal(node.get('value'), 'lcars');
+    // No conflict or modified markers are shown.
+    assert.equal(
+        parentNode.all('.modified').size(),
+        0,
+        'found a modified node');
+    assert.equal(
+        parentNode.all('.conflict-pending').size(),
+        0,
+        'found a conflict-pending node');
+    assert.equal(
+        parentNode.all('input.conflict').size(),
+        0,
+        'found the conflict node');
+  });
+
 });
