@@ -317,7 +317,7 @@ YUI.add('juju-charm-store', function(Y) {
         return;
       }
 
-      var endpoint = this.buildFileUrl(charmID, filename);
+      var endpoint = 'charm/' + charmID + '/file/' + filename;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
@@ -339,25 +339,6 @@ YUI.add('juju-charm-store', function(Y) {
           }
         }
       });
-    },
-
-    /**
-      Generate the API path to a file.
-      This is useful when generating links and references in HTML to a file
-      but not actually fetching the file itself.
-
-      @method buildFileUrl
-      @param {String} charmID The id of the charm to grab the file from.
-      @param {String} filename The name of the file to generate a path to.
-
-     */
-    buildFileUrl: function(charmID, filename) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'file',
-        filename].join('/');
     },
 
     /**
@@ -386,18 +367,23 @@ YUI.add('juju-charm-store', function(Y) {
         // The following regular expression removes everything up to the
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
-        return this.buildFileUrl(charmID, 'icon.svg');
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'file',
+          'icon.svg'].join('/');
       }
     },
 
     /**
      * Generate the url to an icon for the category specified.
      *
-     * @method categoryIconPath
+     * @method buildCategoryIconPath
      * @param {String} categoryID the id of the category to load an icon for.
      *
      */
-    categoryIconPath: function(categoryID) {
+    buildCategoryIconPath: function(categoryID) {
       return [
         this.get('apiHost'),
         'static/img/category-',
@@ -563,26 +549,8 @@ YUI.add('juju-charm-store', function(Y) {
    * @extends {Base}
    *
    */
-  ns.APIv2 = Y.Base.create('APIv2', Y.Base, [], {
+  ns.APIv2 = Y.Base.create('APIv2', ns.APIv3, [], {
     _apiRoot: 'api/2',
-
-    /**
-      * Send the actual request and handle response from the api.
-      *
-      * @method _makeRequest
-      * @param {Object} args any query params and arguments required.
-      * @private
-      *
-      */
-    _makeRequest: function(apiEndpoint, callbacks, args) {
-      // If we're in the noop state, just call the error callback.
-      if (this.get('noop')) {
-        callbacks.failure('noop failure');
-        return;
-      }
-      // Delegate the request making to the helper object.
-      this.apiHelper.makeRequest(apiEndpoint, callbacks, args);
-    },
 
     /**
      * Api call to fetch autocomplete suggestions based on the current term.
@@ -604,26 +572,6 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
       this._makeRequest(endpoint, callbacks, filters);
-    },
-
-
-    /**
-     * Api call to fetch a charm's details.
-     *
-     * @method charm
-     * @param {String} charmID the charm to fetch.
-     * @param {Object} callbacks the success/failure callbacks to use.
-     * @param {Object} bindScope the scope of *this* in the callbacks.
-     *
-     */
-    _charm: function(charmID, callbacks, bindScope) {
-      var endpoint = 'charm/' + charmID;
-      if (bindScope) {
-        callbacks.success = Y.bind(callbacks.success, bindScope);
-        callbacks.failure = Y.bind(callbacks.failure, bindScope);
-      }
-
-      this._makeRequest(endpoint, callbacks);
     },
 
     /**
@@ -673,25 +621,6 @@ YUI.add('juju-charm-store', function(Y) {
         charmID = charmID + '-1';
       }
       this._charm(charmID, callbacks, bindScope);
-    },
-
-    /**
-     Like the "charm" method but returning a Promise.
-
-     @method promiseCharm
-     @param {String} charmId The ID of the charm to fetch.
-     @param {ModelList} cache A local cache of browser charms.
-     @param {String} [defaultSeries='precise'] The series to use if none is
-       specified in the charm ID.
-     @return {Promise} Returns a promise. Triggered with the result of calling
-       this.charm.
-    */
-    promiseCharm: function(charmId, cache, defaultSeries) {
-      var self = this;
-      return Y.Promise(function(resolve, reject) {
-        self.charm(charmId, { 'success': resolve, 'failure': reject },
-            self, cache, defaultSeries);
-      });
     },
 
     /**
@@ -746,66 +675,6 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Fetch the contents of a charm's file.
-     *
-     * @method file
-     * @param {String} charmID The id of the charm's file we want.
-     * @param {String} filename The path/name of the file to fetch content.
-     * @param {Object} callbacks The success/failure callbacks.
-     * @param {Object} bindScope The scope for this in the callbacks.
-     *
-     */
-    file: function(charmID, filename, callbacks, bindScope) {
-      // If we're in the noop state, just call the error callback.
-      if (this.get('noop')) {
-        callbacks.failure('noop failure');
-        return;
-      }
-
-      var endpoint = 'charm/' + charmID + '/file/' + filename;
-      if (bindScope) {
-        callbacks.success = Y.bind(callbacks.success, bindScope);
-        callbacks.failure = Y.bind(callbacks.failure, bindScope);
-      }
-
-      this.get('datasource').sendRequest({
-        request: endpoint,
-        callback: {
-          success: function(io_request) {
-            callbacks.success(io_request.response.results[0].responseText);
-          },
-          'failure': function(io_request) {
-            var respText = io_request.response.results[0].responseText,
-                res;
-            if (respText) {
-              res = Y.JSON.parse(respText);
-            }
-            callbacks.failure(res, io_request);
-          }
-        }
-      });
-    },
-
-    /**
-      Generate the API path to a file.
-      This is useful when generating links and references in HTML to a file
-      but not actually fetching the file itself.
-
-      @method buildFileUrl
-      @param {String} charmID The id of the charm to grab the file from.
-      @param {String} filename The name of the file to generate a path to.
-
-     */
-    buildFileUrl: function(charmID, filename) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'file',
-        filename].join('/');
-    },
-
-    /**
       Generate the API path to a charm icon.
       This is useful when generating links and references in HTML to the
       charm's icon and is constructing the correct icon based on reviewed
@@ -831,7 +700,6 @@ YUI.add('juju-charm-store', function(Y) {
         // The following regular expression removes everything up to the
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
-
         return this.get('apiHost') + [
           this._apiRoot,
           'charm',
@@ -843,71 +711,17 @@ YUI.add('juju-charm-store', function(Y) {
     /**
      * Generate the url to an icon for the category specified.
      *
-     * @method categoryIconPath
+     * @method buildCategoryIconPath
      * @param {String} categoryID the id of the category to load an icon for.
      *
      */
-    categoryIconPath: function(categoryID) {
+    buildCategoryIconPath: function(categoryID) {
       return [
         this.get('apiHost'),
         'static/img/category-',
         categoryID,
         '-bw.svg'
       ].join('');
-    },
-
-    /**
-     * Load the QA data for a specific charm.
-     *
-     * @method qa
-     * @param {String} charmID The charm to fetch QA data for.
-     * @param {Object} callbacks The success/failure callbacks to use.
-     * @param {Object} bindScope The scope for 'this' in the callbacks.
-     *
-     */
-    qa: function(charmID, callbacks, bindScope) {
-      var endpoint = 'charm/' + charmID + '/qa';
-      if (bindScope) {
-        callbacks.success = Y.bind(callbacks.success, bindScope);
-        callbacks.failure = Y.bind(callbacks.failure, bindScope);
-      }
-      this._makeRequest(endpoint, callbacks);
-    },
-
-    /**
-     * Given a result list, turn that into a BrowserCharmList object for the
-     * application to use. Metadata is appended to the charm as data.
-     *
-     * @method resultsToCharmlist
-     * @param {Object} JSON decoded data from response.
-     * @private
-     *
-     */
-    resultsToCharmlist: function(data) {
-      // Append the metadata to the actual charm object.
-      var preppedData = Y.Array.map(data, function(charmData) {
-        if (charmData.metadata) {
-          charmData.charm.metadata = charmData.metadata;
-        }
-        return charmData.charm;
-      });
-      return new Y.juju.models.BrowserCharmList({
-        items: preppedData
-      });
-    },
-
-    /**
-     * Initialize the API helper. Constructs a reusable datasource for all
-     * calls.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      // XXX This isn't set on initial load so we have to manually hit the
-      // setter to get datasource filled in. Must be a better way.
-      this.set('apiHost', cfg.apiHost);
     },
 
     /**
@@ -924,81 +738,9 @@ YUI.add('juju-charm-store', function(Y) {
       }
 
       this._makeRequest('charms/interesting', callbacks);
-    },
-
-    /**
-      Fetch the related charm info from the charmworld api.
-
-      @method related
-      @param {String} charmID The charm to find related charms for.
-      @param {Object} callbacks The success/failure callbacks to use.
-      @param {Object} bindscope An object scope to perform callbacks in.
-      @return {Object} data loaded from the api call.
-
-     */
-    related: function(charmID, callbacks, bindScope) {
-      var endpoint = 'charm/' + charmID + '/related';
-      if (bindScope) {
-        callbacks.success = Y.bind(callbacks.success, bindScope);
-        callbacks.failure = Y.bind(callbacks.failure, bindScope);
-      }
-      this._makeRequest(endpoint, callbacks);
     }
   }, {
-    ATTRS: {
-      /**
-       * Required attribute for the host to talk to for api calls.
-       *
-       * @attribute apiHost
-       * @default undefined
-       * @type {String}
-       *
-       */
-      apiHost: {
-        required: true,
-        setter: function(val) {
-          if (val && !val.match(/\/$/)) {
-            val = val + '/';
-          }
-          // Make sure we update the datasource if our apiHost changes.
-          var source = val + this._apiRoot + '/';
-          this.set('datasource', new Y.DataSource.IO({ source: source }));
-          return val;
-        }
-      },
-
-      /**
-       * Auto constructed datasource object based on the apiHost attribute.
-       * @attribute datasource
-       * @type {Datasource}
-       *
-       */
-      datasource: {
-        setter: function(datasource) {
-          // Construct an API helper using the new datasource.
-          this.apiHelper = new ns.ApiHelper({
-            sendRequest: Y.bind(datasource.sendRequest, datasource)
-          });
-          return datasource;
-        }
-      },
-
-      /**
-        If there's no config we end up setting noop on the store so that tests
-        that don't need to worry about the browser can safely ignore it.
-
-        We do log a console error, so those will occur on these tests to help
-        make it easy to catch an issue when you don't mean to noop the store.
-
-        @attribute noop
-        @default false
-        @type {Boolean}
-
-       */
-      noop: {
-        value: false
-      }
-    }
+    ATTRS: {}
   });
 
 }, '0.1.0', {

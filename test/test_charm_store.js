@@ -99,15 +99,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       api.destroy();
     });
 
-    it('constructs file URLs correctly', function() {
-      var iconPath = api.buildFileUrl('precise/mysql-1', 'icon.svg');
-      assert.equal(
-          iconPath,
-          hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
-    });
-
     it('constructs cateogry icon paths correctly', function() {
-      var iconPath = api.categoryIconPath('app-servers');
+      var iconPath = api.buildCategoryIconPath('app-servers');
       assert.equal(
           iconPath,
           hostname + 'static/img/category-app-servers-bw.svg');
@@ -202,8 +195,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('constructs iconpaths correctly', function() {
       var iconPath = api.iconpath('precise/mysql-1');
       assert.equal(
-        iconPath,
-        hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
+          iconPath,
+          hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
     });
 
     it('constructs an icon path for local charms', function() {
@@ -211,11 +204,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
     });
 
-    it('splits the charm id to remove cs: when necessary', function() {
+    it('removes cs: from the icon path when necessary', function() {
       var iconPath = api.iconpath('cs:precise/mysql-1');
       assert.equal(
-        iconPath,
-        hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
+          iconPath,
+          hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
     });
 
     it('can fetch a charm via a promise', function(done) {
@@ -343,15 +336,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       api.destroy();
     });
 
-    it('constructs file URLs correctly', function() {
-      var iconPath = api.buildFileUrl('precise/mysql-1', 'icon.svg');
-      assert.equal(
-          iconPath,
-          hostname + 'api/2/charm/precise/mysql-1/file/icon.svg');
-    });
-
     it('constructs cateogry icon paths correctly', function() {
-      var iconPath = api.categoryIconPath('app-servers');
+      var iconPath = api.buildCategoryIconPath('app-servers');
       assert.equal(
           iconPath,
           hostname + 'static/img/category-app-servers-bw.svg');
