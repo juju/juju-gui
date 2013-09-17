@@ -143,9 +143,10 @@ class DeployTestMixin(object):
             get_search_box, error='Charm search box is not visible')
         search_box.send_keys(charm_name)
         search_box.send_keys('\n')
-        # The search autocomplete has not closed in CI runs and it's either a
-        # race or the \n doesn't force the widget to close the results. We
-        # need to lose focus by clicking on something else in the UI
+        # The search autocomplete does not always close in time to click on
+        # the charm token. This attempt to force it to be closed by moving
+        # focus to another node first, then trying to click on the selected
+        # charm token.
         self.driver.find_element_by_css_selector(
             '#environment-switcher').click()
 
