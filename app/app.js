@@ -1379,7 +1379,7 @@ YUI.add('juju-gui', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.charmworld.APIv2(cfg);
+          return new Y.juju.charmworld.APIv3(cfg);
         }
       },
 

@@ -258,8 +258,11 @@ YUI.add('browser-search-widget', function(Y) {
         queryDelay: 100,
         resultFormatter: suggestFormatter,
         resultListLocator: 'result',
+        // resultTextLocator is quoted to hide it from the yuidoc linter.
         'resultTextLocator': function(result) {
-          return result.charm.name;
+          // The result can be either a charm or a bundle; either way, we want
+          // its name.
+          return (result.charm || result.bundle).name;
         },
         source: fetchSuggestions
       });
