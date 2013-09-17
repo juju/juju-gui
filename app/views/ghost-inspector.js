@@ -179,8 +179,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
         // to think that we have removed the old service and created a new
         // service which then causes the d3/topo to remove the old service
         // block and render the new service block.
-        this.options.ghostService.set(
-            'id', '(' + e.newVal + ')');
+        var name = '(' + e.newVal + ')';
+        this.options.ghostService.setAttrs({
+          id: name,
+          displayName: name
+        });
       }
       this.serviceNameInputStatus(!valid, e.currentTarget);
     },
@@ -302,6 +305,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       ghostService.setAttrs({
         id: serviceName,
+        displayName: serviceName,
         pending: false,
         loading: false,
         config: config,
