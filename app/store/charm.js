@@ -546,7 +546,11 @@ YUI.add('juju-charm-store', function(Y) {
    * Charmworld API version 2 interface.
    *
    * @class APIv2
-   * @extends {Base}
+   * @extends {APIv3}
+   *
+   * This class inherits from the v3 version of the API so that removing v2
+   * once it is no longer needed will be easy (just delete this class, the one
+   * or two places it is referenced in the code, and its associated tests).
    *
    */
   ns.APIv2 = Y.Base.create('APIv2', ns.APIv3, [], {
