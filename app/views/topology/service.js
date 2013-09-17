@@ -1334,23 +1334,6 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * Show (if hidden) or hide (if shown) the service menu.
-     *
-     * @method toggleServiceMenu
-     * @param {object} box The presentation state for the service.
-     * @return {undefined} Side effects only.
-     */
-    toggleServiceMenu: function(box) {
-      var serviceMenu = this.get('container').one('#service-menu');
-
-      if (serviceMenu.hasClass('active') || !box) {
-        this.hideServiceMenu();
-      } else {
-        this.showServiceMenu(box);
-      }
-    },
-
-    /**
      * Show the service menu.
      *
      * @method showServiceMenu
