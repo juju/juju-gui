@@ -32,7 +32,7 @@ YUI.add('viewlet-inspector-header', function(Y) {
     'render': function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
       var pojoModel = model.getAttrs();
-      if (model instanceof models.BrowserCharm) {
+      if (model instanceof models.Charm) {
         pojoModel.ghost = true;
         pojoModel.charmUrl = pojoModel.id;
       } else if (model instanceof models.Service) {

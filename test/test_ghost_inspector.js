@@ -63,7 +63,7 @@ describe('Ghost Inspector', function() {
   });
 
   var setUpInspector = function(options) {
-    var charm = new models.BrowserCharm(charmData.charm);
+    var charm = new models.Charm(charmData.charm);
     db.charms.add(charm);
 
     // Create a ghost service with the fake charm.

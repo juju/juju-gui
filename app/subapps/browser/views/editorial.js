@@ -161,7 +161,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           // Send updated cache data to the app
           var cache = {
             interesting: results,
-            charms: new models.BrowserCharmList()
+            charms: new models.CharmList()
           };
           cache.charms.add(newCharms);
           cache.charms.add(popularCharms);

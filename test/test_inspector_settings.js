@@ -60,7 +60,7 @@ describe('Inspector Settings', function() {
   });
 
   var setUpInspector = function(options) {
-    var charm = new models.BrowserCharm(charmData.charm),
+    var charm = new models.Charm(charmData.charm),
         charmId = charm.get('id');
     db.charms.add(charm);
     if (options && options.useGhost) {

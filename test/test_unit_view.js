@@ -69,7 +69,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container = Y.Node.create('<div id=\"test-container\"/>');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.BrowserCharm({
+      charm = new models.Charm({
         id: 'cs:precise/mysql-5',
         name: 'mysql',
         description: 'A DB'

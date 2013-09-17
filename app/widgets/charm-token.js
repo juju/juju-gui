@@ -47,7 +47,7 @@ YUI.add('browser-charm-token', function(Y) {
     initializer: function(cfg) {
       // Extract the charm configuration values from the jumble of widget
       // cfg options.
-      var charmAttributes = Y.Object.keys(Y.juju.models.BrowserCharm.ATTRS);
+      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
       // @property charmData Contains the extracted charm information.
       this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
     },
@@ -55,7 +55,7 @@ YUI.add('browser-charm-token', function(Y) {
     /**
       Setter for the boundingBox attribute
 
-      **Override vs YUI to prevent node id setting based on BrowserCharm**
+      **Override vs YUI to prevent node id setting based on Charm**
 
       @method _setBB
       @private
@@ -64,7 +64,7 @@ YUI.add('browser-charm-token', function(Y) {
     */
     _setBB: function(node) {
       // Blank out the ID part of the boundingBox. We don't want the
-      // charm-token id="" to be set based on the actual BrowserCharm model
+      // charm-token id="" to be set based on the actual Charm model
       // data passed in.
       // The Y.Widget will generate a YUID for the node automatically.
       return this._setBox(undefined, node, this.BOUNDING_TEMPLATE, true);

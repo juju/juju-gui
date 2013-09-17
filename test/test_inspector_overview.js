@@ -87,7 +87,7 @@ describe('Inspector Overview', function() {
   var setUpInspector = function() {
     var charmId = 'precise/mediawiki-14';
     charmConfig.id = charmId;
-    var charm = new models.BrowserCharm(charmConfig);
+    var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     service = new models.Service({
       id: 'mediawiki',
