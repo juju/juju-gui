@@ -709,22 +709,6 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Generate the url to an icon for the category specified.
-     *
-     * @method buildCategoryIconPath
-     * @param {String} categoryID the id of the category to load an icon for.
-     *
-     */
-    buildCategoryIconPath: function(categoryID) {
-      return [
-        this.get('apiHost'),
-        'static/img/category-',
-        categoryID,
-        '-bw.svg'
-      ].join('');
-    },
-
-    /**
      * Fetch the interesting landing content from the charmworld api.
      *
      * @method interesting
