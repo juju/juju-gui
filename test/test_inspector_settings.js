@@ -333,7 +333,7 @@ describe('Inspector Settings', function() {
     assert.equal('foo', message.Params.Config.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});
-    assert.equal(button.getHTML(), 'Save Changes');
+    assert.equal(button.getHTML(), 'Save changes');
     assert.isTrue(input.hasClass('change-saved'));
   });
 

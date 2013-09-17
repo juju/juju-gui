@@ -29,11 +29,11 @@ YUI.add('viewlet-inspector-overview', function(Y) {
   var SHOWCOUNT = 5;
 
   var unitListNameMap = {
-    error: 'Error',
-    pending: 'Pending',
-    running: 'Running',
-    'landscape-needs-reboot': 'Needs Reboot',
-    'landscape-security-upgrades': 'Security Upgrade'
+    error: 'errored units',
+    pending: 'pending units',
+    running: 'running units',
+    'landscape-needs-reboot': 'machines need to be restarted',
+    'landscape-security-upgrades': 'security upgrades available'
   };
 
   /**
