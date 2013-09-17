@@ -13,30 +13,6 @@
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
-.animation (...) {
-    -webkit-animation: @arguments;
-    -moz-animation: @arguments;
-    -ms-animation: @arguments;
-    -o-animation: @arguments;
-    animation: @arguments;
-}
-
-.animation-fill-mode (...) {
-    -webkit-animation-fill-mode: @arguments;
-    -moz-animation-fill-mode: @arguments;
-    -ms-animation-fill-mode: @arguments;
-    -o-animation-fill-mode: @arguments;
-    animation-fill-mode: @arguments;
-}
-
-.transition (...) {
-    -webkit-transition: @arguments;
-    -moz-transition: @arguments;
-    -ms-transition: @arguments;
-    -o-transition: @arguments;
-    transition: @arguments;
-}
-
 .pulse-green-frames-mixin () {
     0% {
       background-color: @inspector-changed-field;
@@ -180,6 +156,16 @@
             padding-left: 10px;
             padding-right: 10px;
             border: none;
+            background-position: right;
+            background-repeat: no-repeat;
+
+            &.valid {
+                background-image: url(/juju-ui/assets/images/form-validation-tick.png);
+            }
+
+            &.invalid {
+                background-image: url(/juju-ui/assets/images/form-validation-cross.png);
+            }
         }
         textarea {
             margin: 0;
@@ -335,6 +321,7 @@
         }
         .destroy-service-prompt,
         .controls {
+            .transition(.25s, max-height .3s);
             overflow: hidden;
             max-height: @inspector-controls-height;
             padding: 0 20px;
@@ -342,12 +329,10 @@
             border-top: 1px solid @inspector-divider-bottom;
             border-bottom: 1px solid @inspector-divider-bottom;
             overflow: hidden;
-            .transition(.25s, max-height .3s);
 
             &.closed {
                 max-height: 0;
             }
-
             &:before {
                 content: "";
                 display: block;
@@ -438,11 +423,13 @@
             .border-box;
             position: relative;
             width: 100%;
+            padding-top: 20px;
             padding-bottom: 20px;
             border-top: 1px solid @inspector-divider-top;
             border-bottom: 1px solid @inspector-divider-bottom;
 
             &:first-child {
+                padding-top: 0;
                 border-top: none;
             }
             &:last-child {
@@ -450,12 +437,12 @@
                 border-bottom: none;
             }
             label {
-                margin: 20px 0 10px 0;
+                margin: 0 0 10px 0;
             }
             .settings-description {
                 clear: both;
-                font-size: 12px;
-                margin-top: 12px;
+                padding-top: 12px;
+                font-weight: 200;
                 /* below hyphenation code was taken from:
                 http://www.newnet-soft.com/blog/csstypography */
                 -ms-word-break: break-all;
@@ -469,13 +456,8 @@
                 -webkit-hyphenate-after: 3;
                 hyphenate-lines: 3;
             }
-       }
-
+        }
         .config-file {
-            padding: 20px @inspector-main-padding;
-            border-top: 1px solid @inspector-divider-top;
-            border-bottom: 1px solid @inspector-divider-bottom;
-
             input {
                 position: absolute;
                 top: 0;
@@ -483,7 +465,6 @@
                 visibility: hidden;
                 z-index: 0;
             }
-
             .fakebutton {
                 .create-border-radius(@border-radius);
                 z-index: 2;
@@ -493,73 +474,33 @@
                     right center no-repeat;
                 border: 1px solid #6B6B6B;
                 color: #fff;
+                cursor: pointer;
             }
         }
-
         .ghost {
             input[type=text] {
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
                 height: auto;
             }
-            .header-slot {
-                header {
-                    margin-bottom: 0;
-                    border-bottom: none;
+            & .use-defaults {
+                textarea,
+                input[type=text] {
+                    background-color: @disabled-input-background-color;
+                    border-color: @inspector-background-color;
+                    cursor: not-allowed;
+                    color: @disabled-input-text-color;
                 }
-            }
-            .config-file {
-                padding: 0 0 20px 0;
-                border-top: none;
-            }
-            .ghost-config-header {
-                height: 35px;
-                border-top: 1px solid @inspector-divider-top;
-                font-size: 16px;
-                font-weight: 200;
-                line-height: 35px;
-                padding-left: @inspector-main-padding;
-
-                .sprite {
-                    vertical-align: -2%;
-                    margin-right: 7px;
+                .fakebutton {
+                    color: @disabled-input-background-color;
+                    border-color: @disabled-input-background-color;
+                    cursor: default;
                 }
-            }
-            .ghost-config-content {
-                padding: @inspector-main-padding;
-                border-bottom: 1px solid @inspector-divider-bottom;
-
-                &.use-defaults {
-                    textarea,
-                    input[type=text] {
-                        background-color: @disabled-input-background-color;
-                        border-color: @inspector-background-color;
-                        cursor: not-allowed;
-                        color: @disabled-input-text-color;
-                    }
-                    .fakebutton {
-                        color: @disabled-input-background-color;
-                        border-color: @disabled-input-background-color;
-                        cursor: default;
-                    }
-                }
-            }
-            .ghost-config-wrapper.service-constraints .ghost-config-content {
-                padding-top: 0;
             }
             .service-config {
+                padding-top: 20px;
                 border-top: 1px solid @inspector-divider-top;
-            }
-            .viewlet-container {
-                margin-top: -1px;
-            }
-            .toggle {
-                padding-left: 0;
-                padding-right: 0;
-                border-top: 1px solid @inspector-divider-top;
-                border-bottom: 1px solid @inspector-divider-bottom;
             }
         }
-
         /* Resetting panel styles. Can be removed after old inspector styles are
            removed. (ServiceInspector) */
         .charm-panel-configure {
@@ -745,22 +686,25 @@
             handle which it sometimes covers */
             z-index: 502;
         }
-
+        .settings-constraints,
+        .settings-config {
+            margin-bottom: @inspector-controls-height;
+        }
         .view-container {
             margin-top: -1px;
 
-            &.settings-constraints,
-            &.settings-config {
-                margin-bottom: @inspector-controls-height;
-            }
-            h2 {
-                padding-left: 0;
-            }
             .view-content {
-                padding-bottom: 20px;
-                padding-left: @inspector-main-padding;
-                padding-right: @inspector-main-padding;
+                padding: 20px @inspector-main-padding;
                 border-top: 1px solid @inspector-divider-top;
+                border-bottom: 1px solid @inspector-divider-bottom;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+                &.join-top {
+                    padding-top: 10px;
+                    border-top: none;
+                }
             }
             .settings-wrapper {
                 position: relative;
@@ -896,11 +840,10 @@
         .destroy-service-prompt.closed {
             max-height: 0;
         }
-        .viewlet-wrapper{
+        .viewlet-wrapper {
             h4,
             h3,
-            h2,
-            legend {
+            h2 {
                 .border-box;
                 margin-bottom: 0;
                 padding: 10px @inspector-main-padding;
@@ -909,11 +852,16 @@
                 font-size: 16px;
                 font-weight: 200;
                 color: @charm-panel-configure-title-color;
+
+                .sprite {
+                    vertical-align: -2%;
+                    margin-right: 7px;
+                }
             }
-            h4,
-            h3,
-            h2 {
-                width: auto;
+            h2.join-bottom {
+                padding-top: 0;
+                padding-bottom: 0;
+                border-bottom: none;
             }
             h4 {
                 padding: 7px 10px;
@@ -932,6 +880,8 @@
         .overview-footer-item {
             padding: @inspector-main-padding;
             border-top: 1px solid @inspector-divider-top;
+            border-bottom: 1px solid @inspector-divider-bottom;
+
             &.expose {
                 padding-top: 10px;
                 padding-bottom: 5px;
@@ -969,12 +919,12 @@
                     width: 10px;
                     height: 3px;
                     margin-left: 5px;
-                    background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+                    background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
                 }
             }
 
             .closed-unit-list .chevron {
-                background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
+                background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
             }
 
             .status-unit-header.error {

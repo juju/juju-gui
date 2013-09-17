@@ -166,7 +166,6 @@ YUI.add('resizing-textarea', function(Y) {
       var height = clone_one.get('scrollHeight');
       clone_one.remove(true);
       return height;
-
     },
 
     /**

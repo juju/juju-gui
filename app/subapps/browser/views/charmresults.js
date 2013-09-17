@@ -134,7 +134,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cache = {
-        charms: new models.BrowserCharmList()
+        charms: new models.CharmList()
       };
       this._bindEvents();
     },

@@ -668,7 +668,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
-     * @param {BrowserCharm} charm the charm model instance to view.
+     * @param {Charm} charm the charm model instance to view.
      * @param {Boolean} isFullscreen is this display for the fullscreen
      * experiecne?
      *
@@ -771,7 +771,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this.get('store').charm(this.get('charmID'), {
           'success': function(data) {
-            var charm = new models.BrowserCharm(data.charm);
+            var charm = new models.Charm(data.charm);
             if (data.metadata) {
               charm.set('metadata', data.metadata);
             }
@@ -806,7 +806,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        * @attribute charm
        * @default undefined
-       * @type {juju.models.BrowserCharm}
+       * @type {juju.models.Charm}
        *
        */
       charm: {},
