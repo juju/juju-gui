@@ -146,7 +146,8 @@ class DeployTestMixin(object):
         # The search autocomplete has not closed in CI runs and it's either a
         # race or the \n doesn't force the widget to close the results. We
         # need to lose focus by clicking on something else in the UI
-        driver.find_element_by_css_selector('#environment-switcher').click()
+        self.driver.find_element_by_css_selector(
+            '#environment-switcher').click()
 
         # Open details page
         charm_token = self.wait_for(
