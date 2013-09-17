@@ -107,12 +107,6 @@ YUI.add('juju-topology-service', function(Y) {
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
         var fromGhost = d.model.get('placeFromGhostPosition');
-        if (fromGhost) {
-          // This flag has served its purpose, at initialization time on the
-          // canvas.  Remove it, so future changes will have the usual
-          // behavior.
-          d.model.set('placeFromGhostPosition', false);
-        }
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions') && !fromGhost;
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
@@ -172,6 +166,18 @@ YUI.add('juju-topology-service', function(Y) {
               .attr({'class': 'sub-rel-count',
           'x': 64,
           'y': 47 * 0.8});
+
+    // Handle the last step of models that were made locally from ghosts.
+    node.filter(function(d) {
+      return d.model.get('placeFromGhostPosition');
+    }).each(function(d) {
+      // Show the service menu from the start.
+      self.showServiceMenu(d);
+      // This flag has served its purpose, at initialization time on the
+      // canvas.  Remove it, so future changes will have the usual
+      // behavior.
+      d.model.set('placeFromGhostPosition', false);
+    });
 
     // Landscape badge
     if (landscape) {
@@ -454,8 +460,7 @@ YUI.add('juju-topology-service', function(Y) {
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
       // Set a default
-      this.set('currentServiceClickAction', 'toggleServiceMenu');
-
+      this.set('currentServiceClickAction', 'showServiceMenu');
     },
 
     /**
@@ -1325,23 +1330,6 @@ YUI.add('juju-topology-service', function(Y) {
                   -(cpWidth) - arrowWidth) +
                   tr[0])
         });
-      }
-    },
-
-    /**
-     * Show (if hidden) or hide (if shown) the service menu.
-     *
-     * @method toggleServiceMenu
-     * @param {object} box The presentation state for the service.
-     * @return {undefined} Side effects only.
-     */
-    toggleServiceMenu: function(box) {
-      var serviceMenu = this.get('container').one('#service-menu');
-
-      if (serviceMenu.hasClass('active') || !box) {
-        this.hideServiceMenu();
-      } else {
-        this.showServiceMenu(box);
       }
     },
 

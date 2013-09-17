@@ -144,6 +144,11 @@ YUI.add('juju-view-environment', function(Y) {
           // listen for the event and remove it from the list of open inspectors
           serviceInspector.viewletManager.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
+            // We want the service menu to hide when the inspector does.
+            // For now, at least, with only one inspector, we can simply close
+            // all service menus.  We expect the service menus to go away
+            // soon-ish anyway in favor of a new approach.
+            this.topo.fire('hideServiceMenu');
           }, this);
 
           // Restrict to a single inspector instance
