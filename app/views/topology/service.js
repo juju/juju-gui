@@ -106,15 +106,15 @@ YUI.add('juju-topology-service', function(Y) {
         delete annotations['gui-y'];
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
-        var localCreation = d.model.get('localCreation');
-        if (localCreation) {
+        var fromGhost = d.model.get('placeFromGhostPosition');
+        if (fromGhost) {
           // This flag has served its purpose, at initialization time on the
           // canvas.  Remove it, so future changes will have the usual
           // behavior.
-          d.model.set('localCreation', false);
+          d.model.set('placeFromGhostPosition', false);
         }
         if (!d.inDrag) {
-          var useTransitions = self.get('useTransitions') && !localCreation;
+          var useTransitions = self.get('useTransitions') && !fromGhost;
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
         }
       }});
@@ -1056,7 +1056,7 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. This has the side effect that service blocks can overlap
       // and will be fixed later.
       var vertices;
-      var localCreation = false;
+      var fromGhost = false;
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             return !Y.Lang.isNumber(boundingBox.x);
@@ -1095,9 +1095,8 @@ YUI.add('juju-topology-service', function(Y) {
           vertices = [];
         }
         Y.each(new_services, function(box) {
-          if (box.model.get('localCreation')) {
-            // box.model.set('localCreation', false);
-            localCreation = true;
+          if (box.model.get('placeFromGhostPosition')) {
+            fromGhost = true;
           }
           var existing = box.model.get('annotations') || {};
           if (!existing && !existing['gui-x']) {
@@ -1123,7 +1122,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!vertices) {
           vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
         }
-        this.findAndSetCentroid(vertices, localCreation);
+        this.findAndSetCentroid(vertices, fromGhost);
       }
       // enter
       node
