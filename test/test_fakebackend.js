@@ -148,6 +148,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         icon: undefined,
         pending: false,
         life: 'alive',
+        placeFromGhostPosition: false,
         relations: [],
         unit_count: undefined,
         upgrade_available: false,
