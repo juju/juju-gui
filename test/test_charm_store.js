@@ -21,8 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Charmworld API v3 interface', function() {
-    var Y, models, conn, env, app, container, data, juju, utils, charmworld,
-        hostname, api;
+    var Y, models, conn, data, juju, utils, charmworld, hostname, api;
 
 
     before(function(done) {
@@ -258,7 +257,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   // support for the v2 charmworld API will be easy.  However, it means that
   // any edits made to these tests may need to be made to the v3 tests above.
   describe('Charmworld API v2 interface', function() {
-    var Y, models, conn, env, app, container, data, juju, utils, charmworld,
+    var Y, models, conn, data, juju, utils, charmworld,
         hostname, api;
 
 
@@ -488,8 +487,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Charmworld API Helper', function() {
-    var Y, models, conn, env, app, container, data, juju, utils, charmworld,
-        hostname;
+    var Y, models, conn, data, juju, utils, charmworld, hostname;
 
 
     before(function(done) {
@@ -531,6 +529,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // A leading charm store scheme identifier will be stripped.
       assert.equal(apiHelper.normalizeCharmId('cs:precise/wordpress-10'),
           'precise/wordpress-10');
+    });
+
+  });
+
+  describe('Charmworld API feature flag support', function() {
+    var Y, models, conn, juju, app;
+
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-gui',
+          'datasource-local', 'json-stringify', 'juju-charm-store',
+          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
+          'juju-tests-utils',
+          function(Y) {
+            juju = Y.namespace('juju');
+            done();
+          });
+    });
+
+    afterEach(function() {
+      app.destroy();
+      window.flags = {};
+    });
+
+    it('enables the charmworld v2 API if not set', function() {
+      assert.deepEqual(window.flags, {});
+      app = new Y.juju.App({});
+      assert.equal(app.get('store').name, 'APIv2');
+    });
+
+    it('enables the charmworld v3 API if set', function() {
+      window.flags.charmworldv3 = true;
+      app = new Y.juju.App({});
+      assert.equal(app.get('store').name, 'APIv3');
     });
 
   });
