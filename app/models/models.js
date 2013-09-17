@@ -409,9 +409,24 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
+      var randomId, invalid = true;
+
+      do {
+        // The $ appended to the end is to guarantee that an id coming from Juju
+        // will never clash with the randomly generated ghost id's in the GUI.
+        randomId = Math.floor(Math.random() * 100000000) + '$';
+        // Don't make functions within a loop
+        /* jshint -W083 */
+        invalid = this.some(function(service) {
+          if (service.get('id') === randomId) {
+            return true;
+          }
+        });
+      } while (invalid);
+
       var ghostService = this.create({
         // Creating a temporary id because it's undefined by default.
-        id: Math.floor(Math.random() * 100000000),
+        id: randomId,
         displayName: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,

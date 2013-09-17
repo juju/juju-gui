@@ -247,6 +247,9 @@ YUI.add('juju-topology-service', function(Y) {
               (name_size / service_height) / 2;
         }
         });
+
+    node.select('.name').text(function(d) { return d.displayName; });
+
     node.select('.charm-label')
                     .attr({'style': function(d) {
           // Programmatically size the font.
