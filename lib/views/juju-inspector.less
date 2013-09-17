@@ -13,15 +13,17 @@
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
+/* This doesn't work in FF.
+   https://bugzilla.mozilla.org/show_bug.cgi?id=546052
+   field-saved-finished is completely transparent; unfortunately no browser
+   currently supports transitioning from an image to none.
+*/
 .pulse-green-frames-mixin () {
     0% {
-      background-color: @inspector-changed-field;
-    }
-    10% {
-      background-color: #38b44a;
+        background-image: url(/juju-ui/assets/images/field-saved.png);
     }
     100% {
-      background-color: white;
+        background-image: url(/juju-ui/assets/images/field-saved-finished.png);
     }
 }
 
@@ -719,7 +721,7 @@
                   .transition(background 1s linear);
                   background-repeat: no-repeat;
                   background-position: right center;
-                  background-url: none;
+                  background-image: none;
                   margin-bottom: 0px;
                 }
                 .config-field {
@@ -789,6 +791,9 @@
                 }
 
                 .change-saved {
+                    background-image: url(/juju-ui/assets/images/field-saved.png);
+                    background-position: center right;
+                    background-repeat: no-repeat;
                     .animation(pulse-green 1s);
                     .animation-fill-mode(forwards);
                     .transition(none);
