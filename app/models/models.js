@@ -300,6 +300,19 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
+
+      /**
+        Flag from ghost inspector to service topology.  Helps topology
+        keep from unnecessarily jumping the service around.  Essentially
+        an internal value that should be ignored except by this machinery.
+
+        @attribute placeFromGhostPosition
+        @default false
+        @type {Boolean}
+      */
+      placeFromGhostPosition: {
+        value: false
+      },
       life: {
         value: ALIVE
       },
@@ -399,11 +412,8 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
-      var serviceCount = this.filter(function(service) {
-        return service.get('charm') === charm.get('id');
-      }).length + 1;
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+        id: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),
@@ -1039,7 +1049,7 @@ YUI.add('juju-models', function(Y) {
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
-      this.charms = new models.BrowserCharmList();
+      this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -1061,7 +1071,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': models.BrowserCharm
+        'charm': models.Charm
       };
 
       // Used to assign new relation ids.

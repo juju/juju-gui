@@ -1,14 +1,16 @@
-<div class="view-container settings-config">
-  <h2>Service settings</h2>
-  <div class="config-file">
-    <input type="file">
-    <div class="fakebutton">Import config file...</div>
+<div class="settings-config">
+  <div class="view-container">
+    <h2>Service settings</h2>
+    <div class="config-file view-content">
+      <input type="file">
+      <div class="fakebutton">Import config file...</div>
+    </div>
+    {{> service-configuration}}
   </div>
-  {{> service-configuration}}
   {{#unless ghost}}
     <div class="controls configuration-buttons closed">
-      <button class="cancel">Cancel</button>
-      <button class="confirm">Save Changes</button>
+      <button class="cancel">Discard changes</button>
+      <button class="confirm">Save changes</button>
     </div>
   {{/unless}}
 </div>

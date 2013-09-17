@@ -67,7 +67,7 @@ describe('Inspector Conflict UX', function() {
   });
 
   function setUpInspector(options) {
-    var charm = new models.BrowserCharm(charmData.charm),
+    var charm = new models.Charm(charmData.charm),
         charmId = charm.get('id');
     db.charms.add(charm);
     service = new models.Service({

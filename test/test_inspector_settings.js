@@ -60,7 +60,7 @@ describe('Inspector Settings', function() {
   });
 
   var setUpInspector = function(options) {
-    var charm = new models.BrowserCharm(charmData.charm),
+    var charm = new models.Charm(charmData.charm),
         charmId = charm.get('id');
     db.charms.add(charm);
     if (options && options.useGhost) {
@@ -333,7 +333,7 @@ describe('Inspector Settings', function() {
     assert.equal('foo', message.Params.Config.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});
-    assert.equal(button.getHTML(), 'Save Changes');
+    assert.equal(button.getHTML(), 'Save changes');
     assert.isTrue(input.hasClass('change-saved'));
   });
 

@@ -87,7 +87,7 @@ describe('Inspector Overview', function() {
   var setUpInspector = function() {
     var charmId = 'precise/mediawiki-14';
     charmConfig.id = charmId;
-    var charm = new models.BrowserCharm(charmConfig);
+    var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
     service = new models.Service({
       id: 'mediawiki',
@@ -321,12 +321,12 @@ describe('Inspector Overview', function() {
 
   it('generates category names appropriately', function() {
     var outputInput = {
-      'Error': { type: 'unit', category: 'error', units: [] },
-      'Pending': { type: 'unit', category: 'pending', units: [] },
-      'Running': { type: 'unit', category: 'running', units: [] },
-      'Needs Reboot': { type: 'unit',
+      'errored units': { type: 'unit', category: 'error', units: [] },
+      'pending units': { type: 'unit', category: 'pending', units: [] },
+      'running units': { type: 'unit', category: 'running', units: [] },
+      'machines need to be restarted': { type: 'unit',
         category: 'landscape-needs-reboot', units: []},
-      'Security Upgrade': { type: 'unit',
+      'security upgrades available': { type: 'unit',
         category: 'landscape-security-upgrades', units: []},
       'A new upgrade is available': { type: 'service',
         category: 'upgrade-service', upgradeAvailable: true,
@@ -383,7 +383,7 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper1.one(SUC).hasClass('close-unit'), true);
     assert.equal(wrapper1.one('.unit-qty').getHTML(), 2);
-    assert.equal(wrapper1.one('.category-label').getHTML(), 'Error');
+    assert.equal(wrapper1.one('.category-label').getHTML(), 'errored units');
     assert.notEqual(wrapper1.one(SUC).getStyle('maxHeight'), undefined);
 
     var wrapper2 = unitListWrappers.item(1);
@@ -391,7 +391,7 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper2.one(SUC).hasClass('close-unit'), true);
     assert.equal(wrapper2.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
     var wrapper3 = unitListWrappers.item(2);
@@ -399,7 +399,7 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper3.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper3.one(SUC).hasClass('close-unit'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
     var wrapper4 = unitListWrappers.item(3);
@@ -432,13 +432,13 @@ describe('Inspector Overview', function() {
     wrapper2 = unitListWrappers.item(1);
     assert.equal(wrapper2.one(SUH).hasClass('pending'), true);
     assert.equal(wrapper2.one('.unit-qty').getHTML(), 5);
-    assert.equal(wrapper2.one('.category-label').getHTML(), 'Pending');
+    assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
     wrapper3 = unitListWrappers.item(2);
     assert.equal(wrapper3.one(SUH).hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
-    assert.equal(wrapper3.one('.category-label').getHTML(), 'Running');
+    assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
     wrapper4 = unitListWrappers.item(3);

@@ -1,7 +1,3 @@
-
-
-
-
 /*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
@@ -83,12 +79,32 @@ YUI.add('viewlet-service-ghost', function(Y) {
       // Signalling to the shared templates that this is the ghost view.
       templateOptions.ghost = true;
       this.container.setHTML(this.template(templateOptions));
+      this.container.all('textarea.config-field').plug(
+          plugins.ResizingTextarea, {
+            max_height: 200,
+            min_height: 18,
+            single_line: 18
+          }
+      );
+    },
 
-      var ResizingTextarea = plugins.ResizingTextArea;
-      this.container.all('textarea.config-field').plug(ResizingTextarea, {
-        max_height: 200,
-        min_height: 18,
-        single_line: 18
+    /**
+     * Force resize the config textareas.
+     * ResizingTextarea needs the nodes to be visible to resize properly. We
+     * hook into the show() so that we can force the resize once the node is
+     * made visible via its viewlet container. Note that there are dupe hidden
+     * textarea nodes so we need to check if the node found has the plugin on
+     * it before running resize.
+     *
+     * @method show
+     *
+     */
+    show: function() {
+      this.container.show();
+      this.container.all('textarea.config-field').each(function(n) {
+        if (n.resizingTextarea) {
+          n.resizingTextarea.resize();
+        }
       });
     }
   };
