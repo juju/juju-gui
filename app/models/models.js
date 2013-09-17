@@ -246,7 +246,15 @@ YUI.add('juju-models', function(Y) {
 
   }, {
     ATTRS: {
-      displayName: { },
+      displayName: {
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            return this.get('id').replace('service-', '');
+          }
+        }
+      },
       name: {},
       charm: {},
       icon: {},
