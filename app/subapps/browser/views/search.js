@@ -108,7 +108,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           }
           var cache = {
             search: results,
-            charms: new models.BrowserCharmList()
+            charms: new models.CharmList()
           };
           cache.charms.add(results.recommended);
           cache.charms.add(results.more);

@@ -53,7 +53,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         a_string: {type: 'string', 'default': 'howdy'},
         some_text: {type: 'string', 'default': 'hidey\nho'}
       };
-      charm = new models.BrowserCharm({
+      charm = new models.Charm({
         id: 'cs:precise/mysql-7',
         description: 'A DB',
         options: charmOptions
@@ -190,7 +190,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         .hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.BrowserCharm({
+      charm = new models.Charm({
         id: 'cs:precise/mysql-7',
         description: 'A DB'
       });

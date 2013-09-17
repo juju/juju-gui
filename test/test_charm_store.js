@@ -250,7 +250,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('finds upgrades for charms - upgrade available', function(done) {
       var store = utils.makeFakeStore();
-      var charm = new models.BrowserCharm({url: 'cs:precise/wordpress-10'});
+      var charm = new models.Charm({url: 'cs:precise/wordpress-10'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
             assert.equal(upgrade, 'precise/wordpress-15');
@@ -263,7 +263,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('finds upgrades for charms - no upgrade available', function(done) {
       var store = utils.makeFakeStore();
-      var charm = new models.BrowserCharm({url: 'cs:precise/wordpress-15'});
+      var charm = new models.Charm({url: 'cs:precise/wordpress-15'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
             assert.isUndefined(upgrade);

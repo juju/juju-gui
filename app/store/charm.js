@@ -221,7 +221,7 @@ YUI.add('juju-charm-store', function(Y) {
         } else {
           var successCB = callbacks.success;
           callbacks.success = function(data) {
-            var charm = new Y.juju.models.BrowserCharm(data.charm);
+            var charm = new Y.juju.models.Charm(data.charm);
             if (data.metadata) {
               charm.set('metadata', data.metadata);
             }
@@ -434,7 +434,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, turn that into a BrowserCharmList object for the
+     * Given a result list, turn that into a CharmList object for the
      * application to use. Metadata is appended to the charm as data.
      *
      * @method _resultsToCharmlist
@@ -450,7 +450,7 @@ YUI.add('juju-charm-store', function(Y) {
         }
         return charmData.charm;
       });
-      return new Y.juju.models.BrowserCharmList({
+      return new Y.juju.models.CharmList({
         items: preppedData
       });
     },

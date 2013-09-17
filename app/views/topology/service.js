@@ -756,7 +756,7 @@ YUI.add('juju-topology-service', function(Y) {
           var charmData = Y.JSON.parse(dragData.charmData);
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
-          var charm = new models.BrowserCharm(charmData);
+          var charm = new models.Charm(charmData);
           Y.fire('initiateDeploy', charm, ghostAttributes);
         }
       }
