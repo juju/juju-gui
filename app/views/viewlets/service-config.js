@@ -89,13 +89,13 @@ YUI.add('viewlet-service-config', function(Y) {
             service: service,
             settings: templatedSettings,
             exposed: service.get('exposed')}));
-      this.container.all('textarea.config-field').each(function(n) {
-        n.plug(plugins.ResizingTextarea, {
-          max_height: 200,
-          min_height: 18,
-          single_line: 18
-        });
-      });
+      this.container.all('textarea.config-field').plug(
+          plugins.ResizingTextarea, {
+            max_height: 200,
+            min_height: 18,
+            single_line: 18
+          }
+      );
     },
 
     /**
