@@ -143,6 +143,10 @@ class DeployTestMixin(object):
             get_search_box, error='Charm search box is not visible')
         search_box.send_keys(charm_name)
         search_box.send_keys('\n')
+        # The search autocomplete has not closed in CI runs and it's either a
+        # race or the \n doesn't force the widget to close the results. We
+        # need to lose focus by clicking on something else in the UI
+        driver.find_element_by_css_selector('#environment-switcher').click()
 
         # Open details page
         charm_token = self.wait_for(
@@ -153,6 +157,9 @@ class DeployTestMixin(object):
         add_button = self.wait_for(
             get_add_button, error='Charm details page is not visible.')
         add_button.click()
+        # The search autocomplete has not closed in CI runs and it's either a
+        # race or the \n doesn't force the widget to close the results. We
+        # need to lose focus by clicking on something else in the UI
 
         # Deploy a charm.
         deploy_button = self.wait_for(
