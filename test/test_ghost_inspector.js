@@ -98,7 +98,7 @@ describe('Ghost Inspector', function() {
         }
         inspector = setUpInspector();
         var serviceIcon = Y.one('tspan.name');
-        assert.equal(serviceIcon.get('textContent'), '(mediawiki 1)');
+        assert.equal(serviceIcon.get('textContent'), '(mediawiki)');
 
         var serviceNameInput = Y.one('input[name=service-name]'),
             vmContainer = inspector.viewletManager.get('container');

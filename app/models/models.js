@@ -412,11 +412,8 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
-      var serviceCount = this.filter(function(service) {
-        return service.get('charm') === charm.get('id');
-      }).length + 1;
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+        id: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),

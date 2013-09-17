@@ -102,7 +102,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
                   container.one('input[name=number-units]').get('value'), 10)),
           config;
 
-      if (this.checkForExistingService(serviceName)) {
+      if (utils.checkForExistingService(serviceName, options.db)) {
         options.db.notifications.add(
             new models.Notification({
               title: 'Attempting to deploy service ' + serviceName,
@@ -141,18 +141,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Checks the database for an existing service with the same name.
-
-      @method checkForExistingService
-      @param {String} serviceName of the new service to deploy.
-      @return {Boolean} true if it exists, false if doesn't.
-    */
-    checkForExistingService: function(serviceName) {
-      var existingService = this.options.db.services.getById(serviceName);
-      return (existingService) ? true : false;
-    },
-
-    /**
       Destroys the inspector.
 
       @method closeInspector
@@ -162,18 +150,39 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
+      Updates the status of the service name input.
+
+      @method serviceNameInputStatus
+      @param {Boolean} valid status of the service name check.
+      @param {Y.Node} input a reference to the input node instance.
+    */
+    serviceNameInputStatus: function(valid, input) {
+      if (valid) {
+        input.removeClass('invalid');
+        input.addClass('valid'); // add checkmark
+      } else {
+        input.removeClass('valid');
+        input.addClass('invalid'); // add x
+      }
+    },
+
+    /**
       Updates the ghost service name when the user changes it in the inspector.
 
       @method updateGhostName
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      // By updating the id of the ghost service model we are causing d3
-      // to think that we have removed the old service and created a new
-      // service which then causes the d3/topo to remove the old service
-      // block and render the new service block.
-      this.options.ghostService.set(
-          'id', '(' + e.newVal + ')');
+      var valid = utils.checkForExistingService(e.newVal, this.options.db);
+      if (!valid) {
+        // By updating the id of the ghost service model we are causing d3
+        // to think that we have removed the old service and created a new
+        // service which then causes the d3/topo to remove the old service
+        // block and render the new service block.
+        this.options.ghostService.set(
+            'id', '(' + e.newVal + ')');
+      }
+      this.serviceNameInputStatus(!valid, e.currentTarget);
     },
 
     /**
