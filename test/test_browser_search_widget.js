@@ -174,7 +174,7 @@ describe('browser search widget', function() {
 });
 
 
-describe('search widget autocomplete functional checks', function() {
+describe('search widget autocomplete', function() {
   var Y, cleanIconHelper, container, data, fakeStore, search, Search, utils;
 
   before(function(done) {
@@ -223,7 +223,8 @@ describe('search widget autocomplete functional checks', function() {
           fakeStore
       ),
       autocompleteDataFormatter: fakeStore.resultsToCharmlist,
-      categoryIconGenerator: Y.bind(fakeStore.categoryIconPath, fakeStore),
+      categoryIconGenerator:
+          Y.bind(fakeStore.buildCategoryIconPath, fakeStore),
       filters: {}
     });
     search.render(container);

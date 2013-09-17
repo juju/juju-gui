@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Charmworld API v2 interface', function() {
     var Y, models, conn, env, app, container, data, juju, utils, charmworld,
-        hostname;
+        hostname, api;
 
 
     before(function(done) {
@@ -41,11 +41,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       hostname = 'http://charmworld.example/';
+      api = new charmworld.APIv2({apiHost: hostname});
     });
 
     it('constructs the api url correctly based on apiHost', function() {
-      var api = new charmworld.APIv2({apiHost: hostname}),
-          ds = api.get('datasource');
+      var ds = api.get('datasource');
 
       ds.get('source').should.eql(hostname + 'api/2/');
 
@@ -57,8 +57,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles loading interesting content correctly', function(done) {
-      var api = new charmworld.APIv2({apiHost: hostname}),
-          data = [];
+      var data = [];
 
       data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
       api.set('datasource', new Y.DataSource.Local({source: data}));
@@ -75,8 +74,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles searching correctly', function(done) {
-      var api = new charmworld.APIv2({apiHost: hostname}),
-          data = [],
+      var data = [],
           url;
       data.push({responseText: Y.JSON.stringify({name: 'foo'})});
       // Create a monkeypatched datasource we can use to track the generated
@@ -102,7 +100,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs filepaths correctly', function() {
-      var api = new charmworld.APIv2({apiHost: hostname});
       var iconPath = api.filepath('precise/mysql-1', 'icon.svg');
       assert.equal(
           iconPath,
@@ -110,17 +107,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs cateogry icon paths correctly', function() {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
-      var iconPath = api.categoryIconPath('app-servers');
+      var iconPath = api.buildCategoryIconPath('app-servers');
       assert.equal(
           iconPath,
           hostname + 'static/img/category-app-servers-bw.svg');
     });
 
     it('makes charm requests to correct URL', function(done) {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(endpoint, 'charm/CHARM-ID');
         done();
@@ -130,8 +123,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can use a cache to avoid requesting charm data', function(done) {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
       var should_not_happen = function() {
         assert.isTrue(false, 'Oops, this should not have been called.');
         done();
@@ -158,8 +149,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('will make a request on a cache miss', function(done) {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
       var should_not_happen = function() {
         assert.isTrue(false, 'Oops, this should not have been called.');
         done();
@@ -190,7 +179,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('makes autocomplete requests to correct URL', function(done) {
       var noop = function() {};
-      var api = new charmworld.APIv2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(endpoint, 'charms');
@@ -202,7 +190,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('makes autocomplete requests with right query flag', function(done) {
       var noop = function() {};
-      var api = new charmworld.APIv2({apiHost: hostname});
 
       api._makeRequest = function(endpoint, callbacks, filters) {
         assert.equal(filters.autocomplete, 'true');
@@ -213,21 +200,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('constructs iconpaths correctly', function() {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
       var iconPath = api.iconpath('precise/mysql-1');
       assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
     });
 
     it('constructs an icon path for local charms', function() {
-      var api = new charmworld.APIv2({apiHost: hostname});
-
       var iconPath = api.iconpath('local:precise/mysql-1');
       assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
     });
 
     it('splits the charm id to remove cs: when necessary', function() {
-      var api = new charmworld.APIv2({apiHost: hostname});
       var iconPath = api.iconpath('cs:precise/mysql-1');
       assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
     });
@@ -235,7 +217,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can fetch a charm via a promise', function(done) {
       // The "promiseCharm" method is just a promise-wrapped version of the
       // "charm" method.
-      var api = new charmworld.APIv2({apiHost: hostname});
       var DATA = 'DATA';
       var CHARM = 'CHARM';
       api.charm = function(charmID, callbacks) {

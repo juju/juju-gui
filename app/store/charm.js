@@ -402,11 +402,11 @@ YUI.add('juju-charm-store', function(Y) {
     /**
      * Generate the url to an icon for the category specified.
      *
-     * @method categoryIconPath
+     * @method buildCategoryIconPath
      * @param {String} categoryID the id of the category to load an icon for.
      *
      */
-    categoryIconPath: function(categoryID) {
+    buildCategoryIconPath: function(categoryID) {
       return [
         this.get('apiHost'),
         'static/img/category-',
@@ -419,9 +419,9 @@ YUI.add('juju-charm-store', function(Y) {
      * Load the QA data for a specific charm.
      *
      * @method qa
-     * @param {String} charmID the charm to fetch qa data for.
-     * @param {Object} callbacks the success/failure callbacks to use.
-     * @param {Object} bindScope the scope for 'this' in the callbacks.
+     * @param {String} charmID The charm to fetch QA data for.
+     * @param {Object} callbacks The success/failure callbacks to use.
+     * @param {Object} bindScope The scope for 'this' in the callbacks.
      *
      */
     qa: function(charmID, callbacks, bindScope) {
@@ -437,21 +437,26 @@ YUI.add('juju-charm-store', function(Y) {
      * Given a result list, turn that into a BrowserCharmList object for the
      * application to use. Metadata is appended to the charm as data.
      *
-     * @method _resultsToCharmlist
+     * @method resultsToCharmlist
      * @param {Object} JSON decoded data from response.
      * @private
      *
      */
     resultsToCharmlist: function(data) {
+      // Remove non-charms (bundles) from the data.
+      // TODO Add code to handle bundles.
+      data = Y.Array.filter(data, function(charmData) {
+        return charmData.charm !== undefined;
+      });
       // Append the metadata to the actual charm object.
-      var preppedData = Y.Array.map(data, function(charmData) {
+      data = Y.Array.map(data, function(charmData) {
         if (charmData.metadata) {
           charmData.charm.metadata = charmData.metadata;
         }
         return charmData.charm;
       });
       return new Y.juju.models.BrowserCharmList({
-        items: preppedData
+        items: data
       });
     },
 
@@ -464,7 +469,7 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     initializer: function(cfg) {
-      // @todo this isn't set on initial load so we have to manually hit the
+      // XXX This isn't set on initial load so we have to manually hit the
       // setter to get datasource filled in. Must be a better way.
       this.set('apiHost', cfg.apiHost);
     },
