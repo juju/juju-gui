@@ -220,32 +220,31 @@
             }
         }
         .toggle {
-
             span {
                 display: block;
                 vertical-align: top;
                 line-height: 30px;
             }
-
             .textvalue {
               float: left;
               height: 26px;
               padding-top: 5px;
               text-transform: capitalize;
             }
-
-            &.expose {
+            &.single-line {
                 label {
                     display: inline-block;
+                    margin-bottom: 0;
                     line-height: 34px;
                 }
+                .textvalue {
+                    display: none;
+                }
             }
-
             .toggle-switch {
                 display: inline-block;
                 vertical-align: top;
                 float: right;
-                padding-left: 15px;
 
                 label {
                     .create-border-radius(@border-radius);
