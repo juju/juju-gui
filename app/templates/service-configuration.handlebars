@@ -5,7 +5,9 @@
       <input type="file">
       <div class="fakebutton">Import config file...</div>
     </div>
-    {{> service-configuration}}
+    <div class="view-content charm-settings">
+      {{> service-configuration}}
+    </div>
   </div>
   {{#unless ghost}}
     <div class="controls configuration-buttons closed">

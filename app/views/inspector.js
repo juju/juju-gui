@@ -704,7 +704,8 @@ YUI.add('juju-view-inspector', function(Y) {
             }));
       }
       var container = this.viewletManager.get('container');
-      container.all('.settings-wrapper').hide();
+      container.all('.charm-settings').hide();
+      container.all('.settings-wrapper.toggle').hide();
     },
 
     /**
@@ -718,7 +719,8 @@ YUI.add('juju-view-inspector', function(Y) {
       var container = this.viewletManager.get('container');
       this.viewletManager.configFileContent = null;
       container.one('.fakebutton').setHTML('Import config file...');
-      container.all('.settings-wrapper').show();
+      container.all('.charm-settings').show();
+      container.all('.settings-wrapper.toggle').show();
       // Replace the file input node.  There does not appear to be any way
       // to reset the element, so the only option is this rather crude
       // replacement.  It actually works well in practice.
