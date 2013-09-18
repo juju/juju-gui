@@ -606,16 +606,13 @@
                         text-decoration: underline;
                     }
                     .close {
-                        /* required to overwrite bootstrap styles */
-                        text-shadow: none;
-                        color: #a0a0a0;
-                        font-weight: 200;
+                        /* Required to overwrite bootstrap styles */
                         opacity: 1;
-                        font-size: 17px;
-                        line-height: 17px;
-                        /* not overwriting */
-                        vertical-align: top;
-                        margin-top: -6px;
+                        display: block;
+
+                        .sprite {
+                            vertical-align: top;
+                        }
                     }
                     & > div {
                         display: inline-block;
