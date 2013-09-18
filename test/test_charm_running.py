@@ -73,8 +73,12 @@ class TestBasics(browser.TestCase):
                     tests_completed, 'Unable to complete test run.',
                     timeout=600)
             except exceptions.TimeoutException:
+                msg = "Tests did not complete. Check video and timeout value"
+                browser.printerr(msg)
+                browser.printerr("Test Runner Stats:")
                 browser.printerr(
                     self.driver.execute_script('return testRunner.stats;'))
+                browser.printerr("Re-raising TimeoutException")
                 raise
             return total, failures
         self.load('/test/')
@@ -148,7 +152,7 @@ class DeployTestMixin(object):
         # focus to another node first, then trying to click on the selected
         # charm token.
         self.driver.find_element_by_css_selector(
-            '#environment-switcher').click()
+            '#zoom-out-btn').click()
 
         # Open details page
         charm_token = self.wait_for(
