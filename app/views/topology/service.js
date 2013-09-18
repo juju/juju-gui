@@ -1311,7 +1311,6 @@ YUI.add('juju-topology-service', function(Y) {
       var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var triangle = serviceMenu.one('.triangle');
       var securityURL, rebootURL;
-      var flags = window.flags;
 
       this.show_service(service);
 
@@ -1349,10 +1348,6 @@ YUI.add('juju-topology-service', function(Y) {
           addRelation.addClass('disabled');
         }
 
-        // We do not want the user destroying the Juju GUI service.
-        if (utils.isGuiService(service)) {
-          serviceMenu.one('.destroy-service').addClass('disabled');
-        }
         this.updateServiceMenuLocation();
       }
     },
@@ -1372,8 +1367,6 @@ YUI.add('juju-topology-service', function(Y) {
         serviceMenu.removeClass('active');
         topo.set('active_service', null);
         topo.set('active_context', null);
-        // Most services can be destroyed via the GUI.
-        serviceMenu.one('.destroy-service').removeClass('disabled');
       }
     },
 
@@ -1385,9 +1378,6 @@ YUI.add('juju-topology-service', function(Y) {
     show_service: function(service) {
       var topo = this.get('component');
       var createServiceInspector = topo.get('createServiceInspector');
-      var getModelURL = topo.get('getModelURL');
-      // to satisfy linter;
-      var flags = window.flags;
 
       topo.detachContainer();
       createServiceInspector(service);

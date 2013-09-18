@@ -585,8 +585,9 @@ YUI.add('juju-gui', function(Y) {
       // at a distance and strange failures.
       this.db.services.after(['add', 'remove', '*:change'],
                              this.on_database_changed, this);
-      this.db.relations.after(['add', 'remove', '*:change'],
-                                this.on_database_changed, this);
+      this.db.relations.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');

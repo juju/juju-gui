@@ -319,7 +319,7 @@ describe('Endpoints map', function() {
 
 });
 
-describe.only('Endpoints map handlers', function() {
+describe('Endpoints map handlers', function() {
   var Y, juju, utils, models, app, conn, env, controller, destroyMe;
 
   before(function(done) {
