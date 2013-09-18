@@ -299,7 +299,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       ghostService.setAttrs({
         id: serviceName,
-        displayName: serviceName,
+        displayName: undefined,
         pending: false,
         loading: false,
         config: config,
