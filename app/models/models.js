@@ -795,6 +795,12 @@ YUI.add('juju-models', function(Y) {
         if (result.service) {
           result.charm = db.charms.getById(
               result.service.get('charm'));
+          if (!result.charm) {
+            console.warn('Failed to load charm',
+                         result.charm, db.charms.size(), db.charms.get('id'));
+          }
+        } else {
+          console.warn('failed to resolve service', result.name);
         }
         return result;
       }, this);
@@ -1271,7 +1277,7 @@ YUI.add('juju-models', function(Y) {
             result.push({name: endpoint.type});
             return [endpoint.name, {name: endpoint.type}];
           });
-      var relation = this.relations.create({
+      var relation = this.relations.add({
         relation_id: relationId,
         type: match['interface'],
         endpoints: endpoints,
@@ -1402,6 +1408,7 @@ YUI.add('juju-models', function(Y) {
       }
 
 
+      var charmLookupByName = {};
       Object.keys(source.services).forEach(function(serviceName) {
         var current = source.services[serviceName];
         var existing = self.services.getById(serviceName);
@@ -1416,16 +1423,17 @@ YUI.add('juju-models', function(Y) {
         serviceIdMap[serviceName] = targetId;
 
         // Also track any new charms we'll have to add.
-        if (current.charm && charms.indexOf(current.charm) === -1) {
+        if (current.charm && charmLookupByName[current.charm] === undefined) {
           charms.push(charmStore.promiseCharm(current.charm, self.charms,
                                               defaultSeries));
+          charmLookupByName[current.charm] = true;
         }
       });
 
       // If we made it this far its time for mutation, start by importing
       // charms and then services.
       return Y.batch.apply(this, charms)
-     .then(function() {
+      .then(function() {
             Object.keys(serviceIdMap).forEach(function(serviceName) {
               var serviceData = source.services[serviceName];
               var serviceId = serviceIdMap[serviceName];
