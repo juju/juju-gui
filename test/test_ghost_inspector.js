@@ -246,7 +246,7 @@ describe('Ghost Inspector', function() {
         assert.equal(nameInput.get('value'), oldVal);
       });
 
-  it('It resets the canvas when hitting cancel', function(done) {
+  it('Resets the canvas when hitting cancel', function(done) {
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
     // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
     if (Y.UA.ie === 10) { done(); }
@@ -276,7 +276,7 @@ describe('Ghost Inspector', function() {
     nameInput.set('value', 'foo');
   });
 
-  it('It resets the canvas when hitting X', function(done) {
+  it('Resets the canvas when hitting X', function(done) {
     // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
     // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
     if (Y.UA.ie === 10) { done(); }
