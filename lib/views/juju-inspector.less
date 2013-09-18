@@ -483,7 +483,7 @@
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
                 height: auto;
             }
-            & .use-defaults {
+            .use-defaults {
                 textarea,
                 input[type=text] {
                     background-color: @disabled-input-background-color;
@@ -495,6 +495,9 @@
                     color: @disabled-input-background-color;
                     border-color: @disabled-input-background-color;
                     cursor: default;
+                }
+                .settings-description {
+                    color: #54504d;
                 }
             }
             .service-config {
