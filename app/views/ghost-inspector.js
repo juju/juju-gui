@@ -174,12 +174,23 @@ YUI.add('juju-ghost-inspector', function(Y) {
     */
     updateGhostName: function(e) {
       var name = '(' + e.newVal + ')';
-      this.options.ghostService.setAttrs({
-        displayName: name
-      });
+      this.options.ghostService.set('displayName', name);
       this.serviceNameInputStatus(
           !utils.checkForExistingService(e.newVal, this.options.db),
           e.currentTarget);
+    },
+
+    /**
+      Resets the changes that the inspector made in the canvas before
+      destroying the viewlet Manager on Cancel
+
+      @method resetCanvas
+    */
+    resetCanvas: function() {
+      var opt = this.options;
+      opt.ghostService.set(
+          'displayName', '(' + opt.model.get('package_name') + ')');
+      this.viewletManager.destroy();
     },
 
     /**
