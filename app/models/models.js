@@ -247,15 +247,12 @@ YUI.add('juju-models', function(Y) {
   }, {
     ATTRS: {
       displayName: {
-        /**
-          Dynamically calculate a display name that accounts for Juju Core name
-          prefixes.
-
-          @attribute displayName
-          @type {String}
-         */
-        getter: function() {
-          return this.get('id').replace('service-', '');
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            return this.get('id').replace('service-', '');
+          }
         }
       },
       name: {},
@@ -412,8 +409,25 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
+      var randomId, invalid = true;
+
+      do {
+        // The $ appended to the end is to guarantee that an id coming from Juju
+        // will never clash with the randomly generated ghost id's in the GUI.
+        randomId = Math.floor(Math.random() * 100000000) + '$';
+        // Don't make functions within a loop
+        /* jshint -W083 */
+        invalid = this.some(function(service) {
+          if (service.get('id') === randomId) {
+            return true;
+          }
+        });
+      } while (invalid);
+
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ')',
+        // Creating a temporary id because it's undefined by default.
+        id: randomId,
+        displayName: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),

@@ -173,16 +173,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      var valid = utils.checkForExistingService(e.newVal, this.options.db);
-      if (!valid) {
-        // By updating the id of the ghost service model we are causing d3
-        // to think that we have removed the old service and created a new
-        // service which then causes the d3/topo to remove the old service
-        // block and render the new service block.
-        this.options.ghostService.set(
-            'id', '(' + e.newVal + ')');
-      }
-      this.serviceNameInputStatus(!valid, e.currentTarget);
+      var name = '(' + e.newVal + ')';
+      this.options.ghostService.setAttrs({
+        displayName: name
+      });
+      this.serviceNameInputStatus(
+          !utils.checkForExistingService(e.newVal, this.options.db),
+          e.currentTarget);
     },
 
     /**
@@ -297,6 +294,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       ghostService.setAttrs({
         id: serviceName,
+        displayName: undefined,
         pending: false,
         loading: false,
         config: config,
