@@ -43,10 +43,6 @@ describe('Inspector Charm', function() {
     });
   });
 
-  beforeEach(function() {
-    window.flags.serviceInspector = true;
-  });
-
   afterEach(function() {
     if (fakeStore) {
       fakeStore.destroy();
@@ -55,8 +51,6 @@ describe('Inspector Charm', function() {
     if (testContainer) {
       testContainer.remove(true);
     }
-
-    window.flags = {};
   });
 
   it('should ensure the viewlet exists', function() {
