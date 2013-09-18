@@ -1239,7 +1239,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('should support deployer status without imports', function(done) {
-      var fixture = utils.loadFixture('data/wp-deployer.yaml');
       var data = {
         Type: 'Deployer',
         Request: 'Status',

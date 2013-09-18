@@ -1209,7 +1209,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleDeployerImport: function(data, client, state) {
       var request = data;
-      var self = this;
       var callback = function(reply) {
         var response = {
           RequestId: request.RequestId,

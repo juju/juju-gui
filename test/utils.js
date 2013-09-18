@@ -138,7 +138,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     })(),
 
     makeFakeStore: function(cache) {
-      var modellist = cache;
       var fakeStore = new Y.juju.charmworld.APIv2({});
       fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
         store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
