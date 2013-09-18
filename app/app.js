@@ -569,9 +569,13 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      Y.one('#export-icon').on('click', function(e) {
-        this.exportYAML();
-      }, this);
+      var exportNode = Y.one('#export-icon');
+      // Tests won't have this node.
+      if (exportNode) {
+        exportNode.on('click', function(e) {
+          this.exportYAML();
+        }, this);
+      }
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
@@ -612,7 +616,7 @@ YUI.add('juju-gui', function(Y) {
       var result = this.db.exportDeployer();
       var exportData = jsyaml.dump(result);
       var exportBlob = new Blob([exportData],
-        {type: 'application/yaml;charset=utf-8'});
+          {type: 'application/yaml;charset=utf-8'});
       saveAs(exportBlob, 'export.yaml');
     },
 
