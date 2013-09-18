@@ -308,7 +308,7 @@ describe('Ghost Inspector', function() {
 
     inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
     inspector.viewletManager.configFileContent.should.equal(fileContents);
-    var settings = container.all('.settings-wrapper');
+    var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
       node.getStyle('display').should.equal('none');
     });
@@ -320,7 +320,7 @@ describe('Ghost Inspector', function() {
 
     inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
     inspector.viewletManager.configFileContent.should.equal(fileContents);
-    var settings = container.all('.settings-wrapper');
+    var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
       node.getStyle('display').should.equal('none');
     });

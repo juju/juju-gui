@@ -220,32 +220,31 @@
             }
         }
         .toggle {
-
             span {
                 display: block;
                 vertical-align: top;
                 line-height: 30px;
             }
-
             .textvalue {
               float: left;
               height: 26px;
               padding-top: 5px;
               text-transform: capitalize;
             }
-
-            &.expose {
+            &.single-line {
                 label {
                     display: inline-block;
+                    margin-bottom: 0;
                     line-height: 34px;
                 }
+                .textvalue {
+                    display: none;
+                }
             }
-
             .toggle-switch {
                 display: inline-block;
                 vertical-align: top;
                 float: right;
-                padding-left: 15px;
 
                 label {
                     .create-border-radius(@border-radius);
@@ -484,7 +483,7 @@
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
                 height: auto;
             }
-            & .use-defaults {
+            .use-defaults {
                 textarea,
                 input[type=text] {
                     background-color: @disabled-input-background-color;
@@ -492,10 +491,8 @@
                     cursor: not-allowed;
                     color: @disabled-input-text-color;
                 }
-                .fakebutton {
-                    color: @disabled-input-background-color;
-                    border-color: @disabled-input-background-color;
-                    cursor: default;
+                .settings-description {
+                    color: #54504d;
                 }
             }
             .service-config {
@@ -606,16 +603,13 @@
                         text-decoration: underline;
                     }
                     .close {
-                        /* required to overwrite bootstrap styles */
-                        text-shadow: none;
-                        color: #a0a0a0;
-                        font-weight: 200;
+                        /* Required to overwrite bootstrap styles */
                         opacity: 1;
-                        font-size: 17px;
-                        line-height: 17px;
-                        /* not overwriting */
-                        vertical-align: top;
-                        margin-top: -6px;
+                        display: block;
+
+                        .sprite {
+                            vertical-align: top;
+                        }
                     }
                     & > div {
                         display: inline-block;
@@ -709,8 +703,6 @@
                 }
             }
             .settings-wrapper {
-                position: relative;
-
                 span.resolver .conflicted-env {
                   display: inline-block;
                   min-width: 25px;
@@ -829,7 +821,7 @@
         .destroy-service-prompt {
             overflow: hidden;
             max-height: 200px;
-            .transition(.25s, max-height .3s);
+            .transition(max-height .2s);
             position: absolute;
             bottom: 0;
             left: 0;
