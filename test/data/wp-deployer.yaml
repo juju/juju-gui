@@ -2,7 +2,7 @@ envExport:
   series: precise
   services: 
     mysql: 
-      charm: "cs:precise/mysql-27"
+      charm: "cs:precise/mysql-26"
       num_units: 1
       options: 
         "binlog-format": MIXED
@@ -26,7 +26,7 @@ envExport:
         "gui-x": 115
         "gui-y": 89
     wordpress: 
-      charm: "cs:precise/wordpress-16"
+      charm: "cs:precise/wordpress-15"
       num_units: 1
       options: 
         debug: "no"
