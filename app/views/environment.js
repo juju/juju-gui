@@ -178,12 +178,12 @@ YUI.add('juju-view-environment', function(Y) {
               environment: this,
               store: this.topo.get('store'),
               events: {
-                '.close': {'click': 'destroy'},
                 '.close-slot': {'click': 'hideSlot'}
               }
             },
             configService: {
               events: {
+                '.close': {'click': 'destroy'},
                 '.tab': {'click': 'switchTab'}
               },
               viewletEvents: {
@@ -237,13 +237,13 @@ YUI.add('juju-view-environment', function(Y) {
               // the viewlet manager template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
               // these events are for the viewlet manager
-              events: {
-                '.cancel': { 'click': 'destroy' }
-              },
+              events: {},
               // these events are for the viewlets and have their callbacks
               // bound to the controllers prototype and are then mixed with the
               // manager's events for final binding
               viewletEvents: {
+                '.close': { 'click': 'resetCanvas' },
+                '.cancel': { 'click': 'resetCanvas' },
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.confirm': { click: 'deployCharm' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},

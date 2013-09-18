@@ -106,10 +106,8 @@ describe('Ghost Inspector', function() {
         // to create our own event handler listening for the special Y.View
         // bubbling valuechange (note not valueChange) event.
         var handler = vmContainer.delegate('valuechange', function() {
-          view.update(); // simulating a db.fire('update') call
-          // Reselecting the service node because it is replaced not actually
-          // updated by the topo service d3 system.
-          assert.equal(Y.one('tspan.name').get('textContent'), '(foo)');
+          view.update(); // Simulating a db.fire('update') call
+          assert.equal(serviceIcon.get('textContent'), '(foo)');
           handler.detach();
           done();
         }, 'input[name=service-name]');
@@ -248,7 +246,65 @@ describe('Ghost Inspector', function() {
         assert.equal(nameInput.get('value'), oldVal);
       });
 
-  it('Saves the config when closing the inspector via \'X\' or \'Save\'');
+  it('Resets the canvas when hitting cancel', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) { done(); }
+
+    inspector = setUpInspector();
+    var vmContainer = inspector.viewletManager.get('container');
+    var nameInput = vmContainer.one('input[name=service-name]');
+    var model = inspector.options.ghostService;
+    var serviceIcon = Y.one('tspan.name');
+
+    assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
+    assert.equal(model.get('displayName'), '(mediawiki)', 'model before');
+
+    var handler = vmContainer.delegate('valuechange', function() {
+      assert.equal(model.get('displayName'), '(foo)', 'model callback');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(foo)', 'icon callback');
+      vmContainer.one('button.cancel').simulate('click');
+      assert.equal(model.get('displayName'), '(mediawiki)', 'model after');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon after');
+      handler.detach();
+      done();
+    }, 'input[name=service-name]');
+
+    nameInput.simulate('focus');
+    nameInput.set('value', 'foo');
+  });
+
+  it('Resets the canvas when hitting X', function(done) {
+    // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
+    // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
+    if (Y.UA.ie === 10) { done(); }
+
+    inspector = setUpInspector();
+    var vmContainer = inspector.viewletManager.get('container');
+    var nameInput = vmContainer.one('input[name=service-name]');
+    var model = inspector.options.ghostService;
+    var serviceIcon = Y.one('tspan.name');
+
+    assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
+    assert.equal(model.get('displayName'), '(mediawiki)', 'model before');
+
+    var handler = vmContainer.delegate('valuechange', function() {
+      assert.equal(model.get('displayName'), '(foo)', 'model callback');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(foo)', 'icon callback');
+      vmContainer.one('.close').simulate('click');
+      assert.equal(model.get('displayName'), '(mediawiki)', 'model after');
+      view.update(); // Simulating a db.fire('update') call
+      assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon after');
+      handler.detach();
+      done();
+    }, 'input[name=service-name]');
+
+    nameInput.simulate('focus');
+    nameInput.set('value', 'foo');
+  });
 
   it('renders into the dom when instantiated', function() {
     inspector = setUpInspector();
