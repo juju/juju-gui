@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
 
-describe.only('Ghost Inspector', function() {
+describe('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
       jujuViews, models, service, utils, view, Y;
