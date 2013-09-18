@@ -230,11 +230,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          var result = this.db.exportDeployer();
-          var exportData = jsyaml.dump(result);
-          var exportBlob = new Blob([exportData],
-                                    {type: 'application/yaml;charset=utf-8'});
-          saveAs(exportBlob, 'export.yaml');
+          this.exportYAML();
         },
         help: 'Export the environment'
       },
@@ -573,6 +569,10 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
+      Y.one('#export-icon').on('click', function(e) {
+        this.exportYAML();
+      }, this);
+
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
       if (window.flags && window.flags.serviceInspector) {
@@ -601,6 +601,19 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deploy(charm, ghostAttributes);
       }, this);
+    },
+
+    /**
+    Export the YAML for this environment.
+
+    @method exportYAML
+    */
+    exportYAML: function() {
+      var result = this.db.exportDeployer();
+      var exportData = jsyaml.dump(result);
+      var exportBlob = new Blob([exportData],
+        {type: 'application/yaml;charset=utf-8'});
+      saveAs(exportBlob, 'export.yaml');
     },
 
     /**
