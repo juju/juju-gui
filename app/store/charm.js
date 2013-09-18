@@ -109,10 +109,6 @@ YUI.add('juju-charm-store', function(Y) {
         }
         result = defaultSeries + '/' + result;
       }
-      if (/\-(\d+|HEAD)/.exec(result) === null) {
-        // Add in a revision placeholder
-        result = result + '-1';
-      }
       return result;
     }
 
@@ -122,14 +118,14 @@ YUI.add('juju-charm-store', function(Y) {
   });
 
   /**
-   * Api helper for the charmworld API v2.
+   * Charmworld API version 3 interface.
    *
-   * @class APIv2
+   * @class APIv3
    * @extends {Base}
    *
    */
-  ns.APIv2 = Y.Base.create('APIv2', Y.Base, [], {
-    _apiRoot: 'api/2',
+  ns.APIv3 = Y.Base.create('APIv3', Y.Base, [], {
+    _apiRoot: 'api/3',
 
     /**
       * Send the actual request and handle response from the api.
@@ -159,7 +155,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} bindScope the scope of *this* in the callbacks.
      */
     autocomplete: function(filters, callbacks, bindScope) {
-      var endpoint = 'charms';
+      var endpoint = 'search';
       // Force that this is an autocomplete call to perform matching on the
       // start of names vs a fulltext search.
       filters.autocomplete = 'true';
@@ -221,7 +217,7 @@ YUI.add('juju-charm-store', function(Y) {
         } else {
           var successCB = callbacks.success;
           callbacks.success = function(data) {
-            var charm = new Y.juju.models.BrowserCharm(data.charm);
+            var charm = new Y.juju.models.Charm(data.charm);
             if (data.metadata) {
               charm.set('metadata', data.metadata);
             }
@@ -263,8 +259,8 @@ YUI.add('juju-charm-store', function(Y) {
       @return {Promise} A promise for a newer charm ID or undefined.
     */
     promiseUpgradeAvailability: function(charm, cache) {
-      // Get the charm's store ID, then replace the version number
-      // with '-HEAD' to retrieve the latest version of the charm.
+      // Get the charm's store ID, then remove the version number to retrieve
+      // the latest version of the charm.
       var storeId, revision;
       if (charm instanceof Y.Model) {
         storeId = charm.get('storeId');
@@ -273,7 +269,7 @@ YUI.add('juju-charm-store', function(Y) {
         storeId = charm.url;
         revision = parseInt(charm.revision, 10);
       }
-      storeId = storeId.replace(/-\d+$/, '-HEAD');
+      storeId = storeId.replace(/-\d+$/, '');
       // XXX By using a cache we hide charm versions that have become available
       // since we last requested the most recent version.
       return this.promiseCharm(storeId, cache)
@@ -296,7 +292,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} bindScope the scope of *this* in the callbacks.
      */
     search: function(filters, callbacks, bindScope) {
-      var endpoint = 'charms';
+      var endpoint = 'search';
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
@@ -346,25 +342,6 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-      Generate the API path to a file.
-      This is useful when generating links and references in HTML to a file
-      but not actually fetching the file itself.
-
-      @method filepath
-      @param {String} charmID The id of the charm to grab the file from.
-      @param {String} filename The name of the file to generate a path to.
-
-     */
-    filepath: function(charmID, filename) {
-      return this.get('apiHost') + [
-        this._apiRoot,
-        'charm',
-        charmID,
-        'file',
-        filename].join('/');
-    },
-
-    /**
       Generate the API path to a charm icon.
       This is useful when generating links and references in HTML to the
       charm's icon and is constructing the correct icon based on reviewed
@@ -390,11 +367,11 @@ YUI.add('juju-charm-store', function(Y) {
         // The following regular expression removes everything up to the
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
-
         return this.get('apiHost') + [
           this._apiRoot,
           'charm',
           charmID,
+          'file',
           'icon.svg'].join('/');
       }
     },
@@ -402,11 +379,11 @@ YUI.add('juju-charm-store', function(Y) {
     /**
      * Generate the url to an icon for the category specified.
      *
-     * @method categoryIconPath
+     * @method buildCategoryIconPath
      * @param {String} categoryID the id of the category to load an icon for.
      *
      */
-    categoryIconPath: function(categoryID) {
+    buildCategoryIconPath: function(categoryID) {
       return [
         this.get('apiHost'),
         'static/img/category-',
@@ -419,9 +396,9 @@ YUI.add('juju-charm-store', function(Y) {
      * Load the QA data for a specific charm.
      *
      * @method qa
-     * @param {String} charmID the charm to fetch qa data for.
-     * @param {Object} callbacks the success/failure callbacks to use.
-     * @param {Object} bindScope the scope for 'this' in the callbacks.
+     * @param {String} charmID The charm to fetch QA data for.
+     * @param {Object} callbacks The success/failure callbacks to use.
+     * @param {Object} bindScope The scope for 'this' in the callbacks.
      *
      */
     qa: function(charmID, callbacks, bindScope) {
@@ -434,24 +411,29 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, turn that into a BrowserCharmList object for the
+     * Given a result list, turn that into a CharmList object for the
      * application to use. Metadata is appended to the charm as data.
      *
-     * @method _resultsToCharmlist
+     * @method resultsToCharmlist
      * @param {Object} JSON decoded data from response.
      * @private
      *
      */
     resultsToCharmlist: function(data) {
+      // Remove non-charms (bundles) from the data.
+      // TODO Add code to handle bundles.
+      data = Y.Array.filter(data, function(charmData) {
+        return charmData.charm !== undefined;
+      });
       // Append the metadata to the actual charm object.
-      var preppedData = Y.Array.map(data, function(charmData) {
+      data = Y.Array.map(data, function(charmData) {
         if (charmData.metadata) {
           charmData.charm.metadata = charmData.metadata;
         }
         return charmData.charm;
       });
-      return new Y.juju.models.BrowserCharmList({
-        items: preppedData
+      return new Y.juju.models.CharmList({
+        items: data
       });
     },
 
@@ -464,7 +446,7 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     initializer: function(cfg) {
-      // @todo this isn't set on initial load so we have to manually hit the
+      // XXX This isn't set on initial load so we have to manually hit the
       // setter to get datasource filled in. Must be a better way.
       this.set('apiHost', cfg.apiHost);
     },
@@ -482,7 +464,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      this._makeRequest('charms/interesting', callbacks);
+      this._makeRequest('search/interesting', callbacks);
     },
 
     /**
@@ -558,6 +540,195 @@ YUI.add('juju-charm-store', function(Y) {
         value: false
       }
     }
+  });
+
+  /**
+   * Charmworld API version 2 interface.
+   *
+   * @class APIv2
+   * @extends {APIv3}
+   *
+   * This class inherits from the v3 version of the API so that removing v2
+   * once it is no longer needed will be easy (just delete this class, the one
+   * or two places it is referenced in the code, and its associated tests).
+   *
+   */
+  ns.APIv2 = Y.Base.create('APIv2', ns.APIv3, [], {
+    _apiRoot: 'api/2',
+
+    /**
+     * Api call to fetch autocomplete suggestions based on the current term.
+     *
+     * @method autocomplete
+     * @param {Object} query the filters data object for search.
+     * @param {Object} filters the filters data object for search.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     */
+    autocomplete: function(filters, callbacks, bindScope) {
+      var endpoint = 'charms';
+      // Force that this is an autocomplete call to perform matching on the
+      // start of names vs a fulltext search.
+      filters.autocomplete = 'true';
+      filters.limit = 5;
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks, filters);
+    },
+
+    /**
+     * Api call to fetch a charm's details, with an optional local cache.
+     *
+     * @method charmWithCache
+     * @param {String} charmID The charm to fetch This is the fully qualified
+     *   charm name in the format scheme:series/charm-revision.
+     * @param {Object} callbacks The success/failure callbacks to use.
+     * @param {Object} bindScope The scope of "this" in the callbacks.
+     * @param {ModelList} [cache] a local cache of browser charms.
+     * @param {String} [defaultSeries='precise'] The series to use if none is
+     *  specified in the charm ID.
+     */
+    charm: function(charmID, callbacks, bindScope, cache, defaultSeries) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+      }
+      if (cache) {
+        var charm = cache.getById(charmID);
+        if (charm) {
+          // If the charm was found in the cache, then we can declare success
+          // without ever making a request to charmworld.
+          Y.soon(function() {
+            // Since there wasn't really a request, there is no data, so we
+            // pass an empty object as the "data" parameter.
+            callbacks.success({}, charm);
+          });
+          return;
+        } else {
+          var successCB = callbacks.success;
+          callbacks.success = function(data) {
+            var charm = new Y.juju.models.Charm(data.charm);
+            if (data.metadata) {
+              charm.set('metadata', data.metadata);
+            }
+            cache.add(charm);
+            successCB(data, charm);
+          };
+        }
+      }
+      charmID = this.apiHelper.normalizeCharmId(charmID, defaultSeries);
+      // If the charm ID does not have a revision number (or "HEAD"), add one.
+      if (/\-(\d+|HEAD)/.exec(charmID) === null) {
+        // Add in a revision placeholder.  Any value will do, v2 of the
+        // charmworld API ignores revision numbers.
+        charmID = charmID + '-1';
+      }
+      this._charm(charmID, callbacks, bindScope);
+    },
+
+    /**
+      Promises to return the latest charm ID for a given charm if a newer one
+      exists; this also caches the newer charm if one is available.
+
+      @method promiseUpgradeAvailability
+      @param {Charm} charm An existing charm potentially in need of an upgrade.
+      @param {ModelList} cache A local cache of browser charms.
+      @return {Promise} A promise for a newer charm ID or undefined.
+    */
+    promiseUpgradeAvailability: function(charm, cache) {
+      // Get the charm's store ID, then replace the version number
+      // with '-HEAD' to retrieve the latest version of the charm.
+      var storeId, revision;
+      if (charm instanceof Y.Model) {
+        storeId = charm.get('storeId');
+        revision = parseInt(charm.get('revision'), 10);
+      } else {
+        storeId = charm.url;
+        revision = parseInt(charm.revision, 10);
+      }
+      storeId = storeId.replace(/-\d+$/, '-HEAD');
+      // XXX By using a cache we hide charm versions that have become available
+      // since we last requested the most recent version.
+      return this.promiseCharm(storeId, cache)
+        .then(function(latest) {
+            var latestVersion = parseInt(latest.charm.id.split('-').pop(), 10);
+            if (latestVersion > revision) {
+              return latest.charm.id;
+            }
+          }, function(e) {
+            throw e;
+          });
+    },
+
+    /**
+     * Api call to search charms
+     *
+     * @method search
+     * @param {Object} filters the filters data object for search.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     */
+    search: function(filters, callbacks, bindScope) {
+      var endpoint = 'charms';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks, filters);
+    },
+
+    /**
+      Generate the API path to a charm icon.
+      This is useful when generating links and references in HTML to the
+      charm's icon and is constructing the correct icon based on reviewed
+      status and categories on the charm.
+
+      @method iconpath
+      @param {String} charmID The id of the charm to grab the icon for.
+      @return {String} The URL of the charm's icon.
+     */
+    iconpath: function(charmID) {
+      // If this is a local charm, then we need use a hard coded path to the
+      // default icon since we cannot fetch its category data or its own
+      // icon.
+      // XXX: #1202703 - this is a short term fix for the bug. Need longer
+      // term solution.
+      if (charmID.indexOf('local:') === 0) {
+        return this.get('apiHost') +
+            'static/img/charm_160.svg';
+
+      } else {
+        // Get the charm ID from the service.  In some cases, this will be
+        // the charm URL with a protocol, which will need to be removed.
+        // The following regular expression removes everything up to the
+        // colon portion of the quote and leaves behind a charm ID.
+        charmID = charmID.replace(/^[^:]+:/, '');
+        return this.get('apiHost') + [
+          this._apiRoot,
+          'charm',
+          charmID,
+          'icon.svg'].join('/');
+      }
+    },
+
+    /**
+     * Fetch the interesting landing content from the charmworld api.
+     *
+     * @method interesting
+     * @return {Object} data loaded from the api call.
+     *
+     */
+    interesting: function(callbacks, bindScope) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      this._makeRequest('charms/interesting', callbacks);
+    }
+  }, {
+    ATTRS: {}
   });
 
 }, '0.1.0', {

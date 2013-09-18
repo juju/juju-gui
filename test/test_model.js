@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('BrowserCharm initialization', function() {
+describe('Charm initialization', function() {
   var models;
 
   before(function(done) {
@@ -28,8 +28,8 @@ describe('BrowserCharm initialization', function() {
     });
   });
 
-  it('must be able to create BrowserCharm', function() {
-    var charm = new models.BrowserCharm(
+  it('must be able to create Charm', function() {
+    var charm = new models.Charm(
         {id: 'cs:~alt-bac/precise/openstack-dashboard-0'});
     charm.get('scheme').should.equal('cs');
     charm.get('owner').should.equal('alt-bac');
@@ -43,7 +43,7 @@ describe('BrowserCharm initialization', function() {
   });
 
   it('must not set "owner" for promulgated charms', function() {
-    var charm = new models.BrowserCharm({
+    var charm = new models.Charm({
       id: 'cs:precise/openstack-dashboard-0'
     });
     assert.isUndefined(charm.get('owner'));
@@ -52,7 +52,7 @@ describe('BrowserCharm initialization', function() {
   it('must be able to parse hyphenated owner names', function() {
     // Note that an earlier version of the parsing code did not handle
     // hyphens in user names, so this test intentionally includes one.
-    var charm = new models.BrowserCharm(
+    var charm = new models.Charm(
         {id: 'cs:~marco-ceppi/precise/wordpress-17'});
     charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
   });
@@ -60,7 +60,7 @@ describe('BrowserCharm initialization', function() {
   it('must reject bad charm ids.', function() {
     try {
       /* jshint -W031 */
-      new models.BrowserCharm({id: 'foobar'});
+      new models.Charm({id: 'foobar'});
       /* jshint +W031 */
       assert.fail('Should have thrown an error');
     } catch (e) {
@@ -73,7 +73,7 @@ describe('BrowserCharm initialization', function() {
   it('must reject missing charm ids at initialization.', function() {
     try {
       /* jshint -W031 */
-      new models.BrowserCharm();
+      new models.Charm();
       /* jshint +W031 */
       assert.fail('Should have thrown an error');
     } catch (e) {
@@ -82,10 +82,10 @@ describe('BrowserCharm initialization', function() {
     }
   });
 
-  it('must convert timestamps into time objects on BrowserCharm', function() {
+  it('must convert timestamps into time objects on Charm', function() {
     var time = 1349797266.032,
         date = new Date(time),
-        charm = new models.BrowserCharm(
+        charm = new models.Charm(
         { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
     charm.get('last_change').created.should.eql(date);
   });
@@ -443,14 +443,14 @@ describe('juju models', function() {
 
   it('returns a display name for a service', function() {
     var service = new models.Service({id: 'mysql', exposed: false});
-    assert.equal('mysql', service.get('displayName'));
+    assert.equal(service.get('displayName'), 'mysql');
     service = new models.Service({id: 'service-mysql', exposed: false});
-    assert.equal('mysql', service.get('displayName'));
+    assert.equal(service.get('displayName'), 'mysql');
   });
 
   it('updates the display name when the id changes', function() {
     var service = new models.Service({id: 'service-mysql', exposed: false});
-    assert.equal('mysql', service.get('displayName'));
+    assert.equal(service.get('displayName'), 'mysql');
     service.set('id', 'service-flibbertigibbet');
     assert.equal('flibbertigibbet', service.get('displayName'));
   });
@@ -468,7 +468,7 @@ describe('juju models', function() {
   });
 });
 
-describe('BrowserCharm load', function() {
+describe('Charm load', function() {
   var Y, models, conn, env, app, container, fakeStore, data, juju;
 
   before(function(done) {
@@ -507,7 +507,7 @@ describe('BrowserCharm load', function() {
   });
 
   it('will throw an exception with non-read sync', function() {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'});
+    var charm = new models.Charm({id: 'local:precise/foo-4'});
     try {
       charm.sync('create');
       assert.fail('Should have thrown an error');
@@ -530,7 +530,7 @@ describe('BrowserCharm load', function() {
 
   it('throws an error if you do not pass get_charm',
      function() {
-       var charm = new models.BrowserCharm({id: 'local:precise/foo-4'});
+       var charm = new models.Charm({id: 'local:precise/foo-4'});
        try {
          charm.sync('read', {});
          assert.fail('Should have thrown an error');
@@ -548,13 +548,13 @@ describe('BrowserCharm load', function() {
      });
 
   it('must send request to juju environment for local charms', function() {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(env);
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
     assert(!charm.loaded);
     assert.equal('CharmInfo', conn.last_message().Request);
   });
 
   it('must handle success from local charm request', function(done) {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
         env,
         function(err, response) {
           assert(!err);
@@ -571,7 +571,7 @@ describe('BrowserCharm load', function() {
   });
 
   it('parses charm model options correctly', function(done) {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
         env,
         function(err, response) {
           assert(!err);
@@ -602,7 +602,7 @@ describe('BrowserCharm load', function() {
   });
 
   it('must handle failure from local charm request', function(done) {
-    var charm = new models.BrowserCharm({id: 'local:precise/foo-4'}).load(
+    var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
         env,
         function(err, response) {
           assert(err);
@@ -619,7 +619,7 @@ describe('BrowserCharm load', function() {
   });
 });
 
-describe('BrowserCharm test', function() {
+describe('Charm test', function() {
   var data, instance, models, relatedData, sampleData, utils, Y;
 
   before(function(done) {
@@ -648,12 +648,12 @@ describe('BrowserCharm test', function() {
 
   it('maps api downloads in 30 days to recent downloads', function() {
     data.charm.downloads_in_past_30_days = 10;
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     instance.get('recent_download_count').should.eql(10);
   });
 
   it('maps relations to keep with the original charm model', function() {
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     var requires = instance.get('requires');
     // Interface is quoted for lint purposes.
     requires.balancer['interface'].should.eql('http');
@@ -663,7 +663,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('maps revisions nicely for us with converted dates', function() {
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     var commits = instance.get('recent_commits');
     commits.length.should.equal(10);
 
@@ -684,22 +684,22 @@ describe('BrowserCharm test', function() {
   });
 
   it('must be able to determine if an icon should be shown', function() {
-    var approved_with_icon = new models.BrowserCharm({
+    var approved_with_icon = new models.Charm({
       id: 'cs:precise/mysql-2',
       is_approved: true,
       files: ['icon.svg']
     });
-    var approved_without_icon = new models.BrowserCharm({
+    var approved_without_icon = new models.Charm({
       id: 'cs:precise/mysql-2',
       is_approved: true,
       files: []
     });
-    var unapproved_with_icon = new models.BrowserCharm({
+    var unapproved_with_icon = new models.Charm({
       id: 'cs:precise/mysql-2',
       is_approved: false,
       files: ['icon.svg']
     });
-    var unapproved_without_icon = new models.BrowserCharm({
+    var unapproved_without_icon = new models.Charm({
       id: 'cs:precise/mysql-2',
       is_approved: false,
       files: []
@@ -711,7 +711,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('tracks recent commits in the last 30 days', function() {
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     var commits = instance.get('recent_commits'),
         today = new Date();
 
@@ -725,7 +725,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('tracks the total commits of the charm', function() {
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     assert.equal(instance.get('commitCount'), 44);
   });
 
@@ -737,7 +737,7 @@ describe('BrowserCharm test', function() {
       'local': 'FAILURE',
       'openstack': 'FAILURE'
     };
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     instance.get('providers').should.eql(
         {successes: ['ec2'], failures: ['local', 'openstack']});
   });
@@ -748,7 +748,7 @@ describe('BrowserCharm test', function() {
   // CharmMode.getAttrs() would have sent out to the charm-token widget.
   it('maps related data to the model-ish api', function() {
     var providesData = relatedData.provides.http[0];
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     var converted = instance._convertRelatedData(providesData);
     assert.equal(providesData.name, converted.name);
     assert.equal(providesData.id, converted.storeId);
@@ -766,7 +766,7 @@ describe('BrowserCharm test', function() {
   });
 
   it('builds proper relatedCharms object', function() {
-    instance = new models.BrowserCharm(data.charm);
+    instance = new models.Charm(data.charm);
     instance.buildRelatedCharms(relatedData.provides, relatedData.requires);
     var relatedObject = instance.get('relatedCharms');
 

@@ -98,7 +98,7 @@ YUI.add('juju-view-bundle', function(Y) {
               });
       node.append('text').append('tspan')
         .attr('class', 'name')
-        .text(function(d) {return d.displayName; });
+        .text(function(d) { return d.displayName; });
     },
 
     /**

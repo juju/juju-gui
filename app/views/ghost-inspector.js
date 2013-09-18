@@ -102,7 +102,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
                   container.one('input[name=number-units]').get('value'), 10)),
           config;
 
-      if (this.checkForExistingService(serviceName)) {
+      if (utils.checkForExistingService(serviceName, options.db)) {
         options.db.notifications.add(
             new models.Notification({
               title: 'Attempting to deploy service ' + serviceName,
@@ -141,18 +141,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
-      Checks the database for an existing service with the same name.
-
-      @method checkForExistingService
-      @param {String} serviceName of the new service to deploy.
-      @return {Boolean} true if it exists, false if doesn't.
-    */
-    checkForExistingService: function(serviceName) {
-      var existingService = this.options.db.services.getById(serviceName);
-      return (existingService) ? true : false;
-    },
-
-    /**
       Destroys the inspector.
 
       @method closeInspector
@@ -162,18 +150,36 @@ YUI.add('juju-ghost-inspector', function(Y) {
     },
 
     /**
+      Updates the status of the service name input.
+
+      @method serviceNameInputStatus
+      @param {Boolean} valid status of the service name check.
+      @param {Y.Node} input a reference to the input node instance.
+    */
+    serviceNameInputStatus: function(valid, input) {
+      if (valid) {
+        input.removeClass('invalid');
+        input.addClass('valid'); // add checkmark
+      } else {
+        input.removeClass('valid');
+        input.addClass('invalid'); // add x
+      }
+    },
+
+    /**
       Updates the ghost service name when the user changes it in the inspector.
 
       @method updateGhostName
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      // By updating the id of the ghost service model we are causing d3
-      // to think that we have removed the old service and created a new
-      // service which then causes the d3/topo to remove the old service
-      // block and render the new service block.
-      this.options.ghostService.set(
-          'id', '(' + e.newVal + ')');
+      var name = '(' + e.newVal + ')';
+      this.options.ghostService.setAttrs({
+        displayName: name
+      });
+      this.serviceNameInputStatus(
+          !utils.checkForExistingService(e.newVal, this.options.db),
+          e.currentTarget);
     },
 
     /**
@@ -193,7 +199,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var container = this.viewletManager.get('container'),
           ghostConfigNode = container.one(
-              '.service-configuration');
+              '.service-configuration .charm-settings');
 
       var textareas = ghostConfigNode.all('textarea'),
           inputs = ghostConfigNode.all('input');
@@ -201,12 +207,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       if (useDefaults) {
         ghostConfigNode.addClass('use-defaults');
         textareas.setAttribute('disabled');
-        inputs.each(function(input) {
-          // Without this check you will disable the toggle button too
-          if (input.get('id') !== 'use-default-toggle') {
-            input.setAttribute('disabled');
-          }
-        });
+        inputs.setAttribute('disabled');
 
         var viewlet = this.viewletManager.viewlets.ghostConfig,
             viewletContainer = viewlet.container;
@@ -293,6 +294,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       ghostService.setAttrs({
         id: serviceName,
+        displayName: undefined,
         pending: false,
         loading: false,
         config: config,
@@ -300,6 +302,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
       });
 
       this.closeInspector();
+      // This flag is used twice in the service topology module as a marker
+      // to know that it should not move the service or the canvas around
+      // (as opposed to services received from the environment).
+      ghostService.set('placeFromGhostPosition', true);
+      this.options.environment.createServiceInspector(ghostService);
     }
 
   };

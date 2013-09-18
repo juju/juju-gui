@@ -28,7 +28,7 @@ describe('Model Controller Promises', function() {
         'juju-view-environment', 'juju-tests-utils', function(Y) {
           var environments = Y.juju.environments;
           yui = Y;
-          load = Y.juju.models.BrowserCharm.prototype.load;
+          load = Y.juju.models.Charm.prototype.load;
           getService = environments.PythonEnvironment.prototype.get_service;
           aEach = Y.Array.each;
           utils = Y.namespace('juju-tests.utils');
@@ -61,14 +61,14 @@ describe('Model Controller Promises', function() {
   });
 
   /**
-    Monkeypatching the BrowserCharm model's load method to allow the load calls
+    Monkeypatching the Charm model's load method to allow the load calls
     to execute successfully.
 
     @method clobberLoad
     @static
   */
   function clobberLoad() {
-    yui.juju.models.BrowserCharm.prototype.load = function(env, callback) {
+    yui.juju.models.Charm.prototype.load = function(env, callback) {
       assert.deepEqual(env, environment);
       callback();
     };
@@ -76,13 +76,13 @@ describe('Model Controller Promises', function() {
   }
 
   /**
-    Restores the BrowserCharm model's load method to its original value.
+    Restores the Charm model's load method to its original value.
 
     @method restoreLoad
     @static
   */
   function restoreLoad() {
-    yui.juju.models.BrowserCharm.prototype.load = load;
+    yui.juju.models.Charm.prototype.load = load;
   }
 
   /**

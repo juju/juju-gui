@@ -388,11 +388,11 @@ YUI.add('juju-charm-models', function(Y) {
   /**
    * Model to represent the Charms from the Charmworld API.
    *
-   * @class BrowserCharm
+   * @class Charm
    * @extends {Y.Model}
    *
    */
-  models.BrowserCharm = Y.Base.create('browser-charm', Y.Model, [], {
+  models.Charm = Y.Base.create('browser-charm', Y.Model, [], {
     // Only care about at most, this number of related charms per interface.
     maxRelatedCharms: 5,
 
@@ -522,10 +522,10 @@ YUI.add('juju-charm-models', function(Y) {
     },
 
     parse: function(response) {
-      var data = models.BrowserCharm.superclass.parse.apply(this, arguments),
+      var data = models.Charm.superclass.parse.apply(this, arguments),
           self = this;
 
-      //Data can come from two places; a BrowserCharm being deployed into the
+      //Data can come from two places; a Charm being deployed into the
       //environment, or a charm already in the environment. They have slightly
       //different attributes.
       if (data.config) {
@@ -955,12 +955,12 @@ YUI.add('juju-charm-models', function(Y) {
 
 
   /**
-   * BrowserCharmList is set of BrowserCharms.
+   * CharmList is set of Charms.
    *
-   * @class BrowserCharmList
+   * @class CharmList
    */
-  models.BrowserCharmList = Y.Base.create('browserCharmList', Y.ModelList, [], {
-    model: models.BrowserCharm,
+  models.CharmList = Y.Base.create('browserCharmList', Y.ModelList, [], {
+    model: models.Charm,
     /**
       Search charms for ids in various formats. This defaults to doing a
       getById but when no match is found this will parse the charmId argument

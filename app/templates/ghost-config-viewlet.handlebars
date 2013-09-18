@@ -27,24 +27,24 @@
     <i class="sprite inspector_configuration"></i>
     Configuration
   </h2>
-  <div class="view-content join-top service-configuration use-defaults">
+  <div class="view-content join-top service-configuration">
     <div class="config-file settings-wrapper">
       <input type="file" id="config-file">
       <div class="fakebutton">Import config file...</div>
     </div>
-    <div class="toggle settings-wrapper">
-      <label>Use the default configuration?</label>
+    <div class="toggle single-line settings-wrapper">
+      <label>Use default configuration?</label>
       <div class="toggle-switch">
         <input type="checkbox" class="hidden-checkbox" id="use-default-toggle" checked>
         <label for="use-default-toggle">
           <div class="handle"></div>
         </label>
       </div>
-      <div class="textvalue">true</div>
+      <div class="textvalue"></div>
       <!-- Clear the floating slider/texvalue. -->
       <div class="clearall"></div>
     </div>
-    <form class="charm-settings">
+    <form class="charm-settings use-defaults">
       <div class="service-config">
         {{> service-configuration}}
       </div>

@@ -123,6 +123,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       attrs.units = attrs.units.toArray();
       // deepEquals compares order, even though that's not guaranteed by any
       // JS engine - if there are failures here check the order first.
+
       assert.deepEqual(attrs, {
         initialized: true,
         destroyed: false,
@@ -148,6 +149,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         icon: undefined,
         pending: false,
         life: 'alive',
+        placeFromGhostPosition: false,
         relations: [],
         unit_count: undefined,
         upgrade_available: false,

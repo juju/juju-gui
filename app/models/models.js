@@ -247,15 +247,12 @@ YUI.add('juju-models', function(Y) {
   }, {
     ATTRS: {
       displayName: {
-        /**
-          Dynamically calculate a display name that accounts for Juju Core name
-          prefixes.
-
-          @attribute displayName
-          @type {String}
-         */
-        getter: function() {
-          return this.get('id').replace('service-', '');
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            return this.get('id').replace('service-', '');
+          }
         }
       },
       name: {},
@@ -298,6 +295,19 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       pending: {
+        value: false
+      },
+
+      /**
+        Flag from ghost inspector to service topology.  Helps topology
+        keep from unnecessarily jumping the service around.  Essentially
+        an internal value that should be ignored except by this machinery.
+
+        @attribute placeFromGhostPosition
+        @default false
+        @type {Boolean}
+      */
+      placeFromGhostPosition: {
         value: false
       },
       life: {
@@ -399,11 +409,25 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
-      var serviceCount = this.filter(function(service) {
-        return service.get('charm') === charm.get('id');
-      }).length + 1;
+      var randomId, invalid = true;
+
+      do {
+        // The $ appended to the end is to guarantee that an id coming from Juju
+        // will never clash with the randomly generated ghost id's in the GUI.
+        randomId = Math.floor(Math.random() * 100000000) + '$';
+        // Don't make functions within a loop
+        /* jshint -W083 */
+        invalid = this.some(function(service) {
+          if (service.get('id') === randomId) {
+            return true;
+          }
+        });
+      } while (invalid);
+
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+        // Creating a temporary id because it's undefined by default.
+        id: randomId,
+        displayName: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),
@@ -1045,7 +1069,7 @@ YUI.add('juju-models', function(Y) {
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
-      this.charms = new models.BrowserCharmList();
+      this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -1067,7 +1091,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': models.BrowserCharm
+        'charm': models.Charm
       };
 
       // Used to assign new relation ids.

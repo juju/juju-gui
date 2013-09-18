@@ -96,6 +96,26 @@ YUI.add('juju-viewlet-manager', function(Y) {
     selectBindModel: null,
 
     /**
+      Show the viewlet to the world.
+
+      @method show
+
+     */
+    show: function() {
+      this.container.show();
+    },
+
+    /**
+      Hide the viewlet from the world.
+
+      @method hide
+
+     */
+    hide: function() {
+      this.container.hide();
+    },
+
+    /**
       User defined update method which re-renders the contents of the viewlet.
       Called by the binding engine if a modellist is updated. This is
       accomplished by grabbing the viewlets manager and setHTML() with the new
@@ -370,11 +390,11 @@ YUI.add('juju-viewlet-manager', function(Y) {
       } else {
         Y.Object.each(this.viewlets, function(viewletToCheck) {
           if (!viewletToCheck.slot) {
-            viewletToCheck.container.hide();
+            viewletToCheck.hide();
           }
         });
       }
-      viewlet.container.show();
+      viewlet.show();
       this.recalculateHeight();
     },
 
