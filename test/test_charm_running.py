@@ -73,8 +73,12 @@ class TestBasics(browser.TestCase):
                     tests_completed, 'Unable to complete test run.',
                     timeout=600)
             except exceptions.TimeoutException:
+                msg = "Tests did not complete. Check video and timeout value"
+                browser.printerr(msg)
+                browser.printerr("Test Runner Stats:")
                 browser.printerr(
                     self.driver.execute_script('return testRunner.stats;'))
+                browser.printerr("Re-raising TimeoutException")
                 raise
             return total, failures
         self.load('/test/')
