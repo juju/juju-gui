@@ -202,7 +202,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var container = this.viewletManager.get('container'),
           ghostConfigNode = container.one(
-              '.service-configuration');
+              '.service-configuration .charm-settings');
 
       var textareas = ghostConfigNode.all('textarea'),
           inputs = ghostConfigNode.all('input');
@@ -210,12 +210,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       if (useDefaults) {
         ghostConfigNode.addClass('use-defaults');
         textareas.setAttribute('disabled');
-        inputs.each(function(input) {
-          // Without this check you will disable the toggle button too
-          if (input.get('id') !== 'use-default-toggle') {
-            input.setAttribute('disabled');
-          }
-        });
+        inputs.setAttribute('disabled');
 
         var viewlet = this.viewletManager.viewlets.ghostConfig,
             viewletContainer = viewlet.container;
