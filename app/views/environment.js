@@ -115,8 +115,8 @@ YUI.add('juju-view-environment', function(Y) {
           // the charm so that's what this switcheroo is doing here.
           if (model.get('pending')) {
             type = 'ghost';
-            config.ghostService = model;
-            model = charm;
+            model.set('packageName', charm.get('package_name'));
+            config.charmModel = charm;
           }
 
           // If the user is trying to open the same inspector twice

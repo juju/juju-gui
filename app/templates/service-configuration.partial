@@ -8,7 +8,7 @@
                 <input type="checkbox"
                        name="{{name}}"
                        class="hidden-checkbox {{name}}-toggle config-field"
-                       data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}"
+                       data-bind="config.{{name}}"
                        {{#if_eq value 'checked'}}checked="checked"{{/if_eq}}
                        {{#if ../../ghost}}disabled{{/if}}
                        id="input-{{name}}">
@@ -18,7 +18,7 @@
             </div>
             <div class="textvalue"
                  data-skipconflictux=true
-                 data-bind="{{#if ../../ghost}}options{{else}}config{{/if}}.{{name}}">
+                 data-bind="config.{{name}}">
                  {{#if_eq value 'checked'}}true{{else}}false{{/if_eq}}</div>
     {{else}}
       {{#if isNumeric}}
@@ -30,7 +30,7 @@
             name="{{name}}"
             id="input-{{name}}"
             value="{{value}}"
-            data-bind="{{#if ../../../ghost}}options{{else}}config{{/if}}.{{name}}"
+            data-bind="config.{{name}}"
             {{#if ../../../ghost}}disabled{{/if}}
           />
         </div>
@@ -39,7 +39,7 @@
         <label for="input-{{name}}">{{name}} ({{type}})</label>
         <div>
           <textarea
-            data-bind="{{#if ../../../ghost}}options{{else}}config{{/if}}.{{name}}"
+            data-bind="config.{{name}}"
             class="config-field"
             id="input-{{name}}"
             name="{{name}}"

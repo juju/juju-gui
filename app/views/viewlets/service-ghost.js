@@ -32,10 +32,15 @@ YUI.add('viewlet-service-ghost', function(Y) {
     name: 'ghostConfig',
     template: templates['ghost-config-viewlet'],
     bindings: {
-      options: {
+      config: {
         // On update make sure undefined isn't sent to the user as viewable
         // input.
         'update': function(node, val) {
+          var charmModel = this.viewlet.options.charmModel;
+          var option = node.getData('bind').split('.')[1];
+          if (!val) {
+            val = charmModel.get('options')[option];
+          }
           var newVal = (val['default'] === undefined) ? '' : val['default'];
           node.set('value', newVal);
         }
@@ -63,21 +68,19 @@ YUI.add('viewlet-service-ghost', function(Y) {
 
       // This is to allow for data binding on the ghost settings
       // while using a shared template across both inspectors
-      var templateOptions = model.getAttrs();
+      var templateOptions = {};
 
       // XXX - Jeff
       // not sure this should be done like this
       // but this will allow us to use the old template.
       templateOptions.settings = utils.extractServiceSettings(
-          templateOptions.options);
+          viewletMgrAttrs.charmModel.get('options'));
 
       templateOptions.constraints = utils.getConstraints(
           // no current constraints in play.
           {},
           viewletMgrAttrs.env.genericConstraints);
 
-      // Signalling to the shared templates that this is the ghost view.
-      templateOptions.ghost = true;
       this.container.setHTML(this.template(templateOptions));
       this.container.all('textarea.config-field').plug(
           plugins.ResizingTextarea, {
