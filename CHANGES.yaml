@@ -21,6 +21,36 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 - unreleased:
+- 0.10.0:
+    - Added new inspector view for deploying and configuring services.
+    - Inspector allows viewing details in full environment context.
+    - Inspector fixes problem losing edits when environment changes.
+    - Inspector shows edit conflicts and allows resolution.
+    - Inspector fixes previously broken per-service charm view.
+    - Worked around fragility in Keystone charm (LP bug 1214087).
+    - >
+      Updated charm token (the token is the small charm visualization in
+      browse and search) to show series and owner (or "Recommended") rather
+      than summary.
+    - Added missing support for removing units from services in Juju Core.
+    - Added support for alternate Google Analytics keys.
+    - >
+      Removed filters from charm searches.  We will add them back when there is
+      more to filter on.
+    - >
+      Added feature-flagged support for upgrading to a new version of
+      a charm.
+    - >
+      Added internal support for new charm deployer integration (bundle
+      support).
+    - >
+      Added internal support for sandbox version of deployer integration
+      (bundle support).
+    - Added internal support for charmworld APIv3 (bundle support).
+    - Added internal support for rendering visual bundle summaries.
+    - Refactored to unify internal charm implementations.
+    - Switched to using Go sandbox by default.
+    - Delivered other performance and bug fixes.
 - 0.9.0:
     - Added autocomplete to the Charm Browser search input field.
     - Added support for Internet Explorer 10.

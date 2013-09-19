@@ -247,15 +247,12 @@ YUI.add('juju-models', function(Y) {
   }, {
     ATTRS: {
       displayName: {
-        /**
-          Dynamically calculate a display name that accounts for Juju Core name
-          prefixes.
-
-          @attribute displayName
-          @type {String}
-         */
-        getter: function() {
-          return this.get('id').replace('service-', '');
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            return this.get('id').replace('service-', '');
+          }
         }
       },
       name: {},
@@ -412,8 +409,25 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
+      var randomId, invalid = true;
+
+      do {
+        // The $ appended to the end is to guarantee that an id coming from Juju
+        // will never clash with the randomly generated ghost id's in the GUI.
+        randomId = Math.floor(Math.random() * 100000000) + '$';
+        // Don't make functions within a loop
+        /* jshint -W083 */
+        invalid = this.some(function(service) {
+          if (service.get('id') === randomId) {
+            return true;
+          }
+        });
+      } while (invalid);
+
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ')',
+        // Creating a temporary id because it's undefined by default.
+        id: randomId,
+        displayName: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),
@@ -781,6 +795,12 @@ YUI.add('juju-models', function(Y) {
         if (result.service) {
           result.charm = db.charms.getById(
               result.service.get('charm'));
+          if (!result.charm) {
+            console.warn('Failed to load charm',
+                         result.charm, db.charms.size(), db.charms.get('id'));
+          }
+        } else {
+          console.warn('failed to resolve service', result.name);
         }
         return result;
       }, this);
@@ -1257,7 +1277,7 @@ YUI.add('juju-models', function(Y) {
             result.push({name: endpoint.type});
             return [endpoint.name, {name: endpoint.type}];
           });
-      var relation = this.relations.create({
+      var relation = this.relations.add({
         relation_id: relationId,
         type: match['interface'],
         endpoints: endpoints,
@@ -1388,6 +1408,7 @@ YUI.add('juju-models', function(Y) {
       }
 
 
+      var charmLookupByName = {};
       Object.keys(source.services).forEach(function(serviceName) {
         var current = source.services[serviceName];
         var existing = self.services.getById(serviceName);
@@ -1402,16 +1423,17 @@ YUI.add('juju-models', function(Y) {
         serviceIdMap[serviceName] = targetId;
 
         // Also track any new charms we'll have to add.
-        if (current.charm && charms.indexOf(current.charm) === -1) {
+        if (current.charm && charmLookupByName[current.charm] === undefined) {
           charms.push(charmStore.promiseCharm(current.charm, self.charms,
                                               defaultSeries));
+          charmLookupByName[current.charm] = true;
         }
       });
 
       // If we made it this far its time for mutation, start by importing
       // charms and then services.
       return Y.batch.apply(this, charms)
-     .then(function() {
+      .then(function() {
             Object.keys(serviceIdMap).forEach(function(serviceName) {
               var serviceData = source.services[serviceName];
               var serviceId = serviceIdMap[serviceName];

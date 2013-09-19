@@ -173,16 +173,24 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      var valid = utils.checkForExistingService(e.newVal, this.options.db);
-      if (!valid) {
-        // By updating the id of the ghost service model we are causing d3
-        // to think that we have removed the old service and created a new
-        // service which then causes the d3/topo to remove the old service
-        // block and render the new service block.
-        this.options.ghostService.set(
-            'id', '(' + e.newVal + ')');
-      }
-      this.serviceNameInputStatus(!valid, e.currentTarget);
+      var name = '(' + e.newVal + ')';
+      this.options.ghostService.set('displayName', name);
+      this.serviceNameInputStatus(
+          !utils.checkForExistingService(e.newVal, this.options.db),
+          e.currentTarget);
+    },
+
+    /**
+      Resets the changes that the inspector made in the canvas before
+      destroying the viewlet Manager on Cancel
+
+      @method resetCanvas
+    */
+    resetCanvas: function() {
+      var opt = this.options;
+      opt.ghostService.set(
+          'displayName', '(' + opt.model.get('package_name') + ')');
+      this.viewletManager.destroy();
     },
 
     /**
@@ -202,7 +210,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var container = this.viewletManager.get('container'),
           ghostConfigNode = container.one(
-              '.service-configuration');
+              '.service-configuration .charm-settings');
 
       var textareas = ghostConfigNode.all('textarea'),
           inputs = ghostConfigNode.all('input');
@@ -210,12 +218,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       if (useDefaults) {
         ghostConfigNode.addClass('use-defaults');
         textareas.setAttribute('disabled');
-        inputs.each(function(input) {
-          // Without this check you will disable the toggle button too
-          if (input.get('id') !== 'use-default-toggle') {
-            input.setAttribute('disabled');
-          }
-        });
+        inputs.setAttribute('disabled');
 
         var viewlet = this.viewletManager.viewlets.ghostConfig,
             viewletContainer = viewlet.container;
@@ -302,6 +305,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       ghostService.setAttrs({
         id: serviceName,
+        displayName: undefined,
         pending: false,
         loading: false,
         config: config,

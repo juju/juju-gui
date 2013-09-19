@@ -1485,6 +1485,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
+    'juju-view-environment',
     'juju-view-login',
     'juju-landscape',
     'juju-websocket-logging',

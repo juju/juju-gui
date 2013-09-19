@@ -244,11 +244,12 @@ describe('charm configuration', function() {
   it('must show the description in a tooltip', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'});
     var db = new models.Database();
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          db: db,
-          tooltipDelay: 0 });
+    var view = new views.CharmConfigurationView({
+      container: container,
+      model: charm,
+      db: db,
+      tooltipDelay: 0
+    });
 
     charm.setAttrs(charmConfig);
     charm.loaded = true;

@@ -395,6 +395,103 @@ YUI.add('juju-env-go', function(Y) {
       }, this.handleEnvironmentInfo);
     },
 
+    /*
+    Deployer support
+
+    The deployer integration introduces a number of calls,
+
+    Deployer:Import takes a YAML blob and returns a import request Id.
+    Deployer:Watch can watch a request Id returning status information
+    Deployer:Status asks for status information across all running and queued
+    imports.
+    */
+    /**
+     * Send a request for details about the current Juju environment: default
+     * series and provider type.
+     *
+     * @method deployerImport
+     * @param {String} yamlData to import.
+     * @param {String} [bundleName] Bundle name to import.
+     * @param {Function} callback to trigger.
+     * @return {Number} Request Id.
+     */
+    deployerImport: function(yamlData, bundleName, callback) {
+      var intermediateCallback;
+
+      if (Y.Lang.isFunction(bundleName) && callback === undefined) {
+        callback = bundleName;
+        bundleName = undefined;
+      }
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerImport,
+                                      this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Import',
+        Params: {
+          YAML: yamlData,
+          Name: undefined
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     Callback to map data from deployerImport back to caller.
+
+     @method handleDeployerImport
+     @param {Function} userCallback to trigger.
+     @param {Object} data from backend to transform.
+    */
+    handleDeployerImport: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        DeploymentId: data.Response.DeploymentId
+      };
+      userCallback(transformedData);
+    },
+
+    /**
+     Gather the status of all changes, the callback will be triggered
+     with LastChanges in the response which will be an Array of
+     {DeploymentId: ...,
+      Status: 'status string',
+      Time: timestamp,
+      Error: 'optional error',
+      Queue: optional depth in queue
+     }
+
+     @method deployerStatus
+     @param {Function} callback to trigger.
+    */
+    deployerStatus: function(callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerStatus,
+                                      this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Status'
+      }, intermediateCallback);
+    },
+
+    /**
+     Callback to map data from deployerStatus back to caller.
+
+     @method handleDeployerStatus
+     @param {Function} userCallback to trigger.
+     @param {Object} data from backend to transform.
+    */
+    handleDeployerStatus: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        DeploymentId: data.Response.LastChanges
+      };
+      userCallback(transformedData);
+    },
+
+
     /**
        Deploy a charm.
 
@@ -1327,6 +1424,8 @@ YUI.add('juju-env-go', function(Y) {
     }
 
   });
+
+
 
   environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;

@@ -64,6 +64,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._resetAnnotations();
       // used for relation id's
       this._relationCount = 0;
+      // used for deployer import tracking
+      this._importId = 0;
+      this._importChanges = [];
+      this._deploymentId = 0;
     },
 
     /**
@@ -1183,6 +1187,78 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
 
       return {result: result};
+    },
+
+    /**
+     Import Deployer from YAML files
+
+     @method importDeployer
+     @param {String} YAMLData YAML string data to import.
+     @param {String} [name] Name of bundle within deployer file to import.
+     @param {Function} callback Triggered on completion of the import.
+     @return {undefined} Callback only.
+     */
+    importDeployer: function(YAMLData, name, callback) {
+      var self = this;
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATED_ERROR);
+      }
+      var data;
+      try {
+        data = jsyaml.safeLoad(YAMLData);
+      } catch (e) {
+        console.log('error parsing deployer bundle');
+        return callback(VALUE_ERROR);
+      }
+      var options = {};
+      if (name) {
+        options.targetBundle = name;
+      }
+      this.db.importDeployer(data, this.get('store'), options)
+      .then(function() {
+            self._deploymentId += 1;
+            self._importChanges.push({
+              DeploymentId: self._deploymentId,
+              Status: 'completed',
+              Timestamp: Date.now()
+            });
+            // Keep the list limited to the last 5
+            if (self._importChanges.length > 5) {
+              self._importChanges = self._importChanges.slice(-5);
+            }
+
+            // Fakebackend needs an extra little push for imported relations to
+            // make it on the wire. This code currently indicates _all_
+            // relations have changes, not just those from the import. It may
+            // make sense down the road to have the db.importDeployer return a
+            // mapping of new object ids.
+            self.db.services.each(function(s) {
+              self.changes.services[s.get('id')] = [s, true];
+            });
+            self.db.relations.each(function(r) {
+              self.changes.relations[r.get('relation_id')] = [r, true];
+            });
+
+            callback({DeploymentId: self._deploymentId});
+          }, function(err) {
+            callback({Error: err.toString()});
+          });
+    },
+
+    /**
+     Query the deployer import code for global status of the last 5 imports. We
+     don't currently queue but a real impl would need to always include every
+     pending import regardless of queue length
+
+     @method statusDeployer
+     @param {Function} callback Triggered with completion information.
+     @return {undefined} Callback only.
+    */
+    statusDeployer: function(callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATED_ERROR);
+      }
+      callback({LastChanges: this._importChanges});
     },
 
     /**
