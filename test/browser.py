@@ -76,7 +76,7 @@ if os.path.exists('juju-internal-ip'):
 
 # We sometimes run the tests under different browsers, if none is
 # specified, use Chrome.
-browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'local-chrome')
+browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
 
 
 def formatWebDriverError(error):
