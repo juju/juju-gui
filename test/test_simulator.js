@@ -56,9 +56,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function(done) {
-      state = utils.makeFakeBackend();
-      var fixture = utils.loadFixture('data/sample-improv.json', false);
-      state.importEnvironment(fixture, function(result) {
+      utils.promiseImport('data/wp-deployer.yaml', 'wordpress-prod')
+      .then(function(resolve) {
+        state = resolve.backend;
         done();
       });
     });
@@ -108,7 +108,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           service = db.services.getById('wordpress'),
           units = db.units.get_units_for_service(service);
       units = state.db.units.get_units_for_service(service);
-      assert.equal(units.length, 11);
+      assert.equal(units.length, 12);
     });
 
     agentShould('honor threshold 0.0', function() {
@@ -144,7 +144,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     agentShould('be able to use random (1) for list for selection', function() {
       // A random selection of 0% results in no items.
-      assert.equal(this.get('selection').size(), 5);
+      assert.equal(this.get('selection').size(), 2);
     }, {
       select: {list: 'services', random: 1.0}
     });

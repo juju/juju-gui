@@ -217,6 +217,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       });
     },
 
+
+    promiseDeploy: function(charmId, options) {
+      var self = this;
+      return new Y.Promise(function(resolve) {
+        self.deploy(charmId, resolve, options);
+      });
+    },
+
     /**
     Set the given service to use the given charm, optionally forcing units in
     error state to use the charm.
@@ -722,6 +730,114 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Takes two string endpoints and splits it into usable parts.
+
+      @method parseEndpointStrings
+      @param {Database} db to resolve charms/services on.
+      @param {Array} endpoints an array of endpoint strings
+        to split in the format wordpress:db.
+      @return {Object} An Array of parsed endpoints, each containing name, type
+      and the related charm. Name is the user defined service name and type is
+      the charms authors name for the relation type.
+     */
+    parseEndpointStrings: function(db, endpoints) {
+      return Y.Array.map(endpoints, function(endpoint) {
+        var epData = endpoint.split(':');
+        var result = {};
+        if (epData.length > 1) {
+          result.name = epData[0];
+          result.type = epData[1];
+        } else {
+          result.name = epData[0];
+        }
+        result.service = db.services.getById(result.name);
+        if (result.service) {
+          result.charm = db.charms.getById(
+              result.service.get('charm'));
+          if (!result.charm) {
+            console.warn('Failed to load charm',
+                         result.charm, db.charms.size(), db.charms.get('id'));
+          }
+        } else {
+          console.warn('failed to resolve service', result.name);
+        }
+        return result;
+      }, this);
+    },
+
+    /**
+      Loops through the charm endpoint data to determine whether we have a
+      relationship match. The result is either an object with an error
+      attribute, or an object giving the interface, scope, providing endpoint,
+      and requiring endpoint.
+
+      @method findEndpointMatch
+      @param {Array} endpoints Pair of two endpoint data objects.  Each
+      endpoint data object has name, charm, service, and scope.
+      @return {Object} A hash with the keys 'interface', 'scope', 'provides',
+      and 'requires'.
+     */
+    findEndpointMatch: function(endpoints) {
+      var matches = [], result;
+      Y.each([0, 1], function(providedIndex) {
+        // Identify the candidates.
+        var providingEndpoint = endpoints[providedIndex];
+        // The merges here result in a shallow copy.
+        var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
+            requiringEndpoint = endpoints[!providedIndex + 0],
+            requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
+        if (!provides['juju-info']) {
+          provides['juju-info'] = {'interface': 'juju-info',
+                                    scope: 'container'};
+        }
+        // Restrict candidate types as tightly as possible.
+        var candidateProvideTypes, candidateRequireTypes;
+        if (providingEndpoint.type) {
+          candidateProvideTypes = [providingEndpoint.type];
+        } else {
+          candidateProvideTypes = Y.Object.keys(provides);
+        }
+        if (requiringEndpoint.type) {
+          candidateRequireTypes = [requiringEndpoint.type];
+        } else {
+          candidateRequireTypes = Y.Object.keys(requires);
+        }
+        // Find matches for candidates and evaluate them.
+        Y.each(candidateProvideTypes, function(provideType) {
+          Y.each(candidateRequireTypes, function(requireType) {
+            var provideMatch = provides[provideType],
+                requireMatch = requires[requireType];
+            if (provideMatch &&
+                requireMatch &&
+                provideMatch['interface'] === requireMatch['interface']) {
+              matches.push({
+                'interface': provideMatch['interface'],
+                scope: provideMatch.scope || requireMatch.scope,
+                provides: providingEndpoint,
+                requires: requiringEndpoint,
+                provideType: provideType,
+                requireType: requireType
+              });
+            }
+          });
+        });
+      });
+      if (matches.length === 0) {
+        result = {error: 'Specified relation is unavailable.'};
+      } else if (matches.length > 1) {
+        result = {error: 'Ambiguous relationship is not allowed.'};
+      } else {
+        result = matches[0];
+        // Specify the type for implicit relations.
+        result.provides = Y.merge(result.provides);
+        result.requires = Y.merge(result.requires);
+        result.provides.type = result.provideType;
+        result.requires.type = result.requireType;
+      }
+      return result;
+    },
+
+    /**
       Add a relation between two services.
 
       @method addRelation
@@ -744,8 +860,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = this.db.relations
-                             .parseEndpointStrings(this.db,
+      var endpointData = this.parseEndpointStrings(this.db,
                                                    [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
@@ -754,7 +869,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var match = this.db.relations.findEndpointMatch(endpointData);
+      var match = this.findEndpointMatch(endpointData);
 
       // If there is an error fetching a valid interface and scope
       if (match.error) { return match; }
@@ -778,6 +893,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
           function(endpoint) {
             return [endpoint.name, {name: endpoint.type}];
           });
+      // Explicit Role labelling.
+      endpoints[0][1].role = 'client';
+      endpoints[1][1].role = 'server';
 
       var relation = this.db.relations.create({
         relation_id: relationId,
@@ -833,7 +951,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = this.db.relations.parseEndpointStrings(
+      var endpointData = this.parseEndpointStrings(
           this.db, [endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
@@ -1189,6 +1307,129 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {result: result};
     },
 
+
+    /**
+     Single atomic, non-mutating parse of a bundle
+     followed by things like id assignment, this
+     returns a complex data structure which is used
+     by importDeployer to enact the deploy.
+
+     @method injestDeployer
+     */
+    injestDeployer: function (data, name, options) {
+      if (!data) {return;}
+      options = options || {};
+      var self = this;
+      var db = this.db;
+      var rewriteIds = options.rewriteIds || false;
+      var targetBundle = options.targetBundle;
+      var useGhost = options.useGhost;
+      if (useGhost === undefined) {
+        useGhost = true;
+      }
+      var defaultSeries = db.environment.get('defaultSeries');
+
+      if (!targetBundle && Object.keys(data).length > 1) {
+        throw new Error('Import target ambigious, aborting.');
+      }
+
+      // Builds out a object with inherited properties.
+      var source = targetBundle && data[targetBundle] ||
+          data[Object.keys(data)[0]];
+      var ancestors = [];
+      var seen = [];
+
+      /**
+        Helper to build out an inheritence chain
+
+        @method setupinheritance
+        @param {Object} base object currently being inspected.
+        @param {Array} baseList chain of ancestors to later inherit.
+        @param {Object} bundleData import data used to resolve ancestors.
+        @param {Array} seen list used to track objects already in inheritence
+        chain.  @return {Array} of all inherited objects ordered from most base
+        to most specialized.
+      */
+      function setupInheritance(base, baseList, bundleData, seen) {
+        // local alias for internal function.
+        var sourceData = bundleData;
+        var seenList = seen;
+
+        baseList.unshift(base);
+        // Normalize to array when present.
+        if (!base.inherits) { return; }
+        if (base.inherits && !Y.Lang.isArray(base.inherits)) {
+          base.inherits = [base.inherits];
+        }
+
+        base.inherits.forEach(function(ancestor) {
+          var baseDeploy = sourceData[ancestor];
+          if (baseDeploy === undefined) {
+            throw new Error('Unable to resolve bundle inheritence.');
+          }
+          if (seenList.indexOf(ancestor) === -1) {
+            seenList.push(ancestor);
+            setupInheritance(baseDeploy, baseList, bundleData, seenList);
+          }
+        });
+
+      }
+      setupInheritance(source, ancestors, data, seen);
+      // Source now merges it all.
+      source = {};
+      ancestors.forEach(function(ancestor) {
+        // Mix Merge and overwrite in order of inheritance
+        Y.mix(source, ancestor, true, undefined, 0, true);
+      });
+
+      // Create an id mapping. This will track the ids of objects
+      // read from data as they are mapped into db. When options
+      // rewriteIds is true this is required for services, but some
+      // types of object ids ('relations' for example) can always
+      // be rewritten but depend on the use of the proper ids.
+      // By building this mapping now we can detect collisions
+      // prior to mutating the database.
+      var serviceIdMap = {};
+      var charms = [];
+
+      /**
+       Helper to generate the next valid service id.
+       @method nextServiceId
+       @return {String} next service id to use.
+      */
+      function nextServiceId(modellist, id) {
+        var existing = modellist.getById(id);
+        var count = 0;
+        var target;
+        while (existing) {
+          count += 1;
+          target = id + '-' + count;
+          existing = modellist.getById(target);
+        }
+        return target;
+      }
+
+      Object.keys(source.services).forEach(function(serviceName) {
+        var current = source.services[serviceName];
+        var existing = db.services.getById(serviceName);
+        var targetId = serviceName;
+        if (existing) {
+          if (!rewriteIds) {
+            throw new Error(serviceName +
+                           ' is already present in the database.');
+          }
+          targetId = nextServiceId(db.services, serviceName);
+          current.id = targetId;
+        }
+        serviceIdMap[serviceName] = targetId;
+      });
+
+      return {
+        services: source.services,
+        relations: source.relations
+      }
+    },
+
     /**
      Import Deployer from YAML files
 
@@ -1204,45 +1445,102 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATED_ERROR);
       }
       var data;
-      try {
-        data = jsyaml.safeLoad(YAMLData);
-      } catch (e) {
-        console.log('error parsing deployer bundle');
-        return callback(VALUE_ERROR);
+      if (typeof YAMLData === 'string') {
+        try {
+          data = jsyaml.safeLoad(YAMLData);
+        } catch (e) {
+          console.log('error parsing deployer bundle');
+          return callback(VALUE_ERROR);
+        }
+      } else {
+        // Allow passing in Objects directly to ease testing.
+        data = YAMLData;
       }
+      // XXX: The proper API doesn't allow options for the level
+      // of control that injest allows. This should be addressed
+      // in the future.
       var options = {};
       if (name) {
         options.targetBundle = name;
       }
-      this.db.importDeployer(data, this.get('store'), options)
+      var injestedData = this.injestDeployer(data, name, options);
+      var servicePromises = [];
+      Y.each(injestedData.services, function(serviceData) {
+        // Map the argument name from the deployer format
+        // name for unit count.
+        serviceData.unitCount = serviceData.num_units;
+        servicePromises.push(
+         self.promiseDeploy(serviceData.charm, serviceData));
+      });
+
+
+      self._deploymentId += 1;
+      var deployStatus = {
+        DeploymentId: self._deploymentId,
+        Status: 'started',
+        Timestamp: Date.now()
+      };
+      self._importChanges.push(deployStatus);
+      // Keep the list limited to the last 5
+      if (self._importChanges.length > 5) {
+        self._importChanges = self._importChanges.slice(-5);
+      }
+
+      Y.batch.apply(this, servicePromises)
+      .then(function(serviceDeployResult) {
+        serviceDeployResult.forEach(function(sdr) {
+          // Update export elements that 'deploy'
+          // doesn't handle
+          var service = sdr.service;
+          var serviceId = service.get('id');
+          var serviceData = injestedData.services[serviceId];
+
+          // Force the annotation update (deploy doesn't handle this).
+          var annotiations = serviceData.annotations;
+          if (annotiations) {
+            service.set('annotations', annotiations);
+          }
+
+          // Expose
+          if (serviceData.exposed) {
+            self.expose(serviceId);
+          }
+
+          self.changes.services[sdr.service.get('id')] = [sdr.service, true];
+        });
+
+        injestedData.relations.forEach(function(relationData) {
+          var relResult = self.addRelation(
+            relationData[0], relationData[1], true);
+          self.changes.relations[relResult.relation.get('id')] = [
+            relResult.relation, true];
+        });
+      })
       .then(function() {
-            self._deploymentId += 1;
-            self._importChanges.push({
-              DeploymentId: self._deploymentId,
-              Status: 'completed',
-              Timestamp: Date.now()
-            });
-            // Keep the list limited to the last 5
-            if (self._importChanges.length > 5) {
-              self._importChanges = self._importChanges.slice(-5);
-            }
+        deployStatus.Status = 'completed';
+        callback({DeploymentId: self._deploymentId});
+        self.sendDelta();
+      }, function(err) {
+        deployStatus.Status = 'failed';
+        callback({Error: err.toString()});
+      });
+    },
 
-            // Fakebackend needs an extra little push for imported relations to
-            // make it on the wire. This code currently indicates _all_
-            // relations have changes, not just those from the import. It may
-            // make sense down the road to have the db.importDeployer return a
-            // mapping of new object ids.
-            self.db.services.each(function(s) {
-              self.changes.services[s.get('id')] = [s, true];
-            });
-            self.db.relations.each(function(r) {
-              self.changes.relations[r.get('relation_id')] = [r, true];
-            });
+    /**
+     Promise the result of an importDeployer call. This method
+     exists to aid tests which use the import system to quickly
+     generate fixtures.
 
-            callback({DeploymentId: self._deploymentId});
-          }, function(err) {
-            callback({Error: err.toString()});
-          });
+     @method promiseDeploy
+     @param {String} YAMLData
+     @param {String} [name] Bundle name to import.
+     @return {Promise} After the import is run
+    */
+    promiseImport: function(YAMLData, name) {
+      var self = this;
+      return new Y.Promise(function(resolve) {
+        self.importDeployer(YAMLData, name, resolve);
+      });
     },
 
     /**
@@ -1259,138 +1557,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATED_ERROR);
       }
       callback({LastChanges: this._importChanges});
-    },
-
-    /**
-   * Import JSON data to populate the fakebackend
-   * @method importEnvironment
-   * @param {String} JSON data to load.
-   * @return {Object} with error or result: true.
-   */
-    importEnvironment: function(jsonData, callback) {
-      if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATED_ERROR);
-      }
-      var data;
-      try {
-        data = JSON.parse(jsonData);
-      } catch (e) {
-        console.log('error parsing environment data');
-        return callback(VALUE_ERROR);
-      }
-      var version = 0;
-      var importImpl;
-      // Dispatch to the correct version after inspecting the JSON data.
-      if (data.meta && data.meta.exportFormat) {
-        version = data.meta.exportFormat;
-      }
-
-      // Might have to check for float and sub '.' with '_'.
-      importImpl = this['importEnvironment_v' + version];
-      if (!importImpl) {
-        return callback({
-          error: 'Unknown or unspported import format: ' + version});
-      }
-      importImpl.call(this, data, callback);
-    },
-
-    /**
-     * Import Improv/jitsu styled exports
-     * @method importEnvironment_v0
-     */
-    importEnvironment_v0: function(data, callback) {
-      // Rewrite version 0 data to v1 and pass along.
-      // - This involves replacing the incoming relation
-      //    data with a massaged version.
-      var relations = [];
-      Y.each(data.relations, function(relationData) {
-        var relData = {endpoints: []};
-        Y.Array.each(relationData, function(r) {
-          var ep = [];
-          relData.type = r[1];
-          ep.push(r[0]);
-          ep.push({name: r[2],
-            role: r[3]});
-          relData.endpoints.push(ep);
-          relData.scope = r[4];
-        });
-        relations.push(relData);
-      });
-
-      // Overwrite relations with our new structure.
-      data.relations = relations;
-      this.importEnvironment_v1(data, callback);
-    },
-
-    /**
-     * Import fakebackend exported data
-     * @method importEnvironment_v1
-     */
-    importEnvironment_v1: function(data, callback) {
-      var self = this;
-      var charms = [];
-
-      // Generate an Array of promises to load charms.
-      Y.each(data.services, function(s) {
-        charms.push(self._promiseCharmForService(s));
-        if (s.name && !s.id) {
-          s.id = s.name;
-        }
-      });
-
-      // Assign relation_ids
-      Y.each(data.relations, function(r) {
-        r.relation_id = 'relation-' + self._relationCount;
-        self._relationCount += 1;
-      });
-
-      // Convert all the promises to load charms into resolved
-      // charms passing them to the next 'then'.
-      // The entire chain of then has an errback returning
-      // the failure mode to the user (which becomes a notification).
-      Y.batch.apply(self, charms) // resolve all the charms
-      .then(function(charms) {
-            // Charm version requested from an import will return
-            // the current (rather than pinned) version from the store.
-            // update the service to include the returned charm version.
-            Y.Array.each(charms, function(data) {
-              var charm = data[0],
-                  serviceData = data[1];
-              serviceData.charm = charm.get('id');
-
-              // If this is a subordinate mark the serviceData as such
-              if (charm.get('is_subordinate')) {
-                serviceData.subordinate = true;
-              }
-            });
-          })
-      .then(function() {
-            Y.each(data.services, function(serviceData) {
-              var s = self.db.services.add(serviceData);
-              self.changes.services[s.get('id')] = [s, true];
-              if (serviceData.exposed) {
-                self.expose(s.get('id'));
-              }
-              if (serviceData.unit_count) {
-                self.addUnit(s.get('id'), serviceData.unit_count);
-              }
-              var annotations = s.get('annotations');
-
-              if (annotations && !Y.Object.isEmpty(annotations)) {
-                self.annotations.services[s.get('id')] = annotations;
-              }
-            });
-
-            Y.each(data.relations, function(relationData) {
-              var r = self.db.relations.add(relationData);
-              self.changes.relations[r.get('relation_id')] = [r, true];
-            });
-          })
-      .then(function() {
-            return callback({result: true});
-          }, function(reason) {
-            return callback(reason);
-          });
     }
 
   });

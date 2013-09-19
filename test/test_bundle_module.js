@@ -19,8 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('bundle module', function() {
-  var db, juju, models, utils, views, Y, bundleModule;
-  var bundle, container, fakeStore;
+  var juju, models, utils, views, Y, bundleModule;
+  var bundle, container, fakebackend;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -41,7 +41,6 @@ describe('bundle module', function() {
 
   beforeEach(function() {
     container = utils.makeContainer();
-    db = new models.Database();
   });
 
   afterEach(function() {
@@ -50,24 +49,23 @@ describe('bundle module', function() {
 
   });
 
-  function promiseBundle() {
-    db.environment.set('defaultSeries', 'precise');
-    var fakeStore = utils.makeFakeStore(db.charms);
-    fakeStore.iconpath = function() { return 'fake.svg'; };
+  function promiseBundle(done) {
+    fakebackend = utils.makeFakeBackend();
+    fakebackend.db.environment.set('defaultSeries', 'precise');
 
-    return db.importDeployer(
-        jsyaml.safeLoad(utils.loadFixture('data/wp-deployer.yaml')),
-        fakeStore, {useGhost: true, targetBundle: 'wordpress-prod'})
+    return fakebackend.promiseImport(
+        utils.loadFixture('data/wp-deployer.yaml'),
+        'wordpress-prod')
         .then(function() {
           bundle = new views.BundleTopology({
-            db: db,
+            db: fakebackend.db,
             container: container,
-            store: fakeStore
+            store: fakebackend.get('store')
           }).render();
           bundleModule = bundle.topology.modules.BundleModule;
           bundleModule.set('useTransitions', false);
           return bundle;
-        });
+        }, done);
   }
 
   function normalizeTranslate(translateStr) {
@@ -75,7 +73,7 @@ describe('bundle module', function() {
   }
 
   it('should create a proper service for each model', function(done) {
-    promiseBundle()
+    promiseBundle(done)
     .then(function(bundle) {
           // The size of the element should reflect the passed in params
           var selection = d3.select(container.getDOMNode());

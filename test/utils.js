@@ -163,6 +163,17 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       });
       fakebackend.login('admin', 'password');
       return fakebackend;
+    },
+
+    promiseImport: function(YAMLBundleURL, name) {
+      var fakebackend = this.makeFakeBackend();
+      var db = fakebackend.db;
+      db.environment.set('defaultSeries', 'precise');
+      var fixture = jujuTests.utils.loadFixture(YAMLBundleURL);
+      return fakebackend.promiseImport(fixture, name)
+             .then(function(result) {
+               return {result: result, backend: fakebackend};
+             });
     }
   });
 }, '0.1.0', {
@@ -170,6 +181,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     'handlebars',
     'io',
     'node',
+    'promise',
     'json-parse',
     'datasource-local',
     'juju-charm-store',
