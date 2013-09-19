@@ -259,7 +259,7 @@ describe('search widget autocomplete', function() {
     search.ac.on('results', function(ev) {
       // The results should be displaying now. Check for charm-token nodes.
       assert.equal(ev.results.length, 21);
-      assert.isTrue(ev.results[0].display.hasClass('yui3-charmtoken'));
+      assert.isTrue(ev.results[0].display.hasClass('yui3-token'));
 
       // There are two category results now for 'a'. They appear at the start
       // of the list of completion options.

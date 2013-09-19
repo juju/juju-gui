@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('browser_charm_view', function() {
+  describe('Browser charm view', function() {
     var container, CharmView, cleanIconHelper, models, node, utils, view,
         views, Y;
 

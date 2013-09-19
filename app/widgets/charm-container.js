@@ -34,10 +34,10 @@ YUI.add('browser-charm-container', function(Y) {
    * A container for charm tokens, used to control how many are
    * displayed and provide categorization.
    *
-   * @class CharmContainer
+   * @class TokenContainer
    * @extends {Y.Widget}
    */
-  ns.CharmContainer = Y.Base.create('CharmContainer', Y.Widget, [
+  ns.TokenContainer = Y.Base.create('TokenContainer', Y.Widget, [
     Y.Event.EventTracker,
     Y.WidgetParent
   ], {
@@ -90,8 +90,8 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _selectLast: function() {
       var contentBox = this.get('contentBox');
-      contentBox.all('.yui3-charmtoken.last').removeClass('last');
-      contentBox.all('.yui3-charmtoken:not(.yui3-charmtoken-hidden)').slice(
+      contentBox.all('.yui3-token.last').removeClass('last');
+      contentBox.all('.yui3-token:not(.yui3-token-hidden)').slice(
           -1).addClass('last');
     },
 
@@ -103,7 +103,7 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _toggleExpand: function(e) {
       e.halt();
-      var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
+      var invisible = this.get('contentBox').one('.yui3-token-hidden'),
           expander = e.currentTarget,
           more = expander.one('.more'),
           less = expander.one('.less');
@@ -208,11 +208,11 @@ YUI.add('browser-charm-container', function(Y) {
 
       /**
        * @attribute defaultChildType
-       * @default Y.juju.widgets.browser.CharmToken
+       * @default Y.juju.widgets.browser.Token
        * @type {Function}
        */
       defaultChildType: {
-        value: ns.CharmToken
+        value: ns.Token
       },
 
       /**
