@@ -172,39 +172,6 @@ describe('service module events', function() {
     assert(menu.hasClass('active'));
   });
 
-  it('should show the service menu with conditional landscape items',
-     function() {
-       var box = topo.service_boxes.haproxy;
-       var service = db.services.getById('haproxy');
-       var menu = viewContainer.one('#service-menu');
-       var landscape = new views.Landscape();
-       landscape.set('db', db);
-
-       topo.set('landscape', landscape);
-       db.environment.set('annotations', {
-         'landscape-url': 'http://host',
-         'landscape-computers': '/foo',
-         'landscape-reboot-alert-url': '+reboot'
-       });
-       service['landscape-needs-reboot'] = true;
-       service.set('annotations', {
-         'landscape-computers': '/bar'
-       });
-
-       assert.isFalse(menu.hasClass('active'));
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-       // Check no-op.
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-
-       // Verify that we have a reboot URL.
-       var rebootItem = menu.one('.landscape-reboot');
-       rebootItem.one('a').get('href').should.equal(
-           'http://host/foo/bar/+reboot');
-     });
-
-
   it('should hide the service menu',
      function() {
        var box = topo.service_boxes.haproxy;
