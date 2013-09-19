@@ -1301,7 +1301,6 @@ YUI.add('juju-view-inspector', function(Y) {
       options.templateConfig = options.templateConfig || {};
 
       var container = Y.Node.create(Templates['service-inspector']());
-      debugger;
       container.appendTo(Y.one('#content'));
 
       var self = this;

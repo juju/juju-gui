@@ -377,7 +377,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          control.set('value', 1);
          control.simulate('keydown', {keyCode: ENTER}); // Simulate Enter.
          var message = conn.last_message();
-         debugger;
          assert.equal('DestroyServiceUnits', message.Request);
          assert.deepEqual(['mysql/2', 'mysql/1'], message.Params.UnitNames);
        });

@@ -779,7 +779,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var charm = {'id': service.charm,
                        loaded: false};
          db.charms.add(charm);
-         debugger;
          sm.showServiceMenu(service);
 
          // Since the service's charm is not loaded the 'Build Relation' link
