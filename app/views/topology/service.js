@@ -571,17 +571,6 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
 
-      // If the service box is pending, ensure that the charm panel is
-      // visible, but don't do anything else.
-      if (box.pending) {
-        // Prevent the clickoutside event from firing and immediately
-        // closing the panel.
-        d3.event.halt();
-        // Ensure service menus are closed.
-        topo.fire('clearState');
-        views.CharmPanel.getInstance().show();
-        return;
-      }
       // serviceClick is being called after dragend is processed.  In those
       // cases the current click action should not be invoked.
       if (topo.ignoreServiceClick) {
@@ -1323,8 +1312,6 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var service = box.model;
       var landscape = topo.get('landscape');
-      var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
-      var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var triangle = serviceMenu.one('.triangle');
       var securityURL, rebootURL;
 
@@ -1332,19 +1319,6 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (service.get('pending')) {
         return true;
-      }
-
-      // Update landscape links and show/hide as needed.
-      if (landscape) {
-        rebootURL = landscape.getLandscapeURL(service, 'reboot');
-        securityURL = landscape.getLandscapeURL(service, 'security');
-
-        if (rebootURL && service['landscape-needs-reboot']) {
-          landscapeReboot.show().one('a').set('href', rebootURL);
-        }
-        if (securityURL && service['landscape-security-upgrades']) {
-          landscapeSecurity.show().one('a').set('href', securityURL);
-        }
       }
 
       if (box && !serviceMenu.hasClass('active')) {
