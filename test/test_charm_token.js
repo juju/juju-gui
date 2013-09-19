@@ -20,13 +20,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('charm token', function() {
-  var charm_container, CharmToken, cleanIconHelper, token, utils, Y;
+  var charm_container, Token, cleanIconHelper, token, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
-          CharmToken = Y.juju.widgets.browser.CharmToken;
+          Token = Y.juju.widgets.browser.Token;
           utils = Y.namespace('juju-tests.utils');
           cleanIconHelper = utils.stubCharmIconPath();
           done();
@@ -49,7 +49,7 @@ describe('charm token', function() {
   });
 
   it('exists', function() {
-    var token = new CharmToken();
+    var token = new Token();
     assert.isObject(token);
   });
 
@@ -65,7 +65,7 @@ describe('charm token', function() {
       series: 'precise',
       tested_providers: ['ec2']
     };
-    var token = new CharmToken(cfg);
+    var token = new Token(cfg);
     token.render(charm_container);
     var metadata = charm_container.one('.metadata');
     assert.equal(
@@ -86,7 +86,7 @@ describe('charm token', function() {
       series: 'precise',
       tested_providers: ['ec2']
     };
-    var token = new CharmToken(cfg);
+    var token = new Token(cfg);
     token.render(charm_container);
     var metadata = charm_container.one('.metadata');
     assert.equal(
@@ -96,7 +96,7 @@ describe('charm token', function() {
   });
 
   it('sets a default of small size', function() {
-    var token = new CharmToken();
+    var token = new Token();
     token.get('size').should.eql('small');
 
     // and the css class should be on the token once rendered.
@@ -105,7 +105,7 @@ describe('charm token', function() {
   });
 
   it('allows setting a large size', function() {
-    var token = new CharmToken({
+    var token = new Token({
       size: 'large'
     });
     token.get('size').should.eql('large');
@@ -116,7 +116,7 @@ describe('charm token', function() {
   });
 
   it('allows setting a tiny size', function() {
-    var token = new CharmToken({
+    var token = new Token({
       size: 'tiny',
       description: 'some description',
       mainCategory: 'app-servers',
@@ -131,7 +131,7 @@ describe('charm token', function() {
   });
 
   it('allows overriding the charm icon url', function() {
-    var token = new CharmToken({
+    var token = new Token({
       size: 'tiny',
       description: 'some description',
       mainCategory: 'app-servers',
