@@ -363,14 +363,6 @@ YUI.add('juju-topology-service', function(Y) {
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
           click: 'canvasClick'
-        },
-        // Menu/Controls
-        '.view-service': {
-          click: 'viewServiceClick',
-          touchstart: 'viewServiceClick'
-        },
-        '.destroy-service': {
-          click: 'destroyServiceClick'
         }
       },
       d3: {
@@ -579,17 +571,6 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
 
-      // If the service box is pending, ensure that the charm panel is
-      // visible, but don't do anything else.
-      if (box.pending && !window.flags.serviceInspector) {
-        // Prevent the clickoutside event from firing and immediately
-        // closing the panel.
-        d3.event.halt();
-        // Ensure service menus are closed.
-        topo.fire('clearState');
-        views.CharmPanel.getInstance().show();
-        return;
-      }
       // serviceClick is being called after dragend is processed.  In those
       // cases the current click action should not be invoked.
       if (topo.ignoreServiceClick) {
@@ -795,36 +776,6 @@ YUI.add('juju-topology-service', function(Y) {
               topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       this.hideServiceMenu();
-    },
-
-    /**
-     * The user clicked on the "View" menu item.
-     *
-     * @method viewServiceClick
-     */
-    viewServiceClick: function(_, context) {
-      // Get the service element
-      var topo = context.get('component');
-      var box = topo.get('active_service');
-      var service = box.model;
-      context.hideServiceMenu();
-      context.show_service(service);
-    },
-
-    /**
-     * The user clicked on the "Destroy" menu item.
-     *
-     * @method destroyServiceClick
-     */
-    destroyServiceClick: function(_, context) {
-      // Get the service element
-      var topo = context.get('component');
-      var box = topo.get('active_service');
-      context.hideServiceMenu();
-      if (window.flags && window.flags.serviceInspector) {
-        context.destroyServiceInspector();
-      }
-      context.destroyServiceConfirm(box);
     },
 
     /**
@@ -1360,38 +1311,12 @@ YUI.add('juju-topology-service', function(Y) {
       var serviceMenu = this.get('container').one('#service-menu');
       var topo = this.get('component');
       var service = box.model;
-      var landscape = topo.get('landscape');
-      var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
-      var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var triangle = serviceMenu.one('.triangle');
-      var securityURL, rebootURL;
-      var flags = window.flags;
 
-      if (flags.serviceInspector) {
-        this.show_service(service);
-      }
+      this.show_service(service);
 
       if (service.get('pending')) {
         return true;
-      }
-
-      // Update landscape links and show/hide as needed.
-      if (landscape && !flags.serviceInspector) {
-        rebootURL = landscape.getLandscapeURL(service, 'reboot');
-        securityURL = landscape.getLandscapeURL(service, 'security');
-
-        if (rebootURL && service['landscape-needs-reboot']) {
-          landscapeReboot.show().one('a').set('href', rebootURL);
-        }
-        if (securityURL && service['landscape-security-upgrades']) {
-          landscapeSecurity.show().one('a').set('href', securityURL);
-        }
-      }
-
-      // The view option should not be used with the inspector.
-      if (flags.serviceInspector) {
-        serviceMenu.one('.view-service').hide();
-        serviceMenu.one('.destroy-service').hide();
       }
 
       if (box && !serviceMenu.hasClass('active')) {
@@ -1411,10 +1336,6 @@ YUI.add('juju-topology-service', function(Y) {
           addRelation.addClass('disabled');
         }
 
-        // We do not want the user destroying the Juju GUI service.
-        if (utils.isGuiService(service)) {
-          serviceMenu.one('.destroy-service').addClass('disabled');
-        }
         this.updateServiceMenuLocation();
       }
     },
@@ -1434,8 +1355,6 @@ YUI.add('juju-topology-service', function(Y) {
         serviceMenu.removeClass('active');
         topo.set('active_service', null);
         topo.set('active_context', null);
-        // Most services can be destroyed via the GUI.
-        serviceMenu.one('.destroy-service').removeClass('disabled');
       }
     },
 
@@ -1447,18 +1366,9 @@ YUI.add('juju-topology-service', function(Y) {
     show_service: function(service) {
       var topo = this.get('component');
       var createServiceInspector = topo.get('createServiceInspector');
-      var getModelURL = topo.get('getModelURL');
-      // to satisfy linter;
-      var flags = window.flags;
 
       topo.detachContainer();
-      if (flags.serviceInspector) {
-        createServiceInspector(service);
-      } else {
-        topo.fire('navigateTo', {
-          url: getModelURL(service)
-        });
-      }
+      createServiceInspector(service);
     },
 
     /*
