@@ -348,6 +348,18 @@ code {
             float: right;
             margin: 0;
 
+	    .import-export {
+		cursor: pointer;
+	    }
+	    #import-trigger {
+		padding: 25px 5px 0 0;
+		/* XXX bac: remove the hiding when import is implemented. */
+		display: none;
+	    }
+	    #export-trigger {
+		padding: 25px 10px 0 5px;
+	    }
+
             li,
             li a {
                 color: #fff;
@@ -382,6 +394,7 @@ code {
                         overflow: auto;
                     }
                 }
+
             }
         }
     }
