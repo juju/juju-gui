@@ -219,17 +219,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
 
     /**
-     Return a promise to deploy a charm.
+     Return a promise to deploy a charm. On failure the promise
+     will be rejected.
 
      @method promiseDeploy
      @param {String} charmId Charm to deploy.
      @param {Object} [options] See deploy.
-     @return {Promise} Resolving to the deployed service.
+     @return {Promise} Resolving to the results of the deploy call.
     */
     promiseDeploy: function(charmId, options) {
       var self = this;
-      return new Y.Promise(function(resolve) {
-        self.deploy(charmId, resolve, options);
+     return new Y.Promise(function(resolve, reject) {
+       var intermediateCallback = function(result) {
+          if(result.error) {
+            reject(result);
+          } else {
+            resolve(result);
+          }
+       };
+        self.deploy(charmId, intermediateCallback, options);
       });
     },
 
