@@ -57,7 +57,6 @@ describe('Inspector Overview', function() {
     };
     env.connect();
     conn.open();
-    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
@@ -70,7 +69,6 @@ describe('Inspector Overview', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    window.flags = {};
 
     if (client) {
       client.destroy();

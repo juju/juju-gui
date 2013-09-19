@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer();
+      container = testUtils.makeContainer('content');
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -779,6 +779,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var charm = {'id': service.charm,
                        loaded: false};
          db.charms.add(charm);
+         debugger;
          sm.showServiceMenu(service);
 
          // Since the service's charm is not loaded the 'Build Relation' link

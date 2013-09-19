@@ -43,37 +43,10 @@ YUI.add('juju-view-inspector', function(Y) {
    */
   ns.manageUnitsMixin = {
     // Mixin attributes
-    // XXX Makyo - this will need to be removed when the serviceInspector flag
-    // goes away.
-    events: {
-      '.num-units-control': {
-        keydown: 'modifyUnits',
-        blur: 'resetUnits'
-      }
-    },
-
-    /*
-     * XXX Makyo - all instances of testing for the flag will go away once
-     * the inspector becomes the default, rather than internal pages.
-     */
-    /**
-     * No-Op function to replace getModelURL for the time being.
-     * XXX Makyo - remove when inspector becomes the default.
-     *
-     * @method noop
-     * @return {undefined} Nothing.
-     */
-    noop: function() { return; },
-
     resetUnits: function() {
-      var container, model, flags = window.flags;
-      if (flags.serviceInspector) {
-        container = this.viewletManager.get('container');
-        model = this.viewletManager.get('model');
-      } else {
-        container = this.get('container');
-        model = this.get('model');
-      }
+      var container, model;
+      container = this.viewletManager.get('container');
+      model = this.viewletManager.get('model');
       var field = container.one('.num-units-control');
       field.set('value', model.get('unit_count'));
       field.set('disabled', false);
@@ -83,13 +56,9 @@ YUI.add('juju-view-inspector', function(Y) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container, flags = window.flags, currentUnits;
-      if (flags.serviceInspector) {
-        container = this.viewletManager.get('container');
-        currentUnits = this.viewletManager.get('model').get('unit_count');
-      } else {
-        container = this.get('container');
-      }
+      var container, currentUnits;
+      container = this.viewletManager.get('container');
+      currentUnits = this.viewletManager.get('model').get('unit_count');
       var field = container.one('.num-units-control');
 
       if (ev.keyCode === ESC) {
@@ -104,7 +73,7 @@ YUI.add('juju-view-inspector', function(Y) {
 
       if (/^\d+$/.test(numUnits)) {
         numUnits = parseInt(numUnits, 10);
-        if (flags.serviceInspector && numUnits > currentUnits) {
+        if (numUnits > currentUnits) {
           this._confirmUnitConstraints(numUnits);
         } else {
           this._modifyUnits(numUnits);
@@ -195,14 +164,8 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     _modifyUnits: function(requested_unit_count) {
-      var container, env, flags = window.flags;
-      if (flags.serviceInspector) {
-        container = this.viewletManager.get('container');
-        env = this.viewletManager.get('env');
-      } else {
-        container = this.get('container');
-        env = this.get('env');
-      }
+      var container = this.viewletManager.get('container');
+      var env = this.viewletManager.get('env');
 
       var service = this.model || this.get('model');
       var unit_count = service.get('unit_count');
@@ -222,11 +185,7 @@ YUI.add('juju-view-inspector', function(Y) {
       } else if (delta < 0) {
         delta = Math.abs(delta);
         var db;
-        if (flags.serviceInspector) {
-          db = this.viewletManager.get('db');
-        } else {
-          db = this.get('db');
-        }
+        db = this.viewletManager.get('db');
         var units = db.units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
@@ -240,22 +199,13 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._removeUnitCallback, this)
         );
       }
-      if (!flags.serviceInspector) {
-        field.set('disabled', true);
-      }
+      field.set('disabled', true);
     },
 
     _addUnitCallback: function(ev) {
-      var service, getModelURL, db, flags = window.flags;
-      if (flags.serviceInspector) {
-        service = this.viewletManager.get('model');
-        getModelURL = this.noop;
-        db = this.viewletManager.get('db');
-      } else {
-        service = this.get('model');
-        getModelURL = this.get('getModelURL');
-        db = this.get('db');
-      }
+      var service, db;
+      service = this.viewletManager.get('model');
+      db = this.viewletManager.get('db');
       var unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
@@ -263,7 +213,6 @@ YUI.add('juju-view-inspector', function(Y) {
               title: 'Error adding unit',
               message: ev.num_units + ' units',
               level: 'error',
-              link: getModelURL(service),
               modelId: service
             })
         );
@@ -281,16 +230,8 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     _removeUnitCallback: function(ev) {
-      var service, getModelURL, db, flags = window.flags;
-      if (flags.serviceInspector) {
-        service = this.viewletManager.get('model');
-        getModelURL = this.noop;
-        db = this.viewletManager.get('db');
-      } else {
-        service = this.get('model');
-        getModelURL = this.get('getModelURL');
-        db = this.get('db');
-      }
+      var service = this.viewletManager.get('model');
+      var db = this.viewletManager.get('db');
       var unit_names = ev.unit_names;
 
       if (ev.err) {
@@ -312,7 +253,6 @@ YUI.add('juju-view-inspector', function(Y) {
                 return 'Unit name: ' + ev.unit_names[0];
               })(),
               level: 'error',
-              link: getModelURL(service),
               modelId: service
             })
         );
@@ -346,8 +286,7 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     unexposeService: function() {
-      var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.viewletManager : this;
+      var dataSource = this.viewletManager;
       var service = dataSource.get('model'),
           env = dataSource.get('env');
       env.unexpose(service.get('id'),
@@ -365,8 +304,7 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _unexposeServiceCallback: function(ev) {
-      var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.viewletManager : this;
+      var dataSource = this.viewletManager;
       var service = dataSource.get('model'),
           db = dataSource.get('db');
       if (ev.err) {
@@ -394,8 +332,7 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     exposeService: function() {
-      var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.viewletManager : this;
+      var dataSource = this.viewletManager;
       var service = dataSource.get('model'),
           env = dataSource.get('env');
       env.expose(service.get('id'),
@@ -413,8 +350,7 @@ YUI.add('juju-view-inspector', function(Y) {
      * @return {undefined} Nothing.
      */
     _exposeServiceCallback: function(ev) {
-      var svcInspector = window.flags && window.flags.serviceInspector;
-      var dataSource = svcInspector ? this.viewletManager : this;
+      var dataSource = this.viewletManager;
       var service = dataSource.get('model'),
           db = dataSource.get('db');
       if (ev.err) {
@@ -486,10 +422,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @return {undefined} Nothing.
     */
     initiateServiceDestroy: function() {
-      var svcInspector = window.flags && window.flags.serviceInspector;
-      // When the above flag is removed we won't need the dataSource variable
-      // any more and can refactor this accordingly.
-      var dataSource = svcInspector ? this.viewletManager : this;
+      var dataSource = this.viewletManager;
       var model = dataSource.get('model');
       var db = this.viewletManager.get('db');
       if (model.name === 'service') {
@@ -1368,6 +1301,7 @@ YUI.add('juju-view-inspector', function(Y) {
       options.templateConfig = options.templateConfig || {};
 
       var container = Y.Node.create(Templates['service-inspector']());
+      debugger;
       container.appendTo(Y.one('#content'));
 
       var self = this;

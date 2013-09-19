@@ -100,7 +100,6 @@ describe('Inspector Constraints', function() {
     });
     view.render();
     inspector = makeInspector(view, service);
-    window.flags.serviceInspector = true;
     done();
   });
 
@@ -110,7 +109,6 @@ describe('Inspector Constraints', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    window.flags = {};
   });
 
   it('renders the constraints form correctly', function() {
