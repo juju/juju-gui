@@ -1311,9 +1311,7 @@ YUI.add('juju-topology-service', function(Y) {
       var serviceMenu = this.get('container').one('#service-menu');
       var topo = this.get('component');
       var service = box.model;
-      var landscape = topo.get('landscape');
       var triangle = serviceMenu.one('.triangle');
-      var securityURL, rebootURL;
 
       this.show_service(service);
 
