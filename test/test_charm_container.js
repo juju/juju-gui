@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('charm container widget', function() {
-  var container, Y, charm_container, CharmContainer, cleanIconHelper, utils;
+  var container, Y, charm_container, TokenContainer, cleanIconHelper, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -31,7 +31,7 @@ describe('charm container widget', function() {
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
       cleanIconHelper = utils.stubCharmIconPath();
-      CharmContainer = Y.juju.widgets.browser.CharmContainer;
+      TokenContainer = Y.juju.widgets.browser.TokenContainer;
       done();
     });
   });
@@ -52,7 +52,7 @@ describe('charm container widget', function() {
   });
 
   it('sets up values according to children and its cutoff', function() {
-    charm_container = new Y.juju.widgets.browser.CharmContainer({
+    charm_container = new Y.juju.widgets.browser.TokenContainer({
       children: [{
         name: 'foo'
       },{
@@ -68,7 +68,7 @@ describe('charm container widget', function() {
   });
 
   it('only shows items up to the cutoff at first', function() {
-    charm_container = new Y.juju.widgets.browser.CharmContainer({
+    charm_container = new Y.juju.widgets.browser.TokenContainer({
       children: [{
         name: 'foo'
       },{
@@ -80,19 +80,19 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    var charms = container.all('.yui3-charmtoken'),
+    var charms = container.all('.yui3-token'),
         shown_charms = charms.slice(0, 3),
         hidden_charms = charms.slice(3, 4);
     Y.Array.each(shown_charms, function(charm) {
-      assert.isFalse(charm.hasClass('yui3-charmtoken-hidden'));
+      assert.isFalse(charm.hasClass('yui3-token-hidden'));
     });
     Y.Array.each(hidden_charms, function(charm) {
-      assert.isTrue(charm.hasClass('yui3-charmtoken-hidden'));
+      assert.isTrue(charm.hasClass('yui3-token-hidden'));
     });
   });
 
   it('renders', function() {
-    charm_container = new Y.juju.widgets.browser.CharmContainer({
+    charm_container = new Y.juju.widgets.browser.TokenContainer({
       name: 'Popular',
       children: [{
         name: 'foo'
@@ -113,7 +113,7 @@ describe('charm container widget', function() {
 
   it('toggles between all or just a few items being shown', function() {
     var hidden;
-    charm_container = new Y.juju.widgets.browser.CharmContainer({
+    charm_container = new Y.juju.widgets.browser.TokenContainer({
       children: [{
         name: 'foo'
       },{
@@ -127,7 +127,7 @@ describe('charm container widget', function() {
     charm_container.render(container);
 
     container.one('.expandToggle').simulate('click');
-    hidden = container.all('.yui3-charmtoken-hidden');
+    hidden = container.all('.yui3-token-hidden');
     assert.equal(
         0, hidden.size(),
         'Hidden items after all items should be visible.');
@@ -135,7 +135,7 @@ describe('charm container widget', function() {
     assert.isTrue(container.one('.more').hasClass('hidden'));
 
     container.one('.expandToggle').simulate('click');
-    hidden = container.all('.yui3-charmtoken-hidden');
+    hidden = container.all('.yui3-token-hidden');
     assert.equal(
         1, hidden.size(),
         'No hidden items after extra items should be hidden.');
@@ -144,16 +144,16 @@ describe('charm container widget', function() {
   });
 
   it('handles having no charm tokens', function() {
-    charm_container = new Y.juju.widgets.browser.CharmContainer({name: 'Foo'});
+    charm_container = new Y.juju.widgets.browser.TokenContainer({name: 'Foo'});
     charm_container.render(container);
-    var rendered = container.one('.yui3-charmcontainer');
+    var rendered = container.one('.yui3-tokencontainer');
     assert.equal(
         'Foo(0)',
         rendered.one('h3').get('text').replace(/\s/g, ''));
   });
 
   it('handles having less charms tokens than its cutoff', function() {
-    charm_container = new Y.juju.widgets.browser.CharmContainer({
+    charm_container = new Y.juju.widgets.browser.TokenContainer({
       name: 'Popular',
       cutoff: 6,
       children: [{
@@ -168,18 +168,18 @@ describe('charm container widget', function() {
     });
     charm_container.render(container);
 
-    var rendered = container.one('.yui3-charmcontainer');
+    var rendered = container.one('.yui3-tokencontainer');
     assert.equal(
         'Popular(4)',
         rendered.one('h3').get('text').replace(/\s/g, ''));
-    assert.equal(4, container.all('.yui3-charmtoken').size());
-    assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
+    assert.equal(4, container.all('.yui3-token').size());
+    assert.equal(0, container.all('.yui3-token-hidden').size());
     assert.equal(1, charm_container._events.length);
     assert.isNull(rendered.one('.expand'));
   });
 
   it('allows setting the size on all charms it contains', function() {
-    charm_container = new CharmContainer({
+    charm_container = new TokenContainer({
       name: 'Popular',
       cutoff: 6,
       children: [{

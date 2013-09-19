@@ -202,18 +202,18 @@ YUI.add('browser-search-widget', function(Y) {
       };
 
       charmlist.each(function(charm, idx, list) {
-        var container = Y.Node.create('<div class="yui3-charmtoken"/>');
+        var container = Y.Node.create('<div class="yui3-token"/>');
         // Force the tokens to not show the is_approved star by force them to
         // be false.
         var tokenAttrs = Y.merge(charm.getAttrs(), {
           size: 'tiny',
           is_approved: false
         });
-        var token = new ns.CharmToken(tokenAttrs);
+        var token = new ns.Token(tokenAttrs);
         var html = Y.Node.create(token.TEMPLATE(token.getAttrs()));
 
         // If there are categories at the top, we need them to have an
-        // additional css class on the .yui3-charmtoken node.
+        // additional css class on the .yui3-token node.
         if (isCategory(charm.get('id'))) {
           lastCharmWasCategory = true;
           html.addClass('category');

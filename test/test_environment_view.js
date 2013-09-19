@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer();
+      container = testUtils.makeContainer('content');
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed

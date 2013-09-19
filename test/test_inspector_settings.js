@@ -43,7 +43,6 @@ describe('Inspector Settings', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
@@ -56,7 +55,6 @@ describe('Inspector Settings', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    window.flags = {};
   });
 
   var setUpInspector = function(options) {

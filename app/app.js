@@ -579,21 +579,20 @@ YUI.add('juju-gui', function(Y) {
 
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
-      if (window.flags && window.flags.serviceInspector) {
-        // To use the new service Inspector use the deploy method
-        // from the Y.juju.GhostDeployer extension
-        cfg.deploy = Y.bind(this.deployService, this);
-        // Watch specific things, (add units), remove db.update above
-        // Note: This hides under the flag as tests don't properly clean
-        // up sometimes and this binding creates spooky interaction
-        // at a distance and strange failures.
-        this.db.services.after(['add', 'remove', '*:change'],
-                               this.on_database_changed, this);
-        this.db.relations.after(['add', 'remove', '*:change'],
-                                this.on_database_changed, this);
-      } else {
-        cfg.deploy = this.charmPanel.deploy;
-      }
+
+      // To use the new service Inspector use the deploy method
+      // from the Y.juju.GhostDeployer extension
+      cfg.deploy = Y.bind(this.deployService, this);
+      // Watch specific things, (add units), remove db.update above
+      // Note: This hides under the flag as tests don't properly clean
+      // up sometimes and this binding creates spooky interaction
+      // at a distance and strange failures.
+      this.db.services.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
+      this.db.relations.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
@@ -1504,6 +1503,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
+    'juju-view-environment',
     'juju-view-login',
     'juju-landscape',
     'juju-websocket-logging',
