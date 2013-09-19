@@ -58,9 +58,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function(done) {
       utils.promiseImport('data/wp-deployer.yaml', 'wordpress-prod')
       .then(function(resolve) {
-        state = resolve.backend;
-        done();
-      });
+            state = resolve.backend;
+            done();
+          });
     });
 
     afterEach(function() {

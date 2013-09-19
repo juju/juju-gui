@@ -218,6 +218,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
 
+    /**
+     Return a promise to deploy a charm.
+
+     @method promiseDeploy
+     @param {String} charmId Charm to deploy.
+     @param {Object} [options] See deploy.
+     @return {Promise} Resolving to the deployed service.
+    */
     promiseDeploy: function(charmId, options) {
       var self = this;
       return new Y.Promise(function(resolve) {
@@ -1316,7 +1324,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
      @method injestDeployer
      */
-    injestDeployer: function (data, name, options) {
+    injestDeployer: function(data, name, options) {
       if (!data) {return;}
       options = options || {};
       var self = this;
@@ -1416,7 +1424,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         if (existing) {
           if (!rewriteIds) {
             throw new Error(serviceName +
-                           ' is already present in the database.');
+                ' is already present in the database.');
           }
           targetId = nextServiceId(db.services, serviceName);
           current.id = targetId;
@@ -1427,7 +1435,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {
         services: source.services,
         relations: source.relations
-      }
+      };
     },
 
     /**
@@ -1470,7 +1478,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // name for unit count.
         serviceData.unitCount = serviceData.num_units;
         servicePromises.push(
-         self.promiseDeploy(serviceData.charm, serviceData));
+            self.promiseDeploy(serviceData.charm, serviceData));
       });
 
 
@@ -1488,42 +1496,43 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       Y.batch.apply(this, servicePromises)
       .then(function(serviceDeployResult) {
-        serviceDeployResult.forEach(function(sdr) {
-          // Update export elements that 'deploy'
-          // doesn't handle
-          var service = sdr.service;
-          var serviceId = service.get('id');
-          var serviceData = injestedData.services[serviceId];
+            serviceDeployResult.forEach(function(sdr) {
+              // Update export elements that 'deploy'
+              // doesn't handle
+              var service = sdr.service;
+              var serviceId = service.get('id');
+              var serviceData = injestedData.services[serviceId];
 
-          // Force the annotation update (deploy doesn't handle this).
-          var annotiations = serviceData.annotations;
-          if (annotiations) {
-            service.set('annotations', annotiations);
-          }
+              // Force the annotation update (deploy doesn't handle this).
+              var annotiations = serviceData.annotations;
+              if (annotiations) {
+                service.set('annotations', annotiations);
+              }
 
-          // Expose
-          if (serviceData.exposed) {
-            self.expose(serviceId);
-          }
+              // Expose
+              if (serviceData.exposed) {
+                self.expose(serviceId);
+              }
 
-          self.changes.services[sdr.service.get('id')] = [sdr.service, true];
-        });
+              self.changes.services[sdr.service.get('id')] = [
+                sdr.service, true];
+            });
 
-        injestedData.relations.forEach(function(relationData) {
-          var relResult = self.addRelation(
-            relationData[0], relationData[1], true);
-          self.changes.relations[relResult.relation.get('id')] = [
-            relResult.relation, true];
-        });
-      })
+            injestedData.relations.forEach(function(relationData) {
+              var relResult = self.addRelation(
+                  relationData[0], relationData[1], true);
+              self.changes.relations[relResult.relation.get('id')] = [
+                relResult.relation, true];
+            });
+          })
       .then(function() {
-        deployStatus.Status = 'completed';
-        callback({DeploymentId: self._deploymentId});
-        self.sendDelta();
-      }, function(err) {
-        deployStatus.Status = 'failed';
-        callback({Error: err.toString()});
-      });
+            deployStatus.Status = 'completed';
+            callback({DeploymentId: self._deploymentId});
+            self.sendDelta();
+          }, function(err) {
+            deployStatus.Status = 'failed';
+            callback({Error: err.toString()});
+          });
     },
 
     /**
@@ -1532,9 +1541,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
      generate fixtures.
 
      @method promiseDeploy
-     @param {String} YAMLData
+     @param {String} YAMLData YAML data to import.
      @param {String} [name] Bundle name to import.
-     @return {Promise} After the import is run
+     @return {Promise} After the import is run.
     */
     promiseImport: function(YAMLData, name) {
       var self = this;

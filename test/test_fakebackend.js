@@ -489,116 +489,121 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('FakeBackend deployer support', function() {
     var requires = ['node',
       'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-      var Y, fakebackend, utils;
+    var Y, fakebackend, utils;
 
-      before(function(done) {
-        Y = YUI(GlobalConfig).use(requires, function(Y) {
-          utils = Y.namespace('juju-tests.utils');
-          done();
-        });
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
       });
+    });
 
-      afterEach(function() {
-        if (fakebackend) {
-          fakebackend.destroy();
-        }
-      });
+    afterEach(function() {
+      if (fakebackend) {
+        fakebackend.destroy();
+      }
+    });
 
-      it('should support YAML imports', function(done) {
-        utils.promiseImport('data/wp-deployer.yaml')
+    it('should support YAML imports', function(done) {
+      utils.promiseImport('data/wp-deployer.yaml')
         .then(function(resolve) {
-          var result = resolve.result;
-          fakebackend = resolve.backend;
-          assert.equal(result.Error, undefined);
-          assert.equal(result.DeploymentId, 1, 'deployment id incorrect');
-          assert.isNotNull(fakebackend.db.services.getById('wordpress'), 'failed to import wordpress');
-          assert.isNotNull(fakebackend.db.services.getById('mysql'), 'failed to import mysql');
-          assert.equal(fakebackend.db.relations.size(), 1, 'failed to import relations');
-          // Verify units created.
-          assert.equal(fakebackend.db.units.size(), 3, 'Unit count wrong');
-          done();
-        }).then(undefined, done);
-      });
+            var result = resolve.result;
+            fakebackend = resolve.backend;
+            assert.equal(result.Error, undefined);
+            assert.equal(result.DeploymentId, 1,
+                         'deployment id incorrect');
+            assert.isNotNull(fakebackend.db.services.getById('wordpress'),
+                             'failed to import wordpress');
+            assert.isNotNull(fakebackend.db.services.getById('mysql'),
+                             'failed to import mysql');
+            assert.equal(fakebackend.db.relations.size(), 1,
+                         'failed to import relations');
+            // Verify units created.
+            assert.equal(fakebackend.db.units.size(), 3,
+                         'Unit count wrong');
+            done();
+          }).then(undefined, done);
+    });
 
-      it('should provide status of imports', function(done) {
-        utils.promiseImport('data/wp-deployer.yaml')
+    it('should provide status of imports', function(done) {
+      utils.promiseImport('data/wp-deployer.yaml')
         .then(function(resolve) {
-          fakebackend = resolve.backend;
-          fakebackend.statusDeployer(
-            function(status) {
-            assert.lengthOf(status.LastChanges, 1);
-            assert.equal(status.LastChanges[0].Status, 'completed');
-            assert.equal(status.LastChanges[0].DeploymentId, 1);
-            assert.isNumber(status.LastChanges[0].Timestamp);
+            fakebackend = resolve.backend;
+            fakebackend.statusDeployer(
+                function(status) {
+                  assert.lengthOf(status.LastChanges, 1);
+                  assert.equal(status.LastChanges[0].Status, 'completed');
+                  assert.equal(status.LastChanges[0].DeploymentId, 1);
+                  assert.isNumber(status.LastChanges[0].Timestamp);
+                  done();
+                });
+          });
+    });
+
+    it('throws an error with more than one import target', function() {
+      fakebackend = utils.makeFakeBackend();
+      assert.throws(function() {
+        fakebackend.importDeployer({a: {}, b: {}});
+      }, 'Import target ambigious, aborting.');
+    });
+
+    it('detects service id collisions', function() {
+      fakebackend = utils.makeFakeBackend();
+      fakebackend.db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
+      var data = {
+        a: {services: {mysql: {
+          charm: 'cs:precise/mysql-26',
+          num_units: 2, options: {debug: false}}}}
+      };
+      assert.throws(function() {
+        fakebackend.importDeployer(data);
+      }, 'mysql is already present in the database.');
+    });
+
+    it('properly implements inheritence in target definitions', function(done) {
+      fakebackend = utils.makeFakeBackend();
+      var data = {
+        a: {services: {mysql: {charm: 'cs:precise/mysql-26',
+          num_units: 2, options: {debug: false}}}},
+        b: {inherits: 'a', services: {mysql: {num_units: 5,
+          options: {debug: true}}}},
+        c: {inherits: 'b', services: {mysql: {num_units: 3 }}},
+        d: {inherits: 'z', services: {mysql: {num_units: 3 }}}
+      };
+
+
+      // No 'z' available.
+      assert.throws(function() {
+        fakebackend.importDeployer(data, 'd');
+      }, 'Unable to resolve bundle inheritence.');
+
+      fakebackend.promiseImport(data, 'c')
+        .then(function() {
+            // Insure that we inherit the debug options from 'b'
+            var mysql = fakebackend.db.services.getById('mysql');
+            assert.isNotNull(mysql);
+            var config = mysql.get('config');
+            assert.equal(config['block-size'], 5);
             done();
           });
-        });
-      });
+    });
 
-      it('throws an error with more than one import target', function() {
-        fakebackend = utils.makeFakeBackend();
-        assert.throws(function() {
-          fakebackend.importDeployer({a: {}, b: {}});
-        }, 'Import target ambigious, aborting.');
-      });
+    it('properly builds relations on import', function(done) {
+      fakebackend = utils.makeFakeBackend();
+      var data = {
+        a: {
+          services: {
+            mysql: {
+              charm: 'cs:precise/mysql-26',
+              num_units: 2, options: {debug: false}},
+            wordpress: {
+              charm: 'cs:precise/wordpress-15',
+              num_units: 1
+            }},
+          relations: [['mysql', 'wordpress']]
+        }};
 
-      it('detects service id collisions', function() {
-        fakebackend = utils.makeFakeBackend();
-        fakebackend.db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
-        var data = {
-          a: {services: {mysql: {
-            charm: 'cs:precise/mysql-26',
-            num_units: 2, options: {debug: false}}}}
-        };
-        assert.throws(function() {
-          fakebackend.importDeployer(data);
-        }, 'mysql is already present in the database.');
-      });
-
-      it('properly implements inheritence in target definitions', function(done) {
-        fakebackend = utils.makeFakeBackend();
-        var data = {
-          a: {services: {mysql: {charm: 'cs:precise/mysql-26',
-            num_units: 2, options: {debug: false}}}},
-            b: {inherits: 'a', services: {mysql: {num_units: 5,
-              options: {debug: true}}}},
-              c: {inherits: 'b', services: {mysql: {num_units: 3 }}},
-              d: {inherits: 'z', services: {mysql: {num_units: 3 }}}
-        };
-
-
-        // No 'z' available.
-        assert.throws(function() {
-          fakebackend.importDeployer(data, 'd');
-        }, 'Unable to resolve bundle inheritence.');
-
-        fakebackend.promiseImport(data, 'c')
-        .then(function() {
-          // Insure that we inherit the debug options from 'b'
-          var mysql = fakebackend.db.services.getById('mysql');
-          assert.isNotNull(mysql);
-          var config = mysql.get('config');
-          assert.equal(config['block-size'], 5);
-          done();
-        });
-      });
-
-      it('properly builds relations on import', function(done) {
-        fakebackend = utils.makeFakeBackend();
-        var data = {
-          a: {
-            services: {
-              mysql: {
-                charm: 'cs:precise/mysql-26',
-                num_units: 2, options: {debug: false}},
-                wordpress: {
-                  charm: 'cs:precise/wordpress-15',
-                  num_units: 1
-                }},
-                relations: [['mysql', 'wordpress']]
-          }};
-
-          fakebackend.promiseImport(data)
+      fakebackend.promiseImport(data)
           .then(function() {
             var mysql = fakebackend.db.services.getById('mysql');
             var wordpress = fakebackend.db.services.getById('wordpress');
@@ -615,28 +620,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.isFalse(rel.get('pending'));
             done();
           }).then(undefined, function(e) {done(e);});
-      });
+    });
 
-      it('should support finding charms through a search', function(done) {
-        // Use import to import many charms and then resolve them with a few
-        // different keys.
-        var defaultSeries = 'precise';
-        utils.promiseImport('data/blog.yaml', 'wordpress-prod')
+    it('should support finding charms through a search', function(done) {
+      // Use import to import many charms and then resolve them with a few
+      // different keys.
+      var defaultSeries = 'precise';
+      utils.promiseImport('data/blog.yaml', 'wordpress-prod')
         .then(function(resolve) {
-          var db = resolve.backend.db;
-          assert.isNotNull(db.charms.find('wordpress', defaultSeries));
-          assert.isNotNull(db.charms.find('precise/wordpress', defaultSeries));
-          assert.isNotNull(db.charms.find('precise/wordpress'));
-          assert.isNotNull(db.charms.find('cs:precise/wordpress'));
-          assert.isNotNull(db.charms.find('cs:precise/wordpress-999'));
-          // Can't find this w/o a series
-          assert.isNull(db.charms.find('wordpress'));
-          // Find fails on missing items as well.
-          assert.isNull(db.charms.find('foo'));
-          assert.isNull(db.charms.find('foo', defaultSeries));
-          done();
-        }).then(undefined, done);
-      });
+            var db = resolve.backend.db;
+            assert.isNotNull(db.charms.find('wordpress', defaultSeries));
+            assert.isNotNull(db.charms.find('precise/wordpress',
+                                            defaultSeries));
+            assert.isNotNull(db.charms.find('precise/wordpress'));
+            assert.isNotNull(db.charms.find('cs:precise/wordpress'));
+            assert.isNotNull(db.charms.find('cs:precise/wordpress-999'));
+            // Can't find this w/o a series
+            assert.isNull(db.charms.find('wordpress'));
+            // Find fails on missing items as well.
+            assert.isNull(db.charms.find('foo'));
+            assert.isNull(db.charms.find('foo', defaultSeries));
+            done();
+          }).then(undefined, done);
+    });
   });
 
   describe('FakeBackend.uniformOperations', function() {
@@ -1213,20 +1219,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.promiseDeploy(charms[0])
       .then(fakebackend.promiseDeploy(charms[1]))
       .then(function() {
-        relation.push(true);
-        var result = fakebackend.addRelation.apply(fakebackend, relation);
-        assert.equal(result.error, undefined);
-        assert.equal(result.relationId, 'relation-0');
-        assert.equal(typeof result.relation, 'object');
-        // Check those elements we care about.
-        assert.equal(result.endpoints[0][0], mock.endpoints[0][0]);
-        assert.equal(result.endpoints[0][1].name, mock.endpoints[0][1].name);
-        assert.equal(result.endpoints[1][0], mock.endpoints[1][0]);
-        assert.equal(result.endpoints[1][1].name, mock.endpoints[1][1].name);
-        assert.equal(result.scope, mock.scope);
-        assert.equal(result.type, mock.type);
-        done();
-      }).then(undefined, done);
+            relation.push(true);
+            var result = fakebackend.addRelation.apply(fakebackend, relation);
+            assert.equal(result.error, undefined);
+            assert.equal(result.relationId, 'relation-0');
+            assert.equal(typeof result.relation, 'object');
+            // Check those elements we care about.
+            assert.equal(result.endpoints[0][0], mock.endpoints[0][0]);
+            assert.equal(result.endpoints[0][1].name,
+                         mock.endpoints[0][1].name);
+            assert.equal(result.endpoints[1][0], mock.endpoints[1][0]);
+            assert.equal(result.endpoints[1][1].name,
+                         mock.endpoints[1][1].name);
+            assert.equal(result.scope, mock.scope);
+            assert.equal(result.type, mock.type);
+            done();
+          }).then(undefined, done);
     }
 
     it('rejects unauthenticated calls', function() {
@@ -1274,13 +1282,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('can create a relation with a double explicit interface', function(done) {
+    it('can create a relation with a explicit interfaces', function(done) {
       createRelation(
-        ['cs:wordpress', 'cs:mysql'],
-        ['wordpress:db', 'mysql:db'],
-        { type: 'mysql', scope: 'global',
-          endpoints:
-            [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          { type: 'mysql', scope: 'global',
+            endpoints:
+                [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
           done);
     });
 

@@ -118,28 +118,28 @@ describe('topology', function() {
 
     utils.promiseImport('data/wp-deployer.yaml', 'wordpress-prod')
     .then(function(resolve) {
-      // Init the topo with the db at this point and ...
-      var fakebackend = resolve.backend;
-      var bundle = new views.BundleTopology({
-        container: container,
-        size: [320, 240],
-        db: fakebackend.db,
-        store: fakebackend.get('store')}).render();
+          // Init the topo with the db at this point and ...
+          var fakebackend = resolve.backend;
+          var bundle = new views.BundleTopology({
+            container: container,
+            size: [320, 240],
+            db: fakebackend.db,
+            store: fakebackend.get('store')}).render();
 
-        // The size of the element should reflect the passed in params
-        var svg = d3.select(container.getDOMNode()).select('svg');
-        assert.equal(svg.attr('width'), 320);
-        assert.equal(svg.attr('height'), 240);
+          // The size of the element should reflect the passed in params
+          var svg = d3.select(container.getDOMNode()).select('svg');
+          assert.equal(svg.attr('width'), 320);
+          assert.equal(svg.attr('height'), 240);
 
-        // We should have the two rendered services
-        assert.equal(container.all('.service').size(), 2);
-        // and the one relation between them
-        assert.equal(container.all('.relation').size(), 1);
+          // We should have the two rendered services
+          assert.equal(container.all('.service').size(), 2);
+          // and the one relation between them
+          assert.equal(container.all('.relation').size(), 1);
 
-        container.remove(true);
-        bundle.destroy();
-        done();
-    }).then(undefined, done);
+          container.remove(true);
+          bundle.destroy();
+          done();
+        }).then(undefined, done);
   });
 
 });

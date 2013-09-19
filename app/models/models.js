@@ -708,7 +708,7 @@ YUI.add('juju-models', function(Y) {
       },
       scope: {},
       display_name: {
-        getter: function(value) {
+        'getter': function(value) {
           if (value) { return value;}
           var names = [];
           this.get('endpoints').forEach(function(endpoint) {
