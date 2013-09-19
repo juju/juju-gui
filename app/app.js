@@ -569,7 +569,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      var exportNode = Y.one('#export-icon');
+      var exportNode = Y.one('#export-trigger');
       // Tests won't have this node.
       if (exportNode) {
         exportNode.on('click', function(e) {
