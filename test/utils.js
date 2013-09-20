@@ -165,6 +165,26 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return fakebackend;
     },
 
+    /**
+     Return a promise to return a working fakebackend
+     with imported YAML as its bundle. This returns
+     the result of the import call as 'result' and
+     the new fakebackend as 'backend'.
+
+     promiseImport('data/bundle.yaml', 'bundleName')
+     .then(function(resolve) {
+      var fakebackend = resolve.backend;
+      var result = resolve.result;
+      // Asserts.
+      done();
+     })
+
+      @method promiseImport
+      @param {String} YAMLBundleURL File to import
+      @param {String} [name] Name of bundle to load, optional when
+             only one target in the bundle.
+      @return {Promise} Outlined in description.
+    */
     promiseImport: function(YAMLBundleURL, name) {
       var fakebackend = this.makeFakeBackend();
       var db = fakebackend.db;
