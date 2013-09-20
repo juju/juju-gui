@@ -34,7 +34,7 @@ describe('charm token', function() {
   });
 
   beforeEach(function() {
-    charm_container = utils.makeContainer('charm-container');
+    charm_container = utils.makeContainer('token-container');
   });
 
   afterEach(function() {

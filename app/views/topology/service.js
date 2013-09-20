@@ -755,7 +755,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (dragData.dataType === 'token-drag-and-drop') {
           // The charm data was JSON encoded because the dataTransfer
           // mechanism only allows for string values.
-          var charmData = Y.JSON.parse(dragData.charmData);
+          var charmData = Y.JSON.parse(dragData.data);
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
           var charm = new models.Charm(charmData);
