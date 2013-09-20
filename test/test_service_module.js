@@ -278,7 +278,7 @@ describe('service module events', function() {
             dataTransfer: {
               getData: function(name) {
                 return JSON.stringify({
-                  charmData: '{"id": "cs:foo/bar-1"}',
+                  data: '{"id": "cs:foo/bar-1"}',
                   dataType: 'token-drag-and-drop',
                   iconSrc: src
                 });
