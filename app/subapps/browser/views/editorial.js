@@ -154,7 +154,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var active = this.get('activeID');
           if (active) {
             this._updateActive(
-                container.one('.charm-token[data-charmid="' + active + '"]')
+                container.one('.token[data-charmid="' + active + '"]')
             );
           }
 
@@ -221,7 +221,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-charm-container',
+    'browser-token-container',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',

@@ -165,7 +165,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
 
-      node.one('.charm-token').simulate('click');
+      node.one('.token').simulate('click');
     });
 
     it('clicking a charm navigates for sidebar', function(done) {
@@ -192,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       });
 
-      node.one('.charm-token').simulate('click');
+      node.one('.token').simulate('click');
     });
 
     it('setting the activeID marks the div active', function() {

@@ -24,7 +24,7 @@ describe('charm token', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-token', 'node-event-simulate',
+        ['browser-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           Token = Y.juju.widgets.browser.Token;
           utils = Y.namespace('juju-tests.utils');
@@ -101,7 +101,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    charm_container.one('.charm-token').hasClass('small').should.equal(true);
+    charm_container.one('.token').hasClass('small').should.equal(true);
   });
 
   it('allows setting a large size', function() {
@@ -112,7 +112,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    charm_container.one('.charm-token').hasClass('large').should.equal(true);
+    charm_container.one('.token').hasClass('large').should.equal(true);
   });
 
   it('allows setting a tiny size', function() {
@@ -127,7 +127,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    assert(charm_container.one('.charm-token').hasClass('tiny'));
+    assert(charm_container.one('.token').hasClass('tiny'));
   });
 
   it('allows overriding the charm icon url', function() {
