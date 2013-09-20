@@ -25,8 +25,8 @@ describe('charm container widget', function() {
     Y = YUI(GlobalConfig).use([
       'array',
       'juju-tests-utils',
-      'browser-charm-container',
-      'browser-charm-token',
+      'browser-token-container',
+      'browser-token',
       'node-event-simulate'],
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
@@ -193,7 +193,7 @@ describe('charm container widget', function() {
     });
 
     charm_container.render(container);
-    var tokens = container.all('.charm-token');
+    var tokens = container.all('.token');
 
     tokens.size().should.equal(2);
     Y.Array.each(tokens, function(token) {

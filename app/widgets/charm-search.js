@@ -157,7 +157,7 @@ YUI.add('browser-search-widget', function(Y) {
         if (name.substr(0, query.length).toLowerCase() === query) {
           fakeModelData.push({
             charm: {
-              // A very fake storeId so we can use the charm-token to display
+              // A very fake storeId so we can use the token to display
               // the categories in the results.
               id: 'cat:~gui/cat/' + id + '-1',
               description: '',
@@ -277,7 +277,7 @@ YUI.add('browser-search-widget', function(Y) {
       // causes rendering errors in the header.
       this.ac.get('boundingBox').setStyle('position', 'absolute');
 
-      // Stop clicking on charm-tokens <a> links from navigating.
+      // Stop clicking on tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
         ev.halt();
       }, 'a', this);
@@ -559,7 +559,7 @@ YUI.add('browser-search-widget', function(Y) {
   requires: [
     'autocomplete',
     'base',
-    'browser-charm-token',
+    'browser-token',
     'browser-filter-widget',
     'event',
     'event-delegate',

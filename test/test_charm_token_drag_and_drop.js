@@ -23,7 +23,7 @@ describe('charm token drag and drop', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'browser-charm-token',
+      'browser-token',
       'juju-tests-utils'
     ],
     function(Y) {
@@ -64,9 +64,9 @@ describe('charm token drag and drop', function() {
       thingThatIsNotCharmConfiguration: 42
     };
     token = new Token(config);
-    assert.equal(token.charmData.id, config.id);
-    assert.equal(token.charmData.description, config.description);
-    assert.equal(token.charmData.thingThatIsNotCharmConfiguration, undefined);
+    assert.equal(token.data.id, config.id);
+    assert.equal(token.data.description, config.description);
+    assert.equal(token.data.thingThatIsNotCharmConfiguration, undefined);
   });
 
   it('makes each charm token draggable', function() {
@@ -84,8 +84,8 @@ describe('charm token drag and drop', function() {
     // We need to simulate a complex token with several nested elements.
     token = new Token(cfg);
     var draggable = [];
-    token._makeDraggable = function(element, charmData) {
-      draggable.push(Y.JSON.parse(charmData).id);
+    token._makeDraggable = function(element, data) {
+      draggable.push(Y.JSON.parse(data).id);
     };
     token.renderUI(container);
     // Many elements are made draggable for a single token token.
@@ -113,10 +113,10 @@ describe('charm token drag and drop', function() {
       }
     };
     var dragImage = {};
-    token._makeDragStartHandler = function(dragImage, charmData) {
+    token._makeDragStartHandler = function(dragImage, data) {
       assert.equal(element, element);
       assert.equal(dragImage, dragImage);
-      assert.equal(charmData, charmData);
+      assert.equal(data, data);
     };
     token._makeDraggable(element, dragImage, 'charm-id');
     assert.isTrue(setAttributeCalled);
@@ -160,8 +160,8 @@ describe('charm token drag and drop', function() {
     token = new Token(cfg);
     token.render();
     var setDataCalled, setDragImageCalled;
-    var charmData = 'data';
-    var handler = token._makeDragStartHandler(charmData);
+    var data = 'data';
+    var handler = token._makeDragStartHandler(data);
     var dragDataSet = [];
     var evt = {
       _event: {
@@ -186,8 +186,8 @@ describe('charm token drag and drop', function() {
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
     console.log(dragDataSet);
     assert.deepEqual(dragDataSet, {
-      charmData: 'data',
-      dataType: 'charm-token-drag-and-drop',
+      data: 'data',
+      dataType: 'token-drag-and-drop',
       iconSrc: 'UNIQUE ID'
     });
     // Assure that we verified all data that was set.
@@ -219,9 +219,9 @@ describe('charm token drag and drop', function() {
       boundingBox: container
     };
     token = new Token(cfg);
-    token._makeDraggable = function(element, charmData) {};
+    token._makeDraggable = function(element, data) {};
     token._addDraggability();
-    assert.equal(token.charmData.id, token.charmData.url);
+    assert.equal(token.data.id, token.data.url);
   });
 
 });
