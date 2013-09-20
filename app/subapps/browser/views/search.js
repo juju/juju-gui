@@ -103,7 +103,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (active) {
             this._updateActive(
                 this.get('container').one(
-                    '.charm-token[data-charmid="' + active + '"]')
+                    '.token[data-charmid="' + active + '"]')
             );
           }
           var cache = {
@@ -201,8 +201,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'browser-charm-token',
-    'browser-charm-container',
+    'browser-token',
+    'browser-token-container',
     'browser-filter-widget',
     'event-tracker',
     'juju-browser-models',
