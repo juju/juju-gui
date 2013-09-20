@@ -443,7 +443,7 @@ YUI.add('juju-charm-models', function(Y) {
 
     /**
       Given the set of data for relatedCharms, make it compatible with the
-      model API to be used in the charm/browser token widget, for example.
+      model api to be used in the charm-token widget, for example.
 
       @method _convertRelatedData
       @param {Object} data a related charm object.

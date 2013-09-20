@@ -31,7 +31,7 @@ describe('browser search widget', function() {
                                'node'], function(Y) {
       Search = Y.juju.widgets.browser.Search;
       utils = Y.namespace('juju-tests.utils');
-      // Need the handlebars helper for the token to render.
+      // Need the handlebars helper for the charm-token to render.
       Y.Handlebars.registerHelper(
           'charmFilePath',
           function(charmID, file) {
@@ -188,7 +188,7 @@ describe('search widget autocomplete', function() {
       utils = Y.namespace('juju-tests.utils');
       data = utils.loadFixture('data/autocomplete.json');
 
-      // Need the handlebars helper for the token to render.
+      // Need the handlebars helper for the charm-token to render.
       Y.Handlebars.registerHelper(
           'charmFilePath',
           function(charmID, file) {
@@ -257,7 +257,7 @@ describe('search widget autocomplete', function() {
     container = utils.makeContainer('container');
 
     search.ac.on('results', function(ev) {
-      // The results should be displaying now. Check for token nodes.
+      // The results should be displaying now. Check for charm-token nodes.
       assert.equal(ev.results.length, 21);
       assert.isTrue(ev.results[0].display.hasClass('yui3-token'));
 
@@ -279,9 +279,9 @@ describe('search widget autocomplete', function() {
     search.ac.on('results', function(ev) {
       // The first two results should be category
       assert.isTrue(
-          ev.results[0].display.one('.token').hasClass('category'));
+          ev.results[0].display.one('.charm-token').hasClass('category'));
       assert.isTrue(
-          ev.results[1].display.one('.token').hasClass('category'));
+          ev.results[1].display.one('.charm-token').hasClass('category'));
 
       // The second category is the last category and is labeled as such.
       assert.isTrue(ev.results[1].display.hasClass('last-category'));

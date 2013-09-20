@@ -52,7 +52,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
   ], {
     EV_CACHE_UPDATED: 'cache-updated',
     events: {
-      '.token': {
+      '.charm-token': {
         click: '_handleCharmSelection'
       }
     },
@@ -71,7 +71,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
             var id = ev.newVal;
             if (id) {
               id = this.get('container').one(
-                  '.token[data-charmid="' + id + '"]');
+                  '.charm-token[data-charmid="' + id + '"]');
             }
             this._updateActive(id);
           })
@@ -108,7 +108,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       Update the node in the editorial list marked as 'active'.
 
       @method _updateActive
-      @param {Node} clickTarget the token clicked on to activate.
+      @param {Node} clickTarget the charm-token clicked on to activate.
 
     */
     _updateActive: function(clickTarget) {
