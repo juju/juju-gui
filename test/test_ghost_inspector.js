@@ -45,7 +45,6 @@ describe('Ghost Inspector', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
