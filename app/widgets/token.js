@@ -35,7 +35,7 @@ YUI.add('browser-token', function(Y) {
     Y.Event.EventTracker,
     Y.WidgetChild
   ], {
-    TEMPLATE: Y.namespace('juju.views').Templates['token'],
+    TEMPLATE: Y.namespace('juju.views').Templates.token,
 
     /**
     * Default general initializer method.
@@ -54,7 +54,7 @@ YUI.add('browser-token', function(Y) {
         this.type = 'charm';
         model = Y.juju.models.Charm;
       } else { // Otherwise it is a bundle.
-        throw 'We can not handle this code path yet.  We need a bundle model.';
+        // XXX We can not handle this code path yet.  We need a bundle model.
         this.type = 'bundle';
         model = Y.juju.models.Bundle;
       }
