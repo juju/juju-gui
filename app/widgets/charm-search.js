@@ -277,7 +277,8 @@ YUI.add('browser-search-widget', function(Y) {
       // causes rendering errors in the header.
       this.ac.get('boundingBox').setStyle('position', 'absolute');
 
-      // Stop clicking on tokens <a> links from navigating.
+      // Clicking on a token's <a> links should not navigate away from this
+      // page.
       this.get('boundingBox').delegate('click', function(ev) {
         ev.halt();
       }, 'a', this);
