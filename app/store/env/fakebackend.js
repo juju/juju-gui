@@ -229,14 +229,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     promiseDeploy: function(charmId, options) {
       var self = this;
-     return new Y.Promise(function(resolve, reject) {
-       var intermediateCallback = function(result) {
-          if(result.error) {
+      return new Y.Promise(function(resolve, reject) {
+        var intermediateCallback = function(result) {
+          if (result.error) {
             reject(result);
           } else {
             resolve(result);
           }
-       };
+        };
         self.deploy(charmId, intermediateCallback, options);
       });
     },
