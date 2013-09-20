@@ -1335,7 +1335,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     injestDeployer: function(data, name, options) {
       if (!data) {return;}
       options = options || {};
-      var self = this;
       var db = this.db;
       var rewriteIds = options.rewriteIds || false;
       var targetBundle = options.targetBundle;
@@ -1343,8 +1342,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (useGhost === undefined) {
         useGhost = true;
       }
-      var defaultSeries = db.environment.get('defaultSeries');
-
       if (!targetBundle && Object.keys(data).length > 1) {
         throw new Error('Import target ambigious, aborting.');
       }
@@ -1406,8 +1403,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // By building this mapping now we can detect collisions
       // prior to mutating the database.
       var serviceIdMap = {};
-      var charms = [];
-
       /**
        Helper to generate the next valid service id.
        @method nextServiceId
