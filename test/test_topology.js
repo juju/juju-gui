@@ -116,21 +116,15 @@ describe('topology', function() {
     container.destroy(true);
     container = utils.makeContainer();
 
-    db = new models.Database();
-    db.environment.set('defaultSeries', 'precise');
-    var fakeStore = utils.makeFakeStore(db.charms);
-    fakeStore.iconpath = function() { return 'fake.svg'; };
-
-    db.importDeployer(
-        jsyaml.safeLoad(utils.loadFixture('data/wp-deployer.yaml')),
-        fakeStore, {useGhost: true, targetBundle: 'wordpress-prod'})
-    .then(function() {
+    utils.promiseImport('data/wp-deployer.yaml', 'wordpress-prod')
+    .then(function(resolve) {
           // Init the topo with the db at this point and ...
+          var fakebackend = resolve.backend;
           var bundle = new views.BundleTopology({
             container: container,
             size: [320, 240],
-            db: db,
-            store: fakeStore}).render();
+            db: fakebackend.db,
+            store: fakebackend.get('store')}).render();
 
           // The size of the element should reflect the passed in params
           var svg = d3.select(container.getDOMNode()).select('svg');
