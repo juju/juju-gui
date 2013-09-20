@@ -123,8 +123,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       attrs.units = attrs.units.toArray();
       // deepEquals compares order, even though that's not guaranteed by any
       // JS engine - if there are failures here check the order first.
-
-      assert.deepEqual(attrs, {
+      // Be aware of issues with mocha's diff reporting, see issues:
+      // https://github.com/visionmedia/mocha/issues/905
+      // https://github.com/visionmedia/mocha/issues/903
+      var expectedAttrs = {
         initialized: true,
         destroyed: false,
         id: 'wordpress',
@@ -148,14 +150,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         subordinate: false,
         icon: undefined,
         pending: false,
-        life: 'alive',
         placeFromGhostPosition: false,
+        life: 'alive',
+        units: [],
         relations: [],
         unit_count: undefined,
         upgrade_available: false,
-        units: [],
-        upgrade_to: undefined
-      });
+        upgrade_to: undefined,
+        packageName: undefined
+      };
+
+      assert.deepEqual(attrs, expectedAttrs);
       var units = fakebackend.db.units.get_units_for_service(service);
       assert.lengthOf(units, 1);
       assert.lengthOf(result.units, 1);

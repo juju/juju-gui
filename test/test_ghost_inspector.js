@@ -253,7 +253,7 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     var vmContainer = inspector.viewletManager.get('container');
     var nameInput = vmContainer.one('input[name=service-name]');
-    var model = inspector.options.ghostService;
+    var model = inspector.model;
     var serviceIcon = Y.one('tspan.name');
 
     assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
@@ -283,7 +283,7 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     var vmContainer = inspector.viewletManager.get('container');
     var nameInput = vmContainer.one('input[name=service-name]');
-    var model = inspector.options.ghostService;
+    var model = inspector.model;
     var serviceIcon = Y.one('tspan.name');
 
     assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');

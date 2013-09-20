@@ -373,7 +373,14 @@ YUI.add('juju-models', function(Y) {
         @type {string}
       */
       upgrade_to: {},
-      aggregated_status: {}
+      aggregated_status: {},
+      /**
+        The original name from the Charm
+
+        @attribute packageName
+        @type {String}
+      */
+      packageName: {}
     }
   });
   models.Service = Service;

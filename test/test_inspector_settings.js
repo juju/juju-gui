@@ -301,12 +301,10 @@ describe('Inspector Settings', function() {
   it('can destroy using a ghost model', function(done) {
     var inspector = setUpInspector({useGhost: true});
     assert(inspector.viewletManager.get('model').name, 'browser-charm');
-    inspector.viewletManager.set('db', {
-      services: {
-        remove: function(model) {
-          // This means that it successfully went down the proper path
-          done();
-        }
+    inspector.viewletManager.set('env', {
+      destroy_service: function() {
+        // This means that it successfully went down the proper path
+        done();
       }
     });
     inspector.initiateServiceDestroy();
