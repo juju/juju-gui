@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('bundle module', function() {
-  var models, utils, views, Y, bundleModule;
+  var utils, views, Y, bundleModule;
   var bundle, container, fakebackend;
 
   before(function(done) {
@@ -31,7 +31,6 @@ describe('bundle module', function() {
       'juju-tests-utils'
     ],
     function(Y) {
-      models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       done();
