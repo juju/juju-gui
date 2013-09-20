@@ -496,8 +496,6 @@ YUI.add('juju-view-inspector', function(Y) {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
             Y.bind(this._destroyServiceCallback, this, model, db));
-      } else if (model.name === 'browser-charm') {
-        db.services.remove(this.options.ghostService);
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }

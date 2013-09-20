@@ -81,6 +81,8 @@ YUI.add('viewlet-service-ghost', function(Y) {
           {},
           viewletMgrAttrs.env.genericConstraints);
 
+      // Signalling to the shared templates that this is the ghost view.
+      templateOptions.ghost = true;
       this.container.setHTML(this.template(templateOptions));
       this.container.all('textarea.config-field').plug(
           plugins.ResizingTextarea, {
