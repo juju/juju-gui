@@ -70,9 +70,6 @@ YUI.add('viewlet-service-ghost', function(Y) {
       // while using a shared template across both inspectors
       var templateOptions = {};
 
-      // XXX - Jeff
-      // not sure this should be done like this
-      // but this will allow us to use the old template.
       templateOptions.settings = utils.extractServiceSettings(
           viewletMgrAttrs.charmModel.get('options'));
 
