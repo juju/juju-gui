@@ -521,6 +521,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             // Verify units created.
             assert.equal(fakebackend.db.units.size(), 3,
                          'Unit count wrong');
+
+            // Verify config.
+            var wordpress = fakebackend.db.services.getById('wordpress');
+            assert.equal(wordpress.get('config.engine'), 'nginx');
+            assert.equal(wordpress.get('config.tuning'), 'single');
             done();
           }).then(undefined, done);
     });

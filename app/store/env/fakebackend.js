@@ -181,7 +181,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-    Deploy a charm.  Uses a callback for response!
+    Deploy a service from a charm.  Uses a callback for response!
 
     @method deploy
     @param {String} charmUrl The URL of the charm.
@@ -219,8 +219,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
 
     /**
-     Return a promise to deploy a charm. On failure the promise
-     will be rejected.
+     Return a promise to deploy a charm. On failure the promise will be
+     rejected.
 
      @method promiseDeploy
      @param {String} charmId Charm to deploy.
