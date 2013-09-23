@@ -132,11 +132,11 @@ var GlobalConfig = {
         },
 
         'browser-charm-token': {
-          fullpath: '/juju-ui/widgets/charm-token.js'
+          fullpath: '/juju-ui/widgets/token.js'
         },
 
         'browser-charm-container': {
-          fullpath: '/juju-ui/widgets/charm-container.js'
+          fullpath: '/juju-ui/widgets/token-container.js'
         },
 
         'browser-filter-widget': {
