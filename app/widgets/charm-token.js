@@ -31,7 +31,7 @@ YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-token-add';
-  ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [
+  ns.Token = Y.Base.create('Token', Y.Widget, [
     Y.Event.EventTracker,
     Y.WidgetChild
   ], {
@@ -87,8 +87,8 @@ YUI.add('browser-charm-token', function(Y) {
         iconSrc = icon.one('img').getAttribute('src');
         dataTransfer.effectAllowed = 'copy';
         var dragData = {
-          charmData: charmData,
-          dataType: 'charm-token-drag-and-drop',
+          data: charmData,
+          dataType: 'token-drag-and-drop',
           iconSrc: iconSrc
         };
         // Must be 'Text' because IE10 doesn't treat this as key/value pair
@@ -154,7 +154,7 @@ YUI.add('browser-charm-token', function(Y) {
 
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
-      container.ancestor('.yui3-charmtoken').addClass('yui3-u');
+      container.ancestor('.yui3-token').addClass('yui3-u');
       container.setHTML(content);
       if (this.get('isDraggable')) {
         this._addDraggability();
@@ -178,9 +178,7 @@ YUI.add('browser-charm-token', function(Y) {
        * @type {String}
        *
        */
-      iconUrl: {
-
-      },
+      iconUrl: {},
 
       /**
          @attribute is_approved
@@ -237,16 +235,15 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-         Supports size attributes of small and large that turn into the css
-         class around the charm token.
+        Supports size attribute that is in turn used as the CSS class around
+        the charm token.
 
-         Sizes include tiny, small, large
+        Sizes include tiny, small, large.
 
-         @attribute size
-         @default SIZE_SMALL
-         @type {String}
-
-       */
+        @attribute size
+        @default SIZE_SMALL
+        @type {String}
+      */
       size: {
         value: 'small'
       },

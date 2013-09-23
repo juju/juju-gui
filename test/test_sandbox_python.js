@@ -1023,8 +1023,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     'interface': 'mysql',
                     scope: 'global',
                     endpoints: [
-                      {wordpress: {name: 'db'}},
-                      {mysql: {name: 'db'}}
+                      {wordpress: {name: 'db', role: 'client'}},
+                      {mysql: {name: 'db', role: 'server'}}
                     ]
                   }
                 };
@@ -1054,8 +1054,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               scope: 'global',
               request_id: rec.request_id,
               endpoints: [
-                {kumquat: {name: 'db'}},
-                {mysql: {name: 'db'}}
+                {kumquat: {name: 'db', role: 'client'}},
+                {mysql: {name: 'db', role: 'server'}}
               ]
             }
           };
@@ -1109,8 +1109,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     'interface': 'juju-info',
                     scope: 'container',
                     endpoints: [
-                      {puppet: {name: 'juju-info'}},
-                      {wordpress: {name: 'juju-info'}}
+                      {puppet: {name: 'juju-info', role: 'client'}},
+                      {wordpress: {name: 'juju-info', role: 'server'}}
                     ]
                   }
                 };
@@ -1389,32 +1389,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             };
             client.send(Y.JSON.stringify({op: 'exportEnvironment'}));
           });
-    });
-
-    it('should support import', function(done) {
-      var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
-
-      client.onmessage = function() {
-        client.onmessage = function(result) {
-          var data = Y.JSON.parse(result.data).result;
-          assert.isTrue(data);
-
-          // Verify that we can now find an expected entry
-          // in the database.
-          assert.isNotNull(state.db.services.getById('wordpress'));
-
-          var changes = state.nextChanges();
-          // Validate the delta includes imported services.
-          assert.include(Y.Object.keys(changes.services), 'wordpress');
-          assert.include(Y.Object.keys(changes.services), 'mysql');
-          // validate relation was added/updated.
-          assert.include(Y.Object.keys(changes.relations), 'relation-0');
-          done();
-        };
-        client.send(Y.JSON.stringify({op: 'importEnvironment',
-                             envData: fixture}));
-      };
-      client.open();
     });
 
   });

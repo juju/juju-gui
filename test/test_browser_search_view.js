@@ -99,8 +99,8 @@ describe('search view', function() {
     view.render();
     var container = view.get('container');
     assert.equal('charms?text=foo', apiURL);
-    assert.equal(1, container.all('.yui3-charmtoken').size());
-    var charmText = container.one('.yui3-charmtoken').one('.title').get('text');
+    assert.equal(1, container.all('.yui3-token').size());
+    var charmText = container.one('.yui3-token').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
   });
 
@@ -132,7 +132,7 @@ describe('search view', function() {
       done();
     });
 
-    container.one('.charm-token').simulate('click');
+    container.one('.token').simulate('click');
   });
 
   it('organizes results by approval status', function(done) {
@@ -274,7 +274,7 @@ describe('search view', function() {
       done();
     });
 
-    container.one('.charm-token').simulate('click');
+    container.one('.token').simulate('click');
   });
 
   it('tells listeners the cache has updated', function() {

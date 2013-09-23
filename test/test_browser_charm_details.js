@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('browser_charm_view', function() {
+  describe('Browser charm view', function() {
     var container, CharmView, cleanIconHelper, models, node, utils, view,
         views, Y;
 
@@ -864,7 +864,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       // We've selected the activeTab specified.
-      var tokens = view.get('container').all('.charm-token');
+      var tokens = view.get('container').all('.token');
       assert.equal(tokens.size(), 5);
 
       // And clicking on one of those charms navigates correctly.
@@ -878,7 +878,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         testContainer.remove(true);
         done();
       });
-      view.get('container').one('.charm-token').simulate('click');
+      view.get('container').one('.token').simulate('click');
     });
 
     it('loads related charms when interface tab selected', function() {
@@ -911,7 +911,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.all('#bws-related-charms .charm-token').size(),
+          testContainer.all('#bws-related-charms .token').size(),
           9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });

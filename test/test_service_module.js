@@ -97,8 +97,9 @@ describe('service module annotations', function() {
      });
 });
 
+
 describe('service module events', function() {
-  var db, juju, models, serviceModule, topo, utils,
+  var db, charm, fakeStore, juju, models, serviceModule, topo, utils,
       view, viewContainer, views, Y;
 
   before(function(done) {
@@ -120,9 +121,16 @@ describe('service module events', function() {
   });
 
   beforeEach(function() {
-    viewContainer = utils.makeContainer();
+    fakeStore = new Y.juju.charmworld.APIv2({});
+    fakeStore.iconpath = function() {
+      return 'charm icon url';
+    };
+    viewContainer = utils.makeContainer('content');
+    var charmData = utils.loadFixture('data/haproxy-api-response.json', true);
+    charm = new models.Charm(charmData.charm);
     db = new models.Database();
-    db.services.add({id: 'haproxy'});
+    db.services.add({id: 'haproxy', charm: 'cs:precise/haproxy-18'});
+    db.charms.add(charm);
     view = new views.environment({
       container: viewContainer,
       db: db,
@@ -133,7 +141,7 @@ describe('service module events', function() {
       nsRouter: {
         url: function() { return; }
       },
-      getModelURL: function() {}
+      store: fakeStore
     });
     view.render();
     view.rendered();
@@ -145,52 +153,24 @@ describe('service module events', function() {
     if (viewContainer) {
       viewContainer.remove(true);
     }
+
+    fakeStore.destroy();
+    charm.destroy();
+    db.destroy();
+    topo.destroy();
+    view.destroy();
   });
 
-  it('should show the service menu',
-     function() {
-       var box = topo.service_boxes.haproxy;
-       var menu = viewContainer.one('#service-menu');
-       assert.isFalse(menu.hasClass('active'));
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-       // Check no-op.
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-     });
-
-  it('should show the service menu with conditional landscape items',
-     function() {
-       var box = topo.service_boxes.haproxy;
-       var service = db.services.getById('haproxy');
-       var menu = viewContainer.one('#service-menu');
-       var landscape = new views.Landscape();
-       landscape.set('db', db);
-
-       topo.set('landscape', landscape);
-       db.environment.set('annotations', {
-         'landscape-url': 'http://host',
-         'landscape-computers': '/foo',
-         'landscape-reboot-alert-url': '+reboot'
-       });
-       service['landscape-needs-reboot'] = true;
-       service.set('annotations', {
-         'landscape-computers': '/bar'
-       });
-
-       assert.isFalse(menu.hasClass('active'));
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-       // Check no-op.
-       serviceModule.showServiceMenu(box);
-       assert(menu.hasClass('active'));
-
-       // Verify that we have a reboot URL.
-       var rebootItem = menu.one('.landscape-reboot');
-       rebootItem.one('a').get('href').should.equal(
-           'http://host/foo/bar/+reboot');
-     });
-
+  it('should show the service menu', function() {
+    var box = topo.service_boxes.haproxy;
+    var menu = viewContainer.one('#service-menu');
+    assert.isFalse(menu.hasClass('active'));
+    serviceModule.showServiceMenu(box);
+    assert(menu.hasClass('active'));
+    // Check no-op.
+    serviceModule.showServiceMenu(box);
+    assert(menu.hasClass('active'));
+  });
 
   it('should hide the service menu',
      function() {
@@ -240,72 +220,6 @@ describe('service module events', function() {
     // Fire one manually here.
     clickService(service);
     assert(menu.hasClass('active'));
-  });
-
-  it('hides the service menu when the View entry is clicked', function() {
-    var menu = clickService(viewContainer.one('.service'));
-    // Click the "View" menu entry.
-    menu.one('.view-service').simulate('click');
-    assert.isFalse(menu.hasClass('active'));
-  });
-
-  it('hides the service menu when the Destroy entry is clicked', function() {
-    var menu = clickService(viewContainer.one('.service'));
-    // Click the "Destroy" menu entry.
-    menu.one('.destroy-service').simulate('click');
-    assert.isFalse(menu.hasClass('active'));
-    // Click the "Cancel" button to close the "Destroy Service" dialog.
-    Y.all('.yui3-widget-modal .btn').item(1).simulate('click');
-  });
-
-  it('must be able to view a service from the menu', function() {
-    var topo = view.topo,
-        requestTransition = false;
-
-    topo.once('*:navigateTo', function() {
-      requestTransition = true;
-    });
-
-    // Select a service and click it.
-    var menu = clickService(viewContainer.one('.service'));
-    // Click the "View" menu entry.
-    menu.one('.view-service').simulate('click');
-    requestTransition.should.equal(true);
-  });
-
-  it('must be able to destroy a service from the menu', function() {
-    // Select a service and click it.
-    var menu = clickService(viewContainer.one('.service'));
-    // Click the "Destroy" menu entry.
-    menu.one('.destroy-service').simulate('click');
-    // Retrieve the "Destroy Service" modal dialog buttons.
-    var destroyDialogButtons = Y.all('.yui3-widget-modal .btn');
-    var destroyButton = destroyDialogButtons.item(0);
-    var cancelButton = destroyDialogButtons.item(1);
-
-    var serviceDestroyed = false;
-    view.get('env').destroy_service = function() {
-      serviceDestroyed = true;
-    };
-
-    // Clicking the destroy button removes the service from the environment.
-    destroyButton.simulate('click');
-    assert.isTrue(serviceDestroyed);
-    // Click the "Cancel" button to close the "Destroy Service" dialog.
-    cancelButton.simulate('click');
-  });
-
-  it('should prevent the Juju GUI service from being destroyed', function() {
-    var service = db.services.add({
-      id: 'gui',
-      charm: 'cs:precise/juju-gui-7'
-    });
-    var box = views.BoundingBox(serviceModule, service);
-    var menu = view.get('container').one('#service-menu');
-    view.topo.set('active_service', service);
-
-    serviceModule.showServiceMenu(box);
-    menu.one('.destroy-service').hasClass('disabled').should.equal(true);
   });
 
   it('must not process service clicks after a dragend', function() {
@@ -364,8 +278,8 @@ describe('service module events', function() {
             dataTransfer: {
               getData: function(name) {
                 return JSON.stringify({
-                  charmData: '{"id": "cs:foo/bar-1"}',
-                  dataType: 'charm-token-drag-and-drop',
+                  data: '{"id": "cs:foo/bar-1"}',
+                  dataType: 'token-drag-and-drop',
                   iconSrc: src
                 });
               }

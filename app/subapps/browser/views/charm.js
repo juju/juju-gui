@@ -60,7 +60,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .back': {
         click: '_handleBack'
       },
-      '.charm-token': {
+      '.token': {
         click: '_handleCharmSelection'
       },
       '#sharing a': {
@@ -574,8 +574,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this.tabview.destroy();
       }
 
-      if (this.relatedCharmContainer) {
-        this.relatedCharmContainer.destroy();
+      if (this.relatedTokenContainer) {
+        this.relatedTokenContainer.destroy();
       }
 
       if (this.charmTokens) {
@@ -627,7 +627,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             ].join('-');
 
             charm.size = 'tiny';
-            var ct = new widgets.browser.CharmToken(charm);
+            var ct = new widgets.browser.Token(charm);
             var node = Y.one('[data-interface="' + uiID + '"]');
             ct.render(node);
             this.charmTokens.push(ct);
@@ -651,13 +651,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
         // If there are no overall related charms then just skip it all.
         if (relatedCharms.overall) {
           var relatedNode = this.get('container').one('.related-charms');
-          this.relatedCharmContainer = new widgets.browser.CharmContainer(
+          this.relatedTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'Related Charms',
                 cutoff: 10,
                 children: relatedCharms.overall
               }));
-          this.relatedCharmContainer.render(relatedNode);
+          this.relatedTokenContainer.render(relatedNode);
           this.hideIndicator(Y.one('.related-charms'));
         }
         this.loadedRelatedCharms = true;

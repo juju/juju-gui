@@ -132,8 +132,8 @@ class DeployTestMixin(object):
         def get_charm_token(driver):
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings .
             return driver.find_element_by_css_selector(
-                '.yui3-charmtoken-content '
-                '.charm-token[data-charmid*={}]'.format(charm_name))
+                '.yui3-token-content '
+                '.token[data-charmid*={}]'.format(charm_name))
 
         def get_add_button(driver):
             return driver.find_element_by_css_selector('.bws-view-data .add')

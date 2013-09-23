@@ -343,12 +343,13 @@ describe('Endpoints map handlers', function() {
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.connect();
+    destroyMe.push(env);
     app = new Y.juju.App({env: env, consoleEnabled: true});
-    destroyMe.push(app);
     app.showView(new Y.View());
+    destroyMe.push(app);
     controller = app.endpointsController;
-    destroyMe.push(controller);
     controller.endpointsMap = {};
+    destroyMe.push(controller);
   });
 
   afterEach(function() {
