@@ -21,3 +21,8 @@
     </div>
   </div>
 </header>
+{{#unless ghost}}
+  <div data-bind="charmChanged" class="charm-changed hidden">
+      {{displayName}} has just been upgraded to <span data-bind="charm"></span>.
+  </div>
+{{/unless}}
