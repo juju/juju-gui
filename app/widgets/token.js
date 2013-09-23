@@ -48,8 +48,8 @@ YUI.add('browser-charm-token', function(Y) {
       // Extract the charm configuration values from the jumble of widget
       // cfg options.
       var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
-      // @property charmData Contains the extracted charm information.
-      this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
+      // @property tokenData Contains the extracted charm information.
+      this.tokenData = Y.aggregate({}, cfg, false, charmAttributes);
     },
 
     /**
@@ -74,10 +74,10 @@ YUI.add('browser-charm-token', function(Y) {
      * Generate a function that records drag and drop data when a drag starts.
      *
      * @method _makeDragStartHandler
-     * @param {String} charmData The JSON encoded charm attributes.
+     * @param {String} tokenData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDragStartHandler: function(charmData) {
+    _makeDragStartHandler: function(tokenData) {
       var container = this.get('boundingBox');
       return function(evt) {
         var icon = container.one('.icon'),
@@ -87,7 +87,7 @@ YUI.add('browser-charm-token', function(Y) {
         iconSrc = icon.one('img').getAttribute('src');
         dataTransfer.effectAllowed = 'copy';
         var dragData = {
-          data: charmData,
+          data: tokenData,
           dataType: 'token-drag-and-drop',
           iconSrc: iconSrc
         };
@@ -109,13 +109,13 @@ YUI.add('browser-charm-token', function(Y) {
      * @param {Node} element The node which is to be made draggable.
      * @param {Node} dragImage The node which will be displayed during
      *   dragging.
-     * @param {String} charmData The JSON encoded charm attributes.
+     * @param {String} tokenData The JSON encoded charm attributes.
      * @return {undefined} Nothing.
      */
-    _makeDraggable: function(element, charmData) {
+    _makeDraggable: function(element, tokenData) {
       element.setAttribute('draggable', 'true');
       this.addEvent(element.on('dragstart',
-          this._makeDragStartHandler(charmData)));
+          this._makeDragStartHandler(tokenData)));
     },
 
     /**
@@ -128,18 +128,18 @@ YUI.add('browser-charm-token', function(Y) {
      * @return {undefined}  Nothing; side-effects only.
     */
     _addDraggability: function() {
-      var charmData,
+      var tokenData,
           container = this.get('boundingBox');
       // Adjust the id to meet Charm model expectations.
-      this.charmData.id = this.charmData.url;
+      this.tokenData.id = this.tokenData.url;
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the charm data.  This passed-in config includes
       // charm attributes.
-      charmData = Y.JSON.stringify(this.charmData);
-      this._makeDraggable(container, charmData);
+      tokenData = Y.JSON.stringify(this.tokenData);
+      this._makeDraggable(container, tokenData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
-        this._makeDraggable(element, charmData);
+        this._makeDraggable(element, tokenData);
       }, this);
     },
 
