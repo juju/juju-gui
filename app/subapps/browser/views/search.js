@@ -103,7 +103,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (active) {
             this._updateActive(
                 this.get('container').one(
-                    '.charm-token[data-charmid="' + active + '"]')
+                    '.token[data-charmid="' + active + '"]')
             );
           }
           var cache = {
