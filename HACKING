@@ -29,6 +29,10 @@ recommended branch to use as a server is ``rapi-rollup`` by hazmat::
 
   bzr branch lp:~hazmat/juju/rapi-rollup
 
+For rapi-rollup you may need to install a few additional dependencies::
+
+  sudo apt-get install python-txzookeeper python-txaws
+
 For development, we always use a nice testing script in that branch that
 allows you to interact with Juju without actually deploying real machines.  In
 the rapi-rollup branch, run ``python improv.py -h`` to get an idea of its
@@ -46,17 +50,17 @@ also available there.
 
 Now it is time to actually get the GUI itself set up.  Juju GUI uses
 nodejs-based development tools, so you will need ``nodejs`` from Chris
-Lea's node PPA. You also need ImageMagick for sprite generation, lbox to
-propose branches, python-sphinx and python-yaml to build docs, PyTZ to make
-releases, python-shelltoolbox and python-selenium for browser tests, and
-python-virtualenv to build the Google Closure linter tools locally::
+Lea's node PPA. You also need ImageMagick for sprite generation, python-sphinx
+and python-yaml to build docs, PyTZ to make releases, python-shelltoolbox and
+python-selenium for browser tests, and python-virtualenv to build the Google
+Closure linter tools locally, and g++ for contextify::
 
   sudo add-apt-repository ppa:chris-lea/node.js
   sudo add-apt-repository ppa:gophers/go
   sudo apt-get update
-  sudo apt-get install nodejs imagemagick lbox python-sphinx python-yaml \
+  sudo apt-get install nodejs imagemagick python-sphinx python-yaml \
     python-tz python-virtualenv python-shelltoolbox python-selenium \
-    python-tornado python-gflags
+    python-tornado python-gflags g++
 
 See :ref:`Browser Testing <browser-testing>` if you are curious about the
 reason for ``python-shelltoolbox`` and ``python-selenium``.
@@ -139,6 +143,18 @@ To link branch to ticket::
 To push code::
 
   bzr push lp:~{yourUserName}/juju-gui/{featureBranchName}
+
+In order to submit code for review we use a tool called lbox. If you are using
+Ubuntu < 13.04 you can install lbox by::
+
+  sudo apt-get install lbox
+
+If you are using a newer version you will have to build it from source. First
+step is to install Go lang, you can find the instructions on installing it
+here http://golang.org/doc/install#bsd_linux . Then follow the instructions::
+
+  sudo go get launchpad.net/lbox
+  sudo go install launchpad.net/lbox
 
 To submit for review::
 
