@@ -193,7 +193,7 @@ describe('charm container widget', function() {
     });
 
     charm_container.render(container);
-    var tokens = container.all('.charm-token');
+    var tokens = container.all('.token');
 
     tokens.size().should.equal(2);
     Y.Array.each(tokens, function(token) {

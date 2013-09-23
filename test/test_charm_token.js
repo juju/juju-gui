@@ -34,7 +34,7 @@ describe('charm token', function() {
   });
 
   beforeEach(function() {
-    charm_container = utils.makeContainer('charm-container');
+    charm_container = utils.makeContainer('token-container');
   });
 
   afterEach(function() {
@@ -101,7 +101,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    charm_container.one('.charm-token').hasClass('small').should.equal(true);
+    charm_container.one('.token').hasClass('small').should.equal(true);
   });
 
   it('allows setting a large size', function() {
@@ -112,7 +112,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    charm_container.one('.charm-token').hasClass('large').should.equal(true);
+    charm_container.one('.token').hasClass('large').should.equal(true);
   });
 
   it('allows setting a tiny size', function() {
@@ -127,7 +127,7 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     token.render(charm_container);
-    assert(charm_container.one('.charm-token').hasClass('tiny'));
+    assert(charm_container.one('.token').hasClass('tiny'));
   });
 
   it('allows overriding the charm icon url', function() {

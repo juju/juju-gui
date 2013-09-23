@@ -745,7 +745,7 @@ describe('Charm test', function() {
   // Testing a private method because if this test fails it'll provide a much
   // nicer hint as to why something in a View or such doesn't work correctly.
   // The api data that we get must be converted into what the
-  // CharmMode.getAttrs() would have sent out to the charm-token widget.
+  // CharmMode.getAttrs() would have sent out to the token widget.
   it('maps related data to the model-ish api', function() {
     var providesData = relatedData.provides.http[0];
     instance = new models.Charm(data.charm);

@@ -186,8 +186,8 @@ describe('charm token drag and drop', function() {
     assert.equal(evt._event.dataTransfer.effectAllowed, 'copy');
     console.log(dragDataSet);
     assert.deepEqual(dragDataSet, {
-      charmData: 'data',
-      dataType: 'charm-token-drag-and-drop',
+      data: 'data',
+      dataType: 'token-drag-and-drop',
       iconSrc: 'UNIQUE ID'
     });
     // Assure that we verified all data that was set.

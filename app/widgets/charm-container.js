@@ -42,7 +42,7 @@ YUI.add('browser-charm-container', function(Y) {
     Y.WidgetParent
   ], {
 
-    TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
+    TEMPLATE: Y.namespace('juju.views').Templates['token-container'],
 
     /**
      * Sets up some attributes that are needed before render, but can only be

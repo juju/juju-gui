@@ -154,7 +154,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var active = this.get('activeID');
           if (active) {
             this._updateActive(
-                container.one('.charm-token[data-charmid="' + active + '"]')
+                container.one('.token[data-charmid="' + active + '"]')
             );
           }
 

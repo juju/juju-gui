@@ -60,7 +60,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .back': {
         click: '_handleBack'
       },
-      '.charm-token': {
+      '.token': {
         click: '_handleCharmSelection'
       },
       '#sharing a': {
