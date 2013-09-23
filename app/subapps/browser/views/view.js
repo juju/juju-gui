@@ -333,7 +333,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-token',
+    'browser-charm-token',
     'browser-search-widget',
     'event-tracker',
     'juju-charm-store',

@@ -132,7 +132,7 @@ describe('search view', function() {
       done();
     });
 
-    container.one('.token').simulate('click');
+    container.one('.charm-token').simulate('click');
   });
 
   it('organizes results by approval status', function(done) {
@@ -274,7 +274,7 @@ describe('search view', function() {
       done();
     });
 
-    container.one('.token').simulate('click');
+    container.one('.charm-token').simulate('click');
   });
 
   it('tells listeners the cache has updated', function() {

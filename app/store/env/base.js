@@ -62,11 +62,13 @@ YUI.add('juju-env-base', function(Y) {
    * @return {undefined} side effects only.
    */
   module.verifySessionStorage = function() {
-    if (!module.sessionStorage) {
-      // The conditional is to allow for test manipulation.
-      module.sessionStorage = window.sessionStorage;
-    }
     try {
+      // Any manipulation of the sessionStorage that might actually fail
+      // because cookies are turned off needs to be in this try/catch block.
+      if (!module.sessionStorage) {
+        // The conditional is to allow for test manipulation.
+        module.sessionStorage = window.sessionStorage;
+      }
       module.sessionStorage.getItem('credentials');
     } catch (e) {
       module.sessionStorage = module.stubSessionStorage;

@@ -279,7 +279,7 @@ describe('service module events', function() {
               getData: function(name) {
                 return JSON.stringify({
                   data: '{"id": "cs:foo/bar-1"}',
-                  dataType: 'token-drag-and-drop',
+                  dataType: 'charm-token-drag-and-drop',
                   iconSrc: src
                 });
               }
