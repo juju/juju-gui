@@ -102,7 +102,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer()
       });
       view.render();
-      var heading = view.get('container').one('.heading');
+      var heading = view.get('container').one('.header');
       assert.isNotNull(heading);
       return heading;
     };
