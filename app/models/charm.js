@@ -759,7 +759,10 @@ YUI.add('juju-charm-models', function(Y) {
          */
         valueFn: function() {
           var files = this.get('files') || [];
-          if (Object.keys(files).indexOf('icon.svg') !== -1 &&
+          if (!Y.Lang.isArray(files)) {
+            files = Object.keys(files);
+          }
+          if (files.indexOf('icon.svg') !== -1 &&
               this.get('is_approved')) {
             return true;
           } else {
