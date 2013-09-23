@@ -1,4 +1,109 @@
 .charm {
+    .changelog li,
+    .changelog p,
+    .charm-details {
+        background: inherit;
+        border: none;
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    }
+    .section-title,
+    .section-title a {
+        .type5;
+    }
+    .section-title {
+        margin: 40px 0 20px;
+        padding: 0;
+        background: transparent;
+        border: none;
+
+        a:hover {
+            background: transparent;
+        }
+    }
+    .header {
+        .block-icon {
+            display: inline-block;
+            float: left;
+        }
+        .charm-icon,
+        img.icon {
+            width: 120px;
+            height: 120px;
+        }
+        .charm-icon {
+            background: transparent
+                    url(/juju-ui/assets/images/charm_160.png)
+                    left top no-repeat;
+            background-size: 120px 120px;
+        }
+        .add-reviewed {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+
+            a.add {
+                // Using a variable here because LESS strips commas in mixin args.
+                @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
+                .create-box-shadow(@box-shadow);
+                .create-border-radius(@bws-corner);
+                display: block;
+                height: 40px;
+                margin-top: 17px;
+                padding: 0 30px;
+                background-color: @charm-panel-orange;
+                color: #fff;
+                line-height: 40px;
+            }
+        }
+        .charm-details {
+            display: inline-block;
+            margin-left: 20px;
+        }
+    }
+    .providers li a {
+        color: @bws-text;
+        text-decoration: underline;
+    }
+    .providers {
+        overflow: auto;
+        padding: 0 0 10px 0;
+        border-bottom: 1px solid @bws-border;
+
+        i {
+            margin-right: 15px;
+        }
+        ul {
+            float: left;
+            width: 50%;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    }
+    .changelog {
+        .remaining {
+            margin-top: 10px;
+        }
+        h4,
+        li,
+        .maintainer {
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 0;
+        }
+        .date {
+            margin-right: 3pt;
+        }
+    }
+    .intro {
+        margin-top: 9px;
+        margin-bottom: 26px;
+    }
     #bws-features,
     #bws-summary,
     #bws-readme {
@@ -131,13 +236,31 @@
     background-image: none;
 
     .header {
+        .type13;
         z-index: 10;
         float: left;
         width: @bws-sidebar-width;
         padding: 0;
         background-color: #fff;
-        background-image: none;
         border: none;
+
+        h1 {
+            .type2;
+            margin: -3px 0 5px 0;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+
+            li {
+                line-height: 1.55;
+
+                a {
+                    color: @bws-text;
+                    text-decoration: underline;
+                }
+            }
+        }
 
         .block-icon,
         .charm-details {
