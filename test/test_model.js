@@ -634,7 +634,7 @@ describe('Charm test', function() {
     });
   });
 
-  before(function() {
+  beforeEach(function() {
     sampleData = Y.io('data/browsercharm.json', {sync: true});
     data = Y.JSON.parse(sampleData.responseText);
     relatedData = utils.loadFixture('data/related.json', true).result;
