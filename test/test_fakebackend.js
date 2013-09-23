@@ -248,6 +248,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('deploys a charm with no config options', function(done) {
+      // Charms that don't specify options would previously
+      // not deployer proper as the code path expected them
+      // to exist.
+      fakebackend.promiseDeploy('cs:precise/puppetmaster-4')
+      .then(function(result) {
+            var service = fakebackend.db.services.getById('puppetmaster');
+            assert.isObject(
+                service,
+                'Null returend when a service was expected.');
+            assert.strictEqual(service, result.service);
+            done();
+          });
+    });
+
+
     it('deploys multiple units.', function() {
       fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 3});
       var units = fakebackend.db.units.get_units_for_service(result.service);

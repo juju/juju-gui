@@ -75,7 +75,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   var unsetIfNoValue = function(val) {
-    if (Y.Object.keys(val).length === 0) {
+    if (!val || Y.Object.keys(val).length === 0) {
       return null;
     } else {
       return val;
@@ -758,7 +758,8 @@ YUI.add('juju-charm-models', function(Y) {
 
          */
         valueFn: function() {
-          if (this.get('files').indexOf('icon.svg') !== -1 &&
+          var files = this.get('files') || [];
+          if (Object.keys(files).indexOf('icon.svg') !== -1 &&
               this.get('is_approved')) {
             return true;
           } else {
