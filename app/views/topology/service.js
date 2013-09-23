@@ -752,7 +752,7 @@ YUI.add('juju-topology-service', function(Y) {
           ghostAttributes.coordinates[index] =
               (dropXY[index] - translation[index]) / scale;
         });
-        if (dragData.dataType === 'charm-token-drag-and-drop') {
+        if (dragData.dataType === 'token-drag-and-drop') {
           // The charm data was JSON encoded because the dataTransfer
           // mechanism only allows for string values.
           var charmData = Y.JSON.parse(dragData.data);

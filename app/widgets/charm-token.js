@@ -88,7 +88,7 @@ YUI.add('browser-charm-token', function(Y) {
         dataTransfer.effectAllowed = 'copy';
         var dragData = {
           charmData: charmData,
-          dataType: 'charm-token-drag-and-drop',
+          dataType: 'token-drag-and-drop',
           iconSrc: iconSrc
         };
         // Must be 'Text' because IE10 doesn't treat this as key/value pair

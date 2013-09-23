@@ -187,7 +187,7 @@ describe('charm token drag and drop', function() {
     console.log(dragDataSet);
     assert.deepEqual(dragDataSet, {
       charmData: 'data',
-      dataType: 'charm-token-drag-and-drop',
+      dataType: 'token-drag-and-drop',
       iconSrc: 'UNIQUE ID'
     });
     // Assure that we verified all data that was set.
