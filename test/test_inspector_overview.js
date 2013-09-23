@@ -103,9 +103,15 @@ describe('Inspector Overview', function() {
     })();
     db.services.add(service);
     db.onDelta({data: {result: [
-      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+      ['unit', 'add', 
+        {id: 'mediawiki/0', agent_state: 'pending', 
+          charmUrl: 'cs:precise/mediaWiki-14'}],
+      ['unit', 'add', 
+        {id: 'mediawiki/1', agent_state: 'pending', 
+          charmUrl: 'cs:precise/mediaWiki-14'}],
+      ['unit', 'add', 
+        {id: 'mediawiki/2', agent_state: 'pending', 
+          charmUrl: 'cs:precise/mediaWiki-14'}],
     ]}});
     var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function(id) {
@@ -542,21 +548,22 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function() {
     window.flags.upgradeCharm = true;
-
+    var inspector = setUpInspector();
+    var newContainer = inspector.viewletManager.viewlets.inspectorHeader
+      .container;
     var unitId = 'mediawiki/1';
-
-    db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
-    db.units.create({id: unitId, charmUrl: 'cs:precise/mediawiki-7'});
 
     var service = db.services.getById('mediawiki');
 
+    assert.isFalse(service.get('charmChanged'));
+    assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
+
     db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-8'}]
+      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
     ]}});
 
     assert.isTrue(service.get('charmChanged'));
-    // TODO Makyo Sept 5 - Next branch will take care of reflecting the
-    // changes in the inspector.
+    assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
   });
 
   it('toggles exposure', function() {
