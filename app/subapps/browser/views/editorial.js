@@ -92,7 +92,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 return charm.getAttrs();
               });
           var featuredCount = featuredCharmObjects.length;
-          var featuredCharmContainer = new widgets.browser.CharmContainer(
+          var featuredTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'Featured Charms',
                 cutoff: featuredCount,
@@ -103,12 +103,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
-          featuredCharmContainer.render(featuredContainer);
+          featuredTokenContainer.render(featuredContainer);
 
           // Add popular charms
           var popularCharms = results.popularCharms;
           var popularContainer = tplNode.one('.popular');
-          var popularCharmContainer = new widgets.browser.CharmContainer(
+          var popularTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'Popular Charms',
                 cutoff: cutoffs.popular,
@@ -120,12 +120,12 @@ YUI.add('subapp-browser-editorial', function(Y) {
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
-          popularCharmContainer.render(popularContainer);
+          popularTokenContainer.render(popularContainer);
 
           // Add in the charm tokens for the new as well.
           var newCharms = results.newCharms;
           var newContainer = tplNode.one('.new');
-          var newCharmContainer = new widgets.browser.CharmContainer(
+          var newTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'New Charms',
                 cutoff: cutoffs['new'],
@@ -137,17 +137,17 @@ YUI.add('subapp-browser-editorial', function(Y) {
                   isDraggable: !this.get('isFullscreen')
                 }
               }));
-          newCharmContainer.render(newContainer);
+          newTokenContainer.render(newContainer);
 
           var container = this.get('container');
           container.append(tplNode);
           this.get('renderTo').setHTML(container);
           this.hideIndicator(this.get('renderTo'));
 
-          this.charmContainers = [
-            featuredCharmContainer,
-            newCharmContainer,
-            popularCharmContainer
+          this.tokenContainers = [
+            featuredTokenContainer,
+            newTokenContainer,
+            popularTokenContainer
           ];
 
           // Set the active charm if available.
@@ -161,7 +161,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           // Send updated cache data to the app
           var cache = {
             interesting: results,
-            charms: new models.BrowserCharmList()
+            charms: new models.CharmList()
           };
           cache.charms.add(newCharms);
           cache.charms.add(popularCharms);
@@ -209,8 +209,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
            @method destructor
          */
         destructor: function() {
-          if (this.charmContainers) {
-            Y.Array.each(this.charmContainers, function(container) {
+          if (this.tokenContainers) {
+            Y.Array.each(this.tokenContainers, function(container) {
               container.destroy();
             });
           }

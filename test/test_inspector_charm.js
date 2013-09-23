@@ -43,10 +43,6 @@ describe('Inspector Charm', function() {
     });
   });
 
-  beforeEach(function() {
-    window.flags.serviceInspector = true;
-  });
-
   afterEach(function() {
     if (fakeStore) {
       fakeStore.destroy();
@@ -55,8 +51,6 @@ describe('Inspector Charm', function() {
     if (testContainer) {
       testContainer.remove(true);
     }
-
-    window.flags = {};
   });
 
   it('should ensure the viewlet exists', function() {
@@ -108,8 +102,8 @@ describe('Inspector Charm', function() {
     testContainer.setHTML('<div class="left-breakout"></div>');
 
     fakeStore = new Y.juju.charmworld.APIv2({});
-    var cache = new Y.juju.models.BrowserCharmList();
-    var charm = new Y.juju.models.BrowserCharm(data.charm);
+    var cache = new Y.juju.models.CharmList();
+    var charm = new Y.juju.models.Charm(data.charm);
     charm.set('cached', true);
     cache.add(charm);
 

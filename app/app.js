@@ -230,11 +230,7 @@ YUI.add('juju-gui', function(Y) {
 
       'S-d': {
         callback: function(evt) {
-          var result = this.db.exportDeployer();
-          var exportData = jsyaml.dump(result);
-          var exportBlob = new Blob([exportData],
-                                    {type: 'application/yaml;charset=utf-8'});
-          saveAs(exportBlob, 'export.yaml');
+          this.exportYAML();
         },
         help: 'Export the environment'
       },
@@ -573,23 +569,30 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
+      var exportNode = Y.one('#export-trigger');
+      // Tests won't have this node.
+      if (exportNode) {
+        exportNode.on('click', function(e) {
+          this.exportYAML();
+        }, this);
+      }
+
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
-      if (window.flags && window.flags.serviceInspector) {
-        // To use the new service Inspector use the deploy method
-        // from the Y.juju.GhostDeployer extension
-        cfg.deploy = Y.bind(this.deployService, this);
-        // Watch specific things, (add units), remove db.update above
-        // Note: This hides under the flag as tests don't properly clean
-        // up sometimes and this binding creates spooky interaction
-        // at a distance and strange failures.
-        this.db.services.after(['add', 'remove', '*:change'],
-                               this.on_database_changed, this);
-        this.db.relations.after(['add', 'remove', '*:change'],
-                                this.on_database_changed, this);
-      } else {
-        cfg.deploy = this.charmPanel.deploy;
-      }
+
+      // To use the new service Inspector use the deploy method
+      // from the Y.juju.GhostDeployer extension
+      cfg.deploy = Y.bind(this.deployService, this);
+      // Watch specific things, (add units), remove db.update above
+      // Note: This hides under the flag as tests don't properly clean
+      // up sometimes and this binding creates spooky interaction
+      // at a distance and strange failures.
+      this.db.services.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
+      this.db.relations.after(
+          ['add', 'remove', '*:change'],
+          this.on_database_changed, this);
 
       // Share the store instance with subapps.
       cfg.store = this.get('store');
@@ -601,6 +604,19 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deploy(charm, ghostAttributes);
       }, this);
+    },
+
+    /**
+    Export the YAML for this environment.
+
+    @method exportYAML
+    */
+    exportYAML: function() {
+      var result = this.db.exportDeployer();
+      var exportData = jsyaml.dump(result);
+      var exportBlob = new Blob([exportData],
+          {type: 'application/yaml;charset=utf-8'});
+      saveAs(exportBlob, 'export.yaml');
     },
 
     /**
@@ -1379,7 +1395,11 @@ YUI.add('juju-gui', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.charmworld.APIv2(cfg);
+          if (window.flags.charmworldv3) {
+            return new Y.juju.charmworld.APIv3(cfg);
+          } else {
+            return new Y.juju.charmworld.APIv2(cfg);
+          }
         }
       },
 
@@ -1483,6 +1503,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
+    'juju-view-environment',
     'juju-view-login',
     'juju-landscape',
     'juju-websocket-logging',

@@ -43,7 +43,6 @@ describe('Inspector Settings', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    window.flags.serviceInspector = true;
   });
 
   afterEach(function(done) {
@@ -56,11 +55,10 @@ describe('Inspector Settings', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    window.flags = {};
   });
 
   var setUpInspector = function(options) {
-    var charm = new models.BrowserCharm(charmData.charm),
+    var charm = new models.Charm(charmData.charm),
         charmId = charm.get('id');
     db.charms.add(charm);
     if (options && options.useGhost) {
@@ -303,12 +301,10 @@ describe('Inspector Settings', function() {
   it('can destroy using a ghost model', function(done) {
     var inspector = setUpInspector({useGhost: true});
     assert(inspector.viewletManager.get('model').name, 'browser-charm');
-    inspector.viewletManager.set('db', {
-      services: {
-        remove: function(model) {
-          // This means that it successfully went down the proper path
-          done();
-        }
+    inspector.viewletManager.set('env', {
+      destroy_service: function() {
+        // This means that it successfully went down the proper path
+        done();
       }
     });
     inspector.initiateServiceDestroy();
@@ -333,7 +329,7 @@ describe('Inspector Settings', function() {
     assert.equal('foo', message.Params.Config.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});
-    assert.equal(button.getHTML(), 'Save Changes');
+    assert.equal(button.getHTML(), 'Save changes');
     assert.isTrue(input.hasClass('change-saved'));
   });
 

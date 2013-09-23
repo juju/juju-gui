@@ -230,9 +230,6 @@ YUI.add('juju-topology-relation', function(Y) {
           var decoratedRelation = views.DecoratedRelation(
               relation, source, target);
           // Copy the relation type to the box.
-          if (decoratedRelation.display_name === undefined) {
-            decoratedRelation.display_name = pair[0][0];
-          }
           decorated.push(decoratedRelation);
         }
       });
@@ -896,10 +893,7 @@ YUI.add('juju-topology-relation', function(Y) {
           type: result['interface'],
           endpoints: endpoints,
           pending: false,
-          scope: result.scope,
-          // Using either the relation name for endpoint A (this one) or
-          // the one for endpoint B (endpoints[1][1].name) is arbitrary.
-          display_name: endpoints[0][1].name
+          scope: result.scope
         });
       }
       topo.update();

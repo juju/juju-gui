@@ -106,9 +106,10 @@ YUI.add('juju-topology-service', function(Y) {
         delete annotations['gui-y'];
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
+        var fromGhost = d.model.get('placeFromGhostPosition');
         if (!d.inDrag) {
-          self.drag.call(this, d, self, {x: x, y: y},
-              self.get('useTransitions'));
+          var useTransitions = self.get('useTransitions') && !fromGhost;
+          self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
         }
       }});
 
@@ -165,6 +166,18 @@ YUI.add('juju-topology-service', function(Y) {
               .attr({'class': 'sub-rel-count',
           'x': 64,
           'y': 47 * 0.8});
+
+    // Handle the last step of models that were made locally from ghosts.
+    node.filter(function(d) {
+      return d.model.get('placeFromGhostPosition');
+    }).each(function(d) {
+      // Show the service menu from the start.
+      self.showServiceMenu(d);
+      // This flag has served its purpose, at initialization time on the
+      // canvas.  Remove it, so future changes will have the usual
+      // behavior.
+      d.model.set('placeFromGhostPosition', false);
+    });
 
     // Landscape badge
     if (landscape) {
@@ -240,6 +253,9 @@ YUI.add('juju-topology-service', function(Y) {
               (name_size / service_height) / 2;
         }
         });
+
+    node.select('.name').text(function(d) { return d.displayName; });
+
     node.select('.charm-label')
                     .attr({'style': function(d) {
           // Programmatically size the font.
@@ -347,14 +363,6 @@ YUI.add('juju-topology-service', function(Y) {
         // See _attachDragEvents for the drag and drop event registrations
         '.zoom-plane': {
           click: 'canvasClick'
-        },
-        // Menu/Controls
-        '.view-service': {
-          click: 'viewServiceClick',
-          touchstart: 'viewServiceClick'
-        },
-        '.destroy-service': {
-          click: 'destroyServiceClick'
         }
       },
       d3: {
@@ -447,8 +455,7 @@ YUI.add('juju-topology-service', function(Y) {
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
       // Set a default
-      this.set('currentServiceClickAction', 'toggleServiceMenu');
-
+      this.set('currentServiceClickAction', 'showServiceMenu');
     },
 
     /**
@@ -564,17 +571,6 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
 
-      // If the service box is pending, ensure that the charm panel is
-      // visible, but don't do anything else.
-      if (box.pending && !window.flags.serviceInspector) {
-        // Prevent the clickoutside event from firing and immediately
-        // closing the panel.
-        d3.event.halt();
-        // Ensure service menus are closed.
-        topo.fire('clearState');
-        views.CharmPanel.getInstance().show();
-        return;
-      }
       // serviceClick is being called after dragend is processed.  In those
       // cases the current click action should not be invoked.
       if (topo.ignoreServiceClick) {
@@ -700,30 +696,43 @@ YUI.add('juju-topology-service', function(Y) {
       var dataTransfer = evt.dataTransfer;
       var fileSources = dataTransfer.files;
       if (fileSources && fileSources.length) {
-        // Path for dumping Deployer files on canvas.
+        var env = topo.get('env');
         var db = topo.get('db');
-        var store = topo.get('store');
         var notifications = db.notifications;
+        if (!Y.Lang.isFunction(env.deployerImport)) {
+          // notify and return
+          notifications.add({
+            title: 'Deployer Import Unsupported',
+            message: 'Your environment is too old to support deployer file' +
+                ' imports directly. Please consider upgrading to use' +
+                ' this feature.',
+            level: 'important'
+          });
+          return;
+        }
+        // Path for dumping Deployer files on canvas.
         Y.Array.each(fileSources, function(file) {
           var reader = new FileReader();
           reader.onload = function(e) {
             // Import each into the environment
-            db.importDeployer(jsyaml.safeLoad(e.target.result),
-                store, {useGhost: false})
-                              .then(function() {
-                  notifications.add({
-                    title: 'Imported Environment',
-                    message: 'Import from "' + file.name + '" successful',
-                    level: 'important'
-                  });
-                }, function(err) {
-                  notifications.add({
-                    title: 'Import Environment Failed',
-                    message: 'Import from "' + file.name +
-                                    '" failed.<br/>' + err,
-                    level: 'error'
-                  });
+            env.deployerImport(e.target.result, null, function(result) {
+              if (!result.err) {
+                notifications.add({
+                  title: 'Imported Deployer file',
+                  message: 'Import from "' + file.name + '" successful. This ' +
+                      'can take some time to complete.',
+                  level: 'important'
                 });
+              } else {
+                console.log('import failed', file, result);
+                notifications.add({
+                  title: 'Import Environment Failed',
+                  message: 'Import from "' + file.name +
+                      '" failed.<br/>' + result.err,
+                  level: 'error'
+                });
+              }
+            });
           };
           reader.readAsText(file);
         });
@@ -749,7 +758,7 @@ YUI.add('juju-topology-service', function(Y) {
           var charmData = Y.JSON.parse(dragData.charmData);
           // Add the icon url to the ghost attributes for the ghost icon
           ghostAttributes.icon = dragData.iconSrc;
-          var charm = new models.BrowserCharm(charmData);
+          var charm = new models.Charm(charmData);
           Y.fire('initiateDeploy', charm, ghostAttributes);
         }
       }
@@ -767,36 +776,6 @@ YUI.add('juju-topology-service', function(Y) {
               topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
       this.hideServiceMenu();
-    },
-
-    /**
-     * The user clicked on the "View" menu item.
-     *
-     * @method viewServiceClick
-     */
-    viewServiceClick: function(_, context) {
-      // Get the service element
-      var topo = context.get('component');
-      var box = topo.get('active_service');
-      var service = box.model;
-      context.hideServiceMenu();
-      context.show_service(service);
-    },
-
-    /**
-     * The user clicked on the "Destroy" menu item.
-     *
-     * @method destroyServiceClick
-     */
-    destroyServiceClick: function(_, context) {
-      // Get the service element
-      var topo = context.get('component');
-      var box = topo.get('active_service');
-      context.hideServiceMenu();
-      if (window.flags && window.flags.serviceInspector) {
-        context.destroyServiceInspector();
-      }
-      context.destroyServiceConfirm(box);
     },
 
     /**
@@ -1049,6 +1028,7 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. This has the side effect that service blocks can overlap
       // and will be fixed later.
       var vertices;
+      var fromGhost = false;
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             return !Y.Lang.isNumber(boundingBox.x);
@@ -1087,6 +1067,9 @@ YUI.add('juju-topology-service', function(Y) {
           vertices = [];
         }
         Y.each(new_services, function(box) {
+          if (box.model.get('placeFromGhostPosition')) {
+            fromGhost = true;
+          }
           var existing = box.model.get('annotations') || {};
           if (!existing && !existing['gui-x']) {
             topo.get('env').update_annotations(
@@ -1111,7 +1094,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!vertices) {
           vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
         }
-        this.findAndSetCentroid(vertices);
+        this.findAndSetCentroid(vertices, fromGhost);
       }
       // enter
       node
@@ -1157,14 +1140,16 @@ YUI.add('juju-topology-service', function(Y) {
     @param {array} vertices A list of vertices in the form [x, y].
     @return {undefined} Side effects only.
     */
-    findAndSetCentroid: function(vertices) {
+    findAndSetCentroid: function(vertices, preventPan) {
       var topo = this.get('component'),
               centroid = topoUtils.centroid(vertices);
       // The centroid is set on the topology object due to the fact that it is
       // used as a sigil to tell whether or not to pan to the point after the
       // first delta.
       topo.centroid = centroid;
-      topo.fire('panToPoint', {point: topo.centroid});
+      if (!preventPan) {
+        topo.fire('panToPoint', {point: topo.centroid});
+      }
     },
 
     /**
@@ -1208,7 +1193,7 @@ YUI.add('juju-topology-service', function(Y) {
               });
       node.append('text').append('tspan')
         .attr('class', 'name')
-        .text(function(d) {return d.displayName; });
+        .text(function(d) { return d.displayName; });
 
       // Append status charts to service nodes.
       var status_graph = node.append('g')
@@ -1316,23 +1301,6 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * Show (if hidden) or hide (if shown) the service menu.
-     *
-     * @method toggleServiceMenu
-     * @param {object} box The presentation state for the service.
-     * @return {undefined} Side effects only.
-     */
-    toggleServiceMenu: function(box) {
-      var serviceMenu = this.get('container').one('#service-menu');
-
-      if (serviceMenu.hasClass('active') || !box) {
-        this.hideServiceMenu();
-      } else {
-        this.showServiceMenu(box);
-      }
-    },
-
-    /**
      * Show the service menu.
      *
      * @method showServiceMenu
@@ -1343,37 +1311,12 @@ YUI.add('juju-topology-service', function(Y) {
       var serviceMenu = this.get('container').one('#service-menu');
       var topo = this.get('component');
       var service = box.model;
-      var landscape = topo.get('landscape');
-      var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
-      var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
       var triangle = serviceMenu.one('.triangle');
-      var securityURL, rebootURL;
-      var flags = window.flags;
 
-      if (flags.serviceInspector) {
-        this.show_service(service);
-      }
+      this.show_service(service);
 
       if (service.get('pending')) {
         return true;
-      }
-
-      // Update landscape links and show/hide as needed.
-      if (landscape && !flags.serviceInspector) {
-        rebootURL = landscape.getLandscapeURL(service, 'reboot');
-        securityURL = landscape.getLandscapeURL(service, 'security');
-
-        if (rebootURL && service['landscape-needs-reboot']) {
-          landscapeReboot.show().one('a').set('href', rebootURL);
-        }
-        if (securityURL && service['landscape-security-upgrades']) {
-          landscapeSecurity.show().one('a').set('href', securityURL);
-        }
-      }
-
-      // The view option should not be used with the inspector.
-      if (flags.serviceInspector) {
-        serviceMenu.one('.view-service').hide();
       }
 
       if (box && !serviceMenu.hasClass('active')) {
@@ -1393,10 +1336,6 @@ YUI.add('juju-topology-service', function(Y) {
           addRelation.addClass('disabled');
         }
 
-        // We do not want the user destroying the Juju GUI service.
-        if (utils.isGuiService(service)) {
-          serviceMenu.one('.destroy-service').addClass('disabled');
-        }
         this.updateServiceMenuLocation();
       }
     },
@@ -1416,8 +1355,6 @@ YUI.add('juju-topology-service', function(Y) {
         serviceMenu.removeClass('active');
         topo.set('active_service', null);
         topo.set('active_context', null);
-        // Most services can be destroyed via the GUI.
-        serviceMenu.one('.destroy-service').removeClass('disabled');
       }
     },
 
@@ -1429,18 +1366,9 @@ YUI.add('juju-topology-service', function(Y) {
     show_service: function(service) {
       var topo = this.get('component');
       var createServiceInspector = topo.get('createServiceInspector');
-      var getModelURL = topo.get('getModelURL');
-      // to satisfy linter;
-      var flags = window.flags;
 
       topo.detachContainer();
-      if (flags.serviceInspector) {
-        createServiceInspector(service);
-      } else {
-        topo.fire('navigateTo', {
-          url: getModelURL(service)
-        });
-      }
+      createServiceInspector(service);
     },
 
     /*

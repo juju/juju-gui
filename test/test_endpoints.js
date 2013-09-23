@@ -182,7 +182,7 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map', function() {
     controller.endpointsMap = {};
-    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -235,7 +235,7 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map, requires only', function() {
     controller.endpointsMap = {};
-    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       requires: {
         db: {
@@ -268,7 +268,7 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map, provides only', function() {
     controller.endpointsMap = {};
-    var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('relations', {
       provides: {
         url: {
@@ -301,7 +301,7 @@ describe('Endpoints map', function() {
   it('should add a service to the map, neither provides nor requires',
      function() {
        controller.endpointsMap = {};
-       var charm = new models.BrowserCharm({id: 'cs:precise/wordpress-2'});
+       var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
        controller.addServiceToEndpointsMap('wordpress', charm);
        controller.endpointsMap.should.eql({wordpress: {
          requires: [],
@@ -343,12 +343,13 @@ describe('Endpoints map handlers', function() {
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.connect();
+    destroyMe.push(env);
     app = new Y.juju.App({env: env, consoleEnabled: true});
-    destroyMe.push(app);
     app.showView(new Y.View());
+    destroyMe.push(app);
     controller = app.endpointsController;
-    destroyMe.push(controller);
     controller.endpointsMap = {};
+    destroyMe.push(controller);
   });
 
   afterEach(function() {

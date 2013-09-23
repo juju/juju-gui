@@ -93,7 +93,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
     deployCharm: function() {
       var options = this.options,
           container = options.container,
-          model = options.model,
+          model = this.model,
           serviceName = container.one('input[name=service-name]').get('value'),
           isSubordinate = model.get('is_subordinate'),
           numUnits = (
@@ -119,7 +119,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         config = utils.getElementsValuesMapping(
             container, '.service-config .config-field');
         config = utils.removeUnchangedConfigOptions(
-            config, options.model.get('options'));
+            config, options.charmModel.get('options'));
       }
 
       // Deploy needs constraints in simple key:value object.
@@ -127,7 +127,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           container, '.constraint-field');
 
       options.env.deploy(
-          model.get('id'),
+          model.get('charm'),
           serviceName,
           config,
           this.viewletManager.configFileContent,
@@ -173,16 +173,22 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
-      var valid = utils.checkForExistingService(e.newVal, this.options.db);
-      if (!valid) {
-        // By updating the id of the ghost service model we are causing d3
-        // to think that we have removed the old service and created a new
-        // service which then causes the d3/topo to remove the old service
-        // block and render the new service block.
-        this.options.ghostService.set(
-            'id', '(' + e.newVal + ')');
-      }
-      this.serviceNameInputStatus(!valid, e.currentTarget);
+      var name = '(' + e.newVal + ')';
+      this.model.set('displayName', name);
+      this.serviceNameInputStatus(
+          !utils.checkForExistingService(e.newVal, this.options.db),
+          e.currentTarget);
+    },
+
+    /**
+      Resets the changes that the inspector made in the canvas before
+      destroying the viewlet Manager on Cancel
+
+      @method resetCanvas
+    */
+    resetCanvas: function() {
+      this.model.set('displayName', '(' + this.model.get('packageName') + ')');
+      this.viewletManager.destroy();
     },
 
     /**
@@ -202,7 +208,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       var container = this.viewletManager.get('container'),
           ghostConfigNode = container.one(
-              '.service-configuration');
+              '.service-configuration .charm-settings');
 
       var textareas = ghostConfigNode.all('textarea'),
           inputs = ghostConfigNode.all('input');
@@ -210,21 +216,15 @@ YUI.add('juju-ghost-inspector', function(Y) {
       if (useDefaults) {
         ghostConfigNode.addClass('use-defaults');
         textareas.setAttribute('disabled');
-        inputs.each(function(input) {
-          // Without this check you will disable the toggle button too
-          if (input.get('id') !== 'use-default-toggle') {
-            input.setAttribute('disabled');
-          }
-        });
+        inputs.setAttribute('disabled');
 
-        var viewlet = this.viewletManager.viewlets.ghostConfig,
-            viewletContainer = viewlet.container;
+        var charmModel = this.viewletManager.get('charmModel');
         // Loop through the fields to set the values back to their defaults
         // We can't use the data binding because setting it to it's default
         // value doesn't trigger the databinding change events.
-        Y.Object.each(viewlet.model.get('options'), function(opt, key) {
+        Y.Object.each(charmModel.get('options'), function(opt, key) {
           var newVal = (opt['default'] === undefined) ? '' : opt['default'];
-          var input = viewletContainer.one('#input-' + key);
+          var input = container.one('#input-' + key);
 
           if (input) {
             if (input.get('type') !== 'checkbox') {
@@ -252,7 +252,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
     _deployCallbackHandler: function(serviceName, config, constraints, e) {
       var options = this.options,
           db = options.db,
-          ghostService = options.ghostService;
+          ghostService = this.model;
 
       if (e.err) {
         db.notifications.add(
@@ -300,15 +300,26 @@ YUI.add('juju-ghost-inspector', function(Y) {
             });
       }
 
+      // Now that we are using the same model for the ghost and service views
+      // we need to close the inspector to deactivate the databinding
+      // before setting else we end up with a race condition on nodes which
+      // no longer exist.
+      this.closeInspector();
+
       ghostService.setAttrs({
         id: serviceName,
+        displayName: undefined,
         pending: false,
         loading: false,
         config: config,
         constraints: constraints
       });
 
-      this.closeInspector();
+      // This flag is used twice in the service topology module as a marker
+      // to know that it should not move the service or the canvas around
+      // (as opposed to services received from the environment).
+      ghostService.set('placeFromGhostPosition', true);
+      this.options.environment.createServiceInspector(ghostService);
     }
 
   };

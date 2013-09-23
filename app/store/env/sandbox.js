@@ -594,6 +594,17 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+     * Perform 'importDeployer' operation.
+     * @method performOp_importDeployer
+     */
+    performOp_importDeployer: function(data) {
+      ASYNC_OP(this, 'importDeployer', ['YAMLData', 'name'])(data);
+      // Explicitly trigger a delta after an import.
+      this.sendDelta();
+    },
+
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
@@ -852,13 +863,21 @@ YUI.add('juju-env-sandbox', function(Y) {
         'Series': function(attrs, self) {
           var db = self.get('state').db;
           var service = db.services.getById(attrs.service);
-          var charm = db.charms.getById(service.get('charm'));
-          return charm.get('series');
+          if (service) {
+            var charm = db.charms.getById(service.get('charm'));
+            return charm.get('series');
+          } else {
+            return null; // Probably unit/service was deleted.
+          }
         },
         'CharmURL': function(attrs, self) {
           var db = self.get('state').db;
           var service = db.services.getById(attrs.service);
-          return service.get('charm');
+          if (service) {
+            return service.get('charm');
+          } else {
+            return null; // Probably unit/service was deleted.
+          }
         },
         PublicAddress: 'public_address',
         PrivateAddress: 'private_address',
@@ -1180,6 +1199,61 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle DeployerImport messages
+
+    @method handleDeployerImport
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleDeployerImport: function(data, client, state) {
+      var request = data;
+      var callback = function(reply) {
+        var response = {
+          RequestId: request.RequestId,
+          Response: {
+            DeployerId: reply.DeploymentId
+          }
+        };
+        if (reply.Error) {
+          response.Error = reply.Error;
+        }
+        client.receive(response);
+      };
+      state.importDeployer(data.Params.YAML, data.Params.Name,
+                           Y.bind(callback, this));
+    },
+
+    /**
+    Handle DeployerStatus messages
+
+    @method handleDeployerStatus
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleDeployerStatus: function(data, client, state) {
+      var request = data;
+      var callback = function(reply) {
+        var response = {
+          RequestId: request.RequestId,
+          Response: {
+            LastChanges: reply.LastChanges
+          }
+        };
+        if (reply.Error) {
+          response.Error = reply.Error;
+        }
+        client.receive(response);
+      };
+      state.statusDeployer(Y.bind(callback, this));
+    },
+
+
+
+    /**
     Handle SetAnnotations messages
 
     @method handleClientSetAnnotations
@@ -1219,7 +1293,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         state.getCharm(charmName, function(payload) {
           var charmData = payload.result;
           var formattedConfig = {};
-          var backendConfig = reply.result.config;
+          var backendConfig = reply.result.options || reply.result.config;
 
           Y.Object.each(charmData.options, function(value, key) {
             formattedConfig[key] = charmData.options[key];

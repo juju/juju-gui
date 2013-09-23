@@ -247,15 +247,12 @@ YUI.add('juju-models', function(Y) {
   }, {
     ATTRS: {
       displayName: {
-        /**
-          Dynamically calculate a display name that accounts for Juju Core name
-          prefixes.
-
-          @attribute displayName
-          @type {String}
-         */
-        getter: function() {
-          return this.get('id').replace('service-', '');
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            return this.get('id').replace('service-', '');
+          }
         }
       },
       name: {},
@@ -298,6 +295,19 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       pending: {
+        value: false
+      },
+
+      /**
+        Flag from ghost inspector to service topology.  Helps topology
+        keep from unnecessarily jumping the service around.  Essentially
+        an internal value that should be ignored except by this machinery.
+
+        @attribute placeFromGhostPosition
+        @default false
+        @type {Boolean}
+      */
+      placeFromGhostPosition: {
         value: false
       },
       life: {
@@ -363,7 +373,14 @@ YUI.add('juju-models', function(Y) {
         @type {string}
       */
       upgrade_to: {},
-      aggregated_status: {}
+      aggregated_status: {},
+      /**
+        The original name from the Charm
+
+        @attribute packageName
+        @type {String}
+      */
+      packageName: {}
     }
   });
   models.Service = Service;
@@ -399,8 +416,25 @@ YUI.add('juju-models', function(Y) {
    */
     ghostService: function(charm) {
       var config = charm && charm.get('config');
+      var randomId, invalid = true;
+
+      do {
+        // The $ appended to the end is to guarantee that an id coming from Juju
+        // will never clash with the randomly generated ghost id's in the GUI.
+        randomId = Math.floor(Math.random() * 100000000) + '$';
+        // Don't make functions within a loop
+        /* jshint -W083 */
+        invalid = this.some(function(service) {
+          if (service.get('id') === randomId) {
+            return true;
+          }
+        });
+      } while (invalid);
+
       var ghostService = this.create({
-        id: '(' + charm.get('package_name') + ')',
+        // Creating a temporary id because it's undefined by default.
+        id: randomId,
+        displayName: '(' + charm.get('package_name') + ')',
         annotations: {},
         pending: true,
         charm: charm.get('id'),
@@ -680,7 +714,16 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       scope: {},
-      display_name: {}
+      display_name: {
+        'getter': function(value) {
+          if (value) { return value;}
+          var names = [];
+          this.get('endpoints').forEach(function(endpoint) {
+            names.push(endpoint[1].name);
+          });
+          return names.join(':');
+        }
+      }
     }
   });
   models.Relation = Relation;
@@ -743,107 +786,6 @@ YUI.add('juju-models', function(Y) {
 
     },
 
-    /**
-      Takes two string endpoints and splits it into usable parts.
-
-      @method parseEndpointStrings
-      @param {Database} db to resolve charms/services on.
-      @param {Array} endpoints an array of endpoint strings
-        to split in the format wordpress:db.
-      @return {Object} An Array of parsed endpoints, each containing name, type
-      and the related charm. Name is the user defined service name and type is
-      the charms authors name for the relation type.
-     */
-    parseEndpointStrings: function(db, endpoints) {
-      return Y.Array.map(endpoints, function(endpoint) {
-        var epData = endpoint.split(':');
-        var result = {};
-        if (epData.length > 1) {
-          result.name = epData[0];
-          result.type = epData[1];
-        } else {
-          result.name = epData[0];
-        }
-        result.service = db.services.getById(result.name);
-        if (result.service) {
-          result.charm = db.charms.getById(
-              result.service.get('charm'));
-        }
-        return result;
-      }, this);
-    },
-
-    /**
-      Loops through the charm endpoint data to determine whether we have a
-      relationship match. The result is either an object with an error
-      attribute, or an object giving the interface, scope, providing endpoint,
-      and requiring endpoint.
-
-      @method findEndpointMatch
-      @param {Array} endpoints Pair of two endpoint data objects.  Each
-      endpoint data object has name, charm, service, and scope.
-      @return {Object} A hash with the keys 'interface', 'scope', 'provides',
-      and 'requires'.
-     */
-    findEndpointMatch: function(endpoints) {
-      var matches = [], result;
-      Y.each([0, 1], function(providedIndex) {
-        // Identify the candidates.
-        var providingEndpoint = endpoints[providedIndex];
-        // The merges here result in a shallow copy.
-        var provides = Y.merge(providingEndpoint.charm.get('provides') || {}),
-            requiringEndpoint = endpoints[!providedIndex + 0],
-            requires = Y.merge(requiringEndpoint.charm.get('requires') || {});
-        if (!provides['juju-info']) {
-          provides['juju-info'] = {'interface': 'juju-info',
-                                    scope: 'container'};
-        }
-        // Restrict candidate types as tightly as possible.
-        var candidateProvideTypes, candidateRequireTypes;
-        if (providingEndpoint.type) {
-          candidateProvideTypes = [providingEndpoint.type];
-        } else {
-          candidateProvideTypes = Y.Object.keys(provides);
-        }
-        if (requiringEndpoint.type) {
-          candidateRequireTypes = [requiringEndpoint.type];
-        } else {
-          candidateRequireTypes = Y.Object.keys(requires);
-        }
-        // Find matches for candidates and evaluate them.
-        Y.each(candidateProvideTypes, function(provideType) {
-          Y.each(candidateRequireTypes, function(requireType) {
-            var provideMatch = provides[provideType],
-                requireMatch = requires[requireType];
-            if (provideMatch &&
-                requireMatch &&
-                provideMatch['interface'] === requireMatch['interface']) {
-              matches.push({
-                'interface': provideMatch['interface'],
-                scope: provideMatch.scope || requireMatch.scope,
-                provides: providingEndpoint,
-                requires: requiringEndpoint,
-                provideType: provideType,
-                requireType: requireType
-              });
-            }
-          });
-        });
-      });
-      if (matches.length === 0) {
-        result = {error: 'Specified relation is unavailable.'};
-      } else if (matches.length > 1) {
-        result = {error: 'Ambiguous relationship is not allowed.'};
-      } else {
-        result = matches[0];
-        // Specify the type for implicit relations.
-        result.provides = Y.merge(result.provides);
-        result.requires = Y.merge(result.requires);
-        result.provides.type = result.provideType;
-        result.requires.type = result.requireType;
-      }
-      return result;
-    },
 
     /* Return true if a relation exists for the given endpoint.
 
@@ -1036,7 +978,7 @@ YUI.add('juju-models', function(Y) {
       // Single model for environment database is bound to.
       this.environment = new Environment();
       this.services = new ServiceList();
-      this.charms = new models.BrowserCharmList();
+      this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -1058,7 +1000,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': models.BrowserCharm
+        'charm': models.Charm
       };
 
       // Used to assign new relation ids.
@@ -1195,240 +1137,6 @@ YUI.add('juju-models', function(Y) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
-    },
-
-    /**
-      Add a relation between two services.
-
-      @method addRelation
-      @param {String} endpointA A string representation of the service name
-        and endpoint connection type ie) wordpress:db.
-      @param {String} endpointB A string representation of the service name
-        and endpoint connection type ie) wordpress:db.
-      @param {Boolean} ghost When true this is a pending relationship.
-      @return {Object} new relation.
-    */
-    addRelation: function(endpointA, endpointB, ghost) {
-      if ((typeof endpointA !== 'string') ||
-          (typeof endpointB !== 'string')) {
-        return {error: 'Two string endpoint names' +
-              ' required to establish a relation'};
-      }
-
-      // Parses the endpoint strings to extract all required data.
-      var endpointData = this.relations
-                              .parseEndpointStrings(this,
-                                                    [endpointA, endpointB]);
-
-      // This error should never be hit but it's here JIC
-      if (!endpointData[0].charm || !endpointData[1].charm) {
-        throw new Error('Required charm for relation endpoint not loaded');
-      }
-      // If there are matching interfaces this will contain an object of the
-      // charm interface type and scope (if supplied).
-      var match = this.relations.findEndpointMatch(endpointData);
-
-      // If there is an error fetching a valid interface and scope
-      if (match.error) { return match; }
-
-      // Assign a unique relation id which is incremented after every
-      // successful relation.
-      var relationId = 'relation-' + this._relationCount;
-      // The ordering of requires and provides is stable in Juju Core, and not
-      // specified in PyJuju.
-      var endpoints = Y.Array.map(
-          [match.requires, match.provides],
-          function(endpoint) {
-            var result = [];
-            result.push(endpoint.name);
-            result.push({name: endpoint.type});
-            return [endpoint.name, {name: endpoint.type}];
-          });
-      var relation = this.relations.create({
-        relation_id: relationId,
-        type: match['interface'],
-        endpoints: endpoints,
-        pending: Boolean(ghost),
-        scope: match.scope || 'global',
-        display_name: endpointData[0].type
-      });
-
-      if (relation) {
-        this._relationCount += 1;
-      }
-      return relation;
-
-    },
-
-
-    /**
-      Import deployer styled dumps and create the relevant objects in the
-      database. This modifies the database its called on directly. \
-
-      Options contains flags controlling import behavior. If 'rewrite-ids' is
-      true then import id conflicts will result in the imported object being
-      assigned a new id.
-
-      If the deployer data contains multiple bundle definitions then
-      'targetBundle' must be included and that bundle will be deployed.
-
-      If 'useGhost' is true then services and relations will be imported as
-      ghosts allowing further customization prior to deploy. This defaults to
-      true.
-
-      @method importDeployer
-      @param {Object} data to import.
-      @param {Object} charmStore (with its promiseCharm method).
-      @param {Object} options (optional).
-      @return {Promise} that the import is complete.
-    */
-    importDeployer: function(data, charmStore, options) {
-      if (!data) {return;}
-      options = options || {};
-      var self = this;
-      var rewriteIds = options.rewriteIds || false;
-      var targetBundle = options.targetBundle;
-      var useGhost = options.useGhost;
-      if (useGhost === undefined) {
-        useGhost = true;
-      }
-      var defaultSeries = self.environment.get('defaultSeries');
-
-      if (!targetBundle && Object.keys(data).length > 1) {
-        throw new Error('Import target ambigious, aborting.');
-      }
-
-      // Builds out a object with inherited properties.
-      var source = targetBundle && data[targetBundle] ||
-          data[Object.keys(data)[0]];
-      var ancestors = [];
-      var seen = [];
-
-      /**
-        Helper to build out an inheritence chain
-
-        @method setupinheritance
-        @param {Object} base object currently being inspected.
-        @param {Array} baseList chain of ancestors to later inherit.
-        @param {Object} bundleData import data used to resolve ancestors.
-        @param {Array} seen list used to track objects already in inheritence
-        chain.  @return {Array} of all inherited objects ordered from most base
-        to most specialized.
-      */
-      function setupInheritance(base, baseList, bundleData, seen) {
-        // local alias for internal function.
-        var sourceData = bundleData;
-        var seenList = seen;
-
-        baseList.unshift(base);
-        // Normalize to array when present.
-        if (!base.inherits) { return; }
-        if (base.inherits && !Y.Lang.isArray(base.inherits)) {
-          base.inherits = [base.inherits];
-        }
-
-        base.inherits.forEach(function(ancestor) {
-          var baseDeploy = sourceData[ancestor];
-          if (baseDeploy === undefined) {
-            throw new Error('Unable to resolve bundle inheritence.');
-          }
-          if (seenList.indexOf(ancestor) === -1) {
-            seenList.push(ancestor);
-            setupInheritance(baseDeploy, baseList, bundleData, seenList);
-          }
-        });
-
-      }
-      setupInheritance(source, ancestors, data, seen);
-      // Source now merges it all.
-      source = {};
-      ancestors.forEach(function(ancestor) {
-        // Mix Merge and overwrite in order of inheritance
-        Y.mix(source, ancestor, true, undefined, 0, true);
-      });
-
-      // Create an id mapping. This will track the ids of objects
-      // read from data as they are mapped into db. When options
-      // rewriteIds is true this is required for services, but some
-      // types of object ids ('relations' for example) can always
-      // be rewritten but depend on the use of the proper ids.
-      // By building this mapping now we can detect collisions
-      // prior to mutating the database.
-      var serviceIdMap = {};
-      var charms = [];
-
-      /**
-       Helper to generate the next valid service id.
-       @method nextServiceId
-       @return {String} next service id to use.
-      */
-      function nextServiceId(modellist, id) {
-        var existing = modellist.getById(id);
-        var count = 0;
-        var target;
-        while (existing) {
-          count += 1;
-          target = id + '-' + count;
-          existing = modellist.getById(target);
-        }
-        return target;
-      }
-
-
-      Object.keys(source.services).forEach(function(serviceName) {
-        var current = source.services[serviceName];
-        var existing = self.services.getById(serviceName);
-        var targetId = serviceName;
-        if (existing) {
-          if (!rewriteIds) {
-            throw new Error(serviceName +
-                           ' is already present in the database.');
-          }
-          targetId = nextServiceId(self.services, serviceName);
-        }
-        serviceIdMap[serviceName] = targetId;
-
-        // Also track any new charms we'll have to add.
-        if (current.charm && charms.indexOf(current.charm) === -1) {
-          charms.push(charmStore.promiseCharm(current.charm, self.charms,
-                                              defaultSeries));
-        }
-      });
-
-      // If we made it this far its time for mutation, start by importing
-      // charms and then services.
-      return Y.batch.apply(this, charms)
-     .then(function() {
-            Object.keys(serviceIdMap).forEach(function(serviceName) {
-              var serviceData = source.services[serviceName];
-              var serviceId = serviceIdMap[serviceName];
-              var charm = self.charms.find(serviceData.charm, defaultSeries);
-              var charmId = charm && charm.get('id') || undefined;
-              var current = Y.mix(serviceData, {
-                id: serviceId, pending: useGhost, charm: charmId
-              }, true);
-              self.services.add(current);
-              // XXX: This is a questionable use case as we are only creating
-              // client side objects in the database.  There would ideally be
-              // a version of this code that returned a list of Promises that
-              // called proper env methods (for all the objects, not just
-              // units) to mutate a real env.
-              // This however will allow us to import bundles into a fresh
-              // database with the intention of only rendering it.
-              //if (!useGhost) {}
-            });
-          })
-      .then(function() {
-            if (!source.relations) { return; }
-            source.relations.forEach(function(relationData) {
-              if (relationData.length !== 2) {
-                // Skip peer relations
-                return;
-              }
-              self.addRelation(relationData[0], relationData[1], useGhost);
-            });
-          });
-
     },
 
     /**

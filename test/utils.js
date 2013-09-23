@@ -138,7 +138,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     })(),
 
     makeFakeStore: function(cache) {
-      var modellist = cache;
       var fakeStore = new Y.juju.charmworld.APIv2({});
       fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
         store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
@@ -146,8 +145,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         charmName = charmName.split('-', 1);
         if (charmName in jujuTests.utils._cached_charms) {
           var response = jujuTests.utils._cached_charms[charmName];
-          if (modellist) {
-            modellist.add(response.charm);
+          if (cache) {
+            cache.add(response.charm);
           }
           callbacks.success(response);
         } else {
@@ -164,6 +163,37 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       });
       fakebackend.login('admin', 'password');
       return fakebackend;
+    },
+
+    /**
+     Return a promise to return a working fakebackend
+     with imported YAML as its bundle. This returns
+     the result of the import call as 'result' and
+     the new fakebackend as 'backend'.
+
+     promiseImport('data/bundle.yaml', 'bundleName')
+     .then(function(resolve) {
+      var fakebackend = resolve.backend;
+      var result = resolve.result;
+      // Asserts.
+      done();
+     })
+
+      @method promiseImport
+      @param {String} YAMLBundleURL File to import
+      @param {String} [name] Name of bundle to load, optional when
+             only one target in the bundle.
+      @return {Promise} Outlined in description.
+    */
+    promiseImport: function(YAMLBundleURL, name) {
+      var fakebackend = this.makeFakeBackend();
+      var db = fakebackend.db;
+      db.environment.set('defaultSeries', 'precise');
+      var fixture = jujuTests.utils.loadFixture(YAMLBundleURL);
+      return fakebackend.promiseImport(fixture, name)
+             .then(function(result) {
+               return {result: result, backend: fakebackend};
+             });
     }
   });
 }, '0.1.0', {
@@ -171,6 +201,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     'handlebars',
     'io',
     'node',
+    'promise',
     'json-parse',
     'datasource-local',
     'juju-charm-store',

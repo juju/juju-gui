@@ -32,15 +32,13 @@ YUI.add('viewlet-inspector-header', function(Y) {
     'render': function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
       var pojoModel = model.getAttrs();
-      if (pojoModel.scheme) {
+      if (model instanceof models.Charm) {
         pojoModel.ghost = true;
-      }
-      // If this is a service, the id is the service.charm.
-      if (pojoModel.charm) {
+        pojoModel.charmUrl = pojoModel.id;
+      } else if (model instanceof models.Service) {
         pojoModel.charmUrl = pojoModel.charm;
       } else {
-        // If this is a charm model, just use the id.
-        pojoModel.charmUrl = pojoModel.id;
+        throw 'Programmer error: unknown model type';
       }
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.

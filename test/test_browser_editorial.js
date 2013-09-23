@@ -88,7 +88,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore
       });
       view.render();
-      assert(node.all('.yui3-charmtoken-hidden').size() > 0);
+      assert(node.all('.yui3-token-hidden').size() > 0);
     });
 
     it('shows and hides an indicator', function(done) {
@@ -137,7 +137,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore
       });
       view.render();
-      assert(node.all('.yui3-charmtoken-hidden').size() === 14);
+      assert(node.all('.yui3-token-hidden').size() === 14);
     });
 
     it('clicking a charm navigates for fullscreen', function(done) {
@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         activeID: 'precise/ceph-9'
       });
       view.render();
-      node.all('.yui3-charmtoken.active').size().should.equal(1);
+      node.all('.yui3-token.active').size().should.equal(1);
     });
 
     it('unsetting the activeID will remove the active markings', function() {
@@ -236,7 +236,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       view.set('activeID', null);
-      node.all('.yui3-charmtoken.active').size().should.equal(0);
+      node.all('.yui3-token.active').size().should.equal(0);
     });
 
     it('tells listeners the cache has updated', function() {

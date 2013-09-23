@@ -115,8 +115,8 @@ YUI.add('juju-view-environment', function(Y) {
           // the charm so that's what this switcheroo is doing here.
           if (model.get('pending')) {
             type = 'ghost';
-            config.ghostService = model;
-            model = charm;
+            model.set('packageName', charm.get('package_name'));
+            config.charmModel = charm;
           }
 
           // If the user is trying to open the same inspector twice
@@ -144,6 +144,11 @@ YUI.add('juju-view-environment', function(Y) {
           // listen for the event and remove it from the list of open inspectors
           serviceInspector.viewletManager.after('destroy', function(e) {
             this.setInspector(e.currentTarget, true);
+            // We want the service menu to hide when the inspector does.
+            // For now, at least, with only one inspector, we can simply close
+            // all service menus.  We expect the service menus to go away
+            // soon-ish anyway in favor of a new approach.
+            this.topo.fire('hideServiceMenu');
           }, this);
 
           // Restrict to a single inspector instance
@@ -173,12 +178,12 @@ YUI.add('juju-view-environment', function(Y) {
               environment: this,
               store: this.topo.get('store'),
               events: {
-                '.close': {'click': 'destroy'},
                 '.close-slot': {'click': 'hideSlot'}
               }
             },
             configService: {
               events: {
+                '.close': {'click': 'destroy'},
                 '.tab': {'click': 'switchTab'}
               },
               viewletEvents: {
@@ -232,13 +237,13 @@ YUI.add('juju-view-environment', function(Y) {
               // the viewlet manager template
               template: Y.juju.views.Templates['ghost-config-wrapper'],
               // these events are for the viewlet manager
-              events: {
-                '.cancel': { 'click': 'destroy' }
-              },
+              events: {},
               // these events are for the viewlets and have their callbacks
               // bound to the controllers prototype and are then mixed with the
               // manager's events for final binding
               viewletEvents: {
+                '.close': { 'click': 'resetCanvas' },
+                '.cancel': { 'click': 'resetCanvas' },
                 '.charm-url': {click: 'onShowCharmDetails'},
                 '.confirm': { click: 'deployCharm' },
                 '.config-file .fakebutton': { click: 'handleFileClick'},

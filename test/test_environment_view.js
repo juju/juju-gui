@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer();
+      container = testUtils.makeContainer('content');
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -779,7 +779,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var charm = {'id': service.charm,
                        loaded: false};
          db.charms.add(charm);
-         sm.toggleServiceMenu(service);
+         sm.showServiceMenu(service);
 
          // Since the service's charm is not loaded the 'Build Relation' link
          // is disabled.
@@ -787,8 +787,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          charm = db.charms.getById(service.charm);
          charm.loaded = true;
          // Toggle the service menu twice to cause re-rendering.
-         sm.toggleServiceMenu(service);
-         sm.toggleServiceMenu(service);
+         sm.hideServiceMenu(service);
+         sm.showServiceMenu(service);
          // Now that the charm is loaded and the menu is re-rendered, the
          // Build Relation link is no longer disabled.
          assert.isFalse(add_rel.hasClass('disabled'));
@@ -815,7 +815,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          // Toggle the service menu for the Add Relation button.
          var sm = view.topo.modules.ServiceModule;
-         sm.toggleServiceMenu(service);
+         sm.showServiceMenu(service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');
@@ -878,7 +878,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.toggleServiceMenu(service);
+         sm.showServiceMenu(service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');

@@ -59,7 +59,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
 
-          var recommendedContainer = new widgets.browser.CharmContainer(
+          var recommendedContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'Recommended charms',
                 cutoff: 4,
@@ -72,7 +72,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 }
               }));
 
-          var moreContainer = new widgets.browser.CharmContainer(
+          var moreContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'More charms',
                 cutoff: 4,
@@ -108,12 +108,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
           }
           var cache = {
             search: results,
-            charms: new models.BrowserCharmList()
+            charms: new models.CharmList()
           };
           cache.charms.add(results.recommended);
           cache.charms.add(results.more);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
-          this.charmContainers = [
+          this.tokenContainers = [
             recommendedContainer,
             moreContainer
           ];
@@ -135,8 +135,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
            @method destructor
          */
         destructor: function() {
-          if (this.charmContainers) {
-            Y.Array.each(this.charmContainers, function(container) {
+          if (this.tokenContainers) {
+            Y.Array.each(this.tokenContainers, function(container) {
               container.destroy();
             });
           }

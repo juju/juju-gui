@@ -71,10 +71,14 @@ class TestBasics(browser.TestCase):
             try:
                 total, failures = self.wait_for(
                     tests_completed, 'Unable to complete test run.',
-                    timeout=300)
+                    timeout=600)
             except exceptions.TimeoutException:
+                msg = "Tests did not complete. Check video and timeout value"
+                browser.printerr(msg)
+                browser.printerr("Test Runner Stats:")
                 browser.printerr(
                     self.driver.execute_script('return testRunner.stats;'))
+                browser.printerr("Re-raising TimeoutException")
                 raise
             return total, failures
         self.load('/test/')
@@ -128,7 +132,7 @@ class DeployTestMixin(object):
         def get_charm_token(driver):
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings .
             return driver.find_element_by_css_selector(
-                '.yui3-charmtoken-content '
+                '.yui3-token-content '
                 '.charm-token[data-charmid*={}]'.format(charm_name))
 
         def get_add_button(driver):
@@ -143,6 +147,12 @@ class DeployTestMixin(object):
             get_search_box, error='Charm search box is not visible')
         search_box.send_keys(charm_name)
         search_box.send_keys('\n')
+        # The search autocomplete does not always close in time to click on
+        # the charm token. This attempt to force it to be closed by moving
+        # focus to another node first, then trying to click on the selected
+        # charm token.
+        self.driver.find_element_by_css_selector(
+            '#zoom-out-btn').click()
 
         # Open details page
         charm_token = self.wait_for(

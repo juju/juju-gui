@@ -53,7 +53,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         a_string: {type: 'string', 'default': 'howdy'},
         some_text: {type: 'string', 'default': 'hidey\nho'}
       };
-      charm = new models.BrowserCharm({
+      charm = new models.Charm({
         id: 'cs:precise/mysql-7',
         description: 'A DB',
         options: charmOptions
@@ -157,14 +157,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 })();
 
+
+
+// XXX: Remove with old service view code
+// With the inspector panel these tests are no longer required. The service
+// views are no longer used and their UX doesn't bind to things. These are
+// made to be skipped for now as an aid to find code no longer required when
+// we clean out the last of the old service view code.
 (function() {
   // XXX This "describe" is a lie.  There are tests here for both the service
   // view (views.service) and the relations view (views.service_relations).
   // This test suite needs to be broken out into two that just contain tests
   // for one or the other.
-  describe('juju service view', function() {
+  describe.skip('juju service view', function() {
     var models, Y, container, service, db, conn, env, charm, ENTER, ESC,
-        makeServiceView, makeServiceRelationsView, views, unit, utils;
+        makeServiceView, makeServiceRelationsView, testUtils, views, unit,
+        utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -177,20 +185,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             models = Y.namespace('juju.models');
             views = Y.namespace('juju.views');
             utils = Y.namespace('juju.views.utils');
+            testUtils = Y.namespace('juju-tests.utils');
             done();
           });
     });
 
     beforeEach(function(done) {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub();
-      env = Y.namespace('juju').newEnvironment({conn: conn});
+      conn = new testUtils.SocketStub();
+      env = Y.juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div/>')
         .hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.BrowserCharm({
+      charm = new models.Charm({
         id: 'cs:precise/mysql-7',
         description: 'A DB'
       });

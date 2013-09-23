@@ -49,7 +49,6 @@ describe('Inspector Conflict UX', function() {
   });
 
   beforeEach(function() {
-    window.flags.serviceInspector = true;
     container = utils.makeContainer();
     db = new models.Database();
     conn = new utils.SocketStub();
@@ -63,11 +62,10 @@ describe('Inspector Conflict UX', function() {
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
-    window.flags = {};
   });
 
   function setUpInspector(options) {
-    var charm = new models.BrowserCharm(charmData.charm),
+    var charm = new models.Charm(charmData.charm),
         charmId = charm.get('id');
     db.charms.add(charm);
     service = new models.Service({

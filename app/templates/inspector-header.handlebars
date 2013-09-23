@@ -4,18 +4,20 @@
       <img src="{{icon}}" alt="{{name}} icon" class="icon">
     </div>
     <div class="details-wrapper">
-      {{#if ghost}}
+      {{#if pending}}
         <input type="text" class="service-name config-field {{invalidName}}" name="service-name"
-               value="{{package_name}}">
+               value="{{packageName}}">
       {{else}}
         <div data-bind="displayName" class="service-name">{{displayName}}</div>
       {{/if}}
       <div {{#unless ghost}}data-bind="charm"{{/unless}}
            data-charmid="{{charmUrl}}">{{charmUrl}}</div>
-      {{#unless ghost}}
+      {{#unless pending}}
         <div class="charm-url" data-charmid="{{charmUrl}}">Charm details</div>
       {{/unless}}
     </div>
-    <div href="" class="close">&#x2A2F;</div>
+    <div class="close">
+        <i class="sprite inspector-close"></i>
+    </div>
   </div>
 </header>

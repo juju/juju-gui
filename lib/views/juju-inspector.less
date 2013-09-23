@@ -13,15 +13,17 @@
 @disabled-input-background-color: #727272;
 @disabled-input-text-color: #252525;
 
+/* This doesn't work in FF.
+   https://bugzilla.mozilla.org/show_bug.cgi?id=546052
+   field-saved-finished is completely transparent; unfortunately no browser
+   currently supports transitioning from an image to none.
+*/
 .pulse-green-frames-mixin () {
     0% {
-      background-color: @inspector-changed-field;
-    }
-    10% {
-      background-color: #38b44a;
+        background-image: url(/juju-ui/assets/images/field-saved.png);
     }
     100% {
-      background-color: white;
+        background-image: url(/juju-ui/assets/images/field-saved-finished.png);
     }
 }
 
@@ -182,32 +184,31 @@
             }
         }
         .toggle {
-
             span {
                 display: block;
                 vertical-align: top;
                 line-height: 30px;
             }
-
             .textvalue {
               float: left;
               height: 26px;
               padding-top: 5px;
               text-transform: capitalize;
             }
-
-            &.expose {
+            &.single-line {
                 label {
                     display: inline-block;
+                    margin-bottom: 0;
                     line-height: 34px;
                 }
+                .textvalue {
+                    display: none;
+                }
             }
-
             .toggle-switch {
                 display: inline-block;
                 vertical-align: top;
                 float: right;
-                padding-left: 15px;
 
                 label {
                     .create-border-radius(@border-radius);
@@ -446,7 +447,7 @@
                 /* Fixes the bottom of the service name getting cutoff (IE10) */
                 height: auto;
             }
-            & .use-defaults {
+            .use-defaults {
                 textarea,
                 input[type=text] {
                     background-color: @disabled-input-background-color;
@@ -454,10 +455,8 @@
                     cursor: not-allowed;
                     color: @disabled-input-text-color;
                 }
-                .fakebutton {
-                    color: @disabled-input-background-color;
-                    border-color: @disabled-input-background-color;
-                    cursor: default;
+                .settings-description {
+                    color: #54504d;
                 }
             }
             .service-config {
@@ -568,16 +567,13 @@
                         text-decoration: underline;
                     }
                     .close {
-                        /* required to overwrite bootstrap styles */
-                        text-shadow: none;
-                        color: #a0a0a0;
-                        font-weight: 200;
+                        /* Required to overwrite bootstrap styles */
                         opacity: 1;
-                        font-size: 17px;
-                        line-height: 17px;
-                        /* not overwriting */
-                        vertical-align: top;
-                        margin-top: -6px;
+                        display: block;
+
+                        .sprite {
+                            vertical-align: top;
+                        }
                     }
                     & > div {
                         display: inline-block;
@@ -671,8 +667,6 @@
                 }
             }
             .settings-wrapper {
-                position: relative;
-
                 span.resolver .conflicted-env {
                   display: inline-block;
                   min-width: 25px;
@@ -683,7 +677,7 @@
                   .transition(background 1s linear);
                   background-repeat: no-repeat;
                   background-position: right center;
-                  background-url: none;
+                  background-image: none;
                   margin-bottom: 0px;
                 }
                 .config-field {
@@ -753,6 +747,9 @@
                 }
 
                 .change-saved {
+                    background-image: url(/juju-ui/assets/images/field-saved.png);
+                    background-position: center right;
+                    background-repeat: no-repeat;
                     .animation(pulse-green 1s);
                     .animation-fill-mode(forwards);
                     .transition(none);
@@ -788,7 +785,7 @@
         .destroy-service-prompt {
             overflow: hidden;
             max-height: 200px;
-            .transition(.25s, max-height .3s);
+            .transition(max-height .2s);
             position: absolute;
             bottom: 0;
             left: 0;
@@ -883,12 +880,12 @@
                     width: 10px;
                     height: 3px;
                     margin-left: 5px;
-                    background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+                    background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
                 }
             }
 
             .closed-unit-list .chevron {
-                background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
+                background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
             }
 
             .status-unit-header.error {
