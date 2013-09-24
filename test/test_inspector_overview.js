@@ -323,6 +323,45 @@ describe('Inspector Overview', function() {
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
 
+  it('can generate service update statuses (no downgrades)', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview;
+
+    // Clear out the units added in the setUpInspector method
+    db.units.reset();
+
+    // Clear the service upgrade information.
+    service.set('charm', 'cs:precise/mysql-1')
+    service.set('upgrade_available', false);
+    service.set('upgrade_to', undefined);
+
+    window.flags.upgradeCharm = true;
+
+    var units = new Y.LazyModelList();
+
+    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
+        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
+        e = units.add({
+          id: 'mysql/4',
+          agent_state: 'started',
+          annotations: {
+            'landscape-needs-reboot': 'foo'
+          }
+        }),
+        a = units.add({ id: 'mysql/0', agent_state: 'install-error' }),
+        b = units.add({ id: 'mysql/1', agent_state: 'install-error' });
+
+    // This order is important.
+    var expected = [
+      { type: 'unit', category: 'error', units: [a, b] },
+      { type: 'unit', category: 'pending', units: [c] },
+      { type: 'unit', category: 'running', units: [d, e] },
+      { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
+      { type: 'unit', category: 'landscape-security-upgrades', units: {}}
+    ];
+    assert.deepEqual(overview.updateStatusList(units), expected);
+  });
+
   it('generates category names appropriately', function() {
     var outputInput = {
       'errored units': { type: 'unit', category: 'error', units: [] },
