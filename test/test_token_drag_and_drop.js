@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('charm token drag and drop', function() {
+describe('token drag and drop', function() {
   var Y, container, cleanIconHelper, outerContainer, Token, token, utils;
 
   before(function(done) {
@@ -69,7 +69,7 @@ describe('charm token drag and drop', function() {
     assert.equal(token.tokenData.thingThatIsNotCharmConfiguration, undefined);
   });
 
-  it('makes each charm token draggable', function() {
+  it('makes each token draggable', function() {
     var cfg = {
       id: 'test',
       url: 'cs:test',
@@ -93,7 +93,7 @@ describe('charm token drag and drop', function() {
     // There is only a single token represented by all the draggable elements.
     draggable = Y.Array.dedupe(draggable);
     assert.equal(draggable.length, 1);
-    // All of the charm tokens are made draggable.
+    // All of the tokens are made draggable.
     assert.deepEqual(draggable, ['cs:test']);
   });
 
