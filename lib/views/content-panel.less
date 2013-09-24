@@ -1,0 +1,63 @@
+.content-panel {
+    position: absolute;
+    z-index: 600;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: @bws-panel-width;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #fff;
+    background-image: none;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+
+    a.yui3-tab-label {
+        color: @bws-text;
+    }
+    .yui3-tab-selected a.yui3-tab-label {
+        color: @bws-heading;
+    }
+    .content {
+        .border-box;
+    }
+    .header {
+        .type13;
+        position: relative;
+        padding: 30px;
+        background: @bws-background;
+        border-bottom: 1px solid @bws-border;
+
+        h1 {
+            .type2;
+            margin: -3px 0 5px 0;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+
+            li {
+                line-height: 1.55;
+
+                a {
+                    color: @bws-text;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+    .close-slot,
+    .back.icon {
+        position: absolute;
+        /* Display above content */
+        z-index: 1;
+        display: block;
+        top: 30px;
+        right: 30px;
+        width: 20px;
+        height: 20px;
+        background: transparent
+            url(/juju-ui/assets/images/panel_close.png)
+            left top no-repeat;
+    }
+}
