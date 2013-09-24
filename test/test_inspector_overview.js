@@ -663,7 +663,7 @@ describe('Inspector Overview', function() {
       removeButton.simulate('click');
 
       var expected = {
-        Params: {UnitNames: 'mediawiki/7'},
+        Params: {UnitNames: ['mediawiki/7']},
         Request: 'DestroyServiceUnits',
         RequestId: 1,
         Type: 'Client'
