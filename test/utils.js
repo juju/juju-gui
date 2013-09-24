@@ -129,7 +129,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       var url, charms = {},
           names = [
             'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
-            'memcached'];
+            'memcached', 'puppetmaster'];
       Y.Array.each(names, function(name) {
         url = 'data/' + name + '-api-response.json';
         charms[name] = jujuTests.utils.loadFixture(url, true);
@@ -143,6 +143,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
         var charmName = store_id.split('/')[1];
         charmName = charmName.split('-', 1);
+        if (Y.Lang.isArray(charmName)) {
+          charmName = charmName[0];
+        }
         if (charmName in jujuTests.utils._cached_charms) {
           var response = jujuTests.utils._cached_charms[charmName];
           if (cache) {
@@ -180,7 +183,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      })
 
       @method promiseImport
-      @param {String} YAMLBundleURL File to import
+      @param {String} YAMLBundleURL File to import.
       @param {String} [name] Name of bundle to load, optional when
              only one target in the bundle.
       @return {Promise} Outlined in description.
