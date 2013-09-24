@@ -283,7 +283,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
     initializer: function(options) {
       // Passed in on instantiation
-      this.viewletConfig = options.viewlets;
+      this.viewletConfig = {};
+      // Make a copy of viewlet configuration so that we never mutate the
+      // original configuration.
+      Y.each(options.viewlets, function(cfg, name) {
+        this.viewletConfig[name] = Y.merge(cfg);
+      }, this);
       this.template = options.template;
       this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;
