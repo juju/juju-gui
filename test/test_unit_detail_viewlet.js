@@ -64,19 +64,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('mutates a node without an address or ports', function() {
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node);
-      assert.strictEqual(node.getContent(), '');
+      assert.strictEqual(node.getHTML(), '');
     });
 
     it('mutates a node without an address', function() {
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, null, [80]);
-      assert.strictEqual(node.getContent(), '');
+      assert.strictEqual(node.getHTML(), '');
     });
 
     it('mutates a node with an address', function() {
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, '10.0.0.1');
-      assert.strictEqual(node.getContent(), '10.0.0.1');
+      assert.strictEqual(node.getHTML(), '10.0.0.1');
     });
 
     it('mutates a node with an address and non-http[s] port', function() {

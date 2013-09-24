@@ -37,46 +37,45 @@ YUI.add('viewlet-unit-details', function(Y) {
     */
   var updateAddress = function(node, value, open_ports) {
     node.empty();
-    if (value) {
-      var protocol;
-      var protocols = {443: 'https', 80: 'http'};
-      if (open_ports && open_ports.length) {
-        Object.keys(protocols).some(function(port) {
-          if (open_ports.indexOf(port) >= 0 ||
-              open_ports.indexOf(parseInt(port, 10)) >= 0) {
-            protocol = protocols[port];
-            return true; // Short-circuits the loop.
-          }
-        });
-      }
-      var infoNode;
-      if (protocol) {
-        infoNode = Y.Node.create('<a></a>').setAttrs({
-          href: protocol + '://' + value + '/',
+    if (!value) { return; }
+    var protocol;
+    var protocols = {443: 'https', 80: 'http'};
+    if (open_ports && open_ports.length) {
+      Object.keys(protocols).some(function(port) {
+        if (open_ports.indexOf(port) >= 0 ||
+            open_ports.indexOf(parseInt(port, 10)) >= 0) {
+          protocol = protocols[port];
+          return true; // Short-circuits the loop.
+        }
+      });
+    }
+    var infoNode;
+    if (protocol) {
+      infoNode = Y.Node.create('<a></a>').setAttrs({
+        href: protocol + '://' + value + '/',
+        target: '_blank',
+        text: value
+      });
+    } else {
+      infoNode = Y.Node.create(value);
+    }
+    node.append(infoNode);
+    if (open_ports && open_ports.length) {
+      // YUI 3 trims HTML because IE (<10?) does it. :-/
+      node.append('&nbsp;| Ports&nbsp;');
+      var previous;
+      open_ports.forEach(function(port) {
+        if (previous) {
+          node.append(',&nbsp;');
+        }
+        previous = port;
+        var protocol = protocols[port.toString()] || 'http';
+        node.append(Y.Node.create('<a></a>').setAttrs({
+          href: protocol + '://' + value + ':' + port + '/',
           target: '_blank',
-          text: value
-        });
-      } else {
-        infoNode = Y.Node.create(value);
-      }
-      node.append(infoNode);
-      if (open_ports && open_ports.length) {
-        // YUI 3 trims HTML because IE (<10?) does it. :-/
-        node.append('&nbsp;| Ports&nbsp;');
-        var previous;
-        open_ports.forEach(function(port) {
-          if (previous) {
-            node.append(',&nbsp;');
-          }
-          previous = port;
-          var protocol = protocols[port.toString()] || 'http';
-          node.append(Y.Node.create('<a></a>').setAttrs({
-            href: protocol + '://' + value + ':' + port + '/',
-            target: '_blank',
-            text: port
-          }));
-        });
-      }
+          text: port
+        }));
+      });
     }
   };
   ns.updateUnitAddress = updateAddress; // Expose for testing.
@@ -86,13 +85,6 @@ YUI.add('viewlet-unit-details', function(Y) {
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
-    'get': function(model) {
-      var result = model;
-      this.name.split('.').forEach(function(name) {
-        result = result && result[name];
-      });
-      return result;
-    },
     bindings: {
       agent_state_info: {
         'update': function(node, value) {
