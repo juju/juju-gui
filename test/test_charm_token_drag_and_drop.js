@@ -114,8 +114,8 @@ describe('charm token drag and drop', function() {
     };
     var dragImage = {};
     token._makeDragStartHandler = function(dragImage, tokenData) {
-      assert.equal(element, element);
       // XXX This doesn't really do anything.
+      assert.equal(element, element);
       assert.equal(dragImage, dragImage);
       assert.equal(tokenData, tokenData);
     };

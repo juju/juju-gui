@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Provides the Charm Token widget, for display a small unit of charm
+ * Provides the charm/bundle Token widget, for display a small unit of
  * information.
  *
  * @namespace juju
@@ -30,13 +30,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
-  ns.EVENT_CHARM_ADD = 'charm-token-add';
+  ns.EVENT_CHARM_ADD = 'charm-token-add';  // XXX Is this used?
   ns.Token = Y.Base.create('Token', Y.Widget, [
     Y.Event.EventTracker,
     Y.WidgetChild
   ], {
-    TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
-
     /**
     * Default general initializer method.
     *
@@ -45,11 +43,18 @@ YUI.add('browser-charm-token', function(Y) {
     * @return {undefined} Nothing.
     */
     initializer: function(cfg) {
-      // Extract the charm configuration values from the jumble of widget
+      // Extract the charm/bundle values from the jumble of widget
       // cfg options.
-      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+      var templates = Y.namespace('juju.views').Templates;
+      if (this.get('kind') === 'charm') {
+        var attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+        this.TEMPLATE = templates['charm-token'];
+      } else {
+        var attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
+        this.TEMPLATE = templates['bundle-token'];
+      }
       // @property tokenData Contains the extracted charm information.
-      this.tokenData = Y.aggregate({}, cfg, false, charmAttributes);
+      this.tokenData = Y.aggregate({}, cfg, false, attributes);
     },
 
     /**
@@ -151,7 +156,6 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
       container.ancestor('.yui3-token').addClass('yui3-u');
@@ -249,12 +253,25 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-        The id used for querying the charmworld data store.
-        @attribute id
+        The ID used for querying the charmworld data store.
+        @attribute storeId
         @default undefined
         @type {String}
       */
-      storeId: {}
+      storeId: {},
+
+      /**
+        The kind of item represented by this token.  The value can be either
+        "charm" or "bundle".
+        @attribute kind
+        @default undefined
+        @type {String}
+      */
+      kind: {
+        getter: function() {
+          return 'charm';
+        }
+      }
 
     }
   });
