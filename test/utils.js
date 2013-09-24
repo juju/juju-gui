@@ -183,7 +183,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      })
 
       @method promiseImport
-      @param {String} YAMLBundleURL File to import
+      @param {String} YAMLBundleURL File to import.
       @param {String} [name] Name of bundle to load, optional when
              only one target in the bundle.
       @return {Promise} Outlined in description.
