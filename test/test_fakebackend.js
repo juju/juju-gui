@@ -250,7 +250,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('deploys a charm with no config options', function(done) {
       // Charms that don't specify options would previously
-      // not deployer proper as the code path expected them
+      // not deploy properly as the code path expected them
       // to exist.
       fakebackend.promiseDeploy('cs:precise/puppetmaster-4')
       .then(function(result) {

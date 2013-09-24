@@ -75,7 +75,7 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   var unsetIfNoValue = function(val) {
-    if (!val || Y.Object.keys(val).length === 0) {
+    if (!val || Y.Object.size(val) === 0) {
       return null;
     } else {
       return val;
@@ -760,6 +760,9 @@ YUI.add('juju-charm-models', function(Y) {
         valueFn: function() {
           var files = this.get('files') || [];
           if (!Y.Lang.isArray(files)) {
+            // On some codepaths files is the list of objects and on
+            // others its a mapping of filename to content.
+            // XXX: Normalize handling here (without resolving root issue).
             files = Object.keys(files);
           }
           if (files.indexOf('icon.svg') !== -1 &&
