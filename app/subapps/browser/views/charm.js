@@ -872,7 +872,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-charm-container',
+    'browser-token-container',
     'browser-overlay-indicator',
     'browser-tabview',
     'datatype-date',

@@ -1,0 +1,52 @@
+{
+  "basket_name": "wiki",
+  "basket_revision": 3,
+  "branch_deleted": false,
+  "data": {
+    "relations": [
+      [
+        "wiki:db",
+        "db"
+      ],
+      [
+        "wiki",
+        [
+          "haproxy",
+          "memcached"
+        ]
+      ]
+    ],
+    "series": "precise",
+    "services": {
+      "db": {
+        "branch": "lp:charms/precise/mysql",
+        "charm": "mysql",
+        "options": {
+          "tuning-level": "fast"
+        }
+      },
+      "haproxy": {
+        "branch": "lp:charms/precise/haproxy"
+      },
+      "memcached": {
+        "branch": "lp:charms/precise/memcached",
+        "options": {
+          "request-limit": 32
+        }
+      },
+      "wiki": {
+        "branch": "lp:charms/precise/mediawiki",
+        "charm": "mediawiki",
+        "constraints": "mem=2",
+        "num_units": 2
+      }
+    }
+  },
+  "description": "",
+  "id": "~bac/wiki/3/wiki",
+  "name": "wiki",
+  "owner": "bac",
+  "permanent_url": "jc:~bac/wiki/3/wiki",
+  "promulgated": false,
+  "title": ""
+}

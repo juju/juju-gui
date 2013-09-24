@@ -1,0 +1,139 @@
+{
+  "address": "cs:precise/puppetmaster", 
+  "branch_deleted": false, 
+  "bzr_branch": "", 
+  "categories": [], 
+  "config": {
+    "options": {}
+  }, 
+  "date_created": "2012-05-09T23:21:47Z", 
+  "description": "This charm deploys a puppet master, which is the server hosting\nmanifests and files for the puppet nodes.  Puppet lets you centrally\nmanage every important aspect of your system using a cross-platform\nspecification language that manages all the separate elements normally\naggregated in different files, like users, cron jobs, and hosts, along\nwith obviously discrete elements like packages, services, and files.\nPuppet's simple declarative specification language provides powerful\nclassing abilities for drawing out the similarities between hosts while\nallowing them to be as specific as necessary, and it handles dependency\nand prerequisite relationships between objects clearly and explicitly.\n", 
+  "downloads": 98, 
+  "downloads_in_past_30_days": 3, 
+  "downloads_in_past_7_days": 0, 
+  "downloads_in_past_half_year": 46, 
+  "error": "", 
+  "files": {
+    "README": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/README", 
+      "filename": "README", 
+      "length": 387, 
+      "md5": "919fb6366b3dec2b4252b9a290eea1d0", 
+      "subdir": ""
+    }, 
+    "install": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/install", 
+      "filename": "install", 
+      "length": 799, 
+      "md5": "dc9ccb25556571aa174e42f5bd2b82a6", 
+      "subdir": "hooks"
+    }, 
+    "metadata%2Eyaml": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/metadata%2Eyaml", 
+      "filename": "metadata.yaml", 
+      "length": 866, 
+      "md5": "1943e230670383eb2eb1539fcd03a3e1", 
+      "subdir": ""
+    }, 
+    "puppetmaster-relation-changed": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/puppetmaster-relation-changed", 
+      "filename": "puppetmaster-relation-changed", 
+      "length": 516, 
+      "md5": "7960909aa608c90b12199878e70be699", 
+      "subdir": "hooks"
+    }, 
+    "puppetmaster-relation-departed": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/puppetmaster-relation-departed", 
+      "filename": "puppetmaster-relation-departed", 
+      "length": 71, 
+      "md5": "59051f68b159623fe0bd7ca4cf092cb9", 
+      "subdir": "hooks"
+    }, 
+    "revision": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/revision", 
+      "filename": "revision", 
+      "length": 3, 
+      "md5": "31d30eea8d0968d6458e0ad0027c9f80", 
+      "subdir": ""
+    }, 
+    "start": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/start", 
+      "filename": "start", 
+      "length": 44, 
+      "md5": "e58b3f181d1cbf33794413740d8dc4d0", 
+      "subdir": "hooks"
+    }, 
+    "stop": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/stop", 
+      "filename": "stop", 
+      "length": 43, 
+      "md5": "d4cb67857ae6cc0576d6b11587a8ba9b", 
+      "subdir": "hooks"
+    }, 
+    "upgrade-charm": {
+      "charmid": "charmers/precise/puppetmaster/trunk", 
+      "contentType": null, 
+      "fileid": "charmers/precise/puppetmaster/trunk/hooks/upgrade-charm", 
+      "filename": "upgrade-charm", 
+      "length": 36, 
+      "md5": "9e0c5f1a9a999545632faafaa0330c55", 
+      "subdir": "hooks"
+    }
+  }, 
+  "hash": "224b117b7b5d0ba8c72e3ffb07a3008a21a9f0daec3c676a12b959fca6df428a", 
+  "last_change": {
+    "authors": [
+      "Mark Mims <mark.mims@canonical.com>"
+    ], 
+    "committer": "Mark Mims <mark.mims@canonical.com>", 
+    "created": 1364571133.269, 
+    "message": "maintainer change", 
+    "revno": 8
+  }, 
+  "maintainer": "Mark Mims <mark.mims@ubuntu.com>", 
+  "name": "puppetmaster", 
+  "owner": "charmers", 
+  "promulgated": true, 
+  "proof": {
+    "w": [
+      " Metadata is missing categories.", 
+      " No icon.svg file."
+    ]
+  }, 
+  "provides": {
+    "puppetmaster": {
+      "interface": "puppet"
+    }
+  }, 
+  "requires": {}, 
+  "series": "precise", 
+  "store_url": "cs:precise/puppetmaster-4", 
+  "subordinate": false, 
+  "summary": "puppet master", 
+  "test_results": {
+    "ec2": "~charmers/charms/precise/puppetmaster/trunk::ec2-92", 
+    "local": "~charmers/charms/precise/puppetmaster/trunk::local-44", 
+    "openstack": "~charmers/charms/precise/puppetmaster/trunk::openstack-45"
+  }, 
+  "tests": {
+    "ec2": "SUCCESS", 
+    "local": "SUCCESS", 
+    "openstack": "SUCCESS"
+  }
+}

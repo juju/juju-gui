@@ -131,12 +131,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
-        'browser-charm-token': {
-          fullpath: '/juju-ui/widgets/charm-token.js'
+        'browser-token': {
+          fullpath: '/juju-ui/widgets/token.js'
         },
 
-        'browser-charm-container': {
-          fullpath: '/juju-ui/widgets/charm-container.js'
+        'browser-token-container': {
+          fullpath: '/juju-ui/widgets/token-container.js'
         },
 
         'browser-filter-widget': {
@@ -335,6 +335,10 @@ var GlobalConfig = {
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
+        },
+
+        'juju-bundle-models': {
+          fullpath: '/juju-ui/models/bundle.js'
         },
 
         'juju-charm-models': {

@@ -36,66 +36,17 @@
 .yui3-juju-inspector {
     .customize-scrollbar;
 
-    ::-webkit-scrollbar-track {
-        background-color: #1c1815;
-    }
-    ::-webkit-scrollbar-thumb {
-        background-color: #505050;
-        border-width: 0 1px;
-        border-color: #1c1815;
-    }
-    /* Hide IE input clear control */
-    input[type=text]::-ms-clear {
-        display: none;
-    }
     .left-breakout {
         .type9;
-        position: absolute;
         top: 20px;
         bottom: @navbar-bottom-height + 20px;
+        left: auto;
         right: @inspector-width + 71px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        width: @bws-panel-width;
-        background-color: #fff;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
-        .close-slot {
-            position: absolute;
-            // Need to raise it above the content.
-            z-index: 1;
-            display: block;
-            top: 20px;
-            right: 20px;
-            width: 20px;
-            height: 20px;
-            background: transparent
-                url(/juju-ui/assets/images/panel_close.png)
-                left top no-repeat;
-        }
         .charm .yui3-tabview {
             margin-top: 30px;
         }
         .unit-overview {
-            .header {
-                .type13;
-                padding: 30px;
-                background: @bws-background;
-                border-bottom: 1px solid @bws-border;
-
-                h2 {
-                    .type2;
-                    margin-bottom: 20px;
-                }
-                ul {
-                    margin: 0;
-                    list-style: none;
-
-                    li {
-                        line-height: 1.55;
-                    }
-                }
-            }
             .unit-info-tabs {
                 padding: 30px;
 
@@ -137,6 +88,15 @@
         margin: 0;
         font-size: 14px;
 
+
+        ::-webkit-scrollbar-track {
+            background-color: #1c1815;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #505050;
+            border-width: 0 1px;
+            border-color: #1c1815;
+        }
         form {
             margin: 0;
         }
@@ -146,6 +106,10 @@
             font-size: 14px;
         }
         input[type=checkbox].hidden-checkbox {
+            display: none;
+        }
+        /* Hide IE input clear control */
+        input[type=text]::-ms-clear {
             display: none;
         }
         input[type=text] {
