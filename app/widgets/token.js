@@ -43,15 +43,16 @@ YUI.add('browser-token', function(Y) {
     * @return {undefined} Nothing.
     */
     initializer: function(cfg) {
+      var templates = Y.namespace('juju.views').Templates;
       // Extract the charm/bundle values from the jumble of widget
       // cfg options.
-      var templates = Y.namespace('juju.views').Templates;
+      var attributes;
       if (this.get('kind') === 'charm') {
-        var attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+        attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
         this.TEMPLATE = templates['charm-token'];
       } else {
         // XXX This doesn't actually work yet, but soon.
-        var attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
+        attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
         this.TEMPLATE = templates['bundle-token'];
       }
       // @property tokenData Contains the extracted charm information.
@@ -271,7 +272,8 @@ YUI.add('browser-token', function(Y) {
         @type {String}
       */
       kind: {
-        getter: function() {
+        // The function name is quoted to keep the yuidoc linter happy.
+        'getter': function() {
           // TODO When we wire in the bundle handling code this will be a
           // non-constant value.
           return 'charm';
