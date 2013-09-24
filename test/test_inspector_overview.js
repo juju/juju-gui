@@ -103,15 +103,15 @@ describe('Inspector Overview', function() {
     })();
     db.services.add(service);
     db.onDelta({data: {result: [
-      ['unit', 'add', 
-        {id: 'mediawiki/0', agent_state: 'pending', 
+      ['unit', 'add',
+        {id: 'mediawiki/0', agent_state: 'pending',
           charmUrl: 'cs:precise/mediaWiki-14'}],
-      ['unit', 'add', 
-        {id: 'mediawiki/1', agent_state: 'pending', 
+      ['unit', 'add',
+        {id: 'mediawiki/1', agent_state: 'pending',
           charmUrl: 'cs:precise/mediaWiki-14'}],
-      ['unit', 'add', 
-        {id: 'mediawiki/2', agent_state: 'pending', 
-          charmUrl: 'cs:precise/mediaWiki-14'}],
+      ['unit', 'add',
+        {id: 'mediawiki/2', agent_state: 'pending',
+          charmUrl: 'cs:precise/mediaWiki-14'}]
     ]}});
     var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function(id) {
