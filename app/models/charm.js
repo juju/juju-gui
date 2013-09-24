@@ -113,7 +113,7 @@ YUI.add('juju-charm-models', function(Y) {
    * @class Charm
    */
   // XXX jcsackett Aug 12 2013 Charm model is only being kept while we observe
-  // the effects of the changeover to Browsercharm. This can be deleted once we
+  // the effects of the changeover to browser-charm. This can be deleted once we
   // ascertain there is no fallout.
   var Charm = Y.Base.create('charm', Y.Model, [], {
 
@@ -694,7 +694,7 @@ YUI.add('juju-charm-models', function(Y) {
         valueFn: function() {
           var source = this.get('code_source');
           if (source) {
-            return parseInt(this.get('code_source').revision, 10);
+            return parseInt(source.revision, 10);
           } else {
             return undefined;
           }

@@ -337,6 +337,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/models/endpoints.js'
         },
 
+        'juju-bundle-models': {
+          fullpath: '/juju-ui/models/bundle.js'
+        },
+
         'juju-charm-models': {
           fullpath: '/juju-ui/models/charm.js'
         },
