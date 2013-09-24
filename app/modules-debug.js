@@ -135,7 +135,7 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/token.js'
         },
 
-        'browser-charm-container': {
+        'browser-token-container': {
           fullpath: '/juju-ui/widgets/token-container.js'
         },
 

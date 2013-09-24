@@ -20,14 +20,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * browser-charm-container provides a container used for categorizing charm
+ * browser-token-container provides a container used for categorizing charm
  * tokens.
  *
  * @namespace juju
  * @module widgets
  * @submodule browser
  */
-YUI.add('browser-charm-container', function(Y) {
+YUI.add('browser-token-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
   /**
