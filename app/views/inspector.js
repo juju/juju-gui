@@ -1043,9 +1043,13 @@ YUI.add('juju-view-inspector', function(Y) {
     _sendUnitRemove: function(unitNames, env) {
       // The Go backend can take an array of unitNames but the python one cannot
       // XXX Remove this loop when we drop python support.
-      unitNames.forEach(function(unitName) {
-        env.remove_units(unitName);
-      });
+      if (env.name === 'go-env') {
+        env.remove_units(unitNames);
+      } else {
+        unitNames.forEach(function(unitName) {
+          env.remove_units(unitName);
+        });
+      }
     }
   };
 
