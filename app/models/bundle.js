@@ -51,7 +51,6 @@ YUI.add('juju-bundle-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      this.set('id', this.get('id'));
       this.loaded = false;
       this.on('load', function() { this.loaded = true; });
     }

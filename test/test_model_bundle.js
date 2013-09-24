@@ -28,16 +28,17 @@ describe('Bundle initialization', function() {
     });
   });
 
-  it('must be able to create Bundle', function() {
+  it('must be able to create a bundle', function() {
+    var expected = '~bac/wiki/3/wiki';
     var bundle = new models.Bundle(
-        {id: '~bac/wiki/3/wiki'});
-    bundle.get('id').should.equal('~bac/wiki/3/wiki');
+        {id: expected});
+    assert.equal(expected, bundle.get('id'));
   });
 
 });
 
-describe('Bundle tests', function() {
-  var data, expected, instance, models, relatedData, sampleData, utils, Y;
+describe('The bundle model', function() {
+  var data, expected, instance, models, origData, relatedData, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -47,13 +48,14 @@ describe('Bundle tests', function() {
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
+      var sampleData = Y.io('data/browserbundle.json', {sync: true});
+      origData = Y.JSON.parse(sampleData.responseText);
       done();
     });
   });
 
   beforeEach(function() {
-    sampleData = Y.io('data/browserbundle.json', {sync: true});
-    data = Y.JSON.parse(sampleData.responseText);
+    data = Y.clone(origData);
   });
 
   afterEach(function() {
