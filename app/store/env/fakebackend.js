@@ -345,9 +345,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {Object} A matching charm from the db.
     */
     _getCharmFromData: function(charmData) {
-      var charm = this.db.charms.getById(charmData.url);
+      var charm = this.db.charms.getById(charmData.store_url || charmData.url);
       if (!charm) {
-        charmData.id = charmData.url;
+        charmData.id = charmData.store_url || charmData.url;
         charm = this.db.charms.add(charmData);
       }
       return charm;
@@ -374,6 +374,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {undefined} Get the result from the callback.
     */
     _deployFromCharm: function(charm, callback, options) {
+      if (!options) {
+        options = {};
+      }
       if (!options.name) {
         options.name = charm.get('package_name');
       }
@@ -426,7 +429,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // we need to mix those values in to the charm config
         // options when creating a new model.
         config: (function() {
-          var charmOptions = charm.get('options');
+          var charmOptions = charm.get('options') || {};
           var config = {};
           if (!options.config) { options.config = {}; }
           Object.keys(charmOptions).forEach(function(key) {
