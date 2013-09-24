@@ -559,7 +559,7 @@ YUI.add('browser-search-widget', function(Y) {
   requires: [
     'autocomplete',
     'base',
-    'browser-charm-token',
+    'browser-token',
     'browser-filter-widget',
     'event',
     'event-delegate',

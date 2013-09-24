@@ -131,7 +131,7 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
-        'browser-charm-token': {
+        'browser-token': {
           fullpath: '/juju-ui/widgets/token.js'
         },
 

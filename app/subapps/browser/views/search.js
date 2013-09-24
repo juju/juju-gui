@@ -201,7 +201,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'browser-charm-token',
+    'browser-token',
     'browser-charm-container',
     'browser-filter-widget',
     'event-tracker',

@@ -237,7 +237,7 @@ YUI.add('browser-charm-container', function(Y) {
   requires: [
     'array',
     'base-build',
-    'browser-charm-token',
+    'browser-token',
     'event-tracker',
     'handlebars',
     'juju-templates',

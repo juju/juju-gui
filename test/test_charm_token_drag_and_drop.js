@@ -23,7 +23,7 @@ describe('charm token drag and drop', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'browser-charm-token',
+      'browser-token',
       'juju-tests-utils'
     ],
     function(Y) {

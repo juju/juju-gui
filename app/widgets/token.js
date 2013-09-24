@@ -27,7 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @module widgets
  * @submodule browser
  */
-YUI.add('browser-charm-token', function(Y) {
+YUI.add('browser-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-token-add';  // XXX Is this used?

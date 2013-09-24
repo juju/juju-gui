@@ -24,7 +24,7 @@ describe('charm token', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-token', 'node-event-simulate',
+        ['browser-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           Token = Y.juju.widgets.browser.Token;
           utils = Y.namespace('juju-tests.utils');
