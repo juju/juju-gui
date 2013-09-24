@@ -50,6 +50,7 @@ YUI.add('browser-token', function(Y) {
         var attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
         this.TEMPLATE = templates['charm-token'];
       } else {
+        // XXX This doesn't actually work yet, but soon.
         var attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
         this.TEMPLATE = templates['bundle-token'];
       }
@@ -254,6 +255,7 @@ YUI.add('browser-token', function(Y) {
 
       /**
         The ID used for querying the charmworld data store.
+
         @attribute storeId
         @default undefined
         @type {String}
@@ -263,12 +265,15 @@ YUI.add('browser-token', function(Y) {
       /**
         The kind of item represented by this token.  The value can be either
         "charm" or "bundle".
+
         @attribute kind
         @default undefined
         @type {String}
       */
       kind: {
         getter: function() {
+          // TODO When we wire in the bundle handling code this will be a
+          // non-constant value.
           return 'charm';
         }
       }
