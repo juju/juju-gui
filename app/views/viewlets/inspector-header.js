@@ -29,6 +29,17 @@ YUI.add('viewlet-inspector-header', function(Y) {
     name: 'inspectorHeader',
     template: templates['inspector-header'],
     slot: 'header',
+    bindings: {
+      charmChanged: {
+        'update': function(node, value) {
+          if (value) {
+            node.removeClass('hidden');
+          } else {
+            node.addClass('hidden');
+          }
+        }
+      }
+    },
     'render': function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
       var pojoModel = model.getAttrs();
