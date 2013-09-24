@@ -331,7 +331,7 @@ describe('Inspector Overview', function() {
     db.units.reset();
 
     // Clear the service upgrade information.
-    service.set('charm', 'cs:precise/mysql-1')
+    service.set('charm', 'cs:precise/mysql-1');
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
 
