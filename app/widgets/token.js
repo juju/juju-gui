@@ -30,13 +30,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('browser-token', function(Y) {
 
   var determineTokenDataType = function(tokenData) {
-      // It would be nice to restructure the token widget so that it takes
-      // a model instead of a jumble of attributes.  If we did so, this
-      // would just be a type check over the class of the model.
-      if (tokenData && 'basket_name' in tokenData) {
-        return 'bundle';
-      }
-      return 'charm';
+    // It would be nice to restructure the token widget so that it takes
+    // a model instead of a jumble of attributes.  If we did so, this
+    // would just be a type check over the class of the model.
+    if (tokenData && 'basket_name' in tokenData) {
+      return 'bundle';
+    }
+    return 'charm';
   };
 
   var ns = Y.namespace('juju.widgets.browser');

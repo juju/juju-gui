@@ -168,7 +168,7 @@ describe('charm/bundle token', function() {
     });
 
     token.render(token_container);
-    assert.match(token_container.getHTML(), /This is a bundle token./)
+    assert.match(token_container.getHTML(), /This is a bundle token./);
   });
 
 });
