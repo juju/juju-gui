@@ -29,6 +29,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 YUI.add('browser-token', function(Y) {
 
+  var determineTokenDataType = function(tokenData) {
+    // It would be nice to restructure the token widget so that it takes
+    // a model instead of a jumble of attributes.  If we did so, this
+    // would just be a type check over the class of the model.
+    if (tokenData && 'basket_name' in tokenData) {
+      return 'bundle';
+    }
+    return 'charm';
+  };
+
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-token-add';  // XXX Is this used?
   ns.Token = Y.Base.create('Token', Y.Widget, [
@@ -47,11 +57,10 @@ YUI.add('browser-token', function(Y) {
       // Extract the charm/bundle values from the jumble of widget
       // cfg options.
       var attributes;
-      if (this.get('type') === 'charm') {
+      if (determineTokenDataType(cfg) === 'charm') {
         attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
         this.TEMPLATE = templates['charm-token'];
       } else {
-        // XXX This doesn't actually work yet, but soon. (benji 2013-09-24)
         attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
         this.TEMPLATE = templates['bundle-token'];
       }
@@ -273,9 +282,7 @@ YUI.add('browser-token', function(Y) {
       type: {
         // The function name is quoted to keep the yuidoc linter happy.
         'getter': function() {
-          // TODO When we wire in the bundle handling code this will be a
-          // non-constant value.
-          return 'charm';
+          return determineTokenDataType(this.tokenData);
         }
       }
 
@@ -288,6 +295,7 @@ YUI.add('browser-token', function(Y) {
     'event-tracker',
     'handlebars',
     'juju-charm-models',
+    'juju-bundle-models',
     'juju-templates',
     'juju-view-utils',
     'widget',
