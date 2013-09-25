@@ -80,7 +80,7 @@ YUI.add('juju-models', function(Y) {
         list.remove(instance);
         // We need to actually destroy these model instances when we are done
         // with them so that we can react elsewhere in the application.
-        if (list.name === 'ServiceList') {
+        if (list.name === 'serviceList') {
           instance.destroy();
         }
       }
