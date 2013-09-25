@@ -144,7 +144,7 @@ describe('charm/bundle token', function() {
         'http://localhost.svg');
   });
 
-  it('can report the kind of object it represents', function() {
+  it('can report that it represents a charm', function() {
     var charmToken = new Token({
       size: 'tiny',
       description: 'some description',
@@ -152,12 +152,15 @@ describe('charm/bundle token', function() {
       iconUrl: 'http://localhost.svg'
     });
 
+    assert.equal(charmToken.get('type'), 'charm');
+  });
+
+  it('can report that it represents a bundle', function() {
     var bundleToken = new Token({
       size: 'small',
       basket_name: 'BASKET-NAME'
     });
 
-    assert.equal(charmToken.get('type'), 'charm');
     assert.equal(bundleToken.get('type'), 'bundle');
   });
 
