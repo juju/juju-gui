@@ -1020,11 +1020,11 @@ YUI.add('juju-env-go', function(Y) {
       };
       if (data) {
         sendData.Request = 'ServiceSetYAML';
-        sendData.Params.ConfigYAML = data;
+        sendData.Params.Config = data;
       } else {
         config = utils.removeUnchangedConfigOptions(config, serviceConfig);
         sendData.Request = 'ServiceSet';
-        sendData.Params.Config = stringifyObjectValues(config);
+        sendData.Params.Options = stringifyObjectValues(config);
       }
       this._send_rpc(sendData, intermediateCallback);
     },
