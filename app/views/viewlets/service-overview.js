@@ -143,7 +143,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       // should just be pushed onto the end of the list of statuses.
       if (upgradeServiceStatus.upgradeAvailable) {
         statuses.splice(2, 0, upgradeServiceStatus);
-      } else {
+      } else if (upgradeServiceStatus.downgrades.length > 0) {
         statuses.push(upgradeServiceStatus);
       }
     }

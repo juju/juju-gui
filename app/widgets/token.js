@@ -20,23 +20,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Provides the Charm Token widget, for display a small unit of charm
+ * Provides the Token widget, for displaying a small amount of charm/bundle
  * information.
  *
  * @namespace juju
  * @module widgets
  * @submodule browser
  */
-YUI.add('browser-charm-token', function(Y) {
+YUI.add('browser-token', function(Y) {
+
+  var determineTokenDataType = function(tokenData) {
+    // It would be nice to restructure the token widget so that it takes
+    // a model instead of a jumble of attributes.  If we did so, this
+    // would just be a type check over the class of the model.
+    if (tokenData && 'basket_name' in tokenData) {
+      return 'bundle';
+    }
+    return 'charm';
+  };
 
   var ns = Y.namespace('juju.widgets.browser');
-  ns.EVENT_CHARM_ADD = 'charm-token-add';
+  ns.EVENT_CHARM_ADD = 'charm-token-add';  // XXX Is this used?
   ns.Token = Y.Base.create('Token', Y.Widget, [
     Y.Event.EventTracker,
     Y.WidgetChild
   ], {
-    TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
-
     /**
     * Default general initializer method.
     *
@@ -45,11 +53,19 @@ YUI.add('browser-charm-token', function(Y) {
     * @return {undefined} Nothing.
     */
     initializer: function(cfg) {
-      // Extract the charm configuration values from the jumble of widget
+      var templates = Y.namespace('juju.views').Templates;
+      // Extract the charm/bundle values from the jumble of widget
       // cfg options.
-      var charmAttributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
-      // @property charmData Contains the extracted charm information.
-      this.charmData = Y.aggregate({}, cfg, false, charmAttributes);
+      var attributes;
+      if (determineTokenDataType(cfg) === 'charm') {
+        attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
+        this.TEMPLATE = templates['charm-token'];
+      } else {
+        attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
+        this.TEMPLATE = templates['bundle-token'];
+      }
+      // @property tokenData Contains the extracted information.
+      this.tokenData = Y.aggregate({}, cfg, false, attributes);
     },
 
     /**
@@ -63,9 +79,8 @@ YUI.add('browser-charm-token', function(Y) {
       @return {Node} the generated bounding box.
     */
     _setBB: function(node) {
-      // Blank out the ID part of the boundingBox. We don't want the
-      // charm-token id="" to be set based on the actual Charm model
-      // data passed in.
+      // Blank out the ID part of the boundingBox. We don't want the token ID
+      // to be set based on the actual model data passed in.
       // The Y.Widget will generate a YUID for the node automatically.
       return this._setBox(undefined, node, this.BOUNDING_TEMPLATE, true);
     },
@@ -74,10 +89,10 @@ YUI.add('browser-charm-token', function(Y) {
      * Generate a function that records drag and drop data when a drag starts.
      *
      * @method _makeDragStartHandler
-     * @param {String} charmData The JSON encoded charm attributes.
+     * @param {String} tokenData The JSON encoded attributes.
      * @return {undefined} Nothing.
      */
-    _makeDragStartHandler: function(charmData) {
+    _makeDragStartHandler: function(tokenData) {
       var container = this.get('boundingBox');
       return function(evt) {
         var icon = container.one('.icon'),
@@ -87,7 +102,7 @@ YUI.add('browser-charm-token', function(Y) {
         iconSrc = icon.one('img').getAttribute('src');
         dataTransfer.effectAllowed = 'copy';
         var dragData = {
-          data: charmData,
+          data: tokenData,
           dataType: 'token-drag-and-drop',
           iconSrc: iconSrc
         };
@@ -109,37 +124,37 @@ YUI.add('browser-charm-token', function(Y) {
      * @param {Node} element The node which is to be made draggable.
      * @param {Node} dragImage The node which will be displayed during
      *   dragging.
-     * @param {String} charmData The JSON encoded charm attributes.
+     * @param {String} tokenData The JSON encoded attributes.
      * @return {undefined} Nothing.
      */
-    _makeDraggable: function(element, charmData) {
+    _makeDraggable: function(element, tokenData) {
       element.setAttribute('draggable', 'true');
       this.addEvent(element.on('dragstart',
-          this._makeDragStartHandler(charmData)));
+          this._makeDragStartHandler(tokenData)));
     },
 
     /**
-     * Make the charm token draggable.
+     * Make the token draggable.
      *
      * @method _addDraggability
-     * @param {Node} container The node which contains the charm list.
+     * @param {Node} container The node which contains the token container.
      * @param {Node} dragImage The node which will be displayed during
      *   dragging.
      * @return {undefined}  Nothing; side-effects only.
     */
     _addDraggability: function() {
-      var charmData,
+      var tokenData,
           container = this.get('boundingBox');
-      // Adjust the id to meet Charm model expectations.
-      this.charmData.id = this.charmData.url;
+      // Adjust the ID to meet model expectations.
+      this.tokenData.id = this.tokenData.url;
       // Since the browser's dataTransfer mechanism only accepts string values
-      // we have to JSON encode the charm data.  This passed-in config includes
-      // charm attributes.
-      charmData = Y.JSON.stringify(this.charmData);
-      this._makeDraggable(container, charmData);
+      // we have to JSON encode the data.  This passed-in config includes
+      // charm/bundle attributes.
+      tokenData = Y.JSON.stringify(this.tokenData);
+      this._makeDraggable(container, tokenData);
       // We need all the children to participate.
       container.all('*').each(function(element) {
-        this._makeDraggable(element, charmData);
+        this._makeDraggable(element, tokenData);
       }, this);
     },
 
@@ -151,7 +166,6 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-
       var content = this.TEMPLATE(this.getAttrs());
       var container = this.get('contentBox');
       container.ancestor('.yui3-token').addClass('yui3-u');
@@ -189,7 +203,7 @@ YUI.add('browser-charm-token', function(Y) {
       is_approved: {},
 
       /**
-       * Should the charm token be draggable?
+       * Should the token be draggable?
        *
        * @attribute isDraggable
        * @default true
@@ -236,7 +250,7 @@ YUI.add('browser-charm-token', function(Y) {
 
       /**
         Supports size attribute that is in turn used as the CSS class around
-        the charm token.
+        the token.
 
         Sizes include tiny, small, large.
 
@@ -249,12 +263,28 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-        The id used for querying the charmworld data store.
-        @attribute id
+        The ID used for querying the charmworld data store.
+
+        @attribute storeId
         @default undefined
         @type {String}
       */
-      storeId: {}
+      storeId: {},
+
+      /**
+        The kind of item represented by this token.  The value can be either
+        "charm" or "bundle".
+
+        @attribute type
+        @default undefined
+        @type {String}
+      */
+      type: {
+        // The function name is quoted to keep the yuidoc linter happy.
+        'getter': function() {
+          return determineTokenDataType(this.tokenData);
+        }
+      }
 
     }
   });
@@ -265,6 +295,7 @@ YUI.add('browser-charm-token', function(Y) {
     'event-tracker',
     'handlebars',
     'juju-charm-models',
+    'juju-bundle-models',
     'juju-templates',
     'juju-view-utils',
     'widget',

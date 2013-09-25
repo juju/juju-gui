@@ -19,12 +19,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('charm token', function() {
-  var charm_container, Token, cleanIconHelper, token, utils, Y;
+describe('charm/bundle token', function() {
+  var token_container, Token, cleanIconHelper, token, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-token', 'node-event-simulate',
+        ['browser-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
           Token = Y.juju.widgets.browser.Token;
           utils = Y.namespace('juju-tests.utils');
@@ -34,11 +34,11 @@ describe('charm token', function() {
   });
 
   beforeEach(function() {
-    charm_container = utils.makeContainer('token-container');
+    token_container = utils.makeContainer('token-container');
   });
 
   afterEach(function() {
-    charm_container.remove(true);
+    token_container.remove(true);
     if (token) {
       token.destory();
     }
@@ -66,8 +66,8 @@ describe('charm token', function() {
       tested_providers: ['ec2']
     };
     var token = new Token(cfg);
-    token.render(charm_container);
-    var metadata = charm_container.one('.metadata');
+    token.render(token_container);
+    var metadata = token_container.one('.metadata');
     assert.equal(
         ' Deployed 3 times precise | Recommended ',
         metadata.get('text').replace(/\s+/g, ' '));
@@ -87,8 +87,8 @@ describe('charm token', function() {
       tested_providers: ['ec2']
     };
     var token = new Token(cfg);
-    token.render(charm_container);
-    var metadata = charm_container.one('.metadata');
+    token.render(token_container);
+    var metadata = token_container.one('.metadata');
     assert.equal(
         ' Deployed 3 times precise | rharding ',
         metadata.get('text').replace(/\s+/g, ' '));
@@ -100,8 +100,8 @@ describe('charm token', function() {
     token.get('size').should.eql('small');
 
     // and the css class should be on the token once rendered.
-    token.render(charm_container);
-    charm_container.one('.token').hasClass('small').should.equal(true);
+    token.render(token_container);
+    token_container.one('.token').hasClass('small').should.equal(true);
   });
 
   it('allows setting a large size', function() {
@@ -111,8 +111,8 @@ describe('charm token', function() {
     token.get('size').should.eql('large');
 
     // and the css class should be on the token once rendered.
-    token.render(charm_container);
-    charm_container.one('.token').hasClass('large').should.equal(true);
+    token.render(token_container);
+    token_container.one('.token').hasClass('large').should.equal(true);
   });
 
   it('allows setting a tiny size', function() {
@@ -126,8 +126,8 @@ describe('charm token', function() {
     assert.equal('tiny', token.get('size'));
 
     // and the css class should be on the token once rendered.
-    token.render(charm_container);
-    assert(charm_container.one('.token').hasClass('tiny'));
+    token.render(token_container);
+    assert(token_container.one('.token').hasClass('tiny'));
   });
 
   it('allows overriding the charm icon url', function() {
@@ -138,11 +138,40 @@ describe('charm token', function() {
       iconUrl: 'http://localhost.svg'
     });
 
-    token.render(charm_container);
+    token.render(token_container);
     assert.equal(
-        charm_container.one('img').getAttribute('src'),
+        token_container.one('img').getAttribute('src'),
         'http://localhost.svg');
+  });
 
+  it('can report that it represents a charm', function() {
+    var charmToken = new Token({
+      size: 'tiny',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      iconUrl: 'http://localhost.svg'
+    });
+
+    assert.equal(charmToken.get('type'), 'charm');
+  });
+
+  it('can report that it represents a bundle', function() {
+    var bundleToken = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME'
+    });
+
+    assert.equal(bundleToken.get('type'), 'bundle');
+  });
+
+  it('can render bundles', function() {
+    var token = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME'
+    });
+
+    token.render(token_container);
+    assert.match(token_container.getHTML(), /This is a bundle token./);
   });
 
 });

@@ -26,28 +26,109 @@ YUI.add('viewlet-unit-details', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  /**
+    Updates a node with a display of the given address and ports.
+
+    @method updateAddress
+    @param {Y.Node} node The node to be updated.
+    @param {String} value The IP address.
+    @param {Array} value An array of the ports exposed.
+    @return {undefined} Mutates the node.
+    */
+  var updateAddress = function(node, value, open_ports) {
+    node.empty();
+    if (!value) { return; }
+    var protocol;
+    var protocols = {443: 'https', 80: 'http'};
+    if (open_ports && open_ports.length) {
+      Object.keys(protocols).some(function(port) {
+        if (open_ports.indexOf(port) >= 0 ||
+            open_ports.indexOf(parseInt(port, 10)) >= 0) {
+          protocol = protocols[port];
+          return true; // Short-circuits the loop.
+        }
+      });
+    }
+    var infoNode;
+    if (protocol) {
+      infoNode = Y.Node.create('<a></a>').setAttrs({
+        href: protocol + '://' + value + '/',
+        target: '_blank',
+        text: value
+      });
+    } else {
+      infoNode = Y.Node.create(value);
+    }
+    node.append(infoNode);
+    if (open_ports && open_ports.length) {
+      // YUI 3 trims HTML because IE (<10?) does it. :-/
+      node.append('&nbsp;| Ports&nbsp;');
+      var previous;
+      open_ports.forEach(function(port) {
+        if (previous) {
+          node.append(',&nbsp;');
+        }
+        previous = port;
+        var protocol = protocols[port.toString()] || 'http';
+        node.append(Y.Node.create('<a></a>').setAttrs({
+          href: protocol + '://' + value + ':' + port + '/',
+          target: '_blank',
+          text: port
+        }));
+      });
+    }
+  };
+  ns.updateUnitAddress = updateAddress; // Expose for testing.
+
   ns.unitDetails = {
     name: 'unitDetails',
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
+    bindings: {
+      agent_state_info: {
+        'update': function(node, value) {
+          if (value) {
+            node.one('span').set('text', value);
+            node.show();
+          } else {
+            node.hide();
+          }
+        }
+      },
+      'annotations.landscape-computer': {
+        'update': function(node, value) {
+          if (value) {
+            var unit = this.viewlet.model;
+            var environment = this.viewlet.options.db.environment;
+            node.one('a').set(
+                'href', utils.getLandscapeURL(environment, unit));
+            node.show();
+          } else {
+            node.hide();
+          }
+        }
+      },
+      private_address: {
+        depends: ['open_ports'],
+        'update': function(node, value) {
+          updateAddress(node, value, this.viewlet.model.open_ports);
+        }
+      },
+      public_address: {
+        depends: ['open_ports'],
+        'update': function(node, value) {
+          updateAddress(node, value, this.viewlet.model.open_ports);
+        }
+      }
+    },
 
     // Return the template context for the unit detail view.
     'getContext': function(db, service, unit) {
-      var ipDescriptionChunks = [];
-      if (unit.public_address) {
-        ipDescriptionChunks.push(unit.public_address);
-      }
-      if (unit.private_address) {
-        ipDescriptionChunks.push(unit.private_address);
-      }
-      if (unit.open_ports) {
-        ipDescriptionChunks.push(unit.open_ports.join(', '));
-      }
-      var unitIPDescription;
-      if (ipDescriptionChunks.length) {
-        unitIPDescription = ipDescriptionChunks.join(' | ');
-      }
+      // This should be handled with bindings, once per-unit relation
+      // information is actually sanely available from Juju Core.
+      // Of course, that might be tricky unless we also keep track of
+      // relation errors on the db's unit models....
       // Ignore relations errors.
       var relation_errors = unit.relation_errors || {},
           relations = utils.getRelationDataForService(db, service);
@@ -58,9 +139,7 @@ YUI.add('viewlet-unit-details', function(Y) {
       });
       return {
         unit: unit,
-        unitIPDescription: unitIPDescription,
-        relations: relations,
-        landscapeURL: utils.getLandscapeURL(db.environment, unit)
+        relations: relations
       };
     },
 
