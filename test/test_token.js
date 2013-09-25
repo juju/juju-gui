@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('charm token', function() {
+describe('charm/bundle token', function() {
   var token_container, Token, cleanIconHelper, token, utils, Y;
 
   before(function(done) {

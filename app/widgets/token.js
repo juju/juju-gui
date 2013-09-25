@@ -51,7 +51,6 @@ YUI.add('browser-token', function(Y) {
         attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
         this.TEMPLATE = templates['charm-token'];
       } else {
-        // XXX This doesn't actually work yet, but soon.
         attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
         this.TEMPLATE = templates['bundle-token'];
       }
@@ -274,8 +273,12 @@ YUI.add('browser-token', function(Y) {
       kind: {
         // The function name is quoted to keep the yuidoc linter happy.
         'getter': function() {
-          // TODO When we wire in the bundle handling code this will be a
-          // non-constant value.
+          // It would be nice to restructure the token widget so that it takes
+          // a model instead of a jumble of attributes.  If we did so, this
+          // would just be a type check over the class of the model.
+          if ('basket_name' in this.tokenData) {
+            return 'bundle';
+          }
           return 'charm';
         }
       }
