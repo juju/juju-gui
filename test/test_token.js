@@ -142,7 +142,33 @@ describe('charm/bundle token', function() {
     assert.equal(
         token_container.one('img').getAttribute('src'),
         'http://localhost.svg');
+  });
 
+  it('can report the kind of object it represents', function() {
+    var charmToken = new Token({
+      size: 'tiny',
+      description: 'some description',
+      mainCategory: 'app-servers',
+      iconUrl: 'http://localhost.svg'
+    });
+
+    var bundleToken = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME'
+    });
+
+    assert.equal(charmToken.get('type'), 'charm');
+    assert.equal(bundleToken.get('type'), 'bundle');
+  });
+
+  it('can render bundles', function() {
+    var token = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME'
+    });
+
+    token.render(token_container);
+    assert.match(token_container.getHTML(), /This is a bundle token./)
   });
 
 });
