@@ -1136,7 +1136,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientServiceSet: function(data, client, state) {
       var result = state.setConfig(
-        data.Params.ServiceName, data.Params.Options);
+          data.Params.ServiceName, data.Params.Options);
       this._basicReceive(data, client, result);
     },
 
