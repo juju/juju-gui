@@ -1,16 +1,14 @@
 <div class="unit-overview">
     <div class="header">
-        <h2><span class="">&bull;</span> {{ unit.displayName }}</h2>
+        <h1 data-bind="displayName">{{ unit.displayName }}</h1>
         <ul class="unit-stats content">
-            <li>IP Address: {{ unit.private_address }}</li>
-            <li>Status: {{ unit.agent_state }}</li>
-            {{#if unit.agent_state_info}}
-              <li>Status Info: {{ unit.agent_state_info }}</li>
-            {{/if}}
-            <li>Public Address: {{ unitIPDescription }}</li>
-            {{#if landscapeURL}}
-              <li><a href="{{landscapeURL}}" class="landscape" target="_blank">Open Landscape</a></li>
-            {{/if}}
+            <li>IP Address: <span data-bind="private_address"></span></li>
+            <li>Status: <span data-bind="agent_state"></span></li>
+            <li data-bind="agent_state_info">Status Info: <span></span></li>
+            <li>Public Address: <span data-bind="public_address"></span></li>
+            <li data-bind="annotations.landscape-computer">
+              <a class="landscape" target="_blank">Open Landscape</a>
+            </li>
         </ul>
     </div>
     <div class="unit-info-tabs content">

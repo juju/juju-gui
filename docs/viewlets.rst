@@ -148,5 +148,5 @@ configuration property `bindings`. See the databindings documentation.
 Controller
 ==========
 
-The Controller is a 100% user created class whos responsibility is to connect
+The Controller is a 100% user created class whose responsibility is to connect
 the `Viewlet Manager`_ and the `Databinding Engine`_ together.

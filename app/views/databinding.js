@@ -350,11 +350,20 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype.addBinding = function(config, viewlet) {
       var defaultBinding = {};
-      defaultBinding.get = function(model) { return model.get(this.name);};
+      defaultBinding.get = function(model) {
+        if (model.get) {
+          // YUI mode.
+          return model.get(this.name);
+        } else {
+          // POJO mode!
+          var result = model;
+          this.name.split('.').forEach(function(name) {
+            result = result && result[name];
+          });
+          return result;
+        }
+      };
       var binding = Y.mix(defaultBinding, config);
-      if (viewlet.get) {
-        binding.get = viewlet.get;
-      }
       // Explicitly allow additional binding information to
       // be passed in the viewlet config. From this we can
       // resolve formatters and update callbacks.
