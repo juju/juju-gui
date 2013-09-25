@@ -153,12 +153,11 @@ YUI.add('juju-view-environment', function(Y) {
 
           // If the service is destroyed from the console then we need to
           // destroy the inspector and hide the service menu
-          model.on('destroy', function(e) {
-            var inspector = this.getInspector(
-                e.currentTarget.get('packageName'));
-            if (inspector) {
-              inspector.destroy();
-            }
+          model.on('lifeChange', function(e) {
+            if (e.newVal !== 'dying') { return; }
+            var name = e.currentTarget.get('packageName');
+            var inspector = this.getInspector(name);
+            if (inspector) { inspector.viewletManager.destroy(); }
             this.topo.fire('hideServiceMenu');
           }, this);
 

@@ -526,7 +526,6 @@ YUI.add('juju-charm-panel', function(Y) {
           var ghostService = this.get('ghostService');
           if (Y.Lang.isValue(ghostService)) {
             db.services.remove(ghostService);
-            ghostService.destroy();
             db.fire('update');
           }
         },

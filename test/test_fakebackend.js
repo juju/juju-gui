@@ -157,7 +157,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         unit_count: undefined,
         upgrade_available: false,
         upgrade_to: undefined,
-        packageName: undefined
+        packageName: 'wordpress'
       };
 
       assert.deepEqual(attrs, expectedAttrs);

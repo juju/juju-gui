@@ -78,11 +78,6 @@ YUI.add('juju-models', function(Y) {
     else if (action === 'remove') {
       if (exists) {
         list.remove(instance);
-        // We need to actually destroy these model instances when we are done
-        // with them so that we can react elsewhere in the application.
-        if (list.name === 'serviceList') {
-          instance.destroy();
-        }
       }
     } else {
       console.warn('Unknown change kind in _process_delta:', action);
@@ -385,7 +380,25 @@ YUI.add('juju-models', function(Y) {
         @attribute packageName
         @type {String}
       */
-      packageName: {}
+      packageName: {
+        'getter': function(value) {
+          if (value) {
+            return value;
+          } else {
+            // Because the packageName is not set if the
+            // model was created from the core delta.
+            var charm = this.get('charm');
+            // If there is no charm as well, well you have bigger problems :)
+            // but this helps so that we don't need to provide charm data
+            // for every test suite.
+            if (charm) {
+              charm = charm.split('/');
+              charm = charm[charm.length - 1].split('-')[0];
+            }
+            return charm || undefined;
+          }
+        }
+      }
     }
   });
   models.Service = Service;
