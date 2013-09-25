@@ -425,12 +425,13 @@ YUI.add('juju-view-inspector', function(Y) {
       var dataSource = this.viewletManager;
       var model = dataSource.get('model');
       var db = this.viewletManager.get('db');
-      if (model.name === 'service') {
+      if (model.name === 'service' && !model.get('pending')) {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
             Y.bind(this._destroyServiceCallback, this, model, db));
       } else if (model.get('pending')) {
         db.services.remove(model);
+        model.destroy();
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }
@@ -462,6 +463,7 @@ YUI.add('juju-view-inspector', function(Y) {
         // service from the database.  (Why wouldn't we get an update from the
         // server side that would do this for us?).
         db.services.remove(service);
+        service.destroy();
         db.relations.remove(db.relations.filter(
             function(r) {
               return Y.Array.some(r.get('endpoints'), function(ep) {

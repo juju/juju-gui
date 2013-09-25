@@ -151,6 +151,17 @@ YUI.add('juju-view-environment', function(Y) {
             this.topo.fire('hideServiceMenu');
           }, this);
 
+          // If the service is destroyed from the console then we need to
+          // destroy the inspector and hide the service menu
+          model.on('destroy', function(e) {
+            var inspector = this.getInspector(
+                e.currentTarget.get('packageName'));
+            if (inspector) {
+              inspector.destroy();
+            }
+            this.topo.fire('hideServiceMenu');
+          }, this);
+
           // Restrict to a single inspector instance
           if (Y.Object.size(this._inspectors) >= 1) {
             Y.Object.each(this._inspectors, function(inspector) {
