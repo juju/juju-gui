@@ -393,6 +393,11 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.render();
       return this;
     },
+    'rerender': function() {
+      this.model.set('charmChanged', false);
+      var viewlet = this.viewletManager.viewlets.config;
+      viewlet.render(this.model, viewlet.options);
+    },
 
     /**
       Display the "do you really want to destroy this service?" prompt.
