@@ -78,7 +78,7 @@ YUI.add('juju-models', function(Y) {
     else if (action === 'remove') {
       if (exists) {
         list.remove(instance);
-        if (instance.name === 'serviceList') {
+        if (list.name === 'serviceList') {
           instance.destroy();
         }
       }
