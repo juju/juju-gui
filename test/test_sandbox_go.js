@@ -519,7 +519,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSet',
           Params: {
             ServiceName: 'wordpress',
-            Config: { engine: 'apache' }
+            Options: { engine: 'apache' }
           },
           RequestId: 42
         };
@@ -567,7 +567,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Request: 'ServiceSetYAML',
           Params: {
             ServiceName: 'wordpress',
-            ConfigYAML: 'wordpress:\n  engine: apache'
+            Config: 'wordpress:\n  engine: apache'
           },
           RequestId: 42
         };

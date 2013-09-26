@@ -163,9 +163,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var params = message.Params;
       assert.equal('ServiceSet', message.Request);
       assert.equal('mysql', params.ServiceName);
-      assert.equal('new value', params.Config.option0);
+      assert.equal('new value', params.Options.option0);
       // undefined because it should only set the changed values
-      assert.equal(undefined, params.Config.option1);
+      assert.equal(undefined, params.Options.option1);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
