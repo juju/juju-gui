@@ -846,7 +846,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Params: {
           ServiceName: 'mysql',
-          Config: {
+          Options: {
             'cfg-key': 'cfg-val'
           }
         },
@@ -868,7 +868,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceSetYAML',
         Params: {
           ServiceName: 'mysql',
-          ConfigYAML: data
+          Config: data
         }
       };
       assert.deepEqual(expected, msg);
