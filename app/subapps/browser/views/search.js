@@ -160,7 +160,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           } else {
             this.get('store').search(this.get('filters'), {
               'success': function(data) {
-                var results = this.get('store').resultsToCharmlist(
+                var results = this.get('store').transformResults(
                     data.result);
                 var recommended = [],
                     more = [];

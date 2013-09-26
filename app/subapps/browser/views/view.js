@@ -163,7 +163,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
               store.autocomplete,
               store
           ),
-          autocompleteDataFormatter: store.resultsToCharmlist,
+          autocompleteDataFormatter: store.transformResults,
           categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
           filters: this.get('filters'),
           withHome: this.get('withHome')
