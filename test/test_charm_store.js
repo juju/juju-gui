@@ -267,9 +267,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('copies metadata while transforming results', function() {
       var store = utils.makeFakeStore(3);
       var fakebundle = {bundle: {id: 'bundle0'},
-                        metadata: 'bundledata'};
+                         metadata: 'bundledata'};
       var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
-                       metadata: 'charmdata'};
+                        metadata: 'charmdata'};
       var testdata = Y.clone([fakecharm, fakebundle]);
       fakebundle.bundle.metadata = fakebundle.metadata;
       fakecharm.charm.metadata = fakecharm.metadata;
@@ -518,23 +518,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('filters results into an array of charms while removing bundles',
-      function() {
-        var store = utils.makeFakeStore();
-        var fakecharm = {charm: {url: 'cs:precise/wordpress-15'}};
-        var fakebundle = {bundle: {id: 'bundle0'}};
-        var other = {foo: {id: 'foo0'}};
-        var results = store.transformResults([fakecharm, fakebundle, other]);
-        var expected = [new models.Charm(fakecharm.charm)];
-        assert.equal(expected.length, results.length);
-        assert.equal(expected[0].get('id'), results[0].get('id'));
-      });
+        function() {
+          var store = utils.makeFakeStore();
+          var fakecharm = {charm: {url: 'cs:precise/wordpress-15'}};
+          var fakebundle = {bundle: {id: 'bundle0'}};
+          var other = {foo: {id: 'foo0'}};
+          var results = store.transformResults([fakecharm, fakebundle, other]);
+          var expected = [new models.Charm(fakecharm.charm)];
+          assert.equal(expected.length, results.length);
+          assert.equal(expected[0].get('id'), results[0].get('id'));
+        });
 
     it('copies metadata while transforming results', function() {
       var store = utils.makeFakeStore();
       var fakebundle = {bundle: {id: 'bundle0'},
-                        metadata: 'bundledata'};
+                         metadata: 'bundledata'};
       var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
-                       metadata: 'charmdata'};
+                        metadata: 'charmdata'};
       var testdata = Y.clone([fakecharm, fakebundle]);
       fakebundle.bundle.metadata = fakebundle.metadata;
       fakecharm.charm.metadata = fakecharm.metadata;

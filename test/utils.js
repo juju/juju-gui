@@ -139,7 +139,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
     makeFakeStore: function(version) {
       var fakeStore;
-      if (version == 3) {
+      if (version === 3) {
         fakeStore = new Y.juju.charmworld.APIv3({});
       } else {
         fakeStore = new Y.juju.charmworld.APIv2({});
