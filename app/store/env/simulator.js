@@ -55,7 +55,6 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             '+alert:security-upgrades/packages/list?filter=security';
         context.state.updateAnnotations('env', envAnno);
         context.serviceAnnotations(context);
-
       },
 
       /**
@@ -81,7 +80,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       @method unitAnnotations
        */
       unitAnnotations: function(context) {
-        context.state.services.each(function(service) {
+        context.state.db.services.each(function(service) {
           if (service.get('pending')) {
             return;
           }
@@ -97,8 +96,8 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
      },
 
       select: {
-        list: 'units',
-        random: 0.01
+        list: 'services',
+        random: 0.02
       },
 
       run: function(context) {
@@ -131,7 +130,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     unitCounts: {
       select: {
         list: 'services',
-        random: 0.1
+        random: 0.5
       },
       run: function(context) {
         context.selection.each(function(service) {
@@ -140,7 +139,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           } else {
             var units = service.get('units');
             if (units.length > 1) {
-              var unit = units[units.length - 1];
+              var unit = units.item(units.length - 1);
               context.state.removeUnits([unit.id]);
             }
           }
@@ -150,43 +149,44 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
     unitStatus: {
       select: {
-        list: 'units',
-        random: 0.05
+        list: 'services'
       },
       run: function(context) {
-        context.selection.each(function(unit) {
-          var roll = Math.random();
-          if (roll <= 0.25) {
-            unit.agent_state = 'started';
-            unit.agent_state_info = undefined;
-          } else if (roll <= 0.5) {
-            unit.agent_state = 'install-error';
-            unit.agent_state_info = undefined;
-          } else if (roll <= 0.75) {
-            unit.agent_state = 'pending';
-            unit.agent_state_info = undefined;
-          } else if (roll <= 1) {
-            var db = context.state.db;
-            var serviceName = this.service;
-            var relations = db.relations.get_relations_for_service(
+        context.selection.each(function(service) {
+          service.get('units').each(function(unit) {
+            if (RAND(0.95)) { return; }
+            var roll = Math.random();
+            if (roll <= 0.25) {
+              unit.agent_state = 'started';
+              unit.agent_state_info = undefined;
+            } else if (roll <= 0.5) {
+              unit.agent_state = 'install-error';
+              unit.agent_state_info = undefined;
+            } else if (roll <= 0.75) {
+              unit.agent_state = 'pending';
+              unit.agent_state_info = undefined;
+            } else if (roll <= 1) {
+              var db = context.state.db;
+              var serviceName = this.service;
+              var relations = db.relations.get_relations_for_service(
                 db.services.getById(serviceName));
-            if (relations.length > 0) {
-              unit.agent_state = 'error';
-              var relation = relations[
-                  Math.floor(Math.random() * relations.length)];
-              var interfaceName;
-              relation.get('endpoints').forEach(function(endpoint) {
-                if (endpoint[0] !== serviceName) { return; }
-                interfaceName = endpoint[1].name;
-              });
-              unit.agent_state_info = 'hook failed: ' +
-                  interfaceName + '-relation-changed';
+                if (relations.length > 0) {
+                  unit.agent_state = 'error';
+                  var relation = relations[
+                    Math.floor(Math.random() * relations.length)];
+                    var interfaceName;
+                    relation.get('endpoints').forEach(function(endpoint) {
+                      if (endpoint[0] !== serviceName) { return; }
+                      interfaceName = endpoint[1].name;
+                    });
+                    unit.agent_state_info = 'hook failed: ' +
+                      interfaceName + '-relation-changed';
+                }
             }
-          }
-          // Put in delta since there is no API for this.
-          context.state.changes.units[unit.id] = [unit, true];
+            // Put in delta since there is no API for this.
+            context.state.changes.units[unit.id] = [unit, true];
+          });
         });
-
       }
     },
 

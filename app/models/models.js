@@ -1110,13 +1110,17 @@ YUI.add('juju-models', function(Y) {
       var self = this,
           serviceList = this.services,
           relationList = this.relations,
+          defaultSeries = this.environment.get('defaultSeries'),
           result = {
             envExport: {
-              series: this.environment.get('defaultSeries'),
               services: {},
               relations: []
             }
           };
+
+      if (defaultSeries) {
+        result.envExport.series = defaultSeries;
+      }
 
       serviceList.each(function(service) {
         var units = service.get('units');
