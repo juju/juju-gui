@@ -524,10 +524,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           service.get('units').each(function(stateUnit) {
             var guiUnit = db.resolveModelByName(stateUnit.id);
             Y.each(
-              ['agent_state', 'machine', 'number', 'service'],
-              function(attrName) {
-                assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
-              }
+                ['agent_state', 'machine', 'number', 'service'],
+                function(attrName) {
+                  assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
+                }
             );
           });
         });

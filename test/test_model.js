@@ -129,9 +129,11 @@ describe('test_models.js', function() {
         agent_state: 'error'});
       wordpress.get('units').add([wp0, wp1]);
 
-      assert.deepEqual(mysql.get('units').get_informative_states_for_service(mysql),
+      assert.deepEqual(mysql.get('units')
+                       .get_informative_states_for_service(mysql),
           [{'pending': 2}, {}]);
-      assert.deepEqual(wordpress.get('units').get_informative_states_for_service(wordpress),
+      assert.deepEqual(wordpress.get('units')
+                       .get_informative_states_for_service(wordpress),
           [{'pending': 1, 'error': 1}, {}]);
     });
 
@@ -140,8 +142,10 @@ describe('test_models.js', function() {
          var sl = new models.ServiceList();
          var mysql = new models.Service({id: 'mysql'});
          sl.add([mysql]);
-         var my0 = new models.ServiceUnit({ id: 'mysql/0', agent_state: 'pending'});
-         var my1 = new models.ServiceUnit({ id: 'mysql/1', agent_state: 'pending'});
+         var my0 = new models.ServiceUnit({
+           id: 'mysql/0', agent_state: 'pending'});
+         var my1 = new models.ServiceUnit({
+           id: 'mysql/1', agent_state: 'pending'});
          var sul = mysql.get('units');
 
          window._gaq.should.eql([]);
@@ -160,8 +164,10 @@ describe('test_models.js', function() {
 
     it('services have unit and relation modellists', function() {
       var service = new models.Service();
-      assert.equal(service.get('units') instanceof models.ServiceUnitList, true);
-      assert.equal(service.get('relations') instanceof models.RelationList, true);
+      assert.equal(service.get('units') instanceof
+                   models.ServiceUnitList, true);
+      assert.equal(service.get('relations') instanceof
+                   models.RelationList, true);
     });
 
     it('relation changes on service update aggregateRelations', function(done) {
@@ -197,7 +203,7 @@ describe('test_models.js', function() {
          service_unit.number.should.equal(5);
        });
 
-   it('must be able to resolve models by their name', function() {
+    it('must be able to resolve models by their name', function() {
       var db = new models.Database();
       var results = db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
       results[0].get('units').add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
@@ -356,38 +362,31 @@ describe('test_models.js', function() {
            endpoints:
            [['mediawiki', {name: 'cache', role: 'source'}],
             ['squid', {name: 'cache', role: 'front'}]],
-           'interface': 'cache'
-         }),
-                                      rel1 = new models.Relation(
+           'interface': 'cache' }),
+         rel1 = new models.Relation(
          { id: 'relation-1',
-           endpoints:
-                                            [['wordpress', {role: 'peer', name: 'loadbalancer'}]],
-           'interface': 'reversenginx'
-                                      }),
-                                      rel2 = new models.Relation(
+           endpoints: [['wordpress', {role: 'peer', name: 'loadbalancer'}]],
+           'interface': 'reversenginx' }),
+         rel2 = new models.Relation(
          { id: 'relation-2',
+           endpoints: [['mysql', {name: 'db', role: 'db'}],
+             ['mediawiki', {name: 'storage', role: 'app'}]],
+           'interface': 'db'}),
+         rel3 = new models.Relation(
+         { id: 'relation-3',
            endpoints:
-                                            [['mysql', {name: 'db', role: 'db'}],
-                                              ['mediawiki', {name: 'storage', role: 'app'}]],
-           'interface': 'db'
-                                      }),
-                                      rel3 = new models.Relation(
-                                        { id: 'relation-3',
-                                          endpoints:
-                                            [['mysql', {role: 'peer', name: 'loadbalancer'}]],
-                                          'interface': 'mysql-loadbalancer'
-                                      }),
-                                      rel4 = new models.Relation(
-                                        { id: 'relation-4',
-                                          endpoints:
-                                            [['something', {name: 'foo', role: 'bar'}],
-                                              ['mysql', {name: 'la', role: 'lee'}]],
-                                              'interface': 'thing'
-                                      });
+           [['mysql', {role: 'peer', name: 'loadbalancer'}]],
+           'interface': 'mysql-loadbalancer' }),
+         rel4 = new models.Relation(
+         { id: 'relation-4',
+           endpoints:
+           [['something', {name: 'foo', role: 'bar'}],
+            ['mysql', {name: 'la', role: 'lee'}]],
+                  'interface': 'thing' });
          db.relations.add([rel0, rel1, rel2, rel3, rel4]);
          db.relations.get_relations_for_service(service).map(
          function(r) { return r.get('id'); })
-                                        .should.eql(['relation-2', 'relation-3', 'relation-4']);
+         .should.eql(['relation-2', 'relation-3', 'relation-4']);
        });
 
     it('must be able to reference the Environment model', function() {

@@ -372,8 +372,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('fails if a service is in error without force.', function() {
       fakebackend.db.services.getById('wordpress').get('units')
       .each(function(unit) {
-        unit.agent_state = 'error';
-      });
+            unit.agent_state = 'error';
+          });
       fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', false,
           callback);
       assert.equal(result.error, 'Cannot set charm on a service with units ' +

@@ -93,7 +93,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             }
           });
         });
-     },
+      },
 
       select: {
         list: 'services',
@@ -169,19 +169,19 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               var db = context.state.db;
               var serviceName = this.service;
               var relations = db.relations.get_relations_for_service(
-                db.services.getById(serviceName));
-                if (relations.length > 0) {
-                  unit.agent_state = 'error';
-                  var relation = relations[
+                  db.services.getById(serviceName));
+              if (relations.length > 0) {
+                unit.agent_state = 'error';
+                var relation = relations[
                     Math.floor(Math.random() * relations.length)];
-                    var interfaceName;
-                    relation.get('endpoints').forEach(function(endpoint) {
-                      if (endpoint[0] !== serviceName) { return; }
-                      interfaceName = endpoint[1].name;
-                    });
-                    unit.agent_state_info = 'hook failed: ' +
-                      interfaceName + '-relation-changed';
-                }
+                var interfaceName;
+                relation.get('endpoints').forEach(function(endpoint) {
+                  if (endpoint[0] !== serviceName) { return; }
+                  interfaceName = endpoint[1].name;
+                });
+                unit.agent_state_info = 'hook failed: ' +
+                    interfaceName + '-relation-changed';
+              }
             }
             // Put in delta since there is no API for this.
             context.state.changes.units[unit.id] = [unit, true];

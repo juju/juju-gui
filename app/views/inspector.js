@@ -218,10 +218,10 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         service.get('units').add(
-          Y.Array.map(unit_names, function(unit_id) {
-          return {id: unit_id,
-            agent_state: 'pending'};
-        }));
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);
       }

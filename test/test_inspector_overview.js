@@ -530,11 +530,14 @@ describe('Inspector Overview', function() {
 
     var unitId = 'mediawiki/1';
 
-    var service = db.services.create({id: 'mediawiki', charm: 'cs:precise/mediawiki-7'});
-    service.get('units').create({id: unitId, charmUrl: 'cs:precise/mediawiki-7'});
+    var service = db.services.create({id: 'mediawiki',
+      charm: 'cs:precise/mediawiki-7'});
+    service.get('units').create({id: unitId,
+      charmUrl: 'cs:precise/mediawiki-7'});
 
     db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-8'}]
+      ['unit', 'change', {id: unitId,
+        charmUrl: 'cs:precise/mediawiki-8'}]
     ]}});
 
     assert.isTrue(service.get('charmChanged'));
