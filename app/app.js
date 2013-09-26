@@ -544,12 +544,6 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmPanel instance once the app is initialized.
-      this.charmPanel = views.CharmPanel.getInstance({
-        env: this.env,
-        app: this
-      });
-
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -1333,7 +1327,6 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'juju-charm-models',
-    'juju-charm-panel',
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
