@@ -382,11 +382,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('succeeds if a service is in error with force.', function() {
-      fakebackend.db.units.each(function(unit) {
-        unit.agent_state = 'error';
+      fakebackend.db.services.each(function(service) {
+        service.get('units').each(function(unit) {
+          unit.agent_state = 'error';
+        });
       });
       fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', true,
-          callback);
+                           callback);
       assert.isUndefined(result.error);
       assert.equal(service.get('charm'), 'cs:precise/mediawiki-8');
     });

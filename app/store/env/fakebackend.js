@@ -601,10 +601,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
     _getAvailableMachines: function() {
       var machines = [];
       var usedMachineIds = {};
-      this.db.units.each(function(unit) {
-        if (unit.machine) {
-          usedMachineIds[unit.machine] = true;
-        }
+      this.db.services.each(function(service) {
+        service.get('units').each(function(unit) {
+          if (unit.machine) {
+            usedMachineIds[unit.machine] = true;
+          }
+        });
       });
       this.db.machines.each(function(machine) {
         if (!usedMachineIds[machine.machine_id]) {

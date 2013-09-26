@@ -81,15 +81,20 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       @method unitAnnotations
        */
       unitAnnotations: function(context) {
-        context.state.db.units.each(function(unit) {
-          // Toggle landscape attributes as though they
-          var annotations = unit.annotations || {};
-          if (!annotations['landscape-computer']) {
-            annotations['landscape-computer'] = '+unit:' + unit.urlName;
-            context.state.updateAnnotations(unit.id, annotations);
+        context.state.services.each(function(service) {
+          if (service.get('pending')) {
+            return;
           }
+          service.get('units').each(function(unit) {
+            // Toggle landscape attributes as though they
+            var annotations = unit.annotations || {};
+            if (!annotations['landscape-computer']) {
+              annotations['landscape-computer'] = '+unit:' + unit.urlName;
+              context.state.updateAnnotations(unit.id, annotations);
+            }
+          });
         });
-      },
+     },
 
       select: {
         list: 'units',

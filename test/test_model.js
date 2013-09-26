@@ -183,7 +183,8 @@ describe('test_models.js', function() {
        function() {
          var service_unit = {id: 'mysql/0'};
          var db = new models.Database();
-         db.units.add(service_unit);
+         var service = db.services.add({id: 'mysql'});
+         service.get('units').add(service_unit);
          service_unit.service.should.equal('mysql');
        });
 
@@ -191,30 +192,12 @@ describe('test_models.js', function() {
        function() {
          var service_unit = {id: 'mysql/5'};
          var db = new models.Database();
-         db.units.add(service_unit);
+         var service = db.services.add({id: 'mysql'});
+         service.get('units').add(service_unit);
          service_unit.number.should.equal(5);
        });
 
-    it('must be able to resolve models by modelid', function() {
-      var db = new models.Database();
-
-      db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
-      db.units.add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
-
-      var model = db.services.item(0);
-      // single parameter calling
-      db.getModelById([model.name, model.get('id')])
-               .get('id').should.equal('wordpress');
-      // two parameter interface
-      db.getModelById(model.name, model.get('id'))
-               .get('id').should.equal('wordpress');
-
-      var unit = db.units.item(0);
-      db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
-      db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
-    });
-
-    it('must be able to resolve models by their name', function() {
+   it('must be able to resolve models by their name', function() {
       var db = new models.Database();
       var results = db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
       results[0].get('units').add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
@@ -255,15 +238,16 @@ describe('test_models.js', function() {
     it('onDelta should handle remove changes correctly',
        function() {
          var db = new models.Database();
+         var mysql = db.services.add({id: 'mysql'});
          var my0 = new models.ServiceUnit({id: 'mysql/0',
            agent_state: 'pending'});
          var my1 = new models.ServiceUnit({id: 'mysql/1',
            agent_state: 'pending'});
-         db.units.add([my0, my1]);
+         mysql.get('units').add([my0, my1]);
          db.onDelta({data: {result: [
            ['unit', 'remove', 'mysql/1']
          ]}});
-         var names = db.units.get('id');
+         var names = mysql.get('units').get('id');
          names.length.should.equal(1);
          names[0].should.equal('mysql/0');
        });
@@ -284,8 +268,9 @@ describe('test_models.js', function() {
        // Units are special because they use the LazyModelList.
        function() {
          var db = new models.Database();
+         var mysql = db.services.add({id: 'mysql'});
          var my0 = {id: 'mysql/0', agent_state: 'pending'};
-         db.units.add([my0]);
+         mysql.get('units').add([my0]);
          db.onDelta({data: {result: [
            ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
          ]}});

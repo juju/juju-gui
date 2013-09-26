@@ -217,11 +217,11 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        db.units.add(
-            Y.Array.map(unit_names, function(unit_id) {
-              return {id: unit_id,
-                agent_state: 'pending'};
-            }));
+        service.get('units').add(
+          Y.Array.map(unit_names, function(unit_id) {
+          return {id: unit_id,
+            agent_state: 'pending'};
+        }));
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);
       }
@@ -258,7 +258,9 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         Y.Array.each(unit_names, function(unit_name) {
-          db.units.remove(db.units.getById(unit_name));
+          var service = db.services.getById(unit_name.split('/')[0]);
+          var units = service.get('units');
+          units.remove(units.getById(unit_name));
         });
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);
@@ -851,7 +853,9 @@ YUI.add('juju-view-inspector', function(Y) {
     showUnitDetails: function(ev) {
       ev.halt();
       var db = this.viewletManager.get('db');
-      var unit = db.units.getById(ev.currentTarget.getData('unit'));
+      var unitName = ev.currentTarget.getData('unit');
+      var service = db.services.getById(unitName.split('/')[0]);
+      var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
     },
 

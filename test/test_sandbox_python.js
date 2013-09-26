@@ -509,7 +509,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // We want to verify that the GUI database is equivalent to the state
         // database.
         assert.equal(db.services.size(), 1);
-        assert.equal(db.units.size(), 2);
         assert.equal(db.machines.size(), 2);
         var stateService = state.db.services.item(0);
         var guiService = db.services.item(0);
@@ -521,14 +520,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   guiService.get(attrName), stateService.get(attrName));
             }
         );
-        state.db.units.each(function(stateUnit) {
-          var guiUnit = db.units.getById(stateUnit.id);
-          Y.each(
+        state.db.services.each(function(service) {
+          service.get('units').each(function(stateUnit) {
+            var guiUnit = db.resolveModelByName(stateUnit.id);
+            Y.each(
               ['agent_state', 'machine', 'number', 'service'],
               function(attrName) {
                 assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
               }
-          );
+            );
+          });
         });
         state.db.machines.each(function(stateMachine) {
           var guiMachine = db.machines.getById(stateMachine.id);
