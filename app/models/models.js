@@ -78,6 +78,9 @@ YUI.add('juju-models', function(Y) {
     else if (action === 'remove') {
       if (exists) {
         list.remove(instance);
+        if (instance.name === 'serviceList') {
+          instance.destroy();
+        }
       }
     } else {
       console.warn('Unknown change kind in _process_delta:', action);

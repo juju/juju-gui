@@ -431,6 +431,7 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._destroyServiceCallback, this, model, db));
       } else if (model.get('pending')) {
         db.services.remove(model);
+        model.destroy();
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }
@@ -462,6 +463,7 @@ YUI.add('juju-view-inspector', function(Y) {
         // service from the database.  (Why wouldn't we get an update from the
         // server side that would do this for us?).
         db.services.remove(service);
+        service.destroy();
         db.relations.remove(db.relations.filter(
             function(r) {
               return Y.Array.some(r.get('endpoints'), function(ep) {

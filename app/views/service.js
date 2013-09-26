@@ -87,6 +87,7 @@ YUI.add('juju-view-service', function(Y) {
         );
       } else {
         db.services.remove(service);
+        service.destroy();
         db.relations.remove(
             db.relations.filter(
             function(r) {
