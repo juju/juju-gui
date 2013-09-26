@@ -192,7 +192,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
                 '.cancel-destroy': {click: '_onCancelDestroy'},
-                '.rerender-config': {click: 'rerender'},
+                '.rerender-config': {click: 'rerenderConfig'},
                 // Overview viewlet.
                 '.num-units-control': {
                   keydown: 'modifyUnits'
