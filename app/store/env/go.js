@@ -258,6 +258,7 @@ YUI.add('juju-env-go', function(Y) {
         }
         return cmp[a[0]] - cmp[b[0]];
       });
+      console.log('delta', deltas);
       this.fire('delta', {data: {result: deltas}});
     },
 

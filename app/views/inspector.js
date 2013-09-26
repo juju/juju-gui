@@ -186,13 +186,13 @@ YUI.add('juju-view-inspector', function(Y) {
         delta = Math.abs(delta);
         var db;
         db = this.viewletManager.get('db');
-        var units = db.units.get_units_for_service(service),
+        var units = service.get('units'),
             unit_ids_to_remove = [];
 
-        for (var i = units.length - 1;
+        for (var i = units.size() - 1;
             unit_ids_to_remove.length < delta;
             i -= 1) {
-          unit_ids_to_remove.push(units[i].id);
+          unit_ids_to_remove.push(units.item(i).id);
         }
         env.remove_units(
             unit_ids_to_remove,

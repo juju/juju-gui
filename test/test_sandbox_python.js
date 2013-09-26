@@ -364,7 +364,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             tuning: 'single',
             'wp-content': ''
           });
-          var units = state.db.units.get_units_for_service(service);
+          var units = service.get('units').toArray();
           assert.lengthOf(units, 2);
           done();
         };
@@ -599,7 +599,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
-            units = state.db.units.get_units_for_service(service),
+            units = service.get('units'),
             data = Y.JSON.parse(received.data),
             mock = {
               num_units: 2,
@@ -608,7 +608,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               result: ['wordpress/1', 'wordpress/2']
             };
         // Do we have enough total units?
-        assert.lengthOf(units, 3);
+        assert.lengthOf(units.toArray(), 3);
         // Does the response object contain the proper data
         assert.deepEqual(data, mock);
         // Error is undefined
@@ -647,8 +647,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units (integration)', function(done) {
       function testForAddedUnits(data) {
         var service = state.db.services.getById('kumquat'),
-            units = state.db.units.get_units_for_service(service);
-        assert.lengthOf(units, 3);
+            units = service.get('units');
+        assert.lengthOf(units.toArray(), 3);
         done();
       }
       generateIntegrationServices(testForAddedUnits);
@@ -1305,7 +1305,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             request_id: 99
           };
           client.onmessage = function(received) {
-            var unit = state.db.units.getById('wordpress/0');
+            var unit = state.db.services.getById('wordpress')
+                .get('units').getById('wordpress/0');
             var annotations = unit.annotations;
             assert.equal(annotations.foo, 'bar');
             // Error should be undefined.

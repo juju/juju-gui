@@ -262,7 +262,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return callback({error: 'Service "' + serviceName + '" not found.'});
       }
-      var serviceInError = this.db.units.get_units_for_service(service)
+      var serviceInError = service.get('units')
         .some(function(unit) {
             return (/error/).test(unit.agent_state);
           });
@@ -465,12 +465,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var relations = this.db.relations.get_relations_for_service(service);
       Y.Array.each(relations, function(rel) {
         this.db.relations.remove(rel);
+        this.changes.relations[rel.get('relation_id')] = [rel, false];
       }, this);
       // Remove units for this service.
-      var unitNames = Y.Array.map(this.db.units.get_units_for_service(service),
-          function(unit) {
-            return unit.id;
-          });
+      var unitNames = service.get('units').get('id');
       var result = this.removeUnits(unitNames);
       if (result.error.length > 0) {
         return {error: 'Error removing units: ' + result.error};
@@ -479,6 +477,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // And finally destroy and remove the service.
       this.db.services.remove(service);
+      this.changes.services[serviceName] = [service, false];
       service.destroy();
       return {result: serviceName};
     },
@@ -570,13 +569,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
         service.unitSequence = 0;
       }
       var unit, machine;
-      var units = [];
       var machines = this._getUnitMachines(numUnits);
+      var unitList = service.get('units');
+      var units = [];
 
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence;
         machine = machines[i];
-        unit = this.db.units.add({
+        unit = unitList.add({
           'id': serviceName + '/' + unitId,
           'machine': machine.machine_id,
           // The models use underlines, not hyphens (see
@@ -657,21 +657,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
       // the corresponding machines.
+      if (typeof unitNames === 'string') {
+        unitNames = [unitNames];
+      }
       Y.Array.each(unitNames, function(unitName) {
-        removedUnit = false;
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
           error.push(unitName + ' is a subordinate, cannot remove.');
         } else {
-          removedUnit = this.db.units.some(function(unit, index) {
-            if (unit.displayName === unitName) {
-              this.db.units.remove(index);
-              this.changes.units[unit.id] = [unit, false];
-              return true;
+          // For now we also need to clean up the services unit list but the
+          // above should go away soon when below becomes the default.
+          if (service) {
+            var units = service.get('units');
+            var unit = units.getById(unitName);
+            if (unit) {
+              units.remove(unit);
+              this.changes.units[unitName] = [unit, false];
+              return;
             }
-          }, this);
-        }
-        if (!removedUnit) {
+          }
           warning.push(unitName + ' does not exist, cannot remove.');
         }
       }, this);
@@ -1214,13 +1218,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var unit = this.db.units.getById(unitName);
-      if (!unit) {
+      var serviceName = unitName.split('/', 1)[0];
+      var service = this.db.services.getById(serviceName);
+      var unit;
+      if (service) {
+        unit = service.get('units').getById(unitName);
+      }
+      if (!service || !unit) {
         return {error: 'Unit "' + unitName + '" does not exist.'};
       }
 
       if (relationName) {
-        var service = this.db.services.getById(unit.service);
         var relation = this.db.relations.get_relations_for_service(
             service).filter(function(rel) {
           return (rel.endpoints[0].name === relationName ||
@@ -1304,8 +1312,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
             delete serviceData[key];
           }
           // Add in initial unit count.
-          serviceData.unit_count = self.db.units
-          .get_units_for_service(s).length || 1;
+          var units = s.get('units');
+          serviceData.unit_count = units.size() || 1;
         });
         result.services.push(serviceData);
       });
@@ -1482,7 +1490,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Y.each(injestedData.services, function(serviceData) {
         // Map the argument name from the deployer format
         // name for unit count.
-        serviceData.unitCount = serviceData.num_units;
+        if (!serviceData.unitCount) {
+          serviceData.unitCount = serviceData.num_units || 1;
+        }
         servicePromises.push(
             self.promiseDeploy(serviceData.charm, serviceData));
       });

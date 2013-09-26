@@ -49,7 +49,8 @@ describe('Landscape integration', function() {
       db.services.add({id: 'mysql',
         annotations: {'landscape-computers': '+service:mysql'}
       });
-      db.units.add([{id: 'mysql/0',
+      db.services.getById('mysql').get('units').add([{
+        id: 'mysql/0',
         annotations: {'landscape-computer': '+unit:mysql-0'}
       }, {
         id: 'mysql/1',
@@ -80,7 +81,7 @@ describe('Landscape integration', function() {
     url.should.equal(
         'http://landscape.example.com/computers/criteria/environment:test+service:mysql/');
 
-    url = landscape.getLandscapeURL(db.units.item(0));
+    url = landscape.getLandscapeURL(db.services.getById('mysql').get('units').item(0));
     url.should.equal(
         'http://landscape.example.com/computers/criteria/environment:test+unit:mysql-0/');
   });
@@ -93,8 +94,9 @@ describe('Landscape integration', function() {
 
     landscape.update();
 
-    unit1 = db.units.item(0);
-    unit2 = db.units.item(1);
+    var units = mysql.get('units');
+    unit1 = units.item(0);
+    unit2 = units.item(1);
 
     // The delta stream will set this if the unit has annotations
     // but we don't make an empty by default as we need units to
@@ -129,7 +131,7 @@ describe('Landscape integration', function() {
     // Add a second service with a unit in a flagged state
     // and make sure the environment reflects this.
     var wordpress = db.services.add({id: 'wordpress'});
-    db.units.add({
+    wordpress.get('units').add({
       id: 'wordpress/0',
       annotations: {'landscape-security-upgrades': true}
     });
@@ -147,7 +149,7 @@ describe('Landscape integration', function() {
   it('should build the bottom-bar properly', function() {
     var env = db.environment;
     var mysql = db.services.getById('mysql');
-    var unit = db.units.item(0);
+    var unit = mysql.get('units').item(0);
     var partial = Y.Handlebars.partials['landscape-controls'];
     Y.one('body').append('<div id="test-node"></div>');
     var node = Y.one('#test-node');

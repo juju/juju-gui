@@ -119,8 +119,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       delete attrs.clientId;
       // when doing a deep equals on an object which contains a LazyModelList
       // call toArray() on it first else it will fail and it won't tell you why.
-      attrs.relations = attrs.relations.toArray();
-      attrs.units = attrs.units.toArray();
+      // Verify units and relations outside of the deepEquals
+      attrs.relations = [];
+      attrs.units = [];
       // deepEquals compares order, even though that's not guaranteed by any
       // JS engine - if there are failures here check the order first.
       // Be aware of issues with mocha's diff reporting, see issues:
@@ -161,7 +162,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       assert.deepEqual(attrs, expectedAttrs);
-      var units = fakebackend.db.units.get_units_for_service(service);
+      var units = service.get('units').toArray();
       assert.lengthOf(units, 1);
       assert.lengthOf(result.units, 1);
       assert.strictEqual(units[0], result.units[0]);
@@ -266,7 +267,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('deploys multiple units.', function() {
       fakebackend.deploy('cs:precise/wordpress-15', callback, {unitCount: 3});
-      var units = fakebackend.db.units.get_units_for_service(result.service);
+      var units = result.service.get('units').toArray();
       assert.lengthOf(units, 3);
       assert.lengthOf(result.units, 3);
       assert.deepEqual(units, result.units);
@@ -369,7 +370,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('fails if a service is in error without force.', function() {
-      fakebackend.db.units.each(function(unit) {
+      fakebackend.db.services.getById('wordpress').get('units')
+      .each(function(unit) {
         unit.agent_state = 'error';
       });
       fakebackend.setCharm('wordpress', 'cs:precise/mediawiki-8', false,
@@ -540,7 +542,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(fakebackend.db.relations.size(), 1,
                          'failed to import relations');
             // Verify units created.
-            assert.equal(fakebackend.db.units.size(), 3,
+            assert.equal(fakebackend.db.services.getById('wordpress')
+                         .get('units').size(), 2,
                          'Unit count wrong');
 
             // Verify config.
@@ -699,14 +702,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(result.error, 'Please log in.');
       });
 
-      it('reports invalid untis', function() {
+      it('reports invalid units', function() {
         var result = fakebackend.resolved('wordpress/0');
         assert.equal(result.error, 'Unit "wordpress/0" does not exist.');
       });
 
       it('reports invalid relations', function(done) {
-        fakebackend.deploy('cs:precise/wordpress-15', function() {
-          var result = fakebackend.resolved('wordpress/0', 'db');
+        fakebackend.deploy('cs:precise/wordpress-15', function(result) {
+          result = fakebackend.resolved('wordpress/0', 'db');
           assert.equal(result.error, 'Relation db not found for wordpress/0');
           done();
         });
@@ -871,12 +874,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('removes units when destroying a service', function(done) {
         fakebackend.deploy('cs:precise/wordpress-15', function(data) {
           var service = fakebackend.db.services.getById('wordpress');
-          var units = fakebackend.db.units.get_units_for_service(service);
+          var units = service.get('units').toArray();
           assert.lengthOf(units, 1);
           var result = fakebackend.destroyService('wordpress');
           assert.equal(result.result, 'wordpress');
           assert.isUndefined(result.error);
-          units = fakebackend.db.units.get_units_for_service(service);
+          units = service.get('units').toArray();
           assert.lengthOf(units, 0);
           done();
         });
@@ -1055,16 +1058,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
-          fakebackend.db.units.get_units_for_service(deployResult.service), 1);
+          deployResult.service.get('units').toArray(), 1);
       var result = fakebackend.addUnit('wordpress');
       assert.lengthOf(result.units, 1);
       assert.lengthOf(
-          fakebackend.db.units.get_units_for_service(deployResult.service), 2);
+          deployResult.service.get('units').toArray(), 2);
       // Units are simple objects, not models.
       assert.equal(result.units[0].id, 'wordpress/1');
       assert.equal(result.units[0].agent_state, 'started');
-      assert.deepEqual(
-          result.units[0], fakebackend.db.units.getById('wordpress/1'));
       // Creating units also created/assigned associated machines.  Like units,
       // these are simple objects, not models.
       assert.lengthOf(result.machines, 1);
@@ -1081,11 +1082,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
-          fakebackend.db.units.get_units_for_service(deployResult.service), 1);
+          deployResult.service.get('units').toArray(), 1);
       var result = fakebackend.addUnit('wordpress', 5);
       assert.lengthOf(result.units, 5);
-      assert.lengthOf(
-          fakebackend.db.units.get_units_for_service(deployResult.service), 6);
+      assert.lengthOf(deployResult.service.get('units').toArray(), 6);
       assert.equal(result.units[0].id, 'wordpress/1');
       assert.equal(result.units[1].id, 'wordpress/2');
       assert.equal(result.units[2].id, 'wordpress/3');

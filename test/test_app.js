@@ -168,7 +168,7 @@ function injectData(app, data) {
       // Take handles to database objects and ensure we can route to the view
       // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
-          wp0 = app.db.units.get_units_for_service(wordpress)[0];
+          wp0 = wordpress.get('units').item(0);
 
       // 'service/wordpress/' is the primary route,
       // so other URLs are not returned.

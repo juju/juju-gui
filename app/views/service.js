@@ -709,7 +709,7 @@ YUI.add('juju-view-service', function(Y) {
       var db = this.get('db');
       var service = this.get('model');
       var filter_state = this.get('querystring').state;
-      var units = db.units.get_units_for_service(service);
+      var units = service.get('units');
       var charm_id = service.get('charm');
       var charm = db.charms.getById(charm_id);
       var charm_attrs = charm ? charm.getAttrs() : undefined;

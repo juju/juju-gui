@@ -556,20 +556,6 @@ YUI.add('juju-models', function(Y) {
       return result;
     },
 
-    get_units_for_service: function(service, asList) {
-      var options = {},
-          sid = service.get('id');
-
-      if (asList !== undefined) {
-        options.asList = true;
-      }
-
-      var units = this.filter(options, function(m) {
-        return m.service === sid;
-      });
-      return units;
-    },
-
     /*
      *  Return information about the state of the set of units for a
      *  given service in the form of a map of agent states:
@@ -578,9 +564,9 @@ YUI.add('juju-models', function(Y) {
     get_informative_states_for_service: function(service) {
       var aggregate_map = {},
           relationError = {},
-          units_for_service = this.get_units_for_service(service);
+          units_for_service = service.get('units');
 
-      units_for_service.forEach(function(unit) {
+      units_for_service.each(function(unit) {
         var state = utils.simplifyState(unit);
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
@@ -1066,7 +1052,10 @@ YUI.add('juju-models', function(Y) {
       }
 
       if (/^\S+\/\d+$/.test(entityName)) {
-        return this.units.getById(entityName);
+        var service = this.services.getById(entityName.split('/')[0]);
+        if (service) {
+          return service.get('units').getById(entityName);
+        }
       }
 
       return this.services.getById(entityName);

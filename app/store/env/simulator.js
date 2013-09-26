@@ -133,7 +133,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           if (RAND(0.5)) {
             context.state.addUnit(service.get('id'), 1);
           } else {
-            var units = context.state.db.units.get_units_for_service(service);
+            var units = service.get('units');
             if (units.length > 1) {
               var unit = units[units.length - 1];
               context.state.removeUnits([unit.id]);
