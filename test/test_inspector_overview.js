@@ -216,9 +216,6 @@ describe('Inspector Overview', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
 
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
-
     var units = new Y.LazyModelList();
 
     var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
@@ -247,9 +244,6 @@ describe('Inspector Overview', function() {
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
-
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
 
     window.flags.upgradeCharm = true;
 
@@ -285,9 +279,6 @@ describe('Inspector Overview', function() {
   it('can generate service update statuses (no update)', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
-
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
 
     // Clear the service upgrade information.
     service.set('upgrade_available', false);
@@ -326,9 +317,6 @@ describe('Inspector Overview', function() {
   it('can generate service update statuses (no downgrades)', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
-
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
 
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
@@ -400,9 +388,6 @@ describe('Inspector Overview', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = utils.makeContainer();
-
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
 
     var units = new Y.LazyModelList();
 
@@ -498,9 +483,6 @@ describe('Inspector Overview', function() {
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = utils.makeContainer();
 
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
-
     window.flags.upgradeCharm = true;
 
     var units = new Y.LazyModelList();
@@ -593,7 +575,6 @@ describe('Inspector Overview', function() {
     var unitId = 'mediawiki/1';
 
     var service = db.services.getById('mediawiki');
-
     assert.isFalse(service.get('charmChanged'));
     assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
 

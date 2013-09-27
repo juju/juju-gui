@@ -45,6 +45,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('replaces the attribute names when required', function() {
+        var django = db.services.add({id: 'django'});
         var change = {
           id: 'django/1',
           private_address: '10.0.0.1',
@@ -54,7 +55,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         pyDelta(db, 'add', change, 'unit');
         // Retrieve the unit from the database.
-        var unit = db.units.getById('django/1');
+        var unit = django.get('units').getById('django/1');
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.strictEqual('example.com', unit.public_address);
         assert.isTrue(unit.is_subordinate);
@@ -73,20 +74,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         pyDelta(db, 'add', {id: 'django/1'}, 'unit');
         pyDelta(db, 'add', {id: '1'}, 'machine');
         assert.strictEqual(1, db.services.size());
-        assert.strictEqual(1, db.units.size());
         assert.strictEqual(1, db.machines.size());
-        assert.isNotNull(db.services.getById('django'));
-        assert.isNotNull(db.units.getById('django/1'));
+        var django = db.services.getById('django');
+        assert.isNotNull(django);
+        assert.isNotNull(django.get('units').getById('django/1'));
         assert.isNotNull(db.machines.getById('1'));
       });
 
       it('automatically handles removals of model lists', function() {
-        db.services.add({
+        var wordpress = db.services.add({
           id: 'wordpress',
           charm: 'cs:quantal/wordpress-11',
           exposed: true
         });
-        db.units.add({
+        wordpress.get('units').add({
           id: 'wordpress/1',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -95,7 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         pyDelta(db, 'remove', 'wordpress/1', 'unit');
         pyDelta(db, 'remove', 'wordpress', 'service');
         assert.strictEqual(0, db.services.size());
-        assert.strictEqual(0, db.units.size());
+        assert.strictEqual(0, wordpress.get('units').size());
       });
 
     });
@@ -109,6 +110,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('creates a unit in the database', function() {
+        var django = db.services.add({id: 'django'});
         var change = {
           Name: 'django/1',
           Service: 'django',
@@ -120,9 +122,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
-        assert.strictEqual(1, db.units.size());
         // Retrieve the unit from the database.
-        var unit = db.units.getById('django/1');
+        var unit = django.get('units').getById('django/1');
         assert.strictEqual('django', unit.service);
         assert.strictEqual('1', unit.machine);
         assert.strictEqual('pending', unit.agent_state);
@@ -133,7 +134,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('updates a unit in the database', function() {
-        db.units.add({
+        var django = db.services.add({id: 'django'});
+        django.get('units').add({
           id: 'django/2',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -146,9 +148,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           PrivateAddress: '192.168.0.1'
         };
         unitInfo(db, 'change', change);
-        assert.strictEqual(1, db.units.size());
         // Retrieve the unit from the database.
-        var unit = db.units.getById('django/2');
+        var unit = django.get('units').getById('django/2');
         assert.strictEqual('started', unit.agent_state);
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('192.168.0.1', unit.private_address);
@@ -156,6 +157,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('creates or updates the corresponding machine', function() {
         var machine;
+        db.services.add({id: 'django'});
         var change = {
           Name: 'django/2',
           MachineId: '1',
@@ -177,7 +179,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('removes a unit from the database', function() {
-        db.units.add({
+        var django = db.services.add({id: 'django'});
+        var units = django.get('units');
+        units.add({
           id: 'django/2',
           agent_state: 'pending',
           public_address: 'example.com',
@@ -190,7 +194,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           PrivateAddress: '192.168.0.1'
         };
         unitInfo(db, 'remove', change);
-        assert.strictEqual(0, db.units.size());
+        assert.strictEqual(0, units.size());
       });
 
     });
@@ -270,24 +274,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
            assert.deepEqual({}, service.get('constraints'));
          });
 
-      it('if configs are not in the change stream they are {}',
-         function() {
-           db.services.add({
-             id: 'wordpress',
-             charm: 'cs:quantal/wordpress-11',
-             exposed: true
-           });
-           var change = {
-             Name: 'wordpress',
-             CharmURL: 'cs:quantal/wordpress-11',
-             Exposed: false
-           };
-           serviceInfo(db, 'change', change);
-           assert.strictEqual(1, db.services.size());
-           // Retrieve the service from the database.
-           var service = db.services.getById('wordpress');
-           assert.deepEqual({}, service.get('config'));
-         });
+      it('if configs are not in the change stream they are {}', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.deepEqual({}, service.get('config'));
+      });
 
       it('handles constraint changes', function() {
         db.services.add({
@@ -520,7 +523,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('stores annotations on a unit', function() {
-        db.units.add({id: 'django/2'});
+        var django = db.services.add({id: 'django'});
+        var units = django.get('units');
+        units.add({id: 'django/2'});
         var annotations = {'foo': '42', 'bar': '47'};
         var change = {
           Tag: 'unit-django-2',
@@ -528,7 +533,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         annotationInfo(db, 'add', change);
         // Retrieve the annotations from the database.
-        var unit = db.units.getById('django/2');
+        var unit = units.getById('django/2');
         assert.deepEqual(annotations, unit.annotations);
       });
 
@@ -584,16 +589,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('does not override the unit relation_errors attr', function() {
+        var django = db.services.add({id: 'django'});
+        var units = django.get('units');
         var relation_errors = {'cache': ['memcached']},
             annotations = {'foo': '42', 'bar': '47'};
-        db.units.add({id: 'django/2', relation_errors: relation_errors});
+        units.add({id: 'django/2', relation_errors: relation_errors});
         var change = {
           Tag: 'unit-django-2',
           Annotations: annotations
         };
         annotationInfo(db, 'add', change);
         // Retrieve the annotations from the database.
-        var unit = db.units.getById('django/2');
+        var unit = units.getById('django/2');
         assert.deepEqual(relation_errors, unit.relation_errors);
       });
 

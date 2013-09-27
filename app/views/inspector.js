@@ -184,15 +184,13 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var db;
-        db = this.viewletManager.get('db');
-        var units = db.units.get_units_for_service(service),
+        var units = service.get('units'),
             unit_ids_to_remove = [];
 
-        for (var i = units.length - 1;
+        for (var i = units.size() - 1;
             unit_ids_to_remove.length < delta;
             i -= 1) {
-          unit_ids_to_remove.push(units[i].id);
+          unit_ids_to_remove.push(units.item(i).id);
         }
         env.remove_units(
             unit_ids_to_remove,
@@ -217,7 +215,7 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        db.units.add(
+        service.get('units').add(
             Y.Array.map(unit_names, function(unit_id) {
               return {id: unit_id,
                 agent_state: 'pending'};
@@ -258,7 +256,9 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         Y.Array.each(unit_names, function(unit_name) {
-          db.units.remove(db.units.getById(unit_name));
+          var service = db.services.getById(unit_name.split('/')[0]);
+          var units = service.get('units');
+          units.remove(units.getById(unit_name));
         });
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);
@@ -857,7 +857,9 @@ YUI.add('juju-view-inspector', function(Y) {
     showUnitDetails: function(ev) {
       ev.halt();
       var db = this.viewletManager.get('db');
-      var unit = db.units.getById(ev.currentTarget.getData('unit'));
+      var unitName = ev.currentTarget.getData('unit');
+      var service = db.services.getById(unitName.split('/')[0]);
+      var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
     },
 

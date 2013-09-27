@@ -1170,7 +1170,7 @@ describe('utilities', function() {
           id: 'django',
           annotations: {'landscape-computers': '+service:django'}
         });
-        unit = db.units.add({
+        unit = service.get('units').add({
           id: 'django/42',
           annotations: {'landscape-computer': '+unit:django-42'}
         });

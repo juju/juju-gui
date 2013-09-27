@@ -132,31 +132,4 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 })();
 
-(function() {
 
-  describe('Template: service.handlebars', function() {
-    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-    var Y, conn, env, template;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(requires, function(Y) {
-        var templates = Y.namespace('juju.views').Templates;
-        template = templates.service;
-        done();
-      });
-    });
-
-    it('does not show the destroy or expose UI for Juju GUI', function() {
-      var html = template({serviceIsJujuGUI: true, units: []});
-      assert.notMatch(html, /Destroy/);
-      assert.notMatch(html, /Expose/);
-    });
-
-    it('shows the destroy or expose UI for non-Juju-GUI services', function() {
-      var html = template({serviceIsJujuGUI: false, units: []});
-      assert.match(html, /Destroy/);
-      assert.match(html, /Expose/);
-    });
-
-  });
-})();

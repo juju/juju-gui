@@ -106,9 +106,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // added units.
       var db = state.db,
           service = db.services.getById('wordpress'),
-          units = db.units.get_units_for_service(service);
-      units = state.db.units.get_units_for_service(service);
-      assert.equal(units.length, 12);
+          units = service.get('units');
+      assert.equal(units.size(), 12);
     });
 
     agentShould('honor threshold 0.0', function() {

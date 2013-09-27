@@ -265,7 +265,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           tuning: 'single',
           'wp-content': ''
         });
-        var units = state.db.units.get_units_for_service(service);
+        var units = service.get('units').toArray();
         assert.lengthOf(units, 2);
         done();
       };
@@ -381,7 +381,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Type: 'Client',
           Request: 'DestroyServiceUnits',
           Params: {
-            ServiceName: 'wordpress/0'
+            UnitNames: 'wordpress/0'
           },
           RequestId: 42
         };
@@ -609,7 +609,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can resolve a unit', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
-        state.db.units.getById('wordpress/0').agent_state = 'error';
+        state.db.services.getById('wordpress')
+          .get('units').getById('wordpress/0')
+          .agent_state = 'error';
         var data = {
           Type: 'Client',
           Request: 'Resolved',
@@ -636,7 +638,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can resolve a unit (environment integration)', function(done) {
       env.connect();
       state.deploy('cs:precise/wordpress-15', function() {
-        state.db.units.getById('wordpress/0').agent_state = 'error';
+        state.db.services.getById('wordpress')
+          .get('units').getById('wordpress/0')
+          .agent_state = 'error';
         var callback = function(result) {
           // See note above on resolving in a fakebackend.
           assert.isUndefined(result.err);
@@ -796,7 +800,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
-            units = state.db.units.get_units_for_service(service),
+            units = service.get('units').toArray(),
             data = Y.JSON.parse(received.data),
             mock = {
               Response: {
@@ -846,7 +850,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units (integration)', function(done) {
       function testForAddedUnits(data) {
         var service = state.db.services.getById('kumquat'),
-            units = state.db.units.get_units_for_service(service);
+            units = service.get('units').toArray();
         assert.lengthOf(units, 3);
         done();
       }
