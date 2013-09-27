@@ -3,7 +3,7 @@
 set -m
 
 fn=`tempfile`
-node ./test-server.js $1 > $fn &
+(node ./test-server.js $1 | tee $fn )  &
 sleep 2
 if [ -n "$2" ]; then
     xdg-open `cat $fn`

@@ -262,11 +262,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return callback({error: 'Service "' + serviceName + '" not found.'});
       }
-      var serviceInError = service.get('units')
+      var unitsInError = service.get('units')
         .some(function(unit) {
             return (/error/).test(unit.agent_state);
           });
-      if (serviceInError && !force) {
+      if (unitsInError && !force) {
         return callback({error: 'Cannot set charm on a service with units in ' +
               'error without the force flag.'});
       }
@@ -468,6 +468,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         this.changes.relations[rel.get('relation_id')] = [rel, false];
       }, this);
       // Remove units for this service.
+      // get() on modelList returns the array of values for all children by
+      // default.
       var unitNames = service.get('units').get('id');
       var result = this.removeUnits(unitNames);
       if (result.error.length > 0) {
@@ -1286,8 +1288,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * @return {String} JSON description of env data.
      */
     exportEnvironment: function() {
-      var self = this,
-          serviceList = this.db.services,
+      var serviceList = this.db.services,
           relationList = this.db.relations,
           result = {meta: {
             exportFormat: 1.0

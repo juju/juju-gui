@@ -1289,32 +1289,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '/notifications/',
             callbacks: 'show_notifications_overview',
             namespace: 'gui'},
-          // Services.
-          { path: '/service/:id/config/',
-            callbacks: 'show_service_config',
-            intent: 'config',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/constraints/',
-            callbacks: 'show_service_constraints',
-            intent: 'constraints',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/relations/',
-            callbacks: 'show_service_relations',
-            intent: 'relations',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/',
-            callbacks: 'show_service',
-            model: 'service',
-            namespace: 'gui'},
-          // Units.
-          { path: '/unit/:id/',
-            callbacks: 'show_unit',
-            reverse_map: {id: 'urlName'},
-            model: 'serviceUnit',
-            namespace: 'gui'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]

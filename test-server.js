@@ -45,5 +45,6 @@ app.get('/juju-ui/:file', function(req, res) {
 });
 
 var server = http.createServer(app);
+// Bind 0 requests a random port which we read back.
 server.listen(0);
 console.log('http://0.0.0.0:' + server.address().port + '/test/index.html');
