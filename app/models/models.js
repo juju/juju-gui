@@ -316,7 +316,7 @@ YUI.add('juju-models', function(Y) {
       unit_count: {},
 
       /**
-        The services current units. This is kept in sync with the db.units
+        The services current units.
         modellist
 
         @attribute units
@@ -506,7 +506,7 @@ YUI.add('juju-models', function(Y) {
       var oldModelCharm,
           flags = window.flags;
       if (flags.upgradeCharm && action === 'change' && data.charmUrl && db) {
-        var oldModel = db.units.getById(data.id);
+        var oldModel = db.resolveModelByName(data.id);
         if (oldModel) {
           oldModelCharm = oldModel.charmUrl;
         }
@@ -556,20 +556,6 @@ YUI.add('juju-models', function(Y) {
       return result;
     },
 
-    get_units_for_service: function(service, asList) {
-      var options = {},
-          sid = service.get('id');
-
-      if (asList !== undefined) {
-        options.asList = true;
-      }
-
-      var units = this.filter(options, function(m) {
-        return m.service === sid;
-      });
-      return units;
-    },
-
     /*
      *  Return information about the state of the set of units for a
      *  given service in the form of a map of agent states:
@@ -578,9 +564,9 @@ YUI.add('juju-models', function(Y) {
     get_informative_states_for_service: function(service) {
       var aggregate_map = {},
           relationError = {},
-          units_for_service = this.get_units_for_service(service);
+          units_for_service = service.get('units');
 
-      units_for_service.forEach(function(unit) {
+      units_for_service.each(function(unit) {
         var state = utils.simplifyState(unit);
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
@@ -981,16 +967,6 @@ YUI.add('juju-models', function(Y) {
       this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
-
-      // These two are dangerous.. we very well may not have capacity
-      // to store a 1-1 representation of units and machines in js.
-      // At least we should never assume the collection is complete, and
-      // have usage of some ephemeral slice/cursor of the collection.
-      // Indexed db might be interesting to explore here, with object delta
-      // and bulk transfer feeding directly into indexedb.
-      // Needs some experimentation with a large data set.  For now, we are
-      // simply using LazyModelList.
-      this.units = new ServiceUnitList();
       this.machines = new MachineList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
@@ -1014,32 +990,12 @@ YUI.add('juju-models', function(Y) {
      */
     destructor: function() {
       [this.services, this.relations,
-        this.machines, this.units,
+        this.machines,
         this.charms, this.environment,
         this.notifications].forEach(function(ml) {
         ml.detachAll();
         ml.destroy();
       });
-    },
-
-    /*
-     * Model Id is a [db[model_list_name], model.get('id')]
-     * sequence that can be used to lookup models relative
-     * to the Database.
-     *
-     * getModelById can be called with either a modelId
-     * or model_type, model_id as individual parameters
-     */
-    getModelById: function(modelList, id, data) {
-      if (!Y.Lang.isValue(id)) {
-        id = modelList[1];
-        modelList = modelList[0];
-      }
-      modelList = this.getModelListByModelName(modelList);
-      if (!modelList) {
-        return undefined;
-      }
-      return modelList.getById(id);
     },
 
     /**
@@ -1066,7 +1022,10 @@ YUI.add('juju-models', function(Y) {
       }
 
       if (/^\S+\/\d+$/.test(entityName)) {
-        return this.units.getById(entityName);
+        var service = this.services.getById(entityName.split('/')[0]);
+        if (service) {
+          return service.get('units').getById(entityName);
+        }
       }
 
       return this.services.getById(entityName);
@@ -1081,7 +1040,7 @@ YUI.add('juju-models', function(Y) {
     */
     getModelListByModelName: function(modelName) {
       if (modelName === 'serviceUnit') {
-        modelName = 'unit';
+        throw new Error('Deprecated usage of global unit list');
       } else if (modelName === 'annotations' || modelName === 'environment') {
         return this.environment;
       }
@@ -1089,12 +1048,10 @@ YUI.add('juju-models', function(Y) {
     },
 
     getModelFromChange: function(change) {
-      var change_type = change[0],
-          change_kind = change[1],
+      var change_kind = change[1],
           data = change[2],
-          model_id = change_kind === 'remove' &&
-          data || data.id;
-      return this.getModelById(change_type, model_id, data);
+          model_id = change_kind === 'remove' && data || data.id;
+      return this.resolveModelByName(model_id);
     },
 
     reset: function() {
@@ -1102,7 +1059,6 @@ YUI.add('juju-models', function(Y) {
       this.machines.reset();
       this.charms.reset();
       this.relations.reset();
-      this.units.reset();
       this.notifications.reset();
     },
 
@@ -1133,8 +1089,10 @@ YUI.add('juju-models', function(Y) {
       });
 
       // Update service unit aggregates.
+      // (This should select only those elements which
+      // had deltas)
       this.services.each(function(service) {
-        self.units.update_service_unit_aggregates(service);
+        service.get('units').update_service_unit_aggregates(service);
       });
       this.fire('update');
     },
@@ -1151,16 +1109,20 @@ YUI.add('juju-models', function(Y) {
       var self = this,
           serviceList = this.services,
           relationList = this.relations,
+          defaultSeries = this.environment.get('defaultSeries'),
           result = {
             envExport: {
-              series: this.environment.get('defaultSeries'),
               services: {},
               relations: []
             }
           };
 
+      if (defaultSeries) {
+        result.envExport.series = defaultSeries;
+      }
+
       serviceList.each(function(service) {
-        var units = service.units;
+        var units = service.get('units');
         var charm = self.charms.getById(service.get('charm'));
         var serviceOptions = {};
         var charmOptions = charm.get('config.options');

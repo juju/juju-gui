@@ -93,7 +93,7 @@ YUI.add('juju-landscape', function(Y) {
           // The above lint is needed to allow a |= expression
           // to pass the linter.
           serviceFlagged |= service[annotationName] = Y.some(
-              db.units.get_units_for_service(service),
+              service.get('units'),
               function(unit) {
                 var annotations = unit.annotations;
                 return Boolean(

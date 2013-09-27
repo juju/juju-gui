@@ -364,7 +364,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             tuning: 'single',
             'wp-content': ''
           });
-          var units = state.db.units.get_units_for_service(service);
+          var units = service.get('units').toArray();
           assert.lengthOf(units, 2);
           done();
         };
@@ -509,7 +509,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // We want to verify that the GUI database is equivalent to the state
         // database.
         assert.equal(db.services.size(), 1);
-        assert.equal(db.units.size(), 2);
         assert.equal(db.machines.size(), 2);
         var stateService = state.db.services.item(0);
         var guiService = db.services.item(0);
@@ -521,14 +520,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   guiService.get(attrName), stateService.get(attrName));
             }
         );
-        state.db.units.each(function(stateUnit) {
-          var guiUnit = db.units.getById(stateUnit.id);
-          Y.each(
-              ['agent_state', 'machine', 'number', 'service'],
-              function(attrName) {
-                assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
-              }
-          );
+        state.db.services.each(function(service) {
+          service.get('units').each(function(stateUnit) {
+            var guiUnit = db.resolveModelByName(stateUnit.id);
+            Y.each(
+                ['agent_state', 'machine', 'number', 'service'],
+                function(attrName) {
+                  assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
+                }
+            );
+          });
         });
         state.db.machines.each(function(stateMachine) {
           var guiMachine = db.machines.getById(stateMachine.id);
@@ -599,7 +600,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units', function(done) {
       function testForAddedUnits(received) {
         var service = state.db.services.getById('wordpress'),
-            units = state.db.units.get_units_for_service(service),
+            units = service.get('units'),
             data = Y.JSON.parse(received.data),
             mock = {
               num_units: 2,
@@ -608,7 +609,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               result: ['wordpress/1', 'wordpress/2']
             };
         // Do we have enough total units?
-        assert.lengthOf(units, 3);
+        assert.lengthOf(units.toArray(), 3);
         // Does the response object contain the proper data
         assert.deepEqual(data, mock);
         // Error is undefined
@@ -647,8 +648,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add additional units (integration)', function(done) {
       function testForAddedUnits(data) {
         var service = state.db.services.getById('kumquat'),
-            units = state.db.units.get_units_for_service(service);
-        assert.lengthOf(units, 3);
+            units = service.get('units');
+        assert.lengthOf(units.toArray(), 3);
         done();
       }
       generateIntegrationServices(testForAddedUnits);
@@ -1305,7 +1306,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             request_id: 99
           };
           client.onmessage = function(received) {
-            var unit = state.db.units.getById('wordpress/0');
+            var unit = state.db.services.getById('wordpress')
+                .get('units').getById('wordpress/0');
             var annotations = unit.annotations;
             assert.equal(annotations.foo, 'bar');
             // Error should be undefined.

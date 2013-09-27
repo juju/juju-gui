@@ -411,23 +411,20 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, filter out anything but charms and bundles and
-     * return an array of charm or bundle objects.  Metadata is appended to
-     * the charm or bundle as the 'metadata' attribute.
+     * Given a result list, append metadata is appended to the charm or bundle
+     * as the 'metadata' attribute and convert to objects.
      *
      * @method transformResults
      * @param {Object} JSON decoded data from response.
+     * @return {Array} List of charm and bundle objects.
      *
      */
     transformResults: function(data) {
-      var items = Y.Array.filter(data, function(entity) {
-        return entity.charm !== undefined || entity.bundle !== undefined;
-      });
       // Append the metadata to the actual token object.
       var token;
       var tokens;
-      tokens = Y.Array.map(items, function(entity) {
-        if (entity.charm !== undefined) {
+      tokens = Y.Array.map(data, function(entity) {
+        if (Y.Lang.isValue(entity.charm)) {
           token = new Y.juju.models.Charm(entity.charm);
         } else {
           token = new Y.juju.models.Bundle(entity.bundle);
@@ -722,12 +719,13 @@ YUI.add('juju-charm-store', function(Y) {
      *
      * @method transformResults
      * @param {Object} JSON decoded data from response.
+     * @return {Array} List of charm objects.
      *
      */
     transformResults: function(data) {
       // Remove non-charms (bundles) from the data.
       data = Y.Array.filter(data, function(charmData) {
-        return charmData.charm !== undefined;
+        return Y.Lang.isValue(charmData.charm);
       });
       // Append the metadata to the actual charm object.
       data = Y.Array.map(data, function(charmData) {

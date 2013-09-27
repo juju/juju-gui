@@ -120,8 +120,14 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     pyDelta: function(db, action, change, kind) {
-      var data,
-          modelList = db.getModelListByModelName(kind);
+      var data, modelList;
+      if (kind === 'unit') {
+        var modelId = change.id || change;
+        var service = db.services.getById(modelId.split('/')[0]);
+        modelList = service.get('units');
+      } else {
+        modelList = db.getModelListByModelName(kind);
+      }
       // If kind === 'annotations' then this is an environment
       // annotation, and we don't need to change the values.
       if (kind !== 'annotations' &&
@@ -164,7 +170,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.MachineId,
         public_address: change.PublicAddress
       };
-      db.units.process_delta(action, unitData, db);
+      var service = db.services.getById(change.Name.split('/')[0]);
+      service.get('units').process_delta(action, unitData, db);
       db.machines.process_delta(action, machineData, db);
     },
 
@@ -259,16 +266,15 @@ YUI.add('juju-delta-handlers', function(Y) {
     annotationInfo: function(db, action, change) {
       var tag = change.Tag,
           kind = tag.split('-')[0],
-          modelOrModelList = db.getModelListByModelName(kind),
           id = utils.cleanUpEntityTags(tag),
           instance;
       // We cannot use the process_delta methods here, because their legacy
       // behavior is to override the service exposed and unit relation_errors
       // attributes when they are missing in the change data.
       if (kind === 'environment') {
-        instance = modelOrModelList;
+        instance = db.environment;
       } else {
-        instance = modelOrModelList.getById(id);
+        instance = db.resolveModelByName(id);
       }
       if (instance instanceof Y.Model) {
         instance.set('annotations', change.Annotations);

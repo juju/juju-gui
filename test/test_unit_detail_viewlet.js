@@ -34,7 +34,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ViewletManager = viewlets.ViewletManager;
         db = new models.Database();
         service = db.services.add({id: 'haproxy'});
-        unit = db.units.add({
+        var units = service.get('units');
+        unit = units.add({
           id: 'haproxy/42',
           annotations: {'landscape-computer': '+unit:haproxy-42'},
           agent_state: 'peachy',

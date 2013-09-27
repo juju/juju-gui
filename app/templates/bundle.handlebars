@@ -1,0 +1,123 @@
+<div class="bundle">
+    <div class="content">
+        {{#unless forInspector}}
+            <div class="header">
+                <a href="" class="back icon"></a>
+                <div class="block-icon">
+                    <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
+                </div>
+                <div class="details">
+                    <h1>{{ name }}</h1>
+                    <div class="add-reviewed">
+                        <a href="" class="add">Add to my canvas</a>
+                    </div>
+                    <ul>
+                        <li>
+                            Activity: {{ downloads }}
+                            {{pluralize 'Download' downloads}},
+                            {{ commitCount }}
+                            {{pluralize 'Commit' commitCount}}
+                        </li>
+                        <li>Ubuntu series: {{ distro_series }}</li>
+                        <li>Location: {{ url }}</li>
+                        <li>
+                            Links:
+                            <a href="{{ sourceLink }}">Source</a>
+                            <a href="{{ code_source.bugs_link }}">Bugs</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        {{/unless}}
+
+        <div class="tabs">
+            <ul>
+                <li><a href="#bundle" class="bundle">Bundle</a></li>
+                <li><a href="#summary" class="summary">Summary</a></li>
+                <li><a href="#readme" class="readme">Readme</a></li>
+                <li><a href="#charms" class="charms">Charms</a></li>
+            </ul>
+            <div>
+                <div id="bundle">
+                    [Bundle layout to go here]
+                </div>
+                <div id="summary">
+                    <div class="summary">
+                        {{>providers}}
+                        <h2>Description</h2>
+                        <p class="respect-whitespace">{{ truncate description 300 }}</p>
+                    </div>
+                    <h2>Charms within this bundle</h2>
+                    [Charm list to go here]
+                    <div class="changelog">
+                        <h3 class="section-title">
+                            {{#if recent_commits}}
+                                <a href="" class="expandToggle"
+                                    data-state="closed">
+                            {{/if}}
+                            Change log
+                            {{#if recent_commits}}
+                                    <span class="expand">
+                                        <span class="more">
+                                            <img src="/juju-ui/assets/images/expand_icon.png"
+                                                alt="Expand" />
+                                        </span>
+                                        <span class="less hidden">
+                                            <img src="/juju-ui/assets/images/contract_icon.png"
+                                                alt="Contract" />
+                                        </span>
+                                    </span>
+                                </a>
+                            {{/if}}
+                        </h3>
+                        {{#if recent_commits}}
+                            <div class="first">
+                                <p>
+                                    Latest change:
+                                    <span class="date">
+                                        {{prettyCommits.first.prettyDate}}
+                                    </span>
+                                    <strong>{{prettyCommits.first.author.name}}</strong>
+                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
+                                    <a href="{{ prettyCommits.first.revnoLink }}">
+                                      REVNO{{prettyCommits.first.revno}}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="remaining hidden">
+                                <p class="maintainer">
+                                    Maintained by {{ maintainer.name }}
+                                </p>
+                                <h4>Earlier changes</h4>
+                                <ul>
+                                    {{#prettyCommits.remaining}}
+                                        <li>
+                                            <p>
+                                                <span class="date">
+                                                    {{prettyDate}}
+                                                </span>
+                                                <strong>{{author.name}}</strong> 
+                                                <span class="respect-whitespace">{{message}}</span> -
+                                                <a href="{{ revnoLink }}">
+                                                    REVNO{{revno}}
+                                                </a>
+                                            </p>
+                                        </li>
+                                    {{/prettyCommits.remaining}}
+                                </ul>
+                            </div>
+                        {{else}}
+                            <p>No change history exists.</p>
+                        {{/if}}
+                    </div>
+                </div>
+                <div id="readme">
+                    [Readme to go here]
+                </div>
+                <div id="charms">
+                    [Charms to go here]
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
