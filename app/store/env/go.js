@@ -1041,7 +1041,7 @@ YUI.add('juju-env-go', function(Y) {
         request.Params.Config = data;
       } else {
         // Only the modified options are sent to the API backend.
-        newValues = utils.getUnchangedConfigOptions(config, serviceConfig);
+        newValues = utils.getChangedConfigOptions(config, serviceConfig);
         request.Request = 'ServiceSet';
         request.Params.Options = stringifyObjectValues(newValues);
       }

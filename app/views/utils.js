@@ -663,13 +663,13 @@ YUI.add('juju-view-utils', function(Y) {
     only those that are different from the supplied charm or service defaults
     at the time of parsing.
 
-    @method getUnchangedConfigOptions
+    @method getChangedConfigOptions
     @param {Object} config is a reference to service config values in the GUI.
     @param {Object} options is a reference to the charm or
                     service configuration options.
     @return {Object} the key/value pairs of config options.
   */
-  utils.getUnchangedConfigOptions = function(config, options) {
+  utils.getChangedConfigOptions = function(config, options) {
     // This method is always called even if the config is provided by
     // a configuration file - in this case, return.
     if (!config) {
