@@ -928,7 +928,8 @@ YUI.add('juju-view-inspector', function(Y) {
     rerenderConfig: function() {
       this.model.set('charmChanged', false);
       var viewlet = this.viewletManager.viewlets.config;
-      viewlet.render(this.model, viewlet.options);
+      this.viewletManager.renderViewlet(viewlet, 'config', this.model,
+          viewlet.container.ancestor());
     },
 
     /**

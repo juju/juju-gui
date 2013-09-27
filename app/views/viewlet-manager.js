@@ -327,24 +327,38 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       // render the viewlets into their containers
       Y.Object.each(this.viewlets, function(viewlet, name) {
-        if (!viewlet.name) {
-          viewlet.name = name;
-        }
-        if (viewlet.slot) {
-          return;
-        }
-        var result = viewlet.render(model, attrs);
-        if (result && typeof result === 'string') {
-          viewlet.container = Y.Node.create(result);
-        }
-        viewletContainer.append(viewlet.container);
-        this.bindingEngine.bind(model, viewlet);
+        this.renderViewlet(viewlet, name, model, viewletContainer);
       }, this);
 
       this.recalculateHeight(viewletContainer);
 
       // chainable
       return this;
+    },
+
+    /**
+      Renders a viewlet into the given container with the given model.
+
+      @method renderViewlet
+      @param {Object} viewlet The viewlet to render.
+      @param {String} name A string name for the viewlet.
+      @param {Model} model The model or POJSO for the viewlet
+      @param {Y.Node} viewletContainer The container into which the viewlet
+        should be rendered.
+    */
+    renderViewlet: function(viewlet, name, model, viewletContainer) {
+      if (!viewlet.name) {
+        viewlet.name = name;
+      }
+      if (viewlet.slot) {
+        return;
+      }
+      var result = viewlet.render(model, this.getAttrs());
+      if (result && typeof result === 'string') {
+        viewlet.container = Y.Node.create(result);
+      }
+      viewletContainer.append(viewlet.container);
+      this.bindingEngine.bind(model, viewlet);
     },
 
     /**
