@@ -239,9 +239,9 @@ describe('search view', function() {
         }
       }, {
         bundle: {
-          id: "~bac/wiki/3/wiki",
-          name: "wiki",
-          basket_name: "wiki",
+          id: '~bac/wiki/3/wiki',
+          name: 'wiki',
+          basket_name: 'wiki',
           basket_revision: 3,
           branch_deleted: false
         }
