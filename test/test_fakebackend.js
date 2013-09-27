@@ -119,7 +119,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       delete attrs.clientId;
       // when doing a deep equals on an object which contains a LazyModelList
       // call toArray() on it first else it will fail and it won't tell you why.
-      // Verify units and relations outside of the deepEquals
+      // We make specific checks around unit/rel size counts outside of the
+      // deepEquals check so we can make these easily testable.
       attrs.relations = [];
       attrs.units = [];
       // deepEquals compares order, even though that's not guaranteed by any
