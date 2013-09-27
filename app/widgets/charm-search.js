@@ -201,7 +201,7 @@ YUI.add('browser-search-widget', function(Y) {
         }
       };
 
-      charmlist.each(function(charm, idx, list) {
+      Y.Array.each(charmlist, function(charm, idx, list) {
         var container = Y.Node.create('<div class="yui3-token"/>');
         // Force the tokens to not show the is_approved star by force them to
         // be false.

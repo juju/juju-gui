@@ -137,8 +137,13 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return charms;
     })(),
 
-    makeFakeStore: function(cache) {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+    makeFakeStore: function(version) {
+      var fakeStore;
+      if (version === 3) {
+        fakeStore = new Y.juju.charmworld.APIv3({});
+      } else {
+        fakeStore = new Y.juju.charmworld.APIv2({});
+      }
       fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
         store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
         var charmName = store_id.split('/')[1];

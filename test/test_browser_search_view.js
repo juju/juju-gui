@@ -222,10 +222,9 @@ describe('search view', function() {
   });
 
   it('will render both charms and bundles', function(done) {
-    view.set('envSeries', 'lucid');
     view._renderSearchResults = function(results) {
       assert.equal(results.recommended.length, 1);
-      assert.equal(results.recommended[0].get('id'), 'lucid/flim-2');
+      assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
       assert.equal(results.more.length, 1);
       done();
     };
@@ -252,7 +251,6 @@ describe('search view', function() {
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
-        debugger
         params.callback.success({
           response: {
             results: [{
