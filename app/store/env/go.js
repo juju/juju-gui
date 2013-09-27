@@ -256,7 +256,12 @@ YUI.add('juju-env-go', function(Y) {
         if (!cmp[b[0]]) {
           return -1;
         }
-        return cmp[a[0]] - cmp[b[0]];
+        var scoreA = cmp[a[0]];
+        var scoreB = cmp[b[0]];
+        // Reverse the sort order for removes.
+        if (a[1] === 'remove') { scoreA = -scoreA; }
+         if (b[1] === 'remove') { scoreB = -scoreB; }
+        return scoreA - scoreB;
       });
       this.fire('delta', {data: {result: deltas}});
     },

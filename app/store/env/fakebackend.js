@@ -1344,9 +1344,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
      returns a complex data structure which is used
      by importDeployer to enact the deploy.
 
-     @method injestDeployer
+     @method ingestDeployer
      */
-    injestDeployer: function(data, name, options) {
+    ingestDeployer: function(data, name, options) {
       if (!data) {return;}
       options = options || {};
       var db = this.db;
@@ -1482,15 +1482,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
         data = YAMLData;
       }
       // XXX: The proper API doesn't allow options for the level
-      // of control that injest allows. This should be addressed
+      // of control that ingest allows. This should be addressed
       // in the future.
       var options = {};
       if (name) {
         options.targetBundle = name;
       }
-      var injestedData = this.injestDeployer(data, name, options);
+      var ingestedData = this.ingestDeployer(data, name, options);
       var servicePromises = [];
-      Y.each(injestedData.services, function(serviceData) {
+      Y.each(ingestedData.services, function(serviceData) {
         // Map the argument name from the deployer format
         // name for unit count.
         if (!serviceData.unitCount) {
@@ -1520,7 +1520,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               // doesn't handle
               var service = sdr.service;
               var serviceId = service.get('id');
-              var serviceData = injestedData.services[serviceId];
+              var serviceData = ingestedData.services[serviceId];
 
               // Force the annotation update (deploy doesn't handle this).
               var annotiations = serviceData.annotations;
@@ -1537,7 +1537,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 sdr.service, true];
             });
 
-            injestedData.relations.forEach(function(relationData) {
+            ingestedData.relations.forEach(function(relationData) {
               var relResult = self.addRelation(
                   relationData[0], relationData[1], true);
               self.changes.relations[relResult.relation.get('id')] = [
@@ -1547,7 +1547,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       .then(function() {
             deployStatus.Status = 'completed';
             callback({DeploymentId: self._deploymentId});
-            self.sendDelta();
           }, function(err) {
             deployStatus.Status = 'failed';
             callback({Error: err.toString()});

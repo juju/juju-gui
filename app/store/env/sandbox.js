@@ -242,8 +242,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   implentation, but the data within the individual deltas must be structured
   dependent on the backend.  This method is called using `apply` from within
   the appropriate sandbox so that `this._deltaWhitelist` and
-  `self._getDeltaAttrs` can structure the delta
-  according to the juju type.
+  `self._getDeltaAttrs` can structure the delta according to the juju type.
 
   @method _prepareDelta
   @return {Array} An array of deltas events.
@@ -270,7 +269,8 @@ YUI.add('juju-env-sandbox', function(Y) {
             // The unit changeType is actually "serviceUnit" in the Python
             // stream.  Our model code handles either, so we're not modifying
             // it for now.
-            deltas.push([changeType, action, attrs]);
+            var delta = [changeType, action, attrs];
+            deltas.push(delta);
           });
         }
         if (annotations) {

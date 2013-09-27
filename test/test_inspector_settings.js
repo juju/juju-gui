@@ -227,52 +227,6 @@ describe('Inspector Settings', function() {
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
 
-  it('responds to service removal by cleaning out the DB', function() {
-    // If destroying a service succeeds, the service is removed from the
-    // database.
-    var removeServiceCalled = false,
-        removeRelationsCalled = false,
-        destroyServiceCalled = false;
-
-    inspector = setUpInspector();
-
-    var service = {
-      get: function(name) {
-        assert.equal(name, 'id');
-        return 'SERVICE-ID';
-      },
-      destroy: function() {
-        destroyServiceCalled = true;
-      }
-    };
-    var RELATIONS = 'all of the relations of the service being removed';
-
-    var db = {
-      services: {
-        remove: function(serviceToBeRemoved) {
-          assert.deepEqual(serviceToBeRemoved, service);
-          removeServiceCalled = true;
-        }
-      },
-      relations: {
-        filter: function(predicate) {
-          return RELATIONS;
-        },
-        remove: function(relationsToBeRemoved) {
-          assert.deepEqual(relationsToBeRemoved, RELATIONS);
-          removeRelationsCalled = true;
-        }
-      }
-    };
-
-    var evt = {err: false};
-
-    inspector._destroyServiceCallback(service, db, evt);
-    assert.isTrue(removeServiceCalled);
-    assert.isTrue(removeRelationsCalled);
-    assert.isTrue(removeServiceCalled);
-  });
-
   it('responds to service removal failure by alerting the user', function() {
     var notificationAdded;
 
