@@ -318,9 +318,6 @@ describe('Inspector Overview', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
 
-    // Clear out the units added in the setUpInspector method
-    db.units.reset();
-
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
     service.set('upgrade_available', false);
@@ -570,18 +567,14 @@ describe('Inspector Overview', function() {
     newContainer.one('.upgrade-link').simulate('click');
   });
 
-  it('reflects that a service was upgraded', function() {
+  it.only('reflects that a service was upgraded', function() {
     window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
       .container;
     var unitId = 'mediawiki/1';
 
-    var service = db.services.create({id: 'mediawiki',
-      charm: 'cs:precise/mediawiki-7'});
-    service.get('units').create({id: unitId,
-      charmUrl: 'cs:precise/mediawiki-7'});
-
+    var service = db.services.getById('mediawiki');
     assert.isFalse(service.get('charmChanged'));
     assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
 
