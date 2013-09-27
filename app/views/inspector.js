@@ -706,16 +706,16 @@ YUI.add('juju-view-inspector', function(Y) {
 
       button.set('disabled', 'disabled');
 
-      var newVals = utils.getElementsValuesMapping(container, '.config-field');
-      var errors = utils.validate(newVals, schema);
+      var config = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(config, schema);
 
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
-            newVals,
+            config,
             null,
             service.get('config'),
-            Y.bind(this._setConfigCallback, this, container, newVals)
+            Y.bind(this._setConfigCallback, this, container)
         );
       } else {
         db.notifications.add(
@@ -736,23 +736,29 @@ YUI.add('juju-view-inspector', function(Y) {
 
       @method _setConfigCallback
       @param {Y.Node} container of the viewlet-manager.
-      @param {Y.EventFacade} e yui event object.
+      @param {Y.EventFacade} evt YUI event object with the following attrs:
+        - err: whether or not an error occurred;
+        - service_name: the name of the service;
+        - newValues: an object including the modified config options.
     */
-    _setConfigCallback: function(container, config, e) {
+    _setConfigCallback: function(container, evt) {
       // If the user has conflicted fields and still chooses to
       // save, then we will be overwriting the values in Juju.
-      if (e.err) {
+      if (evt.err) {
         var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service configuration',
-              message: 'Service name: ' + e.service_name,
+              message: 'Service name: ' + evt.service_name,
               level: 'error'
             })
         );
       } else {
         this._highlightSaved(container);
-        this.viewletManager.get('model').set('config', config);
+        var service = this.viewletManager.get('model');
+        // Mix the current config (stored in the db) with the modified options.
+        var config = Y.mix(service.get('config'), evt.newValues, true);
+        service.set('config', config);
         var bindingEngine = this.viewletManager.bindingEngine;
         bindingEngine.resetDOMToModel('config');
       }
