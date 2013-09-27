@@ -659,39 +659,44 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
-    Removes unchanged config options from a collection of config values and
-    returns only those that are different from the supplied charm or service
-    defaults at the time of parsing.
+    Find unchanged config options from a collection of config values and return
+    only those that are different from the supplied charm or service defaults
+    at the time of parsing.
 
-    @method removeUnchangedConfigOptions
+    @method getChangedConfigOptions
     @param {Object} config is a reference to service config values in the GUI.
     @param {Object} options is a reference to the charm or
                     service configuration options.
-    @return {Object} An object containing the key/value pairs of config options.
+    @return {Object} the key/value pairs of config options.
   */
-  utils.removeUnchangedConfigOptions = function(config, options) {
+  utils.getChangedConfigOptions = function(config, options) {
     // This method is always called even if the config is provided by
-    // a configuration file - in this case, return;
-    if (!config) { return; }
+    // a configuration file - in this case, return.
+    if (!config) {
+      return;
+    }
+    var newValues = Object.create(null);
     Object.keys(config).forEach(function(key) {
-      // Remove config options which are not different from the charm defaults
-      // Intentionally letting the browser do the type coersion.
-      // The || check is to allow empty inputs to match an undefined default
+      // Find the config options which are not different from the charm or
+      // service defaults intentionally letting the browser do the type
+      // conversion.
+      // The || check is to allow empty inputs to match an undefined default.
       /* jshint -W116 */
       if (Y.Lang.isObject(options[key])) {
-        // If options is the charm config
+        // Options represents a charm config.
         if (config[key] == (options[key]['default'] || '')) {
-          delete config[key];
+          return;
         }
       } else {
-        // If options is a service config
+        // Options represents a service config.
         if (config[key] == (options[key] || '')) {
-          delete config[key];
+          return;
         }
       }
       /* jshint +W116 */
+      newValues[key] = config[key];
     });
-    return config;
+    return newValues;
   };
 
   /**

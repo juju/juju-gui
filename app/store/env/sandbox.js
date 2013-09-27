@@ -1135,7 +1135,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientServiceSet: function(data, client, state) {
-      var result = state.setConfig(data.Params.ServiceName, data.Params.Config);
+      var result = state.setConfig(
+          data.Params.ServiceName, data.Params.Options);
       this._basicReceive(data, client, result);
     },
 
@@ -1151,7 +1152,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     handleClientServiceSetYAML: function(data, client, state) {
       var config = {};
       try {
-        config = jsyaml.safeLoad(data.Params.ConfigYAML);
+        config = jsyaml.safeLoad(data.Params.Config);
       } catch (e) {
         if (e instanceof jsyaml.YAMLException) {
           this._basicReceive(data, client,

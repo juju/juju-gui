@@ -212,55 +212,6 @@ describe('notifications', function() {
 
      });
 
-  it('must be able to include and show object links', function() {
-    var container = Y.Node.create('<div id="test">'),
-        logoNode = Y.Node.create('<div id="nav-brand-env"></div>'),
-        conn = new(Y.namespace('juju-tests.utils')).SocketStub();
-    var env = juju.newEnvironment({conn: conn});
-    env.connect();
-    app = new Y.juju.App({env: env, container: container});
-    var db = app.db,
-        mw = db.services.create({
-          id: 'mediawiki',
-          name: 'mediawiki',
-          charm: 'cs:precise/mediawiki-2'}),
-        notifications = db.notifications,
-        view = new views.NotificationsOverview({
-                      container: container,
-                      notifications: notifications,
-                      app: app,
-                      env: env,
-                      nsRouter: nsRouter}).render();
-    app.navigate = function() { return; };
-    app.showView(new Y.View());
-    // We use overview here for testing as it defaults
-    // to showing all notices.
-
-    // We can use app's routing table to derive a link.
-    notifications.create({title: 'Service Down',
-      message: 'Your service has an error',
-      link: app.getModelURL(mw)
-    });
-    view.render();
-    var link = container.one('.notice').one('a');
-    link.getAttribute('href').should.equal(
-        '/:gui:/service/mediawiki/');
-    link.getHTML().should.contain('View Details');
-
-    // create a new notice passing the link_title
-    notifications.create({title: 'Service Down',
-      message: 'Your service has an error',
-      link: app.getModelURL(mw),
-      link_title: 'Resolve this'
-    });
-    view.render();
-    link = container.one('.notice').one('a');
-    link.getAttribute('href').should.equal(
-        '/:gui:/service/mediawiki/');
-    link.getHTML().should.contain('Resolve this');
-    logoNode.destroy();
-  });
-
   it('must be able to evict irrelevant notices', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),

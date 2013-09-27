@@ -334,7 +334,7 @@ describe('Inspector Settings', function() {
         input, inspector.viewletManager.viewlets.config);
     button.simulate('click');
     var message = env.ws.last_message();
-    assert.equal('foo', message.Params.Config.admins);
+    assert.equal('foo', message.Params.Options.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});
     assert.equal(button.getHTML(), 'Save changes');

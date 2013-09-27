@@ -392,6 +392,8 @@ code {
                     #notify-list {
                         white-space: normal;
                         overflow: auto;
+                        margin-right: 10px;
+                        border: none;
                     }
                 }
 
@@ -866,36 +868,23 @@ g.unit {
     white-space: nowrap;
     max-height: 500px;
     overflow-y: scroll;
-
-    .header {
-        padding: 1em 0;
-    }
 }
 .notice {
     border-top: 1px solid #D0D0D0;
-    padding: 1em;
-    cursor: pointer;
+    padding: 20px;
 
-    &:hover {
-        background-color: #eee;
-    }
-    .seen {
-        background-color: rgba(222, 222, 222, 0.33);
-    }
     &:first-child {
         border: none;
-        padding-top: 0;
+    }
+    h4 {
+        font-weight: normal;
+        margin-bottom: 10px;
     }
     small {
-        margin-left: 1em;
+        display: block;
+        margin-top: 5px;
         font-size: 0.7em;
         color: #d0d0d0;
-    }
-    .header {
-        background-color: #c0c0c0;
-        font-size: 0.9em;
-        margin: 0;
-        padding: 0;
     }
     .error {
         background-color: rgba(255, 0, 0, 0.1);

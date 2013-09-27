@@ -544,12 +544,6 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmPanel instance once the app is initialized.
-      this.charmPanel = views.CharmPanel.getInstance({
-        env: this.env,
-        app: this
-      });
-
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -733,161 +727,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     // Route handlers
-
-    /**
-     * @method show_unit
-     */
-    show_unit: function(req) {
-      // This replacement honors service names that have a hyphen in them.
-      var unitId = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
-      var serviceId = unitId.split('/')[0];
-      var self = this,
-          options = {
-            getModelURL: Y.bind(this.getModelURL, this),
-            db: this.db,
-            env: this.env,
-            querystring: req.query,
-            landscape: this.landscape,
-            nsRouter: this.nsRouter
-          };
-      // Give the page 100 milliseconds to try and load the model
-      // before we show a loading screen.
-      var handle = setTimeout(function() {
-        self.showView('unit', options);
-      }, 100);
-
-      var promise = this.modelController.getService(serviceId);
-      promise.then(
-          // If there is a service available then we need to check if the unit
-          // is available.
-          function(models) {
-            clearTimeout(handle);
-            var unit = self.db.units.getById(unitId);
-            if (unit) {
-              options.unit = unit;
-              self.showView('unit', options);
-            } else {
-              // If there is no unit available in this service then we show
-              // a notification and then redirect to the service.
-              self.db.notifications.add(
-                  new Y.juju.models.Notification({
-                    title: 'Unit is not available',
-                    message: 'The unit you are trying to view does not exist',
-                    level: 'error'
-                  })
-              );
-              self.navigate(self.nsRouter.url(
-                  {gui: '/service/' + serviceId}));
-            }
-          },
-          // If there is no service available then there definitely is no unit
-          // available, so we create a notification and redirect the user to
-          // the environment view.
-          function() {
-            clearTimeout(handle);
-            self.db.notifications.add(
-                new Y.juju.models.Notification({
-                  title: 'Service is not available',
-                  message: 'The service you are trying to view does not exist',
-                  level: 'error'
-                })
-            );
-            self.navigate(self.nsRouter.url({gui: '/'}));
-          });
-    },
-
-    /**
-     * @method _buildServiceView
-     * @private
-     */
-    _buildServiceView: function(req, viewName) {
-      var self = this,
-          options = {
-            db: this.db,
-            env: this.env,
-            landscape: this.landscape,
-            getModelURL: Y.bind(self.getModelURL, this),
-            nsRouter: this.nsRouter,
-            querystring: req.query
-          };
-      var containerAttached = function(view) {
-        // containerAttached handles attaching things like the textarea
-        // autosizer after the views have rendered and the view's container
-        // has attached to the DOM.
-        if (view.containerAttached) {
-          view.containerAttached();
-        }
-      };
-      // Give the page 100 milliseconds to try and load the model
-      // before we show a loading screen.
-      var handle = setTimeout(function() {
-        self.showView(viewName, options, containerAttached);
-      }, 100);
-
-      var promise = this.modelController.getServiceWithCharm(req.params.id);
-      promise.then(
-          function(models) {
-            clearTimeout(handle);
-            options.model = models.service;
-            // Calling update allows showView to be called multiple times but
-            // only have its config updated, not re-rendered.
-            self.showView(
-                viewName, options, { update: true }, containerAttached);
-          },
-          function() {
-            clearTimeout(handle);
-            self.showView(viewName, options, { update: true },
-                function(view) {
-                  // At this point the service view could be in loading state
-                  // or showing details, but the service has become unavailable
-                  // or was never available. This calls a method on the view to
-                  // redirect to the environment and to create a notification.
-                  if (typeof view.noServiceAvailable === 'function') {
-                    view.noServiceAvailable();
-                  }
-                });
-          });
-    },
-
-    /**
-     * @method show_service
-     */
-    show_service: function(req) {
-      this._buildServiceView(req, 'service');
-    },
-
-    /**
-     * @method show_service_config
-     */
-    show_service_config: function(req) {
-      this._buildServiceView(req, 'service_config');
-    },
-
-    /**
-     * @method show_service_relations
-     */
-    show_service_relations: function(req) {
-      this._buildServiceView(req, 'service_relations');
-    },
-
-    /**
-     * @method show_service_constraints
-     */
-    show_service_constraints: function(req) {
-      this._buildServiceView(req, 'service_constraints');
-    },
-
-    /**
-     * @method show_charm
-     */
-    show_charm: function(req) {
-      var charm_url = req.params.charm_path;
-      this.showView('charm', {
-        charm_data_url: charm_url,
-        store: this.get('store'),
-        env: this.env
-      });
-    },
 
     /**
      * @method show_notifications_overview
@@ -1450,32 +1289,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '/notifications/',
             callbacks: 'show_notifications_overview',
             namespace: 'gui'},
-          // Services.
-          { path: '/service/:id/config/',
-            callbacks: 'show_service_config',
-            intent: 'config',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/constraints/',
-            callbacks: 'show_service_constraints',
-            intent: 'constraints',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/relations/',
-            callbacks: 'show_service_relations',
-            intent: 'relations',
-            model: 'service',
-            namespace: 'gui'},
-          { path: '/service/:id/',
-            callbacks: 'show_service',
-            model: 'service',
-            namespace: 'gui'},
-          // Units.
-          { path: '/unit/:id/',
-            callbacks: 'show_unit',
-            reverse_map: {id: 'urlName'},
-            model: 'serviceUnit',
-            namespace: 'gui'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
@@ -1488,7 +1301,6 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.3', {
   requires: [
     'juju-charm-models',
-    'juju-charm-panel',
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
