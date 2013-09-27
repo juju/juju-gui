@@ -551,7 +551,9 @@ YUI.add('juju-models', function(Y) {
       // Some tests add units without creating a service so we need to check
       // for a valid service here.
       if (service) {
-        _process_delta(service.get('units'), action, data, {});
+        var units = service.get('units');
+        _process_delta(units, action, data, {});
+        units.fire('deltaChange', { service: service });
       } else {
         // fixTests
         console.error('Units added without matching Service');
