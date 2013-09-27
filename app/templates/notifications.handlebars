@@ -3,11 +3,6 @@
     {{count}}
   </a>
   <ul id="notify-list" class="dropdown-menu">
-    <li class="header">
-      <a href="{{viewAllUri}}">
-        <i class="icon-list"></i>View All Notifications</a>
-    </li>
-
     {{#notifications}}
     <li id="{{clientId}}" class="notice">
       <div>
@@ -15,9 +10,6 @@
         <div>
           {{message}}
         </div>
-        {{#if link}}
-        <a href="{{link}}"><i class="icon-arrow-right"></i>{{link_title}}</a>
-        {{/if}}
         <small data-timestamp="{{timestamp}}"
                class="timestamp">{{humanizeTime timestamp}}</small>
       </div>
