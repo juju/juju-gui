@@ -251,19 +251,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
     });
 
-    it('filters results into an array of charms and bundles', function() {
-      var store = utils.makeFakeStore(3);
-      var fakecharm = {charm: {url: 'cs:precise/wordpress-15'}};
-      var fakebundle = {bundle: {id: 'bundle0'}};
-      var other = {foo: {id: 'foo0'}};
-      var results = store.transformResults([fakecharm, fakebundle, other]);
-      var expected = [new models.Charm(fakecharm.charm),
-                      new models.Bundle(fakebundle.bundle)];
-      assert.equal(expected.length, results.length);
-      assert.equal(expected[0].get('id'), results[0].get('id'));
-      assert.equal(expected[1].get('id'), results[1].get('id'));
-    });
-
     it('copies metadata while transforming results', function() {
       var store = utils.makeFakeStore(3);
       var fakebundle = {bundle: {id: 'bundle0'},
