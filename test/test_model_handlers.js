@@ -157,7 +157,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('creates or updates the corresponding machine', function() {
         var machine;
-        var django = db.services.add({id: 'django'});
+        db.services.add({id: 'django'});
         var change = {
           Name: 'django/2',
           MachineId: '1',

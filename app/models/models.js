@@ -1048,8 +1048,7 @@ YUI.add('juju-models', function(Y) {
     },
 
     getModelFromChange: function(change) {
-      var change_type = change[0],
-          change_kind = change[1],
+      var change_kind = change[1],
           data = change[2],
           model_id = change_kind === 'remove' && data || data.id;
       return this.resolveModelByName(model_id);

@@ -184,8 +184,6 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var db;
-        db = this.viewletManager.get('db');
         var units = service.get('units'),
             unit_ids_to_remove = [];
 
