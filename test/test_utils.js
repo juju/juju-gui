@@ -330,7 +330,7 @@ describe('utilities', function() {
         key6: 42
       };
       var newValues = getUnchangedConfigOptions(newConfig, serviceConfig);
-      assert.deepEqual(newValues, {key2: 'CHANGED!', key4: true,  key6: 42});
+      assert.deepEqual(newValues, {key2: 'CHANGED!', key4: true, key6: 42});
     });
 
     it('returns changes if they are found on the charm', function() {
@@ -351,7 +351,7 @@ describe('utilities', function() {
         key6: 42
       };
       var newValues = getUnchangedConfigOptions(newConfig, charmConfig);
-      assert.deepEqual(newValues, {key2: 'CHANGED!', key4: true,  key6: 42});
+      assert.deepEqual(newValues, {key2: 'CHANGED!', key4: true, key6: 42});
     });
 
     it('returns all the changes if the existing config is empty', function() {
@@ -368,7 +368,7 @@ describe('utilities', function() {
     it('does not modify in place the passed existing config', function() {
       var serviceConfig = {key1: 'value', key2: 42};
       getUnchangedConfigOptions({key1: 'CHANGED!', key2: 42}, serviceConfig);
-      assert.deepEqual(serviceConfig,  {key1: 'value', key2: 42});
+      assert.deepEqual(serviceConfig, {key1: 'value', key2: 42});
     });
 
   });
