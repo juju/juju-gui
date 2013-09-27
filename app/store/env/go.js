@@ -802,6 +802,29 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+     * Transform the data returned from the set_config call into that suitable
+     * for the user callback.
+     *
+     * @method handleSetConfig
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {String} service The name of the service.  Passed in since it
+     * is not part of the response.
+     * @param {Object} newValues The modified config options.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleSetConfig: function(userCallback, serviceName, newValues, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: serviceName,
+        newValues: newValues
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
+    /**
      * Update the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
@@ -1008,25 +1031,27 @@ YUI.add('juju-env-go', function(Y) {
           (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
         throw 'Exactly one of config and data must be provided';
       }
-      var intermediateCallback, sendData;
-      if (callback) {
-        // Capture the callback and serviceName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleServiceCalls, null,
-            callback, serviceName);
-      }
-      sendData = {
+      var intermediateCallback, newValues, request;
+      request = {
         Type: 'Client',
         Params: {ServiceName: serviceName}
       };
       if (data) {
-        sendData.Request = 'ServiceSetYAML';
-        sendData.Params.Config = data;
+        request.Request = 'ServiceSetYAML';
+        request.Params.Config = data;
       } else {
-        config = utils.removeUnchangedConfigOptions(config, serviceConfig);
-        sendData.Request = 'ServiceSet';
-        sendData.Params.Options = stringifyObjectValues(config);
+        // Only the modified options are sent to the API backend.
+        newValues = utils.getChangedConfigOptions(config, serviceConfig);
+        request.Request = 'ServiceSet';
+        request.Params.Options = stringifyObjectValues(newValues);
       }
-      this._send_rpc(sendData, intermediateCallback);
+      if (callback) {
+        // Capture the callback, serviceName and newValues.
+        // No context is passed.
+        intermediateCallback = Y.bind(this.handleSetConfig, null,
+            callback, serviceName, newValues);
+      }
+      this._send_rpc(request, intermediateCallback);
     },
 
     /**
