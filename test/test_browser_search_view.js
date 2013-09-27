@@ -45,7 +45,7 @@ describe('search view', function() {
 
   beforeEach(function() {
     // Mock out a dummy location for the Store used in view instances.
-    window.juju_config = {charmworldURL: 'http://localhost'};
+    window.juju_config = {charmworldURL: 'http://charmworld.example'};
     container = Y.namespace('juju-tests.utils').makeContainer('container');
     view = new Y.juju.browser.views.BrowserSearchView({
       filters: {text: 'foo'}
@@ -178,7 +178,50 @@ describe('search view', function() {
     view.render();
   });
 
-  it('organizes results by the environment series', function(done) {
+  it('organizes results by approval status', function(done) {
+    view._renderSearchResults = function(results) {
+      assert.equal(results.recommended.length, 1);
+      assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
+      assert.equal(results.more.length, 1);
+      done();
+    };
+    var sampleData = {
+      result: [{
+        charm: {
+          id: 'precise/bar-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: true
+        }
+      }, {
+        charm: {
+          id: 'precise/flim-2',
+          name: 'foo',
+          description: 'some charm named bar',
+          files: [],
+          is_approved: false
+        }
+      }]
+    };
+    var fakeStore = new Y.juju.charmworld.APIv2({});
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: Y.JSON.stringify(sampleData)
+            }]
+          }
+        });
+      }
+    });
+    view.set('store', fakeStore);
+    view.render();
+  });
+
+  it('will render both charms and bundles', function(done) {
     view.set('envSeries', 'lucid');
     view._renderSearchResults = function(results) {
       assert.equal(results.recommended.length, 1);
@@ -196,19 +239,20 @@ describe('search view', function() {
           is_approved: true
         }
       }, {
-        charm: {
-          id: 'lucid/flim-2',
-          name: 'foo',
-          description: 'some charm named bar',
-          files: [],
-          is_approved: true
+        bundle: {
+          id: "~bac/wiki/3/wiki",
+          name: "wiki",
+          basket_name: "wiki",
+          basket_revision: 3,
+          branch_deleted: false
         }
       }]
     };
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
+        debugger
         params.callback.success({
           response: {
             results: [{
