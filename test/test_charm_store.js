@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'datasource-local', 'json-stringify', 'juju-charm-store',
           'datasource-io', 'io', 'array-extras', 'juju-charm-models',
-          'juju-tests-utils',
+          'juju-tests-utils', 'juju-bundle-models',
           function(Y) {
             juju = Y.namespace('juju');
             charmworld = Y.namespace('juju.charmworld');
@@ -226,7 +226,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - upgrade available', function(done) {
-      var store = utils.makeFakeStore();
+      var store = utils.makeFakeStore(3);
       var charm = new models.Charm({url: 'cs:precise/wordpress-10'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -239,7 +239,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - no upgrade available', function(done) {
-      var store = utils.makeFakeStore();
+      var store = utils.makeFakeStore(3);
       var charm = new models.Charm({url: 'cs:precise/wordpress-15'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -249,6 +249,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.isTrue(false, 'We should not get here');
             done();
           });
+    });
+
+    it('copies metadata while transforming results', function() {
+      var store = utils.makeFakeStore(3);
+      var fakebundle = {bundle: {id: 'bundle0'},
+                         metadata: 'bundledata'};
+      var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
+                        metadata: 'charmdata'};
+      var testdata = Y.clone([fakecharm, fakebundle]);
+      fakebundle.bundle.metadata = fakebundle.metadata;
+      fakecharm.charm.metadata = fakecharm.metadata;
+      var expected = [new models.Charm(fakecharm.charm),
+                      new models.Bundle(fakebundle.bundle)];
+      var results = store.transformResults(testdata);
+      assert.equal(expected.length, results.length);
+      assert.equal(expected[0].get('id'), results[0].get('id'));
+      assert.equal(expected[1].get('id'), results[1].get('id'));
+      assert.equal(expected[0].get('metadata'), results[0].get('metadata'));
+      assert.equal(expected[1].get('metadata'), results[1].get('metadata'));
+
     });
 
   });
@@ -484,6 +504,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           });
     });
 
+    it('filters results into an array of charms while removing bundles',
+        function() {
+          var store = utils.makeFakeStore();
+          var fakecharm = {charm: {url: 'cs:precise/wordpress-15'}};
+          var fakebundle = {bundle: {id: 'bundle0'}};
+          var other = {foo: {id: 'foo0'}};
+          var results = store.transformResults([fakecharm, fakebundle, other]);
+          var expected = [new models.Charm(fakecharm.charm)];
+          assert.equal(expected.length, results.length);
+          assert.equal(expected[0].get('id'), results[0].get('id'));
+        });
+
+    it('copies metadata while transforming results', function() {
+      var store = utils.makeFakeStore();
+      var fakebundle = {bundle: {id: 'bundle0'},
+                         metadata: 'bundledata'};
+      var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
+                        metadata: 'charmdata'};
+      var testdata = Y.clone([fakecharm, fakebundle]);
+      fakebundle.bundle.metadata = fakebundle.metadata;
+      fakecharm.charm.metadata = fakecharm.metadata;
+      var expected = [new models.Charm(fakecharm.charm)];
+      var results = store.transformResults(testdata);
+      assert.equal(expected.length, results.length);
+      assert.equal(expected[0].get('id'), results[0].get('id'));
+      assert.equal(expected[0].get('metadata'), results[0].get('metadata'));
+    });
   });
 
   describe('Charmworld API Helper', function() {

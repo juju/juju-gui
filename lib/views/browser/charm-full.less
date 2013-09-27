@@ -1,8 +1,16 @@
-#subapp-browser .charm,
+.bundle,
 .charm {
-    display: table;
-    width: 100%;
+    .changelog li,
+    .changelog p,
+    .details {
+        background: inherit;
+        border: none;
 
+        a:hover {
+            text-decoration: underline;
+        }
+
+    }
     .section-title,
     .section-title a {
         .type5;
@@ -17,70 +25,7 @@
             background: transparent;
         }
     }
-    .changelog li,
-    .changelog p,
-    .charm-details,
-    .yui3-tabview-panel {
-        background: inherit;
-        border: none;
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-    }
-    a.yui3-tab-label {
-        color: @bws-text;
-    }
-    .yui3-tab-selected a.yui3-tab-label {
-        color: @bws-heading;
-    }
-    .yui3-tabview-list,
-    .yui3-tabview-panel {
-        padding: 0 @tabview-right-padding 0 @tabview-left-padding;
-    }
-    .yui3-tabview-list {
-        padding-right: 20px;
-    }
-    .content {
-        .border-box;
-        display: table-cell;
-    }
-    .heading li a,
-    .providers li a {
-        color: @bws-text;
-        text-decoration: underline;
-    }
-    .providers {
-        overflow: auto;
-        padding: 0 0 10px 0;
-        border-bottom: 1px solid @bws-border;
-
-        i {
-            margin-right: 15px;
-        }
-        ul {
-            float: left;
-            width: 50%;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-    }
-    pre {
-        background: #FDF6F2;
-        border-radius: @border-radius;
-        padding: 10px 16px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        margin-bottom: 9px;
-    }
-    .heading {
-        .type13;
-        position: relative;
-        padding: 30px;
-        background: @bws-background;
-        border-bottom: 1px solid @bws-border;
+    .header {
         .block-icon {
             display: inline-block;
             float: left;
@@ -115,40 +60,34 @@
                 line-height: 40px;
             }
         }
-        .charm-details {
+        .details {
             display: inline-block;
             margin-left: 20px;
 
-            h1 {
-                .type2;
-                margin: -3px 0 5px 0;
-            }
             h2 {
-                .type5;
+                .type4;
                 margin: 20px 0 15px 0;
             }
-            li {
-                line-height: 1.55;
-            }
-            .providers {
-                border-bottom: none;
-
-                ul {
-                    float: none;
-                    width: 100%;
-                }
-            }
         }
-        .back.icon {
-            position: absolute;
-            display: block;
-            top: 30px;
-            right: 30px;
-            width: 20px;
-            height: 20px;
-            background: transparent
-                url(/juju-ui/assets/images/panel_close.png)
-                left top no-repeat;
+    }
+    .providers li a {
+        color: @bws-text;
+        text-decoration: underline;
+    }
+    .providers {
+        overflow: auto;
+        padding: 0 0 10px 0;
+        border-bottom: 1px solid @bws-border;
+
+        i {
+            margin-right: 15px;
+        }
+        ul {
+            float: left;
+            width: 50%;
+        }
+        li {
+            margin-bottom: 10px;
         }
     }
     .changelog {
@@ -302,24 +241,43 @@
     background-color: #fff;
     background-image: none;
 
-    .heading {
+    .header {
+        .type13;
+        position: relative;
         z-index: 10;
         float: left;
         width: @bws-sidebar-width;
         padding: 0;
         background-color: #fff;
-        background-image: none;
         border: none;
 
+        h1 {
+            .type2;
+            margin: -3px 0 5px 0;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+
+            li {
+                line-height: 1.55;
+
+                a {
+                    color: @bws-text;
+                    text-decoration: underline;
+                }
+            }
+        }
+
         .block-icon,
-        .charm-details {
+        .details {
             display: block;
             float: none;
         }
         .block-icon {
             margin: 20px;
         }
-        .charm-details {
+        .details {
             margin-left: 0;
             padding: 0 20px;
         }

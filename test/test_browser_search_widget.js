@@ -222,7 +222,7 @@ describe('search widget autocomplete', function() {
           fakeStore.autocomplete,
           fakeStore
       ),
-      autocompleteDataFormatter: fakeStore.resultsToCharmlist,
+      autocompleteDataFormatter: fakeStore.transformResults,
       categoryIconGenerator:
           Y.bind(fakeStore.buildCategoryIconPath, fakeStore),
       filters: {}

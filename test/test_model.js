@@ -584,12 +584,12 @@ describe('test_models.js', function() {
       ], function(Y) {
         models = Y.namespace('juju.models');
         utils = Y.namespace('juju-tests.utils');
-        done();
 
         sampleData = Y.io('data/browsercharm.json', {sync: true});
         origData = Y.JSON.parse(sampleData.responseText);
         // relatedData is never mutated so it can be used directly.
         relatedData = utils.loadFixture('data/related.json', true).result;
+        done();
       });
     });
 

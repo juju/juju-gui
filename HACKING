@@ -151,7 +151,12 @@ Ubuntu < 13.04 you can install lbox by::
 
 If you are using a newer version you will have to build it from source. First
 step is to install Go lang, you can find the instructions on installing it
-here http://golang.org/doc/install#bsd_linux . Then follow the instructions::
+here http://golang.org/doc/install#bsd_linux , making sure to set your GOROOT
+environment variable appropriately. After that, you should set up an install
+directory that you can access, such as $HOME/bin/go which you can set as your
+GOPATH directory (see `go help gopath` for more information). For ease of
+use, you can append $GOROOT/bin and $GOPATH/bin to your PATH environment
+variable. Then follow the instructions::
 
   sudo go get launchpad.net/lbox
   sudo go install launchpad.net/lbox

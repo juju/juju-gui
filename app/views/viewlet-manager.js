@@ -204,22 +204,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
      */
 
     /**
-     Model Data access helper. By default this uses YUI Attribute styled access
-     but to support property styled access you can pass an optional get
-     callback such as:
-
-     function(model) {return model[this.name];}
-
-     This callback will be passed the model and triggered with the binding as
-     'this'. `this.name` refers to the name of the model property the binding
-     is managing.
-
-     @property get
-     @type {Function}
-     @default Attribute access
-     */
-
-    /**
       Removes the databinding events. This method is added to the viewlet
       instance in the databinding class on binding.
 
@@ -283,7 +267,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
     initializer: function(options) {
       // Passed in on instantiation
-      this.viewletConfig = options.viewlets;
+      this.viewletConfig = {};
+      // Make a copy of viewlet configuration so that we never mutate the
+      // original configuration.
+      Y.each(options.viewlets, function(cfg, name) {
+        this.viewletConfig[name] = Y.merge(cfg);
+      }, this);
       this.template = options.template;
       this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;

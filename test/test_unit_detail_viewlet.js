@@ -21,19 +21,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('unit detail viewlet', function() {
-    var db, service, unit, unitDetails, Y;
-    var requirements = ['juju-models', 'viewlet-unit-details'];
+    var db, service, unit, unitDetails, Y, updateAddress, ViewletManager,
+        manager;
+    var requirements = [
+      'juju-models', 'viewlet-unit-details', 'juju-viewlet-manager'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         var models = Y.namespace('juju.models');
         var viewlets = Y.namespace('juju.viewlets');
+        updateAddress = viewlets.updateUnitAddress;
+        ViewletManager = viewlets.ViewletManager;
         db = new models.Database();
         service = db.services.add({id: 'haproxy'});
         var units = service.get('units');
         unit = units.add({
           id: 'haproxy/42',
           annotations: {'landscape-computer': '+unit:haproxy-42'},
+          agent_state: 'peachy',
+          agent_state_info: 'keen',
           public_address: 'public-address',
           private_address: 'private-address',
           open_ports: [80, 443]
@@ -43,24 +49,119 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('correctly generates the viewlet template context', function() {
-      var context = unitDetails.getContext(db, service, unit);
-      var expectedKeys = [
-        'unit', 'unitIPDescription', 'relations', 'landscapeURL'];
-      assert.deepEqual(Y.Object.keys(context), expectedKeys);
+    after(function() {
+      if (manager) {
+        manager.destroy();
+      }
     });
 
-    it('includes the unit in the template context', function() {
+    it('correctly generates the viewlet template context', function() {
       var context = unitDetails.getContext(db, service, unit);
+      var expectedKeys = ['unit', 'relations'];
+      assert.deepEqual(Y.Object.keys(context), expectedKeys);
       assert.deepEqual(context.unit, unit);
     });
 
-    it('includes the unit description in the template context', function() {
-      var context = unitDetails.getContext(db, service, unit);
-      assert.equal(
-          context.unitIPDescription,
-          'public-address | private-address | 80, 443'
-      );
+    it('mutates a node without an address or ports', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node);
+      assert.strictEqual(node.getHTML(), '');
+    });
+
+    it('mutates a node without an address', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, null, [80]);
+      assert.strictEqual(node.getHTML(), '');
+    });
+
+    it('mutates a node with an address', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1');
+      assert.strictEqual(node.getHTML(), '10.0.0.1');
+    });
+
+    it('mutates a node with an address and non-http[s] port', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', [8080]);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 8080');
+      assert.strictEqual(node.all('a').size(), 1);
+      assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1:8080/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '8080');
+    });
+
+    it('mutates a node with an address and http port', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', [80]);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 80');
+      assert.strictEqual(node.all('a').size(), 2);
+      assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '10.0.0.1');
+    });
+
+    it('mutates a node with an address and https port', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', [443]);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 443');
+      assert.strictEqual(node.all('a').size(), 2);
+      assert.strictEqual(node.one('a').get('href'), 'https://10.0.0.1/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '10.0.0.1');
+    });
+
+    it('mutates a node with an address and multiple ports', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', [443, 8080]);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 443, 8080');
+      assert.strictEqual(node.all('a').size(), 3);
+      assert.strictEqual(node.one('a').get('href'), 'https://10.0.0.1/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '10.0.0.1');
+    });
+
+    it('instantiates correctly when bound', function() {
+      db.environment.set('annotations', {
+        'landscape-url': 'http://landscape.example.com',
+        'landscape-computers': '/computers/criteria/environment:test'
+      });
+      manager = new ViewletManager(
+          { interval: 0,
+            template: '<div class="viewlet"></div>',
+            container: Y.Node.create(
+                '<div><div class="leftSlot"></div>' +
+                '<div class="juju-inspector"></div></div>'),
+            model: service,
+            viewlets: {'unitDetails': unitDetails},
+            viewletContainer: '.viewlet',
+            db: db
+          });
+      manager.slots['left-hand-panel'] = '.leftSlot';
+      manager.render();
+      manager.showViewlet('unitDetails', unit);
+      var node = manager.viewlets.unitDetails.container;
+      assert.strictEqual(
+          node.one('[data-bind="displayName"]').get('text'), 'haproxy/42');
+      assert.strictEqual(
+          node.one('[data-bind="agent_state"]').get('text'), 'peachy');
+      assert.strictEqual(
+          node.one('[data-bind="agent_state_info"]').get('text'),
+          'Status Info: keen');
+      assert.strictEqual(
+          node.one('[data-bind="public_address"] a').get('text'),
+          'public-address');
+      assert.strictEqual(
+          node.one('[data-bind="private_address"] a').get('text'),
+          'private-address');
+      assert.strictEqual(
+          node.one(
+              '[data-bind="annotations.landscape-computer"] a').get('href'),
+          'http://landscape.example.com/computers/criteria/environment' +
+          ':test+unit:haproxy-42/');
     });
 
     it('includes the service relations in the template context', function() {
@@ -86,19 +187,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
       assert.deepEqual(relation.near, expectedNear);
       assert.deepEqual(relation.far, expectedFar);
-    });
-
-    it('includes the unit Landscape URL in the template context', function() {
-      db.environment.set('annotations', {
-        'landscape-url': 'http://landscape.example.com',
-        'landscape-computers': '/computers/criteria/environment:test'
-      });
-      var context = unitDetails.getContext(db, service, unit);
-      assert.deepEqual(
-          context.landscapeURL,
-          'http://landscape.example.com/computers/criteria/environment' +
-          ':test+unit:haproxy-42/'
-      );
     });
 
   });

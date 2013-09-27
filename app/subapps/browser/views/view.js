@@ -163,7 +163,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
               store.autocomplete,
               store
           ),
-          autocompleteDataFormatter: store.resultsToCharmlist,
+          autocompleteDataFormatter: store.transformResults,
           categoryIconGenerator: Y.bind(store.buildCategoryIconPath, store),
           filters: this.get('filters'),
           withHome: this.get('withHome')
@@ -333,7 +333,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-charm-token',
+    'browser-token',
     'browser-search-widget',
     'event-tracker',
     'juju-charm-store',

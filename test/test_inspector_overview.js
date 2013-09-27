@@ -103,9 +103,15 @@ describe('Inspector Overview', function() {
     })();
     db.services.add(service);
     db.onDelta({data: {result: [
-      ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/1', agent_state: 'pending'}],
-      ['unit', 'add', {id: 'mediawiki/2', agent_state: 'pending'}]
+      ['unit', 'add',
+        {id: 'mediawiki/0', agent_state: 'pending',
+          charmUrl: 'cs:precise/mediaWiki-14'}],
+      ['unit', 'add',
+        {id: 'mediawiki/1', agent_state: 'pending',
+          charmUrl: 'cs:precise/mediaWiki-14'}],
+      ['unit', 'add',
+        {id: 'mediawiki/2', agent_state: 'pending',
+          charmUrl: 'cs:precise/mediaWiki-14'}]
     ]}});
     var fakeStore = new Y.juju.charmworld.APIv2({});
     fakeStore.iconpath = function(id) {
@@ -304,6 +310,45 @@ describe('Inspector Overview', function() {
       { type: 'service', category: 'upgrade-service',
         upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades
       }
+    ];
+    assert.deepEqual(overview.updateStatusList(units), expected);
+  });
+
+  it('can generate service update statuses (no downgrades)', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview;
+
+    // Clear out the units added in the setUpInspector method
+    db.units.reset();
+
+    // Clear the service upgrade information.
+    service.set('charm', 'cs:precise/mysql-1');
+    service.set('upgrade_available', false);
+    service.set('upgrade_to', undefined);
+
+    window.flags.upgradeCharm = true;
+
+    var units = new Y.LazyModelList();
+
+    var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
+        d = units.add({ id: 'mysql/3', agent_state: 'started' }),
+        e = units.add({
+          id: 'mysql/4',
+          agent_state: 'started',
+          annotations: {
+            'landscape-needs-reboot': 'foo'
+          }
+        }),
+        a = units.add({ id: 'mysql/0', agent_state: 'install-error' }),
+        b = units.add({ id: 'mysql/1', agent_state: 'install-error' });
+
+    // This order is important.
+    var expected = [
+      { type: 'unit', category: 'error', units: [a, b] },
+      { type: 'unit', category: 'pending', units: [c] },
+      { type: 'unit', category: 'running', units: [d, e] },
+      { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
+      { type: 'unit', category: 'landscape-security-upgrades', units: {}}
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
@@ -527,7 +572,9 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function() {
     window.flags.upgradeCharm = true;
-
+    var inspector = setUpInspector();
+    var newContainer = inspector.viewletManager.viewlets.inspectorHeader
+      .container;
     var unitId = 'mediawiki/1';
 
     var service = db.services.create({id: 'mediawiki',
@@ -535,14 +582,15 @@ describe('Inspector Overview', function() {
     service.get('units').create({id: unitId,
       charmUrl: 'cs:precise/mediawiki-7'});
 
+    assert.isFalse(service.get('charmChanged'));
+    assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
+
     db.onDelta({data: {result: [
-      ['unit', 'change', {id: unitId,
-        charmUrl: 'cs:precise/mediawiki-8'}]
+      ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
     ]}});
 
     assert.isTrue(service.get('charmChanged'));
-    // TODO Makyo Sept 5 - Next branch will take care of reflecting the
-    // changes in the inspector.
+    assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
   });
 
   it('toggles exposure', function() {

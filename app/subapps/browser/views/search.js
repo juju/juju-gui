@@ -160,7 +160,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
           } else {
             this.get('store').search(this.get('filters'), {
               'success': function(data) {
-                var results = this.get('store').resultsToCharmlist(
+                var results = this.get('store').transformResults(
                     data.result);
                 var recommended = [],
                     more = [];
@@ -201,8 +201,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    'browser-charm-token',
-    'browser-charm-container',
+    'browser-token',
+    'browser-token-container',
     'browser-filter-widget',
     'event-tracker',
     'juju-browser-models',

@@ -128,7 +128,7 @@ YUI.add('juju-charm-store', function(Y) {
     _apiRoot: 'api/3',
 
     /**
-      * Send the actual request and handle response from the api.
+      * Send the actual request and handle response from the API.
       *
       * @method _makeRequest
       * @param {Object} args any query params and arguments required.
@@ -146,7 +146,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Api call to fetch autocomplete suggestions based on the current term.
+     * API call to fetch autocomplete suggestions based on the current term.
      *
      * @method autocomplete
      * @param {Object} query the filters data object for search.
@@ -169,7 +169,7 @@ YUI.add('juju-charm-store', function(Y) {
 
 
     /**
-     * Api call to fetch a charm's details.
+     * API call to fetch a charm's details.
      *
      * @method charm
      * @param {String} charmID the charm to fetch.
@@ -188,7 +188,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Api call to fetch a charm's details, with an optional local cache.
+     * API call to fetch a charm's details, with an optional local cache.
      *
      * @method charmWithCache
      * @param {String} charmID The charm to fetch This is the fully qualified
@@ -284,7 +284,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Api call to search charms
+     * API call to search charms
      *
      * @method search
      * @param {Object} filters the filters data object for search.
@@ -411,30 +411,30 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, turn that into a CharmList object for the
-     * application to use. Metadata is appended to the charm as data.
+     * Given a result list, append metadata is appended to the charm or bundle
+     * as the 'metadata' attribute and convert to objects.
      *
-     * @method resultsToCharmlist
+     * @method transformResults
      * @param {Object} JSON decoded data from response.
-     * @private
+     * @return {Array} List of charm and bundle objects.
      *
      */
-    resultsToCharmlist: function(data) {
-      // Remove non-charms (bundles) from the data.
-      // TODO Add code to handle bundles.
-      data = Y.Array.filter(data, function(charmData) {
-        return charmData.charm !== undefined;
-      });
-      // Append the metadata to the actual charm object.
-      data = Y.Array.map(data, function(charmData) {
-        if (charmData.metadata) {
-          charmData.charm.metadata = charmData.metadata;
+    transformResults: function(data) {
+      // Append the metadata to the actual token object.
+      var token;
+      var tokens;
+      tokens = Y.Array.map(data, function(entity) {
+        if (Y.Lang.isValue(entity.charm)) {
+          token = new Y.juju.models.Charm(entity.charm);
+        } else {
+          token = new Y.juju.models.Bundle(entity.bundle);
         }
-        return charmData.charm;
+        if (entity.metadata) {
+          token.set('metadata', entity.metadata);
+        }
+        return token;
       });
-      return new Y.juju.models.CharmList({
-        items: data
-      });
+      return tokens;
     },
 
     /**
@@ -452,10 +452,10 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Fetch the interesting landing content from the charmworld api.
+     * Fetch the interesting landing content from the charmworld API.
      *
      * @method interesting
-     * @return {Object} data loaded from the api call.
+     * @return {Object} data loaded from the API call.
      *
      */
     interesting: function(callbacks, bindScope) {
@@ -468,13 +468,13 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-      Fetch the related charm info from the charmworld api.
+      Fetch the related charm info from the charmworld API.
 
       @method related
       @param {String} charmID The charm to find related charms for.
       @param {Object} callbacks The success/failure callbacks to use.
       @param {Object} bindscope An object scope to perform callbacks in.
-      @return {Object} data loaded from the api call.
+      @return {Object} data loaded from the API call.
 
      */
     related: function(charmID, callbacks, bindScope) {
@@ -488,7 +488,7 @@ YUI.add('juju-charm-store', function(Y) {
   }, {
     ATTRS: {
       /**
-       * Required attribute for the host to talk to for api calls.
+       * Required attribute for the host to talk to for API calls.
        *
        * @attribute apiHost
        * @default undefined
@@ -557,7 +557,7 @@ YUI.add('juju-charm-store', function(Y) {
     _apiRoot: 'api/2',
 
     /**
-     * Api call to fetch autocomplete suggestions based on the current term.
+     * API call to fetch autocomplete suggestions based on the current term.
      *
      * @method autocomplete
      * @param {Object} query the filters data object for search.
@@ -579,7 +579,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Api call to fetch a charm's details, with an optional local cache.
+     * API call to fetch a charm's details, with an optional local cache.
      *
      * @method charmWithCache
      * @param {String} charmID The charm to fetch This is the fully qualified
@@ -662,7 +662,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Api call to search charms
+     * API call to search charms
      *
      * @method search
      * @param {Object} filters the filters data object for search.
@@ -713,10 +713,36 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Fetch the interesting landing content from the charmworld api.
+     * Given a result list, turn that into an array of charm objects for the
+     * application to use. Metadata is appended to the charm or bundle as the
+     * 'metadata' attribute.
+     *
+     * @method transformResults
+     * @param {Object} JSON decoded data from response.
+     * @return {Array} List of charm objects.
+     *
+     */
+    transformResults: function(data) {
+      // Remove non-charms (bundles) from the data.
+      data = Y.Array.filter(data, function(charmData) {
+        return Y.Lang.isValue(charmData.charm);
+      });
+      // Append the metadata to the actual charm object.
+      data = Y.Array.map(data, function(charmData) {
+        var charm = new Y.juju.models.Charm(charmData.charm);
+        if (charmData.metadata) {
+          charm.set('metadata', charmData.metadata);
+        }
+        return charm;
+      });
+      return data;
+    },
+
+    /**
+     * Fetch the interesting landing content from the charmworld API.
      *
      * @method interesting
-     * @return {Object} data loaded from the api call.
+     * @return {Object} data loaded from the API call.
      *
      */
     interesting: function(callbacks, bindScope) {
@@ -736,6 +762,7 @@ YUI.add('juju-charm-store', function(Y) {
     'datasource-io',
     'json-parse',
     'juju-charm-models',
+    'juju-bundle-models',
     'promise',
     'querystring-stringify'
   ]
