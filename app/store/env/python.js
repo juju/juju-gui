@@ -410,7 +410,7 @@ YUI.add('juju-env-python', function(Y) {
           (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
         throw 'Exactly one of config and data must be provided';
       }
-      config = utils.removeUnchangedConfigOptions(config, serviceConfig);
+      config = utils.getUnchangedConfigOptions(config, serviceConfig);
 
       this._send_rpc({
         op: 'set_config',

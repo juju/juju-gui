@@ -117,7 +117,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       } else {
         config = utils.getElementsValuesMapping(
             container, '.service-config .config-field');
-        config = utils.removeUnchangedConfigOptions(
+        config = utils.getUnchangedConfigOptions(
             config, options.charmModel.get('options'));
       }
 
