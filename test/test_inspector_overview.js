@@ -567,7 +567,7 @@ describe('Inspector Overview', function() {
     newContainer.one('.upgrade-link').simulate('click');
   });
 
-  it.only('reflects that a service was upgraded', function() {
+  it('reflects that a service was upgraded', function() {
     window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
