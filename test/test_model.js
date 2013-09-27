@@ -805,7 +805,7 @@ describe('database import/export', function() {
 
   beforeEach(function() {
     db = new models.Database();
-    fakeStore = utils.makeFakeStore(db.charms);
+    fakeStore = utils.makeFakeStore();
     fakeStore.iconpath = function() {return 'fake url';};
   });
 
