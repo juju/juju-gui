@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Ghost Inspector', function() {
 
   var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
-      jujuViews, models, service, utils, view, Y;
+      jujuViews, models, service, subordinateCharmData, utils, view, Y;
 
   before(function(done) {
     var requires = [
@@ -34,6 +34,8 @@ describe('Ghost Inspector', function() {
 
           charmData = utils.loadFixture(
               'data/mediawiki-api-response.json', true);
+          subordinateCharmData = utils.loadFixture(
+              'data/puppet-api-response.json', true);
           done();
         });
 
@@ -61,8 +63,11 @@ describe('Ghost Inspector', function() {
     window.flags = {};
   });
 
-  var setUpInspector = function(options) {
-    var charm = new models.Charm(charmData.charm);
+  var setUpInspector = function(data) {
+    if (!data) {
+      data = charmData;
+    }
+    var charm = new models.Charm(data.charm);
     db.charms.add(charm);
 
     // Create a ghost service with the fake charm.
@@ -144,6 +149,12 @@ describe('Ghost Inspector', function() {
     assert.deepEqual(config, params.Config);
   });
 
+  it('does not display unit count for subordinate charms', function() {
+    inspector = setUpInspector(subordinateCharmData);
+    var vmContainer = inspector.viewletManager.get('container');
+    assert.strictEqual(vmContainer.all('input[name=number-units]').size(), 0);
+  });
+
   it('presents the contraints to the user in python env', function() {
     // Create our own env to make sure we know which backend we're creating it
     // against.
@@ -168,6 +179,11 @@ describe('Ghost Inspector', function() {
 
     var inputNodes = container.all('.service-constraints input');
     assert.equal(inputNodes.size(), 4);
+  });
+
+  it('does not display constraints for subordinate charms', function() {
+    inspector = setUpInspector(subordinateCharmData);
+    assert.strictEqual(container.all('.service-constraints').size(), 0);
   });
 
   it('deploys with constraints in python env', function() {
@@ -198,6 +214,15 @@ describe('Ghost Inspector', function() {
 
     var message = env.ws.last_message();
     assert.deepEqual(message.Params.Constraints, { 'cpu-power': 2 });
+  });
+
+  it('deploys with zero units if the charm is a subordinate', function() {
+    inspector = setUpInspector(subordinateCharmData);
+    env.connect();
+    var vmContainer = inspector.viewletManager.get('container');
+    vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
+    var message = env.ws.last_message();
+    assert.strictEqual(message.Params.NumUnits, 0);
   });
 
   it('disables and resets input fields when \'use default config\' is active',
