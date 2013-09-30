@@ -605,9 +605,9 @@ describe('Inspector Overview', function() {
     assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
     inspector.viewletManager.get('environment')
       .createServiceInspector = function(model, attrs) {
-        assert.isFalse(model.get('charmChanged'));
-        done();
-      };
+          assert.isFalse(model.get('charmChanged'));
+          done();
+        };
     newContainer.one('.rerender-config').simulate('click');
   });
 
