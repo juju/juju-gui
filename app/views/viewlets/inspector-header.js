@@ -32,10 +32,15 @@ YUI.add('viewlet-inspector-header', function(Y) {
     bindings: {
       charmChanged: {
         'update': function(node, value) {
-          if (value) {
-            node.removeClass('hidden');
-          } else {
-            node.addClass('hidden');
+          // Check if the Y.Node actually has a DOM node attached; this may
+          // not be the case in the instance of reloding the inspector after
+          // the charm has changed.
+          if (node.getDOMNode()) {
+            if (value) {
+              node.removeClass('hidden');
+            } else {
+              node.addClass('hidden');
+            }
           }
         }
       }
