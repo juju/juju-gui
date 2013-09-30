@@ -459,17 +459,11 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        // If the removal succeeded on the server side, we need to remove the
-        // service from the database.  (Why wouldn't we get an update from the
-        // server side that would do this for us?).
-        db.services.remove(service);
-        service.destroy();
-        db.relations.remove(db.relations.filter(
-            function(r) {
-              return Y.Array.some(r.get('endpoints'), function(ep) {
-                return ep[0] === service.get('id');
-              });
-            }));
+        db.notifications.add({
+          title: 'Destroying service',
+          message: 'Service: ' + evt.service_name + ' is being destroyed.',
+          level: 'important'
+        });
       }
     },
 
