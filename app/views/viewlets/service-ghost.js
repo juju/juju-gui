@@ -65,22 +65,22 @@ YUI.add('viewlet-service-ghost', function(Y) {
      */
     render: function(model, viewletMgrAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
-
       // This is to allow for data binding on the ghost settings
-      // while using a shared template across both inspectors
-      var templateOptions = {};
-
-      templateOptions.settings = utils.extractServiceSettings(
-          viewletMgrAttrs.charmModel.get('options'));
-
-      templateOptions.constraints = utils.getConstraints(
-          // no current constraints in play.
-          {},
-          viewletMgrAttrs.env.genericConstraints);
-
-      // Signalling to the shared templates that this is the ghost view.
-      templateOptions.ghost = true;
-      this.container.setHTML(this.template(templateOptions));
+      // while using a shared template across both inspectors.
+      var subordinate = model.get('subordinate');
+      var context = {
+        // Signal to the shared templates that this is the ghost view.
+        ghost: true,
+        subordinate: subordinate,
+        settings: utils.extractServiceSettings(
+          viewletMgrAttrs.charmModel.get('options'))
+      };
+      if (!subordinate) {
+        context.constraints =  utils.getConstraints(
+          // There are no current constraints in play.
+          {}, viewletMgrAttrs.env.genericConstraints);
+      }
+      this.container.setHTML(this.template(context));
       this.container.all('textarea.config-field').plug(
           plugins.ResizingTextarea, {
             max_height: 200,
