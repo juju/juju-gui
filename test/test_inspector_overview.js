@@ -603,10 +603,11 @@ describe('Inspector Overview', function() {
 
     assert.isTrue(service.get('charmChanged'));
     assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
-    inspector.viewletManager.viewlets.config.render = function(model, attrs) {
-      assert.isFalse(model.get('charmChanged'));
-      done();
-    };
+    inspector.viewletManager.get('environment')
+      .createServiceInspector = function(model, attrs) {
+        assert.isFalse(model.get('charmChanged'));
+        done();
+      };
     newContainer.one('.rerender-config').simulate('click');
   });
 
