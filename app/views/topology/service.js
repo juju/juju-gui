@@ -1369,68 +1369,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       createServiceInspector(service);
-    },
-
-    /*
-     * Show a dialog before destroying a service
-     *
-     * @method destroyServiceConfirm
-     */
-    destroyServiceConfirm: function(box) {
-      // Set service in view.
-      this.set('destroy_service', box.model);
-
-      // Show dialog.
-      this.set('destroy_dialog', views.createModalPanel(
-          'Are you sure you want to destroy the service? ' +
-              'This cannot be undone.',
-          '#destroy-modal-panel',
-          'Destroy Service',
-          Y.bind(function(ev) {
-            ev.preventDefault();
-            var btn = ev.target;
-            btn.set('disabled', true);
-            this.destroyService(btn);
-          }, this)));
-    },
-
-    /*
-     * Destroy a service.
-     *
-     * @method destroyService
-     */
-    destroyService: function(btn) {
-      var env = this.get('component').get('env'),
-              service = this.get('destroy_service');
-      env.destroy_service(service.get('id'),
-          Y.bind(this._destroyCallback, this,
-              service, btn));
-    },
-
-    _destroyCallback: function(service, btn, ev) {
-      var getModelURL = this.get('component').get('getModelURL'),
-              topo = this.get('component'),
-              db = topo.get('db');
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: getModelURL(service),
-              modelId: service
-            }));
-      } else {
-        var relations = db.relations.get_relations_for_service(service);
-        Y.each(relations, function(relation) {
-          relation.destroy();
-        });
-        service.destroy();
-        topo.update();
-      }
-      this.get('destroy_dialog').hide();
-      btn.set('disabled', false);
     }
+
   }, {
     ATTRS: {
       /**

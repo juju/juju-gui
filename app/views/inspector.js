@@ -458,6 +458,12 @@ YUI.add('juju-view-inspector', function(Y) {
               modelId: service
             })
         );
+      } else {
+        db.notifications.add({
+          title: 'Destroying service',
+          message: 'Service: ' + evt.service_name + ' is being destroyed.',
+          level: 'important'
+        });
       }
     },
 
