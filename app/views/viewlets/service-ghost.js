@@ -73,12 +73,12 @@ YUI.add('viewlet-service-ghost', function(Y) {
         ghost: true,
         subordinate: subordinate,
         settings: utils.extractServiceSettings(
-          viewletMgrAttrs.charmModel.get('options'))
+            viewletMgrAttrs.charmModel.get('options'))
       };
       if (!subordinate) {
-        context.constraints =  utils.getConstraints(
-          // There are no current constraints in play.
-          {}, viewletMgrAttrs.env.genericConstraints);
+        context.constraints = utils.getConstraints(
+            // There are no current constraints in play.
+            {}, viewletMgrAttrs.env.genericConstraints);
       }
       this.container.setHTML(this.template(context));
       this.container.all('textarea.config-field').plug(
