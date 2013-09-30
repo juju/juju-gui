@@ -259,7 +259,9 @@ YUI.add('juju-view-environment', function(Y) {
                 'inspectorHeader',
                 'relations'
               ],
-              template: Y.juju.views.Templates['service-config-wrapper']
+              template: Y.juju.views.Templates['service-config-wrapper'],
+              // Define the context for the view manager template.
+              templateConfig: {subordinate: model.get('subordinate')}
             },
             configGhost: {
               // controller will show the first one in this array by default
