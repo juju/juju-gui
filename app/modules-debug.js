@@ -233,10 +233,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/utils.js'
         },
 
-        'juju-charm-panel': {
-          fullpath: '/juju-ui/views/charm-panel.js'
-        },
-
         'juju-notifications': {
           fullpath: '/juju-ui/views/notifications.js'
         },
@@ -251,22 +247,6 @@ var GlobalConfig = {
 
         'juju-view-login': {
           fullpath: '/juju-ui/views/login.js'
-        },
-
-        'juju-view-service': {
-          fullpath: '/juju-ui/views/service.js'
-        },
-
-        'juju-view-unit': {
-          fullpath: '/juju-ui/views/unit.js'
-        },
-
-        'juju-view-charm-collection': {
-          fullpath: '/juju-ui/views/charm.js'
-        },
-
-        'juju-view-charm': {
-          fullpath: '/juju-ui/views/charm.js'
         },
 
         'juju-templates': {
@@ -291,10 +271,6 @@ var GlobalConfig = {
             'juju-topology',
             'juju-view-environment',
             'juju-view-login',
-            'juju-view-service',
-            'juju-view-unit',
-            'juju-view-charm',
-            'juju-view-charm-collection',
             'juju-landscape'
           ]
         },

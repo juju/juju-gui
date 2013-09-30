@@ -161,33 +161,6 @@ function injectData(app, data) {
       container.getAttribute('class').should.include('container');
     });
 
-    it('should be able to route objects to internal URLs', function() {
-      constructAppInstance({
-        env: juju.newEnvironment({conn: new utils.SocketStub()}, 'python')
-      });
-      // Take handles to database objects and ensure we can route to the view
-      // needed to show them.
-      var wordpress = app.db.services.getById('wordpress'),
-          wp0 = app.db.units.get_units_for_service(wordpress)[0];
-
-      // 'service/wordpress/' is the primary route,
-      // so other URLs are not returned.
-      app.getModelURL(wordpress).should.equal('/:gui:/service/wordpress/');
-      // However, passing 'intent' can force selection of another one.
-      app.getModelURL(wordpress, 'config').should.equal(
-          '/:gui:/service/wordpress/config/');
-
-      // Service units use argument rewriting (thus not /u/wp/0).
-      app.getModelURL(wp0).should.equal('/:gui:/unit/wordpress-0/');
-
-      var wpCharmName = wordpress.get('charm');
-      app.db.charms.add({id: wpCharmName});
-      var wpCharm = app.db.charms.getById(wpCharmName);
-      // Charms also require a mapping, but only a name, not a function.
-      app.getModelURL(wpCharm).should.equal(
-          '/:gui:/charms/charms/precise/wordpress-6/json/');
-    });
-
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
       constructAppInstance({

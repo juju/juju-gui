@@ -846,7 +846,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Type: 'Client',
         Params: {
           ServiceName: 'mysql',
-          Config: {
+          Options: {
             'cfg-key': 'cfg-val'
           }
         },
@@ -868,7 +868,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Request: 'ServiceSetYAML',
         Params: {
           ServiceName: 'mysql',
-          ConfigYAML: data
+          Config: data
         }
       };
       assert.deepEqual(expected, msg);
@@ -887,6 +887,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       assert.equal(err, 'service "yoursql" not found');
       assert.equal(service_name, 'yoursql');
+    });
+
+    it('handles successful set config', function() {
+      var dataReturned;
+      var oldConfig = {key1: 'value1', key2: 'value2', key3: 'value3'};
+      var newConfig = {key1: 'value1', key2: 'CHANGED!', key3: 'value3'};
+      env.set_config('django', newConfig, null, oldConfig, function(evt) {
+        dataReturned = evt;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Response: {}
+      });
+      assert.isUndefined(dataReturned.err);
+      assert.equal(dataReturned.service_name, 'django');
+      // The returned event includes the changed config options.
+      assert.deepEqual(dataReturned.newValues, {key2: 'CHANGED!'});
+      // The old and new config objects are not modified in the process.
+      assert.deepEqual(
+          oldConfig, {key1: 'value1', key2: 'value2', key3: 'value3'});
+      assert.deepEqual(
+          newConfig, {key1: 'value1', key2: 'CHANGED!', key3: 'value3'});
     });
 
     it('can destroy a service', function() {

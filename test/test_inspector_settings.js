@@ -230,7 +230,9 @@ describe('Inspector Settings', function() {
   it('responds to service removal by cleaning out the DB', function() {
     // If destroying a service succeeds, the service is removed from the
     // database.
-    var removeServiceCalled, removeRelationsCalled;
+    var removeServiceCalled = false,
+        removeRelationsCalled = false,
+        destroyServiceCalled = false;
 
     inspector = setUpInspector();
 
@@ -238,6 +240,9 @@ describe('Inspector Settings', function() {
       get: function(name) {
         assert.equal(name, 'id');
         return 'SERVICE-ID';
+      },
+      destroy: function() {
+        destroyServiceCalled = true;
       }
     };
     var RELATIONS = 'all of the relations of the service being removed';
@@ -265,6 +270,7 @@ describe('Inspector Settings', function() {
     inspector._destroyServiceCallback(service, db, evt);
     assert.isTrue(removeServiceCalled);
     assert.isTrue(removeRelationsCalled);
+    assert.isTrue(removeServiceCalled);
   });
 
   it('responds to service removal failure by alerting the user', function() {
@@ -300,11 +306,13 @@ describe('Inspector Settings', function() {
 
   it('can destroy using a ghost model', function(done) {
     var inspector = setUpInspector({useGhost: true});
-    assert(inspector.viewletManager.get('model').name, 'browser-charm');
-    inspector.viewletManager.set('env', {
-      destroy_service: function() {
-        // This means that it successfully went down the proper path
-        done();
+    assert(inspector.viewletManager.get('model').name, 'service');
+    inspector.viewletManager.set('db', {
+      services: {
+        remove: function() {
+          // This means that it successfully went down the proper path
+          done();
+        }
       }
     });
     inspector.initiateServiceDestroy();
@@ -326,7 +334,7 @@ describe('Inspector Settings', function() {
         input, inspector.viewletManager.viewlets.config);
     button.simulate('click');
     var message = env.ws.last_message();
-    assert.equal('foo', message.Params.Config.admins);
+    assert.equal('foo', message.Params.Options.admins);
     // Send back a success message.
     env.ws.msg({RequestId: message.RequestId});
     assert.equal(button.getHTML(), 'Save changes');

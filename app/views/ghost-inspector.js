@@ -94,7 +94,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           container = options.container,
           model = this.model,
           serviceName = container.one('input[name=service-name]').get('value'),
-          isSubordinate = model.get('is_subordinate'),
+          isSubordinate = model.get('subordinate'),
           numUnits = (
               isSubordinate ? 0 :
               parseInt(
@@ -117,7 +117,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
       } else {
         config = utils.getElementsValuesMapping(
             container, '.service-config .config-field');
-        config = utils.removeUnchangedConfigOptions(
+        config = utils.getChangedConfigOptions(
             config, options.charmModel.get('options'));
       }
 

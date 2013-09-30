@@ -1447,7 +1447,6 @@ YUI.add('juju-topology-service', function(Y) {
     'd3',
     'd3-components',
     'd3-statusbar',
-    'juju-view-service',
     'juju-templates',
     'juju-models',
     'juju-env',

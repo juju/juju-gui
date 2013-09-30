@@ -151,6 +151,36 @@ YUI.add('juju-view-environment', function(Y) {
             this.topo.fire('hideServiceMenu');
           }, this);
 
+          model.get('units').on('deltaChange', function(e) {
+            var service = e.service;
+            var units = service.get('units');
+
+            var started = !units.some(function(unit) {
+              if ((/-?error$/).test(unit.agent_state)) {
+                return true;
+              }
+            });
+
+            if (started && service.get('life') === 'dying') {
+              var inspector = this.getInspector(service.get('packageName'));
+              if (inspector) { inspector.viewletManager.destroy(); }
+              this.topo.fire('hideServiceMenu');
+            }
+          }, this);
+
+          // If the service is destroyed from the console then we need to
+          // destroy the inspector and hide the service menu.
+          model.after(['lifeChange', 'destroy'], function(e) {
+            var service = e.currentTarget;
+            // The user can put the service in a dying state from the console
+            // but it will not be destroyed if any of its units has errors.
+            if (service.isAlive() || service.hasErrors()) { return; }
+
+            var inspector = this.getInspector(service.get('packageName'));
+            if (inspector) { inspector.viewletManager.destroy(); }
+            this.topo.fire('hideServiceMenu');
+          }, this);
+
           // Restrict to a single inspector instance
           if (Y.Object.size(this._inspectors) >= 1) {
             Y.Object.each(this._inspectors, function(inspector) {
@@ -230,7 +260,9 @@ YUI.add('juju-view-environment', function(Y) {
                 'inspectorHeader',
                 'relations'
               ],
-              template: Y.juju.views.Templates['service-config-wrapper']
+              template: Y.juju.views.Templates['service-config-wrapper'],
+              // Define the context for the view manager template.
+              templateConfig: {subordinate: model.get('subordinate')}
             },
             configGhost: {
               // controller will show the first one in this array by default

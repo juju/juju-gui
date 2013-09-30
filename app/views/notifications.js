@@ -247,13 +247,6 @@ YUI.add('juju-notifications', function(Y) {
         events: {
           '#notify-indicator': {
             click: 'notifyToggle'
-          },
-          'li.notice': {
-            click: 'notificationSelect'
-          },
-
-          '#notify-list li.header a': {
-            click: 'close'
           }
         },
 

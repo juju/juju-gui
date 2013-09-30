@@ -184,15 +184,13 @@ YUI.add('juju-view-inspector', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var db;
-        db = this.viewletManager.get('db');
-        var units = db.units.get_units_for_service(service),
+        var units = service.get('units'),
             unit_ids_to_remove = [];
 
-        for (var i = units.length - 1;
+        for (var i = units.size() - 1;
             unit_ids_to_remove.length < delta;
             i -= 1) {
-          unit_ids_to_remove.push(units[i].id);
+          unit_ids_to_remove.push(units.item(i).id);
         }
         env.remove_units(
             unit_ids_to_remove,
@@ -217,7 +215,7 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        db.units.add(
+        service.get('units').add(
             Y.Array.map(unit_names, function(unit_id) {
               return {id: unit_id,
                 agent_state: 'pending'};
@@ -258,7 +256,9 @@ YUI.add('juju-view-inspector', function(Y) {
         );
       } else {
         Y.Array.each(unit_names, function(unit_name) {
-          db.units.remove(db.units.getById(unit_name));
+          var service = db.services.getById(unit_name.split('/')[0]);
+          var units = service.get('units');
+          units.remove(units.getById(unit_name));
         });
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);
@@ -425,12 +425,13 @@ YUI.add('juju-view-inspector', function(Y) {
       var dataSource = this.viewletManager;
       var model = dataSource.get('model');
       var db = this.viewletManager.get('db');
-      if (model.name === 'service') {
+      if (model.name === 'service' && !model.get('pending')) {
         var env = dataSource.get('env');
         env.destroy_service(model.get('id'),
             Y.bind(this._destroyServiceCallback, this, model, db));
       } else if (model.get('pending')) {
         db.services.remove(model);
+        model.destroy();
       } else {
         throw new Error('Unexpected model type: ' + model.name);
       }
@@ -462,6 +463,7 @@ YUI.add('juju-view-inspector', function(Y) {
         // service from the database.  (Why wouldn't we get an update from the
         // server side that would do this for us?).
         db.services.remove(service);
+        service.destroy();
         db.relations.remove(db.relations.filter(
             function(r) {
               return Y.Array.some(r.get('endpoints'), function(ep) {
@@ -706,16 +708,16 @@ YUI.add('juju-view-inspector', function(Y) {
 
       button.set('disabled', 'disabled');
 
-      var newVals = utils.getElementsValuesMapping(container, '.config-field');
-      var errors = utils.validate(newVals, schema);
+      var config = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(config, schema);
 
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
-            newVals,
+            config,
             null,
             service.get('config'),
-            Y.bind(this._setConfigCallback, this, container, newVals)
+            Y.bind(this._setConfigCallback, this, container)
         );
       } else {
         db.notifications.add(
@@ -736,23 +738,29 @@ YUI.add('juju-view-inspector', function(Y) {
 
       @method _setConfigCallback
       @param {Y.Node} container of the viewlet-manager.
-      @param {Y.EventFacade} e yui event object.
+      @param {Y.EventFacade} evt YUI event object with the following attrs:
+        - err: whether or not an error occurred;
+        - service_name: the name of the service;
+        - newValues: an object including the modified config options.
     */
-    _setConfigCallback: function(container, config, e) {
+    _setConfigCallback: function(container, evt) {
       // If the user has conflicted fields and still chooses to
       // save, then we will be overwriting the values in Juju.
-      if (e.err) {
+      if (evt.err) {
         var db = this.viewletManager.get('db');
         db.notifications.add(
             new models.Notification({
               title: 'Error setting service configuration',
-              message: 'Service name: ' + e.service_name,
+              message: 'Service name: ' + evt.service_name,
               level: 'error'
             })
         );
       } else {
         this._highlightSaved(container);
-        this.viewletManager.get('model').set('config', config);
+        var service = this.viewletManager.get('model');
+        // Mix the current config (stored in the db) with the modified options.
+        var config = Y.mix(service.get('config'), evt.newValues, true);
+        service.set('config', config);
         var bindingEngine = this.viewletManager.bindingEngine;
         bindingEngine.resetDOMToModel('config');
       }
@@ -851,7 +859,9 @@ YUI.add('juju-view-inspector', function(Y) {
     showUnitDetails: function(ev) {
       ev.halt();
       var db = this.viewletManager.get('db');
-      var unit = db.units.getById(ev.currentTarget.getData('unit'));
+      var unitName = ev.currentTarget.getData('unit');
+      var service = db.services.getById(unitName.split('/')[0]);
+      var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
     },
 

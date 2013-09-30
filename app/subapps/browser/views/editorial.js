@@ -189,11 +189,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
             store.interesting({
               'success': function(data) {
                 var results = {
-                  featuredCharms: store.resultsToCharmlist(
+                  featuredCharms: store.transformResults(
                       data.result.featured),
-                  newCharms: store.resultsToCharmlist(
+                  newCharms: store.transformResults(
                       data.result['new']),
-                  popularCharms: store.resultsToCharmlist(
+                  popularCharms: store.transformResults(
                       data.result.popular)
                 };
                 this._renderInteresting(results);
