@@ -293,23 +293,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var sampleData = {
         result: {
           featured: [
-             {
-               charm: {
-                 id: 'precise/bar-2',
-                 name: 'foo',
-                 description: 'some charm named bar',
-                 files: [],
-                 is_approved: true
-               }
-             }, {
-               bundle: {
-                 id: '~bac/wiki/3/wiki',
-                 name: 'wiki',
-                 basket_name: 'wiki',
-                 basket_revision: 3,
-                 branch_deleted: false
-               }
-             }
+            {
+              charm: {
+                id: 'precise/bar-2',
+                name: 'foo',
+                description: 'some charm named bar',
+                files: [],
+                is_approved: true
+              }
+            }, {
+              bundle: {
+                id: '~bac/wiki/3/wiki',
+                name: 'wiki',
+                basket_name: 'wiki',
+                basket_revision: 3,
+                branch_deleted: false
+              }
+            }
           ],
           'new': [],
           popular: []
@@ -321,11 +321,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         sendRequest: function(params) {
           // Stubbing the server callback value.
           params.callback.success({
-          response: {
-            results: [{
-              responseText: Y.JSON.stringify(sampleData)
-            }]
-          }
+            response: {
+              results: [{
+                responseText: Y.JSON.stringify(sampleData)
+              }]
+            }
           });
         }
       });
