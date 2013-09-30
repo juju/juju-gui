@@ -588,7 +588,7 @@ describe('Inspector Overview', function() {
     newContainer.one('.upgrade-link').simulate('click');
   });
 
-  it('reflects that a service was upgraded', function() {
+  it('reflects that a service was upgraded', function(done) {
     window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
@@ -605,6 +605,12 @@ describe('Inspector Overview', function() {
 
     assert.isTrue(service.get('charmChanged'));
     assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
+    inspector.viewletManager.get('environment')
+      .createServiceInspector = function(model, attrs) {
+          assert.isFalse(model.get('charmChanged'));
+          done();
+        };
+    newContainer.one('.rerender-config').simulate('click');
   });
 
   it('toggles exposure', function() {

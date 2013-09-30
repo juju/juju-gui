@@ -930,6 +930,24 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
+      Reloads the inspector in order to ensure that data is up-to-date. in the
+      case of added/removed fields.
+
+      @method reloadInspector
+    */
+    reloadInspector: function() {
+      // Ensure that any flags which would lead to a reload notification are
+      // unset.
+      this.model.set('charmChanged', false);
+
+      // Reload the inspector itself.
+      this.viewletManager.after('destroy', function() {
+        this.get('environment').createServiceInspector(this.get('model'));
+      });
+      this.viewletManager.destroy();
+    },
+
+    /**
       Toggles the close-unit class on the unit-list-wrapper which triggers
       the css close and open animations.
 

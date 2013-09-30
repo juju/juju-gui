@@ -69,7 +69,7 @@ YUI.add('viewlet-service-config', function(Y) {
     /**
      * Viewlet standard render call.
      *
-     * @method rener
+     * @method render
      * @param {Service} service the model of the service in the inspector.
      * @param {Object} viewContainerAttrs an object of helper data from the
      * viewlet manager.
@@ -82,7 +82,9 @@ YUI.add('viewlet-service-config', function(Y) {
       var templatedSettings = utils.extractServiceSettings(
           charm.get('options'), service.get('config'));
 
-      this.container = Y.Node.create(this.templateWrapper);
+      if (!this.container) {
+        this.container = Y.Node.create(this.templateWrapper);
+      }
 
       this.container.setHTML(
           this.template({
@@ -96,6 +98,20 @@ YUI.add('viewlet-service-config', function(Y) {
             single_line: 18
           }
       );
+      this.attachExpandingTextarea();
+    },
+
+    /**
+      Ensures that all resizing textareas are attached.
+
+      @method attachExpandingTextarea
+    */
+    attachExpandingTextarea: function() {
+      this.container.all('textarea.config-field').each(function(n) {
+        if (n.resizingTextarea) {
+          n.resizingTextarea.resize();
+        }
+      });
     },
 
     /**
@@ -111,11 +127,7 @@ YUI.add('viewlet-service-config', function(Y) {
      */
     show: function() {
       this.container.show();
-      this.container.all('textarea.config-field').each(function(n) {
-        if (n.resizingTextarea) {
-          n.resizingTextarea.resize();
-        }
-      });
+      this.attachExpandingTextarea();
     }
 
   };
