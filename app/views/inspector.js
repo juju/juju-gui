@@ -920,13 +920,17 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Re-renders the config viewlet after a charm has been upgraded and the
-      user has been warned.
+      Reloads the inspector in order to ensure that data is up-to-date. in the
+      case of added/removed fields.
 
-      @method rerenderConfig
+      @method reloadInspector
     */
-    rerenderConfig: function() {
+    reloadInspector: function() {
+      // Ensure that any flags which would lead to a reload notification are
+      // unset.
       this.model.set('charmChanged', false);
+
+      // Reload the inspector itself.
       this.viewletManager.after('destroy', function() {
         this.get('environment').createServiceInspector(this.get('model'));
       });
