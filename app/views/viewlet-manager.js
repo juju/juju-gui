@@ -342,7 +342,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method renderViewlet
       @param {Object} viewlet The viewlet to render.
       @param {String} name A string name for the viewlet.
-      @param {Model} model The model or POJSO for the viewlet
+      @param {Model} model The model or POJSO for the viewlet.
       @param {Y.Node} viewletContainer The container into which the viewlet
         should be rendered.
     */
