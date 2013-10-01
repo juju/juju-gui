@@ -1628,6 +1628,27 @@ YUI.add('juju-view-utils', function(Y) {
       }
     }
   };
+
+  /**
+    Given a mapping of key/value pairs, determine if the data describes a charm
+    or a bundle.
+
+    @static
+    @method determineEntityDataType
+    @param {Object} entityData The entity's data.
+    @return {String} Returns "charm" if the data describes a charm, "bundle"
+      if it describes a bundle.
+  */
+  utils.determineEntityDataType = function(entityData) {
+    // It would be nice to restructure the token widget so that it takes
+    // a model instead of a jumble of attributes.  If we did so, this
+    // would just be a type check over the class of the model.
+    if (entityData && 'basket_name' in entityData) {
+      return 'bundle';
+    }
+    return 'charm';
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
