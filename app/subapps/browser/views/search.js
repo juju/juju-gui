@@ -59,13 +59,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
 
-          debugger;
           var recommendedContainer = new widgets.browser.TokenContainer(
               Y.merge({
                 name: 'Recommended charms',
                 cutoff: 4,
                 children: results.recommended.map(function(charm) {
-                  debugger;
                   return charm.getAttrs();
                 })}, {
                 additionalChildConfig: {
