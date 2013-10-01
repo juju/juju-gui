@@ -161,7 +161,6 @@ YUI.add('subapp-browser', function(Y) {
           qs: this._viewState.querystring
         });
       }
-
       if (this._viewState.hash) {
         url = url + this._viewState.hash;
       }
@@ -210,20 +209,19 @@ YUI.add('subapp-browser', function(Y) {
        state.
 
        @method _shouldShowCharm
+       @param {Boolean} force whether or not we should force re-rendering if
+         a charm identifier is found in the view state.
        @return {Boolean} true if should show.
      */
-    _shouldShowCharm: function() {
-      if (
+    _shouldShowCharm: function(force) {
+      return (
           this._viewState.charmID &&
           (
-           this._hasStateChanged('charmID') ||
-           this._hasStateChanged('viewmode')
+            force ||
+            this._hasStateChanged('charmID') ||
+            this._hasStateChanged('viewmode')
           )
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      );
     },
 
     /**
@@ -749,6 +747,7 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+
       // If we've gone from no _sidebar to having one, then force editorial to
       // render.
       var forceSidebar = false;
@@ -793,10 +792,9 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
-
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if (this._shouldShowCharm()) {
+      if (this._shouldShowCharm(forceSidebar)) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }
