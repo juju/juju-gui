@@ -279,7 +279,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         callbacks.failure({boo: 'hiss'});
       };
       fakebackend.deploy('cs:precise/wordpress-15', callback);
-      assert.equal(result.error, 'Error interacting with the charmworld api.');
+      assert.equal(result.error, 'Error interacting with the charmworld API.');
     });
 
     it('honors the optional service name', function() {

@@ -289,9 +289,6 @@ describe('service module events', function() {
             clientY: 153
           }
         };
-    // this will be removed by the canvas drop handler
-    localContainer.setAttribute('id', 'foo');
-    localContainer.append('<img>').setAttribute('src', src);
 
     var eventHandle = Y.on('initiateDeploy', function(charm, ghostAttributes) {
       eventHandle.detach();
@@ -309,4 +306,35 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
+  it('should deploy a bundle on bundle token drop events', function(done) {
+    var localContainer = utils.makeContainer(),
+        src = '/juju-ui/assets/svgs/service_health_mask.svg',
+        preventCount = 0,
+        fakeEventObject = {
+          halt: function() {
+            preventCount += 1;
+          },
+          _event: {
+            dataTransfer: {
+              getData: function(name) {
+                return JSON.stringify({
+                  data: '{"basket_name": "foo", "data": "BUNDLE DATA"}',
+                  dataType: 'token-drag-and-drop',
+                  iconSrc: src
+                });
+              }
+            },
+            target: {},
+            clientX: 155,
+            clientY: 153
+          }
+        };
+
+    view.topo.set('env', {deployerImport: function(deployerData) {
+      assert.include(deployerData, 'BUNDLE DATA');
+      done();
+    }});
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
 });

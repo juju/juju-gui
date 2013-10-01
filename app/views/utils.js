@@ -1628,6 +1628,17 @@ YUI.add('juju-view-utils', function(Y) {
       }
     }
   };
+
+  utils.determineEntityDataType = function(tokenData) {
+    // It would be nice to restructure the token widget so that it takes
+    // a model instead of a jumble of attributes.  If we did so, this
+    // would just be a type check over the class of the model.
+    if (tokenData && 'basket_name' in tokenData) {
+      return 'bundle';
+    }
+    return 'charm';
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
