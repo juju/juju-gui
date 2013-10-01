@@ -267,8 +267,7 @@ describe('service module events', function() {
   });
 
   it('should deploy a service on charm token drop events', function(done) {
-    var localContainer = utils.makeContainer(),
-        src = '/juju-ui/assets/svgs/service_health_mask.svg',
+    var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
         fakeEventObject = {
           halt: function() {
@@ -307,8 +306,7 @@ describe('service module events', function() {
   });
 
   it('should deploy a bundle on bundle token drop events', function(done) {
-    var localContainer = utils.makeContainer(),
-        src = '/juju-ui/assets/svgs/service_health_mask.svg',
+    var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
         fakeEventObject = {
           halt: function() {
