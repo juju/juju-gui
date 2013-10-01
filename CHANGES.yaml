@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 0.10.1:
     - Add icon for exporting a bundle.
     - (FIX) The GUI was unusable when cookies were turned off in your browser.
