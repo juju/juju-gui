@@ -41,6 +41,10 @@ YUI.add('subapp-browser-sidebar', function(Y) {
   ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
     template: views.Templates.sidebar,
 
+    destructor: function() {
+      this.get('container').setHTML('');
+    },
+
     /**
      * Render out the view to the DOM.
      *

@@ -936,15 +936,16 @@ YUI.add('subapp-browser', function(Y) {
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
-
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[viewmode](req, res, next);
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
       } else {
         // Update the app state even though we're not showing anything.
         this._saveState();
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
         // Let the next route go on.
         next();
       }
