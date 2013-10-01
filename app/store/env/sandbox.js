@@ -65,7 +65,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       attribute.
     @return {undefined} Nothing.
     */
-    onmessage: function(event) {},
+    onmessage: function(event) {debugger;},
 
     /**
     Immediately give message to listener (contrast with receive).

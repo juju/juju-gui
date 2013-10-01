@@ -264,6 +264,7 @@ YUI.add('juju-env-base', function(Y) {
      * @return {undefined} Dispatches only.
      */
     dispatch_result: function(data) {
+      debugger;
       this._dispatch_rpc_result(data);
       this._dispatch_event(data);
     },

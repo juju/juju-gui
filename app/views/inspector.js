@@ -984,6 +984,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _unitActionButtonClick: function(e) {
       e.halt();
+      debugger;
       var handlers = {
         resolve: this._sendUnitResolve,
         retry: this._sendUnitRetry,
