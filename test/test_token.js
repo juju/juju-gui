@@ -25,7 +25,7 @@ describe('charm/bundle token', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-token', 'node-event-simulate',
-         'juju-tests-utils'], function(Y) {
+         'juju-tests-utils', 'juju-bundle-models'], function(Y) {
           Token = Y.juju.widgets.browser.Token;
           utils = Y.namespace('juju-tests.utils');
           cleanIconHelper = utils.stubCharmIconPath();
@@ -172,6 +172,25 @@ describe('charm/bundle token', function() {
 
     token.render(token_container);
     assert(token_container.one('.token'));
+  });
+
+  it('renders a bundle token properly with data', function() {
+    var token = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME',
+      serviceCount: 4,
+      unitCount: 5
+    });
+
+    token.render(token_container);
+    assert.notEqual(
+      token_container.get('innerHTML').indexOf('4 services'),
+      -1
+    );
+    assert.notEqual(
+      token_container.get('innerHTML').indexOf('5 units'),
+      -1
+    );
   });
 
 });
