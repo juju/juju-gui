@@ -184,12 +184,12 @@ describe('charm/bundle token', function() {
 
     token.render(token_container);
     assert.notEqual(
-      token_container.get('innerHTML').indexOf('4 services'),
-      -1
+        token_container.get('innerHTML').indexOf('4 services'),
+        -1
     );
     assert.notEqual(
-      token_container.get('innerHTML').indexOf('5 units'),
-      -1
+        token_container.get('innerHTML').indexOf('5 units'),
+        -1
     );
   });
 
