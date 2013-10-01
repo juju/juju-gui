@@ -215,11 +215,10 @@ YUI.add('subapp-browser', function(Y) {
      */
     _shouldShowCharm: function(force) {
       return (
-          this._viewState.charmID &&
-          (
-            force ||
-            this._hasStateChanged('charmID') ||
-            this._hasStateChanged('viewmode')
+          this._viewState.charmID && (
+              force ||
+              this._hasStateChanged('charmID') ||
+              this._hasStateChanged('viewmode')
           )
       );
     },
