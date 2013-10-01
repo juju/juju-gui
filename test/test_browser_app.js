@@ -419,6 +419,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
+      it('verify that route callables exist', function() {
+        app = new browser.Browser();
+        Y.each(app.get('routes'), function(route) {
+          assert.isTrue(typeof app[route.callback] === 'function');
+        });
+      });
+
       it('can go to a default jujucharms landing page', function() {
         app = new browser.Browser({isJujucharms: true});
         var called = false;
@@ -669,6 +676,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         app.fullscreen({}, {}, function() {});
+      });
+
+      it('re-renders charm details with the sidebar', function() {
+        app = new browser.Browser({defaultViewmode: 'sidebar'});
+        // Avoid errors calling renderEditorial.
+        app.renderEditorial = function() {};
+        // Mock the renderCharmDetails method so that we can check if it has
+        // been called.
+        var renderCharmDetailsCalled = false;
+        app.renderCharmDetails = function() {
+          renderCharmDetailsCalled = true;
+        };
+        // Set a charm identifier in the view state, and patch the old state
+        // so that it is no different than the current one.
+        app._viewState.charmID = 'precise/mediawiki-10';
+        app._oldState = app._viewState;
+        // Call the sidebar method and ensure the charm detail is re-rendered.
+        app.sidebar({path: '/'}, null, next);
+        assert.isTrue(renderCharmDetailsCalled);
       });
 
     });
