@@ -794,6 +794,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container.remove(true);
       });
 
+      it('re-renders charm details with the sidebar', function() {
+        // Set a charm identifier in the view state, and patch the old state
+        // so that it is no different than the current one.
+        browser._viewState.charmID = 'precise/mediawiki-10';
+        browser._oldState = browser._viewState;
+        // Call the sidebar method and ensure the charm detail is re-rendered.
+        browser.sidebar({path: '/'}, null, function() {});
+        assert.isTrue(hits.renderCharmDetails);
+      });
+
       it('/ dispatches correctly', function() {
         var req = {
           path: '/'

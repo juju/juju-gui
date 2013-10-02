@@ -55,6 +55,10 @@ YUI.add('subapp-browser', function(Y) {
           this[viewAttr].destroy();
           delete this[viewAttr];
         }
+        if (this._oldState.viewmode === 'sidebar' && this._details) {
+          this._details.destroy();
+          delete this._details;
+        }
       }
     },
 
@@ -209,14 +213,12 @@ YUI.add('subapp-browser', function(Y) {
        state.
 
        @method _shouldShowCharm
-       @param {Boolean} force whether or not we should force re-rendering if
-         a charm identifier is found in the view state.
        @return {Boolean} true if should show.
      */
-    _shouldShowCharm: function(force) {
+    _shouldShowCharm: function() {
       return (
           this._viewState.charmID && (
-              force ||
+              !this._details ||
               this._hasStateChanged('charmID') ||
               this._hasStateChanged('viewmode')
           )
@@ -793,7 +795,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if (this._shouldShowCharm(forceSidebar)) {
+      if (this._shouldShowCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }
