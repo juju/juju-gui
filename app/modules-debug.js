@@ -371,7 +371,7 @@ var GlobalConfig = {
         },
 
         'juju-charm-store': {
-          fullpath: '/juju-ui/store/charm.js'
+          fullpath: '/juju-ui/store/charmworld.js'
         },
 
         'juju-websocket-logging': {
@@ -402,8 +402,16 @@ var GlobalConfig = {
         },
 
         // Browser Views
+        'subapp-browser-entitybaseview': {
+          fullpath: '/juju-ui/subapps/browser/views/entity-base.js'
+        },
+
         'subapp-browser-charmview': {
           fullpath: '/juju-ui/subapps/browser/views/charm.js'
+        },
+
+        'subapp-browser-bundleview': {
+          fullpath: '/juju-ui/subapps/browser/views/bundle.js'
         },
 
         'subapp-browser-charmresults': {

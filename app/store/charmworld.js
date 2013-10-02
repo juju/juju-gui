@@ -62,7 +62,7 @@ YUI.add('juju-charm-store', function(Y) {
       this.sendRequest({
         request: apiEndpoint,
         callback: {
-          success: function(io_request) {
+          'success': function(io_request) {
             var res = Y.JSON.parse(
                 io_request.response.results[0].responseText
                 );
@@ -326,7 +326,7 @@ YUI.add('juju-charm-store', function(Y) {
       this.get('datasource').sendRequest({
         request: endpoint,
         callback: {
-          success: function(io_request) {
+          'success': function(io_request) {
             callbacks.success(io_request.response.results[0].responseText);
           },
           'failure': function(io_request) {
@@ -497,7 +497,7 @@ YUI.add('juju-charm-store', function(Y) {
        */
       apiHost: {
         required: true,
-        setter: function(val) {
+        'setter': function(val) {
           if (val && !val.match(/\/$/)) {
             val = val + '/';
           }
@@ -515,7 +515,7 @@ YUI.add('juju-charm-store', function(Y) {
        *
        */
       datasource: {
-        setter: function(datasource) {
+        'setter': function(datasource) {
           // Construct an API helper using the new datasource.
           this.apiHelper = new ns.ApiHelper({
             sendRequest: Y.bind(datasource.sendRequest, datasource)
