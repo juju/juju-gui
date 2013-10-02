@@ -523,11 +523,11 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderCharmDetails: function(req, res, next) {
-      var charmID = this._viewState.charmID;
+      var charmId = this._viewState.charmID;
 
       var extraCfg = {
         activeTab: this._viewState.hash,
-        charmID: charmID,
+        entityId: charmId,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
@@ -547,7 +547,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cache.charms.getById(charmID);
+      var model = this._cache.charms.getById(charmId);
 
       if (model) {
         extraCfg.charm = model;
@@ -1141,6 +1141,7 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
+    'subapp-browser-bundleview',
     'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',

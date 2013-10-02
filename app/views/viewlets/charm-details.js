@@ -76,6 +76,7 @@ YUI.add('viewlet-charm-details', function(Y) {
   requires: [
     'node',
     'subapp-browser-charmview',
+    'subapp-browser-bundleview',
     'juju-charm-models',
     'juju-view'
   ]
