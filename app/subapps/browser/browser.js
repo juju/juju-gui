@@ -55,6 +55,10 @@ YUI.add('subapp-browser', function(Y) {
           this[viewAttr].destroy();
           delete this[viewAttr];
         }
+        if (this._oldState.viewmode === 'sidebar' && this._details) {
+          this._details.destroy();
+          delete this._details;
+        }
       }
     },
 
@@ -161,7 +165,6 @@ YUI.add('subapp-browser', function(Y) {
           qs: this._viewState.querystring
         });
       }
-
       if (this._viewState.hash) {
         url = url + this._viewState.hash;
       }
@@ -213,17 +216,13 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
-      if (
-          this._viewState.charmID &&
-          (
-           this._hasStateChanged('charmID') ||
-           this._hasStateChanged('viewmode')
+      return (
+          this._viewState.charmID && (
+              !this._details ||
+              this._hasStateChanged('charmID') ||
+              this._hasStateChanged('viewmode')
           )
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      );
     },
 
     /**
@@ -749,6 +748,7 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+
       // If we've gone from no _sidebar to having one, then force editorial to
       // render.
       var forceSidebar = false;
@@ -792,7 +792,6 @@ YUI.add('subapp-browser', function(Y) {
 
         this.renderEditorial(req, res, next);
       }
-
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
@@ -939,15 +938,16 @@ YUI.add('subapp-browser', function(Y) {
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
-
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[viewmode](req, res, next);
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
       } else {
         // Update the app state even though we're not showing anything.
         this._saveState();
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
         // Let the next route go on.
         next();
       }
