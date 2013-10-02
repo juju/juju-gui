@@ -146,5 +146,15 @@ describe('The bundle model', function() {
     assert.equal(expected, instance.get('services'));
   });
 
+  it('must provide a serviceCount attribute', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('serviceCount'), 4);
+  });
+
+  it('must provide a unitCount attribute', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('unitCount'), 5);
+  });
+
 
 });

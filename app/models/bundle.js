@@ -118,6 +118,43 @@ YUI.add('juju-bundle-models', function(Y) {
         getter: function() {
           return this.get('data').services;
         }
+      },
+
+      /**
+       * @attribute service_count
+       * @default 0
+       * @type {Number}
+       *
+       */
+      serviceCount: {
+        'getter': function() {
+          return Y.Object.keys(this.get('services')).length;
+        }
+      },
+
+      /**
+       * Determine the number of units the bundle will use.
+       *
+       * Each service includes one unit by default. If a num_units is defined
+       * in the service then that is added instead of the single default.
+       *
+       * @attribute unitCount
+       * @default 0
+       * @type {Number}
+       *
+       */
+      unitCount: {
+        'getter': function() {
+          var count = 0;
+          Y.Object.each(this.get('services'), function(service) {
+            if (service.num_units) {
+              count += service.num_units;
+            } else {
+              count += 1;
+            }
+          });
+          return count;
+        }
       }
     }
   });

@@ -231,6 +231,15 @@ YUI.add('browser-token', function(Y) {
       series: {},
 
       /**
+       * Bundle specific attribute for the number of services in a bundle.
+       * @attribute serviceCount
+       * @default undefined
+       * @type {Number}
+       *
+       */
+      serviceCount: {},
+
+      /**
        * @attribute shouldShowIcon
        * @default false
        * @type {Boolean}
@@ -275,7 +284,18 @@ YUI.add('browser-token', function(Y) {
         'getter': function() {
           return utils.determineEntityDataType(this.tokenData);
         }
-      }
+      },
+
+      /**
+       * Bundle specific count of the number of units a bundle is expected to
+       * bring up.
+       *
+       * @attribute unitCount
+       * @default undefined
+       * @type {Number}
+       *
+       */
+      unitCount: {}
 
     }
   });

@@ -12,7 +12,7 @@
         {{ name }}
     </span>
     <span class="metadata">
-        <div><strong>5 services | 25 units</strong></div>
+        <div><strong>{{serviceCount}} {{pluralize 'service' serviceCount}} | {{unitCount}} {{pluralize 'unit' unitCount}}</strong></div>
         <div>{{#if series}}{{series}} |{{/if}} {{#if is_approved}}Recommended{{else}}{{owner}}{{/if}}</div>
     </span>
     <span class="charms">
