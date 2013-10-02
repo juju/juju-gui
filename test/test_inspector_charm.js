@@ -79,7 +79,7 @@ describe('Inspector Charm', function() {
     views.BrowserCharmView = function(cfg) {
       assert.isTrue(cfg.forInspector);
       assert.equal(typeof cfg.store, 'object');
-      assert.equal(cfg.charm.get('id'), charmID);
+      assert.equal(cfg.entity.get('id'), charmID);
       return {
         render: function() {
           done();
@@ -110,8 +110,8 @@ describe('Inspector Charm', function() {
     views.BrowserCharmView = function(cfg) {
       assert.isTrue(cfg.forInspector);
       assert.equal(typeof cfg.store, 'object');
-      assert.equal(cfg.charm.get('id'), charmID);
-      assert.isTrue(cfg.charm.get('cached'));
+      assert.equal(cfg.entity.get('id'), charmID);
+      assert.isTrue(cfg.entity.get('cached'));
       return {
         render: function() {
           done();
