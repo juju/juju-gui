@@ -21,6 +21,49 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 - unreleased:
+- 0.10.1:
+    - Add icon for exporting a bundle.
+    - (FIX) The GUI was unusable when cookies were turned off in your browser.
+    - >
+      (CLEANUP) Use service model in ghost inspector, rather than charm model.
+      This is a nice cleanup and also enables a true environment-wide "save"
+      button in the future.
+    - (FIX) The GUI was unable to deploy charms without config options.
+    - (FIX) Remove unit button did not work in Juju Core.
+    - >
+      (FIX) The inspector's unit view did not update when the unit's values
+      changed.  Now everything except for the relations updates.  Relations
+      have other issues that, in part, need in-progress changes in Juju Core
+      to work.
+    - (FIX) Changing settings did not work in Juju Core.
+    - >
+      (FIX) Removed broken and largely unnecessary "All Notifications" link.
+      More, better changes will come there soon.
+    - >
+      (CLEANUP) As part of bundle work, clean up some browser templates for
+      general improvements and for better re-use.
+    - >
+      (FIX) After saving a service config, old, unchanged values would seem
+      to disappear, and then reappear a few seconds later.
+    - >
+      (CLEANUP) Remove the serviceInspector flag code and some of the
+      now-irrelevant old view code.
+    - >
+      (FIX) if a service is destroyed in the command line, the inspector
+      should close when the service disappears.
+    - >
+      (FIX) subordinate charms should not show constraints and should not
+      seem to allow control of scaling.
+    - >
+      (FIX) destroying a service would hide it too soon, causing surprises if
+      the destruction failed.  It now disappears when it is destroyed.
+    - >
+      Behind upgradeCharm feature flag, complete implementation of support for
+      upgrading a charm in the GUI.  This will be released in 0.11, very soon.
+    - >
+      Behind charmworldv3 feature flag, add more support for bundles (model,
+      search results, featured list, initial token, better sandbox support,
+      etc.).
 - 0.10.0:
     - Added new inspector view for deploying and configuring services.
     - Inspector allows viewing details in full environment context.
