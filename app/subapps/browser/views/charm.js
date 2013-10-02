@@ -82,8 +82,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      var Charm = this.get('entity'),
-          attrs = Charm.getAttrs();
+      var charm = this.get('entity'),
+          attrs = charm.getAttrs();
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
@@ -92,9 +92,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
       var ghostAttributes;
       ghostAttributes = {
-        icon: this.get('store').iconpath(Charm.get('storeId'))
+        icon: this.get('store').iconpath(charm.get('storeId'))
       };
-      this.get('deploy').call(null, Charm, ghostAttributes);
+      this.get('deploy').call(null, charm, ghostAttributes);
     },
 
     /**

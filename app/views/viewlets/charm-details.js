@@ -52,7 +52,7 @@ YUI.add('viewlet-charm-details', function(Y) {
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           this.charmView = new browserViews.BrowserCharmView({
-            charm: storeCharm,
+            entity: storeCharm,
             forInspector: true,
             renderTo: this.container.one('.content'),
             store: store
@@ -61,7 +61,7 @@ YUI.add('viewlet-charm-details', function(Y) {
         },
         'failure': function(data) {
           this.charmView = new browserViews.BrowserCharmView({
-            charm: charm,
+            entity: charm,
             forInspector: true,
             renderTo: this.container.one('.content'),
             store: store
