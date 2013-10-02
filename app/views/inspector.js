@@ -459,17 +459,11 @@ YUI.add('juju-view-inspector', function(Y) {
             })
         );
       } else {
-        // If the removal succeeded on the server side, we need to remove the
-        // service from the database.  (Why wouldn't we get an update from the
-        // server side that would do this for us?).
-        db.services.remove(service);
-        service.destroy();
-        db.relations.remove(db.relations.filter(
-            function(r) {
-              return Y.Array.some(r.get('endpoints'), function(ep) {
-                return ep[0] === service.get('id');
-              });
-            }));
+        db.notifications.add({
+          title: 'Destroying service',
+          message: 'Service: ' + evt.service_name + ' is being destroyed.',
+          level: 'important'
+        });
       }
     },
 
@@ -927,6 +921,24 @@ YUI.add('juju-view-inspector', function(Y) {
               });
         });
       });
+    },
+
+    /**
+      Reloads the inspector in order to ensure that data is up-to-date. in the
+      case of added/removed fields.
+
+      @method reloadInspector
+    */
+    reloadInspector: function() {
+      // Ensure that any flags which would lead to a reload notification are
+      // unset.
+      this.model.set('charmChanged', false);
+
+      // Reload the inspector itself.
+      this.viewletManager.after('destroy', function() {
+        this.get('environment').createServiceInspector(this.get('model'));
+      });
+      this.viewletManager.destroy();
     },
 
     /**

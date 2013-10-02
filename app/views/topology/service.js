@@ -689,18 +689,18 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Nothing.
      */
     canvasDropHandler: function(e) {
-      // Required - causes Ubuntu FF 22.0 to refresh without.
+      // Prevent Ubuntu FF 22.0 from refreshing the page.
       e.halt();
       var topo = this.get('component');
       var evt = e._event;
       var dataTransfer = evt.dataTransfer;
       var fileSources = dataTransfer.files;
+      var env = topo.get('env');
       if (fileSources && fileSources.length) {
-        var env = topo.get('env');
         var db = topo.get('db');
         var notifications = db.notifications;
         if (!Y.Lang.isFunction(env.deployerImport)) {
-          // notify and return
+          // Notify the user that their environment is too old and return.
           notifications.add({
             title: 'Deployer Import Unsupported',
             message: 'Your environment is too old to support deployer file' +
@@ -710,7 +710,7 @@ YUI.add('juju-topology-service', function(Y) {
           });
           return;
         }
-        // Path for dumping Deployer files on canvas.
+        // Handle dropping Deployer files on the canvas.
         Y.Array.each(fileSources, function(file) {
           var reader = new FileReader();
           reader.onload = function(e) {
@@ -737,7 +737,7 @@ YUI.add('juju-topology-service', function(Y) {
           reader.readAsText(file);
         });
       } else {
-        // Path for dropping tokens from browser.
+        // Handle dropping charm/bundle tokens from the left side bar.
         var dragData = JSON.parse(dataTransfer.getData('Text'));
         var translation = topo.get('translate');
         var scale = topo.get('scale');
@@ -753,13 +753,21 @@ YUI.add('juju-topology-service', function(Y) {
               (dropXY[index] - translation[index]) / scale;
         });
         if (dragData.dataType === 'token-drag-and-drop') {
-          // The charm data was JSON encoded because the dataTransfer
-          // mechanism only allows for string values.
-          var charmData = Y.JSON.parse(dragData.data);
-          // Add the icon url to the ghost attributes for the ghost icon
-          ghostAttributes.icon = dragData.iconSrc;
-          var charm = new models.Charm(charmData);
-          Y.fire('initiateDeploy', charm, ghostAttributes);
+          // The entiy (charm or bundle) data was JSON encoded because the
+          // dataTransfer mechanism only allows for string values.
+          var entityData = Y.JSON.parse(dragData.data);
+          if (utils.determineEntityDataType(entityData) === 'charm') {
+            // Add the icon url to the ghost attributes for the ghost icon
+            ghostAttributes.icon = dragData.iconSrc;
+            var charm = new models.Charm(entityData);
+            Y.fire('initiateDeploy', charm, ghostAttributes);
+          } else {
+            // The deployer format requires a top-level key to hold the bundle
+            // data, so we wrap the entity data in a mapping.  The deployer
+            // format is YAML, but JSON is a subset of YAML, so we can just
+            // encode it this way.
+            env.deployerImport(Y.JSON.stringify({bundle: entityData.data}));
+          }
         }
       }
     },
@@ -1369,68 +1377,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       createServiceInspector(service);
-    },
-
-    /*
-     * Show a dialog before destroying a service
-     *
-     * @method destroyServiceConfirm
-     */
-    destroyServiceConfirm: function(box) {
-      // Set service in view.
-      this.set('destroy_service', box.model);
-
-      // Show dialog.
-      this.set('destroy_dialog', views.createModalPanel(
-          'Are you sure you want to destroy the service? ' +
-              'This cannot be undone.',
-          '#destroy-modal-panel',
-          'Destroy Service',
-          Y.bind(function(ev) {
-            ev.preventDefault();
-            var btn = ev.target;
-            btn.set('disabled', true);
-            this.destroyService(btn);
-          }, this)));
-    },
-
-    /*
-     * Destroy a service.
-     *
-     * @method destroyService
-     */
-    destroyService: function(btn) {
-      var env = this.get('component').get('env'),
-              service = this.get('destroy_service');
-      env.destroy_service(service.get('id'),
-          Y.bind(this._destroyCallback, this,
-              service, btn));
-    },
-
-    _destroyCallback: function(service, btn, ev) {
-      var getModelURL = this.get('component').get('getModelURL'),
-              topo = this.get('component'),
-              db = topo.get('db');
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: getModelURL(service),
-              modelId: service
-            }));
-      } else {
-        var relations = db.relations.get_relations_for_service(service);
-        Y.each(relations, function(relation) {
-          relation.destroy();
-        });
-        service.destroy();
-        topo.update();
-      }
-      this.get('destroy_dialog').hide();
-      btn.set('disabled', false);
     }
+
   }, {
     ATTRS: {
       /**

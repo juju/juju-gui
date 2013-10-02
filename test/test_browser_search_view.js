@@ -250,7 +250,7 @@ describe('search view', function() {
     var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
-        // Stubbing the server callback value
+        // Stubbing the server callback value.
         params.callback.success({
           response: {
             results: [{

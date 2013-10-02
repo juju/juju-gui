@@ -289,6 +289,64 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(interesting_called);
     });
 
+    it('renders bundles and charms', function(done) {
+      var sampleData = {
+        result: {
+          featured: [
+            {
+              charm: {
+                id: 'precise/bar-2',
+                name: 'foo',
+                description: 'some charm named bar',
+                files: [],
+                is_approved: true
+              }
+            }, {
+              bundle: {
+                id: '~bac/wiki/3/wiki',
+                name: 'wiki',
+                basket_name: 'wiki',
+                basket_revision: 3,
+                branch_deleted: false
+              }
+            }
+          ],
+          'new': [],
+          popular: []
+        }
+      };
+
+      fakeStore = new Y.juju.charmworld.APIv3({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value.
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: Y.JSON.stringify(sampleData)
+              }]
+            }
+          });
+        }
+      });
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore,
+        activeID: 'precise/ceph-7'
+      });
+      view._renderInteresting = function(results) {
+        assert.equal(results.featuredCharms.length, 2,
+            'featureCharm length wrong');
+        assert.equal(results.newCharms.length, 0,
+            'newCharms length wrong');
+        assert.equal(results.popularCharms.length, 0,
+            'popularCharms length wrong');
+        assert.equal(results.featuredCharms[0].get('id'), 'precise/bar-2');
+        assert.equal(results.featuredCharms[1].get('id'), '~bac/wiki/3/wiki');
+        done();
+      };
+      view.render();
+    });
   });
 
 })();

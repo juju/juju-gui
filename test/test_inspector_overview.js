@@ -82,18 +82,19 @@ describe('Inspector Overview', function() {
     window.flags = {};
   });
 
-  var setUpInspector = function() {
+  var setUpInspector = function(serviceAttrs) {
     var charmId = 'precise/mediawiki-14';
     charmConfig.id = charmId;
     var charm = new models.Charm(charmConfig);
     db.charms.add(charm);
-    service = new models.Service({
+    serviceAttrs = Y.mix({
       id: 'mediawiki',
       charm: charmId,
       exposed: false,
       upgrade_available: true,
       upgrade_to: 'cs:precise/mediawiki-15'
-    });
+    }, serviceAttrs, true);
+    service = new models.Service(serviceAttrs);
     downgrades = (function() {
       var versions = [];
       for (var version = 13; version > 0; version = version - 1) {
@@ -131,6 +132,16 @@ describe('Inspector Overview', function() {
         {databinding: {interval: 0}});
     return inspector;
   };
+
+  it('is created with the proper template context', function() {
+    inspector = setUpInspector();
+    assert.deepEqual(inspector.options.templateConfig, {subordinate: false});
+  });
+
+  it('is created with the proper template context if subordinate', function() {
+    inspector = setUpInspector({subordinate: true});
+    assert.deepEqual(inspector.options.templateConfig, {subordinate: true});
+  });
 
   it('should show the proper icon based off the charm model', function() {
     inspector = setUpInspector();
@@ -188,7 +199,7 @@ describe('Inspector Overview', function() {
 
   it('should set the constraints before deploying any more units',
      function() {
-       setUpInspector(true);
+       setUpInspector();
        var control = container.one('.num-units-control');
        control.set('value', 7);
        control.simulate('keydown', { keyCode: ENTER });
@@ -211,6 +222,16 @@ describe('Inspector Overview', function() {
        assert.equal('mediawiki', message.Params.ServiceName);
        assert.deepEqual(constraints, message.Params.Constraints);
      });
+
+  it('does not display the unit scaling widgets if subordinate', function() {
+    inspector = setUpInspector({subordinate: true});
+    assert.strictEqual(container.all('.unit-scaling').size(), 0);
+  });
+
+  it('does not display the constraints widgets if subordinate', function() {
+    inspector = setUpInspector({subordinate: true});
+    assert.strictEqual(container.all('.inspector_constraints').size(), 0);
+  });
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
@@ -567,7 +588,7 @@ describe('Inspector Overview', function() {
     newContainer.one('.upgrade-link').simulate('click');
   });
 
-  it('reflects that a service was upgraded', function() {
+  it('reflects that a service was upgraded', function(done) {
     window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
@@ -584,6 +605,12 @@ describe('Inspector Overview', function() {
 
     assert.isTrue(service.get('charmChanged'));
     assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
+    inspector.viewletManager.get('environment')
+      .createServiceInspector = function(model, attrs) {
+          assert.isFalse(model.get('charmChanged'));
+          done();
+        };
+    newContainer.one('.rerender-config').simulate('click');
   });
 
   it('toggles exposure', function() {

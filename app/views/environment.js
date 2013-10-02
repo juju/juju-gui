@@ -222,6 +222,7 @@ YUI.add('juju-view-environment', function(Y) {
                 '.destroy-service-trigger span': {click: '_onDestroyClick'},
                 '.initiate-destroy': {click: '_onInitiateDestroy'},
                 '.cancel-destroy': {click: '_onCancelDestroy'},
+                '.rerender-config': {click: 'reloadInspector'},
                 // Overview viewlet.
                 '.num-units-control': {
                   keydown: 'modifyUnits'
@@ -259,7 +260,9 @@ YUI.add('juju-view-environment', function(Y) {
                 'inspectorHeader',
                 'relations'
               ],
-              template: Y.juju.views.Templates['service-config-wrapper']
+              template: Y.juju.views.Templates['service-config-wrapper'],
+              // Define the context for the view manager template.
+              templateConfig: {subordinate: model.get('subordinate')}
             },
             configGhost: {
               // controller will show the first one in this array by default
