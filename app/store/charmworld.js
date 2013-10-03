@@ -167,6 +167,35 @@ YUI.add('juju-charm-store', function(Y) {
       this._makeRequest(endpoint, callbacks, filters);
     },
 
+    /**
+      Public method to make an API call to fetch a bundle from Charmworld.
+
+      @method bundle
+      @param {String} bundleID The bundle to fetch This is the fully qualified
+        bundle id.
+      @param {Object} callbacks The success/failure callbacks to use.
+      @param {Object} bindScope The scope of "this" in the callbacks.
+    */
+    bundle: function(bundleID, callbacks, bindScope) {
+      this._bundle(bundleID, callbacks, bindScope);
+    },
+
+    /**
+      API call to fetch a charm's details.
+
+      @method _bundle
+      @param {String} bundleID the bundle to fetch.
+      @param {Object} callbacks the success/failure callbacks to use.
+      @param {Object} bindScope the scope of *this* in the callbacks.
+    */
+    _bundle: function(bundleID, callbacks, bindScope) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(bundleID, callbacks);
+    },
+
 
     /**
      * API call to fetch a charm's details.

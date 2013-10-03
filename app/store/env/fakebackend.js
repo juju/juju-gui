@@ -1346,6 +1346,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
      @method ingestDeployer
      */
+     // XXX name is not used.  See targetBundle.
     ingestDeployer: function(data, name, options) {
       if (!data) {return;}
       options = options || {};

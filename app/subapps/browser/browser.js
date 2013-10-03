@@ -516,17 +516,17 @@ YUI.add('subapp-browser', function(Y) {
     /**
        Render the charm details view
 
-       @method renderCharmDetails
+       @method renderEntityDetails
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    renderCharmDetails: function(req, res, next) {
-      var charmId = this._viewState.charmID;
+    renderEntityDetails: function(req, res, next) {
+      var entityId = this._viewState.charmID;
 
       var extraCfg = {
         activeTab: this._viewState.hash,
-        entityId: charmId,
+        entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
@@ -546,14 +546,19 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cache.charms.getById(charmId);
+      var model = this._cache.charms.getById(entityId);
 
       if (model) {
         extraCfg.charm = model;
       }
 
-      this._details = new views.BrowserCharmView(
-          this._getViewCfg(extraCfg));
+      var EntityView;
+      if (entityId.indexOf('bundle') !== -1) {
+        EntityView = views.BrowserBundleView;
+      } else {
+        EntityView = views.BrowserCharmView;
+      }
+      this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
     },
@@ -697,7 +702,7 @@ YUI.add('subapp-browser', function(Y) {
           this._editorial.destroy();
         }
         this._detailsVisible(true);
-        this.renderCharmDetails(req, res, next);
+        this.renderEntityDetails(req, res, next);
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
@@ -797,7 +802,7 @@ YUI.add('subapp-browser', function(Y) {
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
         this._detailsVisible(true);
-        this.renderCharmDetails(req, res, next);
+        this.renderEntityDetails(req, res, next);
       }
 
       // If there are no details in the route then hide the div for
@@ -920,8 +925,7 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if ((idBits.length === 3 && idBits[0][0] === '~') || // new charms
-          (idBits.length === 2)) {                         // reviewed charms
+      if (idBits.length > 1) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
