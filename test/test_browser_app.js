@@ -669,7 +669,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // We'll hit the default renderEditorial so stub that out as the catch
         // that out test is done.
         app._shouldShowCharm = function() { return true; };
-        app.renderCharmDetails = function() {
+        app.renderEntityDetails = function() {
           assert.equal(searchCleaned, true);
           assert.equal(editorialCleaned, true);
           done();
@@ -732,7 +732,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser = new ns.Browser();
         // Block out each render target so we only track it was hit.
-        browser.renderCharmDetails = function() {
+        browser.renderEntityDetails = function() {
           hits.renderCharmDetails = true;
         };
         browser.renderEditorial = function() {
