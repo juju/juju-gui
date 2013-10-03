@@ -58,17 +58,16 @@ YUI.add('juju-view-bundle', function(Y) {
      @method showServiceDetails
      @param {Object} d Service View Model.
     */
-   showServiceDetails: function(box, self) {
-     var topo = self.get('component'),
-         container = self.get('container'),
-         details = container.one('.topo-info');
-     //Template band-aid
-     var context = Y.mix(box, {
-       num_units: box.units.size(),
-       settings: box.config
-     });
-     details.setHTML(templates['bundle-service-details'](context));
-   },
+    showServiceDetails: function(box, self) {
+      var container = self.get('container'),
+          details = container.one('.topo-info');
+      //Template band-aid
+      var context = Y.mix(box, {
+        num_units: box.units.size(),
+        settings: box.config
+      });
+      details.setHTML(templates['bundle-service-details'](context));
+    },
 
     /**
       Attempt to reuse as much of the existing graph and view models
@@ -324,10 +323,10 @@ YUI.add('juju-view-bundle', function(Y) {
       this._cleanups.push(function() {
         self.container.remove(true);
       });
-   }
-   // Add the popup div used for details.
-   this.container.append(
-     Y.Node.create('<div>')
+    }
+    // Add the popup div used for details.
+    this.container.append(
+        Y.Node.create('<div>')
      .addClass('topo-info'));
 
 
@@ -373,32 +372,32 @@ YUI.add('juju-view-bundle', function(Y) {
   };
 
 
-    /**
+  /**
      Pan/Zoom the view to fit the in the height/width of the container.
 
      @method zoomToFit
      @chainable
      */
-    BundleTopology.prototype.zoomToFit = function() {
-      var topo = this.topology;
-      var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-      var bb = topoUtils.getBoundingBox(vertices);
-      var width = topo.get('width'),
-          height = topo.get('height');
+  BundleTopology.prototype.zoomToFit = function() {
+    var topo = this.topology;
+    var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+    var bb = topoUtils.getBoundingBox(vertices);
+    var width = topo.get('width'),
+        height = topo.get('height');
 
-      // Zoom to Fit
-      // We are really only interested in scale down
-      // here when the bundle is too large to
-      // render in the space provided.
-      var maxScale = 1.0;
-      if (bb.w > width || bb.h > height) {
-        maxScale = Math.min( bb.w / width, bb.h / height);
-        maxScale -= 0.05; // Margin
-      }
-      // Clamp Scale
-      maxScale = Math.max(0.25 , Math.min(1.0, maxScale));
-      this.centerViewport(maxScale);
-    };
+    // Zoom to Fit
+    // We are really only interested in scale down
+    // here when the bundle is too large to
+    // render in the space provided.
+    var maxScale = 1.0;
+    if (bb.w > width || bb.h > height) {
+      maxScale = Math.min(bb.w / width, bb.h / height);
+      maxScale -= 0.05; // Margin
+    }
+    // Clamp Scale
+    maxScale = Math.max(0.25 , Math.min(1.0, maxScale));
+    this.centerViewport(maxScale);
+  };
 
 
   BundleTopology.prototype.render = function() {

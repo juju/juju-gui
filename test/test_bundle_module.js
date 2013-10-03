@@ -39,8 +39,8 @@ describe('topology bundle module', function() {
   });
 
   afterEach(function() {
-    if (container) { container.remove(true); }
     if (bundle) { bundle.destroy(); }
+    if (container) { container.remove(true); }
   });
 
   function promiseBundle(options, visableContainer) {
@@ -104,39 +104,37 @@ describe('topology bundle module', function() {
   it('should set pan/zoom to fit the whole view', function(done) {
     promiseBundle({size: [240, 180]})
     .then(function(bundle) {
-      var selection = d3.select(container.getDOMNode());
-      var svg = selection.select('svg');
-      assert.equal(svg.attr('width'), 240);
-      assert.equal(svg.attr('height'), 180);
+          var selection = d3.select(container.getDOMNode());
+          var svg = selection.select('svg');
+          assert.equal(svg.attr('width'), 240);
+          assert.equal(svg.attr('height'), 180);
 
-      // The positions within the import are larger than 240,180. Verify that
-      // we've scaled the canvas as expected.
-      // In the model.
-      assert.equal(parseFloat(bundle.topology.get('scale'), 10).toFixed(2),
-                   0.48);
-      // and on the canvas.
-      var scaleAttr = svg.select('g').attr('transform');
-      var match = /scale\(([\d\.]+)\)/.exec(scaleAttr);
-      assert.equal(parseFloat(match[1]).toFixed(2), 0.48);
-      done();
-    }).then(undefined, done);
+          // The positions within the import are larger than 240,180. Verify
+          // that we've scaled the canvas as expected.  In the model.
+          assert.equal(
+              parseFloat(bundle.topology.get('scale'), 10).toFixed(2),
+              0.48);
+          // and on the canvas.
+          var scaleAttr = svg.select('g').attr('transform');
+          var match = /scale\(([\d\.]+)\)/.exec(scaleAttr);
+          assert.equal(parseFloat(match[1]).toFixed(2), 0.48);
+          done();
+        }).then(undefined, done);
   });
 
   it('show details for selected item', function(done) {
     promiseBundle({size: [240, 180]})
     .then(function(bundle) {
-      var selection = d3.select(container.getDOMNode());
-      var svg = selection.select('svg');
-      var service = container.one('.service');
-      // Click the service.
-      service.simulate('click');
+          var service = container.one('.service');
+          // Click the service.
+          service.simulate('click');
 
-      var details = container.one('.topo-info');
-      // Verify the template contains expected details.
-      assert.match(details.getHTML(), /cs:precise\/mysql\-26/);
-      assert.equal(details.one('unit-count').getHTML(), 1);
-      done();
-    }).then(undefined, done);
+          var details = container.one('.topo-info');
+          // Verify the template contains expected details.
+          assert.match(details.getHTML(), /cs:precise\/mysql\-26/);
+          assert.equal(details.one('.unit-count').getHTML(), 1);
+          done();
+        }).then(undefined, done);
   });
 
 

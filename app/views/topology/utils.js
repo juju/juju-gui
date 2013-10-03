@@ -162,7 +162,7 @@ YUI.add('juju-topology-utils', function(Y) {
 
   utils.getBoundingBox = function(vertices) {
     var minX = Infinity, maxX = -Infinity,
-        minY = Infinity,  maxY = -Infinity;
+        minY = Infinity, maxY = -Infinity;
 
     vertices.forEach(function(v) {
       if (v[0] < minX) { minX = v[0]; }
