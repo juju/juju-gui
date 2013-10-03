@@ -32,6 +32,7 @@ YUI.add('juju-view-bundle', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       d3ns = Y.namespace('d3'),
+      templates = views.Templates,
       topoUtils = Y.namespace('juju.topology.utils');
 
   /**
@@ -42,6 +43,32 @@ YUI.add('juju-view-bundle', function(Y) {
 
   var BundleModule = Y.Base.create('BundleModule', d3ns.Module, [
     views.ServiceModuleCommon], {
+
+    events: {
+      scene: {
+        '.service': {
+          click: 'showServiceDetails'
+        }
+      }
+    },
+
+    /**
+     Show service details for indicated service block.
+
+     @method showServiceDetails
+     @param {Object} d Service View Model.
+    */
+   showServiceDetails: function(box, self) {
+     var topo = self.get('component'),
+         container = self.get('container'),
+         details = container.one('.topo-info');
+     //Template band-aid
+     var context = Y.mix(box, {
+       num_units: box.units.size(),
+       settings: box.config
+     });
+     details.setHTML(templates['bundle-service-details'](context));
+   },
 
     /**
       Attempt to reuse as much of the existing graph and view models
@@ -243,7 +270,6 @@ YUI.add('juju-view-bundle', function(Y) {
       var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
       this.findAndSetCentroid(vertices);
     },
-
     /**
       Given a set of vertices, find the centroid and pan to that location.
 
@@ -298,11 +324,16 @@ YUI.add('juju-view-bundle', function(Y) {
       this._cleanups.push(function() {
         self.container.remove(true);
       });
-    }
+   }
+   // Add the popup div used for details.
+   this.container.append(
+     Y.Node.create('<div>')
+     .addClass('topo-info'));
+
 
     var topo = this.topology = new views.Topology();
     topo.setAttrs(Y.mix(options, {
-      interactive: false,
+      interactive: true,
       container: this.container,
       db: this.db,
       store: this.store
@@ -317,6 +348,10 @@ YUI.add('juju-view-bundle', function(Y) {
   }
 
   BundleTopology.prototype.centerViewport = function(scale) {
+    // _fire_zoom does a translated scale based on the
+    // delta of the two settings, we prime the pump
+    // here but setting scale to our target value first.
+    this.topology.set('scale', scale);
     this.topology.modules.PanZoomModule._fire_zoom(scale);
     // Pan to the centroid of it all after the zoom
     this.panToCenter();
@@ -338,9 +373,37 @@ YUI.add('juju-view-bundle', function(Y) {
   };
 
 
+    /**
+     Pan/Zoom the view to fit the in the height/width of the container.
+
+     @method zoomToFit
+     @chainable
+     */
+    BundleTopology.prototype.zoomToFit = function() {
+      var topo = this.topology;
+      var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+      var bb = topoUtils.getBoundingBox(vertices);
+      var width = topo.get('width'),
+          height = topo.get('height');
+
+      // Zoom to Fit
+      // We are really only interested in scale down
+      // here when the bundle is too large to
+      // render in the space provided.
+      var maxScale = 1.0;
+      if (bb.w > width || bb.h > height) {
+        maxScale = Math.min( bb.w / width, bb.h / height);
+        maxScale -= 0.05; // Margin
+      }
+      // Clamp Scale
+      maxScale = Math.max(0.25 , Math.min(1.0, maxScale));
+      this.centerViewport(maxScale);
+    };
+
+
   BundleTopology.prototype.render = function() {
     this.topology.render();
-    this.centerViewport(0.66);
+    this.zoomToFit();
     return this;
   };
 

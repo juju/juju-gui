@@ -160,6 +160,22 @@ YUI.add('juju-topology-utils', function(Y) {
     return centroid;
   };
 
+  utils.getBoundingBox = function(vertices) {
+    var minX = Infinity, maxX = -Infinity,
+        minY = Infinity,  maxY = -Infinity;
+
+    vertices.forEach(function(v) {
+      if (v[0] < minX) { minX = v[0]; }
+      if (v[1] < minY) { minY = v[1]; }
+      if (v[0] > maxX) { maxX = v[0]; }
+      if (v[1] > maxY) { maxY = v[1]; }
+    });
+    return {
+      translateX: minX, translateY: minY,
+      w: maxX - minX, h: maxY - minY};
+
+  };
+
 }, '0.1.0', {
   requires: [
     'd3'
