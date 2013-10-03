@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('bundle module', function() {
+describe('topology bundle module', function() {
   var utils, views, Y, bundleModule;
   var bundle, container, fakebackend;
 
@@ -28,7 +28,8 @@ describe('bundle module', function() {
       'juju-view-bundle',
       'juju-charm-store',
       'juju-models',
-      'juju-tests-utils'
+      'juju-tests-utils',
+      'node-event-simulate'
     ],
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
@@ -37,33 +38,30 @@ describe('bundle module', function() {
     });
   });
 
-  beforeEach(function() {
-    container = utils.makeContainer();
-  });
-
   afterEach(function() {
-    if (container) { container.remove(true); }
     if (bundle) { bundle.destroy(); }
-
+    if (container) { container.remove(true); }
   });
 
-  function promiseBundle(done) {
+  function promiseBundle(options, visableContainer) {
+    container = utils.makeContainer('canvas', true);
     fakebackend = utils.makeFakeBackend();
     fakebackend.db.environment.set('defaultSeries', 'precise');
 
+    options = options || {};
     return fakebackend.promiseImport(
         utils.loadFixture('data/wp-deployer.yaml'),
         'wordpress-prod')
         .then(function() {
-          bundle = new views.BundleTopology({
+          bundle = new views.BundleTopology(Y.mix({
             db: fakebackend.db,
             container: container,
             store: fakebackend.get('store')
-          }).render();
+          }, options)).render();
           bundleModule = bundle.topology.modules.BundleModule;
           bundleModule.set('useTransitions', false);
           return bundle;
-        }, done);
+        });
   }
 
   function normalizeTranslate(translateStr) {
@@ -71,7 +69,7 @@ describe('bundle module', function() {
   }
 
   it('should create a proper service for each model', function(done) {
-    promiseBundle(done)
+    promiseBundle()
     .then(function(bundle) {
           // The size of the element should reflect the passed in params
           var selection = d3.select(container.getDOMNode());
@@ -98,12 +96,47 @@ describe('bundle module', function() {
           assert.equal(indicator.attr('height'), '32');
           assert.equal(indicator.attr('x'), '64');
           assert.equal(indicator.attr('y'), '64');
-
-          container.remove(true);
-          bundle.destroy();
           done();
         }).then(undefined, done);
   });
+
+
+  it('should set pan/zoom to fit the whole view', function(done) {
+    promiseBundle({size: [240, 180]})
+    .then(function(bundle) {
+          var selection = d3.select(container.getDOMNode());
+          var svg = selection.select('svg');
+          assert.equal(svg.attr('width'), 240);
+          assert.equal(svg.attr('height'), 180);
+
+          // The positions within the import are larger than 240,180. Verify
+          // that we've scaled the canvas as expected.  In the model.
+          assert.equal(
+              parseFloat(bundle.topology.get('scale'), 10).toFixed(2),
+              0.48);
+          // and on the canvas.
+          var scaleAttr = svg.select('g').attr('transform');
+          var match = /scale\(([\d\.]+)\)/.exec(scaleAttr);
+          assert.equal(parseFloat(match[1]).toFixed(2), 0.48);
+          done();
+        }).then(undefined, done);
+  });
+
+  it('show details for selected item', function(done) {
+    promiseBundle({size: [240, 180]})
+    .then(function(bundle) {
+          var service = container.one('.service');
+          // Click the service.
+          service.simulate('click');
+
+          var details = container.one('.topo-info');
+          // Verify the template contains expected details.
+          assert.match(details.getHTML(), /cs:precise\/mysql\-26/);
+          assert.equal(details.one('.unit-count').getHTML(), 1);
+          done();
+        }).then(undefined, done);
+  });
+
 
 });
 

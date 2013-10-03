@@ -216,12 +216,16 @@ YUI.add('juju-topology', function(Y) {
         loaded nothing will modify these values.
        */
       scale: {
-        getter: function() {return this.zoom.scale();},
+        getter: function() {
+          if (!this.zoom) { return 1.0;}
+          return this.zoom.scale();},
         setter: function(v) {this.zoom.scale(v);}
       },
 
       translate: {
-        getter: function() {return this.zoom.translate();},
+        getter: function() {
+          if (!this.zoom) {return [0, 0]; }
+          return this.zoom.translate();},
         setter: function(v) {this.zoom.translate(v);}
       }
     }

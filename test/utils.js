@@ -24,15 +24,17 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
   jujuTests.utils = {
 
-    makeContainer: function(id) {
+    makeContainer: function(id, visibleContainer) {
       var container = Y.Node.create('<div>');
       if (id) {
         container.set('id', id);
       }
       container.appendTo(document.body);
-      container.setStyle('position', 'absolute');
-      container.setStyle('top', '-10000px');
-      container.setStyle('left', '-10000px');
+      if (visibleContainer !== false) {
+        container.setStyle('position', 'absolute');
+        container.setStyle('top', '-10000px');
+        container.setStyle('left', '-10000px');
+      }
       return container;
     },
 
