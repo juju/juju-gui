@@ -419,6 +419,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
+      it('verify that route callables exist', function() {
+        app = new browser.Browser();
+        Y.each(app.get('routes'), function(route) {
+          assert.isTrue(typeof app[route.callback] === 'function');
+        });
+      });
+
       it('can go to a default jujucharms landing page', function() {
         app = new browser.Browser({isJujucharms: true});
         var called = false;
@@ -662,7 +669,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // We'll hit the default renderEditorial so stub that out as the catch
         // that out test is done.
         app._shouldShowCharm = function() { return true; };
-        app.renderCharmDetails = function() {
+        app.renderEntityDetails = function() {
           assert.equal(searchCleaned, true);
           assert.equal(editorialCleaned, true);
           done();
@@ -725,7 +732,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser = new ns.Browser();
         // Block out each render target so we only track it was hit.
-        browser.renderCharmDetails = function() {
+        browser.renderEntityDetails = function() {
           hits.renderCharmDetails = true;
         };
         browser.renderEditorial = function() {
@@ -1320,6 +1327,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }
         });
         assert.equal(url, '/search?text=mysql');
+      });
+
+      it('re-renders charm details with the sidebar', function() {
+        // Set a charm identifier in the view state, and patch the old state
+        // so that it is no different than the current one.
+        browser._viewState.charmID = 'precise/mediawiki-10';
+        browser._oldState = browser._viewState;
+        // Call the sidebar method and ensure the charm detail is re-rendered.
+        browser.sidebar({path: '/'}, null, function() {});
+        assert.isTrue(hits.renderCharmDetails);
       });
 
     });

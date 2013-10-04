@@ -167,6 +167,8 @@ Checklist for Making a Stable Release
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - Start the ``improv.py`` script as described in the HACKING file.
+- While still in the directory where you extracted the tar file, change
+  app/config-prod.js to specify apiBackend: 'python'.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.
 - Go to the URL shown in the terminal.

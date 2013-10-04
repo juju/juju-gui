@@ -174,4 +174,23 @@ describe('charm/bundle token', function() {
     assert(token_container.one('.token'));
   });
 
+  it('renders a bundle token properly with data', function() {
+    var token = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME',
+      serviceCount: 4,
+      unitCount: 5
+    });
+
+    token.render(token_container);
+    assert.notEqual(
+        token_container.get('innerHTML').indexOf('4 services'),
+        -1
+    );
+    assert.notEqual(
+        token_container.get('innerHTML').indexOf('5 units'),
+        -1
+    );
+  });
+
 });

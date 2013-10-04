@@ -71,6 +71,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     'juju-templates',
     'juju-views',
     'subapp-browser-charmview',
+    'subapp-browser-bundleview',
     'subapp-browser-mainview',
     'view'
   ]

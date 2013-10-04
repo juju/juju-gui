@@ -55,6 +55,10 @@ YUI.add('subapp-browser', function(Y) {
           this[viewAttr].destroy();
           delete this[viewAttr];
         }
+        if (this._oldState.viewmode === 'sidebar' && this._details) {
+          this._details.destroy();
+          delete this._details;
+        }
       }
     },
 
@@ -161,7 +165,6 @@ YUI.add('subapp-browser', function(Y) {
           qs: this._viewState.querystring
         });
       }
-
       if (this._viewState.hash) {
         url = url + this._viewState.hash;
       }
@@ -213,17 +216,13 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
-      if (
-          this._viewState.charmID &&
-          (
-           this._hasStateChanged('charmID') ||
-           this._hasStateChanged('viewmode')
+      return (
+          this._viewState.charmID && (
+              !this._details ||
+              this._hasStateChanged('charmID') ||
+              this._hasStateChanged('viewmode')
           )
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      );
     },
 
     /**
@@ -517,17 +516,17 @@ YUI.add('subapp-browser', function(Y) {
     /**
        Render the charm details view
 
-       @method renderCharmDetails
+       @method renderEntityDetails
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    renderCharmDetails: function(req, res, next) {
-      var charmID = this._viewState.charmID;
+    renderEntityDetails: function(req, res, next) {
+      var entityId = this._viewState.charmID;
 
       var extraCfg = {
         activeTab: this._viewState.hash,
-        charmID: charmID,
+        entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
         deploy: this.get('deploy')
       };
@@ -547,14 +546,19 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Gotten from the sidebar creating the cache.
-      var model = this._cache.charms.getById(charmID);
+      var model = this._cache.charms.getById(entityId);
 
       if (model) {
         extraCfg.charm = model;
       }
 
-      this._details = new views.BrowserCharmView(
-          this._getViewCfg(extraCfg));
+      var EntityView;
+      if (entityId.indexOf('bundle') !== -1) {
+        EntityView = views.BrowserBundleView;
+      } else {
+        EntityView = views.BrowserCharmView;
+      }
+      this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
     },
@@ -698,7 +702,7 @@ YUI.add('subapp-browser', function(Y) {
           this._editorial.destroy();
         }
         this._detailsVisible(true);
-        this.renderCharmDetails(req, res, next);
+        this.renderEntityDetails(req, res, next);
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
@@ -749,6 +753,7 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+
       // If we've gone from no _sidebar to having one, then force editorial to
       // render.
       var forceSidebar = false;
@@ -793,12 +798,11 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
-
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
         this._detailsVisible(true);
-        this.renderCharmDetails(req, res, next);
+        this.renderEntityDetails(req, res, next);
       }
 
       // If there are no details in the route then hide the div for
@@ -921,8 +925,7 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if ((idBits.length === 3 && idBits[0][0] === '~') || // new charms
-          (idBits.length === 2)) {                         // reviewed charms
+      if (idBits.length > 1) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
@@ -939,15 +942,16 @@ YUI.add('subapp-browser', function(Y) {
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
-
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         this[viewmode](req, res, next);
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
       } else {
         // Update the app state even though we're not showing anything.
         this._saveState();
+        // Once the state is updated determine visibility of our Nodes.
+        this.updateVisible();
         // Let the next route go on.
         next();
       }
@@ -1141,6 +1145,7 @@ YUI.add('subapp-browser', function(Y) {
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
+    'subapp-browser-bundleview',
     'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',

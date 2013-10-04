@@ -80,7 +80,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer(),
         forInspector: true
       });
@@ -98,7 +98,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       data.charm.is_subordinate = is_subordinate;
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
       view.render();
@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var charm = new models.Charm(data.charm);
       charm.set('scheme', 'local');
       view = new CharmView({
-        charm: charm,
+        entity: charm,
         container: utils.makeContainer(),
         forInspector: true
       });
@@ -156,7 +156,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -174,7 +174,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should be able to locate a readme file', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -186,7 +186,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._locateReadme().should.eql('readme.rst');
 
       // Matches for caps as well
-      view.get('charm').set('files', [
+      view.get('entity').set('files', [
         'hooks/install',
         'README.md'
       ]);
@@ -195,7 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can generate source and revno links from its charm', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -213,7 +213,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('can generate useful display data for commits', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -271,7 +271,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-readme',
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -292,7 +292,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
         activeTab: '#bws-readme',
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install'
           ],
@@ -320,7 +320,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         return 'charm icon url';
       };
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install'
           ],
@@ -335,8 +335,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         store: fakeStore
       });
       view.set('deploy', function(charm, serviceAttrs) {
-        var browserCharm = view.get('charm');
-        assert.deepEqual(charm, browserCharm);
+        var serviceCharm = view.get('entity');
+        assert.deepEqual(charm, serviceCharm);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');
         assert.equal(serviceAttrs.icon, 'charm icon url');
         done();
@@ -360,7 +360,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'hooks/install',
             'readme.rst'
@@ -404,7 +404,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-readme',
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'readme.md'
           ],
@@ -422,7 +422,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should display the config data in the config tab', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [],
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' },
@@ -446,7 +446,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('_buildQAData properly summerizes the scores', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'readme.md'
           ],
@@ -469,7 +469,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not blow up when the scores from the api is null', function() {
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [
             'readme.md'
           ],
@@ -508,7 +508,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        charm: new models.Charm({
+        entity: new models.Charm({
           files: [],
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
@@ -529,7 +529,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Change the charm to be reviewed/approved and verify we hit the other
       // message while not showing quality scores.
-      view.get('charm').set('is_approved', true);
+      view.get('entity').set('is_approved', true);
       // Force the loading of the qa div.
       view._loadQAContent();
       foundNode = view.get('container').one('.no-qa-reviewed');
@@ -543,7 +543,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
 
@@ -562,7 +562,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
 
@@ -588,7 +588,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -609,7 +609,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -631,7 +631,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -652,7 +652,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -674,7 +674,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -697,7 +697,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -719,7 +719,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -742,7 +742,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -766,7 +766,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           });
           view = new CharmView({
-            charm: charm
+            entity: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
               charm.get('requires'), charm.get('provides'));
@@ -785,7 +785,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
 
@@ -802,7 +802,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       view = new CharmView({
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
 
@@ -824,7 +824,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-configuration',
-        charm: new models.Charm(data.charm),
+        entity: new models.Charm(data.charm),
         container: utils.makeContainer()
       });
 
@@ -856,7 +856,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        charm: new models.Charm(data),
+        entity: new models.Charm(data),
         isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
@@ -903,7 +903,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-related-charms',
-        charm: new models.Charm(data),
+        entity: new models.Charm(data),
         isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
@@ -938,7 +938,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-related-charms',
-        charm: new models.Charm(data),
+        entity: new models.Charm(data),
         isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
@@ -989,7 +989,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         activeTab: '#bws-does-not-exist',
-        charm: new models.Charm(data),
+        entity: new models.Charm(data),
         isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore

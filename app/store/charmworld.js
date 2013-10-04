@@ -62,7 +62,7 @@ YUI.add('juju-charm-store', function(Y) {
       this.sendRequest({
         request: apiEndpoint,
         callback: {
-          success: function(io_request) {
+          'success': function(io_request) {
             var res = Y.JSON.parse(
                 io_request.response.results[0].responseText
                 );
@@ -165,6 +165,35 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
       this._makeRequest(endpoint, callbacks, filters);
+    },
+
+    /**
+      Public method to make an API call to fetch a bundle from Charmworld.
+
+      @method bundle
+      @param {String} bundleID The bundle to fetch This is the fully qualified
+        bundle id.
+      @param {Object} callbacks The success/failure callbacks to use.
+      @param {Object} bindScope The scope of "this" in the callbacks.
+    */
+    bundle: function(bundleID, callbacks, bindScope) {
+      this._bundle(bundleID, callbacks, bindScope);
+    },
+
+    /**
+      API call to fetch a charm's details.
+
+      @method _bundle
+      @param {String} bundleID the bundle to fetch.
+      @param {Object} callbacks the success/failure callbacks to use.
+      @param {Object} bindScope the scope of *this* in the callbacks.
+    */
+    _bundle: function(bundleID, callbacks, bindScope) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(bundleID, callbacks);
     },
 
 
@@ -326,7 +355,7 @@ YUI.add('juju-charm-store', function(Y) {
       this.get('datasource').sendRequest({
         request: endpoint,
         callback: {
-          success: function(io_request) {
+          'success': function(io_request) {
             callbacks.success(io_request.response.results[0].responseText);
           },
           'failure': function(io_request) {
@@ -497,7 +526,7 @@ YUI.add('juju-charm-store', function(Y) {
        */
       apiHost: {
         required: true,
-        setter: function(val) {
+        'setter': function(val) {
           if (val && !val.match(/\/$/)) {
             val = val + '/';
           }
@@ -515,7 +544,7 @@ YUI.add('juju-charm-store', function(Y) {
        *
        */
       datasource: {
-        setter: function(datasource) {
+        'setter': function(datasource) {
           // Construct an API helper using the new datasource.
           this.apiHelper = new ns.ApiHelper({
             sendRequest: Y.bind(datasource.sendRequest, datasource)

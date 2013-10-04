@@ -42,6 +42,16 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     template: views.Templates.sidebar,
 
     /**
+     * Remove the HTML contents for the sidebar.
+     *
+     * @method destructor
+     *
+     */
+    destructor: function() {
+      this.get('container').setHTML('');
+    },
+
+    /**
      * Render out the view to the DOM.
      *
      * @method render
@@ -58,7 +68,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       } else {
         this.set('container', container);
       }
-
       container.setHTML(tplNode);
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();

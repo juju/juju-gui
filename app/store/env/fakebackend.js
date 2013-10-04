@@ -327,7 +327,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             console.warn('error loading charm: ' + e.error);
             if (callbacks.failure) {
               callbacks.failure(
-                  {error: 'Error interacting with the charmworld api.'});
+                  {error: 'Error interacting with the charmworld API.'});
             }
           }
         });
