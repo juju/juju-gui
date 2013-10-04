@@ -557,6 +557,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    it('must not stack new services from delta', function() {
+      var tmp_data = {
+        op: 'delta',
+        result: [
+          ['service', 'add',
+            {
+              'subordinate': false,
+              'charm': 'cs:precise/wordpress-6',
+              'id': 'wordpressa'
+            }
+          ]]
+      };
+      db.reset();
+      view.createTopology();
+      // For testing position isn't testable with transitions on.
+      view.topo.modules.ServiceModule.set('useTransitions', false);
+      view.render();
+
+      db.onDelta({ data: tmp_data });
+      view.update();
+      tmp_data.result[0][2].id = 'wordpressb';
+      db.onDelta({ data: tmp_data });
+      view.update();
+
+      assert.notDeepEqual(
+          view.topo.service_boxes.wordpressa.center,
+          view.topo.service_boxes.wordpressb.center);
+    });
+
     it('must be able to use position annotations', function() {
       var tmp_data = {
         op: 'delta',

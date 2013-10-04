@@ -1074,8 +1074,8 @@ YUI.add('juju-topology-service', function(Y) {
             Y.each(new_services, function(service) {
               service.x += pointOutside[0] - service.x;
               service.y += pointOutside[1] - service.y;
-              service.model.set('x', service.x)
-              service.model.set('y', service.y)
+              service.model.set('x', service.x);
+              service.model.set('y', service.y);
             });
           }
         }
@@ -1089,7 +1089,7 @@ YUI.add('juju-topology-service', function(Y) {
             fromGhost = true;
           }
           var existing = box.model.get('annotations') || {};
-          if (!existing['gui-x']) {
+          if (!existing && !existing['gui-x']) {
             topo.get('env').update_annotations(
                 box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
                 function() {
