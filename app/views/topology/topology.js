@@ -180,7 +180,7 @@ YUI.add('juju-topology', function(Y) {
       // Existing service boxes are those with x/y attributes set.
       var existingBoxes = Y.Object.values(this.service_boxes)
         .filter(function(box) {
-            return box.x !== undefined;
+            return box.x !== undefined && !isNaN(box.center[0]);
           });
       // Find a point outside of the set of existing service boxes.
       return utils.pointOutside(

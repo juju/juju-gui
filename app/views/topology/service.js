@@ -1068,6 +1068,22 @@ YUI.add('juju-topology-service', function(Y) {
           topo.fire('panToPoint', {point: topo.centroid});
         } else {
           this.tree.nodes({children: new_services});
+          if (new_services.length < Y.Object.size(topo.service_boxes)) {
+            // If we have new services that do not have x/y coords and are
+            // not pending, then they've likely been created from the CLI.
+            // In this case, to avoid placing them overlaying any existing
+            // services, make sure to translate all of them to a point
+            // outside the existing services.  Setting these attributes
+            // will result in annotations being set in the environment
+            // below.
+            var pointOutside = topo.servicePointOutside();
+            Y.each(new_services, function(service) {
+              service.x += pointOutside[0] - service.x;
+              service.y += pointOutside[1] - service.y;
+              service.model.set('x', service.x);
+              service.model.set('y', service.y);
+            });
+          }
         }
         // Update annotations settings position on backend (but only do
         // this if there is no existing annotations).
