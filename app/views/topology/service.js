@@ -1071,14 +1071,12 @@ YUI.add('juju-topology-service', function(Y) {
           if (new_services.length < Y.Object.size(topo.service_boxes)) {
             // translate them to pointoutside
             var pointOutside = topo.servicePointOutside();
-            console.log(new_services.map(function(s) { return s.pos; }));
             Y.each(new_services, function(service) {
               service.x += pointOutside[0] - service.x;
               service.y += pointOutside[1] - service.y;
               service.model.set('x', service.x)
               service.model.set('y', service.y)
             });
-            console.log(new_services.map(function(s) { return s.pos; }));
           }
         }
         // Update annotations settings position on backend (but only do
