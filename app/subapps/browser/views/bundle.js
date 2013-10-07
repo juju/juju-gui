@@ -57,57 +57,22 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     template: views.Templates.bundle,
 
     /**
-      Fetches the bundle data and imports it into
-      the local fakebackend for the fake topology.
+      Fetches and prepares the data for the bundle details page rendering.
 
-      @method initializer
-      @param {Object} config The configuration object passed to the view.
+      @method _fetchData
     */
-    initializer: function(config) {
-      var store = config.store,
-          self = this;
+    _fetchData: function() {
+      var self = this;
 
-      /**
-        Flag used to indicate if the data has been fully
-        prepared to display in the local topology instance.
-
-        @property dataPrepared
-        @type {Boolean}
-        @default false
-      */
-      this.dataPrepared = false;
-
-      /**
-        Flag used to indicate if the view has been rendered.
-
-        @property rendered
-        @type {Boolean}
-        @default false
-      */
-      this.rendered = false;
-
-      var fakebackend = new Y.juju.environments.FakeBackend({
-        store: store,
-        authenticated: true
-      });
-
-      /**
-        Fakebackend database which contains the parsed bundle data
-        to be used in the fake bundle topology.
-
-        @property db
-      */
-      this.db = fakebackend.db;
-
-      new Y.Promise(function(resolve, reject) {
-        var entity = config.entity;
+      return new Y.Promise(function(resolve, reject) {
+        var entity = self.get('entity');
         // An entity here is a fully populated charm/bundle model so
         // it's entirely possible that we have an id to load but
         // no model has been populated yet.
         if (entity) {
           resolve(entity);
         } else {
-          store.bundle(config.entityId, {
+          self.get('store').bundle(self.get('entityId'), {
             'success': function(data) {
               var bundle = new models.Bundle(data);
               self.set('entity', bundle);
@@ -116,18 +81,39 @@ YUI.add('subapp-browser-bundleview', function(Y) {
             'failure': reject
           }, self);
         }
-      }).then(function(bundle) {
-        fakebackend.promiseImport({
-          import: bundle.get('data')
-        }).then(function() {
-          self.dataPrepared = true;
-          // If the view has been rendered then render
-          // the fake topology into the view.
-          if (self.rendered) {
-            self._renderBundleView.call(self);
-          }
-        });
-      }, self.apiFailure);
+      });
+    },
+
+    /**
+      Sends the bundle data to the local fakebackend to
+      import and then returns a promise when complete.
+
+      @method _parseData
+      @return {Y.Promise} A promise for the bundle data import.
+    */
+    _parseData: function(bundle) {
+      return this.fakebackend.promiseImport({
+        import: bundle.get('data')
+      });
+    },
+
+    /**
+      Creates a new fakebackend instance for the
+      bundle topology.
+
+      @method _setupLocalFakebackend
+    */
+    _setupLocalFakebackend: function() {
+      /**
+        Fakebackend database which contains the parsed bundle data
+        to be used in the fake bundle topology.
+
+        @property db
+      */
+      this.fakebackend = new Y.juju.environments.FakeBackend({
+        store: this.get('store'),
+        authenticated: true
+      });
     },
 
     /**
@@ -136,47 +122,36 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       @method _renderBundleView
     */
     _renderBundleView: function() {
-      if (!this.dataPrepared || !this.rendered) {
-        console.error(
-            'Cannot render bundle data without container or prepared data.');
-      }
       var bundleAttrs = this.get('entity').getAttrs();
       var content = this.template(bundleAttrs);
       var node = this.get('container').setHTML(content);
-      var store = this.get('store'),
-          renderTo = this.get('renderTo'),
-          options = {size: [480, 360]},
-          self = this;
+      var renderTo = this.get('renderTo');
+      var options = {size: [480, 360]};
 
       this.hideIndicator(renderTo);
-      self.environment = new views.BundleTopology(Y.mix({
-        db: self.db,
-        container: node.one('#bundle'),
-        store: store
+      this.environment = new views.BundleTopology(Y.mix({
+        db: this.fakebackend.db,
+        container: node.one('#bundle'), // XXX change to a class
+        store: this.get('store')
       }, options));
 
-      self.environment.render();
+      this.environment.render();
       renderTo.setHTML(node);
     },
 
     /**
-       Render out the view to the DOM.
+      Renders the loading indicator into the DOM and then calls
+      the _prepareData method to fetch/parse the bundle data for
+      the real view rendering.
 
-       The View might be given either a entityId, which means go fetch the
-       charm data, or a charm model instance, in which case the view has the
-       data it needs to render.
-
-       @method render
-     */
+      @method render
+    */
     render: function() {
       this.showIndicator(this.get('renderTo'));
-      // Y.View's don't have a rendered flag
-      this.rendered = true;
-      // If the data has already been prepared
-      // then render the fake bundle topology.
-      if (this.dataPrepared) {
-        this._renderBundleView();
-      }
+      this._setupLocalFakebackend();
+      this._fetchData().
+          then(this._parseData.bind(this)).
+          then(this._renderBundleView.bind(this), this.apiFailure.bind(this));
     }
 
   }, {
