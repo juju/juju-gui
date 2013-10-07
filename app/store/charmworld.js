@@ -171,17 +171,17 @@ YUI.add('juju-charm-store', function(Y) {
       Public method to make an API call to fetch a bundle from Charmworld.
 
       @method bundle
-      @param {String} bundleID The bundle to fetch This is the fully qualified
+      @param {String} bundleId The bundle to fetch This is the fully qualified
         bundle id.
       @param {Object} callbacks The success/failure callbacks to use.
       @param {Object} bindScope The scope of "this" in the callbacks.
     */
-    bundle: function(bundleID, callbacks, bindScope) {
-      this._bundle(bundleID, callbacks, bindScope);
+    bundle: function(bundleId, callbacks, bindScope) {
+      this._bundle(bundleId, callbacks, bindScope);
     },
 
     /**
-      API call to fetch a charm's details.
+      API call to fetch a bundle's details.
 
       @method _bundle
       @param {String} bundleID the bundle to fetch.
@@ -194,6 +194,24 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
       this._makeRequest(bundleID, callbacks);
+    },
+
+    /**
+     Fetch a bundle's details, returning a promise.
+
+     @method promiseBundle
+     @param {String} bundleId The ID of the charm to fetch.
+     @param {Object} bindScope The scope of "this" in the callbacks.
+     @return {Promise} Returns a promise. Triggered with the result of calling
+       this.charm.
+    */
+    promiseBundle: function(bundleId, bindScope) {
+      var self = this;
+      return Y.Promise(function(resolve, reject) {
+        self.bundle(bundleId,
+                    { 'success': resolve, 'failure': reject },
+                    bindScope);
+      });
     },
 
 

@@ -57,16 +57,106 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     template: views.Templates.bundle,
 
     /**
-      Renders the bundle view template into the DOM
+      Fetches the bundle data and imports it into
+      the local fakebackend for the fake topology.
+
+      @method initializer
+      @param {Object} config The configuration object passed to the view.
+    */
+    initializer: function(config) {
+      var store = config.store,
+          self = this;
+
+      /**
+        Flag used to indicate if the data has been fully
+        prepared to display in the local topology instance.
+
+        @property dataPrepared
+        @type {Boolean}
+        @default false
+      */
+      this.dataPrepared = false;
+
+      /**
+        Flag used to indicate if the view has been rendered.
+
+        @property rendered
+        @type {Boolean}
+        @default false
+      */
+      this.rendered = false;
+
+      var fakebackend = new Y.juju.environments.FakeBackend({
+        store: store,
+        authenticated: true
+      });
+
+      /**
+        Fakebackend database which contains the parsed bundle data
+        to be used in the fake bundle topology.
+
+        @property db
+      */
+      this.db = fakebackend.db;
+
+      new Y.Promise(function(resolve, reject) {
+        var entity = config.entity;
+        // An entity here is a fully populated charm/bundle model so
+        // it's entirely possible that we have an id to load but
+        // no model has been populated yet.
+        if (entity) {
+          resolve(entity);
+        } else {
+          store.bundle(config.entityId, {
+            'success': function(data) {
+              var bundle = new models.Bundle(data);
+              self.set('entity', bundle);
+              resolve(bundle);
+            },
+            'failure': reject
+          }, self);
+        }
+      }).then(function(bundle) {
+        fakebackend.promiseImport({
+          import: bundle.get('data')
+        }).then(function() {
+          self.dataPrepared = true;
+          // If the view has been rendered then render
+          // the fake topology into the view.
+          if (self.rendered) {
+            self._renderBundleView.call(self);
+          }
+        });
+      }, self.apiFailure);
+    },
+
+    /**
+      Renders the bundle view template into the DOM.
 
       @method _renderBundleView
-      @param {Y.Model} bundle The bundle model instance.
-      @param {Boolean} isFullscreen a trigger to display the fullscreen or not.
     */
-    _renderBundleView: function(bundle, isFullscreen) {
-      var bundleAttrs = bundle.getAttrs();
-      var template = this.template(bundleAttrs);
-      this.get('renderTo').setHTML(this.get('container').setHTML(template));
+    _renderBundleView: function() {
+      if (!this.dataPrepared || !this.rendered) {
+        console.error(
+            'Cannot render bundle data without container or prepared data.');
+      }
+      var bundleAttrs = this.get('entity').getAttrs();
+      var content = this.template(bundleAttrs);
+      var node = this.get('container').setHTML(content);
+      var store = this.get('store'),
+          renderTo = this.get('renderTo'),
+          options = {size: [480, 360]},
+          self = this;
+
+      this.hideIndicator(renderTo);
+      self.environment = new views.BundleTopology(Y.mix({
+        db: self.db,
+        container: node.one('#bundle'),
+        store: store
+      }, options));
+
+      self.environment.render();
+      renderTo.setHTML(node);
     },
 
     /**
@@ -77,25 +167,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
        data it needs to render.
 
        @method render
-
      */
     render: function() {
-      var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
-
-      if (this.get('entity')) {
-        this._renderBundleView(this.get('entity'), isFullscreen);
-        this.hideIndicator(this.get('renderTo'));
-      } else {
-        this.get('store').bundle(this.get('entityId'), {
-          'success': function(data) {
-            var bundle = new models.Bundle(data);
-            this.set('entity', bundle);
-            this._renderBundleView(bundle, isFullscreen);
-            this.hideIndicator(this.get('renderTo'));
-          },
-          'failure': this.apiFailure
-        }, this);
+      // Y.View's don't have a rendered flag
+      this.rendered = true;
+      // If the data has already been prepared
+      // then render the fake bundle topology.
+      if (this.dataPrepared) {
+        this._renderBundleView();
       }
     }
 
@@ -105,6 +185,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
 }, '', {
   requires: [
-    'view'
+    'view',
+    'juju-env-fakebackend',
+    'juju-view-bundle'
   ]
 });

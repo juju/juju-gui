@@ -1345,8 +1345,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
      by importDeployer to enact the deploy.
 
      @method ingestDeployer
-     */
-    ingestDeployer: function(data, name, options) {
+    */
+    ingestDeployer: function(data, options) {
       if (!data) {return;}
       options = options || {};
       var db = this.db;
@@ -1488,7 +1488,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (name) {
         options.targetBundle = name;
       }
-      var ingestedData = this.ingestDeployer(data, name, options);
+      var ingestedData = this.ingestDeployer(data, options);
       var servicePromises = [];
       Y.each(ingestedData.services, function(serviceData) {
         // Map the argument name from the deployer format
