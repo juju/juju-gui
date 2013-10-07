@@ -621,10 +621,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       match[1].should.eql('374.1');
       match[2].should.eql('211.2');
 
-      // BoundingBox attributes should not be touched.
-      var service = view.topo.service_boxes.wordpress;
-      assert.equal(service.x, 374.1);
-      assert.equal(service.y, 211.2);
+      // A positioned service will never be auto-positioned.
+      view.topo.servicePointOutside = function() {
+        assert(false, 'We should never get here because annotations are set');
+      };
+      tmp_data = {
+        op: 'delta',
+        result: [
+          ['service', 'add',
+            {
+              'subordinate': false,
+              'charm': 'cs:precise/wordpress-6',
+              'id': 'wordpressa',
+              'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
+            }
+          ]]
+      };
+      db.onDelta({ data: tmp_data });
+      view.update();
+
+      view.topo.servicePointOutside = function() {
+        assert(false,
+            'We should never get here because service was positioned');
+      };
+      tmp_data = {
+        op: 'delta',
+        result: [
+          ['service', 'add',
+            {
+              'subordinate': false,
+              'charm': 'cs:precise/wordpress-6',
+              'id': 'wordpressb'
+            }
+          ]]
+      };
+      db.onDelta({ data: tmp_data });
+      db.services.getById('wordpressb').set('hasBeenPositioned', true);
+      view.update();
     });
 
     it('must be able to use Landscape annotations', function() {
