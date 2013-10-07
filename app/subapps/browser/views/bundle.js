@@ -69,13 +69,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       /**
         Flag used to indicate if the data has been fully
-        prepaired to display in the local topology instance.
+        prepared to display in the local topology instance.
 
-        @property dataPrepaired
+        @property dataPrepared
         @type {Boolean}
         @default false
       */
-      this.dataPrepaired = false;
+      this.dataPrepared = false;
 
       /**
         Flag used to indicate if the view has been rendered.
@@ -86,21 +86,24 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       */
       this.rendered = false;
 
-      /**
-        Fakebackend instance which is used to parse the bundle data
-        to be used in the fake bundle topology and to be used as a
-        database for the bundle data.
-
-        @property fakebackend
-        @type {juju.environments.FakeBackend}
-      */
-      this.fakebackend = new Y.juju.environments.FakeBackend({
+      var fakebackend = new Y.juju.environments.FakeBackend({
         store: store,
         authenticated: true
       });
 
+      /**
+        Fakebackend database which contains the parsed bundle data
+        to be used in the fake bundle topology.
+
+        @property db
+      */
+      this.db = fakebackend.db;
+
       new Y.Promise(function(resolve, reject) {
         var entity = config.entity;
+        // An entity here is a fully populated charm/bundle model so
+        // it's entirely possible that we have an id to load but
+        // no model has been populated yet.
         if (entity) {
           resolve(entity);
         } else {
@@ -114,10 +117,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           }, self);
         }
       }).then(function(bundle) {
-        self.fakebackend.promiseImport({
+        fakebackend.promiseImport({
           import: bundle.get('data')
         }).then(function() {
-          self.dataPrepaired = true;
+          self.dataPrepared = true;
           // If the view has been rendered then render
           // the fake topology into the view.
           if (self.rendered) {
@@ -133,9 +136,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       @method _renderBundleView
     */
     _renderBundleView: function() {
-      if (!this.dataPrepaired || !this.rendered) {
+      if (!this.dataPrepared || !this.rendered) {
         console.error(
-            'Cannot render bundle data without container or prepaired data.');
+            'Cannot render bundle data without container or prepared data.');
       }
       var bundleAttrs = this.get('entity').getAttrs();
       var content = this.template(bundleAttrs);
@@ -147,7 +150,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       this.hideIndicator(renderTo);
       self.environment = new views.BundleTopology(Y.mix({
-        db: self.fakebackend.db,
+        db: self.db,
         container: node.one('#bundle'),
         store: store
       }, options));
@@ -169,9 +172,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this.showIndicator(this.get('renderTo'));
       // Y.View's don't have a rendered flag
       this.rendered = true;
-      // If the data has already been prepaired
+      // If the data has already been prepared
       // then render the fake bundle topology.
-      if (this.dataPrepaired) {
+      if (this.dataPrepared) {
         this._renderBundleView();
       }
     }

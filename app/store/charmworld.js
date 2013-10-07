@@ -181,7 +181,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-      API call to fetch a charm's details.
+      API call to fetch a bundle's details.
 
       @method _bundle
       @param {String} bundleID the bundle to fetch.
@@ -197,7 +197,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     Like the "bundle" method but returning a Promise.
+     Fetch a bundle's details, returning a promise.
 
      @method promiseBundle
      @param {String} bundleId The ID of the charm to fetch.
