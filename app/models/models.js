@@ -524,9 +524,8 @@ YUI.add('juju-models', function(Y) {
       // If a charm_url is included in the data (that is, the Go backend
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
-      var oldModelCharm,
-          flags = window.flags;
-      if (flags.upgradeCharm && action === 'change' && data.charmUrl && db) {
+      var oldModelCharm;
+      if (action === 'change' && data.charmUrl && db) {
         var oldModel = db.resolveModelByName(data.id);
         if (oldModel) {
           oldModelCharm = oldModel.charmUrl;
@@ -544,7 +543,7 @@ YUI.add('juju-models', function(Y) {
       // someone else watching the GUI as a service's charm changes, differ in
       // the amount of information the GUI has originally.  By setting this
       // flag, both cases can react in the same way.
-      if (flags.upgradeCharm && oldModelCharm &&
+      if (oldModelCharm &&
           oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }

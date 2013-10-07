@@ -257,7 +257,6 @@ describe('Model Controller Promises', function() {
       loaded: true,
       charm: charmId
     });
-    window.flags.upgradeCharm = true;
     modelController.set('store', utils.makeFakeStore());
     var promise = modelController.getServiceWithCharm(serviceId);
     promise.then(

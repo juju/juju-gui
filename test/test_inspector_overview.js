@@ -266,8 +266,6 @@ describe('Inspector Overview', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
 
-    window.flags.upgradeCharm = true;
-
     var units = new Y.LazyModelList();
 
     var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
@@ -305,8 +303,6 @@ describe('Inspector Overview', function() {
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
 
-    window.flags.upgradeCharm = true;
-
     var units = new Y.LazyModelList();
 
     var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
@@ -343,8 +339,6 @@ describe('Inspector Overview', function() {
     service.set('charm', 'cs:precise/mysql-1');
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
-
-    window.flags.upgradeCharm = true;
 
     var units = new Y.LazyModelList();
 
@@ -504,8 +498,6 @@ describe('Inspector Overview', function() {
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = utils.makeContainer();
 
-    window.flags.upgradeCharm = true;
-
     var units = new Y.LazyModelList();
 
     units.add({ id: 'mysql/0', agent_state: 'install-error' });
@@ -568,8 +560,6 @@ describe('Inspector Overview', function() {
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = inspector.viewletManager.get('container');
 
-    window.flags.upgradeCharm = true;
-
     // Ensure that get_charm is called to get the new charm.
     env.setCharm = function(serviceName, upgradeTo, force, callback) {
       callback({});
@@ -589,7 +579,6 @@ describe('Inspector Overview', function() {
   });
 
   it('reflects that a service was upgraded', function(done) {
-    window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
       .container;

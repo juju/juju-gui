@@ -156,8 +156,7 @@ YUI.add('model-controller', function(Y) {
                 // we can offer it as an upgrade.
                 // XXX Makyo Aug. 20 - Remove feature flag when upgradecharm
                 // feature lands.
-                if (charm.get('scheme') === 'cs' &&
-                    window.flags.upgradeCharm) {
+                if (charm.get('scheme') === 'cs') {
                   store.promiseUpgradeAvailability(charm, db.charms)
                     .then(function(latestId) {
                         service.set('upgrade_available', !!latestId);
