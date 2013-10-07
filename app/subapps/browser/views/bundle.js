@@ -126,13 +126,14 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var content = this.template(bundleAttrs);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
+      var options = {size: [480, 360]};
 
       this.hideIndicator(renderTo);
       this.environment = new views.BundleTopology(Y.mix({
         db: this.fakebackend.db,
         container: node.one('#bundle'), // XXX change to a class
         store: this.get('store')
-      }, {size: [480, 360]}));
+      }, options));
 
       this.environment.render();
       renderTo.setHTML(node);
