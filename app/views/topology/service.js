@@ -1033,13 +1033,16 @@ YUI.add('juju-topology-service', function(Y) {
       // Rerun the pack layout.
       // Pack doesn't honor existing positions and will re-layout the
       // entire graph. As a short term work around we layout only new
-      // nodes. This has the side effect that service blocks can overlap
-      // and will be fixed later.
+      // nodes. New nodes are those that haven't been positioned by drag
+      // and drop, or those who don't have position attributes/annotations.
       var vertices;
       var fromGhost = false;
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
-            return !Y.Lang.isNumber(boundingBox.x);
+            var annotations = boundingBox.model.get('annotations');
+            return !boundingBox.hasBeenPositioned
+              || (!Y.Lang.isNumber(boundingBox.x) 
+                  && !(annotations && annotations['gui-x']));
           });
       if (new_services.length > 0) {
         // If the there is only one new service and it's pending (as in, it was

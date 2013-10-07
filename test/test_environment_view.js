@@ -616,10 +616,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.update();
 
-      //On annotation change  position should be updated.
+      // On annotation change  position should be updated.
       match = node.getAttribute('transform').match(properTransform);
       match[1].should.eql('374.1');
       match[2].should.eql('211.2');
+
+      // BoundingBox attributes should not be touched.
+      var service = view.topo.service_boxes.wordpress;
+      assert.equal(service.x, 374.1);
+      assert.equal(service.y, 211.2);
     });
 
     it('must be able to use Landscape annotations', function() {
