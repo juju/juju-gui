@@ -31,11 +31,12 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     views.utils.apiFailingView
   ], {
 
+    // XXX Commented out events are not yet handled for this view
     events: {
-      '.token': {
-        click: '_handleCharmSelection'
-      },
-      '.charm .add': {
+      // '.token': {
+      //   click: '_handleCharmSelection'
+      // },
+      '.bundle .add': {
         click: '_addCharmEnvironment'
       },
       // Following handlers are provided by entity-base.js
@@ -43,15 +44,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      '#bws-code select': {
-        change: '_loadHookContent'
-      },
-      '.charm .back': {
+      // '#bws-code select': {
+      //   change: '_loadHookContent'
+      // },
+      '.bundle .back': {
         click: '_handleBack'
-      },
-      '#sharing a': {
-        click: '_openShareLink'
       }
+      // '#sharing a': {
+      //   click: '_openShareLink'
+      // }
     },
 
     template: views.Templates.bundle,
