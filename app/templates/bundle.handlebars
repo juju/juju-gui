@@ -9,23 +9,44 @@
                 <div class="details">
                     <h1>{{ name }}</h1>
                     <div class="add-reviewed">
-                        <a href="" class="add">Add to my canvas</a>
+                        <a href="" class="add">Deploy this bundle</a>
                     </div>
                     <ul>
                         <li>
-                            Activity: {{ downloads }}
-                            {{pluralize 'Download' downloads}},
-                            {{ commitCount }}
-                            {{pluralize 'Commit' commitCount}}
+                            {{serviceCount}}
+                            {{pluralize 'service' serviceCount}} |
+                            {{unitCount}} {{pluralize 'unit' unitCount}}
                         </li>
-                        <li>Ubuntu series: {{ distro_series }}</li>
-                        <li>Location: {{ url }}</li>
                         <li>
-                            Links:
-                            <a href="{{ sourceLink }}">Source</a>
-                            <a href="{{ code_source.bugs_link }}">Bugs</a>
+                            {{#if is_approved}}
+                                Recommended
+                            {{else}}
+                                {{owner}}
+                            {{/if}}
                         </li>
                     </ul>
+                    <div class="charms">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
+                                 alt="[charm name]">
+                    </div>
                 </div>
             </div>
         {{/unless}}
@@ -45,7 +66,11 @@
                     <div class="summary">
                         {{>providers}}
                         <h2>Description</h2>
-                        <p class="respect-whitespace">{{ truncate description 300 }}</p>
+                        {{#if description}}
+                            <p class="respect-whitespace">{{ truncate description 300 }}</p>
+                        {{else}}
+                            <p>No description</p>
+                        {{/if}}
                     </div>
                     <h2>Charms within this bundle</h2>
                     [Charm list to go here]
