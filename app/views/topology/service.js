@@ -1040,9 +1040,9 @@ YUI.add('juju-topology-service', function(Y) {
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             var annotations = boundingBox.model.get('annotations');
-            return !boundingBox.hasBeenPositioned
-              || (!Y.Lang.isNumber(boundingBox.x) 
-                  && !(annotations && annotations['gui-x']));
+            return !boundingBox.hasBeenPositioned ||
+                (!Y.Lang.isNumber(boundingBox.x) &&
+                !(annotations && annotations['gui-x']));
           });
       if (new_services.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
