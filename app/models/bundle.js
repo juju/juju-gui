@@ -58,6 +58,17 @@ YUI.add('juju-bundle-models', function(Y) {
   }, {
     ATTRS: {
       id: {},
+      /**
+        Attribute to indicate the type of entity so that other code
+        does not need to 'guess' by the entities content
+
+        @attribute entityType
+        @type {String}
+        @default 'charm'
+      */
+      entityType: {
+        value: 'bundle'
+      },
       name: {},
       description: {},
       owner: {},

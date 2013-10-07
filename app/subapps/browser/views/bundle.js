@@ -118,6 +118,23 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     /**
+      Creates the tabview instance for the bundle view
+
+      @method _setupTabView
+    */
+    _setupTabview: function() {
+      /**
+        Tabview instance used to display the bundle details.
+
+        @property tabview
+      */
+      this.tabview = new widgets.browser.TabView({
+        render: true,
+        srcNode: this.get('container').one('.tabs')
+      });
+    },
+
+    /**
       Renders the bundle view template into the DOM.
 
       @method _renderBundleView
@@ -132,12 +149,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this.hideIndicator(renderTo);
       this.environment = new views.BundleTopology(Y.mix({
         db: this.fakebackend.db,
-        container: node.one('#bundle'), // XXX change to a class
+        container: node.one('#bws-bundle'), // Id because of Y.TabView
         store: this.get('store')
       }, options));
 
       this.environment.render();
       renderTo.setHTML(node);
+
+      this._setupTabview();
+      this._dispatchTabEvents(this.tabview);
     },
 
     /**

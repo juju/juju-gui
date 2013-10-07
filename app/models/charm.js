@@ -364,6 +364,17 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       /**
+        Attribute to indicate the type of entity so that other code
+        does not need to 'guess' by the entities content
+
+        @attribute entityType
+        @type {String}
+        @default 'charm'
+      */
+      entityType: {
+        value: 'charm'
+      },
+      /**
        * "id" for use with the charmworld datastore
        *
        * @attribute storeId
