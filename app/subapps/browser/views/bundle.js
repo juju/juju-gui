@@ -56,6 +56,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
     template: views.Templates.bundle,
 
+    /**
+      Fetches the bundle data and imports it into
+      the local fakebackend for the fake topology.
+
+      @method initializer
+      @param {Object} config The configuration object passed to the view.
+    */
     initializer: function(config) {
       var store = config.store,
           self = this;
@@ -93,7 +100,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       });
 
       new Y.Promise(function(resolve, reject) {
-        if (config.entity) {
+        var entity = config.entity;
+        if (entity) {
           resolve(entity);
         } else {
           store.bundle(config.entityId, {
@@ -158,7 +166,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
        @method render
      */
     render: function() {
-      var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
       // Y.View's don't have a rendered flag
       this.rendered = true;
