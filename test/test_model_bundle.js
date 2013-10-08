@@ -156,5 +156,9 @@ describe('The bundle model', function() {
     assert.equal(instance.get('unitCount'), 5);
   });
 
+  it('has an entityType attribute', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('entityType'), 'bundle');
+  });
 
 });

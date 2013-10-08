@@ -740,6 +740,12 @@ describe('test_models.js', function() {
       });
       assert.equal(weights.sort(), weights);
     });
+
+    it('has an entity type attribute', function() {
+      instance = new models.Charm(data.charm);
+      assert.equal(instance.get('entityType'), 'charm');
+    });
+
   });
 
   describe('database import/export', function() {

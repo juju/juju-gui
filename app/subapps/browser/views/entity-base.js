@@ -20,6 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('subapp-browser-entitybaseview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      widgets = Y.namespace('juju.widgets'),
       DATE_FORMAT = '%d/%b/%y';
 
   /**
