@@ -108,6 +108,7 @@ describe('Browser bundle detail view', function() {
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
+    // Assertions made in fakebackend mock 'file' above.
     remoteDone = done;
     view.render();
   });

@@ -153,7 +153,7 @@ describe('The bundle model', function() {
     assert.equal(instance.get('unitCount'), 20);
   });
 
-  it('has an entityType attribute', function() {
+  it('has an entityType static property', function() {
     instance = new models.Bundle(data);
     assert.equal(instance.constructor.entityType, 'bundle');
   });
