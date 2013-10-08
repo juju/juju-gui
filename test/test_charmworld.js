@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe('Charmworld API v3 interface', function() {
+  describe.only('Charmworld API v3 interface', function() {
     var Y, models, conn, data, juju, utils, charmworld, hostname, api;
 
 
@@ -96,13 +96,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       }, this);
       api.destroy();
-    });
-
-    it('constructs cateogry icon paths correctly', function() {
-      var iconPath = api.buildCategoryIconPath('app-servers');
-      assert.equal(
-          iconPath,
-          hostname + 'static/img/category-app-servers-bw.svg');
     });
 
     it('makes charm requests to correct URL', function(done) {
@@ -198,6 +191,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
     });
 
+    it('constructs cateogry icon paths correctly', function() {
+      var iconPath = api.buildCategoryIconPath('app-servers');
+      assert.equal(
+          iconPath,
+          hostname + 'static/img/category-app-servers-bw.svg');
+    });
+
     it('constructs an icon path for local charms', function() {
       var iconPath = api.iconpath('local:precise/mysql-1');
       assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
@@ -208,6 +208,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(
           iconPath,
           hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
+    });
+
+    it('constructs bundle icon paths', function() {
+      var iconPath = api.iconpath('wiki/3/wiki', true);
+      assert.equal(
+          iconPath,
+          hostname + 'api/3/bundle/wiki/3/wiki/file/icon.svg');
     });
 
     it('can assemble proper urls to fetch files', function(done) {
