@@ -114,23 +114,20 @@ describe('The bundle model', function() {
   });
 
   it('must store the basket_revision', function() {
-    expected = 3;
+    expected = 5;
     instance = new models.Bundle(data);
-    assert.equal(expected, instance.get('basket_revision'));
+    assert.equal(instance.get('basket_revision'), expected);
   });
 
   it('must have a relations getter', function() {
     instance = new models.Bundle(data);
     expected = [
-      {
-        'wiki:db': 'db'
-      },
-      {
-        'wiki': ['haproxy', 'memcached']
-      }
+      { 'mediawiki:cache': 'memcached:cache' },
+      { 'mediawiki:db': 'mysql:db' },
+      { 'haproxy:reverseproxy': 'mediawiki:website' }
     ];
     var results = instance.get('relations');
-    assert.deepEqual(expected, results);
+    assert.deepEqual(results, expected);
   });
 
   it('must have a series getter', function() {
@@ -153,12 +150,12 @@ describe('The bundle model', function() {
 
   it('must provide a unitCount attribute', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('unitCount'), 5);
+    assert.equal(instance.get('unitCount'), 20);
   });
 
   it('has an entityType attribute', function() {
     instance = new models.Bundle(data);
-    assert.equal(instance.get('entityType'), 'bundle');
+    assert.equal(instance.constructor.entityType, 'bundle');
   });
 
 });

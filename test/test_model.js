@@ -743,7 +743,7 @@ describe('test_models.js', function() {
 
     it('has an entity type attribute', function() {
       instance = new models.Charm(data.charm);
-      assert.equal(instance.get('entityType'), 'charm');
+      assert.equal(instance.constructor.entityType, 'charm');
     });
 
   });

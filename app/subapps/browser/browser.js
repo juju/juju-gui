@@ -558,6 +558,7 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         EntityView = views.BrowserCharmView;
       }
+
       this._details = new EntityView(this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);

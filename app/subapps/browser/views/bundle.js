@@ -27,6 +27,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
   ns.BrowserBundleView = Y.Base.create('browser-view-bundleview', Y.View, [
     widgets.browser.IndicatorManager,
+    Y.Event.EventTracker,
     ns.EntityBaseView,
     views.utils.apiFailingView
   ], {
@@ -141,6 +142,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       this._setupTabview();
       this._dispatchTabEvents(this.tabview);
+
+      this.set('rendered', true);
     },
 
     /**
@@ -159,13 +162,28 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        Used only for testing to determine when the rendering
+        has been completed and appended to the DOM
+
+        @attribute rendered
+        @default false
+      */
+      rendered: {
+        value: false
+      }
+    }
   });
 
 }, '', {
   requires: [
     'view',
     'juju-env-fakebackend',
-    'juju-view-bundle'
+    'juju-view-bundle',
+    'subapp-browser-entitybaseview',
+    'browser-overlay-indicator',
+    'juju-view-utils',
+    'event-tracker'
   ]
 });

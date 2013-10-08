@@ -357,22 +357,21 @@ YUI.add('juju-charm-models', function(Y) {
       });
     }
   }, {
+    /**
+      Static to indicate the type of entity so that other code
+      does not need to 'guess' by the entities content
+
+      @property entityType
+      @type {String}
+      @default 'charm'
+      @static
+    */
+    entityType: 'charm',
     ATTRS: {
       id: {
         validator: function(val) {
           return Y.Lang.isString(val) && !!charmIdRe.exec(val);
         }
-      },
-      /**
-        Attribute to indicate the type of entity so that other code
-        does not need to 'guess' by the entities content
-
-        @attribute entityType
-        @type {String}
-        @default 'charm'
-      */
-      entityType: {
-        value: 'charm'
       },
       /**
        * "id" for use with the charmworld datastore

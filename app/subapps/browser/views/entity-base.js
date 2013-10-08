@@ -327,7 +327,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       var entity = this.get('entity');
       // If this is a bundle it won't have a storeId
       var id = entity.get('storeId') || entity.get('id');
-      this.get('store').file(id, filename, entity.get('entityType'), {
+      this.get('store').file(id, filename, entity.constructor.entityType, {
         'success': function(data) {
           if (prettify) {
             // If we say we want JS-prettified, use the prettify module.
