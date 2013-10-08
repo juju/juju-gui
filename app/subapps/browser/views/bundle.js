@@ -118,23 +118,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     /**
-      Creates the tabview instance for the bundle view
-
-      @method _setupTabView
-    */
-    _setupTabview: function() {
-      /**
-        Tabview instance used to display the bundle details.
-
-        @property tabview
-      */
-      this.tabview = new widgets.browser.TabView({
-        render: true,
-        srcNode: this.get('container').one('.tabs')
-      });
-    },
-
-    /**
       Renders the bundle view template into the DOM.
 
       @method _renderBundleView

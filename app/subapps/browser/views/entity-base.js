@@ -327,7 +327,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       var entity = this.get('entity');
       // If this is a bundle it won't have a storeId
       var id = entity.get('storeId') || entity.get('id');
-
       this.get('store').file(id, filename, entity.get('entityType'), {
             'success': function(data) {
               if (prettify) {
@@ -343,9 +342,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
               this.hideIndicator(container);
             },
-            'failure': function(data, request) {
-
-            }
+            'failure': this.apiFailure
           }, this);
     },
 
@@ -402,6 +399,23 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         less.addClass('hidden');
         more.removeClass('hidden');
       }
+    },
+
+    /**
+      Creates the tabview instance for the bundle view
+
+      @method _setupTabView
+    */
+    _setupTabview: function() {
+      /**
+        Tabview instance used to display the bundle details.
+
+        @property tabview
+      */
+      this.tabview = new widgets.browser.TabView({
+        render: true,
+        srcNode: this.get('container').one('.tabs')
+      });
     }
   };
 
