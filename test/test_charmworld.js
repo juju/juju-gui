@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('Charmworld API v3 interface', function() {
+  describe('Charmworld API v3 interface', function() {
     var Y, models, conn, data, juju, utils, charmworld, hostname, api;
 
 

@@ -203,7 +203,6 @@ YUI.add('subapp-browser', function(Y) {
       var store = this.get('store');
       // Register a helper for generating the icon urls for charms.
       Y.Handlebars.registerHelper('charmIconPath', function(charmID, isBundle) {
-        debugger;
         return store.iconpath(charmID, isBundle);
       });
 
