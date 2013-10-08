@@ -361,17 +361,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       var tpl = this.template(tplData);
-      var tplNode = container.setHTML(tpl);
 
       // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
-      renderTo.setHTML(tplNode);
+      renderTo.setHTML(container.setHTML(tpl));
 
-      this.tabview = new widgets.browser.TabView({
-        render: true,
-        srcNode: tplNode.one('.tabs')
-      });
+      this._setupTabview();
       this._dispatchTabEvents(this.tabview);
 
 

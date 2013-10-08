@@ -766,6 +766,12 @@ describe('test_models.js', function() {
       });
       assert.equal(weights.sort(), weights);
     });
+
+    it('has an entity type static property', function() {
+      instance = new models.Charm(data.charm);
+      assert.equal(instance.constructor.entityType, 'charm');
+    });
+
   });
 
   describe('database import/export', function() {
