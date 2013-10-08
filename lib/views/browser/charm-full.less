@@ -1,9 +1,15 @@
 .bundle,
 .charm {
+    &.recommended {
+        .header {
+            background:
+                url(/juju-ui/assets/images/recommended-triangle.png)
+                no-repeat right top, url(/juju-ui/assets/images/paper-bg.jpg) repeat 0 0;
+        }
+    }
     .changelog li,
     .changelog p,
     .details {
-        background: inherit;
         border: none;
 
         a:hover {
@@ -249,6 +255,13 @@
     background-color: #fff;
     background-image: none;
 
+    &.recommended {
+        .header {
+            background:
+                url(/juju-ui/assets/images/recommended-triangle.png)
+                no-repeat right top;
+        }
+    }
     .header {
         .type13;
         position: relative;

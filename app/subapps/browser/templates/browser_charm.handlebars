@@ -1,4 +1,4 @@
-<div class="charm">
+<div class="charm {{#if is_approved}}recommended{{/if}}">
     <div class="content">
         {{#unless forInspector}}
             <div class="header">
@@ -11,7 +11,6 @@
                     <div class="add-reviewed">
                         {{#if is_approved}}
                             <div>
-                                <i class="sprite approved_star"></i>
                                 Reviewed by the Juju team
                             </div>
                         {{/if}}
