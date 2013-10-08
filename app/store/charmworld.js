@@ -397,9 +397,10 @@ YUI.add('juju-charm-store', function(Y) {
 
       @method iconpath
       @param {String} charmID The id of the charm to grab the icon for.
+      @param {Boolean} isBundle Is this an icon for a bundle?
       @return {String} The URL of the charm's icon.
      */
-    iconpath: function(charmID) {
+    iconpath: function(charmID, isBundle) {
       // If this is a local charm, then we need use a hard coded path to the
       // default icon since we cannot fetch its category data or its own
       // icon.
@@ -417,7 +418,7 @@ YUI.add('juju-charm-store', function(Y) {
         charmID = charmID.replace(/^[^:]+:/, '');
         return this.get('apiHost') + [
           this._apiRoot,
-          'charm',
+          (Y.Lang.isBoolean(isBundle) && isBundle) ? 'bundle' : 'charm',
           charmID,
           'file',
           'icon.svg'].join('/');
