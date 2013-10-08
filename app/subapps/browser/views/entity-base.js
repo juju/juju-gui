@@ -114,7 +114,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     _dispatchTabEvents: function(tabview) {
       this.addEvent(
           tabview.after('selectionChange', function(e) {
-            var label = e.newVal.get('label');
             switch (e.newVal.get('label')) {
               case 'Features':
                 if (!this._qaContentLoaded) {
@@ -329,22 +328,22 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       // If this is a bundle it won't have a storeId
       var id = entity.get('storeId') || entity.get('id');
       this.get('store').file(id, filename, entity.get('entityType'), {
-            'success': function(data) {
-              if (prettify) {
-                // If we say we want JS-prettified, use the prettify module.
-                Y.prettify.renderPrettyPrintedFile(container, data);
-              } else if (filename.slice(-3) === '.md') {
-                // else if it's a .md file, render the markdown to html.
-                container.setHTML(Y.Markdown.toHTML(data));
-              } else {
-                // Else just stick the content in a pre so it's blocked.
-                container.setHTML(Y.Node.create('<pre/>').setContent(data));
-              }
+        'success': function(data) {
+          if (prettify) {
+            // If we say we want JS-prettified, use the prettify module.
+            Y.prettify.renderPrettyPrintedFile(container, data);
+          } else if (filename.slice(-3) === '.md') {
+            // else if it's a .md file, render the markdown to html.
+            container.setHTML(Y.Markdown.toHTML(data));
+          } else {
+            // Else just stick the content in a pre so it's blocked.
+            container.setHTML(Y.Node.create('<pre/>').setContent(data));
+          }
 
-              this.hideIndicator(container);
-            },
-            'failure': this.apiFailure
-          }, this);
+          this.hideIndicator(container);
+        },
+        'failure': this.apiFailure
+      }, this);
     },
 
     /**
