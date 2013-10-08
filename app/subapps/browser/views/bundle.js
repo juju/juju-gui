@@ -178,6 +178,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
 }, '', {
   requires: [
+    'browser-overlay-indicator',
+    'juju-view-utils',
     'view',
     'juju-env-fakebackend',
     'juju-view-bundle',

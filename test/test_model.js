@@ -667,6 +667,32 @@ describe('test_models.js', function() {
       assert.isFalse(unapproved_without_icon.get('shouldShowIcon'));
     });
 
+    it('sorts files', function() {
+      // Because we rely on localeCompare, and this has different
+      // implementations and capabilities across browsers, we don't include
+      // any capital letters in this test.  They sort reliably within a given
+      // browser, but not across browsers.
+      instance = new models.Charm({
+        id: 'cs:precise/mysql-2',
+        files: [
+          'alpha/beta/gamma',
+          'alpha/beta',
+          'alpha/aardvark',
+          'zebra',
+          'yam'
+        ]
+      });
+      assert.deepEqual(
+          instance.get('files'),
+          [
+            'yam',
+            'zebra',
+            'alpha/aardvark',
+            'alpha/beta',
+            'alpha/beta/gamma'
+          ]);
+    });
+
     it('tracks recent commits in the last 30 days', function() {
       instance = new models.Charm(data.charm);
       var commits = instance.get('recent_commits'),

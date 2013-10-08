@@ -331,6 +331,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.isFullscreen = isFullscreen;
       tplData.isLocal = tplData.scheme === 'local';
       tplData.forInspector = this.get('forInspector');
+      if (tplData.files) {
+        // Exclude svg files from the source view.
+        var regex = /\.svg$/;
+        tplData.files = tplData.files.filter(function(name) {
+          return !regex.test(name);
+        });
+      }
       if (!tplData.forInspector) {
         tplData.sourceLink = this._getSourceLink();
         tplData.prettyCommits = this._formatCommitsForHtml(
