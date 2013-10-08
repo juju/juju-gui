@@ -457,7 +457,46 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       files: {
-        value: []
+        value: [],
+        /**
+         * Sort files when they are set.
+         *
+         * @method files.setter
+         */
+        setter: function(value) {
+          if (Y.Lang.isArray(value)) {
+            value.sort(function(a, b) {
+              var segments = [a, b].map(function(path) {
+                var segs = path.split('/');
+                if (segs.length === 1) {
+                  segs.unshift('');
+                }
+                return segs;
+              });
+              var maxLength = Math.max(segments[0].length, segments[1].length);
+              for (var i = 0; i < maxLength; i += 1) {
+                var segmentA = segments[0][i];
+                var segmentB = segments[1][i];
+                if (segmentA === undefined) {
+                  return -1;
+                } else if (segmentB === undefined) {
+                  return 1;
+                } else {
+                  var result = (
+                      // Prefer case-insensitive sort, but honor case when
+                      // string match in a case-insensitive comparison.
+                      segmentA.localeCompare(
+                          segmentB, undefined, {sensitivity: 'accent'}) ||
+                      segmentA.localeCompare(segmentB));
+                  if (result) {
+                    return result;
+                  }
+                }
+              }
+              return 0;
+            });
+          }
+        }
       },
       full_name: {
         /**

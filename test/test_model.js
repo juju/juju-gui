@@ -667,6 +667,56 @@ describe('test_models.js', function() {
       assert.isFalse(unapproved_without_icon.get('shouldShowIcon'));
     });
 
+    it('sorts files (real example)', function() {
+      instance = new models.Charm(data.charm);
+      assert.deepEqual(
+          instance.get('files'),
+          [
+            'config.yaml',
+            'icon.svg',
+            'metadata.yaml',
+            'README.md',
+            'revision',
+            'hooks/balancer-relation-broken',
+            'hooks/balancer-relation-changed',
+            'hooks/balancer-relation-joined',
+            'hooks/config-changed',
+            'hooks/hooks.py',
+            'hooks/install',
+            'hooks/nrpe-external-master-relation-changed',
+            'hooks/reverseproxy-relation-changed',
+            'hooks/reverseproxy-relation-joined',
+            'hooks/start',
+            'hooks/stop',
+            'hooks/upgrade-charm',
+            'hooks/website-cache-relation-changed',
+            'hooks/website-cache-relation-joined',
+            'hooks/website-relation-joined'
+          ]);
+    });
+
+    it('sorts files (artificial example)', function() {
+      instance = new models.Charm({
+        id: 'cs:precise/mysql-2',
+        files: [
+          'alpha/beta/gamma',
+          'alpha/beta',
+          'alpha/aardvark',
+          'zebra',
+          'yam'
+        ]
+      });
+      assert.deepEqual(
+          instance.get('files'),
+          [
+            'yam',
+            'zebra',
+            'alpha/aardvark',
+            'alpha/beta',
+            'alpha/beta/gamma'
+          ]);
+    });
+
     it('tracks recent commits in the last 30 days', function() {
       instance = new models.Charm(data.charm);
       var commits = instance.get('recent_commits'),
