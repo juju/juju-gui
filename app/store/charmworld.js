@@ -416,6 +416,13 @@ YUI.add('juju-charm-store', function(Y) {
         // The following regular expression removes everything up to the
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
+
+        // Note that we make sure isBundle is Boolean. It's coming from a
+        // handlebars template helper which will make the second argument the
+        // context object when it's not supplied. We want it optional for
+        // normal use to default to the charm version, but if it's a boolean,
+        // then check that boolean because the author care specifically if
+        // it's a bundle or not.
         return this.get('apiHost') + [
           this._apiRoot,
           (Y.Lang.isBoolean(isBundle) && isBundle) ? 'bundle' : 'charm',
