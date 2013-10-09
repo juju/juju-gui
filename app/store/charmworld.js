@@ -425,7 +425,7 @@ YUI.add('juju-charm-store', function(Y) {
         // it's a bundle or not.
         return this.get('apiHost') + [
           this._apiRoot,
-          (Y.Lang.isBoolean(isBundle) && isBundle) ? 'bundle' : 'charm',
+          Y.Lang.isBoolean(isBundle) && isBundle === true ? 'bundle' : 'charm',
           charmID,
           'file',
           'icon.svg'].join('/');
