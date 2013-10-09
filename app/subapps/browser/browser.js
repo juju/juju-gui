@@ -914,8 +914,9 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      // If we don't have a valid store we can't do any work here.
       var viewmode = this.get('defaultViewmode');
+
+      // If we don't have a valid store we can't do any work here.
       if (!this._hasValidStore()) {
         return;
       }
@@ -933,7 +934,15 @@ YUI.add('subapp-browser', function(Y) {
         next();
         return;
       } else {
-        // We've got a valid id. Setup the params for our view state.
+
+        // We only want to handle urls without a viwemode calling a specific
+        // id for a charm such as /precise/mysql and not
+        // /fullscreen/precise/mysql.
+        if (this.viewmodes.indexOf(idBits[0]) !== -1) {
+          next();
+          return;
+        }
+
         req.params = {
           id: id,
           viewmode: viewmode
