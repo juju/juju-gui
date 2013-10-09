@@ -79,7 +79,6 @@ describe('Inspector Overview', function() {
     if (state) {
       state.destroy();
     }
-    window.flags = {};
   });
 
   var setUpInspector = function(serviceAttrs) {
