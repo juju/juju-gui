@@ -44,7 +44,8 @@ describe('Model Controller Promises', function() {
     env.connect();
     modelController = new yui.juju.ModelController({
       db: db,
-      env: env
+      env: env,
+      store: utils.makeFakeStore()
     });
     cleanups = [];
   });
@@ -257,7 +258,6 @@ describe('Model Controller Promises', function() {
       loaded: true,
       charm: charmId
     });
-    window.flags.upgradeCharm = true;
     modelController.set('store', utils.makeFakeStore());
     var promise = modelController.getServiceWithCharm(serviceId);
     promise.then(

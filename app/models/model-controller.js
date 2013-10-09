@@ -154,10 +154,7 @@ YUI.add('model-controller', function(Y) {
               mController.getCharm(service.get('charm')).then(function(charm) {
                 // Check if a newer charm is available for this service so that
                 // we can offer it as an upgrade.
-                // XXX Makyo Aug. 20 - Remove feature flag when upgradecharm
-                // feature lands.
-                if (charm.get('scheme') === 'cs' &&
-                    window.flags.upgradeCharm) {
+                if (charm.get('scheme') === 'cs') {
                   store.promiseUpgradeAvailability(charm, db.charms)
                     .then(function(latestId) {
                         service.set('upgrade_available', !!latestId);

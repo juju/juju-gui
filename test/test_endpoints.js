@@ -344,7 +344,11 @@ describe('Endpoints map handlers', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     destroyMe.push(env);
-    app = new Y.juju.App({env: env, consoleEnabled: true});
+    app = new Y.juju.App({
+      env: env,
+      consoleEnabled: true,
+      store: utils.makeFakeStore()
+    });
     app.showView(new Y.View());
     destroyMe.push(app);
     controller = app.endpointsController;
