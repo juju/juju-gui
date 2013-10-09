@@ -351,20 +351,21 @@ YUI.add('juju-charm-store', function(Y) {
      * Fetch the contents of a charm's file.
      *
      * @method file
-     * @param {String} charmID The id of the charm's file we want.
+     * @param {String} entityId The id of the charm's file we want.
      * @param {String} filename The path/name of the file to fetch content.
+     * @param {String} entityType Either 'charm' or 'bundle'.
      * @param {Object} callbacks The success/failure callbacks.
      * @param {Object} bindScope The scope for this in the callbacks.
      *
      */
-    file: function(charmID, filename, callbacks, bindScope) {
+    file: function(entityId, filename, entityType, callbacks, bindScope) {
       // If we're in the noop state, just call the error callback.
       if (this.get('noop')) {
         callbacks.failure('noop failure');
         return;
       }
 
-      var endpoint = 'charm/' + charmID + '/file/' + filename;
+      var endpoint = entityType + '/' + entityId + '/file/' + filename;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);

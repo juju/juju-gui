@@ -211,6 +211,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view._getRevnoLink(url, 1));
     });
 
+    it('excludes source svg files from the source tab', function() {
+      view = new CharmView({
+        entity: new models.Charm({
+          files: [
+            'hooks/install',
+            'icon.svg',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        }),
+        container: utils.makeContainer()
+      });
+      view.render();
+      var options = Y.one('#bws-code').all('select option');
+      assert.equal(options.size(), 3);
+      assert.deepEqual(
+          options.get('text'),
+          ['Select --', 'readme.rst', 'hooks/install']);
+    });
+
     it('can generate useful display data for commits', function() {
       view = new CharmView({
         entity: new models.Charm({

@@ -20,6 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('subapp-browser-entitybaseview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      widgets = Y.namespace('juju.widgets'),
       DATE_FORMAT = '%d/%b/%y';
 
   /**
@@ -89,32 +90,50 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-     * Watch the tab control for change events and dispatch accordingly.
-     *
-     * @method _dispatchTabEvents
-     * @param {TabView} tab the tab control to monitor.
-     *
-     */
-    _dispatchTabEvents: function(tab) {
+      Watch the tab control for change events and load the content
+      if required using the labels as the keys.
+
+      @method _dispatchTabEvents
+      @param {TabView} tabview the tab control to monitor.
+    */
+    /**
+      Flag to indicate that we have loaded the qa content
+
+      @property _qaContentLoaded
+    */
+    /**
+      Flag to indicate that we have loaded the interfaces content
+
+      @property _interfacesContentLoaded
+    */
+    /**
+      Flag to indicate that we have loaded the readme content
+
+      @property _readmeContentLoaded
+    */
+    _dispatchTabEvents: function(tabview) {
       this.addEvent(
-          tab.after('selectionChange', function(ev) {
-            var tabContent = ev.newVal.get('content');
-            if (tabContent === 'Features') {
-              this._loadQAContent();
-              return;
+          tabview.after('selectionChange', function(e) {
+            switch (e.newVal.get('label')) {
+              case 'Features':
+                if (!this._qaContentLoaded) {
+                  this._loadQAContent();
+                }
+                this._qaContentLoaded = true;
+                break;
+              case 'Related Charms':
+                if (!this._interfacesContentLoaded) {
+                  this._loadInterfacesTabCharms();
+                }
+                this._interfacesContentLoaded = true;
+                break;
+              case 'Readme':
+                if (!this._readmeContentLoaded) {
+                  this._loadReadmeTab();
+                }
+                this._readmeContentLoaded = true;
             }
-
-            if (tabContent.indexOf('interface-list') !== -1) {
-              this._loadInterfacesTabCharms();
-              return;
-            }
-
-            if (tabContent === 'Readme') {
-              this._loadReadmeTab();
-              return;
-            }
-          }, this)
-      );
+          }, this));
     },
 
     /**
@@ -242,9 +261,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         var readme = this._locateReadme();
 
         if (readme) {
-          this._loadFile(tplNode.one('#bws-readme'),
-                         readme
-          );
+          this._loadFile(tplNode.one('#bws-readme'), readme);
         } else {
           this._noReadme(tplNode.one('#bws-readme'));
         }
@@ -307,28 +324,26 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     _loadFile: function(container, filename, prettify) {
       // Enable the indicator on the container while we load.
       this.showIndicator(container);
+      var entity = this.get('entity');
+      // If this is a bundle it won't have a storeId
+      var id = entity.get('storeId') || entity.get('id');
+      this.get('store').file(id, filename, entity.constructor.entityType, {
+        'success': function(data) {
+          if (prettify) {
+            // If we say we want JS-prettified, use the prettify module.
+            Y.prettify.renderPrettyPrintedFile(container, data);
+          } else if (filename.slice(-3) === '.md') {
+            // else if it's a .md file, render the markdown to html.
+            container.setHTML(Y.Markdown.toHTML(data));
+          } else {
+            // Else just stick the content in a pre so it's blocked.
+            container.setHTML(Y.Node.create('<pre/>').setContent(data));
+          }
 
-      this.get('store').file(
-          this.get('entity').get('storeId'),
-          filename, {
-            'success': function(data) {
-              if (prettify) {
-                // If we say we want JS-prettified, use the prettify module.
-                Y.prettify.renderPrettyPrintedFile(container, data);
-              } else if (filename.slice(-3) === '.md') {
-                // else if it's a .md file, render the markdown to html.
-                container.setHTML(Y.Markdown.toHTML(data));
-              } else {
-                // Else just stick the content in a pre so it's blocked.
-                container.setHTML(Y.Node.create('<pre/>').setContent(data));
-              }
-
-              this.hideIndicator(container);
-            },
-            'failure': function(data, request) {
-
-            }
-          }, this);
+          this.hideIndicator(container);
+        },
+        'failure': this.apiFailure
+      }, this);
     },
 
     /**
@@ -384,6 +399,23 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         less.addClass('hidden');
         more.removeClass('hidden');
       }
+    },
+
+    /**
+      Creates the tabview instance for the bundle view
+
+      @method _setupTabView
+    */
+    _setupTabview: function() {
+      /**
+        Tabview instance used to display the bundle details.
+
+        @property tabview
+      */
+      this.tabview = new widgets.browser.TabView({
+        render: true,
+        srcNode: this.get('container').one('.tabs')
+      });
     }
   };
 

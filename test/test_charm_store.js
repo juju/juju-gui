@@ -210,6 +210,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           hostname + 'api/3/charm/precise/mysql-1/file/icon.svg');
     });
 
+    it('can assemble proper urls to fetch files', function(done) {
+      api.set('datasource', {
+        sendRequest: function(options) {
+          assert.equal(options.request, 'bundle/abc123/file/readme');
+          assert.equal(typeof options.callback.success === 'function', true);
+          assert.equal(typeof options.callback.failure === 'function', true);
+          done();
+        }
+      });
+      api.file('abc123', 'readme', 'bundle', {
+        success: function() {},
+        failure: function() {}
+      });
+    });
+
     it('can fetch a charm via a promise', function(done) {
       // The "promiseCharm" method is just a promise-wrapped version of the
       // "charm" method.

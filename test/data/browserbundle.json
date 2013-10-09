@@ -1,52 +1,1113 @@
+
 {
   "basket_name": "wiki",
-  "basket_revision": 3,
+  "basket_revision": 5,
   "branch_deleted": false,
+  "charm_metadata": {
+    "haproxy": {
+      "categories": [
+        "cache-proxy"
+      ],
+      "code_source": {
+        "bugs_link": "https://bugs.launchpad.net/charms/+source/haproxy",
+        "last_log": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ",
+        "location": "lp:~charmers/charms/precise/haproxy/trunk",
+        "revision": "67",
+        "revisions": [
+          {
+            "authors": [
+              {
+                "email": "mark.mims@canonical.com",
+                "name": "Mark Mims"
+              }
+            ],
+            "date": "2013-06-03T23:13:29Z",
+            "message": "merging lp:~davidpbritton/charms/precise/haproxy/trunk ",
+            "revno": 67
+          },
+          {
+            "authors": [
+              {
+                "email": "jorge@ubuntu.com",
+                "name": "Jorge O. Castro"
+              }
+            ],
+            "date": "2013-04-22T19:42:18Z",
+            "message": "Add categories.\n",
+            "revno": 66
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2013-02-15T04:55:15Z",
+            "message": "When the reverseproxy relation changes, the website proxy will likely need to be updated, so trigger a config-changed to notify the other side of the relation that it will need to update.\n\nI'm not sure if this the appropriate way to handle this situation, but in practice it seems to work. Please let me know if there is a more accurate or correct way to do it.  LP:148605",
+            "revno": 65
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2013-02-15T04:29:14Z",
+            "message": "Merging LP:148065 Relation driven proxying or multi-service proxying",
+            "revno": 64
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2013-01-15T02:04:19Z",
+            "message": "Merging mthaddon's branch. Include nrpe-external-master relation, and ability to inject pre-install hooks if necessary. MP:139978",
+            "revno": 63
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2012-11-21T16:57:10Z",
+            "message": "When a unit of a service having a relation with haproxy is juju-removed, ha proxy was not removing the line for this unit in /etc/haproxy.cfg.",
+            "revno": 62
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2012-10-29T21:04:13Z",
+            "message": "No more hard coded paths",
+            "revno": 61
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2012-10-03T14:23:30Z",
+            "message": "Adding changes in MP:127191 by gnoy",
+            "revno": 60
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2012-10-03T14:15:01Z",
+            "message": "PEP8 changes",
+            "revno": 59
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2012-09-17T16:50:34Z",
+            "message": "Merging changes by Liam in MP:124731",
+            "revno": 58
+          }
+        ],
+        "type": "bzr"
+      },
+      "date_created": "2012-04-16T18:29:51Z",
+      "description": "HAProxy is a TCP/HTTP reverse proxy which is particularly suited for high availability environments. It features connection persistence through HTTP cookies, load balancing, header addition, modification, deletion both ways. It has request blocking capabilities and provides interface to display server status.",
+      "distro_series": "precise",
+      "downloads": 940,
+      "downloads_in_past_30_days": 66,
+      "files": [
+        "hooks/nrpe.py",
+        "hooks/munin-relation-changed",
+        "hooks/hooks.py",
+        "hooks/website-relation-joined",
+        "revision",
+        "metadata.yaml",
+        "hooks/stop",
+        "hooks/test_hooks.py",
+        "README.md",
+        "hooks/start",
+        "hooks/config-changed",
+        "hooks/nrpe-external-master-relation-changed",
+        "hooks/reverseproxy-relation-broken",
+        "hooks/install",
+        "hooks/reverseproxy-relation-departed",
+        "hooks/website-relation-changed",
+        "config.yaml",
+        "hooks/reverseproxy-relation-changed"
+      ],
+      "id": "precise/haproxy-18",
+      "is_approved": true,
+      "is_subordinate": false,
+      "maintainer": {
+        "email": "Juan Negron <juan@ubuntu.com>Tom Haddon <tom.haddon@canonical.com>",
+        "name": ""
+      },
+      "name": "haproxy",
+      "options": {
+        "default_log": {
+          "default": "global",
+          "description": "Default log",
+          "type": "string"
+        },
+        "default_mode": {
+          "default": "http",
+          "description": "Default mode",
+          "type": "string"
+        },
+        "default_options": {
+          "default": "httplog, dontlognull",
+          "description": "Default options",
+          "type": "string"
+        },
+        "default_retries": {
+          "default": 3,
+          "description": "Set the number of retries to perform on a server after a connection\nfailure. It is important to understand that this value applies to the\nnumber of connection attempts, not full requests. When a connection \nhas effectively been established to a server, there will be no more \nretry.\nIn order to avoid immediate reconnections to a server which is \nrestarting, a turn-around timer of 1 second is applied before a retry\noccurs.\n",
+          "type": "int"
+        },
+        "default_timeouts": {
+          "default": "queue 1000, connect 1000, client 1000, server 1000",
+          "description": "Default timeouts",
+          "type": "string"
+        },
+        "enable_monitoring": {
+          "default": false,
+          "description": "Enable monitoring",
+          "type": "boolean"
+        },
+        "global_debug": {
+          "default": false,
+          "description": "Debug or not",
+          "type": "boolean"
+        },
+        "global_group": {
+          "default": "haproxy",
+          "description": "Group",
+          "type": "string"
+        },
+        "global_log": {
+          "default": "127.0.0.1 local0, 127.0.0.1 local1 notice",
+          "description": "Global log line ( multiples ... comma separated list )",
+          "type": "string"
+        },
+        "global_maxconn": {
+          "default": 4096,
+          "description": "Sets the maximum per-process number of concurrent connections to\n<number>.\n",
+          "type": "int"
+        },
+        "global_quiet": {
+          "default": false,
+          "description": "Quiet",
+          "type": "boolean"
+        },
+        "global_spread_checks": {
+          "default": 0,
+          "descriptions": "Sometimes it is desirable to avoid sending health checks to servers at\nexact intervals, for instance when many logical servers are located on\nthe same physical server. With the help of this parameter, it becomes \npossible to add some randomness in the check interval between 0 and \n+/- 50%. A value between 2 and 5 seems to show good results.\n",
+          "type": "int"
+        },
+        "global_user": {
+          "default": "haproxy",
+          "description": "User",
+          "type": "string"
+        },
+        "monitoring_allowed_cidr": {
+          "default": "127.0.0.1/32",
+          "description": "CIDR allowed ( multiple CIDRs separated by space ) access to the\nmonitoring interface.\n",
+          "type": "string"
+        },
+        "monitoring_password": {
+          "default": "changeme",
+          "description": "Password to the monitoring interface ( if \"changeme\", a new password\nwill be generated and displayed in juju-log )\n",
+          "type": "string"
+        },
+        "monitoring_port": {
+          "default": 10000,
+          "description": "Default monitoring port",
+          "type": "int"
+        },
+        "monitoring_stats_refresh": {
+          "default": 3,
+          "description": "Monitoring interface refresh interval (in seconds)",
+          "type": "int"
+        },
+        "monitoring_username": {
+          "default": "haproxy",
+          "description": "Monitoring username",
+          "type": "string"
+        },
+        "nagios_context": {
+          "default": "juju",
+          "description": "Used by the nrpe-external-master subordinate charm.\nA string that will be prepended to instance name to set the host name\nin nagios. So for instance the hostname would be something like:\n    juju-postgresql-0\nIf you're running multiple environments with the same services in them\nthis allows you to differentiate between them.\n",
+          "type": "string"
+        },
+        "services": {
+          "default": "- service_name: haproxy_service\n  service_host: \"0.0.0.0\"\n  service_port: 80\n  service_options: [balance leastconn]\n  server_options: maxconn 100\n",
+          "description": "Services definition(s). Although the variable type is a string, this is\ninterpreted in the charm as yaml. To use multiple services within the\nsame haproxy instance, specify all of the variables (service_name,\nservice_host, service_port, service_options, server_options) with a \"-\"\nbefore the first variable, service_name, as above. Service options is a\ncomma separated list, server options will be appended as a string to\nthe individual server lines for a given listen stanza.\n",
+          "type": "string"
+        }
+      },
+      "owner": "charmers",
+      "rating_denominator": 0,
+      "rating_numerator": 0,
+      "relations": {
+        "provides": {
+          "munin": {
+            "interface": "munin-node"
+          },
+          "nrpe-external-master": {
+            "interface": "nrpe-external-master",
+            "scope": "container"
+          },
+          "website": {
+            "interface": "http"
+          }
+        },
+        "requires": {
+          "reverseproxy": {
+            "interface": "http"
+          }
+        }
+      },
+      "revision": 42,
+      "summary": "fast and reliable load balancing reverse proxy",
+      "tested_providers": {
+        "ec2": "SUCCESS",
+        "local": "SUCCESS",
+        "openstack": "SUCCESS"
+      },
+      "url": "cs:precise/haproxy-18"
+    },
+    "mediawiki": {
+      "categories": [
+        "applications"
+      ],
+      "code_source": {
+        "bugs_link": "https://bugs.launchpad.net/charms/+source/mediawiki",
+        "last_log": "merging lp:~dave-cheney/charms/precise/mediawiki/trunk as per https://code.launchpad.net/~dave-cheney/charms/precise/mediawiki/trunk/+merge/182803",
+        "location": "lp:~charmers/charms/precise/mediawiki/trunk",
+        "revision": "72",
+        "revisions": [
+          {
+            "authors": [
+              {
+                "email": "mark.mims@canonical.com",
+                "name": "Mark Mims"
+              }
+            ],
+            "date": "2013-09-20T19:13:28Z",
+            "message": "merging lp:~dave-cheney/charms/precise/mediawiki/trunk as per https://code.launchpad.net/~dave-cheney/charms/precise/mediawiki/trunk/+merge/182803",
+            "revno": 72
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-08-14T05:16:21Z",
+            "message": "Santize input from realtion-list",
+            "revno": 71
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-04-25T18:19:21Z",
+            "message": "Added icon.svg",
+            "revno": 70
+          },
+          {
+            "authors": [
+              {
+                "email": "jorge@ubuntu.com",
+                "name": "Jorge O. Castro"
+              }
+            ],
+            "date": "2013-04-22T19:36:55Z",
+            "message": "Add a category\n",
+            "revno": 69
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-01-24T18:26:58Z",
+            "message": "Cleanup of PHP files according to http://www.mediawiki.org/wiki/Coding_conventions\n",
+            "revno": 68
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2012-12-20T03:12:05Z",
+            "message": "Typo in multi-unit command line",
+            "revno": 67
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2012-12-19T20:23:25Z",
+            "message": "Minor clean up and new README file\n",
+            "revno": 66
+          },
+          {
+            "authors": [
+              {
+                "email": "clint@fewbar.com",
+                "name": "Clint Byrum"
+              }
+            ],
+            "date": "2012-06-30T14:37:14Z",
+            "message": "Bumping revision for modernizations",
+            "revno": 65
+          },
+          {
+            "authors": [
+              {
+                "email": "clint@fewbar.com",
+                "name": "Clint Byrum"
+              }
+            ],
+            "date": "2012-06-30T14:36:55Z",
+            "message": "cleanups and modernizing things",
+            "revno": 64
+          },
+          {
+            "authors": [
+              {
+                "email": "clint@ubuntu.com",
+                "name": "Clint Byrum"
+              }
+            ],
+            "date": "2012-06-28T00:02:47Z",
+            "message": "removing old broken munin bits",
+            "revno": 63
+          }
+        ],
+        "type": "bzr"
+      },
+      "date_created": "2012-04-16T18:29:51Z",
+      "description": "MediaWiki is a wiki engine (a program for creating a collaboratively\nedited website). It is designed to handle heavy websites containing\nlibrary-like document collections, and supports user uploads of\nimages/sounds, multilingual content, TOC autogeneration, ISBN links,\netc.\n",
+      "distro_series": "precise",
+      "downloads": 1944,
+      "downloads_in_past_30_days": 281,
+      "files": [
+        "hooks/slave-relation-departed",
+        "hooks/combine-dbservers",
+        "hooks/cache-relation-changed",
+        "hooks/website-relation-joined",
+        "revision",
+        "icon.svg",
+        "hooks/upgrade-charm",
+        "hooks/stop",
+        "README.md",
+        "hooks/db-relation-changed",
+        "hooks/db-relation-departed",
+        "hooks/install",
+        "metadata.yaml",
+        "hooks/config-changed",
+        "hooks/slave-relation-changed",
+        "config.yaml",
+        "hooks/slave-relation-broken"
+      ],
+      "id": "precise/mediawiki-10",
+      "is_approved": true,
+      "is_subordinate": false,
+      "maintainer": {
+        "email": "clint@ubuntu.com",
+        "name": "Clint Byrum"
+      },
+      "name": "mediawiki",
+      "options": {
+        "admins": {
+          "description": "Admin users to create, user:pass",
+          "type": "string"
+        },
+        "debug": {
+          "default": false,
+          "description": "turn on debugging features of mediawiki",
+          "type": "boolean"
+        },
+        "logo": {
+          "description": "URL to fetch logo from",
+          "type": "string"
+        },
+        "name": {
+          "default": "Please set name of wiki",
+          "description": "The name, or Title of the Wiki",
+          "type": "string"
+        },
+        "skin": {
+          "default": "vector",
+          "description": "skin for the Wiki",
+          "type": "string"
+        }
+      },
+      "owner": "charmers",
+      "rating_denominator": 0,
+      "rating_numerator": 0,
+      "relations": {
+        "provides": {
+          "website": {
+            "interface": "http"
+          }
+        },
+        "requires": {
+          "cache": {
+            "interface": "memcache"
+          },
+          "db": {
+            "interface": "mysql"
+          },
+          "slave": {
+            "interface": "mysql"
+          }
+        }
+      },
+      "revision": 90,
+      "summary": "Website engine for collaborative work",
+      "tested_providers": {
+        "ec2": "SUCCESS",
+        "openstack": "SUCCESS"
+      },
+      "url": "cs:precise/mediawiki-10"
+    },
+    "memcached": {
+      "categories": [
+        "applications"
+      ],
+      "code_source": {
+        "bugs_link": "https://bugs.launchpad.net/charms/+source/memcached",
+        "last_log": "Pavel Pachkovskij 2013-07-30 fix factor default value\n",
+        "location": "lp:~charmers/charms/precise/memcached/trunk",
+        "revision": "55",
+        "revisions": [
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-07-31T12:29:00Z",
+            "message": "Pavel Pachkovskij 2013-07-30 fix factor default value\n",
+            "revno": 55
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-04-27T00:13:33Z",
+            "message": "Added icon.svg\n",
+            "revno": 54
+          },
+          {
+            "authors": [
+              {
+                "email": "jorge@ubuntu.com",
+                "name": "Jorge O. Castro"
+              }
+            ],
+            "date": "2013-04-22T19:50:20Z",
+            "message": "Add categories\n",
+            "revno": 53
+          },
+          {
+            "authors": [
+              {
+                "email": "matthew.wedgwood@canonical.com",
+                "name": "Matthew Wedgwood"
+              }
+            ],
+            "date": "2013-04-18T16:23:02Z",
+            "message": "[mthaddon] support for pre-install hook structure, support for the nrpe-external-master charm\n\nThis adds support for pre-install hook structure, as supported in a number of other charms, which allows you to do things like set timezone, install custom apt repositories, etc.. It also adds support for the nrpe-external-master charm\n",
+            "revno": 52
+          },
+          {
+            "authors": [
+              {
+                "email": "nmurata@ashisuto.co.jp",
+                "name": "Nobuto MURATA"
+              }
+            ],
+            "date": "2012-09-20T11:43:25Z",
+            "message": "fix sh syntax error (LP: #1053356)\n",
+            "revno": 51
+          },
+          {
+            "authors": [
+              {
+                "email": "juan.negron@canonical.com",
+                "name": "Juan L. Negron"
+              }
+            ],
+            "date": "2012-09-14T20:14:21Z",
+            "message": "Some fixes for things I noticed while reviewing the charm. MP:124280",
+            "revno": 50
+          },
+          {
+            "authors": [
+              {
+                "email": "clint@ubuntu.com",
+                "name": "Clint Byrum"
+              }
+            ],
+            "date": "2012-05-22T22:30:53Z",
+            "message": "setting maintainer",
+            "revno": 49
+          },
+          {
+            "authors": [
+              {
+                "email": "mark.mims@canonical.com",
+                "name": "Mark Mims"
+              }
+            ],
+            "date": "2012-01-28T01:11:44Z",
+            "message": "strong config types\n",
+            "revno": 48
+          },
+          {
+            "authors": [
+              {
+                "email": "clint@ubuntu.com",
+                "name": "Clint Byrum"
+              }
+            ],
+            "date": "2011-12-05T22:55:46Z",
+            "message": "Making memcached fully configurable using config.yaml",
+            "revno": 47
+          },
+          {
+            "authors": [
+              {
+                "email": "mark.mims@canonical.com",
+                "name": "Mark Mims"
+              }
+            ],
+            "date": "2011-10-11T19:17:17Z",
+            "message": "revision split-out\n",
+            "revno": 46
+          }
+        ],
+        "type": "bzr"
+      },
+      "date_created": "2012-04-16T18:29:50Z",
+      "description": "Danga Interactive developed memcached to enhance the speed of LiveJournal.com, a site which was already doing 20 million+ dynamic page views per day for 1 million users with a bunch of webservers and a bunch of database servers. memcached dropped the database load to almost nothing, yielding faster page load times for users, better resource utilization, and faster access to the databases on a memcache miss.\nmemcached optimizes specific high-load serving applications that are designed to take advantage of its versatile no-locking memory access system. Clients are available in several different programming languages, to suit the needs of the specific application. Traditionally this has been used in mod_perl apps to avoid storing large chunks of data in Apache memory, and to share this burden across several machines.",
+      "distro_series": "precise",
+      "downloads": 611,
+      "downloads_in_past_30_days": 38,
+      "files": [
+        "hooks/cache-relation-joined",
+        "hooks/munin-relation-changed",
+        "hooks/nrpe-external-master-relation-changed",
+        "icon.svg",
+        "hooks/upgrade-charm",
+        "hooks/stop",
+        "hooks/start",
+        "hooks/config-changed",
+        "hooks/install",
+        "metadata.yaml",
+        "config.yaml",
+        "revision"
+      ],
+      "id": "precise/memcached-7",
+      "is_approved": true,
+      "is_subordinate": false,
+      "maintainer": {
+        "email": "clint@ubuntu.com",
+        "name": "Clint Byrum"
+      },
+      "name": "memcached",
+      "options": {
+        "connection-limit": {
+          "default": 1024,
+          "description": "maximum simultaneous connections (memcached option -c)",
+          "type": "int"
+        },
+        "disable-auto-cleanup": {
+          "default": "no",
+          "description": "do not remove things automatically from the cache on OOM\n(memcached option -M)\n",
+          "type": "string"
+        },
+        "disable-cas": {
+          "default": "no",
+          "description": "disable use of CAS (and reduce the per-item size by 8 bytes)",
+          "type": "string"
+        },
+        "disable-large-pages": {
+          "default": "no",
+          "description": "The charm will will try to use large pages if given more than 2GB of RAM. You may want to disable this behavior. (memcached option -L)",
+          "type": "string"
+        },
+        "extra-options": {
+          "default": "",
+          "description": "memcached has many other options documented in its man page. You may pass them here as a string which will be appended to memcached's execution.",
+          "type": "string"
+        },
+        "factor": {
+          "default": 1.25,
+          "description": "Use <factor> as the multiplier for computing the sizes of memory\nchunks that items are stored in. A lower value may result in less\nwasted memory depending on the total amount of memory available\nand the distribution of item sizes. The default is 1.25.\n",
+          "type": "float"
+        },
+        "min-item-size": {
+          "default": -1,
+          "description": "Allocate a minimum of <size> bytes for the item key, value,\nand flags. The default  is  48.  If  you have  a  lot of small\nkeys and values, you can get a significant memory efficiency\ngain with a lower value. If you use a high chunk growth factor\n(-f option),  on  the  other  hand,  you  may  want  to\nincrease  the  size  to  allow  a  bigger percentage of your\nitems to fit in the most densely packed (smallest) chunks.\n(memcached option -n)\n",
+          "type": "int"
+        },
+        "nagios_context": {
+          "default": "juju",
+          "description": "Used by the nrpe-external-master subordinate charm. A string that will be prepended to instance name to set the host name in nagios. So for instance the hostname would be something like:\n    juju-memcached-0\nIf you're running multiple environments with the same services in them this allows you to differentiate between them.\n",
+          "type": "string"
+        },
+        "request-limit": {
+          "default": -1,
+          "description": "limit of requests a single client can make at one time\n(memcached option -R) -1 takes memcached default (20)\n",
+          "type": "int"
+        },
+        "size": {
+          "default": 768,
+          "description": "Size of memcache pool in MiB (memcached option -m)",
+          "type": "int"
+        },
+        "slab-page-size": {
+          "default": -1,
+          "description": "Override the size of each slab page in bytes. In mundane\nwords, it adjusts  the  maximum  item  size that  memcached\nwill  accept.  You can use the suffixes K and M to specify\nthe size as well, so use 2000000 or 2000K or 2M if you want\na maximum size of 2 MB per object.   It  is  not  recommended\nto raise this limit above 1 MB due just to performance reasons.\nThe default value is 1 MB. (memcached option -I) -1 takes\nthe memcached default.\n",
+          "type": "int"
+        },
+        "tcp-port": {
+          "default": 11211,
+          "description": "TCP port to listen on. (memcached option -p)",
+          "type": "int"
+        },
+        "threads": {
+          "default": -1,
+          "description": "number of threads to use. default is 4. (memcached option -t)",
+          "type": "int"
+        },
+        "udp-port": {
+          "default": 0,
+          "description": "UDP port to listen on (memcached option -U)",
+          "type": "int"
+        }
+      },
+      "owner": "charmers",
+      "rating_denominator": 0,
+      "rating_numerator": 0,
+      "relations": {
+        "provides": {
+          "cache": {
+            "interface": "memcache"
+          },
+          "munin": {
+            "interface": "munin-node"
+          },
+          "nrpe-external-master": {
+            "interface": "nrpe-external-master",
+            "scope": "container"
+          }
+        },
+        "requires": {}
+      },
+      "revision": 28,
+      "summary": "A high-performance memory object caching system",
+      "tested_providers": {
+        "ec2": "SUCCESS",
+        "local": "SUCCESS",
+        "openstack": "SUCCESS"
+      },
+      "url": "cs:precise/memcached-7"
+    },
+    "mysql": {
+      "categories": [
+        "databases"
+      ],
+      "code_source": {
+        "bugs_link": "https://bugs.launchpad.net/charms/+source/mysql",
+        "last_log": "[ahasenack] Wait for the rbd device to be available before attempting to format it.",
+        "location": "lp:~charmers/charms/precise/mysql/trunk",
+        "revision": "104",
+        "revisions": [
+          {
+            "authors": [
+              {
+                "email": "adamg@ubuntu.com",
+                "name": "Adam Gandelman"
+              }
+            ],
+            "date": "2013-08-09T11:08:20Z",
+            "message": "[ahasenack] Wait for the rbd device to be available before attempting to format it.",
+            "revno": 104
+          },
+          {
+            "authors": [
+              {
+                "email": "adamg@canonical.com",
+                "name": "Adam Gandelman"
+              }
+            ],
+            "date": "2013-07-23T22:59:11Z",
+            "message": "Merge juju-core compat. fix from James Page.",
+            "revno": 103
+          },
+          {
+            "authors": [
+              {
+                "email": "jorge@ubuntu.com",
+                "name": "Jorge O. Castro"
+              }
+            ],
+            "date": "2013-07-08T13:40:01Z",
+            "message": "Fix category.\n",
+            "revno": 102
+          },
+          {
+            "authors": [
+              {
+                "email": "mark.mims@canonical.com",
+                "name": "Mark Mims"
+              }
+            ],
+            "date": "2013-06-07T16:38:50Z",
+            "message": "merging lp:~dannf/charms/precise/mysql/lp1188424 as per https://code.launchpad.net/~dannf/charms/precise/mysql/lp1188424/+merge/167881",
+            "revno": 101
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-06-06T12:32:17Z",
+            "message": "James Page 2013-06-06 Stop using socket.getfqdn in shared-db hooks as this assumes DNS resolution between instances is functional\n",
+            "revno": 100
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-06-05T16:02:08Z",
+            "message": "Fixes master/slave relation",
+            "revno": 99
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-05-30T16:03:12Z",
+            "message": "Maintainership change lp:1178384",
+            "revno": 98
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-05-30T16:00:48Z",
+            "message": "ha-support: https://code.launchpad.net/~openstack-charmers/charms/precise/mysql/ha-support/+merge/165059\n",
+            "revno": 97
+          },
+          {
+            "authors": [
+              {
+                "email": "marco@ceppi.net",
+                "name": "Marco Ceppi"
+              }
+            ],
+            "date": "2013-04-25T18:19:45Z",
+            "message": "Added icon.svg",
+            "revno": 96
+          },
+          {
+            "authors": [
+              {
+                "email": "jorge@ubuntu.com",
+                "name": "Jorge O. Castro"
+              }
+            ],
+            "date": "2013-04-22T15:04:35Z",
+            "message": "Use the correct syntax\n",
+            "revno": 95
+          }
+        ],
+        "type": "bzr"
+      },
+      "date_created": "2012-04-16T18:30:00Z",
+      "description": "MySQL is a fast, stable and true multi-user, multi-threaded SQL database\nserver. SQL (Structured Query Language) is the most popular database query\nlanguage in the world. The main goals of MySQL are speed, robustness and\nease of use.\n",
+      "distro_series": "precise",
+      "downloads": 9728,
+      "downloads_in_past_30_days": 932,
+      "files": [
+        "hooks/munin-relation-joined",
+        "hooks/monitors.common.bash",
+        "hooks/db-relation-joined",
+        "hooks/shared-db-relation-changed",
+        "hooks/master-relation-departed",
+        "hooks/monitors-relation-departed",
+        "hooks/master-relation-broken",
+        "hooks/lib/cluster_utils.py",
+        "hooks/shared_db_relations.py",
+        "hooks/slave-relation-changed",
+        "README.md",
+        "hooks/ha-relation-changed",
+        "hooks/munin-relation-changed",
+        "hooks/common.py",
+        "hooks/start",
+        "hooks/config-changed",
+        "hooks/db-relation-broken",
+        "hooks/shared-db-relation-joined",
+        "hooks/ha_relations.py",
+        "hooks/cluster-relation-changed",
+        "hooks/slave-relation-departed",
+        "hooks/install",
+        "hooks/ceph-relation-changed",
+        "metadata.yaml",
+        "hooks/ha-relation-joined",
+        "hooks/stop",
+        "hooks/local-monitors-relation-joined",
+        "hooks/db-admin-relation-joined",
+        "config.yaml",
+        "hooks/monitors-relation-joined",
+        "icon.svg",
+        "hooks/upgrade-charm",
+        "hooks/lib/utils.py",
+        "hooks/ceph-relation-joined",
+        "hooks/master-relation-changed",
+        "hooks/lib/__init__.py",
+        "hooks/slave-relation-joined",
+        "hooks/lib/ceph_utils.py",
+        "hooks/slave-relation-broken",
+        "revision",
+        "hooks/monitors-relation-broken"
+      ],
+      "id": "precise/mysql-27",
+      "is_approved": true,
+      "is_subordinate": false,
+      "maintainer": {
+        "email": "marco@ceppi.net",
+        "name": "Marco Ceppi"
+      },
+      "name": "mysql",
+      "options": {
+        "binlog-format": {
+          "default": "MIXED",
+          "description": "If binlogging is enabled, this is the format that will be used. Ignored when tuning-level == fast.",
+          "type": "string"
+        },
+        "block-size": {
+          "default": 5,
+          "description": "Default block storage size to create when setting up MySQL block storage.\nThis value should be specified in GB (e.g. 100 not 100GB).\n",
+          "type": "int"
+        },
+        "dataset-size": {
+          "default": "80%",
+          "description": "How much data do you want to keep in memory in the DB. This will be used to tune settings in the database server appropriately. Any more specific settings will override these defaults though. This currently sets innodb_buffer_pool_size or key_cache_size depending on the setting in preferred-storage-engine. If query-cache-type is set to 'ON' or 'DEMAND' 20% of this is given to query-cache-size. Suffix this value with 'K','M','G', or 'T' to get the relevant kilo/mega/etc. bytes. If suffixed with %, one will get that percentage of RAM devoted to dataset and (if enabled) query cache.",
+          "type": "string"
+        },
+        "flavor": {
+          "default": "distro",
+          "description": "Possible values are 'distro' or 'percona'",
+          "type": "string"
+        },
+        "ha-bindiface": {
+          "default": "eth0",
+          "description": "Default network interface on which HA cluster will bind to communication\nwith the other members of the HA Cluster.\n",
+          "type": "string"
+        },
+        "ha-mcastport": {
+          "default": 5411,
+          "description": "Default multicast port number that will be used to communicate between\nHA Cluster nodes.\n",
+          "type": "int"
+        },
+        "max-connections": {
+          "default": -1,
+          "description": "Maximum connections to allow. -1 means use the server's compiled in default.",
+          "type": "int"
+        },
+        "preferred-storage-engine": {
+          "default": "InnoDB",
+          "description": "Tune the server for usage of this storage engine. Other possible value is MyISAM. Comma separated will cause settings to split resources evenly among given engines.",
+          "type": "string"
+        },
+        "query-cache-size": {
+          "default": -1,
+          "description": "Override the computed version from dataset-size. Still works if query-cache-type is \"OFF\" since sessions can override the cache type setting on their own.",
+          "type": "int"
+        },
+        "query-cache-type": {
+          "default": "OFF",
+          "description": "Query cache is usually a good idea, but can hurt concurrency. Valid values are \"OFF\", \"ON\", or \"DEMAND\". http://dev.mysql.com/doc/refman/5.1/en/server-system-variables.html#sysvar_query_cache_type",
+          "type": "string"
+        },
+        "rbd-name": {
+          "default": "mysql1",
+          "description": "The name that will be used to create the Ceph's RBD image with. If the\nimage name exists in Ceph, it will be re-used and the data will be\noverwritten.\n",
+          "type": "string"
+        },
+        "tuning-level": {
+          "default": "safest",
+          "description": "Valid values are 'safest', 'fast', and 'unsafe'. If set to safest, all settings are tuned to have maximum safety at the cost of performance. Fast will turn off most controls, but may lose data on crashes. unsafe will turn off all protections.",
+          "type": "string"
+        },
+        "vip": {
+          "description": "Virtual IP to use to front mysql in ha configuration",
+          "type": "string"
+        },
+        "vip_cidr": {
+          "default": 24,
+          "description": "Netmask that will be used for the Virtual IP",
+          "type": "int"
+        },
+        "vip_iface": {
+          "default": "eth0",
+          "description": "Network Interface where to place the Virtual IP",
+          "type": "string"
+        }
+      },
+      "owner": "charmers",
+      "rating_denominator": 0,
+      "rating_numerator": 0,
+      "relations": {
+        "provides": {
+          "db": {
+            "interface": "mysql"
+          },
+          "db-admin": {
+            "interface": "mysql-root"
+          },
+          "local-monitors": {
+            "interface": "local-monitors",
+            "scope": "container"
+          },
+          "master": {
+            "interface": "mysql-oneway-replication"
+          },
+          "monitors": {
+            "interface": "monitors"
+          },
+          "munin": {
+            "interface": "munin-node"
+          },
+          "shared-db": {
+            "interface": "mysql-shared"
+          }
+        },
+        "requires": {
+          "ceph": {
+            "interface": "ceph-client"
+          },
+          "ha": {
+            "interface": "hacluster",
+            "scope": "container"
+          },
+          "slave": {
+            "interface": "mysql-oneway-replication"
+          }
+        }
+      },
+      "revision": 309,
+      "summary": "MySQL is a fast, stable and true multi-user, multi-threaded SQL database",
+      "tested_providers": {
+        "ec2": "SUCCESS",
+        "local": "SUCCESS",
+        "openstack": "SUCCESS"
+      },
+      "url": "cs:precise/mysql-27"
+    }
+  },
   "data": {
     "relations": [
       [
-        "wiki:db",
-        "db"
+        "mediawiki:cache",
+        "memcached:cache"
       ],
       [
-        "wiki",
-        [
-          "haproxy",
-          "memcached"
-        ]
+        "mediawiki:db",
+        "mysql:db"
+      ],
+      [
+        "haproxy:reverseproxy",
+        "mediawiki:website"
       ]
     ],
     "series": "precise",
     "services": {
-      "db": {
-        "branch": "lp:charms/precise/mysql",
-        "charm": "mysql",
-        "options": {
-          "tuning-level": "fast"
-        }
-      },
       "haproxy": {
-        "branch": "lp:charms/precise/haproxy"
+        "charm": "haproxy",
+        "num_units": 5
+      },
+      "mediawiki": {
+        "charm": "mediawiki",
+        "num_units": 9,
+        "options": {
+          "name": "Intranet"
+        }
       },
       "memcached": {
-        "branch": "lp:charms/precise/memcached",
-        "options": {
-          "request-limit": 32
-        }
+        "charm": "memcached",
+        "num_units": 3
       },
-      "wiki": {
-        "branch": "lp:charms/precise/mediawiki",
-        "charm": "mediawiki",
-        "constraints": "mem=2",
-        "num_units": 2
+      "mysql": {
+        "charm": "mysql",
+        "num_units": 3,
+        "options": {
+          "tuning-level": "safest"
+        }
       }
     }
   },
   "description": "",
-  "id": "~bac/wiki/3/wiki",
+  "files": [
+    "README",
+    "icon.svg",
+    "bundles.yaml"
+  ],
+  "id": "~benji/wiki/5/wiki",
   "name": "wiki",
-  "owner": "bac",
-  "permanent_url": "jc:~bac/wiki/3/wiki",
+  "owner": "benji",
+  "permanent_url": "jc:~benji/wiki/5/wiki",
   "promulgated": false,
   "title": ""
 }

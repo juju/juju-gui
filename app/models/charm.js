@@ -357,6 +357,16 @@ YUI.add('juju-charm-models', function(Y) {
       });
     }
   }, {
+    /**
+      Static to indicate the type of entity so that other code
+      does not need to 'guess' by the entities content
+
+      @property entityType
+      @type {String}
+      @default 'charm'
+      @static
+    */
+    entityType: 'charm',
     ATTRS: {
       id: {
         validator: function(val) {
@@ -457,7 +467,60 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       files: {
-        value: []
+        value: [],
+        /**
+         * Sort files when they are set.
+         *
+         * @method files.setter
+         */
+        setter: function(value) {
+          if (Y.Lang.isArray(value)) {
+            // This sort has several properties that are different than a
+            // standard lexicographic sort.
+            // * Filenames in the root are grouped together, rather than
+            //   sorted along with the names of directories.
+            // * Sort ignores case, unless case is the only way to
+            //   distinguish between values, in which case it is honored
+            //   per-directory. For example, this is sorted: "a", "b/c",
+            //   "b/d", "B/b", "B/c", "e/f".  Notice that "b" directory values
+            //   and "B" directory values are grouped together, where they
+            //   would not necessarily be in a simpler case-insensitive
+            //   lexicographic sort.
+            // If you rip this out for something different and simpler, that's
+            // fine; just don't tell me about it. :-)  This seemed like a good
+            // approach at the time.
+            value.sort(function(a, b) {
+              var segments = [a, b].map(function(path) {
+                var segs = path.split('/');
+                if (segs.length === 1) {
+                  segs.unshift('');
+                }
+                return segs;
+              });
+              var maxLength = Math.max(segments[0].length, segments[1].length);
+              for (var i = 0; i < maxLength; i += 1) {
+                var segmentA = segments[0][i];
+                var segmentB = segments[1][i];
+                if (segmentA === undefined) {
+                  return -1;
+                } else if (segmentB === undefined) {
+                  return 1;
+                } else {
+                  var result = (
+                      // Prefer case-insensitive sort, but honor case when
+                      // string match in a case-insensitive comparison.
+                      segmentA.localeCompare(
+                          segmentB, undefined, {sensitivity: 'accent'}) ||
+                      segmentA.localeCompare(segmentB));
+                  if (result) {
+                    return result;
+                  }
+                }
+              }
+              return 0;
+            });
+          }
+        }
       },
       full_name: {
         /**
