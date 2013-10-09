@@ -539,7 +539,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(req.params.id, 'precise/mysql-10');
       });
 
-      it.only('directCharmId skips routes that begin with a viewmode', function(done) {
+      it('directCharmId skips routes that begin with a viewmode', function(done) {
         app = new browser.Browser({
           store: new CharmworldAPI({
             'apiHost': 'http://localhost'
