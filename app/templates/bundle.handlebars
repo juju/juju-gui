@@ -4,7 +4,7 @@
             <div class="header">
                 <a href="" class="back icon"></a>
                 <div class="block-icon">
-                    <img src="{{charmIconPath id}}" alt="{{ name }} icon" class="icon">
+                    <img src="{{charmIconPath id true}}" alt="{{ name }} icon" class="icon">
                 </div>
                 <div class="details">
                     <h1>{{ name }}</h1>
@@ -53,16 +53,14 @@
 
         <div class="tabs">
             <ul>
-                <li><a href="#bundle" class="bundle">Bundle</a></li>
-                <li><a href="#summary" class="summary">Summary</a></li>
-                <li><a href="#readme" class="readme">Readme</a></li>
-                <li><a href="#charms" class="charms">Charms</a></li>
+                <li><a href="#bws-bundle" class="bundle">Bundle</a></li>
+                <li><a href="#bws-summary" class="summary">Summary</a></li>
+                <li><a href="#bws-readme" class="readme">Readme</a></li>
+                <li><a href="#bws-charms" class="charms">Charms</a></li>
             </ul>
             <div>
-                <div id="bundle">
-                    [Bundle layout to go here]
-                </div>
-                <div id="summary">
+                <div id="bws-bundle"></div>
+                <div id="bws-summary">
                     <div class="summary">
                         {{>providers}}
                         <h2>Description</h2>
@@ -136,12 +134,8 @@
                         {{/if}}
                     </div>
                 </div>
-                <div id="readme">
-                    [Readme to go here]
-                </div>
-                <div id="charms">
-                    [Charms to go here]
-                </div>
+                <div id="bws-readme"></div>
+                <div id="bws-charms"></div>
             </div>
         </div>
     </div>

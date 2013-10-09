@@ -331,6 +331,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.isFullscreen = isFullscreen;
       tplData.isLocal = tplData.scheme === 'local';
       tplData.forInspector = this.get('forInspector');
+      if (tplData.files) {
+        // Exclude svg files from the source view.
+        var regex = /\.svg$/;
+        tplData.files = tplData.files.filter(function(name) {
+          return !regex.test(name);
+        });
+      }
       if (!tplData.forInspector) {
         tplData.sourceLink = this._getSourceLink();
         tplData.prettyCommits = this._formatCommitsForHtml(
@@ -354,17 +361,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       var tpl = this.template(tplData);
-      var tplNode = container.setHTML(tpl);
 
       // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
-      renderTo.setHTML(tplNode);
+      renderTo.setHTML(container.setHTML(tpl));
 
-      this.tabview = new widgets.browser.TabView({
-        render: true,
-        srcNode: tplNode.one('.tabs')
-      });
+      this._setupTabview();
       this._dispatchTabEvents(this.tabview);
 
 

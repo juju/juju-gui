@@ -27,15 +27,17 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
   ns.BrowserBundleView = Y.Base.create('browser-view-bundleview', Y.View, [
     widgets.browser.IndicatorManager,
+    Y.Event.EventTracker,
     ns.EntityBaseView,
     views.utils.apiFailingView
   ], {
 
+    // XXX Commented out events are not yet handled for this view
     events: {
-      '.token': {
-        click: '_handleCharmSelection'
-      },
-      '.charm .add': {
+      // '.token': {
+      //   click: '_handleCharmSelection'
+      // },
+      '.bundle .add': {
         click: '_addCharmEnvironment'
       },
       // Following handlers are provided by entity-base.js
@@ -43,15 +45,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      '#bws-code select': {
-        change: '_loadHookContent'
-      },
-      '.charm .back': {
+      // '#bws-code select': {
+      //   change: '_loadHookContent'
+      // },
+      '.bundle .back': {
         click: '_handleBack'
-      },
-      '#sharing a': {
-        click: '_openShareLink'
       }
+      // '#sharing a': {
+      //   click: '_openShareLink'
+      // }
     },
 
     template: views.Templates.bundle,
@@ -131,12 +133,17 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this.hideIndicator(renderTo);
       this.environment = new views.BundleTopology(Y.mix({
         db: this.fakebackend.db,
-        container: node.one('#bundle'), // XXX change to a class
+        container: node.one('#bws-bundle'), // Id because of Y.TabView
         store: this.get('store')
       }, options));
 
       this.environment.render();
       renderTo.setHTML(node);
+
+      this._setupTabview();
+      this._dispatchTabEvents(this.tabview);
+
+      this.set('rendered', true);
     },
 
     /**
@@ -155,13 +162,30 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        Used only for testing to determine when the rendering
+        has been completed and appended to the DOM
+
+        @attribute rendered
+        @default false
+      */
+      rendered: {
+        value: false
+      }
+    }
   });
 
 }, '', {
   requires: [
+    'browser-overlay-indicator',
+    'juju-view-utils',
     'view',
     'juju-env-fakebackend',
-    'juju-view-bundle'
+    'juju-view-bundle',
+    'subapp-browser-entitybaseview',
+    'browser-overlay-indicator',
+    'juju-view-utils',
+    'event-tracker'
   ]
 });

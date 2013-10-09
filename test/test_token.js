@@ -191,6 +191,10 @@ describe('charm/bundle token', function() {
         token_container.get('innerHTML').indexOf('5 units'),
         -1
     );
+    assert.notEqual(
+        token_container.one('a').getData('charmid').indexOf('bundle'),
+        -1
+    );
   });
 
 });

@@ -56,6 +56,16 @@ YUI.add('juju-bundle-models', function(Y) {
     }
 
   }, {
+    /**
+      Static to indicate the type of entity so that other code
+      does not need to 'guess' by the entities content
+
+      @property entityType
+      @type {String}
+      @default 'bundle'
+      @static
+    */
+    entityType: 'bundle',
     ATTRS: {
       id: {},
       name: {},
