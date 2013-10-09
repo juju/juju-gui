@@ -57,46 +57,101 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     template: views.Templates.bundle,
 
     /**
-      Renders the bundle view template into the DOM
+      Fetches and prepares the data for the bundle details page rendering.
 
-      @method _renderBundleView
-      @param {Y.Model} bundle The bundle model instance.
-      @param {Boolean} isFullscreen a trigger to display the fullscreen or not.
+      @method _fetchData
     */
-    _renderBundleView: function(bundle, isFullscreen) {
-      var bundleAttrs = bundle.getAttrs();
-      var template = this.template(bundleAttrs);
-      this.get('renderTo').setHTML(this.get('container').setHTML(template));
+    _fetchData: function() {
+      var self = this;
+
+      return new Y.Promise(function(resolve, reject) {
+        var entity = self.get('entity');
+        // An entity here is a fully populated charm/bundle model so
+        // it's entirely possible that we have an id to load but
+        // no model has been populated yet.
+        if (entity) {
+          resolve(entity);
+        } else {
+          self.get('store').bundle(self.get('entityId'), {
+            'success': function(data) {
+              var bundle = new models.Bundle(data);
+              self.set('entity', bundle);
+              resolve(bundle);
+            },
+            'failure': reject
+          }, self);
+        }
+      });
     },
 
     /**
-       Render out the view to the DOM.
+      Sends the bundle data to the local fakebackend to
+      import and then returns a promise when complete.
 
-       The View might be given either a entityId, which means go fetch the
-       charm data, or a charm model instance, in which case the view has the
-       data it needs to render.
+      @method _parseData
+      @return {Y.Promise} A promise for the bundle data import.
+    */
+    _parseData: function(bundle) {
+      return this.fakebackend.promiseImport({
+        import: bundle.get('data')
+      });
+    },
 
-       @method render
+    /**
+      Creates a new fakebackend instance for the
+      bundle topology.
 
-     */
+      @method _setupLocalFakebackend
+    */
+    _setupLocalFakebackend: function() {
+      /**
+        Fakebackend database which contains the parsed bundle data
+        to be used in the fake bundle topology.
+
+        @property db
+      */
+      this.fakebackend = new Y.juju.environments.FakeBackend({
+        store: this.get('store'),
+        authenticated: true
+      });
+    },
+
+    /**
+      Renders the bundle view template into the DOM.
+
+      @method _renderBundleView
+    */
+    _renderBundleView: function() {
+      var bundleAttrs = this.get('entity').getAttrs();
+      var content = this.template(bundleAttrs);
+      var node = this.get('container').setHTML(content);
+      var renderTo = this.get('renderTo');
+      var options = {size: [480, 360]};
+
+      this.hideIndicator(renderTo);
+      this.environment = new views.BundleTopology(Y.mix({
+        db: this.fakebackend.db,
+        container: node.one('#bundle'), // XXX change to a class
+        store: this.get('store')
+      }, options));
+
+      this.environment.render();
+      renderTo.setHTML(node);
+    },
+
+    /**
+      Renders the loading indicator into the DOM and then calls
+      the _prepareData method to fetch/parse the bundle data for
+      the real view rendering.
+
+      @method render
+    */
     render: function() {
-      var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
-
-      if (this.get('entity')) {
-        this._renderBundleView(this.get('entity'), isFullscreen);
-        this.hideIndicator(this.get('renderTo'));
-      } else {
-        this.get('store').bundle(this.get('entityId'), {
-          'success': function(data) {
-            var bundle = new models.Bundle(data);
-            this.set('entity', bundle);
-            this._renderBundleView(bundle, isFullscreen);
-            this.hideIndicator(this.get('renderTo'));
-          },
-          'failure': this.apiFailure
-        }, this);
-      }
+      this._setupLocalFakebackend();
+      this._fetchData().
+          then(this._parseData.bind(this)).
+          then(this._renderBundleView.bind(this), this.apiFailure.bind(this));
     }
 
   }, {
@@ -105,6 +160,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
 }, '', {
   requires: [
-    'view'
+    'view',
+    'juju-env-fakebackend',
+    'juju-view-bundle'
   ]
 });

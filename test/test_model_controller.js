@@ -44,7 +44,8 @@ describe('Model Controller Promises', function() {
     env.connect();
     modelController = new yui.juju.ModelController({
       db: db,
-      env: env
+      env: env,
+      store: utils.makeFakeStore()
     });
     cleanups = [];
   });

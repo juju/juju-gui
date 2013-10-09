@@ -255,9 +255,13 @@ describe('Inspector Overview', function() {
     var expected = [
       { type: 'unit', category: 'error', units: [a, b] },
       { type: 'unit', category: 'pending', units: [c] },
+      { type: 'service', category: 'upgrade-service',
+        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
+        downgrades: downgrades
+      },
       { type: 'unit', category: 'running', units: [d, e] },
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
-      { type: 'unit', category: 'landscape-security-upgrades', units: []}
+      { type: 'unit', category: 'landscape-security-upgrades', units: {}}
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
@@ -420,7 +424,7 @@ describe('Inspector Overview', function() {
     var SUH = '.status-unit-header',
         SUC = '.status-unit-content';
 
-    assert.equal(unitListWrappers.size(), 5);
+    assert.equal(unitListWrappers.size(), 6);
     var wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.one(SUH).hasClass('error'), true);
     assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
@@ -437,7 +441,7 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper3 = unitListWrappers.item(2);
+    var wrapper3 = unitListWrappers.item(3);
     assert.equal(wrapper3.one(SUH).hasClass('running'), true);
     assert.equal(wrapper3.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper3.one(SUC).hasClass('close-unit'), true);
@@ -445,10 +449,10 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper4 = unitListWrappers.item(3);
+    var wrapper4 = unitListWrappers.item(4);
     assert.equal(wrapper4.hasClass('hidden'), true);
 
-    var wrapper5 = unitListWrappers.item(4);
+    var wrapper5 = unitListWrappers.item(5);
     assert.equal(wrapper5.hasClass('hidden'), true);
 
     units = new Y.LazyModelList();
@@ -467,7 +471,7 @@ describe('Inspector Overview', function() {
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
-    assert.equal(unitListWrappers.size(), 5);
+    assert.equal(unitListWrappers.size(), 6);
 
     wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.hasClass('hidden'), true);
@@ -478,14 +482,14 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
-    wrapper3 = unitListWrappers.item(2);
+    wrapper3 = unitListWrappers.item(3);
     assert.equal(wrapper3.one(SUH).hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
     assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
-    wrapper4 = unitListWrappers.item(3);
-    wrapper5 = unitListWrappers.item(4);
+    wrapper4 = unitListWrappers.item(4);
+    wrapper5 = unitListWrappers.item(5);
 
     assert.equal(wrapper4.hasClass('hidden'), true);
     assert.equal(wrapper5.hasClass('hidden'), true);

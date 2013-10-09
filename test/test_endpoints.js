@@ -319,7 +319,7 @@ describe('Endpoints map', function() {
 
 });
 
-describe('Endpoints map handlers', function() {
+describe.only('Endpoints map handlers', function() {
   var Y, juju, utils, models, app, conn, env, controller, destroyMe;
 
   before(function(done) {
@@ -344,7 +344,11 @@ describe('Endpoints map handlers', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     destroyMe.push(env);
-    app = new Y.juju.App({env: env, consoleEnabled: true});
+    app = new Y.juju.App({
+      env: env, 
+      consoleEnabled: true,
+      store: utils.makeFakeStore()
+    });
     app.showView(new Y.View());
     destroyMe.push(app);
     controller = app.endpointsController;
