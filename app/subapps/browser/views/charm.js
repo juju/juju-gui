@@ -170,25 +170,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Event handler for clicking on a hook filename to load that file.
-     *
-     * @method _loadHookContent
-     * @param {Event} ev the click event created.
-     *
-     */
-    _loadHookContent: function(ev) {
-      var index = ev.currentTarget.get('selectedIndex');
-      var filename = ev.currentTarget.get('options').item(
-          index).getAttribute('value'),
-          node = this.get('container').one('#bws-code .filecontent');
-
-      // Load the file, but make sure we prettify the code.
-      if (filename) {
-        this._loadFile(node, filename, true);
-      }
-    },
-
-    /**
      * Load the related charms data and display the related charms into each
      * interface of the charm.
      *
