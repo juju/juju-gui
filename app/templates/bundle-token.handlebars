@@ -1,7 +1,9 @@
 {{! The token class is used by the deploy method in
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
-<a href="/bundle/{{id}}" class="token {{size}}" data-charmid="/bundle/{{id}}">
+<a href="/bundle/{{id}}"
+   class="token {{size}} {{#if is_approved}}recommended{{/if}}"
+   data-charmid="/bundle/{{id}}">
     <span class="block-icon">
         <div class="icon">
             <img src="{{charmIconPath id true}}" alt="{{ name }} icon">
