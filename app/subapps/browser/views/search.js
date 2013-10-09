@@ -63,8 +63,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
               Y.merge({
                 name: 'Recommended charms',
                 cutoff: 4,
-                children: results.recommended.map(function(charm) {
-                  return charm.getAttrs();
+                children: results.recommended.map(function(entity) {
+                  return entity.getAttrs();
                 })}, {
                 additionalChildConfig: {
                   size: this.get('isFullscreen') ? 'large' : 'small',
@@ -76,8 +76,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
               Y.merge({
                 name: 'More charms',
                 cutoff: 4,
-                children: results.more.map(function(charm) {
-                  return charm.getAttrs();
+                children: results.more.map(function(entity) {
+                  return entity.getAttrs();
                 })}, {
                 additionalChildConfig: {
                   size: this.get('isFullscreen') ? 'large' : 'small',

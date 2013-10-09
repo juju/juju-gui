@@ -1248,4 +1248,53 @@ describe('utilities', function() {
 
   });
 
+  describe('utils.charmIconParser', function() {
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', 'io', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('Parses and sorts charm data into the required icon format', function() {
+      var bundleData = Y.io('data/browserbundle.json', {sync: true});
+      bundleData = JSON.parse(bundleData.responseText);
+      var extra = {
+        id: 'fooId',
+        name: 'fooName',
+        is_approved: false
+      };
+      var extra2 = {
+        id: 'foo2Id',
+        name: 'foo2Name',
+        is_approved: true
+      };
+      // Two extras are added to ensure that the sort actually sorts correctly
+      bundleData.charm_metadata.foo = extra;
+      bundleData.charm_metadata.bar = extra2;
+
+      var parsed = utils.charmIconParser(bundleData.charm_metadata);
+      var expected = [{
+        is_approved: true,
+        id: 'precise/haproxy-18',
+        name: 'haproxy'
+      }, {
+        is_approved: true,
+        id: 'precise/mediawiki-10',
+        name: 'mediawiki'
+      }, {
+        is_approved: true,
+        id: 'precise/memcached-7',
+        name: 'memcached'
+      }, {
+        is_approved: true,
+        id: 'precise/mysql-27',
+        name: 'mysql'
+      }, extra2, extra];
+      assert.deepEqual(parsed, expected);
+    });
+  });
+
 })();
