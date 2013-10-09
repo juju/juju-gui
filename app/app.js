@@ -437,8 +437,6 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
-        // NB: The sandbox mode currently does not fully support the Go API.
-        // TODO Remove when it does. Makyo 2013-08-12
         if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
