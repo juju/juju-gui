@@ -653,13 +653,36 @@ YUI.add('juju-databinding', function(Y) {
     BindingEngine.prototype.resetModelChangeEvents = function(model) {
       var mID = model.id || model.get('id');
       var modelEventHandles = this._models[mID] || [];
+
       modelEventHandles.forEach(function(handle) {
+
+        if (handle.model) {
+          // We don't just need to detach the events we also need to remove them
+          // from the bindings list entirely. This loops through each property
+          // on the POJO model and then loops through the current bindings to
+          // find the bindings associated with the model and key then splices
+          // it from the array.
+          Object.keys(handle.model).forEach(function(key) {
+            this._bindings.forEach(function(binding, index) {
+              // Some keys have .'s to allow for nested bindings. This makes
+              // sure we remove all of the bindings associated with the top
+              // level key.
+              if (binding.name.split('.')[0] === key) {
+                var viewletModel = binding.viewlet.model;
+                if (viewletModel.id === mID || viewletModel.get('id') === mID) {
+                  this._bindings.splice(index, 1);
+                }
+              }
+            }, this);
+          }, this);
+        }
+
         if (handle.detach) {
           handle.detach();
         } else {
           Object.unobserve(handle.model, handle.callback);
         }
-      });
+      }, this);
       // Empty the list
       modelEventHandles.splice(0, modelEventHandles.length);
       this._models[mID] = modelEventHandles;
