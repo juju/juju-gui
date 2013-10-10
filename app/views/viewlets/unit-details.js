@@ -74,7 +74,7 @@ YUI.add('viewlet-unit-details', function(Y) {
         } else {
           portNode = Y.Node.create(portData.text);
         }
-         node.append(portNode);
+        node.append(portNode);
       });
     }
   };
