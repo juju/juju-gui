@@ -850,7 +850,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         CharmURL: 'charm',
         Life: 'life',
         Constraints: 'constraints',
-        Config: 'config',
+        Config: 'config'
       },
       machine: {
         Id: 'machine_d',
