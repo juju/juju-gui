@@ -45,18 +45,17 @@ YUI.add('juju-view-onboarding', function(Y) {
 
     /**
      * Onboarding event handler. When clicking the close button,
-     * and put them in the environment, and call the on boarding dismiss function..
+     * remove the onboarding and put the user back into the environment,
      *
      * @method closeHandler
      * @param {Object} ev An event object (with a "currentTarget" attribute).
      * @return {undefined} Mutates only.
      */
     closeHandler: function(ev) {
-      ev.preventDefault();
+      ev.halt();
       var env = this.get('env');
       var container = this.get('container');
-
-      console.log('Close hit');
+      console.log('closing');
       container.hide();
     },
 
@@ -69,29 +68,20 @@ YUI.add('juju-view-onboarding', function(Y) {
      * @return {undefined} Mutates only.
      */
     nextHandler: function(ev) {
-      ev.preventDefault();
-      var env = this.get('env');
-      var container = this.get('container');
-      console.log('Next hit');
-      updateState(onboardingIndex);
+      ev.halt();
       onboardingIndex++;
-    },
+      console.log('Next hit '+onboardingIndex);
+      console.log(ev);
 
-    /**
-     * Update the state of the onboarding to jump to the next step
-     *
-     * Remove the state class and add the next state class.
-     *
-     * @method updateState
-     * @return {undefined} Mutates only.
-     */
-    updateState: function(i) {
       var container = this.get('container');
-      container.removeClass('state-0');
-      container.removeClass('state-1');
-      container.removeClass('state-2');
-      container.removeClass('state-3');
-      container.addClass('state-'+i);
+      var container_bg = container.one('#onboarding-background');
+
+      container_bg.removeClass('state-0');
+      container_bg.removeClass('state-1');
+      container_bg.removeClass('state-2');
+      container_bg.removeClass('state-3');
+      container_bg.addClass('state-'+onboardingIndex);
+
     },
 
     /**

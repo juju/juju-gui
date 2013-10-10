@@ -1076,6 +1076,7 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
+
       if (!this.renderEnvironment) {
         next(); return;
       }
@@ -1098,9 +1099,14 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          if (!this._onboarding) {
+            this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+            this._onboarding.render();
+          }
         },
         render: true
       });
+
       next();
     },
 
