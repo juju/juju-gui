@@ -197,4 +197,53 @@ describe('charm/bundle token', function() {
     );
   });
 
+  it('Renders the proper charm icons into the token', function() {
+    var bundleData = {
+      haproxy: {
+        id: 'precise/haproxy-18',
+        is_approved: true,
+        name: 'haproxy'
+      },
+      mediawiki: {
+        id: 'precise/mediawiki-10',
+        is_approved: true,
+        name: 'mediawiki'
+      },
+      memcached: {
+        id: 'precise/memcached-7',
+        is_approved: true,
+        name: 'memcached'
+      },
+      mysql: {
+        id: 'precise/mysql-27',
+        is_approved: true,
+        name: 'mysql'
+      }
+    };
+    var token = new Token({
+      size: 'small',
+      basket_name: 'BASKET-NAME',
+      charm_metadata: bundleData
+    });
+    // The token needs to be rendered for the attributes to be set???
+    token.render(token_container);
+
+    var charmIcons = token.get('charmIcons');
+    var expected = [{
+      id: 'precise/haproxy-18',
+      name: 'haproxy'
+    }, {
+      id: 'precise/mediawiki-10',
+      name: 'mediawiki'
+    }, {
+      id: 'precise/memcached-7',
+      name: 'memcached'
+    }, {
+      id: 'precise/mysql-27',
+      name: 'mysql'
+    }];
+    assert.deepEqual(charmIcons, expected);
+    assert.equal(token_container.one('span.charms').all('img').size(), 4);
+  });
+
 });

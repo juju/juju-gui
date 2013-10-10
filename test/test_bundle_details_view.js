@@ -113,7 +113,7 @@ describe('Browser bundle detail view', function() {
       }
     });
     view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend('foo', true);
+      this.fakebackend = utils.makeFakeBackend();
     };
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
@@ -144,6 +144,19 @@ describe('Browser bundle detail view', function() {
       codeNode.one('select').simulate('change');
     });
 
+    view.render();
+  });
+
+  it('Renders the proper charm icons into the header', function(done) {
+    view._setupLocalFakebackend = function() {
+      this.fakebackend = utils.makeFakeBackend();
+    };
+    view.after('renderedChange', function(e) {
+      assert.equal(
+          container.one('.header .details .charms').all('img').size(),
+          4);
+      done();
+    });
     view.render();
   });
 

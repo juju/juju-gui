@@ -26,26 +26,9 @@
                         </li>
                     </ul>
                     <div class="charms">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
+                        {{#charmIcons}}
+                            <img src="{{charmIconPath id}}" alt="{{name}} icon"/>
+                        {{/charmIcons}}
                     </div>
                 </div>
             </div>

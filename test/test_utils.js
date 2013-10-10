@@ -1248,4 +1248,44 @@ describe('utilities', function() {
 
   });
 
+  describe('utils.charmIconParser', function() {
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', 'io', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('Parses and sorts charm data into the required icon format', function() {
+      var bundleData = Y.io('data/browserbundle.json', {sync: true});
+      bundleData = JSON.parse(bundleData.responseText);
+      var extra = {
+        id: 'fooId',
+        name: 'fooName',
+        is_approved: false
+      };
+
+      // Add an extra unapproved charm to make sure it's removed
+      bundleData.charm_metadata.foo = extra;
+
+      var parsed = utils.charmIconParser(bundleData.charm_metadata);
+      var expected = [{
+        id: 'precise/haproxy-18',
+        name: 'haproxy'
+      }, {
+        id: 'precise/mediawiki-10',
+        name: 'mediawiki'
+      }, {
+        id: 'precise/memcached-7',
+        name: 'memcached'
+      }, {
+        id: 'precise/mysql-27',
+        name: 'mysql'
+      }];
+      assert.deepEqual(parsed, expected);
+    });
+  });
+
 })();
