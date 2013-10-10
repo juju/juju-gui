@@ -249,6 +249,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/login.js'
         },
 
+        'juju-view-onboarding': {
+          fullpath: '/juju-ui/views/onboarding.js'
+        },
+
         'juju-templates': {
           fullpath: '/juju-ui/templates.js'
         },

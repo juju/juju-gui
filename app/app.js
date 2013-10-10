@@ -81,6 +81,11 @@ YUI.add('juju-gui', function(Y) {
         preserve: false
       },
 
+      onboarding: {
+        type: 'juju.views.onboarding',
+        preserve: true
+      },
+
       environment: {
         type: 'juju.views.environment',
         preserve: true
@@ -372,6 +377,7 @@ YUI.add('juju-gui', function(Y) {
       this.cookieHandler = null;
 
       this.renderEnvironment = true;
+
       // If this property has a value other than '/' then
       // navigate to it after logging in.
       this.redirectPath = '/';
@@ -1317,6 +1323,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-views',
     'juju-view-environment',
     'juju-view-login',
+    'juju-view-onboarding',
     'juju-landscape',
     'juju-websocket-logging',
     'io',
