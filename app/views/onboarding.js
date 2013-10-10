@@ -92,6 +92,30 @@ YUI.add('juju-view-onboarding', function(Y) {
       container.removeClass('state-2');
       container.removeClass('state-3');
       container.addClass('state-'+i);
+    },
+
+    /**
+     * Render the page.
+     *
+     * Reveal the mask element, and show the onboarding window.
+     *
+     * @method render
+     * @return {undefined} Mutates only.
+     */
+    render: function() {
+      // In order to have the mask cover everything, it needs to be an
+      // immediate child of the body.  In order for it to render immediately
+      // when the app loads, it needs to be in index.html.
+      var onboarding = Y.one('body > #onboarding');
+      if (!onboarding) {
+        // No mask in the DOM, as is the case in tests.
+        return this;
+      }
+      onboarding.show();
+      var env = this.get('env');
+
+      this.get('container').setHTML(this.template());
+      return this;
     }
 
   });
