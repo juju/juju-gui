@@ -48,6 +48,9 @@ YUI.add('juju-view-bundle', function(Y) {
       scene: {
         '.service': {
           click: 'showServiceDetails'
+        },
+        '.close-panel': {
+          click: 'hideServiceDetails'
         }
       }
     },
@@ -67,6 +70,18 @@ YUI.add('juju-view-bundle', function(Y) {
         settings: box.config
       });
       details.setHTML(templates['bundle-service-details'](context));
+      details.show();
+    },
+
+    /**
+     Hide service details panel.
+
+     @method hideServiceDetails
+     @param {Object} d Service View Model.
+    */
+    hideServiceDetails: function(box, self) {
+      d3.event.halt();
+      self.get('container').one('.topo-info').hide();
     },
 
     /**
@@ -327,7 +342,7 @@ YUI.add('juju-view-bundle', function(Y) {
     // Add the popup div used for details.
     this.container.append(
         Y.Node.create('<div>')
-     .addClass('topo-info'));
+     .addClass('topo-info').hide());
 
 
     var topo = this.topology = new views.Topology();
