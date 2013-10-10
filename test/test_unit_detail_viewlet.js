@@ -84,18 +84,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, '10.0.0.1', [8080]);
       assert.strictEqual(
-          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 8080');
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 8080/tcp');
       assert.strictEqual(node.all('a').size(), 1);
       assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1:8080/');
       assert.strictEqual(node.one('a').get('target'), '_blank');
-      assert.strictEqual(node.one('a').get('text'), '8080');
+      assert.strictEqual(node.one('a').get('text'), '8080/tcp');
+    });
+
+    it('mutates a node with an address and a port/tcp pair', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', ['8080/tcp']);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 8080/tcp');
+      assert.strictEqual(node.all('a').size(), 1);
+      assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1:8080/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '8080/tcp');
+    });
+
+    it('mutates a node with an address and a port/udp pair', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', ['8080/udp']);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 8080/udp');
+      assert.strictEqual(node.all('a').size(), 0);
     });
 
     it('mutates a node with an address and http port', function() {
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, '10.0.0.1', [80]);
       assert.strictEqual(
-          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 80');
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 80/tcp');
       assert.strictEqual(node.all('a').size(), 2);
       assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1/');
       assert.strictEqual(node.one('a').get('target'), '_blank');
@@ -106,7 +125,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, '10.0.0.1', [443]);
       assert.strictEqual(
-          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 443');
+          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 443/tcp');
       assert.strictEqual(node.all('a').size(), 2);
       assert.strictEqual(node.one('a').get('href'), 'https://10.0.0.1/');
       assert.strictEqual(node.one('a').get('target'), '_blank');
@@ -117,11 +136,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var node = Y.Node.create('<span>Delete me</span>');
       updateAddress(node, '10.0.0.1', [443, 8080]);
       assert.strictEqual(
-          node.get('text').replace(/\s/g, ' '), '10.0.0.1 | Ports 443, 8080');
+          node.get('text').replace(/\s/g, ' '),
+          '10.0.0.1 | Ports 443/tcp, 8080/tcp');
       assert.strictEqual(node.all('a').size(), 3);
       assert.strictEqual(node.one('a').get('href'), 'https://10.0.0.1/');
       assert.strictEqual(node.one('a').get('target'), '_blank');
       assert.strictEqual(node.one('a').get('text'), '10.0.0.1');
+    });
+
+    it('mutates a node with multiple port/protocol pairs', function() {
+      var node = Y.Node.create('<span>Delete me</span>');
+      updateAddress(node, '10.0.0.1', ['42/tcp', '47/udp']);
+      assert.strictEqual(
+          node.get('text').replace(/\s/g, ' '),
+          '10.0.0.1 | Ports 42/tcp, 47/udp');
+      assert.strictEqual(node.all('a').size(), 1);
+      assert.strictEqual(node.one('a').get('href'), 'http://10.0.0.1:42/');
+      assert.strictEqual(node.one('a').get('target'), '_blank');
+      assert.strictEqual(node.one('a').get('text'), '42/tcp');
     });
 
     it('instantiates correctly when bound', function() {
