@@ -1649,6 +1649,34 @@ YUI.add('juju-view-utils', function(Y) {
     return 'charm';
   };
 
+  /**
+    Given a set of charm metadata, extract the parts that we need and return
+    a sorted array of data to generate charm icon lists for the bundle
+    visualizations from.
+
+    @method charmIconParser
+    @param {Object} data charm_metadata from bundle object.
+    @return {Array} Array of charm icon data.
+  */
+  utils.charmIconParser = function(data) {
+    var charmIcons = [];
+    Object.keys(data).forEach(function(key) {
+      // We only show icons for the approved charms.
+      if (data[key].is_approved) {
+        var iconData = {
+          id: data[key].id,
+          name: data[key].name
+        };
+        charmIcons.push(iconData);
+      }
+    });
+
+    if (charmIcons.length > 10) {
+      charmIcons = charmIcons.slice(10);
+    }
+    return charmIcons;
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',

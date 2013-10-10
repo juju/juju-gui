@@ -92,7 +92,7 @@ describe('Browser bundle detail view', function() {
 
   it('displays the bundle data in a tabview', function(done) {
     view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend('foo', true);
+      this.fakebackend = utils.makeFakeBackend();
     };
     view.after('renderedChange', function(e) {
       assert.isNotNull(container.one('.yui3-tabview'));
@@ -103,13 +103,26 @@ describe('Browser bundle detail view', function() {
 
   it('fetches the readme when requested', function(done) {
     view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend('foo', true);
+      this.fakebackend = utils.makeFakeBackend();
     };
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
     // Assertions made in fakebackend mock 'file' above.
     remoteDone = done;
+    view.render();
+  });
+
+  it('Renders the proper charm icons into the header', function(done) {
+    view._setupLocalFakebackend = function() {
+      this.fakebackend = utils.makeFakeBackend();
+    };
+    view.after('renderedChange', function(e) {
+      assert.equal(
+          container.one('.header .details .charms').all('img').size(),
+          4);
+      done();
+    });
     view.render();
   });
 

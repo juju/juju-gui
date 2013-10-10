@@ -23,6 +23,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
+      utils = views.utils,
       widgets = Y.namespace('juju.widgets');
 
   ns.BrowserBundleView = Y.Base.create('browser-view-bundleview', Y.View, [
@@ -124,12 +125,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       @method _renderBundleView
     */
     _renderBundleView: function() {
-      var bundleAttrs = this.get('entity').getAttrs();
-      var content = this.template(bundleAttrs);
+      var entity = this.get('entity');
+      var attrs = entity.getAttrs();
+      attrs.charmIcons = utils.charmIconParser(attrs.charm_metadata);
+      var content = this.template(attrs);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
-
       this.hideIndicator(renderTo);
       this.environment = new views.BundleTopology(Y.mix({
         db: this.fakebackend.db,
@@ -158,7 +160,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._setupLocalFakebackend();
       this._fetchData().
           then(this._parseData.bind(this)).
-          then(this._renderBundleView.bind(this), this.apiFailure.bind(this));
+          then(this._renderBundleView.bind(this)).
+          then(null, this.apiFailure.bind(this));
     }
 
   }, {
@@ -185,7 +188,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     'juju-view-bundle',
     'subapp-browser-entitybaseview',
     'browser-overlay-indicator',
-    'juju-view-utils',
     'event-tracker'
   ]
 });

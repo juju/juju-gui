@@ -150,6 +150,21 @@ YUI.add('browser-token', function(Y) {
     },
 
     /**
+      Setter for the charmIcons attribute. Strips only the
+      required data from the charm_metadata which
+      was passed in and sorts it into the proper order.
+
+      @method setter
+      @param {Object} data The charm metadata
+    */
+    _charmIconsSetter: function(data) {
+      if (data) {
+        return utils.charmIconParser(data);
+      }
+      return [];
+    },
+
+    /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
      * @param {Node} container The contaner to render into.  Mainly for
@@ -168,6 +183,39 @@ YUI.add('browser-token', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+        Bundle charm metadata
+
+        @attribute charm_metadata
+        @default undefined
+        @type {Object}
+      */
+      charm_metadata: {
+        /**
+          Sets the charmIcons attribute with the charm_metadata.
+
+          @method setter
+          @param {Object} data The charm metadata.
+          @return {Object} The original value passed in.
+        */
+        setter: function(data) {
+          if (data) { this.set('charmIcons', data); }
+          return data;
+        }
+      },
+      /**
+        An array of the data required to display the appropriate
+        number of charm icons in the proper order for bundle tokens.
+        This value is set by the setter for the charm_metadata
+        attribute.
+
+        @attribute charmIcons
+        @default []
+        @type {Array}
+      */
+      charmIcons: {
+        setter: '_charmIconsSetter'
+      },
       /**
        * @attribute downloads
        * @default undefined
