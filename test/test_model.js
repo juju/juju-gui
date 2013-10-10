@@ -802,6 +802,7 @@ describe('test_models.js', function() {
         id: 'wordpress',
         charm: 'precise/wordpress-1',
         config: {debug: 'no', username: 'admin'},
+        constraints: 'cpu-power=2,cpu-cores=4',
         annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
       });
       db.relations.add({
@@ -817,14 +818,12 @@ describe('test_models.js', function() {
       // Add the charms so we can resolve them in the export.
       db.charms.add([{id: 'precise/mysql-1'},
             {id: 'precise/wordpress-1',
-              config: {
-                options: {
-                  debug: {
-                    'default': 'no'
-                  },
-                  username: {
-                    'default': 'root'
-                  }
+              options: {
+                debug: {
+                  'default': 'no'
+                },
+                username: {
+                  'default': 'root'
                 }
               }
             }
@@ -843,6 +842,10 @@ describe('test_models.js', function() {
       // Ensure that mysql has no options object in the export as no
       // non-default options are defined
       assert.equal(result.services.mysql.options, undefined);
+
+      // Constraints
+      var constraints = result.services.wordpress.constraints;
+      assert.equal(constraints, 'cpu-power=2,cpu-cores=4');
 
       // Export position annotations.
       assert.equal(result.services.wordpress.annotations['gui-x'], 100);
