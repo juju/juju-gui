@@ -1365,6 +1365,65 @@ YUI.add('juju-view-utils', function(Y) {
     var charmUrl = candidate.charm || candidate.get('charm');
     return utils.isGuiCharmUrl(charmUrl);
   };
+  /**
+   * Normalize the list of open ports on the unit.
+   * The list of open ports can be received in different formats based on the
+   * Juju implementations. In essence, while pyJuju sends e.g. [80, 42],
+   * juju-core includes the protocol information, e.g. ['80/tcp', '47/udp'].
+   *
+   * @method normalizeUnitPorts
+   * @param {Array} ports The list of open ports on a unit.
+   * @return {Array} A list of objects each one with the following properties:
+   *   - port (int): the port number;
+   *   - protocol (string): 'tcp' or 'udp'.
+   */
+  utils.normalizeUnitPorts = function(ports) {
+    if (!ports) {
+      return [];
+    }
+    return Y.Array.map(ports, function(port) {
+      var splitted = port.toString().split('/');
+      return {port: parseInt(splitted[0], 10), protocol: splitted[1] || 'tcp'};
+    });
+  };
+
+  /**
+   * Parse a list of normalized open ports.
+   *
+   * @method parseUnitPorts
+   * @param {String} ipAddress The unit IP address.
+   * @param {Array} normalizedPorts A list of normalized unit ports
+   *   (see utils.normalizeUnitPorts above).
+   * @return {Array} An array of two elements. The first element is a data
+   *   object describing the IP address. The second element is a list of data
+       objects describing each open port. A data object is an object with the
+       following properties:
+   *   - text (string): the text to show in the template;
+   *   - href (string, optional): the URL where the text can link to (
+         if applicable).
+   */
+  utils.parseUnitPorts = function(ipAddress, normalizedPorts) {
+    var httpHref, httpsHref;
+    var ipAddressData = {text: ipAddress};
+    var portDataList = [];
+    normalizedPorts.forEach(function(normalizedPort) {
+      var port = normalizedPort.port;
+      var protocol = normalizedPort.protocol;
+      var portData = {text: port + '/' + protocol};
+      if (protocol === 'tcp') {
+        if (port === 443) {
+          portData.href = httpsHref = 'https://' + ipAddress + '/';
+        } else if (port === 80) {
+          portData.href = httpHref = 'http://' + ipAddress + '/';
+        } else {
+          portData.href = 'http://' + ipAddress + ':' + port + '/';
+        }
+      }
+      portDataList.push(portData);
+    });
+    ipAddressData.href = httpsHref || httpHref;
+    return [ipAddressData, portDataList];
+  };
 
   Y.Handlebars.registerHelper('unitState', function(relation_errors,
       agent_state) {

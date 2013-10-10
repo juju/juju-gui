@@ -373,6 +373,121 @@ describe('utilities', function() {
 
   });
 
+  describe('normalizeUnitPorts', function() {
+    var normalizeUnitPorts;
+
+    before(function() {
+      normalizeUnitPorts = utils.normalizeUnitPorts;
+    });
+
+    it('normalizes juju-core ports', function() {
+      var expected = [
+        {port: 80, protocol: 'tcp'},
+        {port: 42, protocol: 'udp'}
+      ];
+      var obtained = normalizeUnitPorts(['80/tcp', '42/udp']);
+      assert.deepEqual(obtained, expected);
+    });
+
+    it('normalizes pyJuju ports', function() {
+      var expected = [
+        {port: 80, protocol: 'tcp'},
+        {port: 443, protocol: 'tcp'},
+        {port: 8080, protocol: 'tcp'}
+      ];
+      var obtained = normalizeUnitPorts([80, '443', 8080]);
+      assert.deepEqual(obtained, expected);
+    });
+
+    it('returns an empty list if no ports are passed', function() {
+      assert.deepEqual(normalizeUnitPorts([]), []);
+      assert.deepEqual(normalizeUnitPorts(undefined), []);
+    });
+
+  });
+
+  describe('parseUnitPorts', function() {
+    var parseUnitPorts;
+
+    before(function() {
+      parseUnitPorts = utils.parseUnitPorts;
+    });
+
+    it('parses generic ports', function() {
+      var expected = [
+        {text: '10.0.3.1', href: undefined},
+        [
+          {text: '42/tcp', href: 'http://10.0.3.1:42/'},
+          {text: '47/tcp', href: 'http://10.0.3.1:47/'}
+        ]
+      ];
+      var ports = [{port: 42, protocol: 'tcp'}, {port: 47, protocol: 'tcp'}];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', ports), expected);
+    });
+
+    it('parses the HTTP port', function() {
+      var expected = [
+        {text: '10.0.3.1', href: 'http://10.0.3.1/'},
+        [
+          {text: '80/tcp', href: 'http://10.0.3.1/'},
+          {text: '47/tcp', href: 'http://10.0.3.1:47/'}
+        ]
+      ];
+      var ports = [{port: 80, protocol: 'tcp'}, {port: 47, protocol: 'tcp'}];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', ports), expected);
+    });
+
+    it('parses the HTTPS port', function() {
+      var expected = [
+        {text: '10.0.3.1', href: 'https://10.0.3.1/'},
+        [
+          {text: '42/tcp', href: 'http://10.0.3.1:42/'},
+          {text: '443/tcp', href: 'https://10.0.3.1/'}
+        ]
+      ];
+      var ports = [{port: 42, protocol: 'tcp'}, {port: 443, protocol: 'tcp'}];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', ports), expected);
+    });
+
+    it('privileges the HTTPS port', function() {
+      var expected = [
+        {text: '10.0.3.1', href: 'https://10.0.3.1/'},
+        [
+          {text: '42/tcp', href: 'http://10.0.3.1:42/'},
+          {text: '443/tcp', href: 'https://10.0.3.1/'},
+          {text: '80/tcp', href: 'http://10.0.3.1/'}
+        ]
+      ];
+      var ports = [
+        {port: 42, protocol: 'tcp'},
+        {port: 443, protocol: 'tcp'},
+        {port: 80, protocol: 'tcp'}
+      ];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', ports), expected);
+    });
+
+    it('avoid linking UDP ports', function() {
+      var expected = [
+        {text: '10.0.3.1', href: 'https://10.0.3.1/'},
+        [
+          {text: '42/udp'},
+          {text: '443/tcp', href: 'https://10.0.3.1/'}
+        ]
+      ];
+      var ports = [
+        {port: 42, protocol: 'udp'},
+        {port: 443, protocol: 'tcp'}
+      ];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', ports), expected);
+    });
+
+    it('handles no open ports', function() {
+      var expected = [{text: '10.0.3.1', href: undefined}, []];
+      assert.deepEqual(parseUnitPorts('10.0.3.1', []), expected);
+    });
+
+  });
+
 });
 
 (function() {
