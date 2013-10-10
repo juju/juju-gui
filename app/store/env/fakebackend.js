@@ -409,6 +409,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // needs to be an array, so we are converting it back to an object
       // here so that the GUI displays it properly.
       var constraintsMap = {}, vals;
+      if (typeof constraints === 'string') {
+        constraints = constraints.split(',');
+      }
       if (Y.Lang.isArray(constraints)) {
         constraints.forEach(function(cons) {
           vals = cons.split('=');

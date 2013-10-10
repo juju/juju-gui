@@ -25,6 +25,7 @@ envExport:
       annotations: 
         "gui-x": 115
         "gui-y": 89
+      constraints: 'cpu-power=2,cpu-cores=4'
     wordpress: 
       charm: "cs:precise/wordpress-15"
       num_units: 2

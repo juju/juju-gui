@@ -983,6 +983,16 @@ YUI.add('juju-env-sandbox', function(Y) {
       return deltas;
     },
 
+    /**
+
+      Prepare the juju-core specific version of annotation information.
+      This has its own (core styled) formatting. This is different from
+      the Python version which includes annotations in the normal object
+      change stream.
+
+      @method _prepareAnnotations
+      @return [{Object}] Array of annotation deltas.
+    */
     _prepareAnnotations: function() {
       var self = this;
       var state = this.get('state');
@@ -1005,6 +1015,13 @@ YUI.add('juju-env-sandbox', function(Y) {
       return deltas;
     },
 
+    /**
+     Map from a model to a Tag name as used in juju-core
+
+     @method modelToTag
+     @param {Object} model
+     @return {String} tag.
+    */
     modelToTag: function(model) {
       var name = model.name;
       if (name === 'serviceUnit') {
