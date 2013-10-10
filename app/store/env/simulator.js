@@ -130,7 +130,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     unitCounts: {
       select: {
         list: 'services',
-        random: 0.5
+        random: 0.1
       },
       run: function(context) {
         context.selection.each(function(service) {

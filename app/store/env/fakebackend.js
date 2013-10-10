@@ -1057,9 +1057,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         existing = {};
       }
 
-      annotations = Y.merge(existing, annotations, true, 0, null, true);
-      models.setAnnotations(entity, annotations);
-
+      models.setAnnotations(entity, annotations, true);
       // Arrange delta stream updates.
       var annotationGroup = this._getAnnotationGroup(entity);
       this.annotations[annotationGroup][entityName] = entity;
