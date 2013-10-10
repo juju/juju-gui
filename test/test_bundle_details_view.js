@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Browser bundle detail view', function() {
-  var Y, utils, data, container, origData, view, fakestore, browser, remoteDone;
+  var Y, utils, data, container, origData, view, fakestore, browser;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -40,28 +40,10 @@ describe('Browser bundle detail view', function() {
           var sampleData = Y.io('data/browserbundle.json', {sync: true});
 
           origData = Y.JSON.parse(sampleData.responseText);
-          fakestore = {
-            bundle: function(id, callbacks) {
-              callbacks.success(data);
-            },
-            iconpath: function(id) {
-              return 'foo';
-            },
-            file: function(id, filename, entityType, callbacks) {
-              assert.equal(entityType, 'bundle');
-              assert.equal(id, data.id);
-              assert.equal(filename, 'README');
-              assert.isFunction(callbacks.success);
-              assert.isFunction(callbacks.failure);
-              callbacks.success.call(view, '<div id="testit"></div>');
-              assert.isNotNull(container.one('#testit'));
-              remoteDone();
-            }
-          };
 
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
-            store: fakestore
+            store: modifyFakeStore()
           });
 
           done();
@@ -73,7 +55,7 @@ describe('Browser bundle detail view', function() {
     container = utils.makeContainer();
     container.append('<div class="bws-view-data"></div>');
     view = new Y.juju.browser.views.BrowserBundleView({
-      store: fakestore,
+      store: modifyFakeStore(),
       db: {},
       entityId: data.id,
       renderTo: container
@@ -83,8 +65,24 @@ describe('Browser bundle detail view', function() {
   afterEach(function() {
     container.remove().destroy(true);
     view.destroy();
-    remoteDone = null;
   });
+
+  function modifyFakeStore(options) {
+    var defaults = {
+      bundle: function(id, callbacks) {
+        callbacks.success(data);
+      },
+      iconpath: function(id) {
+        return 'foo';
+      }
+    };
+
+    var fakebackend = Y.mix(defaults, options, true);
+    if (view) {
+      view.set('store', fakebackend);
+    }
+    return fakebackend;
+  }
 
   it('can be instantiated', function() {
     assert.equal(view instanceof Y.juju.browser.views.BrowserBundleView, true);
@@ -102,14 +100,50 @@ describe('Browser bundle detail view', function() {
   });
 
   it('fetches the readme when requested', function(done) {
+    modifyFakeStore({
+      file: function(id, filename, entityType, callbacks) {
+        assert.equal(entityType, 'bundle');
+        assert.equal(id, data.id);
+        assert.equal(filename, 'README');
+        assert.isFunction(callbacks.success);
+        assert.isFunction(callbacks.failure);
+        callbacks.success.call(view, '<div id="testit"></div>');
+        assert.isNotNull(container.one('#testit'));
+        done();
+      }
+    });
     view._setupLocalFakebackend = function() {
       this.fakebackend = utils.makeFakeBackend();
     };
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
-    // Assertions made in fakebackend mock 'file' above.
-    remoteDone = done;
+    view.render();
+  });
+
+  it('fetches a source file when requested', function(done) {
+    modifyFakeStore({
+      file: function(id, filename, entityType, callbacks) {
+        assert.equal(entityType, 'bundle');
+        assert.equal(id, data.id);
+        assert.equal(filename, 'bundles.yaml');
+        assert.isFunction(callbacks.success);
+        assert.isFunction(callbacks.failure);
+        callbacks.success.call(view, '<div id="testit"></div>');
+        assert.isNotNull(container.one('#testit'));
+        done();
+      }
+    });
+    view._setupLocalFakebackend = function() {
+      this.fakebackend = utils.makeFakeBackend();
+    };
+    view.after('renderedChange', function(e) {
+      container.one('a.code').simulate('click');
+      var codeNode = container.one('#bws-code');
+      codeNode.all('select option').item(2).set('selected', 'selected');
+      codeNode.one('select').simulate('change');
+    });
+
     view.render();
   });
 

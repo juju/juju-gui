@@ -90,6 +90,25 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
+     * Event handler for clicking on a hook filename to load that file.
+     *
+     * @method _loadHookContent
+     * @param {Event} ev the click event created.
+     *
+     */
+    _loadHookContent: function(ev) {
+      var index = ev.currentTarget.get('selectedIndex');
+      var filename = ev.currentTarget.get('options').item(
+          index).getAttribute('value'),
+          node = this.get('container').one('#bws-code .filecontent');
+
+      // Load the file, but make sure we prettify the code.
+      if (filename) {
+        this._loadFile(node, filename, true);
+      }
+    },
+
+    /**
       Watch the tab control for change events and load the content
       if required using the labels as the keys.
 

@@ -46,9 +46,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      // '#bws-code select': {
-      //   change: '_loadHookContent'
-      // },
+      '#bws-code select': {
+        change: '_loadHookContent'
+      },
       '.bundle .back': {
         click: '_handleBack'
       }
@@ -128,7 +128,12 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var entity = this.get('entity');
       var attrs = entity.getAttrs();
       attrs.charmIcons = utils.charmIconParser(attrs.charm_metadata);
+      // Remove the svg files from the file list
+      attrs.files = attrs.files.filter(function(fileName) {
+        return !/\.svg$/.test(fileName);
+      });
       var content = this.template(attrs);
+
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
