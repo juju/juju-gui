@@ -324,7 +324,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // invalid charm pointing to a bad URL and a read of a
             // 404 giving an error at this level. IOError isn't user
             // facing so we log the warning.
-            console.warn('error loading charm: ' + e.error);
+            console.warn('error loading charm: ', e);
             if (callbacks.failure) {
               callbacks.failure(
                   {error: 'Error interacting with the charmworld API.'});

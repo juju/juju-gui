@@ -334,10 +334,10 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     /**
       Prepare a delta of events to send to the client since the last time they
-      asked.  The deltas list is prepared nearly the same way depending on Py or Go
-      implentation, but the data within the individual deltas must be structured
-      dependent on the backend.  This method is called using `apply` from within
-      the appropriate sandbox so that `this._deltaWhitelist` and
+      asked.  The deltas list is prepared nearly the same way depending on Py
+      or Go implentation, but the data within the individual deltas must be
+      structured dependent on the backend.  This method is called using `apply`
+      from within the appropriate sandbox so that `this._deltaWhitelist` and
       `self._getDeltaAttrs` can structure the delta according to the juju type.
 
       @method _prepareDelta
@@ -947,10 +947,10 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     /**
       Prepare a delta of events to send to the client since the last time they
-      asked.  The deltas list is prepared nearly the same way depending on Py or Go
-      implentation, but the data within the individual deltas must be structured
-      dependent on the backend.  This method is called using `apply` from within
-      the appropriate sandbox so that `this._deltaWhitelist` and
+      asked.  The deltas list is prepared nearly the same way depending on Py
+      or Go implentation, but the data within the individual deltas must be
+      structured dependent on the backend.  This method is called using `apply`
+      from within the appropriate sandbox so that `this._deltaWhitelist` and
       `self._getDeltaAttrs` can structure the delta according to the juju type.
 
       @method _prepareDelta
@@ -964,7 +964,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       if (changes && changes.error) {
         changes = null;
       }
-     if (changes) {
+      if (changes) {
         Y.each(this._deltaWhitelist, function(whitelist, changeType) {
           var collectionName = changeType + 's';
           if (changes) {
@@ -978,7 +978,7 @@ YUI.add('juju-env-sandbox', function(Y) {
               deltas.push(delta);
             });
           }
-       });
+        });
       }
       return deltas;
     },
@@ -991,10 +991,9 @@ YUI.add('juju-env-sandbox', function(Y) {
       change stream.
 
       @method _prepareAnnotations
-      @return [{Object}] Array of annotation deltas.
+      @return [ {Object} ] Array of annotation deltas.
     */
     _prepareAnnotations: function() {
-      var self = this;
       var state = this.get('state');
       var deltas = [];
       var annotations = state.nextAnnotations();
@@ -1003,12 +1002,12 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       if (annotations) {
         Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          var collectionName = changeType + 's';
           Y.each(annotations[changeType + 's'], function(model, key) {
             var attrs = models.getAnnotations(model);
             var tag = this.modelToTag(model);
             // This form will trigger the annotationInfo handler.
-            deltas.push(['annotation', 'change', {Tag: tag, Annotations: attrs}]);
+            deltas.push(['annotation', 'change', {
+              Tag: tag, Annotations: attrs}]);
           }, this);
         }, this);
       }
@@ -1359,7 +1358,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientSetAnnotations: function(data, client, state) {
       var entityId = /^(service|unit|machine|environment)-([^ ]*)$/.
-                      exec(data.Params.Tag)[2];
+          exec(data.Params.Tag)[2];
       var result = state.updateAnnotations(entityId, data.Params.Pairs);
       this._basicReceive(data, client, result);
     },

@@ -795,7 +795,7 @@ describe('test_models.js', function() {
                 }
               }
             }
-      ]);
+          ]);
       var result = db.exportDeployer().envExport;
       var relation = result.relations[0];
 

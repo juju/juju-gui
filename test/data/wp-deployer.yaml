@@ -2,7 +2,7 @@ envExport:
   series: precise
   services: 
     mysql: 
-      charm: "cs:precise/mysql-26"
+      charm: "cs:precise/mysql-27"
       num_units: 1
       options: 
         "binlog-format": MIXED
@@ -27,7 +27,7 @@ envExport:
         "gui-y": 89
       constraints: 'cpu-power=2,cpu-cores=4'
     wordpress: 
-      charm: "cs:precise/wordpress-15"
+      charm: "cs:precise/wordpress-19"
       num_units: 2
       options: 
         debug: "no"
