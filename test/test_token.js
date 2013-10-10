@@ -230,19 +230,15 @@ describe('charm/bundle token', function() {
 
     var charmIcons = token.get('charmIcons');
     var expected = [{
-      is_approved: true,
       id: 'precise/haproxy-18',
       name: 'haproxy'
     }, {
-      is_approved: true,
       id: 'precise/mediawiki-10',
       name: 'mediawiki'
     }, {
-      is_approved: true,
       id: 'precise/memcached-7',
       name: 'memcached'
     }, {
-      is_approved: true,
       id: 'precise/mysql-27',
       name: 'mysql'
     }];
