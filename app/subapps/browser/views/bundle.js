@@ -169,12 +169,20 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         }, options));
         this.environment.render();
       } else {
-        node.one('#bws-bundle').setHTML('[Invalid service layout]');
+        // Remove the bundle tab so it doesn't get PE'd when
+        // we instantiate the tabview.
+        node.one('#bws-bundle').remove();
+        node.one('a[href=#bws-bundle]').get('parentNode').remove();
       }
 
       renderTo.setHTML(node);
 
       this._setupTabview();
+      if (!showTopo) {
+        // Select the charms tab as the landing tab if
+        // we aren't showing the bundle topology.
+        this.tabview.selectChild(2);
+      }
       this._dispatchTabEvents(this.tabview);
 
       this.set('rendered', true);

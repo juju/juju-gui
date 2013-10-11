@@ -167,11 +167,6 @@ describe('Browser bundle detail view', function() {
   it('fails gracefully if services don\'t provide xy annotations',
      function(done) {
        window.flags = { strictBundle: true };
-       view.environment = function() {
-         // This should not be called if any of the services do
-         // not have proper xy annotations.
-         assert.fail();
-       };
        view._parseData = function() {
          return new Y.Promise(function(resolve) { resolve(); });
        };
@@ -194,9 +189,10 @@ describe('Browser bundle detail view', function() {
             };
           }});
        view.after('renderedChange', function(e) {
-         assert.equal(
-             container.one('#bws-bundle').getHTML(),
-             '[Invalid service layout]');
+         assert.isNull(container.one('#bws-bundle'));
+         assert.isNull(container.one('a[href=#bws-bundle]'));
+         // Check that the charms tab is the landing tab
+         assert.equal(view.tabview.get('selection').get('index'), 2);
          window.flags = {};
          done();
        });
@@ -205,9 +201,6 @@ describe('Browser bundle detail view', function() {
 
   it('renders the bundle topology into the view', function(done) {
     window.flags = { strictBundle: true };
-    view._positionAnnotationsIncluded = function() {
-      return true;
-    };
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
@@ -220,17 +213,24 @@ describe('Browser bundle detail view', function() {
             services: {
               foo: {
                 annotations: {
-                  'gui-x': '',
-                  'gui-y': ''
+                  'gui-x': '1',
+                  'gui-y': '2'
                 }
               },
-              bar: {}
+              bar: {
+                annotations: {
+                  'gui-x': '3',
+                  'gui-y': '4'
+                }
+              }
             }
           }
         };
       }});
     view.after('renderedChange', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
+      // Check that the bundle topology tab is the landing tab.
+      assert.equal(view.tabview.get('selection').get('index'), 0);
       window.flags = {};
       done();
     });
