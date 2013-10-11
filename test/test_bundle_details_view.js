@@ -164,7 +164,7 @@ describe('Browser bundle detail view', function() {
     view._setupLocalFakebackend = function() {
       this.fakebackend = utils.makeFakeBackend();
     };
-    // app.js sets this to it's deploy bundle method so
+    // app.js sets this to its deploy bundle method so
     // as long as it's called it's successful.
     view.set('deployBundle', function(data) {
       assert.isObject(data);

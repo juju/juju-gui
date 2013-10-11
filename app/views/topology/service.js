@@ -769,23 +769,8 @@ YUI.add('juju-topology-service', function(Y) {
             env.deployerImport(
                 Y.JSON.stringify({
                   bundle: entityData.data
-                }), null, function(result) {
-                  if (result.err) {
-                    console.log('import failed', result);
-                    notifications.add({
-                      title: 'Deploy Bundle',
-                      message: 'Environment deploy of the bundle failed.<br/>',
-                      level: 'error'
-                    });
-                    return;
-                  }
-                  notifications.add({
-                    title: 'Deploy Bundle',
-                    message: 'Bundle deploy successful. This ' +
-                        'can take some time to complete.',
-                    level: 'important'
-                  });
-                });
+                }), null,
+                Y.bind(utils.deployBundleCallback, null, notifications));
           }
         }
       }
