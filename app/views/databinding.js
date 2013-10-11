@@ -668,8 +668,7 @@ YUI.add('juju-databinding', function(Y) {
               // sure we remove all of the bindings associated with the top
               // level key.
               if (binding.name.split('.')[0] === key) {
-                var viewletModel = binding.viewlet.model;
-                if (viewletModel.id === mID || viewletModel.get('id') === mID) {
+                if (binding.viewlet.model.id === mID) {
                   this._bindings.splice(index, 1);
                 }
               }
