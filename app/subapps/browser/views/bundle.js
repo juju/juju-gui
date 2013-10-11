@@ -155,19 +155,50 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
       this.hideIndicator(renderTo);
-      this.environment = new views.BundleTopology(Y.mix({
-        db: this.fakebackend.db,
-        container: node.one('#bws-bundle'), // Id because of Y.TabView
-        store: this.get('store')
-      }, options));
 
-      this.environment.render();
+      var showTopo = true;
+      if (window.flags && window.flags.strictBundle) {
+        showTopo = this._positionAnnotationsIncluded(attrs.data.services);
+      }
+      if (showTopo) {
+        this.environment = new views.BundleTopology(Y.mix({
+          db: this.fakebackend.db,
+          container: node.one('#bws-bundle'), // Id because of Y.TabView
+          store: this.get('store')
+        }, options));
+        this.environment.render();
+      } else {
+        node.one('#bws-bundle').setHTML('[Invalid service layout]');
+      }
+
       renderTo.setHTML(node);
 
       this._setupTabview();
       this._dispatchTabEvents(this.tabview);
 
       this.set('rendered', true);
+    },
+
+    /**
+      Determines if all of the services in the bundle
+      have position annotations.
+
+      @method _positionAnnotationsIncluded
+      @param {Object} services An object of all of the services in the bundle.
+      @return {Boolean} Weather all services have position annotations or not.
+    */
+    _positionAnnotationsIncluded: function(services) {
+      // Some returns true if it's stopped early, this inverts before returning.
+      return !Object.keys(services).some(function(key) {
+        var annotations = services[key].annotations;
+        // If there is no annotations for the position coords
+        // return true stopping the 'some' loop.
+        if (!annotations ||
+            !annotations['gui-x'] ||
+            !annotations['gui-y']) {
+          return true;
+        }
+      });
     },
 
     /**
