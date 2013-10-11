@@ -1403,4 +1403,30 @@ describe('utilities', function() {
     });
   });
 
+  describe('utils.deployBundleCallback', function() {
+    var utils, Y, notification;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        utils = Y.juju.views.utils;
+        done();
+      });
+    });
+
+    it('creates a notification if bundle import is successful', function(done) {
+      utils.deployBundleCallback({
+        add: function() {
+          done();
+        }}, {});
+    });
+
+    it('creates a notification if bundle import if not successful',
+       function(done) {
+         utils.deployBundleCallback({
+           add: function() {
+             done();
+           }}, {err: true});
+       });
+  });
+
 })();
