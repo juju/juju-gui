@@ -197,6 +197,7 @@ describe('Browser bundle detail view', function() {
          assert.equal(
              container.one('#bws-bundle').getHTML(),
              '[Invalid service layout]');
+         window.flags = {};
          done();
        });
        view.render();
@@ -230,6 +231,7 @@ describe('Browser bundle detail view', function() {
       }});
     view.after('renderedChange', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
+      window.flags = {};
       done();
     });
     view.render();
