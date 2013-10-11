@@ -1066,12 +1066,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientWatchAll: function(data, client, state) {
-      this.set('nextRequestId', data.RequestId);
-      this.deltaIntervalId = setInterval(
-          this.sendDelta.bind(this), this.get('deltaInterval'));
       // AllWatcherId can be hard-coded because we will only ever have one
       // client listening to the environment with the sandbox environment.
-      client.receive({Response: {AllWatcherId: 42}});
+      client.receive({
+        RequestId: data.RequestId,
+        Response: {AllWatcherId: 42}
+      });
     },
 
     /**
