@@ -60,6 +60,9 @@ describe('Browser bundle detail view', function() {
       entityId: data.id,
       renderTo: container
     });
+    view._setupLocalFakebackend = function() {
+      this.fakebackend = utils.makeFakeBackend();
+    };
   });
 
   afterEach(function() {
@@ -89,9 +92,6 @@ describe('Browser bundle detail view', function() {
   });
 
   it('displays the bundle data in a tabview', function(done) {
-    view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
-    };
     view.after('renderedChange', function(e) {
       assert.isNotNull(container.one('.yui3-tabview'));
       done();
@@ -112,9 +112,6 @@ describe('Browser bundle detail view', function() {
         done();
       }
     });
-    view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
-    };
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
@@ -134,9 +131,6 @@ describe('Browser bundle detail view', function() {
         done();
       }
     });
-    view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
-    };
     view.after('renderedChange', function(e) {
       container.one('a.code').simulate('click');
       var codeNode = container.one('#bws-code');
@@ -148,9 +142,6 @@ describe('Browser bundle detail view', function() {
   });
 
   it('renders the proper charm icons into the header', function(done) {
-    view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
-    };
     view.after('renderedChange', function(e) {
       assert.equal(
           container.one('.header .details .charms').all('img').size(),
@@ -161,9 +152,6 @@ describe('Browser bundle detail view', function() {
   });
 
   it('deploys a bundle when \'add\' button is clicked', function(done) {
-    view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
-    };
     // app.js sets this to its deploy bundle method so
     // as long as it's called it's successful.
     view.set('deployBundle', function(data) {
@@ -175,5 +163,77 @@ describe('Browser bundle detail view', function() {
     });
     view.render();
   });
+
+  it('fails gracefully if services don\'t provide xy annotations',
+     function(done) {
+       window.flags = { strictBundle: true };
+       view.environment = function() {
+         // This should not be called if any of the services do
+         // not have proper xy annotations.
+         assert.fail();
+       };
+       view._parseData = function() {
+         return new Y.Promise(function(resolve) { resolve(); });
+       };
+       view.set('entity', {
+          getAttrs: function() {
+            return {
+              charm_metadata: {},
+              files: [],
+              data: {
+                services: {
+                  foo: {
+                    annotations: {
+                      'gui-x': '',
+                      'gui-y': ''
+                    }
+                  },
+                  bar: {}
+                }
+              }
+            };
+          }});
+       view.after('renderedChange', function(e) {
+         assert.equal(
+             container.one('#bws-bundle').getHTML(),
+             '[Invalid service layout]');
+         done();
+       });
+       view.render();
+     });
+
+  it('renders the bundle topology into the view', function(done) {
+    window.flags = { strictBundle: true };
+    view._positionAnnotationsIncluded = function() {
+      return true;
+    };
+    view._parseData = function() {
+      return new Y.Promise(function(resolve) { resolve(); });
+    };
+    view.set('entity', {
+      getAttrs: function() {
+        return {
+          charm_metadata: {},
+          files: [],
+          data: {
+            services: {
+              foo: {
+                annotations: {
+                  'gui-x': '',
+                  'gui-y': ''
+                }
+              },
+              bar: {}
+            }
+          }
+        };
+      }});
+    view.after('renderedChange', function(e) {
+      assert.isNotNull(container.one('.topology-canvas'));
+      done();
+    });
+    view.render();
+  });
+
 
 });

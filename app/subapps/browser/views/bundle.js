@@ -150,13 +150,14 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         return !/\.svg$/.test(fileName);
       });
       var content = this.template(attrs);
-
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
       this.hideIndicator(renderTo);
 
       var showTopo = true;
+      // remove the flag in the test(test_bundle_details_view.js)
+      // when this flag is no longer needed.
       if (window.flags && window.flags.strictBundle) {
         showTopo = this._positionAnnotationsIncluded(attrs.data.services);
       }
