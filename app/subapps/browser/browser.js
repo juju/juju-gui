@@ -528,7 +528,8 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: this._viewState.hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deploy: this.get('deploy')
+        deploy: this.get('deploy'),
+        deployBundle: this.get('deployBundle')
       };
 
       // If the only thing that changed was the hash, then don't redraw. It's

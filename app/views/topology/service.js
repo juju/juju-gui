@@ -696,9 +696,9 @@ YUI.add('juju-topology-service', function(Y) {
       var dataTransfer = evt.dataTransfer;
       var fileSources = dataTransfer.files;
       var env = topo.get('env');
+      var db = topo.get('db');
+      var notifications = db.notifications;
       if (fileSources && fileSources.length) {
-        var db = topo.get('db');
-        var notifications = db.notifications;
         if (!Y.Lang.isFunction(env.deployerImport)) {
           // Notify the user that their environment is too old and return.
           notifications.add({
@@ -766,7 +766,26 @@ YUI.add('juju-topology-service', function(Y) {
             // data, so we wrap the entity data in a mapping.  The deployer
             // format is YAML, but JSON is a subset of YAML, so we can just
             // encode it this way.
-            env.deployerImport(Y.JSON.stringify({bundle: entityData.data}));
+            env.deployerImport(
+                Y.JSON.stringify({
+                  bundle: entityData.data
+                }), null, function(result) {
+                  if (result.err) {
+                    console.log('import failed', result);
+                    notifications.add({
+                      title: 'Deploy Bundle',
+                      message: 'Environment deploy of the bundle failed.<br/>',
+                      level: 'error'
+                    });
+                    return;
+                  }
+                  notifications.add({
+                    title: 'Deploy Bundle',
+                    message: 'Bundle deploy successful. This ' +
+                        'can take some time to complete.',
+                    level: 'important'
+                  });
+                });
           }
         }
       }

@@ -39,7 +39,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       //   click: '_handleCharmSelection'
       // },
       '.bundle .add': {
-        click: '_addCharmEnvironment'
+        click: '_deployBundle'
       },
       // Following handlers are provided by entity-base.js
       // Mixins do not mix properties so this has to be done manually
@@ -58,6 +58,23 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     template: views.Templates.bundle,
+
+    /**
+      Deploys the bundle to the environment via the provided deploy method.
+
+      @method _deployBundle
+    */
+    _deployBundle: function(e) {
+      e.halt();
+      var bundle = this.get('entity');
+      if (this.get('isFullscreen')) {
+        this.fire('viewNavigate',
+            {change: {viewmode: 'sidebar', charmID: null}});
+      } else {
+        this.fire('viewNavigate', {change: {charmID: null}});
+      }
+      this.get('deployBundle')(bundle.get('data'));
+    },
 
     /**
       Fetches and prepares the data for the bundle details page rendering.
