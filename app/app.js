@@ -1099,15 +1099,22 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          if (!this._onboarding) {
-            this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
-            this._onboarding.render();
-          }
+          this.initialise_onboarding();
         },
         render: true
       });
 
       next();
+    },
+
+    /**
+     * @method initialise_onboarding
+     */
+    initialise_onboarding: function() {
+      if (!this._onboarding) {
+        this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+        this._onboarding.render();
+      }
     },
 
     /**
