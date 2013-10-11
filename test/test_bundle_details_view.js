@@ -147,7 +147,7 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
-  it('Renders the proper charm icons into the header', function(done) {
+  it('renders the proper charm icons into the header', function(done) {
     view._setupLocalFakebackend = function() {
       this.fakebackend = utils.makeFakeBackend();
     };
@@ -156,6 +156,22 @@ describe('Browser bundle detail view', function() {
           container.one('.header .details .charms').all('img').size(),
           4);
       done();
+    });
+    view.render();
+  });
+
+  it('deploys a bundle when \'add\' button is clicked', function(done) {
+    view._setupLocalFakebackend = function() {
+      this.fakebackend = utils.makeFakeBackend();
+    };
+    // app.js sets this to it's deploy bundle method so
+    // as long as it's called it's successful.
+    view.set('deployBundle', function(data) {
+      assert.isObject(data);
+      done();
+    });
+    view.after('renderedChange', function(e) {
+      container.one('.bundle .add').simulate('click');
     });
     view.render();
   });
