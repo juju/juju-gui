@@ -167,11 +167,12 @@ Checklist for Making a Stable Release
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, change
-  app/config-prod.js to specify sandbox: true, defaultViewmode: 'fullscreen',
-  user: 'admin', password: 'admin', simulateEvents: false, isJujucharms: true,
-  and showGetJujuButton: true.
+  build-prod/juju-ui/assets/config.js to specify sandbox: true,
+  defaultViewmode: 'fullscreen', user: 'admin', password: 'admin',
+  simulateEvents: false, isJujucharms: true, and showGetJujuButton: true.
 - Configure a webserver to serve the files, if you have not already.  For
   example, these are nginx instructions.
+
   - ``sudo apt-get install nginx``
   - Create a jujugui file in /etc/nginx/sites-available with content similar to
     the following, but replacing the root with the path to the build-prod
