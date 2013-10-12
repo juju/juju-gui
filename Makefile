@@ -551,6 +551,8 @@ ifdef BRANCH_IS_GOOD
 	mkdir -p releases
 	# When creating the tarball, ensure all symbolic links are followed.
 	tar -c --auto-compress --exclude-vcs --exclude releases \
+	    --exclude node_modules --exclude virtualenv --exclude app \
+	    --exclude bin --exclude archives --exclude build-shared \
 	    --dereference --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
 	@echo "Release was created in $(RELEASE_FILE)."
 else

@@ -166,12 +166,34 @@ Checklist for Making a Stable Release
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
-- Start the ``improv.py`` script as described in the HACKING file.
 - While still in the directory where you extracted the tar file, change
-  app/config-prod.js to specify apiBackend: 'python'.
-- While still in the directory where you extracted the tar file, run the
-  command: ``NO_BZR=1 make prod``.
-- Go to the URL shown in the terminal.
+  app/config-prod.js to specify sandbox: true, defaultViewmode: 'fullscreen',
+  user: 'admin', password: 'admin', simulateEvents: false, isJujucharms: true,
+  and showGetJujuButton: true.
+- Configure a webserver to serve the files, if you have not already.  For
+  example, these are nginx instructions.
+  - ``sudo apt-get install nginx``
+  - Create a jujugui file in /etc/nginx/sites-available with content similar to
+    the following, but replacing the root with the path to the build-prod
+    directory of where you have expanded the tarball::
+
+      server {
+        listen 80 default_server;
+        listen [::]:80 default_server ipv6only=on;
+        root /home/gary/tmp/juju-gui/build-prod;
+        index index.html;
+        server_name localhost;
+        location / {
+          try_files $uri $uri/ /index.html;
+        }
+      }
+
+  - In /etc/nginx/sites-enabled, remove any existing symlinks (such as to
+    "default") and add a symlink to /etc/nginx/sites-avilable/jujugui.
+  - ``sudo service nginx restart`` (or ``sudo service nginx start``).
+
+- Go to the localhost port on which the app is running (80 if you use the
+  instructions above).
 - In Chrome and Firefox, QA the application.
 
   - Load the app, open the charm panel, go to an inner page, and make
