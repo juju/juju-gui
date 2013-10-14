@@ -166,12 +166,35 @@ Checklist for Making a Stable Release
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
-- Start the ``improv.py`` script as described in the HACKING file.
 - While still in the directory where you extracted the tar file, change
-  app/config-prod.js to specify apiBackend: 'python'.
-- While still in the directory where you extracted the tar file, run the
-  command: ``NO_BZR=1 make prod``.
-- Go to the URL shown in the terminal.
+  build-prod/juju-ui/assets/config.js to specify sandbox: true,
+  defaultViewmode: 'fullscreen', user: 'admin', password: 'admin',
+  simulateEvents: false, and showGetJujuButton: true.
+- Configure a webserver to serve the files, if you have not already.  For
+  example, these are nginx instructions.
+
+  - ``sudo apt-get install nginx``
+  - Create a jujugui file in /etc/nginx/sites-available with content similar to
+    the following, but replacing the root with the path to the build-prod
+    directory of where you have expanded the tarball::
+
+      server {
+        listen 80 default_server;
+        listen [::]:80 default_server ipv6only=on;
+        root /home/gary/tmp/juju-gui/build-prod;
+        index index.html;
+        server_name localhost;
+        location / {
+          try_files $uri $uri/ /index.html;
+        }
+      }
+
+  - In /etc/nginx/sites-enabled, remove any existing symlinks (such as to
+    "default") and add a symlink to /etc/nginx/sites-avilable/jujugui.
+  - ``sudo service nginx restart`` (or ``sudo service nginx start``).
+
+- Go to the localhost port on which the app is running (80 if you use the
+  instructions above).
 - In Chrome and Firefox, QA the application.
 
   - Load the app, open the charm panel, go to an inner page, and make
@@ -203,6 +226,61 @@ Checklist for Making a Stable Release
   - Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version back to unreleased.'``
   - Push the branch directly to the parent (``bzr push :parent`` should work).
+
+- Make a new release of the juju-gui charm by doing the following.
+
+  - Get a clean branch of the charm trunk owned by juju-gui:
+    ``bzr branch lp:~juju-gui/charms/precise/juju-gui/trunk/ juju-gui-trunk``.
+  - Get a clean branch of the released branch trunk (from charmers):
+    ``bzr branch lp:charms/juju-gui charmers-trunk``.
+  - Merge possible changes from the charmers' charm to trunk:
+    ``bzr merge -d juju-gui-trunk charmers-trunk``.
+  - If required, commit the changes by running the following from the
+    juju-gui-trunk directory:
+    ``bzr ci -m "Merged changes from the released charm."``
+  - Copy the new release to the releases directory of the charm
+    (i.e. ``juju-gui-trunk/releases``).
+  - Remove the old release present in the same directory, and add the new one
+    to the repository, e.g.:
+    ``bzr rm releases/juju-gui-0.10.1.tgz && bzr add``.
+  - Bump the charm revision up.
+  - Commit the changes:
+    ``bzr ci -m "Updated to the newest juju-gui release."``.
+  - Switch to the charmers' charm directory (charmers-trunk).
+  - Merge the new changes from trunk: ``bzr merge ../juju-gui-trunk/``.
+  - Set a bzr tag for the release, e.g.: ``bzr tag 0.11.0``.
+  - Commit the changes: ``bzr ci -m "New charm release."``
+  - If the merge step above shows more changes than just the new GUI release,
+    it is worth live testing the "upgrade charm" steps. This way we ensure any
+    production deployment (e.g. jujucharms.com) can upgrade to the new charm
+    without problems. This is done by deploying from a local repository the old
+    released juju-gui charm, setting up the options as described in
+    <https://wiki.canonical.com/InformationInfrastructure/WebOps/CDO/JujuGui>,
+    and then upgrading the charm to the new local version, verifying the hooks
+    are executed correctly and the resulting GUI works well. Please ping
+    GUI developers on the Freenode's #juju-gui channel for further explanation
+    of the process.
+  - Run the charm linter: ``make lint``.
+  - Run the charm unit and functional tests, passing the name of the Juju
+    environment you want to use (this step takes ~1 hour):
+    ``make test JUJU_ENV=ec2``. Note that, since juju-core requires root
+    privileges to bootstrap and destroy an environment when you use the local
+    provider, and since juju-test does not yet support this use case, you have
+    to use another provider type (like AWS in the example above).
+  - juju-test might leave the environment alive at the end of the test run:
+    destroy it with ``juju destroy-environment -e ec2 -y``.
+  - if any error occurs while trying the "upgrade charm" story or in the test
+    suite, fix the errors before proceeding. If it ends up not being a trivial
+    fix, stop this process and create a critical bug/card.
+  - if everything went well, push the branch directly to the parent:
+    ``bzr push :parent`` should work.
+  - Align the ~juju-gui branch to the ~charmers one:
+    ``cd ../juju-gui-trunk && bzr merge ../charmers-trunk/``.
+  - Commit: bzr ci -m "Merged back the new charm release."
+  - Push the branch directly to the parent: ``bzr push :parent`` should work.
+  - In a few minutes, the new charm revision should be available in
+    <https://jujucharms.com/fullscreen/search/precise/juju-gui/> and
+    <http://manage.jujucharms.com/charms/precise/juju-gui>.
 
 You are done!
 

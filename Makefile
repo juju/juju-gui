@@ -95,7 +95,7 @@ ifndef PROD
 LAUNCHPAD_API_ROOT=staging
 endif
 RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
-RELEASE_FILE=releases/$(RELEASE_NAME).tgz
+RELEASE_FILE=releases/$(RELEASE_NAME).xz
 RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
 NPM_CACHE_VERSION=$(BZR_REVNO)
 NPM_CACHE_FILE=$(CURDIR)/releases/npm-cache-$(NPM_CACHE_VERSION).tgz
@@ -551,6 +551,8 @@ ifdef BRANCH_IS_GOOD
 	mkdir -p releases
 	# When creating the tarball, ensure all symbolic links are followed.
 	tar -c --auto-compress --exclude-vcs --exclude releases \
+	    --exclude node_modules --exclude virtualenv --exclude app \
+	    --exclude bin --exclude archives --exclude build-shared \
 	    --dereference --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
 	@echo "Release was created in $(RELEASE_FILE)."
 else

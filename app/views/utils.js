@@ -1736,6 +1736,24 @@ YUI.add('juju-view-utils', function(Y) {
     return charmIcons;
   };
 
+  utils.deployBundleCallback = function(notifications, result) {
+    if (result.err) {
+      console.log('import failed', result);
+      notifications.add({
+        title: 'Deploy Bundle',
+        message: 'Environment deploy of the bundle failed.<br/>',
+        level: 'error'
+      });
+      return;
+    }
+    notifications.add({
+      title: 'Bundle Deployment Requested',
+      message: 'Bundle deployment request successful. The full ' +
+          'deployment can take some time to complete',
+      level: 'important'
+    });
+  };
+
 }, '0.1.0', {
   requires: [
     'base-build',
