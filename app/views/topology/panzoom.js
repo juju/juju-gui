@@ -296,7 +296,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
           topo = this.get('component'),
           scale = topo.get('scale'),
           size = topo.get('size');
-      console.log('PAN TO POINT', scale, size);
       this.rescale({
         scale: scale,
         translate: point.map(function(d, i) {

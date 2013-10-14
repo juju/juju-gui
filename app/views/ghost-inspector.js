@@ -249,7 +249,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
     _deployCallbackHandler: function(serviceName, config, constraints, e) {
       var options = this.options,
           db = options.db,
-          ghostService = this.model;
+          ghostService = this.model,
+          environmentView = this.options.environment,
+          topo = environmentView.topo;
 
       if (e.err) {
         db.notifications.add(
@@ -312,11 +314,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         constraints: constraints
       });
 
-      // This flag is used twice in the service topology module as a marker
-      // to know that it should not move the service or the canvas around
-      // (as opposed to services received from the environment).
-      ghostService.set('placeFromGhostPosition', true);
-      this.options.environment.createServiceInspector(ghostService);
+      environmentView.createServiceInspector(ghostService);
     }
 
   };

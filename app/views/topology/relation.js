@@ -258,7 +258,10 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinkEndpoints: function(evt) {
       var self = this;
       var service = evt.service;
-      console.log('update endpoints for', evt.service.id);
+
+      if (!service.relations || service.relations.size() === 0) {
+        return;
+      }
 
       Y.each(Y.Array.filter(self.relations, function(relation) {
         return relation.source.id === service.id ||
