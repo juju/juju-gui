@@ -169,7 +169,7 @@ Checklist for Making a Stable Release
 - While still in the directory where you extracted the tar file, change
   build-prod/juju-ui/assets/config.js to specify sandbox: true,
   defaultViewmode: 'fullscreen', user: 'admin', password: 'admin',
-  simulateEvents: false, isJujucharms: true, and showGetJujuButton: true.
+  simulateEvents: false, and showGetJujuButton: true.
 - Configure a webserver to serve the files, if you have not already.  For
   example, these are nginx instructions.
 
