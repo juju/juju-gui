@@ -106,7 +106,7 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions');
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
-          self.annotateBoxPosition(d);
+          topo.annotateBoxPosition(d);
         }
       }});
 
@@ -163,18 +163,6 @@ YUI.add('juju-topology-service', function(Y) {
               .attr({'class': 'sub-rel-count',
           'x': 64,
           'y': 47 * 0.8});
-
-    // Handle the last step of models that were made locally from ghosts.
-    node.filter(function(d) {
-      return d.model.get('placeFromGhostPosition');
-    }).each(function(d) {
-      // Show the service menu from the start.
-      self.showServiceMenu(d);
-      // This flag has served its purpose, at initialization time on the
-      // canvas.  Remove it, so future changes will have the usual
-      // behavior.
-      d.model.set('placeFromGhostPosition', false);
-    });
 
     // Landscape badge
     if (landscape) {
@@ -879,40 +867,15 @@ YUI.add('juju-topology-service', function(Y) {
         // If the service hasn't been dragged (in the case of long-click to
         // add relation, or a double-fired event) or the old and new
         // coordinates are the same, exit.
-        if (!box.inDrag !== views.DRAG_ACTIVE) {
+        if (box.inDrag !== views.DRAG_ACTIVE) {
           return;
         }
 
         // If the service has been dragged, ignore the subsequent service
         // click event.
         topo.ignoreServiceClick = true;
-
-        if (!box.pending) {
-          this.annotateBoxPosition(box);
-        }
+        topo.annotateBoxPosition(box);
       }
-    },
-
-    /**
-     Record a new box position on the backend. This maintains the proper
-     drag state.
-
-     @method annotateBoxPosition
-     @param {Object} box.
-    */
-    annotateBoxPosition: function(box) {
-      var topo = this.get('component');
-      if (box.pending) { return; }
-      topo.get('env').update_annotations(
-        box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-        function() {
-          box.inDrag = views.DRAG_ENDING;
-          Y.later(1000, box, function() {
-            // Provide (t) ms of protection from sending additional annotations
-            // or applying them locally.
-            box.inDrag = false;
-          });
-        });
     },
 
     /**
@@ -1048,6 +1011,7 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       if (new_service_boxes.length > 0) {
+        debugger;
         // If the there is only one new service and it's pending (as in, it was
         // added via the charm panel as a ghost), position it intelligently and
         // set its position coordinates such that they'll be saved when the
@@ -1067,10 +1031,6 @@ YUI.add('juju-topology-service', function(Y) {
           // Set the centroid to the new service's position
           topo.centroid = coords;
           topo.fire('panToPoint', {point: topo.centroid});
-          // In this 'place-one-ghost' case we know the server
-          // doesn't have the position annotation, we just
-          // created and placed it. Set the new annotation.
-          this.annotateBoxPosition(box);
         } else {
           this.tree.nodes({children: new_service_boxes});
           if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
@@ -1094,9 +1054,9 @@ YUI.add('juju-topology-service', function(Y) {
 
         Y.each(new_service_boxes, function(box) {
           var existing = box.model.get('annotations') || {};
-          if (!existing && !existing['gui-x']) {
+          if (!existing['gui-x']) {
             vertices.push([box.x || 0, box.y || 0]);
-            this.annotateBoxPosition(box);
+            topo.annotateBoxPosition(box);
           } else {
             if (vertices) {
               vertices.push([
@@ -1105,7 +1065,7 @@ YUI.add('juju-topology-service', function(Y) {
               ]);
             }
           }
-        }, this);
+        });
       }
       if (!topo.centroid || vertices) {
         // Find the centroid of our hull of services and inform the

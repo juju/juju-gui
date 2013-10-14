@@ -186,7 +186,45 @@ YUI.add('juju-topology', function(Y) {
       return utils.pointOutside(
           utils.serviceBoxesToVertices(existingBoxes),
           this.get('servicePadding'));
+    },
+
+    /**
+     Show the menu for a given service
+
+     @method showMenu
+     @param {String} serviceId
+    */
+    showMenu: function(serviceId) {
+      var serviceModule = this.modules.ServiceModule;
+      if (!serviceModule) { return;}
+      var boxModel = this.service_boxes[serviceId];
+      serviceModule.showServiceMenu(boxModel);
+    },
+
+    /**
+     Record a new box position on the backend. This maintains the proper
+     drag state.
+
+     @method annotateBoxPosition
+     @param {Object} box.
+    */
+    annotateBoxPosition: function(box) {
+      if (box.pending) { return; }
+
+      console.log('annotateBox');
+      console.trace();
+      this.get('env').update_annotations(
+        box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+        function() {
+          box.inDrag = views.DRAG_ENDING;
+          Y.later(1000, box, function() {
+            // Provide (t) ms of protection from sending additional annotations
+            // or applying them locally.
+            box.inDrag = false;
+          });
+        });
     }
+
   }, {
     ATTRS: {
       /**
