@@ -62,6 +62,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           var annotations = ghostService.get('annotations');
           annotations['gui-x'] = ghostAttributes.coordinates[0];
           annotations['gui-y'] = ghostAttributes.coordinates[1];
+          ghostService.set('annotations', annotations);
         }
         ghostService.set('icon', ghostAttributes.icon);
       }

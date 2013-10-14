@@ -182,11 +182,6 @@ YUI.add('juju-topology-relation', function(Y) {
       this.updateLinks();
       this.updateSubordinateRelationsCount();
 
-      // Ensure that link endpoints are up-to-date.
-      //Y.each(topo.service_boxes, function(svc, key) {
-      //  self.updateLinkEndpoints({ service: svc });
-      //});
-
       return this;
     },
 

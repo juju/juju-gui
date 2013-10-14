@@ -80,6 +80,7 @@ YUI.add('juju-topology-service', function(Y) {
     // This is done after the services_boxes
     // binding as the event handler will
     // use that index.
+    var movedNodes = false;
     node.each(function(d) {
       var service = d.model,
           annotations = service.get('annotations'),
@@ -106,9 +107,13 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions');
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
+          movedNodes = true;
           topo.annotateBoxPosition(d);
         }
       }});
+      if (movedNodes) {
+        topo.fire('panToCenter');
+      }
 
     // Mark subordinates as such.  This is needed for when a new service
     // is created.
