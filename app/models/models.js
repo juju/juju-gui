@@ -1149,9 +1149,10 @@ YUI.add('juju-models', function(Y) {
      * that.
      *
      * @method exportDeployer
+     * @param {Object} [topology] used to get position when available.
      * @return {Object} export object suitable for serialization.
      */
-    exportDeployer: function() {
+    exportDeployer: function(topology) {
       var self = this,
           serviceList = this.services,
           relationList = this.relations,
@@ -1203,15 +1204,13 @@ YUI.add('juju-models', function(Y) {
           serviceData.constraints = constraints;
         }
 
-        var annotations = service.get('annotations');
-        if (annotations && annotations['gui-x']) {
+        if (topology && topology.service_boxes) {
           // XXX: Only expose position. Currently these are position absolute
           // rather than relative.
-          serviceData.annotations = {
-            'gui-x': annotations['gui-x'],
-            'gui-y': annotations['gui-y']
-          };
+          var box = topology.service_boxes[service.get('id')];
+          serviceData.annotations = {'gui-x': box.x, 'gui-y': box.y };
         }
+
         result.envExport.services[service.get('id')] = serviceData;
       });
 

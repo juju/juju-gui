@@ -95,22 +95,31 @@ YUI.add('juju-topology-service', function(Y) {
       // node, as the annotations may have been set in another session.
       x = annotations['gui-x'];
       y = annotations['gui-y'];
-      if (!d ||
-          (x !== undefined && x !== d.x) ||
-              (y !== undefined && y !== d.y)) {
+      if (x === undefined || y === undefined) {
+        return;
+      }
+      x = parseFloat(x);
+      y = parseFloat(y);
+      if ((x !== d.x) || (y !== d.y)) {
         // Delete gui-x and gui-y from annotations as we use the values.
         // This is to prevent deltas coming in on a service while it is
         // being dragged from resetting its position during the drag.
 
-        delete annotations['gui-x'];
-        delete annotations['gui-y'];
+        console.group('updateServiceNodes::annotations')
+        console.log("draw new anno", annotations, d.inDrag)
+        console.trace();
+        //delete annotations['gui-x'];
+        //delete annotations['gui-y'];
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
-        var fromGhost = d.model.get('placeFromGhostPosition');
+        var fromGhost = d.model.get('placeFromGhostPosition') || false;
+        console.log("place at xy", x, y, d.id, d.x, d.y );
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions') && !fromGhost;
+          console.log("using drag to pos");
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
         }
+        console.groupEnd();
       }});
 
     // Mark subordinates as such.  This is needed for when a new service
@@ -824,7 +833,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       context.longClickTimer = Y.later(750, this, function(d, e) {
         // Provide some leeway for accidental dragging.
-        if ((Math.abs(box.x - box.oldX) + Math.abs(box.y - box.oldY)) /
+        if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
                 2 > 5) {
           return;
         }
@@ -864,8 +873,6 @@ YUI.add('juju-topology-service', function(Y) {
      * @method dragstart
      */
     dragstart: function(box, self) {
-      box.oldX = box.x;
-      box.oldY = box.y;
       box.inDrag = views.DRAG_START;
     },
 
@@ -880,36 +887,31 @@ YUI.add('juju-topology-service', function(Y) {
       if (topo.buildingRelation) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
-      }
-      else {
-
+      } else {
         // If the service hasn't been dragged (in the case of long-click to
         // add relation, or a double-fired event) or the old and new
         // coordinates are the same, exit.
-        if (!box.inDrag ||
-                (box.oldX === box.x &&
-                box.oldY === box.y)) {
+        if (!box.inDrag !== views.DRAG_ACTIVE) {
           return;
         }
 
-        // If the service is still pending, persist x/y coordinates in
-        // order to set them as annotations when the service is created.
-        if (box.pending) {
-          box.model.set('hasBeenPositioned', true);
-          box.model.set('x', box.x);
-          box.model.set('y', box.y);
-          return;
-        }
 
         // If the service has been dragged, ignore the subsequent service
         // click event.
         topo.ignoreServiceClick = true;
 
-        topo.get('env').update_annotations(
+        if (!box.pending) {
+          topo.get('env').update_annotations(
             box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
             function() {
-              box.inDrag = false;
+              box.inDrag = views.DRAG_ENDING;
+              Y.later(1000, function() {
+                // Provide (t) ms of protection from sending additional annotations
+                // or applying them locally.
+                box.inDrag = false;
+              });
             });
+        }
       }
     },
 
@@ -950,9 +952,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (pos) {
         box.x = pos.x;
         box.y = pos.y;
-        // Explicitly reassign data.
-        selection = selection.data([box]);
-      } else {
+       } else {
         box.x += d3.event.dx;
         box.y += d3.event.dy;
       }
@@ -1040,9 +1040,8 @@ YUI.add('juju-topology-service', function(Y) {
       var new_services = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             var annotations = boundingBox.model.get('annotations');
-            return !boundingBox.hasBeenPositioned ||
-                (!Y.Lang.isNumber(boundingBox.x) &&
-                !(annotations && annotations['gui-x']));
+            return (!Y.Lang.isNumber(boundingBox.x) &&
+                    !(annotations && annotations['gui-x']));
           });
       if (new_services.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
@@ -1059,13 +1058,9 @@ YUI.add('juju-topology-service', function(Y) {
           var coords = topo.servicePointOutside();
           // Set the coordinates on both the box model and the service
           // model.
+          console.log("pos new service", new_services[0]);
           new_services[0].x = coords[0];
           new_services[0].y = coords[1];
-          new_services[0].model.set('x', coords[0]);
-          new_services[0].model.set('y', coords[1]);
-          // This ensures that the x/y coordinates will be saved as
-          // annotations.
-          new_services[0].model.set('hasBeenPositioned', true);
           // Set the centroid to the new service's position
           topo.centroid = coords;
           topo.fire('panToPoint', {point: topo.centroid});
@@ -1081,10 +1076,12 @@ YUI.add('juju-topology-service', function(Y) {
             // below.
             var pointOutside = topo.servicePointOutside();
             Y.each(new_services, function(service) {
+              console.log("PLACE NEW", service);
               service.x += pointOutside[0] - service.x;
               service.y += pointOutside[1] - service.y;
-              service.model.set('x', service.x);
-              service.model.set('y', service.y);
+              console.log('placng new service', service.id);
+              //service.model.set('x', service.x);
+              //service.model.set('y', service.y);
             });
           }
         }

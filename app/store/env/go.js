@@ -841,6 +841,7 @@ YUI.add('juju-env-go', function(Y) {
      * @method update_annotations
      */
     update_annotations: function(entity, type, data, callback) {
+      console.log('update annotations', entity, data);
       var intermediateCallback;
       if (callback) {
         // Capture the callback and entity.  No context is passed.

@@ -183,9 +183,9 @@ YUI.add('juju-topology-relation', function(Y) {
       this.updateSubordinateRelationsCount();
 
       // Ensure that link endpoints are up-to-date.
-      Y.each(topo.service_boxes, function(svc, key) {
-        self.updateLinkEndpoints({ service: svc });
-      });
+      //Y.each(topo.service_boxes, function(svc, key) {
+      //  self.updateLinkEndpoints({ service: svc });
+      //});
 
       return this;
     },
@@ -258,6 +258,8 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinkEndpoints: function(evt) {
       var self = this;
       var service = evt.service;
+      console.log('update endpoints for', evt.service.id);
+
       Y.each(Y.Array.filter(self.relations, function(relation) {
         return relation.source.id === service.id ||
             relation.target.id === service.id;

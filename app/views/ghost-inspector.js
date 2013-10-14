@@ -59,13 +59,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var ghostService = this.db.services.ghostService(charm);
       if (ghostAttributes !== undefined) {
         if (ghostAttributes.coordinates !== undefined) {
-          ghostService.set('x', ghostAttributes.coordinates[0]);
-          ghostService.set('y', ghostAttributes.coordinates[1]);
+          var annotations = ghostService.get('annotations');
+          annotations['gui-x'] = ghostAttributes.coordinates[0];
+          annotations['gui-y'] = ghostAttributes.coordinates[1];
         }
         ghostService.set('icon', ghostAttributes.icon);
-        // Set the dragged attribute to true so that the x/y coords are
-        // stored in annotations as well as on the service box.
-        ghostService.set('hasBeenPositioned', true);
       }
       var environment = this.views.environment.instance,
           ghostInspector = environment.createServiceInspector(ghostService);

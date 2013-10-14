@@ -238,6 +238,7 @@ YUI.add('juju-topology', function(Y) {
    */
   views.DRAG_START = 1;
   views.DRAG_ACTIVE = 2;
+  views.DRAG_ENDING = 3;
 }, '0.1.0', {
   requires: [
     'd3',

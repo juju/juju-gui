@@ -604,7 +604,8 @@ YUI.add('juju-gui', function(Y) {
     @method exportYAML
     */
     exportYAML: function() {
-      var result = this.db.exportDeployer();
+      var topology = this.views.environment.instance.topo;
+      var result = this.db.exportDeployer(topology);
       var exportData = jsyaml.dump(result);
       var exportBlob = new Blob([exportData],
           {type: 'application/yaml;charset=utf-8'});
