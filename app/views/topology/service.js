@@ -1015,7 +1015,6 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       if (new_service_boxes.length > 0) {
-        debugger;
         // If the there is only one new service and it's pending (as in, it was
         // added via the charm panel as a ghost), position it intelligently and
         // set its position coordinates such that they'll be saved when the
@@ -1060,7 +1059,11 @@ YUI.add('juju-topology-service', function(Y) {
           var existing = box.model.get('annotations') || {};
           if (!existing['gui-x']) {
             vertices.push([box.x || 0, box.y || 0]);
-            topo.annotateBoxPosition(box);
+            // Don't export position after pack, this changes
+            // how things work substantially. It means that imported
+            // position annotations will work with go, but that we
+            // don't share pack positions with other clients.
+            //XXX: topo.annotateBoxPosition(box);
           } else {
             if (vertices) {
               vertices.push([
