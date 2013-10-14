@@ -1111,10 +1111,16 @@ YUI.add('juju-gui', function(Y) {
      * @method initialise_onboarding
      */
     initialise_onboarding: function() {
-      if (!this._onboarding) {
-        this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
-        this._onboarding.render();
-      }
+      var path = window.location.pathname;
+        if (!this._onboarding) {
+          if(path === '/'){
+            this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+            this._onboarding.render();
+          }
+        }else if(path !== '/'){
+          this._onboarding.close();
+        }
+
     },
 
     /**

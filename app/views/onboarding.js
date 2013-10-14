@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-view-onboarding', function(Y) {
 
   var views = Y.namespace('juju.views');
-  var enviroment = Y.namespace('juju.views.enviroment');
+  var enviroments = Y.namespace('juju.environments');
   var onboardingIndex = 0;
 
   /**
@@ -42,6 +42,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       '.onboarding-close': {click: 'closeHandler'},
       '.onboarding-start': {click: 'nextHandler'},
       '.onboarding-next': {click: 'nextHandler'},
+      '.onboarding-prev': {click: 'prevHandler'},
       '.onboarding-cross': {mouseover: 'crossHandler', mouseout: 'crossHandler', mousedown: 'crossHandler', mouseup: 'closeHandler'}
     },
 
@@ -55,8 +56,13 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     closeHandler: function(ev) {
       ev.halt();
+      this.close();
+    },
+
+    close: function() {
       var container = this.get('container');
       container.hide();
+      Y.one('#environment-help').removeClass('displayNone');
     },
 
     /**
@@ -70,7 +76,29 @@ YUI.add('juju-view-onboarding', function(Y) {
     nextHandler: function(ev) {
       ev.halt();
       onboardingIndex++;
+      this.drawContent();
+    },
 
+    /**
+     * Onboarding event handler. When clicking the prev button,
+     * update the index counter, and update to the prev step of onboarding.
+     *
+     * @method nextHandler
+     * @param {Object} ev An event object (with a "currentTarget" attribute).
+     * @return {undefined} Mutates only.
+     */
+    prevHandler: function(ev) {
+      ev.halt();
+      onboardingIndex--;
+      this.drawContent();
+    },
+
+    /**
+     * @method drawContent
+     * @return {undefined} Mutates only.
+     */
+    drawContent: function() {
+      this.fire('navigateTo', { url: '/:gui:/' });
       var container = this.get('container');
       var container_bg = container.one('#onboarding-background');
 
@@ -120,9 +148,7 @@ YUI.add('juju-view-onboarding', function(Y) {
 
       this.get('container').setHTML(this.template());
 
-      /*var helpText = this.get('container').one('#environment-help');
-      console.log(views)
-      views.environment.prototype.updateHelpIndicator(null);*/
+      Y.one('#environment-help').addClass('displayNone');
 
       return this;
     }

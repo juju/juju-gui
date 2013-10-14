@@ -522,6 +522,10 @@ code {
         margin-right: auto;
         margin-top: 2ex;
     }
+
+    &.displayNone {
+        display: none;
+    }
 }
 .environment-menu {
     @border_radius: 20px;
@@ -1962,7 +1966,7 @@ g.unit {
         z-index: 10001;
         position: relative;
         top: 100px;
-        left: 310px;
+        left: 350px;
         width: 320px;
         background-color: @inspector-background-color;
         padding: 20px;
@@ -2025,7 +2029,8 @@ g.unit {
             .panel-0 {
                 display: block;
             }
-            ul a.onboarding-next {
+            ul a.onboarding-next,
+            ul a.onboarding-prev {
                 display: none;
             }
         }
@@ -2083,6 +2088,7 @@ g.unit {
             }
             ul a.onboarding-close {
                 background-color: @charm-panel-orange;
+                float: right;
             }
             ul a.onboarding-next {
                 display: none;
