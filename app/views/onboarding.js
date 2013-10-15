@@ -28,8 +28,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-view-onboarding', function(Y) {
 
   var views = Y.namespace('juju.views');
-  var enviroments = Y.namespace('juju.environments');
   var onboardingIndex = 0;
+  var onboarding;
 
   /**
    * The OnboardingView class.
@@ -59,10 +59,30 @@ YUI.add('juju-view-onboarding', function(Y) {
       this.close();
     },
 
+    /**
+     * Hide the container and display the enviroment help.
+     *
+     * @method close
+     * @param {Object} ev An event object (with a "currentTarget" attribute).
+     * @return {undefined} Mutates only.
+     */
     close: function() {
       var container = this.get('container');
       container.hide();
       Y.one('#environment-help').removeClass('displayNone');
+    },
+
+    /**
+     * Show the container and hide the enviroment help.
+     *
+     * @method open
+     * @return {undefined} Mutates only.
+     */
+    open: function() {
+      this.onboardingIndex = 0;
+      this.drawContent();
+      this.onboarding.show();
+      Y.one('#environment-help').addClass('displayNone');
     },
 
     /**
@@ -94,22 +114,12 @@ YUI.add('juju-view-onboarding', function(Y) {
     },
 
     /**
-     * @method drawContent
+     * Onboarding event handler. When hover and click the close cross.
+     *
+     * @method crossHandler
+     * @param {Object} ev An event object (with a "currentTarget" attribute).
      * @return {undefined} Mutates only.
      */
-    drawContent: function() {
-      this.fire('navigateTo', { url: '/:gui:/' });
-      var container = this.get('container');
-      var container_bg = container.one('#onboarding-background');
-
-      container_bg.removeClass('state-0');
-      container_bg.removeClass('state-1');
-      container_bg.removeClass('state-2');
-      container_bg.removeClass('state-3');
-      container_bg.addClass('state-'+onboardingIndex);
-
-    },
-
     crossHandler: function(ev) {
       var container = this.get('container');
       var close_button = container.one('.onboarding-cross');
@@ -127,6 +137,22 @@ YUI.add('juju-view-onboarding', function(Y) {
     },
 
     /**
+     * @method drawContent
+     * @return {undefined} Mutates only.
+     */
+    drawContent: function() {
+      var container = this.get('container');
+      var container_bg = container.one('#onboarding-background');
+
+      container_bg.removeClass('state-0');
+      container_bg.removeClass('state-1');
+      container_bg.removeClass('state-2');
+      container_bg.removeClass('state-3');
+      container_bg.addClass('state-'+onboardingIndex);
+
+    },
+
+    /**
      * Render the page.
      *
      * Reveal the mask element, and show the onboarding window.
@@ -138,17 +164,13 @@ YUI.add('juju-view-onboarding', function(Y) {
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately
       // when the app loads, it needs to be in index.html.
-      var onboarding = Y.one('body > #onboarding');
-      if (!onboarding) {
+      this.onboarding = Y.one('body > #onboarding');
+      if (!this.onboarding) {
         // No mask in the DOM, as is the case in tests.
         return this;
       }
-      onboarding.show();
-      var env = this.get('env');
-
       this.get('container').setHTML(this.template());
-
-      Y.one('#environment-help').addClass('displayNone');
+      this.open();
 
       return this;
     }

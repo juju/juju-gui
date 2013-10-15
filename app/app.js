@@ -1113,14 +1113,14 @@ YUI.add('juju-gui', function(Y) {
     initialise_onboarding: function() {
       var path = window.location.pathname;
         if (!this._onboarding) {
-          if(path === '/'){
+          // Need to check onboarding exists due to the double dispatch bug.
+          if(path === '/') {
             this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
             this._onboarding.render();
           }
-        }else if(path !== '/'){
+        }else if(path !== '/') {
           this._onboarding.close();
         }
-
     },
 
     /**
