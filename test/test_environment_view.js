@@ -537,7 +537,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.all('.service').each(function(serviceNode) {
         // Ensure that all initial service nodes' transform attributes are
         // properly formated (i.e.: no NaN values).
-        console.log('transform', serviceNode.getAttribute('transform'));
         properTransform.test(serviceNode.getAttribute('transform'))
           .should.equal(true);
       });

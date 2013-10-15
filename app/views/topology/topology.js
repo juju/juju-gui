@@ -202,24 +202,32 @@ YUI.add('juju-topology', function(Y) {
     },
 
     /**
-     Record a new box position on the backend. This maintains the proper
-     drag state.
+     Record a new box position on the backend. This maintains the proper drag
+     state. This method also transitions the viewModel to a DRAG_ENDING state
+     with a timeout. During this window the box will behave as if its in a drag
+     state refusing annotation updates. This masks certain classes of races.
 
      @method annotateBoxPosition
      @param {Object} box.
+     @param {ms} window.
     */
-    annotateBoxPosition: function(box) {
+    annotateBoxPosition: function(box, window) {
       if (box.pending) { return; }
+      window = window || 1000;
 
       this.get('env').update_annotations(
         box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
         function() {
-          box.inDrag = views.DRAG_ENDING;
-          Y.later(1000, box, function() {
-            // Provide (t) ms of protection from sending additional annotations
-            // or applying them locally.
-            box.inDrag = false;
+          if (window) {
+            box.inDrag = views.DRAG_ENDING;
+            Y.later(window, box, function() {
+              // Provide (t) ms of protection from sending additional annotations
+              // or applying them locally.
+              box.inDrag = false;
           });
+          } else {
+            box.inDrag = false;
+          }
         });
     }
 

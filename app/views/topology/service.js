@@ -80,7 +80,7 @@ YUI.add('juju-topology-service', function(Y) {
     // This is done after the services_boxes
     // binding as the event handler will
     // use that index.
-    var movedNodes = false;
+    var movedNodes = 0;
     node.each(function(d) {
       var service = d.model,
           annotations = service.get('annotations'),
@@ -107,12 +107,12 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions');
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
-          movedNodes = true;
+          movedNodes++;
           topo.annotateBoxPosition(d);
         }
       }});
-      if (movedNodes) {
-        topo.fire('panToCenter');
+      if (movedNodes > 1) {
+        this.findCentroid();
       }
 
     // Mark subordinates as such.  This is needed for when a new service
@@ -924,7 +924,7 @@ YUI.add('juju-topology-service', function(Y) {
       if (pos) {
         box.x = pos.x;
         box.y = pos.y;
-       } else {
+      } else {
         box.x += d3.event.dx;
         box.y += d3.event.dy;
       }
@@ -1001,9 +1001,7 @@ YUI.add('juju-topology-service', function(Y) {
       var vertices = [];
       var fromGhost = false;
 
-      // new_service_boxes are those w/o current x/y pos and no
-      // annotations.
-      Y.each(topo.service_boxes, function(boundingBox) {
+     Y.each(topo.service_boxes, function(boundingBox) {
         var annotations = boundingBox.annotations;
         if(annotations['gui-x'] && boundingBox.x === undefined) {
           boundingBox.x = annotations['gui-x'];
@@ -1012,6 +1010,9 @@ YUI.add('juju-topology-service', function(Y) {
           boundingBox.y = annotations['gui-y'];
         }
       });
+
+      // new_service_boxes are those w/o current x/y pos and no
+      // annotations.
       var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
         var annotations = boundingBox.model.get('annotations');
@@ -1037,8 +1038,7 @@ YUI.add('juju-topology-service', function(Y) {
           new_service_boxes[0].x = coords[0];
           new_service_boxes[0].y = coords[1];
           // Set the centroid to the new service's position
-          topo.centroid = coords;
-          topo.fire('panToPoint', {point: topo.centroid});
+          topo.fire('panToPoint', {point: coords});
         } else {
           d3.layout.unscaledPack()
                    .size([width, height])
@@ -1059,35 +1059,29 @@ YUI.add('juju-topology-service', function(Y) {
               boxModel.y += pointOutside[1] - boxModel.y;
             });
           }
-        }
 
-        Y.each(new_service_boxes, function(box) {
-          var existing = box.model.get('annotations') || {};
-          if (!existing || !existing['gui-x']) {
-            vertices.push([box.x || 0, box.y || 0]);
-            // Don't export position after pack, this changes
-            // how things work substantially. It means that imported
-            // position annotations will work with go, but that we
-            // don't share pack positions with other clients.
-            //XXX: topo.annotateBoxPosition(box);
-          } else {
-            if (vertices.length > 0) {
-              vertices.push([
-                existing['gui-x'] || (box.x || 0),
-                existing['gui-y'] || (box.y || 0)
-              ]);
+          Y.each(new_service_boxes, function(box) {
+            var existing = box.model.get('annotations') || {};
+            if (!existing || !existing['gui-x']) {
+              vertices.push([box.x || 0, box.y || 0]);
+              topo.annotateBoxPosition(box, false);
+            } else {
+              if (vertices.length > 0) {
+                vertices.push([
+                              existing['gui-x'] || (box.x || 0),
+                              existing['gui-y'] || (box.y || 0)
+                ]);
+              }
             }
-          }
-        });
-      }
-      if (!topo.centroid || vertices) {
+          });
+        }
         // Find the centroid of our hull of services and inform the
         // topology.
-        if (!vertices) {
-          vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+        if (vertices.length) {
+          this.findCentroid(vertices);
         }
-        this.findAndSetCentroid(vertices, fromGhost);
       }
+
       // enter
       node
       .enter().append('g')
@@ -1122,26 +1116,20 @@ YUI.add('juju-topology-service', function(Y) {
     panToCenter: function(evt) {
       var topo = this.get('component');
       var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-      this.findAndSetCentroid(vertices);
+      this.findCentroid(vertices);
     },
 
     /**
     Given a set of vertices, find the centroid and pan to that location.
 
-    @method findAndSetCentroid
+    @method findCentroid
     @param {array} vertices A list of vertices in the form [x, y].
     @return {undefined} Side effects only.
     */
-    findAndSetCentroid: function(vertices, preventPan) {
+    findCentroid: function(vertices) {
       var topo = this.get('component'),
               centroid = topoUtils.centroid(vertices);
-      // The centroid is set on the topology object due to the fact that it is
-      // used as a sigil to tell whether or not to pan to the point after the
-      // first delta.
-      topo.centroid = centroid;
-      if (!preventPan) {
-        topo.fire('panToPoint', {point: topo.centroid});
-      }
+      topo.fire('panToPoint', {point: centroid});
     },
 
     /**

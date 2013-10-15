@@ -798,22 +798,13 @@ describe('test_model.js', function() {
 
     it('can export in deployer format', function() {
       // Mock a topology that can return positions.
-      var topology = {
-        service_boxes: {
-          wordpress: {
-              x: 100,
-              y: 200
-          },
-          mysql: {x: 0, y: 0}
-        }
-      };
-
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({
         id: 'wordpress',
         charm: 'precise/wordpress-1',
         config: {debug: 'no', username: 'admin'},
         constraints: 'cpu-power=2,cpu-cores=4',
+        annotations: {'gui-x': 100, 'gui-y': 200}
       });
       db.relations.add({
         id: 'relation-0',
@@ -838,7 +829,7 @@ describe('test_model.js', function() {
               }
             }
           ]);
-      var result = db.exportDeployer(topology).envExport;
+      var result = db.exportDeployer().envExport;
       var relation = result.relations[0];
 
       assert.equal(result.series, 'precise');

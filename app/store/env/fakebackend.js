@@ -1524,9 +1524,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
               var serviceData = ingestedData.services[serviceId];
 
               // Force the annotation update (deploy doesn't handle this).
-              var annotiations = serviceData.annotations;
-              if (annotiations) {
-                service.set('annotations', annotiations);
+              var anno = serviceData.annotations;
+              if (anno) {
+                self.updateAnnotations(service.get('id'), anno);
               }
 
               // Expose

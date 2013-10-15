@@ -314,8 +314,7 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
-
-     life: {
+      life: {
         value: ALIVE
       },
       unit_count: {},
@@ -1192,11 +1191,12 @@ YUI.add('juju-models', function(Y) {
           serviceData.constraints = constraints;
         }
 
-        if (topology && topology.service_boxes) {
-          // XXX: Only expose position. Currently these are position absolute
-          // rather than relative.
-          var box = topology.service_boxes[service.get('id')];
-          serviceData.annotations = {'gui-x': box.x, 'gui-y': box.y };
+        // XXX: Only expose position. Currently these are position absolute
+        // rather than relative.
+        var anno = service.get('annotations');
+        if (anno && anno['gui-x'] && anno['gui-y']) {
+          serviceData.annotations = {'gui-x': anno['gui-x'],
+                                     'gui-y': anno['gui-y']};
         }
 
         result.envExport.services[service.get('id')] = serviceData;
