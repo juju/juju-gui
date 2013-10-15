@@ -47,7 +47,7 @@ describe('Inspector Overview', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
-    env.update_annotations = function () {};
+    env.update_annotations = function() {};
     env.expose = function(s) {
       exposeCalled = true;
       service.set('exposed', true);
