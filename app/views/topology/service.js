@@ -1070,10 +1070,8 @@ YUI.add('juju-topology-service', function(Y) {
             // position annotations will work with go, but that we
             // don't share pack positions with other clients.
             //XXX: topo.annotateBoxPosition(box);
-            console.log("new box", box.xy, box.translateStr);
           } else {
             if (vertices.length > 0) {
-              console.log('existing box anno', existing);
               vertices.push([
                 existing['gui-x'] || (box.x || 0),
                 existing['gui-y'] || (box.y || 0)
