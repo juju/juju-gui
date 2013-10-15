@@ -575,6 +575,9 @@ YUI.add('juju-gui', function(Y) {
       // To use the new service Inspector use the deploy method
       // from the Y.juju.GhostDeployer extension
       cfg.deploy = Y.bind(this.deployService, this);
+
+      cfg.deployBundle = this.deployBundle.bind(this);
+
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
@@ -596,6 +599,21 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deploy(charm, ghostAttributes);
       }, this);
+    },
+
+    /**
+      Calls the deployer import method with the bundle data
+      to deploy the bundle to the environment.
+
+      @method deployBundle
+      @param {Object} bundle Bundle data.
+    */
+    deployBundle: function(bundle) {
+      var notifications = this.db.notifications;
+      this.env.deployerImport(
+          Y.JSON.stringify({
+            bundle: bundle
+          }), null, Y.bind(utils.deployBundleCallback, null, notifications));
     },
 
     /**

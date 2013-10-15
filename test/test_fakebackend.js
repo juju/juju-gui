@@ -551,8 +551,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             // Verify config.
             var wordpress = fakebackend.db.services.getById('wordpress');
+            var mysql = fakebackend.db.services.getById('mysql');
             assert.equal(wordpress.get('config.engine'), 'nginx');
             assert.equal(wordpress.get('config.tuning'), 'single');
+
+            // Constraints
+            var constraints = mysql.get('constraints');
+            assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
+            assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
             done();
           }).then(undefined, done);
     });

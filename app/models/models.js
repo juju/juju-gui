@@ -278,12 +278,26 @@ YUI.add('juju-models', function(Y) {
       charmChanged: {
         value: false
       },
-      constraints: {},
+      constraints: {
+        'setter': function(value) {
+          if (typeof value === 'string') {
+            var output = {};
+            value.split(',').map(function(pair) {
+              var kv = pair.split('=');
+              output[kv[0]] = kv[1];
+            });
+            value = output;
+          }
+          return value;
+        }
+      },
       constraintsStr: {
         'getter': function() {
           var result = [];
           Y.each(this.get('constraints'), function(v, k) {
-            result.push(k + '=' + v);
+            if (v !== undefined) {
+              result.push(k + '=' + v);
+            }
           });
           if (result.length) {
             return result.join(',');
@@ -967,13 +981,23 @@ YUI.add('juju-models', function(Y) {
    * @return {Object} Annotations.
    */
   models.getAnnotations = function(entity) {
+    if (!entity) {
+      return undefined;
+    }
     if (_annotationProperty[entity.name]) {
       return entity.annotations;
     }
     return entity.get('annotations');
   };
 
-  models.setAnnotations = function(entity, annotations) {
+  models.setAnnotations = function(entity, annotations, merge) {
+    if (!entity) {
+      return;
+    }
+    if (merge) {
+      var existing = models.getAnnotations(entity) || {};
+      annotations = Y.mix(existing, annotations, true);
+    }
     if (_annotationProperty[entity.name]) {
       entity.annotations = annotations;
     } else {
@@ -1147,7 +1171,7 @@ YUI.add('juju-models', function(Y) {
         var units = service.get('units');
         var charm = self.charms.getById(service.get('charm'));
         var serviceOptions = {};
-        var charmOptions = charm.get('config.options');
+        var charmOptions = charm.get('options');
 
         if (service.get('pending') === true) {
           return;
@@ -1157,7 +1181,8 @@ YUI.add('juju-models', function(Y) {
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
           var optionData = charmOptions && charmOptions[key];
-          if (!optionData || (optionData && optionData['default'] &&
+          if ((!optionData && value !== undefined) ||
+              (optionData && optionData['default'] &&
               (value !== optionData['default']))) {
             serviceOptions[key] = value;
           }
@@ -1174,6 +1199,7 @@ YUI.add('juju-models', function(Y) {
         // Add constraints
         var constraints = service.get('constraintsStr');
         if (constraints) {
+          // constraintStr will filter out empty values
           serviceData.constraints = constraints;
         }
 

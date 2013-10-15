@@ -563,15 +563,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('correctly updates annotations', function() {
         var initial = {'gui-x': '42'},
-            expected = {'gui-y': '47', 'gui-z': 'Now in 3D!'};
+            next = {'gui-y': '47', 'gui-z': 'Now in 3D!'},
+            expected = {'gui-x': '42', 'gui-y': '47', 'gui-z': 'Now in 3D!'};
         db.services.add({id: 'django', annotations: initial});
         var change = {
           Tag: 'service-django',
-          Annotations: expected
+          Annotations: next
         };
         annotationInfo(db, 'change', change);
         // Retrieve the annotations from the database.
         var service = db.services.getById('django');
+        // we can see that it merged initial and next.
         assert.deepEqual(expected, service.get('annotations'));
       });
 

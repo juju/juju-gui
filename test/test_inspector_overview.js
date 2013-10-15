@@ -196,6 +196,23 @@ describe('Inspector Overview', function() {
        assert.equal(4, message.Params.NumUnits);
      });
 
+  it('should disable and enable the unit control appropriately', function() {
+    setUpInspector();
+    var control = container.one('.num-units-control');
+    control.set('value', 7);
+    control.simulate('keydown', { keyCode: ENTER });
+    // confirm the 'please confirm constraints' dialogue
+    container.one('.confirm-num-units').simulate('click');
+    assert.isTrue(control.get('disabled'));
+    var message = conn.last_message();
+    conn.msg({
+      RequestId: message.RequestId,
+      Error: undefined,
+      Response: {Units: message.Params.NumUnits}
+    });
+    assert.isFalse(control.get('disabled'));
+  });
+
   it('should set the constraints before deploying any more units',
      function() {
        setUpInspector();

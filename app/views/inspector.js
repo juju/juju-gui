@@ -201,6 +201,8 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     _addUnitCallback: function(ev) {
+      var container = this.viewletManager.get('container');
+      var field = container.one('.num-units-control');
       var service, db;
       service = this.viewletManager.get('model');
       db = this.viewletManager.get('db');
@@ -224,7 +226,7 @@ YUI.add('juju-view-inspector', function(Y) {
             'unit_count', service.get('unit_count') + unit_names.length);
       }
       db.fire('update');
-      // View is redrawn so we do not need to enable field.
+      field.set('disabled', false);
     },
 
     _removeUnitCallback: function(ev) {
