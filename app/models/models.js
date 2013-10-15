@@ -1196,7 +1196,7 @@ YUI.add('juju-models', function(Y) {
         var anno = service.get('annotations');
         if (anno && anno['gui-x'] && anno['gui-y']) {
           serviceData.annotations = {'gui-x': anno['gui-x'],
-                                     'gui-y': anno['gui-y']};
+            'gui-y': anno['gui-y']};
         }
 
         result.envExport.services[service.get('id')] = serviceData;

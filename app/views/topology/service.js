@@ -107,13 +107,13 @@ YUI.add('juju-topology-service', function(Y) {
         if (!d.inDrag) {
           var useTransitions = self.get('useTransitions');
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
-          movedNodes++;
+          movedNodes += 1;
           topo.annotateBoxPosition(d);
         }
       }});
-      if (movedNodes > 1) {
-        this.findCentroid();
-      }
+    if (movedNodes > 1) {
+      this.findCentroid();
+    }
 
     // Mark subordinates as such.  This is needed for when a new service
     // is created.
@@ -999,14 +999,12 @@ YUI.add('juju-topology-service', function(Y) {
       // nodes. New nodes are those that haven't been positioned by drag
       // and drop, or those who don't have position attributes/annotations.
       var vertices = [];
-      var fromGhost = false;
-
-     Y.each(topo.service_boxes, function(boundingBox) {
+      Y.each(topo.service_boxes, function(boundingBox) {
         var annotations = boundingBox.annotations;
-        if(annotations['gui-x'] && boundingBox.x === undefined) {
+        if (annotations['gui-x'] && boundingBox.x === undefined) {
           boundingBox.x = annotations['gui-x'];
         }
-        if(annotations['gui-y'] && boundingBox.y === undefined) {
+        if (annotations['gui-y'] && boundingBox.y === undefined) {
           boundingBox.y = annotations['gui-y'];
         }
       });
@@ -1015,10 +1013,10 @@ YUI.add('juju-topology-service', function(Y) {
       // annotations.
       var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
-        var annotations = boundingBox.model.get('annotations');
-        return ( (!Y.Lang.isNumber(boundingBox.x) &&
-                  !(annotations && annotations['gui-x'])));
-      });
+            var annotations = boundingBox.model.get('annotations');
+            return ((!Y.Lang.isNumber(boundingBox.x) &&
+                !(annotations && annotations['gui-x'])));
+          });
 
       if (new_service_boxes.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
@@ -1029,8 +1027,8 @@ YUI.add('juju-topology-service', function(Y) {
         // time).
         if (new_service_boxes.length === 1 &&
             new_service_boxes[0].model.get('pending') &&
-              (new_service_boxes[0].x === undefined ||
-               new_service_boxes[0].y === undefined)) {
+            (new_service_boxes[0].x === undefined ||
+            new_service_boxes[0].y === undefined)) {
           // Get a coordinate outside the cluster of existing services.
           var coords = topo.servicePointOutside();
           // Set the coordinates on both the box model and the service
@@ -1068,8 +1066,8 @@ YUI.add('juju-topology-service', function(Y) {
             } else {
               if (vertices.length > 0) {
                 vertices.push([
-                              existing['gui-x'] || (box.x || 0),
-                              existing['gui-y'] || (box.y || 0)
+                  existing['gui-x'] || (box.x || 0),
+                  existing['gui-y'] || (box.y || 0)
                 ]);
               }
             }

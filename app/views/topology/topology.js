@@ -216,19 +216,19 @@ YUI.add('juju-topology', function(Y) {
       window = window || 1000;
 
       this.get('env').update_annotations(
-        box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-        function() {
-          if (window) {
-            box.inDrag = views.DRAG_ENDING;
-            Y.later(window, box, function() {
-              // Provide (t) ms of protection from sending additional annotations
-              // or applying them locally.
+          box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+          function() {
+            if (window) {
+              box.inDrag = views.DRAG_ENDING;
+              Y.later(window, box, function() {
+                // Provide (t) ms of protection from sending additional
+                // annotations or applying them locally.
+                box.inDrag = false;
+              });
+            } else {
               box.inDrag = false;
+            }
           });
-          } else {
-            box.inDrag = false;
-          }
-        });
     }
 
   }, {

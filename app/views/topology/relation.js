@@ -176,7 +176,6 @@ YUI.add('juju-topology-relation', function(Y) {
 
       var topo = this.get('component');
       var db = topo.get('db');
-      var self = this;
       var relations = db.relations.toArray();
       this.relations = this.decorateRelations(relations);
       this.updateLinks();
