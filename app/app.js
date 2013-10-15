@@ -1131,7 +1131,7 @@ YUI.add('juju-gui', function(Y) {
       if (!this._onboarding) {
         // Need to check onboarding exists due to the double dispatch bug.
         if (path === '/') {
-          this._onboarding = new Y.juju.views.onboarding({
+          this._onboarding = new Y.juju.views.OnboardingView({
             'container': '#onboarding'
           });
           this._onboarding.render();
