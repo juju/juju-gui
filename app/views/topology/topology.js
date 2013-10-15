@@ -215,6 +215,7 @@ YUI.add('juju-topology', function(Y) {
       if (box.pending) { return; }
       window = window || 1000;
 
+      // This can happen in some tests.
       this.get('env').update_annotations(
           box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
           function() {
