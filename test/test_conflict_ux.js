@@ -53,6 +53,7 @@ describe('Inspector Conflict UX', function() {
     db = new models.Database();
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
+    env.update_annotations = function() {};
     inspector = setUpInspector();
   });
 
@@ -80,7 +81,7 @@ describe('Inspector Conflict UX', function() {
       ['unit', 'add', {id: 'mediawiki/0', agent_state: 'pending'}]
     ]}});
 
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };

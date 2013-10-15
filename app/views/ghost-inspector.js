@@ -59,16 +59,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var ghostService = this.db.services.ghostService(charm);
       if (ghostAttributes !== undefined) {
         if (ghostAttributes.coordinates !== undefined) {
-          ghostService.set('x', ghostAttributes.coordinates[0]);
-          ghostService.set('y', ghostAttributes.coordinates[1]);
+          var annotations = ghostService.get('annotations');
+          annotations['gui-x'] = ghostAttributes.coordinates[0];
+          annotations['gui-y'] = ghostAttributes.coordinates[1];
         }
         ghostService.set('icon', ghostAttributes.icon);
-        // Set the dragged attribute to true so that the x/y coords are
-        // stored in annotations as well as on the service box.
-        ghostService.set('hasBeenPositioned', true);
       }
-      var environment = this.views.environment.instance,
-          ghostInspector = environment.createServiceInspector(ghostService);
+      var environment = this.views.environment.instance;
+      environment.createServiceInspector(ghostService);
     }
   };
 
@@ -251,7 +249,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
     _deployCallbackHandler: function(serviceName, config, constraints, e) {
       var options = this.options,
           db = options.db,
-          ghostService = this.model;
+          ghostService = this.model,
+          environmentView = this.options.environment,
+          topo = environmentView.topo;
 
       if (e.err) {
         db.notifications.add(
@@ -270,41 +270,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
             level: 'info'
           }));
 
-      // Update the annotations with the box's x/y coordinates if
-      // they have been set by dragging the ghost.
-      if (ghostService.get('hasBeenPositioned')) {
-        options.env.update_annotations(
-            serviceName, 'service',
-            { 'gui-x': ghostService.get('x'),
-              'gui-y': ghostService.get('y') },
-            function() {
-              // Make sure that annotations are set on the ghost
-              // service before they come back from the delta to
-              // prevent the service from jumping to the middle of
-              // the canvas and back.
-              var annotations = ghostService.get('annotations');
-              if (!annotations) {
-                annotations = {};
-              }
-              Y.mix(annotations, {
-                'gui-x': ghostService.get('x'),
-                'gui-y': ghostService.get('y')
-              });
-              ghostService.set('annotations', annotations);
-              // The x/y attributes need to be removed to prevent
-              // lingering position problems after the service is
-              // positioned by the update code.
-              ghostService.removeAttr('x');
-              ghostService.removeAttr('y');
-            });
-      }
-
       // Now that we are using the same model for the ghost and service views
       // we need to close the inspector to deactivate the databinding
       // before setting else we end up with a race condition on nodes which
       // no longer exist.
       this.closeInspector();
 
+      var ghostId = ghostService.get('id');
       ghostService.setAttrs({
         id: serviceName,
         displayName: undefined,
@@ -314,11 +286,18 @@ YUI.add('juju-ghost-inspector', function(Y) {
         constraints: constraints
       });
 
-      // This flag is used twice in the service topology module as a marker
-      // to know that it should not move the service or the canvas around
-      // (as opposed to services received from the environment).
-      ghostService.set('placeFromGhostPosition', true);
-      this.options.environment.createServiceInspector(ghostService);
+      // Transition the ghost viewModel to the new
+      // service. It's alive!
+      var boxModel = topo.service_boxes[ghostId];
+      boxModel.id = serviceName;
+      boxModel.pending = false;
+      delete topo.service_boxes[ghostId];
+      topo.service_boxes[serviceName] = boxModel;
+
+      // Set to initial UI state.
+      environmentView.createServiceInspector(ghostService);
+      topo.showMenu(serviceName);
+      topo.annotateBoxPosition(boxModel);
     }
 
   };

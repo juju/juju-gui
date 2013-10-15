@@ -1738,7 +1738,7 @@ YUI.add('juju-view-utils', function(Y) {
 
   utils.deployBundleCallback = function(notifications, result) {
     if (result.err) {
-      console.log('import failed', result);
+      console.log('import failed', result.err);
       notifications.add({
         title: 'Deploy Bundle',
         message: 'Environment deploy of the bundle failed.<br/>',

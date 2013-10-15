@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('test_models.js', function() {
+describe('test_model.js', function() {
   describe('Charm initialization', function() {
     var models;
 
@@ -797,13 +797,14 @@ describe('test_models.js', function() {
     });
 
     it('can export in deployer format', function() {
+      // Mock a topology that can return positions.
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({
         id: 'wordpress',
         charm: 'precise/wordpress-1',
         config: {debug: 'no', username: 'admin'},
         constraints: 'cpu-power=2,cpu-cores=4',
-        annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
+        annotations: {'gui-x': 100, 'gui-y': 200}
       });
       db.relations.add({
         id: 'relation-0',

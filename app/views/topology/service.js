@@ -80,13 +80,14 @@ YUI.add('juju-topology-service', function(Y) {
     // This is done after the services_boxes
     // binding as the event handler will
     // use that index.
+    var movedNodes = 0;
     node.each(function(d) {
       var service = d.model,
           annotations = service.get('annotations'),
           x, y;
 
       // If there are no annotations or the service is being dragged
-      if (!annotations || service.inDrag === views.DRAG_ACTIVE) {
+      if (!annotations || d.inDrag) {
         return;
       }
 
@@ -95,23 +96,24 @@ YUI.add('juju-topology-service', function(Y) {
       // node, as the annotations may have been set in another session.
       x = annotations['gui-x'];
       y = annotations['gui-y'];
-      if (!d ||
-          (x !== undefined && x !== d.x) ||
-              (y !== undefined && y !== d.y)) {
-        // Delete gui-x and gui-y from annotations as we use the values.
-        // This is to prevent deltas coming in on a service while it is
-        // being dragged from resetting its position during the drag.
-
-        delete annotations['gui-x'];
-        delete annotations['gui-y'];
+      if (x === undefined || y === undefined) {
+        return;
+      }
+      x = parseFloat(x);
+      y = parseFloat(y);
+      if ((x !== d.x) || (y !== d.y)) {
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
-        var fromGhost = d.model.get('placeFromGhostPosition');
         if (!d.inDrag) {
-          var useTransitions = self.get('useTransitions') && !fromGhost;
+          var useTransitions = self.get('useTransitions');
           self.drag.call(this, d, self, {x: x, y: y}, useTransitions);
+          movedNodes += 1;
+          topo.annotateBoxPosition(d);
         }
       }});
+    if (movedNodes > 1) {
+      this.findCentroid();
+    }
 
     // Mark subordinates as such.  This is needed for when a new service
     // is created.
@@ -166,18 +168,6 @@ YUI.add('juju-topology-service', function(Y) {
               .attr({'class': 'sub-rel-count',
           'x': 64,
           'y': 47 * 0.8});
-
-    // Handle the last step of models that were made locally from ghosts.
-    node.filter(function(d) {
-      return d.model.get('placeFromGhostPosition');
-    }).each(function(d) {
-      // Show the service menu from the start.
-      self.showServiceMenu(d);
-      // This flag has served its purpose, at initialization time on the
-      // canvas.  Remove it, so future changes will have the usual
-      // behavior.
-      d.model.set('placeFromGhostPosition', false);
-    });
 
     // Landscape badge
     if (landscape) {
@@ -828,7 +818,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       context.longClickTimer = Y.later(750, this, function(d, e) {
         // Provide some leeway for accidental dragging.
-        if ((Math.abs(box.x - box.oldX) + Math.abs(box.y - box.oldY)) /
+        if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
                 2 > 5) {
           return;
         }
@@ -868,8 +858,6 @@ YUI.add('juju-topology-service', function(Y) {
      * @method dragstart
      */
     dragstart: function(box, self) {
-      box.oldX = box.x;
-      box.oldY = box.y;
       box.inDrag = views.DRAG_START;
     },
 
@@ -884,36 +872,18 @@ YUI.add('juju-topology-service', function(Y) {
       if (topo.buildingRelation) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
-      }
-      else {
-
+      } else {
         // If the service hasn't been dragged (in the case of long-click to
         // add relation, or a double-fired event) or the old and new
         // coordinates are the same, exit.
-        if (!box.inDrag ||
-                (box.oldX === box.x &&
-                box.oldY === box.y)) {
-          return;
-        }
-
-        // If the service is still pending, persist x/y coordinates in
-        // order to set them as annotations when the service is created.
-        if (box.pending) {
-          box.model.set('hasBeenPositioned', true);
-          box.model.set('x', box.x);
-          box.model.set('y', box.y);
+        if (box.inDrag !== views.DRAG_ACTIVE) {
           return;
         }
 
         // If the service has been dragged, ignore the subsequent service
         // click event.
         topo.ignoreServiceClick = true;
-
-        topo.get('env').update_annotations(
-            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-            function() {
-              box.inDrag = false;
-            });
+        topo.annotateBoxPosition(box);
       }
     },
 
@@ -954,8 +924,6 @@ YUI.add('juju-topology-service', function(Y) {
       if (pos) {
         box.x = pos.x;
         box.y = pos.y;
-        // Explicitly reassign data.
-        selection = selection.data([box]);
       } else {
         box.x += d3.event.dx;
         box.y += d3.event.dy;
@@ -1011,15 +979,6 @@ YUI.add('juju-topology-service', function(Y) {
         this.service_scale_height = d3.scale.log().range([64, 100]);
       }
 
-      if (!this.tree) {
-        this.tree = d3.layout.unscaledPack()
-        .size([width, height])
-        .value(function(d) {
-              return Math.max(d.unit_count, 1);
-            })
-        .padding(300);
-      }
-
       if (!this.dragBehavior) {
         this.dragBehavior = d3.behavior.drag()
         .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
@@ -1039,43 +998,52 @@ YUI.add('juju-topology-service', function(Y) {
       // entire graph. As a short term work around we layout only new
       // nodes. New nodes are those that haven't been positioned by drag
       // and drop, or those who don't have position attributes/annotations.
-      var vertices;
-      var fromGhost = false;
-      var new_services = Y.Object.values(topo.service_boxes)
+      var vertices = [];
+      Y.each(topo.service_boxes, function(boundingBox) {
+        var annotations = boundingBox.annotations;
+        if (annotations['gui-x'] && boundingBox.x === undefined) {
+          boundingBox.x = annotations['gui-x'];
+        }
+        if (annotations['gui-y'] && boundingBox.y === undefined) {
+          boundingBox.y = annotations['gui-y'];
+        }
+      });
+
+      // new_service_boxes are those w/o current x/y pos and no
+      // annotations.
+      var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
             var annotations = boundingBox.model.get('annotations');
-            return !boundingBox.hasBeenPositioned ||
-                (!Y.Lang.isNumber(boundingBox.x) &&
-                !(annotations && annotations['gui-x']));
+            return ((!Y.Lang.isNumber(boundingBox.x) &&
+                !(annotations && annotations['gui-x'])));
           });
-      if (new_services.length > 0) {
+
+      if (new_service_boxes.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
         // added via the charm panel as a ghost), position it intelligently and
         // set its position coordinates such that they'll be saved when the
         // service is actually created.  Otherwise, rely on our pack layout (as
         // in the case of opening an unannotated environment for the first
         // time).
-        var pendingServicePlaced = false;
-        if (new_services.length === 1 &&
-            new_services[0].model.get('pending')) {
-          pendingServicePlaced = true;
+        if (new_service_boxes.length === 1 &&
+            new_service_boxes[0].model.get('pending') &&
+            (new_service_boxes[0].x === undefined ||
+            new_service_boxes[0].y === undefined)) {
           // Get a coordinate outside the cluster of existing services.
           var coords = topo.servicePointOutside();
           // Set the coordinates on both the box model and the service
           // model.
-          new_services[0].x = coords[0];
-          new_services[0].y = coords[1];
-          new_services[0].model.set('x', coords[0]);
-          new_services[0].model.set('y', coords[1]);
-          // This ensures that the x/y coordinates will be saved as
-          // annotations.
-          new_services[0].model.set('hasBeenPositioned', true);
+          new_service_boxes[0].x = coords[0];
+          new_service_boxes[0].y = coords[1];
           // Set the centroid to the new service's position
-          topo.centroid = coords;
-          topo.fire('panToPoint', {point: topo.centroid});
+          topo.fire('panToPoint', {point: coords});
         } else {
-          this.tree.nodes({children: new_services});
-          if (new_services.length < Y.Object.size(topo.service_boxes)) {
+          d3.layout.unscaledPack()
+                   .size([width, height])
+                   .value(function(d) { return Math.max(d.unit_count, 1); })
+                   .padding(300)
+                   .nodes({children: new_service_boxes});
+          if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
             // If we have new services that do not have x/y coords and are
             // not pending, then they've likely been created from the CLI.
             // In this case, to avoid placing them overlaying any existing
@@ -1084,49 +1052,34 @@ YUI.add('juju-topology-service', function(Y) {
             // will result in annotations being set in the environment
             // below.
             var pointOutside = topo.servicePointOutside();
-            Y.each(new_services, function(service) {
-              service.x += pointOutside[0] - service.x;
-              service.y += pointOutside[1] - service.y;
-              service.model.set('x', service.x);
-              service.model.set('y', service.y);
+            Y.each(new_service_boxes, function(boxModel) {
+              boxModel.x += pointOutside[0] - boxModel.x;
+              boxModel.y += pointOutside[1] - boxModel.y;
             });
           }
-        }
-        // Update annotations settings position on backend (but only do
-        // this if there is no existing annotations).
-        if (!pendingServicePlaced) {
-          vertices = [];
-        }
-        Y.each(new_services, function(box) {
-          if (box.model.get('placeFromGhostPosition')) {
-            fromGhost = true;
-          }
-          var existing = box.model.get('annotations') || {};
-          if (!existing && !existing['gui-x']) {
-            topo.get('env').update_annotations(
-                box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-                function() {
-                  box.inDrag = false;
-                });
-            vertices.push([box.x || 0, box.y || 0]);
-          } else {
-            if (vertices) {
-              vertices.push([
-                existing['gui-x'] || (box.x || 0),
-                existing['gui-y'] || (box.y || 0)
-              ]);
+
+          Y.each(new_service_boxes, function(box) {
+            var existing = box.model.get('annotations') || {};
+            if (!existing || !existing['gui-x']) {
+              vertices.push([box.x || 0, box.y || 0]);
+              topo.annotateBoxPosition(box, false);
+            } else {
+              if (vertices.length > 0) {
+                vertices.push([
+                  existing['gui-x'] || (box.x || 0),
+                  existing['gui-y'] || (box.y || 0)
+                ]);
+              }
             }
-          }
-        });
-      }
-      if (!topo.centroid || vertices) {
+          });
+        }
         // Find the centroid of our hull of services and inform the
         // topology.
-        if (!vertices) {
-          vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
+        if (vertices.length) {
+          this.findCentroid(vertices);
         }
-        this.findAndSetCentroid(vertices, fromGhost);
       }
+
       // enter
       node
       .enter().append('g')
@@ -1135,10 +1088,10 @@ YUI.add('juju-topology-service', function(Y) {
             'class': function(d) {
               return (d.subordinate ? 'subordinate ' : '') +
                   (d.pending ? 'pending ' : '') + 'service';
-            },
-            'transform': function(d) {return d.translateStr;}})
+            }})
         .call(this.dragBehavior)
-        .call(self.createServiceNode, self);
+        .call(self.createServiceNode, self)
+        .attr('transform', function(d) { return d.translateStr; });
 
       // Update all nodes.
       self.updateServiceNodes(node);
@@ -1161,26 +1114,20 @@ YUI.add('juju-topology-service', function(Y) {
     panToCenter: function(evt) {
       var topo = this.get('component');
       var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-      this.findAndSetCentroid(vertices);
+      this.findCentroid(vertices);
     },
 
     /**
     Given a set of vertices, find the centroid and pan to that location.
 
-    @method findAndSetCentroid
+    @method findCentroid
     @param {array} vertices A list of vertices in the form [x, y].
     @return {undefined} Side effects only.
     */
-    findAndSetCentroid: function(vertices, preventPan) {
+    findCentroid: function(vertices) {
       var topo = this.get('component'),
               centroid = topoUtils.centroid(vertices);
-      // The centroid is set on the topology object due to the fact that it is
-      // used as a sigil to tell whether or not to pan to the point after the
-      // first delta.
-      topo.centroid = centroid;
-      if (!preventPan) {
-        topo.fire('panToPoint', {point: topo.centroid});
-      }
+      topo.fire('panToPoint', {point: centroid});
     },
 
     /**
