@@ -213,7 +213,7 @@ YUI.add('juju-topology', function(Y) {
     */
     annotateBoxPosition: function(box, timeout) {
       if (box.pending) { return; }
-      window = window || 1000;
+      timeout = timeout || 1000;
 
       // This can happen in some tests.
       this.get('env').update_annotations(
