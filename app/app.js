@@ -81,6 +81,11 @@ YUI.add('juju-gui', function(Y) {
         preserve: false
       },
 
+      onboarding: {
+        type: 'juju.views.onboarding',
+        preserve: true
+      },
+
       environment: {
         type: 'juju.views.environment',
         preserve: true
@@ -372,6 +377,7 @@ YUI.add('juju-gui', function(Y) {
       this.cookieHandler = null;
 
       this.renderEnvironment = true;
+
       // If this property has a value other than '/' then
       // navigate to it after logging in.
       this.redirectPath = '/';
@@ -1086,6 +1092,7 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
+
       if (!this.renderEnvironment) {
         next(); return;
       }
@@ -1108,10 +1115,28 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          this.initialise_onboarding();
         },
         render: true
       });
+
       next();
+    },
+
+    /**
+     * @method initialise_onboarding
+     */
+    initialise_onboarding: function() {
+      var path = window.location.pathname;
+        if (!this._onboarding) {
+          // Need to check onboarding exists due to the double dispatch bug.
+          if(path === '/') {
+            this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+            this._onboarding.render();
+          }
+        }else if(path !== '/') {
+          this._onboarding.close();
+        }
     },
 
     /**
@@ -1333,6 +1358,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-views',
     'juju-view-environment',
     'juju-view-login',
+    'juju-view-onboarding',
     'juju-landscape',
     'juju-websocket-logging',
     'io',

@@ -522,6 +522,10 @@ code {
         margin-right: auto;
         margin-top: 2ex;
     }
+
+    &.displayNone {
+        display: none;
+    }
 }
 .environment-menu {
     @border_radius: 20px;
@@ -1936,6 +1940,176 @@ g.unit {
     p {
         font-size: 8pt;
     }
+}
+#onboarding-background {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+
+    #onboarding-screen-mask {
+      display: block;
+      position: absolute;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+    }
+
+    #onboarding-message {
+        .create-border-radius(@border-radius);
+        display: block;
+        z-index: 10001;
+        position: relative;
+        top: 100px;
+        left: 350px;
+        width: 320px;
+        background-color: @inspector-background-color;
+        padding: 20px;
+
+        .onboarding-cross {
+            float: right;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header,
+        .text {
+            color: @charm-panel-configure-title-color;
+        }
+
+        img {
+          position: absolute;
+        }
+
+        .panel {
+          display: none;
+          height: 169px;
+        }
+
+        ul {
+            z-index: 2;
+            position: relative;
+            list-style: none;
+            margin-left: 0;
+
+            li {
+              display: inline;
+            }
+
+            a {
+                @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
+                .create-box-shadow(@box-shadow);
+                .create-border-radius(@bws-corner);
+                background-color: @inspector-dark;
+                display: inline-block;
+                height: 40px;
+                margin-top: 17px;
+                padding: 0 30px;
+                color: #fff;
+                line-height: 40px;
+
+                &.onboarding-next,
+                &.onboarding-start {
+                    float: right;
+                }
+
+                &.highlight {
+                    background-color: @charm-panel-orange;
+                }
+            }
+        }
+    }
+
+    &.state-0 {
+        #onboarding-message {
+            .panel-0 {
+                display: block;
+            }
+            ul a.onboarding-next,
+            ul a.onboarding-prev {
+                display: none;
+            }
+        }
+
+    }
+
+    &.state-1 {
+        #onboarding-screen-mask {
+            left: 290px;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-1 {
+                display: block;
+            }
+            ul a.onboarding-next {
+                display: inline-block;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+        }
+    }
+
+    &.state-2 {
+        #onboarding-screen-mask {
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-2 {
+                display: block;
+            }
+            ul a.onboarding-next {
+                display: inline-block;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+            .service-blocks {
+                top: 210px;
+                left: 125px;
+            }
+        }
+    }
+
+    &.state-3 {
+        #onboarding-screen-mask {
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-3 {
+                display: block;
+            }
+            ul a.onboarding-close {
+                background-color: @charm-panel-orange;
+                float: right;
+            }
+            ul a.onboarding-next {
+                display: none;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+            .service-block {
+                top: 320px;
+                left: 90px;
+            }
+            .inspector {
+                right: -370px;
+                top: 0;
+            }
+        }
+    }
+
 }
 .alert {
     letter-spacing: normal;
