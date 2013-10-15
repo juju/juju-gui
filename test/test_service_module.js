@@ -73,7 +73,7 @@ describe('service module annotations', function() {
      function() {
        var d =
            { id: 'wordpress',
-             inDrag: true,
+             inDrag: views.DRAG_ACTIVE,
              x: 100.1,
              y: 200.2};
        serviceModule.dragend(d, serviceModule);

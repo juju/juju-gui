@@ -315,19 +315,7 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
 
-      /**
-        Flag from ghost inspector to service topology.  Helps topology
-        keep from unnecessarily jumping the service around.  Essentially
-        an internal value that should be ignored except by this machinery.
-
-        @attribute placeFromGhostPosition
-        @default false
-        @type {Boolean}
-      */
-      placeFromGhostPosition: {
-        value: false
-      },
-      life: {
+     life: {
         value: ALIVE
       },
       unit_count: {},

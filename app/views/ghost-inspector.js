@@ -66,8 +66,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
         }
         ghostService.set('icon', ghostAttributes.icon);
       }
-      var environment = this.views.environment.instance,
-          ghostInspector = environment.createServiceInspector(ghostService);
+      var environment = this.views.environment.instance;
+      environment.createServiceInspector(ghostService);
     }
   };
 

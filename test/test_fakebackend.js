@@ -162,7 +162,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         packageName: 'wordpress'
       };
 
-      assert.deepEqual(attrs, expectedAttrs);
+      // Assert some key properties
+      assert.equal(attrs.id, expectedAttrs.id);
+      assert.equal(attrs.charm, expectedAttrs.charm);
+      assert.deepEqual(attrs.config, expectedAttrs.config);
+      assert.deepEqual(attrs.annotations, expectedAttrs.annotations);
       var units = service.get('units').toArray();
       assert.lengthOf(units, 1);
       assert.lengthOf(result.units, 1);

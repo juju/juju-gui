@@ -979,15 +979,6 @@ YUI.add('juju-topology-service', function(Y) {
         this.service_scale_height = d3.scale.log().range([64, 100]);
       }
 
-      if (!this.tree) {
-        this.tree = d3.layout.unscaledPack()
-        .size([width, height])
-        .value(function(d) {
-              return Math.max(d.unit_count, 1);
-            })
-        .padding(300);
-      }
-
       if (!this.dragBehavior) {
         this.dragBehavior = d3.behavior.drag()
         .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
@@ -1007,17 +998,26 @@ YUI.add('juju-topology-service', function(Y) {
       // entire graph. As a short term work around we layout only new
       // nodes. New nodes are those that haven't been positioned by drag
       // and drop, or those who don't have position attributes/annotations.
-      var vertices;
+      var vertices = [];
       var fromGhost = false;
 
       // new_service_boxes are those w/o current x/y pos and no
       // annotations.
+      Y.each(topo.service_boxes, function(boundingBox) {
+        var annotations = boundingBox.annotations;
+        if(annotations['gui-x'] && boundingBox.x === undefined) {
+          boundingBox.x = annotations['gui-x'];
+        }
+        if(annotations['gui-y'] && boundingBox.y === undefined) {
+          boundingBox.y = annotations['gui-y'];
+        }
+      });
       var new_service_boxes = Y.Object.values(topo.service_boxes)
       .filter(function(boundingBox) {
-            var annotations = boundingBox.model.get('annotations');
-            return (!Y.Lang.isNumber(boundingBox.x) &&
-                    !(annotations && annotations['gui-x']));
-          });
+        var annotations = boundingBox.model.get('annotations');
+        return ( (!Y.Lang.isNumber(boundingBox.x) &&
+                  !(annotations && annotations['gui-x'])));
+      });
 
       if (new_service_boxes.length > 0) {
         // If the there is only one new service and it's pending (as in, it was
@@ -1026,10 +1026,10 @@ YUI.add('juju-topology-service', function(Y) {
         // service is actually created.  Otherwise, rely on our pack layout (as
         // in the case of opening an unannotated environment for the first
         // time).
-        var pendingServicePlaced = false;
         if (new_service_boxes.length === 1 &&
-            new_service_boxes[0].model.get('pending')) {
-          pendingServicePlaced = true;
+            new_service_boxes[0].model.get('pending') &&
+              (new_service_boxes[0].x === undefined ||
+               new_service_boxes[0].y === undefined)) {
           // Get a coordinate outside the cluster of existing services.
           var coords = topo.servicePointOutside();
           // Set the coordinates on both the box model and the service
@@ -1040,7 +1040,11 @@ YUI.add('juju-topology-service', function(Y) {
           topo.centroid = coords;
           topo.fire('panToPoint', {point: topo.centroid});
         } else {
-          this.tree.nodes({children: new_service_boxes});
+          d3.layout.unscaledPack()
+                   .size([width, height])
+                   .value(function(d) { return Math.max(d.unit_count, 1); })
+                   .padding(300)
+                   .nodes({children: new_service_boxes});
           if (new_service_boxes.length < Y.Object.size(topo.service_boxes)) {
             // If we have new services that do not have x/y coords and are
             // not pending, then they've likely been created from the CLI.
@@ -1056,21 +1060,20 @@ YUI.add('juju-topology-service', function(Y) {
             });
           }
         }
-        if (!pendingServicePlaced) {
-          vertices = [];
-        }
 
         Y.each(new_service_boxes, function(box) {
           var existing = box.model.get('annotations') || {};
-          if (!existing['gui-x']) {
+          if (!existing || !existing['gui-x']) {
             vertices.push([box.x || 0, box.y || 0]);
             // Don't export position after pack, this changes
             // how things work substantially. It means that imported
             // position annotations will work with go, but that we
             // don't share pack positions with other clients.
             //XXX: topo.annotateBoxPosition(box);
+            console.log("new box", box.xy, box.translateStr);
           } else {
-            if (vertices) {
+            if (vertices.length > 0) {
+              console.log('existing box anno', existing);
               vertices.push([
                 existing['gui-x'] || (box.x || 0),
                 existing['gui-y'] || (box.y || 0)
@@ -1095,10 +1098,10 @@ YUI.add('juju-topology-service', function(Y) {
             'class': function(d) {
               return (d.subordinate ? 'subordinate ' : '') +
                   (d.pending ? 'pending ' : '') + 'service';
-            },
-            'transform': function(d) {return d.translateStr;}})
+            }})
         .call(this.dragBehavior)
-        .call(self.createServiceNode, self);
+        .call(self.createServiceNode, self)
+        .attr('transform', function(d) { return d.translateStr; });
 
       // Update all nodes.
       self.updateServiceNodes(node);
