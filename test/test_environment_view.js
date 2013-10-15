@@ -622,9 +622,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       match[2].should.eql('211.2');
 
       // A positioned service will never be auto-positioned.
-      /*view.topo.servicePointOutside = function() {
-        assert(false, 'We should never get here because annotations are set');
-      };*/
       tmp_data = {
         op: 'delta',
         result: [
@@ -640,12 +637,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.update();
 
-      /*
-       *view.topo.servicePointOutside = function() {
-       *  assert(false,
-       *      'We should never get here because service was positioned');
-       *};
-       */
       tmp_data = {
         op: 'delta',
         result: [

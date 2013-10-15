@@ -1136,10 +1136,9 @@ YUI.add('juju-models', function(Y) {
      * that.
      *
      * @method exportDeployer
-     * @param {Object} [topology] used to get position when available.
      * @return {Object} export object suitable for serialization.
      */
-    exportDeployer: function(topology) {
+    exportDeployer: function() {
       var self = this,
           serviceList = this.services,
           relationList = this.relations,

@@ -209,9 +209,9 @@ YUI.add('juju-topology', function(Y) {
 
      @method annotateBoxPosition
      @param {Object} box.
-     @param {ms} window.
+     @param {ms} timeout.
     */
-    annotateBoxPosition: function(box, window) {
+    annotateBoxPosition: function(box, timeout) {
       if (box.pending) { return; }
       window = window || 1000;
 
@@ -219,9 +219,9 @@ YUI.add('juju-topology', function(Y) {
       this.get('env').update_annotations(
           box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
           function() {
-            if (window) {
+            if (timeout) {
               box.inDrag = views.DRAG_ENDING;
-              Y.later(window, box, function() {
+              Y.later(timeout, box, function() {
                 // Provide (t) ms of protection from sending additional
                 // annotations or applying them locally.
                 box.inDrag = false;
