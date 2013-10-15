@@ -1117,8 +1117,6 @@ YUI.add('juju-gui', function(Y) {
           this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
           this._onboarding.render();
         }
-      }else if(path !== '/' && path !== '/:flags:/onboard/') {
-        this._onboarding.close();
       }
     },
 
