@@ -160,10 +160,9 @@ YUI.add('juju-view-onboarding', function(Y) {
       var container = this.get('container');
       var container_bg = container.one('#onboarding-background');
 
-      var i = this.stateCount;
-      while(i--) {
-        container_bg.removeClass(this.states[i]);
-      }
+      this.states.forEach(function(state, idx) {
+        container_bg.removeClass(state);
+      });
       container_bg.addClass(this.states[this.onboardingIndex]);
     },
 
