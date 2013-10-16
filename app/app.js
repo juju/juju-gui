@@ -1130,7 +1130,8 @@ YUI.add('juju-gui', function(Y) {
       // Need to check onboarding exists due to the double dispatch bug.
       if (!this._onboarding && window.flags.onboard) {
         if (path === '/' || path === '/:flags:/onboard/') {
-          this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+          this._onboarding = new Y.juju.views.onboarding(
+              {'container': '#onboarding'});
           this._onboarding.render();
         }
       }
