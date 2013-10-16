@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 
-  describe.only('onboarding process', function() {
+  describe('onboarding process', function() {
     var container, env_help, OnboardingView, views, utils, Y;
 
     before(function(done) {
@@ -68,9 +68,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       onboard.render();
-      onboard.nextHandler({halt: function(){}});
+      onboard.nextHandler({halt: function() {}});
       assert.equal(onboard.onboardingIndex, 1);
-      onboard.nextHandler({halt: function(){}});
+      onboard.nextHandler({halt: function() {}});
       assert.equal(onboard.onboardingIndex, 2);
     });
 
@@ -81,9 +81,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       onboard.render();
       onboard.onboardingIndex = 2;
-      onboard.prevHandler({halt: function(){}});
+      onboard.prevHandler({halt: function() {}});
       assert.equal(onboard.onboardingIndex, 1);
-      onboard.prevHandler({halt: function(){}});
+      onboard.prevHandler({halt: function() {}});
       assert.equal(onboard.onboardingIndex, 0);
     });
 
@@ -107,15 +107,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       onboard.render();
       var background = container.one('#onboarding-background');
-      onboard.nextHandler({halt: function(){}});
+      onboard.nextHandler({halt: function() {}});
       assert.isTrue(background.hasClass('state-1'), 'should be state 1');
-      onboard.nextHandler({halt: function(){}});
+      onboard.nextHandler({halt: function() {}});
       assert.isTrue(background.hasClass('state-2'), 'should be 2');
-      onboard.prevHandler({halt: function(){}});
+      onboard.prevHandler({halt: function() {}});
       assert.isTrue(background.hasClass('state-1'), 'should be 1 again');
-      onboard.prevHandler({halt: function(){}});
+      onboard.prevHandler({halt: function() {}});
       assert.isTrue(background.hasClass('state-0'), 'should be 0 again');
-      onboard.prevHandler({halt: function(){}});
+      onboard.prevHandler({halt: function() {}});
       assert.isTrue(background.hasClass('state-0'), 'should stick to 0');
     });
 
@@ -129,18 +129,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var panel0 = container.one('.panel-0');
       var panel1 = container.one('.panel-1');
       var panel2 = container.one('.panel-2');
-      var panel3 = container.one('.panel-3');
-      assert.equal(panel0.getComputedStyle('display'), 'block', 'should be showing 0');
-      onboard.nextHandler({halt: function(){}});
-      assert.equal(panel1.getComputedStyle('display'), 'block', 'should be showing 1');
-      onboard.nextHandler({halt: function(){}});
-      assert.equal(panel2.getComputedStyle('display'), 'block', 'should be showing 2');
-      onboard.prevHandler({halt: function(){}});
-      assert.equal(panel1.getComputedStyle('display'), 'block', 'should be showing 1 again');
-      onboard.prevHandler({halt: function(){}});
-      assert.equal(panel0.getComputedStyle('display'), 'block', 'back to 0');
-      onboard.prevHandler({halt: function(){}});
-      assert.equal(panel0.getComputedStyle('display'), 'block');
+      assert.equal(
+          panel0.getComputedStyle('display'), 'block');
+      onboard.nextHandler({halt: function() {}});
+      assert.equal(
+          panel1.getComputedStyle('display'), 'block');
+      onboard.nextHandler({halt: function() {}});
+      assert.equal(
+          panel2.getComputedStyle('display'), 'block');
+      onboard.prevHandler({halt: function() {}});
+      assert.equal(
+          panel1.getComputedStyle('display'), 'block');
+      onboard.prevHandler({halt: function() {}});
+      assert.equal(
+          panel0.getComputedStyle('display'), 'block');
+      onboard.prevHandler({halt: function() {}});
+      assert.equal(
+          panel0.getComputedStyle('display'), 'block');
     });
 
     it('closes onboarding', function() {
@@ -151,7 +156,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       onboard.render();
       var onboardingCross = container.one('.onboarding-cross');
       assert.isTrue(onboardingCross instanceof Y.Node);
-      onboard.closeHandler({halt: function(){}});
+      onboard.closeHandler({halt: function() {}});
       assert.equal(container.getComputedStyle('display'), 'none');
       assert.isFalse(env_help.hasClass('hidden'));
     });
