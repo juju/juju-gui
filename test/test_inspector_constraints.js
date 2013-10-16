@@ -91,6 +91,7 @@ describe('Inspector Constraints', function() {
       return 'charm icon url';
     };
     env = juju.newEnvironment({conn: conn});
+    env.update_annotations = function() {};
     env.connect();
     view = new views.environment({
       container: container,

@@ -83,7 +83,7 @@ YUI.add('juju-gui', function(Y) {
 
       onboarding: {
         type: 'juju.views.onboarding',
-        preserve: true
+        preserve: false
       },
 
       environment: {
@@ -1130,7 +1130,7 @@ YUI.add('juju-gui', function(Y) {
       // Need to check onboarding exists due to the double dispatch bug.
       if (!this._onboarding && window.flags.onboard) {
         if (path === '/' || path === '/:flags:/onboard/') {
-          this._onboarding = new Y.juju.views.onboarding(
+          this._onboarding = new Y.juju.views.OnboardingView(
               {'container': '#onboarding'});
           this._onboarding.render();
         }

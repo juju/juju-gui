@@ -314,19 +314,6 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
-
-      /**
-        Flag from ghost inspector to service topology.  Helps topology
-        keep from unnecessarily jumping the service around.  Essentially
-        an internal value that should be ignored except by this machinery.
-
-        @attribute placeFromGhostPosition
-        @default false
-        @type {Boolean}
-      */
-      placeFromGhostPosition: {
-        value: false
-      },
       life: {
         value: ALIVE
       },
@@ -1188,11 +1175,11 @@ YUI.add('juju-models', function(Y) {
           }
         });
 
-        var serviceData = {
-          charm: charm.get('id'),
+        var serviceData = {charm: charm.get('id')};
+        if (!charm.get('is_subordinate')) {
           // Test models or ghosts might not have a units LazyModelList.
-          num_units: units && units.size() || 1
-        };
+          serviceData.num_units = units && units.size() || 1;
+        }
         if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
           serviceData.options = serviceOptions;
         }
@@ -1203,15 +1190,14 @@ YUI.add('juju-models', function(Y) {
           serviceData.constraints = constraints;
         }
 
-        var annotations = service.get('annotations');
-        if (annotations && annotations['gui-x']) {
-          // XXX: Only expose position. Currently these are position absolute
-          // rather than relative.
-          serviceData.annotations = {
-            'gui-x': annotations['gui-x'],
-            'gui-y': annotations['gui-y']
-          };
+        // XXX: Only expose position. Currently these are position absolute
+        // rather than relative.
+        var anno = service.get('annotations');
+        if (anno && anno['gui-x'] && anno['gui-y']) {
+          serviceData.annotations = {'gui-x': anno['gui-x'],
+            'gui-y': anno['gui-y']};
         }
+
         result.envExport.services[service.get('id')] = serviceData;
       });
 
