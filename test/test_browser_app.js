@@ -539,6 +539,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(req.params.id, 'precise/mysql-10');
       });
 
+      it('directCharmId skips routes starting with viewmode', function(done) {
+        app = new browser.Browser({
+          store: new CharmworldAPI({
+            'apiHost': 'http://localhost'
+          })
+        });
+        // Stub out the sidebar so we don't render anything.
+        app.sidebar = function() {};
+        var req = {
+          path: '/fullscreen/precise/mysql-10/'
+        };
+
+        var testNext = function() {
+          // The request params should not be defined or have a viewmode set
+          // since the callable bailed out and called next() since it's not to
+          // meant to handle this route.
+          assert.equal(req.params, undefined);
+          done();
+        };
+
+        app.routeDirectCharmId(req, null, testNext);
+      });
+
       it('/charm/id handles routes for new charms correctly', function() {
         app = new browser.Browser({
           store: new CharmworldAPI({

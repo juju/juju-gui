@@ -1,4 +1,4 @@
-<div class="charm">
+<div class="charm {{#if is_approved}}recommended{{/if}}">
     <div class="content">
         {{#unless forInspector}}
             <div class="header">
@@ -11,8 +11,7 @@
                     <div class="add-reviewed">
                         {{#if is_approved}}
                             <div>
-                                <i class="sprite approved_star"></i>
-                                Reviewed by the Juju team
+                                Recommended by the Juju team
                             </div>
                         {{/if}}
                         {{! The add class is used by the deploy method in
@@ -22,12 +21,17 @@
                     </div>
                     <ul>
                         <li>
-                            Activity: {{ downloads }}
-                            {{pluralize 'Download' downloads}},
-                            {{ commitCount }}
-                            {{pluralize 'Commit' commitCount}}
+                            Deployed {{downloads}}
+                            {{pluralize 'time' downloads}}
                         </li>
-                        <li>Ubuntu series: {{ distro_series }}</li>
+                        <li>
+                            {{#if series}}{{series}} |{{/if}}
+                            {{#if is_approved}}
+                                Recommended
+                            {{else}}
+                                {{owner}}
+                            {{/if}}
+                        </li>
                         <li>Location: {{ url }}</li>
                         {{#if is_subordinate}}
                             <li>Subordinate charm</li>

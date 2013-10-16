@@ -418,9 +418,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (existing) {
         existing = this.bindingEngine.getViewlet(existing.name);
         if (existing) {
-          existing.destroy();
           // remove only removes the databinding but does not clear the DOM.
           existing.remove();
+          // remove the element from the DOM
+          existing.container.remove(true);
         }
       }
       if (model === undefined) {

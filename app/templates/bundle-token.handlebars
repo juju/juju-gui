@@ -1,11 +1,12 @@
 {{! The token class is used by the deploy method in
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
-<a href="/bundle/{{id}}" class="token {{size}}" data-charmid="/bundle/{{id}}">
+<a href="/bundle/{{id}}"
+   class="token {{size}} {{#if is_approved}}recommended{{/if}}"
+   data-charmid="/bundle/{{id}}">
     <span class="block-icon">
         <div class="icon">
-            <img src="/juju-ui/assets/images/non-sprites/bundle-token.svg"
-                 alt="{{ name }} icon">
+            <img src="{{charmIconPath id true}}" alt="{{ name }} icon">
         </div>
     </span>
     <span class="title">
@@ -16,25 +17,8 @@
         <div>{{#if series}}{{series}} |{{/if}} {{#if is_approved}}Recommended{{else}}{{owner}}{{/if}}</div>
     </span>
     <span class="charms">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
-        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                 alt="[charm name]">
+        {{#charmIcons}}
+            <img src="{{charmIconPath id}}" alt="{{name}} icon"/>
+        {{/charmIcons}}
     </span>
 </a>

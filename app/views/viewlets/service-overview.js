@@ -103,49 +103,46 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       statuses.push({type: 'unit', category: key, units: unit});
     });
 
-    var flags = window.flags;
-    if (flags.upgradeCharm) {
-      // Disable strict violation warning for use of `this`.
-      /* jshint -W040 */
-      var service = this.model;
-      var upgradeServiceStatus = {
-        type: 'service',
-        category: 'upgrade-service',
-        upgradeAvailable: service.get('upgrade_available'),
-        upgradeTo: service.get('upgrade_to'),
-        downgrades: []
-      };
-      // Retrieve the charm ID (minus the schema).
-      var charm = service.get('charm');
-      // Find the latest version number - if we have an upgrade, it will be
-      // that charm's version; otherwise it will be the current charm's
-      // version.
-      var currVersion = parseInt(charm.split('-').pop(), 10),
-          maxVersion = upgradeServiceStatus.upgradeAvailable ?
-              parseInt(upgradeServiceStatus.upgradeTo.split('-').pop(), 10) :
-              currVersion;
-      // Remove the version number from the charm so that we can build a
-      // list of downgrades.
-      charm = charm.replace(/-\d+$/, '');
-      // Build a list of available downgrades
-      if (maxVersion > 1) {
-        // Disable -- operator warning so that we can loop.
-        /* jshint -W016 */
-        for (var version = maxVersion - 1; version > 0; version--) {
-          if (version === currVersion) {
-            continue;
-          }
-          upgradeServiceStatus.downgrades.push(charm + '-' + version);
+    // Disable strict violation warning for use of `this`.
+    /* jshint -W040 */
+    var service = this.model;
+    var upgradeServiceStatus = {
+      type: 'service',
+      category: 'upgrade-service',
+      upgradeAvailable: service.get('upgrade_available'),
+      upgradeTo: service.get('upgrade_to'),
+      downgrades: []
+    };
+    // Retrieve the charm ID (minus the schema).
+    var charm = service.get('charm');
+    // Find the latest version number - if we have an upgrade, it will be
+    // that charm's version; otherwise it will be the current charm's
+    // version.
+    var currVersion = parseInt(charm.split('-').pop(), 10),
+        maxVersion = upgradeServiceStatus.upgradeAvailable ?
+            parseInt(upgradeServiceStatus.upgradeTo.split('-').pop(), 10) :
+            currVersion;
+    // Remove the version number from the charm so that we can build a
+    // list of downgrades.
+    charm = charm.replace(/-\d+$/, '');
+    // Build a list of available downgrades
+    if (maxVersion > 1) {
+      // Disable -- operator warning so that we can loop.
+      /* jshint -W016 */
+      for (var version = maxVersion - 1; version > 0; version--) {
+        if (version === currVersion) {
+          continue;
         }
+        upgradeServiceStatus.downgrades.push(charm + '-' + version);
       }
-      // If we have an upgrade for this service, then it needs to appear under
-      // the pending units (at index 1, so insert at index 2); otherwise, it
-      // should just be pushed onto the end of the list of statuses.
-      if (upgradeServiceStatus.upgradeAvailable) {
-        statuses.splice(2, 0, upgradeServiceStatus);
-      } else if (upgradeServiceStatus.downgrades.length > 0) {
-        statuses.push(upgradeServiceStatus);
-      }
+    }
+    // If we have an upgrade for this service, then it needs to appear under
+    // the pending units (at index 1, so insert at index 2); otherwise, it
+    // should just be pushed onto the end of the list of statuses.
+    if (upgradeServiceStatus.upgradeAvailable) {
+      statuses.splice(2, 0, upgradeServiceStatus);
+    } else if (upgradeServiceStatus.downgrades.length > 0) {
+      statuses.push(upgradeServiceStatus);
     }
 
     return statuses;

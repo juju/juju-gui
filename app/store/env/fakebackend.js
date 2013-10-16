@@ -324,7 +324,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // invalid charm pointing to a bad URL and a read of a
             // 404 giving an error at this level. IOError isn't user
             // facing so we log the warning.
-            console.warn('error loading charm: ' + e.error);
+            console.warn('error loading charm: ', e);
             if (callbacks.failure) {
               callbacks.failure(
                   {error: 'Error interacting with the charmworld API.'});
@@ -409,6 +409,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // needs to be an array, so we are converting it back to an object
       // here so that the GUI displays it properly.
       var constraintsMap = {}, vals;
+      if (typeof constraints === 'string') {
+        constraints = constraints.split(',');
+      }
       if (Y.Lang.isArray(constraints)) {
         constraints.forEach(function(cons) {
           vals = cons.split('=');
@@ -1057,9 +1060,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         existing = {};
       }
 
-      annotations = Y.merge(existing, annotations, true, 0, null, true);
-      models.setAnnotations(entity, annotations);
-
+      models.setAnnotations(entity, annotations, true);
       // Arrange delta stream updates.
       var annotationGroup = this._getAnnotationGroup(entity);
       this.annotations[annotationGroup][entityName] = entity;
@@ -1523,9 +1524,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
               var serviceData = ingestedData.services[serviceId];
 
               // Force the annotation update (deploy doesn't handle this).
-              var annotiations = serviceData.annotations;
-              if (annotiations) {
-                service.set('annotations', annotiations);
+              var anno = serviceData.annotations;
+              if (anno) {
+                self.updateAnnotations(service.get('id'), anno);
               }
 
               // Expose

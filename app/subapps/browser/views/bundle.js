@@ -23,6 +23,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
+      utils = views.utils,
       widgets = Y.namespace('juju.widgets');
 
   ns.BrowserBundleView = Y.Base.create('browser-view-bundleview', Y.View, [
@@ -38,16 +39,16 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       //   click: '_handleCharmSelection'
       // },
       '.bundle .add': {
-        click: '_addCharmEnvironment'
+        click: '_deployBundle'
       },
       // Following handlers are provided by entity-base.js
       // Mixins do not mix properties so this has to be done manually
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      // '#bws-code select': {
-      //   change: '_loadHookContent'
-      // },
+      '#bws-code select': {
+        change: '_loadHookContent'
+      },
       '.bundle .back': {
         click: '_handleBack'
       }
@@ -57,6 +58,23 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     template: views.Templates.bundle,
+
+    /**
+      Deploys the bundle to the environment via the provided deploy method.
+
+      @method _deployBundle
+    */
+    _deployBundle: function(e) {
+      e.halt();
+      var bundle = this.get('entity');
+      if (this.get('isFullscreen')) {
+        this.fire('viewNavigate',
+            {change: {viewmode: 'sidebar', charmID: null}});
+      } else {
+        this.fire('viewNavigate', {change: {charmID: null}});
+      }
+      this.get('deployBundle')(bundle.get('data'));
+    },
 
     /**
       Fetches and prepares the data for the bundle details page rendering.
@@ -124,26 +142,72 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       @method _renderBundleView
     */
     _renderBundleView: function() {
-      var bundleAttrs = this.get('entity').getAttrs();
-      var content = this.template(bundleAttrs);
+      var entity = this.get('entity');
+      var attrs = entity.getAttrs();
+      attrs.charmIcons = utils.charmIconParser(attrs.charm_metadata);
+      // Remove the svg files from the file list
+      attrs.files = attrs.files.filter(function(fileName) {
+        return !/\.svg$/.test(fileName);
+      });
+      var content = this.template(attrs);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
-
       this.hideIndicator(renderTo);
-      this.environment = new views.BundleTopology(Y.mix({
-        db: this.fakebackend.db,
-        container: node.one('#bws-bundle'), // Id because of Y.TabView
-        store: this.get('store')
-      }, options));
 
-      this.environment.render();
+      var showTopo = true;
+      // remove the flag in the test(test_bundle_details_view.js)
+      // when this flag is no longer needed.
+      if (window.flags && window.flags.strictBundle) {
+        showTopo = this._positionAnnotationsIncluded(attrs.data.services);
+      }
+      if (showTopo) {
+        this.environment = new views.BundleTopology(Y.mix({
+          db: this.fakebackend.db,
+          container: node.one('#bws-bundle'), // Id because of Y.TabView
+          store: this.get('store')
+        }, options));
+        this.environment.render();
+      } else {
+        // Remove the bundle tab so it doesn't get PE'd when
+        // we instantiate the tabview.
+        node.one('#bws-bundle').remove();
+        node.one('a[href=#bws-bundle]').get('parentNode').remove();
+      }
+
       renderTo.setHTML(node);
 
       this._setupTabview();
+      if (!showTopo) {
+        // Select the charms tab as the landing tab if
+        // we aren't showing the bundle topology.
+        this.tabview.selectChild(2);
+      }
       this._dispatchTabEvents(this.tabview);
 
       this.set('rendered', true);
+    },
+
+    /**
+      Determines if all of the services in the bundle
+      have position annotations.
+
+      @method _positionAnnotationsIncluded
+      @param {Object} services An object of all of the services in the bundle.
+      @return {Boolean} Weather all services have position annotations or not.
+    */
+    _positionAnnotationsIncluded: function(services) {
+      // Some returns true if it's stopped early, this inverts before returning.
+      return !Object.keys(services).some(function(key) {
+        var annotations = services[key].annotations;
+        // If there is no annotations for the position coords
+        // return true stopping the 'some' loop.
+        if (!annotations ||
+            !annotations['gui-x'] ||
+            !annotations['gui-y']) {
+          return true;
+        }
+      });
     },
 
     /**
@@ -158,7 +222,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._setupLocalFakebackend();
       this._fetchData().
           then(this._parseData.bind(this)).
-          then(this._renderBundleView.bind(this), this.apiFailure.bind(this));
+          then(this._renderBundleView.bind(this)).
+          then(null, this.apiFailure.bind(this));
     }
 
   }, {
@@ -185,7 +250,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     'juju-view-bundle',
     'subapp-browser-entitybaseview',
     'browser-overlay-indicator',
-    'juju-view-utils',
     'event-tracker'
   ]
 });

@@ -202,8 +202,8 @@ YUI.add('subapp-browser', function(Y) {
     _registerSubappHelpers: function() {
       var store = this.get('store');
       // Register a helper for generating the icon urls for charms.
-      Y.Handlebars.registerHelper('charmIconPath', function(charmID) {
-        return store.iconpath(charmID);
+      Y.Handlebars.registerHelper('charmIconPath', function(charmID, isBundle) {
+        return store.iconpath(charmID, isBundle);
       });
 
     },
@@ -528,7 +528,8 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: this._viewState.hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deploy: this.get('deploy')
+        deploy: this.get('deploy'),
+        deployBundle: this.get('deployBundle')
       };
 
       // If the only thing that changed was the hash, then don't redraw. It's
@@ -914,8 +915,9 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      // If we don't have a valid store we can't do any work here.
       var viewmode = this.get('defaultViewmode');
+
+      // If we don't have a valid store we can't do any work here.
       if (!this._hasValidStore()) {
         return;
       }
@@ -933,7 +935,15 @@ YUI.add('subapp-browser', function(Y) {
         next();
         return;
       } else {
-        // We've got a valid id. Setup the params for our view state.
+
+        // We only want to handle urls without a viwemode calling a specific
+        // id for a charm such as /precise/mysql and not
+        // /fullscreen/precise/mysql.
+        if (this.viewmodes.indexOf(idBits[0]) !== -1) {
+          next();
+          return;
+        }
+
         req.params = {
           id: id,
           viewmode: viewmode

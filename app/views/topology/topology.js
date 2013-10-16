@@ -186,7 +186,52 @@ YUI.add('juju-topology', function(Y) {
       return utils.pointOutside(
           utils.serviceBoxesToVertices(existingBoxes),
           this.get('servicePadding'));
+    },
+
+    /**
+     Show the menu for a given service
+
+     @method showMenu
+     @param {String} serviceId
+    */
+    showMenu: function(serviceId) {
+      var serviceModule = this.modules.ServiceModule;
+      if (!serviceModule) { return;}
+      var boxModel = this.service_boxes[serviceId];
+      serviceModule.showServiceMenu(boxModel);
+    },
+
+    /**
+     Record a new box position on the backend. This maintains the proper drag
+     state. This method also transitions the viewModel to a DRAG_ENDING state
+     with a timeout. During this window the box will behave as if its in a drag
+     state refusing annotation updates. This masks certain classes of races.
+
+     @method annotateBoxPosition
+     @param {Object} box.
+     @param {ms} timeout.
+    */
+    annotateBoxPosition: function(box, timeout) {
+      if (box.pending) { return; }
+      timeout = timeout || 1000;
+
+      // This can happen in some tests.
+      this.get('env').update_annotations(
+          box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+          function() {
+            if (timeout) {
+              box.inDrag = views.DRAG_ENDING;
+              Y.later(timeout, box, function() {
+                // Provide (t) ms of protection from sending additional
+                // annotations or applying them locally.
+                box.inDrag = false;
+              });
+            } else {
+              box.inDrag = false;
+            }
+          });
     }
+
   }, {
     ATTRS: {
       /**
@@ -238,6 +283,7 @@ YUI.add('juju-topology', function(Y) {
    */
   views.DRAG_START = 1;
   views.DRAG_ACTIVE = 2;
+  views.DRAG_ENDING = 3;
 }, '0.1.0', {
   requires: [
     'd3',

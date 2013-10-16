@@ -443,8 +443,6 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
-        // NB: The sandbox mode currently does not fully support the Go API.
-        // TODO Remove when it does. Makyo 2013-08-12
         if (this.get('sandbox')) {
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
@@ -583,6 +581,9 @@ YUI.add('juju-gui', function(Y) {
       // To use the new service Inspector use the deploy method
       // from the Y.juju.GhostDeployer extension
       cfg.deploy = Y.bind(this.deployService, this);
+
+      cfg.deployBundle = this.deployBundle.bind(this);
+
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
       // up sometimes and this binding creates spooky interaction
@@ -604,6 +605,21 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deploy(charm, ghostAttributes);
       }, this);
+    },
+
+    /**
+      Calls the deployer import method with the bundle data
+      to deploy the bundle to the environment.
+
+      @method deployBundle
+      @param {Object} bundle Bundle data.
+    */
+    deployBundle: function(bundle) {
+      var notifications = this.db.notifications;
+      this.env.deployerImport(
+          Y.JSON.stringify({
+            bundle: bundle
+          }), null, Y.bind(utils.deployBundleCallback, null, notifications));
     },
 
     /**
@@ -1114,7 +1130,8 @@ YUI.add('juju-gui', function(Y) {
       // Need to check onboarding exists due to the double dispatch bug.
       if (!this._onboarding && window.flags.onboard) {
         if (path === '/' || path === '/:flags:/onboard/') {
-          this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
+          this._onboarding = new Y.juju.views.onboarding(
+              {'container': '#onboarding'});
           this._onboarding.render();
         }
       }

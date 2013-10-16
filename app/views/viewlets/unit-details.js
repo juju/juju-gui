@@ -31,50 +31,50 @@ YUI.add('viewlet-unit-details', function(Y) {
 
     @method updateAddress
     @param {Y.Node} node The node to be updated.
-    @param {String} value The IP address.
-    @param {Array} value An array of the ports exposed.
+    @param {String} ipAddress The IP address.
+    @param {Array} openPorts An array of the ports exposed.
     @return {undefined} Mutates the node.
     */
-  var updateAddress = function(node, value, open_ports) {
+  var updateAddress = function(node, ipAddress, openPorts) {
     node.empty();
-    if (!value) { return; }
-    var protocol;
-    var protocols = {443: 'https', 80: 'http'};
-    if (open_ports && open_ports.length) {
-      Object.keys(protocols).some(function(port) {
-        if (open_ports.indexOf(port) >= 0 ||
-            open_ports.indexOf(parseInt(port, 10)) >= 0) {
-          protocol = protocols[port];
-          return true; // Short-circuits the loop.
-        }
-      });
+    if (!ipAddress) {
+      return;
     }
-    var infoNode;
-    if (protocol) {
-      infoNode = Y.Node.create('<a></a>').setAttrs({
-        href: protocol + '://' + value + '/',
+    var ports = utils.normalizeUnitPorts(openPorts);
+    var parsed = utils.parseUnitPorts(ipAddress, ports);
+    var ipAddressData = parsed[0];
+    var portDataList = parsed[1];
+    // Render the IP address fragment.
+    var ipAddressNode;
+    if (ipAddressData.href) {
+      ipAddressNode = Y.Node.create('<a></a>').setAttrs({
+        href: ipAddressData.href,
         target: '_blank',
-        text: value
+        text: ipAddressData.text
       });
     } else {
-      infoNode = Y.Node.create(value);
+      ipAddressNode = Y.Node.create(ipAddressData.text);
     }
-    node.append(infoNode);
-    if (open_ports && open_ports.length) {
+    node.append(ipAddressNode);
+    // Render the ports fragment.
+    if (portDataList.length) {
       // YUI 3 trims HTML because IE (<10?) does it. :-/
       node.append('&nbsp;| Ports&nbsp;');
-      var previous;
-      open_ports.forEach(function(port) {
-        if (previous) {
+      Y.Array.each(portDataList, function(portData, index) {
+        if (index) {
           node.append(',&nbsp;');
         }
-        previous = port;
-        var protocol = protocols[port.toString()] || 'http';
-        node.append(Y.Node.create('<a></a>').setAttrs({
-          href: protocol + '://' + value + ':' + port + '/',
-          target: '_blank',
-          text: port
-        }));
+        var portNode;
+        if (portData.href) {
+          portNode = Y.Node.create('<a></a>').setAttrs({
+            href: portData.href,
+            target: '_blank',
+            text: portData.text
+          });
+        } else {
+          portNode = Y.Node.create(portData.text);
+        }
+        node.append(portNode);
       });
     }
   };

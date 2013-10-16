@@ -82,8 +82,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      var charm = this.get('entity'),
-          attrs = charm.getAttrs();
+      var charm = this.get('entity');
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
             {change: {viewmode: 'sidebar', charmID: null}});
@@ -167,25 +166,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
       interfaceIntro[build] = true;
       return interfaceIntro;
-    },
-
-    /**
-     * Event handler for clicking on a hook filename to load that file.
-     *
-     * @method _loadHookContent
-     * @param {Event} ev the click event created.
-     *
-     */
-    _loadHookContent: function(ev) {
-      var index = ev.currentTarget.get('selectedIndex');
-      var filename = ev.currentTarget.get('options').item(
-          index).getAttribute('value'),
-          node = this.get('container').one('#bws-code .filecontent');
-
-      // Load the file, but make sure we prettify the code.
-      if (filename) {
-        this._loadFile(node, filename, true);
-      }
     },
 
     /**

@@ -276,14 +276,8 @@ YUI.add('juju-delta-handlers', function(Y) {
       } else {
         instance = db.resolveModelByName(id);
       }
-      if (instance instanceof Y.Model) {
-        instance.set('annotations', change.Annotations);
-      } else if (instance) {
-        // This must be from a LazyModelList.
-        instance.annotations = change.Annotations;
-      }
+      models.setAnnotations(instance, change.Annotations, true);
     }
-
   };
 
 }, '0.1.0', {

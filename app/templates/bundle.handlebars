@@ -4,7 +4,7 @@
             <div class="header">
                 <a href="" class="back icon"></a>
                 <div class="block-icon">
-                    <img src="{{charmIconPath id}}" alt="{{ name }} icon" class="icon">
+                    <img src="{{charmIconPath id true}}" alt="{{ name }} icon" class="icon">
                 </div>
                 <div class="details">
                     <h1>{{ name }}</h1>
@@ -26,26 +26,9 @@
                         </li>
                     </ul>
                     <div class="charms">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
-                        <img src="/juju-ui/assets/images/non-sprites/charm_160.svg"
-                                 alt="[charm name]">
+                        {{#charmIcons}}
+                            <img src="{{charmIconPath id}}" alt="{{name}} icon"/>
+                        {{/charmIcons}}
                     </div>
                 </div>
             </div>
@@ -57,6 +40,7 @@
                 <li><a href="#bws-summary" class="summary">Summary</a></li>
                 <li><a href="#bws-readme" class="readme">Readme</a></li>
                 <li><a href="#bws-charms" class="charms">Charms</a></li>
+                <li><a href="#bws-code" class="code">Code</a></li>
             </ul>
             <div>
                 <div id="bws-bundle"></div>
@@ -136,6 +120,31 @@
                 </div>
                 <div id="bws-readme"></div>
                 <div id="bws-charms"></div>
+                <div id="bws-code">
+                    <p class="intro">
+                        The source code of the bundle includes scripts, metadata,
+                        and other supporting files to describe and install a
+                        service.
+                    </p>
+                    <p>
+                        The source code for the bundle has been extracting from the deployer file. Please see the branch for the full, unprocessed deployer file.
+                    </p>
+                    <p class="intro">
+                        <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
+                        target="help">Please contribute to this bundle!</a>
+                    </p>
+                    <p class="intro">
+                        Select a file below to view the contents.
+                    </p>
+                    <select>
+                        <option>Select --</option>
+                        {{#each files}}
+                            <option value="{{ . }}">{{ . }}</option>
+                        {{/each}}
+                    </select>
+                    <div class="filecontent">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

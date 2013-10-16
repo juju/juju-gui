@@ -397,9 +397,10 @@ YUI.add('juju-charm-store', function(Y) {
 
       @method iconpath
       @param {String} charmID The id of the charm to grab the icon for.
+      @param {Boolean} isBundle Is this an icon for a bundle?
       @return {String} The URL of the charm's icon.
      */
-    iconpath: function(charmID) {
+    iconpath: function(charmID, isBundle) {
       // If this is a local charm, then we need use a hard coded path to the
       // default icon since we cannot fetch its category data or its own
       // icon.
@@ -415,9 +416,16 @@ YUI.add('juju-charm-store', function(Y) {
         // The following regular expression removes everything up to the
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
+
+        // Note that we make sure isBundle is Boolean. It's coming from a
+        // handlebars template helper which will make the second argument the
+        // context object when it's not supplied. We want it optional for
+        // normal use to default to the charm version, but if it's a boolean,
+        // then check that boolean because the author care specifically if
+        // it's a bundle or not.
         return this.get('apiHost') + [
           this._apiRoot,
-          'charm',
+          Y.Lang.isBoolean(isBundle) && isBundle === true ? 'bundle' : 'charm',
           charmID,
           'file',
           'icon.svg'].join('/');

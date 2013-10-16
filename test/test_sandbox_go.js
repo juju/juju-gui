@@ -164,7 +164,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         assert.equal(receivedData.Response.AllWatcherId, 42);
-        assert.equal(client.get('juju').get('nextRequestId'), 1066);
+        assert.equal(receivedData.RequestId, 1066);
+        assert.isUndefined(client.get('juju').get('nextRequestId'));
         done();
       };
       client.open();

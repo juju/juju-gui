@@ -34,14 +34,27 @@ YUI.add('juju-view-onboarding', function(Y) {
    *
    * @class OnboardingView
    */
-  var OnboardingView = Y.Base.create('OnboardingView', Y.View, [views.JujuBaseView], {
+  views.OnboardingView = Y.Base.create('OnboardingView', Y.View, [], {
     template: views.Templates.onboarding,
     events: {
-      '.onboarding-close': {click: 'closeHandler'},
-      '.onboarding-start': {click: 'nextHandler'},
-      '.onboarding-next': {click: 'nextHandler'},
-      '.onboarding-prev': {click: 'prevHandler'},
-      '.onboarding-cross': {mouseover: 'crossHandler', mouseout: 'crossHandler', mousedown: 'crossHandler', mouseup: 'closeHandler'}
+      '.onboarding-close': {
+        click: 'closeHandler'
+      },
+      '.onboarding-start': {
+        click: 'nextHandler'
+      },
+      '.onboarding-next': {
+        click: 'nextHandler'
+      },
+      '.onboarding-prev': {
+        click: 'prevHandler'
+      },
+      '.onboarding-cross': {
+        mousedown: 'crossHandler',
+        mouseout: 'crossHandler',
+        mouseover: 'crossHandler',
+        mouseup: 'closeHandler'
+      }
     },
     onboardingIndex: 0,
 
@@ -94,7 +107,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     nextHandler: function(ev) {
       ev.halt();
-      this.onboardingIndex++;
+      this.onboardingIndex = this.onboardingIndex + 1;
       this.drawContent();
     },
 
@@ -108,7 +121,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     prevHandler: function(ev) {
       ev.halt();
-      this.onboardingIndex--;
+      this.onboardingIndex = this.onboardingIndex - 1;
       this.drawContent();
     },
 
@@ -122,16 +135,19 @@ YUI.add('juju-view-onboarding', function(Y) {
     crossHandler: function(ev) {
       var container = this.get('container');
       var close_button = container.one('.onboarding-cross');
-      switch(ev._event.type){
+      switch (ev._event.type) {
         case 'mouseover':
-          close_button.addClass('close-inspector-hover').removeClass('close-inspector-normal');
-        break;
+          close_button.removeClass('close-inspector-normal');
+          close_button.addClass('close-inspector-hover');
+          break;
         case 'mouseout':
-          close_button.addClass('close-inspector-normal').removeClass('close-inspector-hover');
-        break;
+          close_button.removeClass('close-inspector-hover');
+          close_button.addClass('close-inspector-normal');
+          break;
         case 'mousedown':
-          close_button.addClass('close-inspector-click').removeClass('close-inspector-hover');
-        break;
+          close_button.removeClass('close-inspector-hover');
+          close_button.addClass('close-inspector-click');
+          break;
       }
     },
 
@@ -147,8 +163,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       container_bg.removeClass('state-1');
       container_bg.removeClass('state-2');
       container_bg.removeClass('state-3');
-      container_bg.addClass('state-'+this.onboardingIndex);
-
+      container_bg.addClass('state-' + this.onboardingIndex);
     },
 
     /**
@@ -176,12 +191,12 @@ YUI.add('juju-view-onboarding', function(Y) {
 
   });
 
-  views.onboarding = OnboardingView;
 
 }, '0.1.0', {
   requires: [
-    'view',
+    'juju-templates',
     'juju-view-utils',
-    'node'
+    'node',
+    'view'
   ]
 });

@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('test_models.js', function() {
+describe('test_model.js', function() {
   describe('Charm initialization', function() {
     var models;
 
@@ -776,7 +776,7 @@ describe('test_models.js', function() {
 
   describe('database import/export', function() {
     var Y, models, utils;
-    var fakeStore, db;
+    var db;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-models',
@@ -792,17 +792,17 @@ describe('test_models.js', function() {
 
     beforeEach(function() {
       db = new models.Database();
-      fakeStore = utils.makeFakeStore(db.charms);
-      fakeStore.iconpath = function() {return 'fake url';};
     });
 
     it('can export in deployer format', function() {
+      // Mock a topology that can return positions.
       db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
       db.services.add({
         id: 'wordpress',
         charm: 'precise/wordpress-1',
         config: {debug: 'no', username: 'admin'},
-        annotations: {'gui-x': 100, 'gui-y': 200, 'ignored': true}
+        constraints: 'cpu-power=2,cpu-cores=4',
+        annotations: {'gui-x': 100, 'gui-y': 200}
       });
       db.relations.add({
         id: 'relation-0',
@@ -817,14 +817,12 @@ describe('test_models.js', function() {
       // Add the charms so we can resolve them in the export.
       db.charms.add([{id: 'precise/mysql-1'},
             {id: 'precise/wordpress-1',
-              config: {
-                options: {
-                  debug: {
-                    'default': 'no'
-                  },
-                  username: {
-                    'default': 'root'
-                  }
+              options: {
+                debug: {
+                  'default': 'no'
+                },
+                username: {
+                  'default': 'root'
                 }
               }
             }
@@ -836,6 +834,9 @@ describe('test_models.js', function() {
       assert.equal(result.services.mysql.charm, 'precise/mysql-1');
       assert.equal(result.services.wordpress.charm, 'precise/wordpress-1');
 
+      assert.equal(result.services.mysql.num_units, 1);
+      assert.equal(result.services.wordpress.num_units, 1);
+
       // A default config value is skipped
       assert.equal(result.services.wordpress.options.debug, undefined);
       // A value changed from the default is exported
@@ -843,6 +844,10 @@ describe('test_models.js', function() {
       // Ensure that mysql has no options object in the export as no
       // non-default options are defined
       assert.equal(result.services.mysql.options, undefined);
+
+      // Constraints
+      var constraints = result.services.wordpress.constraints;
+      assert.equal(constraints, 'cpu-power=2,cpu-cores=4');
 
       // Export position annotations.
       assert.equal(result.services.wordpress.annotations['gui-x'], 100);
@@ -853,6 +858,15 @@ describe('test_models.js', function() {
       assert.equal(relation[0], 'mysql:db');
       assert.equal(relation[1], 'wordpress:app');
     });
+
+    it('exports subordinate services without units', function() {
+      // Add a subordinate.
+      db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
+      db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.puppet.num_units);
+    });
+
   });
 
   describe('service models', function() {

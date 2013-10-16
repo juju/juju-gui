@@ -278,12 +278,26 @@ YUI.add('juju-models', function(Y) {
       charmChanged: {
         value: false
       },
-      constraints: {},
+      constraints: {
+        'setter': function(value) {
+          if (typeof value === 'string') {
+            var output = {};
+            value.split(',').map(function(pair) {
+              var kv = pair.split('=');
+              output[kv[0]] = kv[1];
+            });
+            value = output;
+          }
+          return value;
+        }
+      },
       constraintsStr: {
         'getter': function() {
           var result = [];
           Y.each(this.get('constraints'), function(v, k) {
-            result.push(k + '=' + v);
+            if (v !== undefined) {
+              result.push(k + '=' + v);
+            }
           });
           if (result.length) {
             return result.join(',');
@@ -298,19 +312,6 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       pending: {
-        value: false
-      },
-
-      /**
-        Flag from ghost inspector to service topology.  Helps topology
-        keep from unnecessarily jumping the service around.  Essentially
-        an internal value that should be ignored except by this machinery.
-
-        @attribute placeFromGhostPosition
-        @default false
-        @type {Boolean}
-      */
-      placeFromGhostPosition: {
         value: false
       },
       life: {
@@ -524,9 +525,8 @@ YUI.add('juju-models', function(Y) {
       // If a charm_url is included in the data (that is, the Go backend
       // provides it), get the old charm so that we can compare charm URLs
       // in the future.
-      var oldModelCharm,
-          flags = window.flags;
-      if (flags.upgradeCharm && action === 'change' && data.charmUrl && db) {
+      var oldModelCharm;
+      if (action === 'change' && data.charmUrl && db) {
         var oldModel = db.resolveModelByName(data.id);
         if (oldModel) {
           oldModelCharm = oldModel.charmUrl;
@@ -544,7 +544,7 @@ YUI.add('juju-models', function(Y) {
       // someone else watching the GUI as a service's charm changes, differ in
       // the amount of information the GUI has originally.  By setting this
       // flag, both cases can react in the same way.
-      if (flags.upgradeCharm && oldModelCharm &&
+      if (oldModelCharm &&
           oldModelCharm !== instance.charmUrl && !service.get('charmChanged')) {
         service.set('charmChanged', true);
       }
@@ -968,13 +968,23 @@ YUI.add('juju-models', function(Y) {
    * @return {Object} Annotations.
    */
   models.getAnnotations = function(entity) {
+    if (!entity) {
+      return undefined;
+    }
     if (_annotationProperty[entity.name]) {
       return entity.annotations;
     }
     return entity.get('annotations');
   };
 
-  models.setAnnotations = function(entity, annotations) {
+  models.setAnnotations = function(entity, annotations, merge) {
+    if (!entity) {
+      return;
+    }
+    if (merge) {
+      var existing = models.getAnnotations(entity) || {};
+      annotations = Y.mix(existing, annotations, true);
+    }
     if (_annotationProperty[entity.name]) {
       entity.annotations = annotations;
     } else {
@@ -1148,7 +1158,7 @@ YUI.add('juju-models', function(Y) {
         var units = service.get('units');
         var charm = self.charms.getById(service.get('charm'));
         var serviceOptions = {};
-        var charmOptions = charm.get('config.options');
+        var charmOptions = charm.get('options');
 
         if (service.get('pending') === true) {
           return;
@@ -1158,35 +1168,36 @@ YUI.add('juju-models', function(Y) {
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
           var optionData = charmOptions && charmOptions[key];
-          if (!optionData || (optionData && optionData['default'] &&
+          if ((!optionData && value !== undefined) ||
+              (optionData && optionData['default'] &&
               (value !== optionData['default']))) {
             serviceOptions[key] = value;
           }
         });
 
-        var serviceData = {
-          charm: charm.get('id'),
+        var serviceData = {charm: charm.get('id')};
+        if (!charm.get('is_subordinate')) {
           // Test models or ghosts might not have a units LazyModelList.
-          num_units: units && units.size() || 1
-        };
+          serviceData.num_units = units && units.size() || 1;
+        }
         if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
           serviceData.options = serviceOptions;
         }
         // Add constraints
         var constraints = service.get('constraintsStr');
         if (constraints) {
+          // constraintStr will filter out empty values
           serviceData.constraints = constraints;
         }
 
-        var annotations = service.get('annotations');
-        if (annotations && annotations['gui-x']) {
-          // XXX: Only expose position. Currently these are position absolute
-          // rather than relative.
-          serviceData.annotations = {
-            'gui-x': annotations['gui-x'],
-            'gui-y': annotations['gui-y']
-          };
+        // XXX: Only expose position. Currently these are position absolute
+        // rather than relative.
+        var anno = service.get('annotations');
+        if (anno && anno['gui-x'] && anno['gui-y']) {
+          serviceData.annotations = {'gui-x': anno['gui-x'],
+            'gui-y': anno['gui-y']};
         }
+
         result.envExport.services[service.get('id')] = serviceData;
       });
 

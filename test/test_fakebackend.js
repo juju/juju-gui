@@ -162,7 +162,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         packageName: 'wordpress'
       };
 
-      assert.deepEqual(attrs, expectedAttrs);
+      // Assert some key properties
+      assert.equal(attrs.id, expectedAttrs.id);
+      assert.equal(attrs.charm, expectedAttrs.charm);
+      assert.deepEqual(attrs.config, expectedAttrs.config);
+      assert.deepEqual(attrs.annotations, expectedAttrs.annotations);
       var units = service.get('units').toArray();
       assert.lengthOf(units, 1);
       assert.lengthOf(result.units, 1);
@@ -551,8 +555,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             // Verify config.
             var wordpress = fakebackend.db.services.getById('wordpress');
+            var mysql = fakebackend.db.services.getById('mysql');
             assert.equal(wordpress.get('config.engine'), 'nginx');
             assert.equal(wordpress.get('config.tuning'), 'single');
+
+            // Constraints
+            var constraints = mysql.get('constraints');
+            assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
+            assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
             done();
           }).then(undefined, done);
     });

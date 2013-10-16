@@ -47,6 +47,7 @@ describe('Inspector Overview', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
+    env.update_annotations = function() {};
     env.expose = function(s) {
       exposeCalled = true;
       service.set('exposed', true);
@@ -79,7 +80,6 @@ describe('Inspector Overview', function() {
     if (state) {
       state.destroy();
     }
-    window.flags = {};
   });
 
   var setUpInspector = function(serviceAttrs) {
@@ -197,6 +197,23 @@ describe('Inspector Overview', function() {
        assert.equal(4, message.Params.NumUnits);
      });
 
+  it('should disable and enable the unit control appropriately', function() {
+    setUpInspector();
+    var control = container.one('.num-units-control');
+    control.set('value', 7);
+    control.simulate('keydown', { keyCode: ENTER });
+    // confirm the 'please confirm constraints' dialogue
+    container.one('.confirm-num-units').simulate('click');
+    assert.isTrue(control.get('disabled'));
+    var message = conn.last_message();
+    conn.msg({
+      RequestId: message.RequestId,
+      Error: undefined,
+      Response: {Units: message.Params.NumUnits}
+    });
+    assert.isFalse(control.get('disabled'));
+  });
+
   it('should set the constraints before deploying any more units',
      function() {
        setUpInspector();
@@ -255,9 +272,13 @@ describe('Inspector Overview', function() {
     var expected = [
       { type: 'unit', category: 'error', units: [a, b] },
       { type: 'unit', category: 'pending', units: [c] },
+      { type: 'service', category: 'upgrade-service',
+        upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
+        downgrades: downgrades
+      },
       { type: 'unit', category: 'running', units: [d, e] },
       { type: 'unit', category: 'landscape-needs-reboot', units: [e]},
-      { type: 'unit', category: 'landscape-security-upgrades', units: []}
+      { type: 'unit', category: 'landscape-security-upgrades', units: {}}
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
@@ -265,8 +286,6 @@ describe('Inspector Overview', function() {
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview;
-
-    window.flags.upgradeCharm = true;
 
     var units = new Y.LazyModelList();
 
@@ -305,8 +324,6 @@ describe('Inspector Overview', function() {
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
 
-    window.flags.upgradeCharm = true;
-
     var units = new Y.LazyModelList();
 
     var c = units.add({ id: 'mysql/2', agent_state: 'pending' }),
@@ -343,8 +360,6 @@ describe('Inspector Overview', function() {
     service.set('charm', 'cs:precise/mysql-1');
     service.set('upgrade_available', false);
     service.set('upgrade_to', undefined);
-
-    window.flags.upgradeCharm = true;
 
     var units = new Y.LazyModelList();
 
@@ -426,7 +441,7 @@ describe('Inspector Overview', function() {
     var SUH = '.status-unit-header',
         SUC = '.status-unit-content';
 
-    assert.equal(unitListWrappers.size(), 5);
+    assert.equal(unitListWrappers.size(), 6);
     var wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.one(SUH).hasClass('error'), true);
     assert.equal(wrapper1.one(SUH).hasClass('closed-unit-list'), true);
@@ -443,7 +458,7 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper3 = unitListWrappers.item(2);
+    var wrapper3 = unitListWrappers.item(3);
     assert.equal(wrapper3.one(SUH).hasClass('running'), true);
     assert.equal(wrapper3.one(SUH).hasClass('closed-unit-list'), true);
     assert.equal(wrapper3.one(SUC).hasClass('close-unit'), true);
@@ -451,10 +466,10 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
-    var wrapper4 = unitListWrappers.item(3);
+    var wrapper4 = unitListWrappers.item(4);
     assert.equal(wrapper4.hasClass('hidden'), true);
 
-    var wrapper5 = unitListWrappers.item(4);
+    var wrapper5 = unitListWrappers.item(5);
     assert.equal(wrapper5.hasClass('hidden'), true);
 
     units = new Y.LazyModelList();
@@ -473,7 +488,7 @@ describe('Inspector Overview', function() {
 
     unitListWrappers = newContainer.all('.unit-list-wrapper');
 
-    assert.equal(unitListWrappers.size(), 5);
+    assert.equal(unitListWrappers.size(), 6);
 
     wrapper1 = unitListWrappers.item(0);
     assert.equal(wrapper1.hasClass('hidden'), true);
@@ -484,14 +499,14 @@ describe('Inspector Overview', function() {
     assert.equal(wrapper2.one('.category-label').getHTML(), 'pending units');
     assert.notEqual(wrapper2.one(SUC).getStyle('maxHeight'), undefined);
 
-    wrapper3 = unitListWrappers.item(2);
+    wrapper3 = unitListWrappers.item(3);
     assert.equal(wrapper3.one(SUH).hasClass('running'), true);
     assert.equal(wrapper3.one('.unit-qty').getHTML(), 1);
     assert.equal(wrapper3.one('.category-label').getHTML(), 'running units');
     assert.notEqual(wrapper3.one(SUC).getStyle('maxHeight'), undefined);
 
-    wrapper4 = unitListWrappers.item(3);
-    wrapper5 = unitListWrappers.item(4);
+    wrapper4 = unitListWrappers.item(4);
+    wrapper5 = unitListWrappers.item(5);
 
     assert.equal(wrapper4.hasClass('hidden'), true);
     assert.equal(wrapper5.hasClass('hidden'), true);
@@ -503,8 +518,6 @@ describe('Inspector Overview', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = utils.makeContainer();
-
-    window.flags.upgradeCharm = true;
 
     var units = new Y.LazyModelList();
 
@@ -568,8 +581,6 @@ describe('Inspector Overview', function() {
         overview = inspector.viewletManager.viewlets.overview,
         newContainer = inspector.viewletManager.get('container');
 
-    window.flags.upgradeCharm = true;
-
     // Ensure that get_charm is called to get the new charm.
     env.setCharm = function(serviceName, upgradeTo, force, callback) {
       callback({});
@@ -589,7 +600,6 @@ describe('Inspector Overview', function() {
   });
 
   it('reflects that a service was upgraded', function(done) {
-    window.flags.upgradeCharm = true;
     var inspector = setUpInspector();
     var newContainer = inspector.viewletManager.viewlets.inspectorHeader
       .container;
