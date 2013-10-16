@@ -171,7 +171,8 @@ YUI.add('juju-view-onboarding', function(Y) {
      * @return {undefined} Mutates only.
      */
     incrementIndex: function() {
-      this.onboardingIndex = Math.min(this.onboardingIndex + 1, this.stateCount);
+      this.onboardingIndex = Math.min(
+          this.onboardingIndex + 1, this.stateCount);
     },
 
     /**
