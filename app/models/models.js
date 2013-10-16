@@ -1175,11 +1175,11 @@ YUI.add('juju-models', function(Y) {
           }
         });
 
-        var serviceData = {
-          charm: charm.get('id'),
+        var serviceData = {charm: charm.get('id')};
+        if (!charm.get('is_subordinate')) {
           // Test models or ghosts might not have a units LazyModelList.
-          num_units: units && units.size() || 1
-        };
+          serviceData.num_units = units && units.size() || 1;
+        }
         if (serviceOptions && Y.Object.size(serviceOptions) >= 1) {
           serviceData.options = serviceOptions;
         }
