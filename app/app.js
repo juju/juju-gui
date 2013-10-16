@@ -1092,7 +1092,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
-
       if (!this.renderEnvironment) {
         next(); return;
       }
@@ -1115,7 +1114,7 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          this.initialise_onboarding();
+          this.initialize_onboarding();
         },
         render: true
       });
@@ -1124,20 +1123,16 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * @method initialise_onboarding
+     * @method initialize_onboarding
      */
-    initialise_onboarding: function() {
+    initialize_onboarding: function() {
       var path = window.location.pathname;
-      if (!this._onboarding) {
-        // Need to check onboarding exists due to the double dispatch bug.
-        if (path === '/') {
-          this._onboarding = new Y.juju.views.OnboardingView({
-            'container': '#onboarding'
-          });
+      // Need to check onboarding exists due to the double dispatch bug.
+      if (!this._onboarding && window.flags.onboard) {
+        if (path === '/' || path === '/:flags:/onboard/') {
+          this._onboarding = new Y.juju.views.onboarding({'container': '#onboarding'});
           this._onboarding.render();
         }
-      } else if (path !== '/') {
-        this._onboarding.close();
       }
     },
 

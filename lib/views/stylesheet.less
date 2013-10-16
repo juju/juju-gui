@@ -522,10 +522,6 @@ code {
         margin-right: auto;
         margin-top: 2ex;
     }
-
-    &.displayNone {
-        display: none;
-    }
 }
 .environment-menu {
     @border_radius: 20px;
@@ -1994,10 +1990,10 @@ g.unit {
         }
 
         ul {
-            z-index: 2;
             position: relative;
             list-style: none;
             margin-left: 0;
+            height: 57px;
 
             li {
               display: inline;
@@ -2016,12 +2012,13 @@ g.unit {
                 line-height: 40px;
 
                 &.onboarding-next,
-                &.onboarding-start {
+                &.onboarding-start,
+                &.onboarding-prev {
                     float: right;
                 }
-
                 &.highlight {
                     background-color: @charm-panel-orange;
+                    margin-left: 10px;
                 }
             }
         }
@@ -2091,6 +2088,7 @@ g.unit {
             }
             ul a.onboarding-close {
                 background-color: @charm-panel-orange;
+                margin-left: 10px;
                 float: right;
             }
             ul a.onboarding-next {

@@ -28,7 +28,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-view-onboarding', function(Y) {
 
   var views = Y.namespace('juju.views');
-  var onboardingIndex = 0;
 
   /**
    * The OnboardingView class.
@@ -57,6 +56,7 @@ YUI.add('juju-view-onboarding', function(Y) {
         mouseup: 'closeHandler'
       }
     },
+    onboardingIndex: 0,
 
     /**
      * Onboarding event handler. When clicking the close button,
@@ -81,7 +81,7 @@ YUI.add('juju-view-onboarding', function(Y) {
     close: function() {
       var container = this.get('container');
       container.hide();
-      Y.one('#environment-help').removeClass('displayNone');
+      Y.one('#environment-help').removeClass('hidden');
     },
 
     /**
@@ -94,7 +94,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       this.onboardingIndex = 0;
       this.drawContent();
       this.onboarding.show();
-      Y.one('#environment-help').addClass('displayNone');
+      Y.one('#environment-help').addClass('hidden');
     },
 
     /**
@@ -107,7 +107,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     nextHandler: function(ev) {
       ev.halt();
-      onboardingIndex = onboardingIndex + 1;
+      this.onboardingIndex = this.onboardingIndex + 1;
       this.drawContent();
     },
 
@@ -121,7 +121,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     prevHandler: function(ev) {
       ev.halt();
-      onboardingIndex = onboardingIndex - 1;
+      this.onboardingIndex = this.onboardingIndex - 1;
       this.drawContent();
     },
 
@@ -163,8 +163,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       container_bg.removeClass('state-1');
       container_bg.removeClass('state-2');
       container_bg.removeClass('state-3');
-      container_bg.addClass('state-' + onboardingIndex);
-
+      container_bg.addClass('state-' + this.onboardingIndex);
     },
 
     /**
