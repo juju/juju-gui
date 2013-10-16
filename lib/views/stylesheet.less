@@ -47,9 +47,10 @@ Go forth and see the typography.less file and use those.
 @charm-panel-padding-left: 10px;
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
-@navbar-height: 79px;
+@navbar-height: 60px;
+@navbar-border-dark: #191514;
+@navbar-border-light: #2d2928;
 @navbar-bottom-height: 50px;
-@navbar-bottom-border-height: 8px;
 @navbar-divider-colour: #333;
 @text-colour: #505050;
 @border-radius: 2px;
@@ -282,14 +283,11 @@ code {
 .navbar {
     min-width: 800px;
     // Need to subtract the bottom-border-height.
-    height: @navbar-height - @navbar-bottom-border-height;
+    height: @navbar-height;
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
-    border-bottom: @navbar-bottom-border-height solid #1c1815;
 
     .navbar-inner {
-        height: 70px;
-        border-bottom: 1px solid #14100f;
         // The following are resets to override Bootstrap styles
         margin: 0;
         padding: 0;
@@ -298,34 +296,48 @@ code {
         border-radius: 0;
         box-shadow: none;
 
-        .brand {
-            margin: 20px 60px 0 10px;
+        &,
+        a {
+            color: #d7d3d0;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        ul {
+            margin: 0;
             padding: 0;
+            list-style: none;
         }
         #browser-nav {
             float: left;
-            margin: 0 20px 0 0;
             padding: 0;
-            list-style: none;
 
-            ul {
-              margin: 0 20px 0 0;
-              padding: 0;
-              list-style: none;
+            & > ul > li,
+            & > ul > li > a {
+                .border-box;
+                display: block;
+                float: left;
+                height: @navbar-height;
+                padding: 20px 20px 0 20px;
+                border-width: 0 1px;
+                border-style: solid;
+                border-left-color: @navbar-border-light;
+                border-right-color: @navbar-border-dark;
             }
-
-            li {
+            & > ul > li {
                 float: left;
 
-                a {
-                    .border-box;
-                    display: block;
-                    height: 70px;
-                    margin-right: 30px;
-                    padding: 30px 0 0 0;
-                    font-size: 12pt;
-                    font-weight: 300;
-                    color: #f2f2e6;
+                &:first-child {
+                    border-left: none;
+                }
+                .brand {
+                  padding-top: 15px;
+                  padding-right: 30px;
+                }
+                & > a {
+                    float: none;
+                    margin: -20px -20px 0 -20px;
+                    border: none;
 
                     &:hover {
                         text-decoration: none;
@@ -337,66 +349,161 @@ code {
                         margin-right: 6px;
                     }
                 }
-            }
-        }
-        #environment-switcher {
-            float: left;
-            height: 47px;
-            padding: 25px 0 0 10px;
-        }
-        .nav {
-            float: right;
-            margin: 0;
+                &.import-export {
+                    padding: 24px 0 0 0;
 
-	    .import-export {
-		cursor: pointer;
-	    }
-	    #import-trigger {
-		padding: 25px 5px 0 0;
-		/* XXX bac: remove the hiding when import is implemented. */
-		display: none;
-	    }
-	    #export-trigger {
-		padding: 25px 10px 0 5px;
-	    }
+                    span {
+                        display: block;
+                        float: left;
+                        height: 15px;
+                        padding:  0 10px;
+                        cursor: pointer;
+                        line-height: 15px;
 
-            li,
-            li a {
-                color: #fff;
-            }
-            & > li {
-                .type13;
-                height: 50px;
-                margin: 0;
-                padding: 16px 10px 0 20px;
-                color: #fff;
-
-                & > a.button.inverse {
-                    background-color: #1f1b18;
-
-                    &:hover {
-                        background-color: #1f1b18;
+                        &:first-child {
+                            border-left: 1px solid @navbar-border-dark;
+                        }
+                        &:last-child {
+                            border-right: 1px solid @navbar-border-light;;
+                        }
+                        // Ugly classes to display the correct sprite for the
+                        // state. We might be able to turn this into a mixin
+                        // if we need to redo the same thing often.
+                        &:focus,
+                        &:hover {
+                            .sprite.hover {
+                                display: block;
+                            }
+                            .sprite.normal,
+                            .sprite.click {
+                                display: none;
+                            }
+                        }
+                        &:active {
+                            .sprite.click {
+                                display: block;
+                            }
+                            .sprite.normal,
+                            .sprite.hover {
+                                display: none;
+                            }
+                        }
+                        .sprite.hover,
+                        .sprite.click {
+                            display: none;
+                        }
+                        .sprite {
+                            display: block;
+                            margin-top: 1px;
+                        }
                     }
-                }
-                #notifications,
-                #notifications a,
-                #notifications li {
-                    color: #333;
-                }
-                #notifications {
-                    #notify-indicator {
-                        .button;
-                        margin: 0 9px 0 0;
-                        padding: 6px 12px;
+                    #import-trigger {
+                        /* XXX bac: remove the hiding when import is implemented. */
+                        display: none;
                     }
-                    #notify-list {
-                        white-space: normal;
-                        overflow: auto;
-                        margin-right: 10px;
+                    #export-trigger {
+                        /* XXX huwshimi: remove the following line when import is implemented. */
                         border: none;
                     }
                 }
+                &.notifications-nav {
+                    position: relative;
+                    padding: 0;
 
+                    #notifications {
+                        & > span {
+                            .border-box;
+                            display: block;
+                            height: @navbar-height;
+                            padding: 15px 20px 0 20px;
+
+                            &.open {
+                                background-color: #000;
+
+                                #notify-list {
+                                    .create-border-radius(0);
+                                    top: @navbar-height;
+                                    width: 290px;
+                                    margin: 0;
+                                    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+                                }
+                            }
+                            #notify-indicator {
+                                .button;
+                                margin: 0 9px 0 0;
+                                padding: 6px 12px;
+                            }
+                            #notify-list {
+                                .customize-scrollbar;
+                                padding: 0;
+                                background-color: #eee;
+                                border: none;
+                                white-space: normal;
+
+                                &.active {
+                                }
+                                &:before,
+                                &:after {
+                                    display: none;
+                                }
+                                a,
+                                li {
+                                    color: #333;
+                                }
+                                h3 {
+                                    padding: 11px 20px;
+                                    background-color: #000;
+                                    color: #f2f2e6;
+                                    font-size: 16px;
+                                    font-weight: 300;
+                                }
+                                ul {
+                                    max-height: 500px;
+                                    overflow-y: auto;
+
+                                    .notice {
+                                        border-top: 1px solid #efefef;
+                                        border-bottom: 1px solid #e2e2e2;
+                                        padding: 20px;
+
+                                        &:first-child {
+                                            border-top: none;
+                                        }
+                                        &:list-child {
+                                            border-bottom: none;
+                                        }
+                                        h4 {
+                                            font-weight: normal;
+                                            margin-bottom: 10px;
+                                        }
+                                        small {
+                                            display: block;
+                                            margin-top: 5px;
+                                            font-size: 0.7em;
+                                            color: #d0d0d0;
+                                        }
+                                        .error {
+                                            background-color: rgba(255, 0, 0, 0.1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .right-nav {
+            float: right;
+            margin: 0 20px 0 0;
+
+            a.button.inverse {
+                margin-top: 12px;
+                background-color: #1f1b18;
+
+                &:hover {
+                    background-color: #1f1b18;
+                }
             }
         }
     }
@@ -440,7 +547,6 @@ code {
     position: relative;
     background-color: #fff;
     width: 100%;
-    border-top: 1px solid #252120;
 }
 #main {
     overflow: hidden;
@@ -861,35 +967,6 @@ g.unit {
   }
 }
 
-/*
- * Notification system
- */
-#notify-list {
-    white-space: nowrap;
-    max-height: 500px;
-    overflow-y: scroll;
-}
-.notice {
-    border-top: 1px solid #D0D0D0;
-    padding: 20px;
-
-    &:first-child {
-        border: none;
-    }
-    h4 {
-        font-weight: normal;
-        margin-bottom: 10px;
-    }
-    small {
-        display: block;
-        margin-top: 5px;
-        font-size: 0.7em;
-        color: #d0d0d0;
-    }
-    .error {
-        background-color: rgba(255, 0, 0, 0.1);
-    }
-}
 #service-footer {
     text-align: center;
 
@@ -910,49 +987,42 @@ g.unit {
  */
 #notifier-box {
     position: absolute;
-    right: 0px;
-    top: 0px;
+    top: @navbar-height;
+    left: 50%;
+    margin: -10px 0 0 -125px;
     z-index: 9999;
 
     .yui3-notifier-content {
-        @background-color: black;
-        @margin-left: 41px;
-        @margin-top: 13px;
-        @opacity: 0.8;
-        // Using a variable here because LESS strips commas in mixin args.
-        @box-shadow: 0 2px 4px lighten(@background-color, 10%),
-            0 1px 2px lighten(@background-color, 20%) inset;
+        @box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         .create-border-radius(@border-radius);
         .create-box-shadow(@box-shadow);
-        background-color: @background-color;
-        margin: 6px;
-        opacity: @opacity;
-        overflow: hidden;
-        width: 277px;
+        position: realtive;
+        width: 250px;
+        margin-top: 5px;
+        padding: 7px 10px;
+        background-color: #fff;
+        color: #333;
+        font-size: 12px;
 
-        &:hover {
-            cursor: pointer;
-            opacity: @opacity - 0.1;
+        &:first-child {
+            margin-top: 0;
+
+            &:before {
+                content: '';
+                position: absolute;
+                display: block;
+                top: -5px;
+                left: 50%;
+                width: 10px;
+                height: 10px;
+                margin-left: -6px;
+                background-color: #fff;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
         }
-        h3 {
-            color: #FDF6E3;
-            font-size: 16px;
-            font-weight: normal;
-            margin-top: @margin-top;
-            margin-left: @margin-left;
-        }
-        div {
-            color: #DDD7C6;
-            font-size: 12px;
-            line-height: 16px;
-            margin-left: @margin-left;
-            margin-bottom: 12px;
-        }
-        .sprite {
-            float: left;
-            margin-top: @margin-top + 5px;
-            margin-left: 12px;
-            opacity: 1;
+        div:last-child {
+          color: #aaa;
         }
     }
 }
