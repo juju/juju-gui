@@ -119,6 +119,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(background.hasClass('state-0'), 'should stick to 0');
     });
 
+    it('displays correct stage of onboarding', function() {
+      var onboard = new OnboardingView({
+        container: container
+      });
 
+      onboard.render();
+
+      var panel0 = container.one('.panel-0');
+      var panel1 = container.one('.panel-1');
+      var panel2 = container.one('.panel-2');
+      var panel3 = container.one('.panel-3');
+      assert.equal(panel0.getComputedStyle('display'), 'block', 'should be showing 0');
+      onboard.nextHandler({halt: function(){}});
+      assert.equal(panel1.getComputedStyle('display'), 'block', 'should be showing 1');
+      onboard.nextHandler({halt: function(){}});
+      assert.equal(panel2.getComputedStyle('display'), 'block', 'should be showing 2');
+      onboard.prevHandler({halt: function(){}});
+      assert.equal(panel1.getComputedStyle('display'), 'block', 'should be showing 1 again');
+      onboard.prevHandler({halt: function(){}});
+      assert.equal(panel0.getComputedStyle('display'), 'block', 'back to 0');
+      onboard.prevHandler({halt: function(){}});
+      assert.equal(panel0.getComputedStyle('display'), 'block');
+    });
+
+    it('closes onboarding', function() {
+      var onboard = new OnboardingView({
+        container: container
+      });
+
+      onboard.render();
+      var onboardingCross = container.one('.onboarding-cross');
+      assert.isTrue(onboardingCross instanceof Y.Node);
+      onboard.closeHandler({halt: function(){}});
+      assert.equal(container.getComputedStyle('display'), 'none');
+      assert.isFalse(env_help.hasClass('hidden'));
+    });
   });
 })();

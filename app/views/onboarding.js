@@ -57,6 +57,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       }
     },
     onboardingIndex: 0,
+    states: ['state-0', 'state-1', 'state-2', 'state-3'],
 
     /**
      * Onboarding event handler. When clicking the close button,
@@ -107,7 +108,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     nextHandler: function(ev) {
       ev.halt();
-      this.onboardingIndex = this.onboardingIndex + 1;
+      this.incrementIndex();
       this.drawContent();
     },
 
@@ -121,7 +122,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     prevHandler: function(ev) {
       ev.halt();
-      this.onboardingIndex = this.onboardingIndex - 1;
+      this.decrementIndex();
       this.drawContent();
     },
 
@@ -159,11 +160,28 @@ YUI.add('juju-view-onboarding', function(Y) {
       var container = this.get('container');
       var container_bg = container.one('#onboarding-background');
 
-      container_bg.removeClass('state-0');
-      container_bg.removeClass('state-1');
-      container_bg.removeClass('state-2');
-      container_bg.removeClass('state-3');
-      container_bg.addClass('state-' + this.onboardingIndex);
+      var i = this.stateCount;
+      while(i--) {
+        container_bg.removeClass(this.states[i]);
+      }
+      container_bg.addClass(this.states[this.onboardingIndex]);
+    },
+
+    /**
+     * @method incrementIndex
+     * @return {undefined} Mutates only.
+     */
+    incrementIndex: function() {
+      this.onboardingIndex = Math.min(this.onboardingIndex + 1, this.stateCount);
+    },
+
+    /**
+     * @method decrementIndex
+     * @return {undefined} Mutates only.
+     */
+    decrementIndex: function() {
+      this.onboardingIndex = Math.max(this.onboardingIndex - 1, 0);
+
     },
 
     /**
@@ -183,6 +201,7 @@ YUI.add('juju-view-onboarding', function(Y) {
         // No mask in the DOM, as is the case in tests.
         return this;
       }
+      this.stateCount = this.states.length - 1;
       this.get('container').setHTML(this.template());
       this.open();
 
