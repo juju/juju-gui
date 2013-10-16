@@ -309,9 +309,16 @@ code {
             list-style: none;
         }
         #browser-nav {
-            float: left;
             padding: 0;
 
+            &:after {
+                content: '';
+                display: block;
+                float: left;
+                height: @navbar-height;
+                background-color: #f00;
+                border-left: 1px solid @navbar-border-light;
+            }
             & > ul > li,
             & > ul > li > a {
                 .border-box;
