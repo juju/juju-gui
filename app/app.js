@@ -372,6 +372,7 @@ YUI.add('juju-gui', function(Y) {
       this.cookieHandler = null;
 
       this.renderEnvironment = true;
+
       // If this property has a value other than '/' then
       // navigate to it after logging in.
       this.redirectPath = '/';
@@ -1109,10 +1110,34 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          this.initializeOnboarding();
         },
         render: true
       });
+
       next();
+    },
+
+    /**
+     * Create a 'welcome' message walkthrough for new usersl.
+     *
+     * @method initialize_onboarding
+     */
+    initializeOnboarding: function() {
+      var path = window.location.pathname;
+      // Need to check onboarding exists due to the double dispatch bug.
+      if (!this._onboarding && window.flags.onboard) {
+        if (path === '/' || path === '/:flags:/onboard/') {
+          var paths = this.nsRouter.parse(window.location.toString());
+          path = paths.charmbrowser;
+          if (path === '/sidebar/' ||
+              (this.get('defaultViewmode') === 'sidebar' && path === '/')) {
+            this._onboarding = new Y.juju.views.OnboardingView(
+                {'container': '#onboarding'});
+            this._onboarding.render();
+          }
+        }
+      }
     },
 
     /**
@@ -1334,6 +1359,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-views',
     'juju-view-environment',
     'juju-view-login',
+    'juju-view-onboarding',
     'juju-landscape',
     'juju-websocket-logging',
     'io',
