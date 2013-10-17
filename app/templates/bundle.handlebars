@@ -119,7 +119,33 @@
                     </div>
                 </div>
                 <div id="bws-readme"></div>
-                <div id="bws-charms"></div>
+                <div id="bws-charms">
+                    <div class="yui3-g">
+                        <div class="interfaces-heading yui3-u-1-2">
+                            <h3>Charm</h3>
+                        </div>
+                        <div class="interfaces-heading yui3-u-1-2">
+                            <h3>Config</h3>
+                        </div>
+                    </div>
+                    <ul class="interface-list">
+                        {{#arrayObject services}}
+                            <li class="interface-row yui3-g">
+                                <div class="yui3-u-1-2" data-config="{{ key }}"></div>
+                                <div class="yui3-u-1-2 charm-config">
+                                    <ul>
+                                        <li>Number of units: {{ value.num_units }}</li>
+                                        {{#if value.config}}
+                                            {{#arrayObject value.options}}
+                                                <li>{{ key }}: {{ value }}</li>
+                                            {{/arrayObject}}
+                                        {{/if}}
+                                    </ul>
+                                </div>
+                            </li>
+                        {{/arrayObject}}
+                    </ul>
+                </div>
                 <div id="bws-code">
                     <p class="intro">
                         The source code of the bundle includes scripts, metadata,
