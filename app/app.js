@@ -565,6 +565,7 @@ YUI.add('juju-gui', function(Y) {
       // Tests won't have this node.
       if (exportNode) {
         exportNode.on('click', function(e) {
+          e.halt();
           this.exportYAML();
         }, this);
       }

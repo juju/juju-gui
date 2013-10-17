@@ -359,12 +359,12 @@ code {
                 &.import-export {
                     padding: 24px 0 0 0;
 
-                    span {
+                    a {
                         display: block;
                         float: left;
                         height: 15px;
+                        margin: 0;
                         padding:  0 10px;
-                        cursor: pointer;
                         line-height: 15px;
 
                         &:first-child {
@@ -381,27 +381,16 @@ code {
                             .sprite.hover {
                                 display: block;
                             }
-                            .sprite.normal,
-                            .sprite.click {
+                            .sprite.normal {
                                 display: none;
                             }
                         }
-                        &:active {
-                            .sprite.click {
-                                display: block;
-                            }
-                            .sprite.normal,
-                            .sprite.hover {
-                                display: none;
-                            }
-                        }
-                        .sprite.hover,
-                        .sprite.click {
+                        .sprite.hover {
                             display: none;
                         }
                         .sprite {
                             display: block;
-                            margin-top: 1px;
+                            margin: 1px 0 0 0;
                         }
                     }
                     #import-trigger {
