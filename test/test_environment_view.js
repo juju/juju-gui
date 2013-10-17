@@ -586,7 +586,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.topo.service_boxes.wordpressb.center);
     });
 
-    it('must be able to use position annotations', function() {
+    it('must be able to use position annotations', function(done) {
       var tmp_data = {
         op: 'delta',
         result: [
@@ -621,7 +621,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       match[1].should.eql('374.1');
       match[2].should.eql('211.2');
 
-      // A positioned service will never be auto-positioned.
+      // A positioned service will never be auto-positioned. It will also
+      // center the canvas on itself.
+      view.topo.on('panToPoint', function() {
+        // Once we reach here, the view has been updated and the canvas panned
+        // to the newly added/annotated service.
+        done();
+      });
       tmp_data = {
         op: 'delta',
         result: [
@@ -631,20 +637,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'charm': 'cs:precise/wordpress-6',
               'id': 'wordpressa',
               'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
-            }
-          ]]
-      };
-      db.onDelta({ data: tmp_data });
-      view.update();
-
-      tmp_data = {
-        op: 'delta',
-        result: [
-          ['service', 'add',
-            {
-              'subordinate': false,
-              'charm': 'cs:precise/wordpress-6',
-              'id': 'wordpressb'
             }
           ]]
       };

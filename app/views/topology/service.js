@@ -714,7 +714,7 @@ YUI.add('juju-topology-service', function(Y) {
                   level: 'important'
                 });
               } else {
-                console.log('import failed', file, result);
+                console.warn('import failed', file, result);
                 notifications.add({
                   title: 'Import Environment Failed',
                   message: 'Import from "' + file.name +
@@ -1000,12 +1000,20 @@ YUI.add('juju-topology-service', function(Y) {
       // and drop, or those who don't have position attributes/annotations.
       var vertices = [];
       Y.each(topo.service_boxes, function(boundingBox) {
-        var annotations = boundingBox.annotations;
-        if (annotations['gui-x'] && boundingBox.x === undefined) {
-          boundingBox.x = annotations['gui-x'];
-        }
-        if (annotations['gui-y'] && boundingBox.y === undefined) {
-          boundingBox.y = annotations['gui-y'];
+        if (!boundingBox.model.get('pending')) {
+          var annotations = boundingBox.annotations,
+              addToVertices = 0;
+          if (annotations['gui-x'] && boundingBox.x === undefined) {
+            boundingBox.x = annotations['gui-x'];
+            addToVertices++;
+          }
+          if (annotations['gui-y'] && boundingBox.y === undefined) {
+            boundingBox.y = annotations['gui-y'];
+            addToVertices++;
+          }
+          if (addToVertices === 2) {
+            vertices.push([boundingBox.x, boundingBox.y]);
+          }
         }
       });
 
@@ -1073,11 +1081,11 @@ YUI.add('juju-topology-service', function(Y) {
             }
           });
         }
-        // Find the centroid of our hull of services and inform the
-        // topology.
-        if (vertices.length) {
-          this.findCentroid(vertices);
-        }
+      }
+      // Find the centroid of our hull of services and inform the
+      // topology.
+      if (vertices.length) {
+        this.findCentroid(vertices);
       }
 
       // enter
