@@ -20,7 +20,42 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.11.0:
+    - >
+      (FIX) Greatly reduced the size of the GUI release through removing
+      unnecessary bits and using more efficient compression. This will help
+      speed deployment greatly.
+    - Add onboarding beyond flag.
+    - >
+      Bundle display now includes charm icons in bundle detail page and on
+      token, the charms tab, the visualization caption with show/hide, icons,
+      and README, all visible via URLs.  Bundles integraded in charm-browser
+      search results.  All remains behind charmworldv3 feature flag.
+    - New import/export icons with hover/click.
+    - >
+      (FIX) Reported issue with export and inspector broken after a scripted
+      deploy.
+    - (FIX) Relation names now contain both endpoints.
+    - >
+      (FIX,CLEANUP) Coordinates were being stored in three places, causing
+      interesting side effects in a real environment.  This was fixed along
+      with a refactor of coordinate managing code.
+    - (FIX) Export no longer sets number of units for subordinates.
+    - (FIX) Gracefully handle bundles without x/y annotated coordinates
+    - (FIX) Scale up input was disabled after value change.
+    - (FIX) Charm details link was not working correctly from inspector.
+    - >
+      (FIX) Go sandbox's AllWatcher initialization was broken, causing the
+      first change to go unnoticed.
+    - Position annotations added to export.
+    - The ability to upgrade a charm released without a feature flag.
+    - (FIX) Clarify that the charm has been processed in the source tab.
+    - (FIX) Fullscreen charm details tabs were loading above content.
+    - (FIX) Better listing of source file listing icons.
+    - (FIX) New units added to the canvas no longer overlap old ones
+    - >
+      (FIX) Minimizing the browser with the details view open; closing,
+      and then re-opening caused the browser to be blank.
 - 0.10.1:
     - Add icon for exporting a bundle.
     - (FIX) The GUI was unusable when cookies were turned off in your browser.
