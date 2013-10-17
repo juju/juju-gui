@@ -161,13 +161,6 @@ YUI.add('juju-env-base', function(Y) {
       @type {string}
     */
     'environmentName': {},
-    /**
-      The user has dismissed the onboarding message.
-
-      @attribute onboardDismissed
-      @type {boolean}
-    */
-    'onboardDismissed': {value: false},
 
     /**
       Operations that are prohibited in read-only mode, but which should fail
