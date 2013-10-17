@@ -349,7 +349,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       this._setupTabview();
       this._dispatchTabEvents(this.tabview);
-
+      this._showActiveTab();
 
       if (isFullscreen) {
         if (!this.get('entity').get('relatedCharms')) {
@@ -358,14 +358,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         } else {
           // We have related charm info, get to rendering them.
           this._renderRelatedCharms();
-        }
-      }
-
-      if (this.get('activeTab')) {
-        var tab = this.get('container').one(
-            '.tabs a[href="' + this.get('activeTab') + '"]');
-        if (tab) {
-          tab.get('parentNode').simulate('click');
         }
       }
 
