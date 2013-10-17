@@ -1005,11 +1005,11 @@ YUI.add('juju-topology-service', function(Y) {
               addToVertices = 0;
           if (annotations['gui-x'] && boundingBox.x === undefined) {
             boundingBox.x = annotations['gui-x'];
-            addToVertices++;
+            addToVertices += 1;
           }
           if (annotations['gui-y'] && boundingBox.y === undefined) {
             boundingBox.y = annotations['gui-y'];
-            addToVertices++;
+            addToVertices += 1;
           }
           if (addToVertices === 2) {
             vertices.push([boundingBox.x, boundingBox.y]);
