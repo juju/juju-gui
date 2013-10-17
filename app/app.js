@@ -1110,7 +1110,7 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          this.initialize_onboarding();
+          this.initializeOnboarding();
         },
         render: true
       });
@@ -1119,9 +1119,11 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Create a 'welcome' message walkthrough for new usersl.
+     *
      * @method initialize_onboarding
      */
-    initialize_onboarding: function() {
+    initializeOnboarding: function() {
       var path = window.location.pathname;
       // Need to check onboarding exists due to the double dispatch bug.
       if (!this._onboarding && window.flags.onboard) {
