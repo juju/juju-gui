@@ -237,5 +237,66 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
+  it('renders the charm list tab properly', function(done) {
+    view._parseData = function() {
+      return new Y.Promise(function(resolve) { resolve(); });
+    };
+    view.set('entity', {
+      getAttrs: function() {
+        return {
+          charm_metadata: {
+            foo: {
+              id: 'precise/foo-9',
+              storeId: 'testid',
+              name: 'foo'
+            },
+            bar: {
+              id: 'precise/bar-10',
+              storeId: 'testid',
+              name: 'bar'
+            }
+          },
+          files: [],
+          data: {
+            services: {
+              foo: {
+                annotations: {
+                  'gui-x': '1',
+                  'gui-y': '2'
+                }
+              },
+              bar: {
+                annotations: {
+                  'gui-x': '3',
+                  'gui-y': '4'
+                }
+              }
+            }
+          },
+          services: {
+            foo: {
+              annotations: {
+                'gui-x': '1',
+                'gui-y': '2'
+              }
+            },
+            bar: {
+              annotations: {
+                'gui-x': '3',
+                'gui-y': '4'
+              }
+            }
+          }
+        };
+      }});
+    view.after('renderedChange', function(e) {
+      var tab = container.one('#bws-charms');
+      assert.equal(tab.all('.token').size(), 2);
+      done();
+    });
+    view.render();
+  });
+
+
 
 });
