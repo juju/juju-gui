@@ -67,8 +67,8 @@ describe('notifier widget', function() {
   it('should display the given title and message', function() {
     makeNotifier('mytitle', 'mymessage');
     var notifierNode = notifierBox.one('*');
-    assert.equal('mytitle', notifierNode.one('h3').getContent());
-    assert.equal('mymessage', notifierNode.one('div').getContent());
+    assert.equal('mytitle', notifierNode.one('div:first-child').getContent());
+    assert.equal('mymessage', notifierNode.one('div:last-child').getContent());
   });
 
   it('should be able to display multiple notifications', function() {
@@ -83,8 +83,8 @@ describe('notifier widget', function() {
     makeNotifier('mytitle1', 'mymessage1');
     makeNotifier('mytitle2', 'mymessage2');
     var notifierNode = notifierBox.one('*');
-    assert.equal('mytitle2', notifierNode.one('h3').getContent());
-    assert.equal('mymessage2', notifierNode.one('div').getContent());
+    assert.equal('mytitle2', notifierNode.one('div:first-child').getContent());
+    assert.equal('mymessage2', notifierNode.one('div:last-child').getContent());
   });
 
   it('should destroy notifications after N milliseconds', function(done) {

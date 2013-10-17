@@ -2,18 +2,24 @@
   <a href="" id="notify-indicator" data-target="notify-list">
     {{count}}
   </a>
-  <ul id="notify-list" class="dropdown-menu">
-    {{#notifications}}
-    <li id="{{clientId}}" class="notice">
-      <div>
-        <h4>{{title}}</h4>
-        <div>
-          {{message}}
-        </div>
-        <small data-timestamp="{{timestamp}}"
-               class="timestamp">{{humanizeTime timestamp}}</small>
-      </div>
-    </li>
-    {{/notifications}}
-  </ul>
+  <span id="notify-list" class="dropdown-menu">
+    <h3>
+      {{count}} notifications
+    </h3>
+    <ul>
+      {{#notifications}}
+        <li id="{{clientId}}" class="notice">
+          <div>
+            <h4>{{title}}</h4>
+            <div>
+              {{message}}
+            </div>
+            <small data-timestamp="{{timestamp}}"
+                   class="timestamp">{{humanizeTime timestamp}}</small>
+          </div>
+        </li>
+      {{/notifications}}
+    </ul>
+  </span>
+  Notifications
 </span>
