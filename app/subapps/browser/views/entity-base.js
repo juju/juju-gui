@@ -435,6 +435,22 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         render: true,
         srcNode: this.get('container').one('.tabs')
       });
+    },
+
+    /**
+      Shows the active tabview tab set via the browser subapp.
+
+      @method _showActiveTab
+    */
+    _showActiveTab: function() {
+      var activeTab = this.get('activeTab');
+      if (activeTab) {
+        var tab = this.get('container')
+                      .one('.tabs a[href="' + activeTab + '"]');
+        if (tab) {
+          tab.get('parentNode').simulate('click');
+        }
+      }
     }
   };
 

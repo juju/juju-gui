@@ -204,6 +204,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         this.tabview.selectChild(2);
       }
       this._dispatchTabEvents(this.tabview);
+      this._showActiveTab();
       this._renderCharmListing();
 
       this.set('rendered', true);

@@ -51,15 +51,7 @@ describe('Browser bundle detail view', function() {
   });
 
   beforeEach(function() {
-    data = Y.clone(origData);
-    container = utils.makeContainer();
-    container.append('<div class="bws-view-data"></div>');
-    view = new Y.juju.browser.views.BrowserBundleView({
-      store: modifyFakeStore(),
-      db: {},
-      entityId: data.id,
-      renderTo: container
-    });
+    view = generateBundleView();
     view._setupLocalFakebackend = function() {
       this.fakebackend = utils.makeFakeBackend();
     };
@@ -69,6 +61,21 @@ describe('Browser bundle detail view', function() {
     container.remove().destroy(true);
     view.destroy();
   });
+
+  function generateBundleView(options) {
+    data = Y.clone(origData);
+    container = utils.makeContainer();
+    container.append('<div class="bws-view-data"></div>');
+    var defaults = {
+      store: modifyFakeStore(),
+      db: {},
+      entityId: data.id,
+      renderTo: container
+    };
+    var bundleView = Y.mix(defaults, options, true);
+    view = new Y.juju.browser.views.BrowserBundleView(bundleView);
+    return view;
+  }
 
   function modifyFakeStore(options) {
     var defaults = {
@@ -297,6 +304,19 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
-
+  it('selects the proper tab when given one', function(done) {
+    view = generateBundleView({
+      activeTab: '#bws-charms'
+    });
+    view._parseData = function() {
+      return new Y.Promise(function(resolve) { resolve(); });
+    };
+    view.render();
+    view.after('renderedChange', function(e) {
+      var selected = view.get('container').one('.yui3-tab-selected a');
+      assert.equal(selected.getAttribute('href'), '#bws-charms');
+      done();
+    });
+  });
 
 });
