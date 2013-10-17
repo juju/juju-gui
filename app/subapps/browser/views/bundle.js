@@ -152,6 +152,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         var token = new widgets.browser.Token(charm);
         var node = Y.one('[data-config="' + key + '"]');
         token.render(node);
+        this._cleanup.tokens.push(token);
       }, this);
     },
 
@@ -228,6 +229,31 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           return true;
         }
       });
+    },
+
+    /**
+      Destroy things when the view is destroyed.
+
+      @method destructor
+
+     */
+    destructor: function() {
+      this._cleanup.tokens.forEach(function(token) {
+        token.destroy();
+      });
+    },
+
+    /**
+      Generic initializer method for the View.
+
+      @method initializer
+      @param {Object} cfg the config object to create the View with.
+
+     */
+    initializer: function(cfg) {
+      this._cleanup = {
+        tokens: []
+      };
     },
 
     /**
