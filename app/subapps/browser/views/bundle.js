@@ -137,6 +137,25 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     /**
+      Render the list of charms in the bundle.
+
+      @method _renderCharmListing
+
+     */
+    _renderCharmListing: function() {
+      var attrs = this.get('entity').getAttrs();
+      Y.Object.each(attrs.charm_metadata, function(charm, key) {
+        var charmModel = new Y.juju.models.Charm(charm);
+        charm = charmModel.getAttrs();
+        charm.size = 'tiny';
+        charm.isDraggable = false;
+        var token = new widgets.browser.Token(charm);
+        var node = Y.one('[data-config="' + key + '"]');
+        token.render(node);
+      }, this);
+    },
+
+    /**
       Renders the bundle view template into the DOM.
 
       @method _renderBundleView
@@ -184,6 +203,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         this.tabview.selectChild(2);
       }
       this._dispatchTabEvents(this.tabview);
+      this._renderCharmListing();
 
       this.set('rendered', true);
     },
@@ -244,6 +264,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 }, '', {
   requires: [
     'browser-overlay-indicator',
+    'juju-charm-models',
     'juju-view-utils',
     'view',
     'juju-env-fakebackend',

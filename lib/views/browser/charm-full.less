@@ -124,6 +124,59 @@
         margin-top: 9px;
         margin-bottom: 26px;
     }
+    .interfaces-heading,
+    .interface,
+    .related {
+        .border-box;
+        padding: 0 20px;
+    }
+    .interfaces-heading {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: 1px solid @bws-border;
+
+        h3 {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+    }
+    .interface-list {
+        h4 {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        .interface-row {
+            border-bottom: 1px solid @bws-border;
+
+            .interface {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                font-size: 10.5pt;
+            }
+            .charm-config {
+                .border-box;
+                min-height: 87px;
+                padding: 20px;
+                border-left: 1px solid @bws-border;
+
+                li {
+                    margin-bottom: 5px;
+                }
+            }
+            .yui3-token {
+                width: 100%;
+
+              .title {
+                  max-width: 150px;
+              }
+            }
+            &:last-child {
+                border: none;
+            }
+        }
+    }
     #bws-features,
     #bws-summary,
     #bws-readme {
@@ -133,46 +186,6 @@
         ul {
             list-style-type: disc;
             padding-left: 2em;
-        }
-    }
-    #bws-related-charms {
-        .interfaces-heading,
-        .interface,
-        .related {
-            .border-box;
-            padding: 0 20px;
-        }
-        h4,
-        h3 {
-            margin: 0;
-            padding: 0;
-            border: none;
-        }
-        .interfaces-heading {
-            padding-top: 0;
-            padding-bottom: 15px;
-            border-bottom: 1px solid @bws-border;
-        }
-        .interface-list {
-            .interface-row {
-                border-bottom: 1px solid @bws-border;
-
-                .interface {
-                    padding-top: 10px;
-                    padding-bottom: 10px;
-                    font-size: 10.5pt;
-                }
-                .yui3-token {
-                    width: 100%;
-
-                    .title {
-                        max-width: 150px;
-                    }
-                }
-                &:last-child {
-                    border: none;
-                }
-            }
         }
     }
     #bws-configuration {
@@ -246,7 +259,7 @@
         padding: 17px 70px 16px 16px;
 
         a {
-            padding-right: 5px; 
+            padding-right: 5px;
         }
     }
 }
@@ -326,7 +339,7 @@
             }
             span {
                 color: @bws-text;
-                text-decoration: underline;    
+                text-decoration: underline;
             }
         }
     }
