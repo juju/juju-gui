@@ -69,17 +69,6 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     closeHandler: function(ev) {
       ev.halt();
-      this.close();
-    },
-
-    /**
-     * Hide the container and display the enviroment help.
-     *
-     * @method close
-     * @param {Object} ev An event object (with a "currentTarget" attribute).
-     * @return {undefined} Mutates only.
-     */
-    close: function() {
       var container = this.get('container');
       container.hide();
       Y.one('#environment-help').removeClass('hidden');
@@ -116,7 +105,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      * Onboarding event handler. When clicking the prev button,
      * update the index counter, and update to the prev step of onboarding.
      *
-     * @method nextHandler
+     * @method prevHandler
      * @param {Object} ev An event object (with a "currentTarget" attribute).
      * @return {undefined} Mutates only.
      */
@@ -138,16 +127,16 @@ YUI.add('juju-view-onboarding', function(Y) {
       var close_button = container.one('.onboarding-cross');
       switch (ev._event.type) {
         case 'mouseover':
-          close_button.removeClass('close-inspector-normal');
-          close_button.addClass('close-inspector-hover');
+          close_button.replaceClass('close-inspector-normal',
+              'close-inspector-hover');
           break;
         case 'mouseout':
-          close_button.removeClass('close-inspector-hover');
-          close_button.addClass('close-inspector-normal');
+          close_button.replaceClass('close-inspector-hover',
+              'close-inspector-normal');
           break;
         case 'mousedown':
-          close_button.removeClass('close-inspector-hover');
-          close_button.addClass('close-inspector-click');
+          close_button.replaceClass('close-inspector-hover',
+              'close-inspector-click');
           break;
       }
     },
@@ -172,7 +161,7 @@ YUI.add('juju-view-onboarding', function(Y) {
      */
     incrementIndex: function() {
       this.onboardingIndex = Math.min(
-          this.onboardingIndex + 1, this.stateCount);
+          this.onboardingIndex + 1, this.states.length - 1);
     },
 
     /**
@@ -201,7 +190,7 @@ YUI.add('juju-view-onboarding', function(Y) {
         // No mask in the DOM, as is the case in tests.
         return this;
       }
-      this.stateCount = this.states.length - 1;
+
       this.get('container').setHTML(this.template());
       this.open();
 

@@ -81,11 +81,6 @@ YUI.add('juju-gui', function(Y) {
         preserve: false
       },
 
-      onboarding: {
-        type: 'juju.views.onboarding',
-        preserve: false
-      },
-
       environment: {
         type: 'juju.views.environment',
         preserve: true
@@ -1131,9 +1126,14 @@ YUI.add('juju-gui', function(Y) {
       // Need to check onboarding exists due to the double dispatch bug.
       if (!this._onboarding && window.flags.onboard) {
         if (path === '/' || path === '/:flags:/onboard/') {
-          this._onboarding = new Y.juju.views.OnboardingView(
-              {'container': '#onboarding'});
-          this._onboarding.render();
+          var paths = this.nsRouter.parse(window.location.toString());
+          path = paths.charmbrowser;
+          if (path === '/sidebar/' ||
+              (this.get('defaultViewmode') === 'sidebar' && path === '/')) {
+            this._onboarding = new Y.juju.views.OnboardingView(
+                {'container': '#onboarding'});
+            this._onboarding.render();
+          }
         }
       }
     },
