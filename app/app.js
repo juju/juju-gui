@@ -388,10 +388,6 @@ YUI.add('juju-gui', function(Y) {
       // Create a client side database to store state.
       this.db = new models.Database();
 
-      // Optional Landscape integration helper.
-      this.landscape = new views.Landscape();
-      this.landscape.set('db', this.db);
-
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
@@ -673,7 +669,7 @@ YUI.add('juju-gui', function(Y) {
       }
       Y.each(
           [this.env, this.db, this.notifications,
-           this.landscape, this.endpointsController],
+           this.endpointsController],
           function(o) {
             if (o && o.destroy) {
               o.detachAll();
@@ -727,9 +723,6 @@ YUI.add('juju-gui', function(Y) {
     */
     _dbChangedHandler: function() {
       var active = this.get('activeView');
-
-      // Update Landscape annotations.
-      this.landscape.update();
 
       // Regardless of which view we are rendering,
       // update the env view on db change.
@@ -1095,7 +1088,6 @@ YUI.add('juju-gui', function(Y) {
       var options = {
         getModelURL: Y.bind(this.getModelURL, this),
         nsRouter: this.nsRouter,
-        landscape: this.landscape,
         endpointsController: this.endpointsController,
         useDragDropImport: this.get('sandbox'),
         db: this.db,
@@ -1360,7 +1352,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-view-environment',
     'juju-view-login',
     'juju-view-onboarding',
-    'juju-landscape',
     'juju-websocket-logging',
     'io',
     'json-parse',
