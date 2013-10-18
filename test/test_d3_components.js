@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('d3-components', function() {
   var Y, NS, TestModule, modA, state,
-      container, comp;
+      container, comp, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
@@ -51,12 +51,13 @@ describe('d3-components', function() {
           state.cancelled = true;
         }
       });
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer('container');
     container.append(Y.Node.create('<button/>')
              .addClass('thing'))
              .append(Y.Node.create('<button/>')
@@ -166,6 +167,25 @@ describe('d3-components', function() {
       done();
     });
     Y.one('window').simulate('resize');
+  });
+
+  it('deep clones event objects to avoid shared bindings', function() {
+    var compA = new NS.Component({container: container});
+    compA.addModule(TestModule);
+    compA.render();
+
+    var containerB = utils.makeContainer('foo');
+    var compB = new NS.Component({container: containerB});
+    compB.addModule(TestModule);
+    compB.render();
+
+    assert.notEqual(compA.events.TestModule.subscriptions[1].evt.id,
+                    compB.events.TestModule.subscriptions[1].evt.id);
+
+    // Cleanup
+    compA.destroy();
+    compB.destroy();
+    containerB.remove().destroy(true);
   });
 
   it('should support basic rendering from all modules',
