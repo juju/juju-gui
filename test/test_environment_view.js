@@ -643,46 +643,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.update();
     });
-
-    it('must be able to use Landscape annotations', function() {
-      var landscape = new views.Landscape();
-      var wordpress = db.services.getById('wordpress');
-      landscape.set('db', db);
-      // Mock out enough of the annotations to
-      // allow a full render with landscape data.
-      db.environment.set('annotations', {
-        'landscape-url': 'http://host',
-        'landscape-computers': '/foo',
-        'landscape-reboot-alert-url': '+reboot'
-      });
-      db.environment['landscape-needs-reboot'] = true;
-      db.services.each(function(s) {
-        s.set('annotations', {
-          'landscape-computers': '/service'
-        });
-      });
-      wordpress['landscape-needs-reboot'] = true;
-      wordpress['landscape-security-upgrades'] = false;
-
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        landscape: landscape,
-        store: fakeStore
-      }).render();
-
-      var rebootItem = container.one('.landscape-controls .restart-control');
-      rebootItem.one('a').get('href').should.equal('http://host/foo+reboot');
-
-      // Test that we can match a single badge rendered on the wordpress
-      // service.
-      var wpNode = view.topo.modules.ServiceModule.getServiceNode('wordpress');
-      var hasBadge = d3.select(wpNode).select('.landscape-badge');
-      hasBadge[0][0].should.not.equal(null);
-    });
-
-
+    
     it('must be able to render subordinate relation indicators',
        function() {
          new views.environment({
