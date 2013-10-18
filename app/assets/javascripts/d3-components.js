@@ -130,7 +130,7 @@ YUI.add('d3-components', function(Y) {
 
       this.modules[module.name] = module;
 
-      modEvents = module.events;
+      modEvents = Y.merge(module.events);
       this.events[module.name] = modEvents;
 
       this.bind(module.name);
