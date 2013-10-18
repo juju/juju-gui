@@ -643,7 +643,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.onDelta({ data: tmp_data });
       view.update();
     });
-    
+
     it('must be able to render subordinate relation indicators',
        function() {
          new views.environment({
