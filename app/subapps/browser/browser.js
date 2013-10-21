@@ -84,6 +84,10 @@ YUI.add('subapp-browser', function(Y) {
         this._fullscreen.destroy();
         delete this._fullscreen;
       }
+      if (this._onboarding) {
+        this._onboarding.destroy();
+        delete this._onboarding;
+      }
     },
 
     /**
@@ -461,6 +465,10 @@ YUI.add('subapp-browser', function(Y) {
       if (this._details) {
         this._details.destroy();
       }
+      if (this._onboarding) {
+        this._onboarding.destroy();
+      }
+
       this._filter.destroy();
     },
 
@@ -614,6 +622,22 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+     * Create a 'welcome' message walkthrough for new users.
+     *
+     * @method renderOnboarding
+     */
+    renderOnboarding: function() {
+      // Need to check onboarding exists due to the double dispatch bug.
+      this._onboarding = new Y.juju.views.OnboardingView({
+        'container': '#onboarding'
+      });
+
+      if (!this._onboarding.get('seen')) {
+          this._onboarding.render();
+      }
+    },
+
+    /**
        Render search results
 
        @method renderSearchResults
@@ -755,7 +779,6 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
-
       // If we've gone from no _sidebar to having one, then force editorial to
       // render.
       var forceSidebar = false;
@@ -826,6 +849,16 @@ YUI.add('subapp-browser', function(Y) {
         }
         if (this._search) {
           this._search.set('activeID', null);
+        }
+      }
+
+      // Only show the onboarding messaging if we're hitting the sidebar view
+      // without any extra url bits to the user. It's meant for a fresh user
+      // to see, not someone doing what they know they want to do.
+      if (!this._onboarding && window.flags.onboard) {
+        if (!this._viewState.search &&
+            !this._viewState.charmID) {
+              this.renderOnboarding();
         }
       }
 
@@ -1153,6 +1186,7 @@ YUI.add('subapp-browser', function(Y) {
     'juju-browser-models',
     'juju-charm-store',
     'juju-models',
+    'juju-view-onboarding',
     'querystring',
     'sub-app',
     'subapp-browser-charmview',
