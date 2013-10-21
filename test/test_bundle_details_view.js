@@ -244,7 +244,7 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
-  it('renders the charm list tab properly', function(done) {
+  it.only('renders the charm list tab properly', function(done) {
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
