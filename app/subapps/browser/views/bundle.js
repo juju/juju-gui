@@ -140,13 +140,12 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       Render the list of charms in the bundle.
 
       @method _renderCharmListing
+      @param {Object} services the services in the bundle.
 
      */
-    _renderCharmListing: function() {
-      var attrs = this.get('entity').getAttrs();
-      Y.Object.each(attrs.charm_metadata, function(charm, key) {
-        var charmModel = new Y.juju.models.Charm(charm);
-        charm = charmModel.getAttrs();
+    _renderCharmListing: function(services) {
+      Y.Object.each(services, function(service, key) {
+        var charm = service._model.getAttrs();
         charm.size = 'tiny';
         charm.isDraggable = false;
         var token = new widgets.browser.Token(charm);
@@ -154,6 +153,28 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         token.render(node);
         this._cleanup.tokens.push(token);
       }, this);
+    },
+
+    /**
+      Build and order a list of charms.
+
+      @method _buildCharmList
+      @return the ordered list of charms in the bundle.
+
+     */
+    _buildCharmList: function() {
+      var attrs = this.get('entity').getAttrs();
+      var services = [];
+      Y.Object.each(attrs.services, function(service, key) {
+        var charm = attrs.charm_metadata[key];
+        attrs.services[key]._model = new Y.juju.models.Charm(charm);
+        service.service_name = key;
+        services.push(service);
+      }, this);
+      services.sort(function(a, b) {
+          return a._model.get('name') > b._model.get('name');
+      });
+      return services;
     },
 
     /**
@@ -169,6 +190,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       attrs.files = attrs.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
+      attrs.services = this._buildCharmList();
       var content = this.template(attrs);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
@@ -205,7 +227,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       }
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
-      this._renderCharmListing();
+      this._renderCharmListing(attrs.services);
 
       this.set('rendered', true);
     },
@@ -271,6 +293,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           then(this._parseData.bind(this)).
           then(this._renderBundleView.bind(this)).
           then(null, this.apiFailure.bind(this));
+          //then(null, function(error) {
+          //    console.error(error.message, error);
+          //});
     }
 
   }, {

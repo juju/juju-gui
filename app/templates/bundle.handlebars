@@ -39,7 +39,7 @@
                 <li><a href="#bws-bundle" class="bundle">Bundle</a></li>
                 <li><a href="#bws-summary" class="summary">Summary</a></li>
                 <li><a href="#bws-readme" class="readme">Readme</a></li>
-                <li><a href="#bws-charms" class="charms">Charms</a></li>
+                <li><a href="#bws-services" class="services">Services</a></li>
                 <li><a href="#bws-code" class="code">Code</a></li>
             </ul>
             <div>
@@ -54,8 +54,6 @@
                             <p>No description</p>
                         {{/if}}
                     </div>
-                    <h2>Charms within this bundle</h2>
-                    [Charm list to go here]
                     <div class="changelog">
                         <h3 class="section-title">
                             {{#if recent_commits}}
@@ -119,7 +117,11 @@
                     </div>
                 </div>
                 <div id="bws-readme"></div>
-                <div id="bws-charms">
+                <div id="bws-services">
+                    <p>
+                        These are the services that the bundle will deploy.
+                        Non-default configuration values are listed.
+                    </p>
                     <div class="yui3-g">
                         <div class="interfaces-heading yui3-u-1-2">
                             <h3>Charm</h3>
@@ -129,21 +131,26 @@
                         </div>
                     </div>
                     <ul class="interface-list">
-                        {{#arrayObject services}}
+                        {{#each services}}
                             <li class="interface-row yui3-g">
-                                <div class="yui3-u-1-2" data-config="{{ key }}"></div>
+                                <div class="yui3-u-1-2" data-config="{{ service_name }}"></div>
                                 <div class="yui3-u-1-2 charm-config">
                                     <ul>
-                                        <li>Number of units: {{ value.num_units }}</li>
-                                        {{#if value.config}}
-                                            {{#arrayObject value.options}}
+                                        <li>Service name: {{ service_name }}</li>
+                                        {{#unless _model.is_subordinate}}
+                                            {{#if unitCount }}
+                                                <li>Number of units: {{ unitCount }}</li>
+                                            {{/if}}
+                                        {{/unless}}
+                                        {{#if config}}
+                                            {{#arrayObject options}}
                                                 <li>{{ key }}: {{ value }}</li>
                                             {{/arrayObject}}
                                         {{/if}}
                                     </ul>
                                 </div>
                             </li>
-                        {{/arrayObject}}
+                        {{/each}}
                     </ul>
                 </div>
                 <div id="bws-code">
