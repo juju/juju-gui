@@ -633,7 +633,7 @@ YUI.add('subapp-browser', function(Y) {
       });
 
       if (!this._onboarding.get('seen')) {
-          this._onboarding.render();
+        this._onboarding.render();
       }
     },
 
@@ -858,7 +858,7 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._onboarding && window.flags.onboard) {
         if (!this._viewState.search &&
             !this._viewState.charmID) {
-              this.renderOnboarding();
+          this.renderOnboarding();
         }
       }
 

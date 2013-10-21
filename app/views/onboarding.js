@@ -141,6 +141,10 @@ YUI.add('juju-view-onboarding', function(Y) {
       }
     },
 
+    /**
+     * @method destructor
+     * @return {undefined} Mutates only.
+     */
     destructor: function() {
       this.get('container').empty();
     },
@@ -197,17 +201,30 @@ YUI.add('juju-view-onboarding', function(Y) {
 
       this.get('container').setHTML(this.template());
       this.open();
-      localStorage.setItem('onboarding', true);
+      localStorage.setItem('onboarding', 'exists');
 
       return this;
     }
 
   }, {
     ATTRS: {
+      /**
+         @attribute seen
+         @default undefined
+         @type {Function}
+       */
       seen: {
-          getter: function() {
-            return localStorage.getItem('onboarding');
-          }
+        /**
+         The "getter" function returns if onboarding localStorage
+         value set.
+
+         @attribute getter
+         @default undefined
+         @type {Function}
+       */
+        getter: function() {
+          return localStorage.getItem('onboarding');
+        }
       }
     }
   });
