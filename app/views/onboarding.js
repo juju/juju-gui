@@ -141,6 +141,10 @@ YUI.add('juju-view-onboarding', function(Y) {
       }
     },
 
+    destructor: function() {
+      this.get('container').empty();
+    },
+
     /**
      * @method drawContent
      * @return {undefined} Mutates only.
@@ -193,10 +197,19 @@ YUI.add('juju-view-onboarding', function(Y) {
 
       this.get('container').setHTML(this.template());
       this.open();
+      localStorage.setItem('onboarding', true);
 
       return this;
     }
 
+  }, {
+    ATTRS: {
+      seen: {
+          getter: function() {
+            return localStorage.getItem('onboarding');
+          }
+      }
+    }
   });
 
 
