@@ -381,6 +381,9 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var centroid = topoUtils.centroid(vertices);
+    var scale = topo.get('scale');
+    centroid[0] += 96 * scale;
+    centroid[1] += 96 * scale;
     this.topology.modules.PanZoomModule.panToPoint({point: centroid});
   };
 
@@ -394,21 +397,15 @@ YUI.add('juju-view-bundle', function(Y) {
   BundleTopology.prototype.zoomToFit = function() {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-    var bb = topoUtils.getBoundingBox(vertices);
+    var bb = topoUtils.getBoundingBox(vertices, 96, 96);
     var width = topo.get('width'),
         height = topo.get('height');
 
     // Zoom to Fit
-    // We are really only interested in scale down
-    // here when the bundle is too large to
-    // render in the space provided.
-    var maxScale = 1.0;
-    if (bb.w > width || bb.h > height) {
-      maxScale = Math.min(bb.w / width, bb.h / height);
-      maxScale -= 0.05; // Margin
-    }
+    var maxScale = Math.min(width / bb.w, height / bb.h);
+    maxScale -= 0.05; // Margin
     // Clamp Scale
-    maxScale = Math.max(0.25 , Math.min(1.0, maxScale));
+    maxScale = Math.min(1.0, maxScale);
     this.centerViewport(maxScale);
   };
 

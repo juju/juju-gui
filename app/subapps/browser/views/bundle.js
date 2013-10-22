@@ -172,7 +172,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var content = this.template(attrs);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
-      var options = {size: [480, 360]};
+      var options = {size: [720, 360]};
       this.hideIndicator(renderTo);
 
       var showTopo = true;
