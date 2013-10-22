@@ -71,7 +71,6 @@ YUI.add('juju-topology-service', function(Y) {
     }
     var self = this,
         topo = this.get('component'),
-        landscape = topo.get('landscape'),
         service_scale = this.service_scale,
         service_scale_width = this.service_scale_width,
         service_scale_height = this.service_scale_height;
@@ -169,55 +168,6 @@ YUI.add('juju-topology-service', function(Y) {
           'x': 64,
           'y': 47 * 0.8});
 
-    // Landscape badge
-    if (landscape) {
-      node.each(function(d) {
-        var landscapeAsset;
-        var securityBadge = landscape.getLandscapeBadge(
-            d.model, 'security', 'round');
-        var rebootBadge = landscape.getLandscapeBadge(
-            d.model, 'reboot', 'round');
-
-        if (securityBadge && rebootBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/landscape_restart_round.png';
-        } else if (securityBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/landscape_security_round.png';
-        } else if (rebootBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/landscape_restart_round.png';
-        }
-        if (landscapeAsset === undefined) {
-          // Remove any existing badge.
-          d3.select(this).select('.landscape-badge').remove();
-        } else {
-          var existing = Y.one(this).one('.landscape-badge'),
-              curr_href, target;
-
-          if (!existing) {
-            existing = d3.select(this).append('image');
-            existing.attr({
-              'class': 'landscape-badge',
-              'width': 32,
-              'height': 32
-            });
-          }
-          existing = d3.select(this).select('.landscape-badge');
-          existing.attr({
-            'x': 13,
-            'y': 79
-          });
-
-          // Only set 'xlink:href' if not already set to the new value,
-          // thus avoiding redundant requests to the server. #1182135
-          curr_href = existing.attr('xlink:href');
-          if (curr_href !== landscapeAsset) {
-            existing.attr({'xlink:href': landscapeAsset});
-          }
-        }
-      });
-    }
     // The following are sizes in pixels of the SVG assets used to
     // render a service, and are used to in calculating the vertical
     // positioning of text down along the service block.
