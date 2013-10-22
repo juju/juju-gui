@@ -102,6 +102,7 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('#testit'));
       done();
     };
+    view.set('store', fakeStore);
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
@@ -120,6 +121,7 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('#testit'));
       done();
     };
+    view.set('store', fakeStore);
     view.after('renderedChange', function(e) {
       container.one('a.code').simulate('click');
       var codeNode = container.one('#bws-code');
