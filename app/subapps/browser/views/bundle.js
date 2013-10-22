@@ -77,34 +77,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     /**
-      Fetches and prepares the data for the bundle details page rendering.
-
-      @method _fetchData
-    */
-    _fetchData: function() {
-      var self = this;
-
-      return new Y.Promise(function(resolve, reject) {
-        var entity = self.get('entity');
-        // An entity here is a fully populated charm/bundle model so
-        // it's entirely possible that we have an id to load but
-        // no model has been populated yet.
-        if (entity) {
-          resolve(entity);
-        } else {
-          self.get('store').bundle(self.get('entityId'), {
-            'success': function(data) {
-              var bundle = new models.Bundle(data);
-              self.set('entity', bundle);
-              resolve(bundle);
-            },
-            'failure': reject
-          }, self);
-        }
-      });
-    },
-
-    /**
       Sends the bundle data to the local fakebackend to
       import and then returns a promise when complete.
 
@@ -182,9 +154,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       @method _renderBundleView
     */
-    _renderBundleView: function() {
-      var entity = this.get('entity');
-      var attrs = entity.getAttrs();
+    _renderBundleView: function(bundleData) {
+      var bundle = new models.Bundle(bundleData);
+      this.set('entity', bundle);
+      var attrs = bundle.getAttrs();
       attrs.charmIcons = utils.charmIconParser(attrs.charm_metadata);
       // Remove the svg files from the file list
       attrs.files = attrs.files.filter(function(fileName) {
@@ -204,6 +177,11 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         showTopo = this._positionAnnotationsIncluded(attrs.data.services);
       }
       if (showTopo) {
+        // Setup the fake backend to create topology to display the canvas-like
+        // rendering of the bundle.
+        this._setupLocalFakebackend();
+        this._parseData(bundle);
+
         this.environment = new views.BundleTopology(Y.mix({
           db: this.fakebackend.db,
           container: node.one('#bws-bundle'), // Id because of Y.TabView
@@ -286,16 +264,21 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       @method render
     */
-    render: function() {
+    render: function(bundleData) {
       this.showIndicator(this.get('renderTo'));
-      this._setupLocalFakebackend();
-      this._fetchData().
-          then(this._parseData.bind(this)).
-          then(this._renderBundleView.bind(this)).
-          then(null, this.apiFailure.bind(this));
-          //then(null, function(error) {
-          //    console.error(error.message, error);
-          //});
+      if (bundleData) {
+        this._renderBundleView(bundleData);
+      } else {
+        this.get('store').bundle(
+          this.get('entityId'), {
+            'success': function(data) {
+              debugger;
+              this._renderBundleView(data);
+            },
+            'failure': this.apiFailure
+          },
+          this);
+      }
     }
 
   }, {
