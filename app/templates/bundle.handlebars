@@ -138,11 +138,16 @@
                                     <ul>
                                         <li>Service name: {{ service_name }}</li>
                                         {{#unless _model.is_subordinate}}
-                                            {{#if unitCount }}
-                                                <li>Number of units: {{ unitCount }}</li>
-                                            {{/if}}
+                                            <li>
+                                                Number of units:
+                                                {{#if num_units }}
+                                                    {{ num_units }}
+                                                {{else}}
+                                                    1
+                                                {{/if}}
+                                            </li>
                                         {{/unless}}
-                                        {{#if config}}
+                                        {{#if options}}
                                             {{#arrayObject options}}
                                                 <li>{{ key }}: {{ value }}</li>
                                             {{/arrayObject}}

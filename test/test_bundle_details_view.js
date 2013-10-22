@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Browser bundle detail view', function() {
-  var Y, utils, data, container, origData, view, fakestore, browser;
+  var Y, cleanUp, utils, data, container, origData, view, fakestore, browser;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -43,7 +43,7 @@ describe('Browser bundle detail view', function() {
 
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
-            store: modifyFakeStore()
+            store: utils.makeFakeStore()
           });
 
           done();
@@ -55,11 +55,13 @@ describe('Browser bundle detail view', function() {
     view._setupLocalFakebackend = function() {
       this.fakebackend = utils.makeFakeBackend();
     };
+    cleanUp = utils.stubCharmIconPath();
   });
 
   afterEach(function() {
     container.remove().destroy(true);
     view.destroy();
+    cleanUp();
   });
 
   function generateBundleView(options) {
@@ -67,7 +69,7 @@ describe('Browser bundle detail view', function() {
     container = utils.makeContainer();
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
-      store: modifyFakeStore(),
+      store: utils.makeFakeStore(3),
       db: {},
       entityId: data.id,
       renderTo: container
@@ -75,23 +77,6 @@ describe('Browser bundle detail view', function() {
     var bundleView = Y.mix(defaults, options, true);
     view = new Y.juju.browser.views.BrowserBundleView(bundleView);
     return view;
-  }
-
-  function modifyFakeStore(options) {
-    var defaults = {
-      bundle: function(id, callbacks) {
-        callbacks.success(data);
-      },
-      iconpath: function(id) {
-        return 'foo';
-      }
-    };
-
-    var fakebackend = Y.mix(defaults, options, true);
-    if (view) {
-      view.set('store', fakebackend);
-    }
-    return fakebackend;
   }
 
   it('can be instantiated', function() {
@@ -107,18 +92,17 @@ describe('Browser bundle detail view', function() {
   });
 
   it('fetches the readme when requested', function(done) {
-    modifyFakeStore({
-      file: function(id, filename, entityType, callbacks) {
-        assert.equal(entityType, 'bundle');
-        assert.equal(id, data.id);
-        assert.equal(filename, 'README');
-        assert.isFunction(callbacks.success);
-        assert.isFunction(callbacks.failure);
-        callbacks.success.call(view, '<div id="testit"></div>');
-        assert.isNotNull(container.one('#testit'));
-        done();
-      }
-    });
+    var fakeStore = utils.makeFakeStore();
+    fakeStore.file = function(id, filename, entityType, callbacks) {
+      assert.equal(entityType, 'bundle');
+      assert.equal(id, data.id);
+      assert.equal(filename, 'README');
+      assert.isFunction(callbacks.success);
+      assert.isFunction(callbacks.failure);
+      callbacks.success.call(view, '<div id="testit"></div>');
+      assert.isNotNull(container.one('#testit'));
+      done();
+    };
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
@@ -126,18 +110,17 @@ describe('Browser bundle detail view', function() {
   });
 
   it('fetches a source file when requested', function(done) {
-    modifyFakeStore({
-      file: function(id, filename, entityType, callbacks) {
-        assert.equal(entityType, 'bundle');
-        assert.equal(id, data.id);
-        assert.equal(filename, 'bundles.yaml');
-        assert.isFunction(callbacks.success);
-        assert.isFunction(callbacks.failure);
-        callbacks.success.call(view, '<div id="testit"></div>');
-        assert.isNotNull(container.one('#testit'));
-        done();
-      }
-    });
+    var fakeStore = utils.makeFakeStore();
+    fakeStore.file = function(id, filename, entityType, callbacks) {
+      assert.equal(entityType, 'bundle');
+      assert.equal(id, data.id);
+      assert.equal(filename, 'bundles.yaml');
+      assert.isFunction(callbacks.success);
+      assert.isFunction(callbacks.failure);
+      callbacks.success.call(view, '<div id="testit"></div>');
+      assert.isNotNull(container.one('#testit'));
+      done();
+    };
     view.after('renderedChange', function(e) {
       container.one('a.code').simulate('click');
       var codeNode = container.one('#bws-code');
@@ -244,64 +227,65 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
-  it.only('renders the charm list tab properly', function(done) {
-    view._parseData = function() {
-      return new Y.Promise(function(resolve) { resolve(); });
-    };
-    view.set('entity', {
-      getAttrs: function() {
-        return {
-          charm_metadata: {
-            foo: {
-              id: 'precise/foo-9',
-              storeId: 'testid',
-              name: 'foo'
-            },
-            bar: {
-              id: 'precise/bar-10',
-              storeId: 'testid',
-              name: 'bar'
+  it('renders the charm list tab properly', function(done) {
+    // This is not under test. It's async and only causes trouble in other
+    // tests.
+    view._parseData = function() {return true;};
+
+    var entity = {
+      charm_metadata: {
+        foo: {
+          id: 'precise/foo-9',
+          storeId: 'testid',
+          name: 'foo'
+        },
+        bar: {
+          id: 'precise/bar-10',
+          storeId: 'testid',
+          name: 'bar'
+        }
+      },
+      files: [],
+      data: {
+        services: {
+          foo: {
+            annotations: {
+              'gui-x': '1',
+              'gui-y': '2'
             }
           },
-          files: [],
-          data: {
-            services: {
-              foo: {
-                annotations: {
-                  'gui-x': '1',
-                  'gui-y': '2'
-                }
-              },
-              bar: {
-                annotations: {
-                  'gui-x': '3',
-                  'gui-y': '4'
-                }
-              }
-            }
-          },
-          services: {
-            foo: {
-              annotations: {
-                'gui-x': '1',
-                'gui-y': '2'
-              }
-            },
-            bar: {
-              annotations: {
-                'gui-x': '3',
-                'gui-y': '4'
-              }
+          bar: {
+            annotations: {
+              'gui-x': '3',
+              'gui-y': '4'
             }
           }
-        };
-      }});
+        }
+      },
+      services: {
+        foo: {
+          annotations: {
+            'gui-x': '1',
+            'gui-y': '2'
+          }
+        },
+        bar: {
+          annotations: {
+            'gui-x': '3',
+            'gui-y': '4'
+          }
+        }
+      }
+    };
     view.after('renderedChange', function(e) {
-      var tab = container.one('#bws-charms');
+      var tab = container.one('#bws-services');
       assert.equal(tab.all('.token').size(), 2);
+      var charmConfigNodes = tab.all('.charm-config');
+      assert.equal(charmConfigNodes.item(0).one('li').get('text'), 'Service name: bar');
+      assert.equal(charmConfigNodes.item(1).one('li').get('text'), 'Service name: foo');
       done();
     });
-    view.render();
+    view.render(entity);
   });
 
   it('selects the proper tab when given one', function(done) {
