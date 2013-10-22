@@ -388,10 +388,6 @@ YUI.add('juju-gui', function(Y) {
       // Create a client side database to store state.
       this.db = new models.Database();
 
-      // Optional Landscape integration helper.
-      this.landscape = new views.Landscape();
-      this.landscape.set('db', this.db);
-
       // Set up a new modelController instance.
       this.modelController = new juju.ModelController({
         db: this.db,
@@ -673,7 +669,7 @@ YUI.add('juju-gui', function(Y) {
       }
       Y.each(
           [this.env, this.db, this.notifications,
-           this.landscape, this.endpointsController],
+           this.endpointsController],
           function(o) {
             if (o && o.destroy) {
               o.detachAll();
@@ -727,9 +723,6 @@ YUI.add('juju-gui', function(Y) {
     */
     _dbChangedHandler: function() {
       var active = this.get('activeView');
-
-      // Update Landscape annotations.
-      this.landscape.update();
 
       // Regardless of which view we are rendering,
       // update the env view on db change.
@@ -1095,7 +1088,6 @@ YUI.add('juju-gui', function(Y) {
       var options = {
         getModelURL: Y.bind(this.getModelURL, this),
         nsRouter: this.nsRouter,
-        landscape: this.landscape,
         endpointsController: this.endpointsController,
         useDragDropImport: this.get('sandbox'),
         db: this.db,
@@ -1110,34 +1102,11 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          this.initializeOnboarding();
         },
         render: true
       });
 
       next();
-    },
-
-    /**
-     * Create a 'welcome' message walkthrough for new usersl.
-     *
-     * @method initialize_onboarding
-     */
-    initializeOnboarding: function() {
-      var path = window.location.pathname;
-      // Need to check onboarding exists due to the double dispatch bug.
-      if (!this._onboarding && window.flags.onboard) {
-        if (path === '/' || path === '/:flags:/onboard/') {
-          var paths = this.nsRouter.parse(window.location.toString());
-          path = paths.charmbrowser;
-          if (path === '/sidebar/' ||
-              (this.get('defaultViewmode') === 'sidebar' && path === '/')) {
-            this._onboarding = new Y.juju.views.OnboardingView(
-                {'container': '#onboarding'});
-            this._onboarding.render();
-          }
-        }
-      }
     },
 
     /**
@@ -1359,7 +1328,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-views',
     'juju-view-environment',
     'juju-view-login',
-    'juju-view-onboarding',
     'juju-landscape',
     'juju-websocket-logging',
     'io',

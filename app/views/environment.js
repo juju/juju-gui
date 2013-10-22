@@ -350,7 +350,6 @@ YUI.add('juju-view-environment', function(Y) {
               getInspector: Y.bind(this.getInspector, this),
               setInspector: Y.bind(this.setInspector, this),
               createServiceInspector: Y.bind(this.createServiceInspector, this),
-              landscape: this.get('landscape'),
               getModelURL: this.get('getModelURL'),
               container: container,
               endpointsController: this.get('endpointsController'),
@@ -360,7 +359,6 @@ YUI.add('juju-view-environment', function(Y) {
             topo.addModule(views.PanZoomModule);
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
-            topo.addModule(views.LandscapeModule);
 
             topo.addTarget(this);
             this.topo = topo;
