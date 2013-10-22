@@ -19,11 +19,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Browser bundle detail view', function() {
-  var Y, cleanUp, utils, data, container, origData, view, fakestore, browser;
+  var Y, cleanUp, utils, data, container, view, fakestore, browser, models;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'view',
+        'juju-bundle-models',
         'juju-env-fakebackend',
         'juju-view-bundle',
         'subapp-browser', // required for handlebars helpers
@@ -36,10 +37,9 @@ describe('Browser bundle detail view', function() {
         'event-simulate',
         'node-event-simulate',
         function(Y) {
+          models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
-          var sampleData = Y.io('data/browserbundle.json', {sync: true});
-
-          origData = Y.JSON.parse(sampleData.responseText);
+          data = utils.loadFixture('data/browserbundle.json', true);
 
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
@@ -65,7 +65,6 @@ describe('Browser bundle detail view', function() {
   });
 
   function generateBundleView(options) {
-    data = Y.clone(origData);
     container = utils.makeContainer();
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
@@ -88,7 +87,7 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('.yui3-tabview'));
       done();
     });
-    view.render();
+    view.render(data);
   });
 
   it('fetches the readme when requested', function(done) {
@@ -106,7 +105,7 @@ describe('Browser bundle detail view', function() {
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
-    view.render();
+    view.render(data);
   });
 
   it('fetches a source file when requested', function(done) {
@@ -128,7 +127,7 @@ describe('Browser bundle detail view', function() {
       codeNode.one('select').simulate('change');
     });
 
-    view.render();
+    view.render(data);
   });
 
   it('renders the proper charm icons into the header', function(done) {
@@ -138,7 +137,7 @@ describe('Browser bundle detail view', function() {
           4);
       done();
     });
-    view.render();
+    view.render(data);
   });
 
   it('deploys a bundle when \'add\' button is clicked', function(done) {
@@ -151,7 +150,7 @@ describe('Browser bundle detail view', function() {
     view.after('renderedChange', function(e) {
       container.one('.bundle .add').simulate('click');
     });
-    view.render();
+    view.render(data);
   });
 
   it('fails gracefully if services don\'t provide xy annotations',
@@ -186,7 +185,7 @@ describe('Browser bundle detail view', function() {
          window.flags = {};
          done();
        });
-       view.render();
+       view.render(data);
      });
 
   it('renders the bundle topology into the view', function(done) {
@@ -194,43 +193,55 @@ describe('Browser bundle detail view', function() {
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
-    view.set('entity', {
-      getAttrs: function() {
-        return {
-          charm_metadata: {},
-          files: [],
-          data: {
-            services: {
-              foo: {
-                annotations: {
-                  'gui-x': '1',
-                  'gui-y': '2'
-                }
-              },
-              bar: {
-                annotations: {
-                  'gui-x': '3',
-                  'gui-y': '4'
-                }
-              }
+    var entity = {
+      charm_metadata: {
+        foo: {
+          id: 'precise/foo-9',
+          storeId: 'testid',
+          name: 'foo'
+        },
+        bar: {
+          id: 'precise/bar-10',
+          storeId: 'testid',
+          name: 'bar'
+        }
+      },
+      files: [],
+      data: {
+        services: {
+          foo: {
+            annotations: {
+              'gui-x': '1',
+              'gui-y': '2'
+            }
+          },
+          bar: {
+            annotations: {
+              'gui-x': '3',
+              'gui-y': '4'
             }
           }
-        };
-      }});
-    view.after('renderedChange', function(e) {
+        }
+      }
+    };
+    view.on('topologyRendered', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
       assert.equal(view.tabview.get('selection').get('index'), 0);
       window.flags = {};
       done();
     });
-    view.render();
+    view.render(entity);
   });
 
-  it('renders the charm list tab properly', function(done) {
+  it('renders the charm list tab properly', function() {
     // This is not under test. It's async and only causes trouble in other
     // tests.
-    view._parseData = function() {return true;};
+    view._parseData = function() {
+      return {
+        then: function() {}
+      };
+    };
 
     var entity = {
       charm_metadata: {
@@ -277,30 +288,26 @@ describe('Browser bundle detail view', function() {
         }
       }
     };
-    view.after('renderedChange', function(e) {
-      var tab = container.one('#bws-services');
-      assert.equal(tab.all('.token').size(), 2);
-      var charmConfigNodes = tab.all('.charm-config');
-      assert.equal(charmConfigNodes.item(0).one('li').get('text'), 'Service name: bar');
-      assert.equal(charmConfigNodes.item(1).one('li').get('text'), 'Service name: foo');
-      done();
-    });
     view.render(entity);
+    var tab = container.one('#bws-services');
+    assert.equal(tab.all('.token').size(), 2);
+    var charmConfigNodes = tab.all('.charm-config');
+    assert.equal(
+        charmConfigNodes.item(0).one('li').get('text'), 'Service name: bar');
+    assert.equal(
+        charmConfigNodes.item(1).one('li').get('text'), 'Service name: foo');
   });
 
-  it('selects the proper tab when given one', function(done) {
-    view = generateBundleView({
-      activeTab: '#bws-charms'
-    });
+  it('selects the proper tab when given one', function() {
+    view.set('activeTab', '#bws-services');
     view._parseData = function() {
-      return new Y.Promise(function(resolve) { resolve(); });
+      return {
+        then: function() {}
+      };
     };
-    view.render();
-    view.after('renderedChange', function(e) {
-      var selected = view.get('container').one('.yui3-tab-selected a');
-      assert.equal(selected.getAttribute('href'), '#bws-charms');
-      done();
-    });
+    view.render(data);
+    var selected = view.get('container').one('.yui3-tab-selected a');
+    assert.equal(selected.getAttribute('href'), '#bws-services');
   });
 
 });

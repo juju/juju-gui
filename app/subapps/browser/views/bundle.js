@@ -131,7 +131,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       Build and order a list of charms.
 
       @method _buildCharmList
-      @return the ordered list of charms in the bundle.
+      @return {Array} the ordered list of charms in the bundle.
 
      */
     _buildCharmList: function() {
@@ -180,14 +180,20 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         // Setup the fake backend to create topology to display the canvas-like
         // rendering of the bundle.
         this._setupLocalFakebackend();
-        this._parseData(bundle);
-
-        this.environment = new views.BundleTopology(Y.mix({
-          db: this.fakebackend.db,
-          container: node.one('#bws-bundle'), // Id because of Y.TabView
-          store: this.get('store')
-        }, options));
-        this.environment.render();
+        var self = this;
+        this._parseData(bundle).then(function(data) {
+          self.environment = new views.BundleTopology(Y.mix({
+            db: self.fakebackend.db,
+            container: node.one('#bws-bundle'), // Id because of Y.TabView
+            store: self.get('store')
+          }, options));
+          self.environment.render();
+          // Fired event to test the topology is rendered
+          self.fire('topologyRendered');
+        },
+        function(error) {
+          console.error(error.message, error);
+        });
       } else {
         // Remove the bundle tab so it doesn't get PE'd when
         // we instantiate the tabview.
@@ -206,7 +212,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
       this._renderCharmListing(attrs.services);
-
       this.set('rendered', true);
     },
 
@@ -270,13 +275,13 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         this._renderBundleView(bundleData);
       } else {
         this.get('store').bundle(
-          this.get('entityId'), {
-            'success': function(data) {
-              this._renderBundleView(data);
+            this.get('entityId'), {
+              'success': function(data) {
+                this._renderBundleView(data);
+              },
+              'failure': this.apiFailure
             },
-            'failure': this.apiFailure
-          },
-          this);
+            this);
       }
     }
 
@@ -298,6 +303,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 }, '', {
   requires: [
     'browser-overlay-indicator',
+    'juju-bundle-models',
     'juju-charm-models',
     'juju-view-utils',
     'view',
