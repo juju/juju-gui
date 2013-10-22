@@ -723,6 +723,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   sidebar: false,
                   renderCharmDetails: false,
                   renderEditorial: false,
+                  renderOnboarding: false,
                   renderSearchResults: false
                 };
               };
@@ -760,6 +761,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         browser.renderEditorial = function() {
           hits.renderEditorial = true;
+        };
+        browser.renderOnboarding = function() {
+          hits.renderOnboarding = true;
         };
         browser.renderSearchResults = function() {
           hits.renderSearchResults = true;
@@ -1231,6 +1235,66 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
+      it('onboarding is called in build mode', function() {
+        window.flags.onboard = true;
+        var req = {
+          path: '/sidebar/',
+          params: {
+            viewmode: 'sidebar'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderEditorial: true,
+          renderOnboarding: true
+        });
+
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+        window.flags.onboard = {};
+      });
+
+      it('onboarding is not called with a charm id', function() {
+        window.flags.onboard = true;
+        var req = {
+          path: '/sidebar/',
+          params: {
+            viewmode: 'sidebar',
+            id: '/precise/mysql'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderEditorial: true,
+          renderCharmDetails: true,
+          renderOnboarding: false
+        });
+
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+        window.flags.onboard = {};
+      });
+
+      it('onboarding is not called with a search', function() {
+        window.flags.onboard = true;
+        var req = {
+          path: '/sidebar/search',
+          params: {
+            viewmode: 'sidebar',
+            id: 'search'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderSearchResults: true,
+          renderOnboarding: false
+        });
+
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+        window.flags.onboard = {};
+      });
+
       it('/minimized dispatches correctly', function() {
         var req = {
           path: '/minimized',
@@ -1361,7 +1425,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.sidebar({path: '/'}, null, function() {});
         assert.isTrue(hits.renderCharmDetails);
       });
-
     });
   })();
 })();
