@@ -79,8 +79,6 @@ describe('topology bundle module', function() {
 
           // We should have the two rendered services
           assert.equal(container.all('.service').size(), 2);
-          assert.deepEqual(container.all('tspan.name').get('text'), [
-            'mysql', 'wordpress']);
           var service = svg.select('.service');
 
           // Sizing
