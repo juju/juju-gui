@@ -308,51 +308,53 @@ code {
             padding: 0;
             list-style: none;
         }
+        .right-nav,
         #browser-nav {
-            padding: 0;
-
-            &:after {
-                content: '';
-                display: block;
-                float: left;
-                height: @navbar-height;
-                background-color: #f00;
-                border-left: 1px solid @navbar-border-light;
-            }
-            & > ul > li,
-            & > ul > li > a {
+            & > li,
+            & > li.tab > a {
                 .border-box;
                 display: block;
-                float: left;
                 height: @navbar-height;
                 padding: 20px 20px 0 20px;
+            }
+            & > li {
+                float: left;
                 border-width: 0 1px;
                 border-style: solid;
                 border-left-color: @navbar-border-light;
                 border-right-color: @navbar-border-dark;
-            }
-            & > ul > li {
-                float: left;
 
+                & > a {
+                    &.button {
+                        margin: -8px 0 0 0;
+                    }
+                }
+            }
+        }
+        #browser-nav {
+            float: left;
+            border-right: 1px solid @navbar-border-light;
+
+            & > li {
                 &:first-child {
                     border-left: none;
                 }
                 .brand {
-                  padding-top: 15px;
-                  padding-right: 30px;
+                    margin: -5px 10px 0 0;
+                    padding: 0;
                 }
                 & > a {
-                    float: none;
-                    margin: -20px -20px 0 -20px;
-                    border: none;
-
                     &:hover {
                         text-decoration: none;
                     }
+                }
+                &.tab a {
+                    margin: -20px -20px 0 -20px;
+
                     &.active {
                         border-bottom: 3px solid @charm-panel-orange;
                     }
-                    i {
+                    .sprite {
                         margin-right: 6px;
                     }
                 }
@@ -363,7 +365,6 @@ code {
                         display: block;
                         float: left;
                         height: 15px;
-                        margin: 0;
                         padding:  0 10px;
                         line-height: 15px;
 
@@ -371,7 +372,7 @@ code {
                             border-left: 1px solid @navbar-border-dark;
                         }
                         &:last-child {
-                            border-right: 1px solid @navbar-border-light;;
+                            border-right: 1px solid @navbar-border-light;
                         }
                         // Ugly classes to display the correct sprite for the
                         // state. We might be able to turn this into a mixin
@@ -491,14 +492,26 @@ code {
         }
         .right-nav {
             float: right;
-            margin: 0 20px 0 0;
+            margin: 0;
+            border-left: 1px solid @navbar-border-dark;
 
+            & > li:last-child {
+                border-right: none;
+            }
             a.button.inverse {
-                margin-top: 12px;
                 background-color: #1f1b18;
 
                 &:hover {
                     background-color: #1f1b18;
+                }
+            }
+            .help-dropdown {
+                .expand {
+                    margin-left: 5px;
+
+                    .hidden {
+                        display: none;
+                    }
                 }
             }
         }
