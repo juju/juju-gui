@@ -171,7 +171,7 @@ YUI.add('juju-topology-utils', function(Y) {
       if (v[1] > maxY) { maxY = v[1]; }
     });
     return {
-      translateX: minX - boxWidth, translateY: minY - boxHeight,
+      translateX: minX - boxWidth / 2, translateY: minY - boxHeight / 2,
       w: maxX - minX + boxWidth, h: maxY - minY + boxHeight};
   };
 

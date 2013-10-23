@@ -381,9 +381,12 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var centroid = topoUtils.centroid(vertices);
-    var scale = topo.get('scale');
-    centroid[0] += 96 * scale;
-    centroid[1] += 96 * scale;
+    var scale = topo.get('scale'),
+        width = topo.get('width'),
+        height = topo.get('height');
+    var bb = topo.get('bundleBoundingBox');
+    centroid[0] += Math.abs(width - bb.w) * scale;
+    centroid[1] += Math.abs(height - bb.h) * scale;
     this.topology.modules.PanZoomModule.panToPoint({point: centroid});
   };
 
@@ -398,12 +401,13 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var bb = topoUtils.getBoundingBox(vertices, 96, 96);
+    topo.set('bundleBoundingBox', bb);
     var width = topo.get('width'),
         height = topo.get('height');
 
     // Zoom to Fit
     var maxScale = Math.min(width / bb.w, height / bb.h);
-    maxScale -= 0.05; // Margin
+    maxScale -= 0.1; // Margin
     // Clamp Scale
     maxScale = Math.min(1.0, maxScale);
     this.centerViewport(maxScale);
