@@ -528,6 +528,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackend();
+    });
+
     afterEach(function() {
       if (fakebackend) {
         fakebackend.destroy();
@@ -555,8 +559,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             // Verify config.
             var wordpress = fakebackend.db.services.getById('wordpress');
+            var wordpressCharm = fakebackend.db.charms.getById(
+                'cs:precise/wordpress-15');
             var mysql = fakebackend.db.services.getById('mysql');
-            assert.equal(wordpress.get('config.engine'), 'nginx');
+            // This value is different from the default (nginx).
+            assert.equal(wordpressCharm.get('options.engine'), 'nginx');
+            assert.equal(wordpress.get('config.engine'), 'apache');
+            // This value is the default, as provided by the charm.
             assert.equal(wordpress.get('config.tuning'), 'single');
             assert.isTrue(wordpress.get('exposed'));
             assert.isFalse(mysql.get('exposed'));

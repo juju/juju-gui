@@ -1368,9 +1368,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var seen = [];
 
       /**
-        Helper to build out an inheritence chain
+        Helper to build out an inheritance chain
 
-        @method setupinheritance
+        @method setupInheritance
         @param {Object} base object currently being inspected.
         @param {Array} baseList chain of ancestors to later inherit.
         @param {Object} bundleData import data used to resolve ancestors.
@@ -1496,6 +1496,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // name for unit count.
         if (!serviceData.unitCount) {
           serviceData.unitCount = serviceData.num_units || 1;
+        }
+        if (serviceData.options) {
+          serviceData.config = serviceData.options;
+          delete serviceData.options;
         }
         servicePromises.push(
             self.promiseDeploy(serviceData.charm, serviceData));
