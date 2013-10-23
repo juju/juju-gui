@@ -867,6 +867,52 @@ describe('test_model.js', function() {
       assert.isUndefined(result.services.puppet.num_units);
     });
 
+    it('exports non-default options', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-1',
+        config: {one: '1', two: '2', three: '3', four: '4', five: true},
+        annotations: {'gui-x': 100, 'gui-y': 200}
+      });
+      db.charms.add([{id: 'precise/mysql-1'},
+            {id: 'precise/wordpress-1',
+              options: {
+                one: {
+                  'default': ''
+                },
+                two: {
+                  'default': null
+                },
+                three: {
+                  'default': undefined
+                },
+                four: {
+                  'default': '0'
+                },
+                five: {
+                  'default': false
+                }
+              }
+            }
+          ]);
+      var result = db.exportDeployer().envExport;
+      assert.equal(result.services.wordpress.options.one, '1');
+      assert.equal(result.services.wordpress.options.two, '2');
+      assert.equal(result.services.wordpress.options.three, '3');
+      assert.equal(result.services.wordpress.options.four, '4');
+      assert.equal(result.services.wordpress.options.five, true);
+    });
+
+    it('exports exposed flag', function() {
+      db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
+      db.charms.add([{id: 'precise/wordpress-4'}]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.wordpress.expose);
+      db.services.getById('wordpress').set('exposed', true);
+      result = db.exportDeployer().envExport;
+      assert.isTrue(result.services.wordpress.expose);
+    });
+
   });
 
   describe('service models', function() {

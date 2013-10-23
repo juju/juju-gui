@@ -9,8 +9,6 @@ envExport:
         "block-size": "5"
         "dataset-size": "80%"
         flavor: distro
-        'gui-x': 50
-        'gui-y': 50
         "ha-bindiface": eth0
         "ha-mcastport": "5411"
         "max-connections": "-1"
@@ -31,13 +29,12 @@ envExport:
       num_units: 2
       options: 
         debug: "no"
-        engine: nginx
-        tuning: single
+        engine: apache
         "wp-content": ""
       annotations: 
         "gui-x": 510
         "gui-y": 184
-      exposed: true
+      expose: true
   relations: 
     - - "wordpress:db"
       - "mysql:db"
