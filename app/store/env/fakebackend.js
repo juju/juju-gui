@@ -1530,7 +1530,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               }
 
               // Expose
-              if (serviceData.exposed) {
+              if (serviceData.expose) {
                 self.expose(serviceId);
               }
 

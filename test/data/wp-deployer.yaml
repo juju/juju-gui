@@ -37,7 +37,7 @@ envExport:
       annotations: 
         "gui-x": 510
         "gui-y": 184
-      exposed: true
+      expose: true
   relations: 
     - - "wordpress:db"
       - "mysql:db"

@@ -558,6 +558,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             var mysql = fakebackend.db.services.getById('mysql');
             assert.equal(wordpress.get('config.engine'), 'nginx');
             assert.equal(wordpress.get('config.tuning'), 'single');
+            assert.isTrue(wordpress.get('exposed'));
+            assert.isFalse(mysql.get('exposed'));
 
             // Constraints
             var constraints = mysql.get('constraints');
