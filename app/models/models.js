@@ -1190,6 +1190,10 @@ YUI.add('juju-models', function(Y) {
           serviceData.constraints = constraints;
         }
 
+        if (service.get('exposed')) {
+          serviceData.expose = true;
+        }
+
         // XXX: Only expose position. Currently these are position absolute
         // rather than relative.
         var anno = service.get('annotations');

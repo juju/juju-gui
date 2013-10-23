@@ -903,6 +903,16 @@ describe('test_model.js', function() {
       assert.equal(result.services.wordpress.options.five, true);
     });
 
+    it('exports exposed flag', function() {
+      db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
+      db.charms.add([{id: 'precise/wordpress-4'}]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.wordpress.expose);
+      db.services.getById('wordpress').set('exposed', true);
+      result = db.exportDeployer().envExport;
+      assert.isTrue(result.services.wordpress.expose);
+    });
+
   });
 
   describe('service models', function() {
