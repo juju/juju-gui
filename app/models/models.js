@@ -1168,9 +1168,9 @@ YUI.add('juju-models', function(Y) {
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
           var optionData = charmOptions && charmOptions[key];
-          if ((!optionData && value !== undefined) ||
-              (optionData && optionData['default'] &&
-              (value !== optionData['default']))) {
+          var defaultVal = optionData && optionData['default'];
+          var hasDefault = Y.Lang.isValue(defaultVal);
+          if (Y.Lang.isValue(value) && (!hasDefault || value !== defaultVal)) {
             serviceOptions[key] = value;
           }
         });
