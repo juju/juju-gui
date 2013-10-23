@@ -43,7 +43,7 @@
         left: 350px;
         width: 320px;
         background-color: @inspector-background-color;
-        padding: 20px;
+        padding: 20px 20px 0;
 
         .onboarding-cross {
             float: right;
@@ -68,10 +68,13 @@
         }
 
         ul {
+            background-color: rgba(34, 30, 28, 0.75);
             position: relative;
             list-style: none;
-            margin-left: 0;
             height: 57px;
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 20px;
 
             li {
               display: inline;
@@ -152,8 +155,9 @@
                 display: none;
             }
             .service-blocks {
-                top: 210px;
-                left: 125px;
+                left: 90px;
+                top: 87px;
+                max-width: none;
             }
         }
     }
