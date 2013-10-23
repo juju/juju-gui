@@ -563,7 +563,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'cs:precise/wordpress-15');
             var mysql = fakebackend.db.services.getById('mysql');
             // This value is different from the default (nginx).
-            assert.equal(wordpressCharm.get('options.engine'), 'nginx');
+            assert.equal(wordpressCharm.get('options.engine.default'), 'nginx');
             assert.equal(wordpress.get('config.engine'), 'apache');
             // This value is the default, as provided by the charm.
             assert.equal(wordpress.get('config.tuning'), 'single');
