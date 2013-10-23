@@ -87,7 +87,8 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('.yui3-tabview'));
       done();
     });
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
   });
 
   it('fetches the readme when requested', function(done) {
@@ -106,7 +107,8 @@ describe('Browser bundle detail view', function() {
     view.after('renderedChange', function(e) {
       container.one('a.readme').simulate('click');
     });
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
   });
 
   it('fetches a source file when requested', function(done) {
@@ -128,8 +130,8 @@ describe('Browser bundle detail view', function() {
       codeNode.all('select option').item(2).set('selected', 'selected');
       codeNode.one('select').simulate('change');
     });
-
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
   });
 
   it('renders the proper charm icons into the header', function(done) {
@@ -139,7 +141,8 @@ describe('Browser bundle detail view', function() {
           4);
       done();
     });
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
   });
 
   it('deploys a bundle when \'add\' button is clicked', function(done) {
@@ -152,7 +155,8 @@ describe('Browser bundle detail view', function() {
     view.after('renderedChange', function(e) {
       container.one('.bundle .add').simulate('click');
     });
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
   });
 
   it('fails gracefully if services don\'t provide xy annotations',
@@ -187,7 +191,8 @@ describe('Browser bundle detail view', function() {
          window.flags = {};
          done();
        });
-       view.render(data);
+       view.set('entity', new models.Bundle(data));
+       view.render();
      });
 
   it('renders the bundle topology into the view', function(done) {
@@ -233,16 +238,15 @@ describe('Browser bundle detail view', function() {
       window.flags = {};
       done();
     });
-    view.render(entity);
+    view.set('entity', new models.Bundle(entity));
+    view.render();
   });
 
   it('renders the charm list tab properly', function() {
     // This is not under test. It's async and only causes trouble in other
     // tests.
     view._parseData = function() {
-      return {
-        then: function() {}
-      };
+      return new Y.Promise(function(resolve) { resolve(); });
     };
 
     var entity = {
@@ -290,7 +294,8 @@ describe('Browser bundle detail view', function() {
         }
       }
     };
-    view.render(entity);
+    view.set('entity', new models.Bundle(entity));
+    view.render();
     var tab = container.one('#bws-services');
     assert.equal(tab.all('.token').size(), 2);
     var charmConfigNodes = tab.all('.charm-config');
@@ -303,11 +308,10 @@ describe('Browser bundle detail view', function() {
   it('selects the proper tab when given one', function() {
     view.set('activeTab', '#bws-services');
     view._parseData = function() {
-      return {
-        then: function() {}
-      };
+      return new Y.Promise(function(resolve) { resolve(); });
     };
-    view.render(data);
+    view.set('entity', new models.Bundle(data));
+    view.render();
     var selected = view.get('container').one('.yui3-tab-selected a');
     assert.equal(selected.getAttribute('href'), '#bws-services');
   });

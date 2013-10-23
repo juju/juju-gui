@@ -133,11 +133,11 @@
                     <ul class="interface-list">
                         {{#each services}}
                             <li class="interface-row yui3-g">
-                                <div class="yui3-u-1-2" data-config="{{ service_name }}"></div>
+                                <div class="yui3-u-1-2" data-config="{{ origService.name }}"></div>
                                 <div class="yui3-u-1-2 charm-config">
                                     <ul>
-                                        <li>Service name: {{ service_name }}</li>
-                                        {{#unless _model.is_subordinate}}
+                                        <li>Service name: {{ origService.name }}</li>
+                                        {{#unless charmModel.is_subordinate}}
                                             <li>
                                                 Number of units:
                                                 {{#if num_units }}
@@ -147,8 +147,8 @@
                                                 {{/if}}
                                             </li>
                                         {{/unless}}
-                                        {{#if options}}
-                                            {{#arrayObject options}}
+                                        {{#if origService.options}}
+                                            {{#arrayObject origService.options}}
                                                 <li>{{ key }}: {{ value }}</li>
                                             {{/arrayObject}}
                                         {{/if}}

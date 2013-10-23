@@ -117,11 +117,11 @@ YUI.add('subapp-browser-bundleview', function(Y) {
      */
     _renderCharmListing: function(services) {
       services.forEach(function(service) {
-        var charm = service._model.getAttrs();
+        var charm = service.charmModel.getAttrs();
         charm.size = 'tiny';
         charm.isDraggable = false;
         var token = new widgets.browser.Token(charm);
-        var node = Y.one('[data-config="' + service.service_name + '"]');
+        var node = Y.one('[data-config="' + service.origService.name + '"]');
         token.render(node);
         this._cleanup.tokens.push(token);
       }, this);
@@ -135,16 +135,21 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
      */
     _buildCharmList: function() {
+      // 'entity' is a bundle here.
       var attrs = this.get('entity').getAttrs();
       var services = [];
       Y.Object.each(attrs.services, function(service, key) {
         var charm = attrs.charm_metadata[key];
-        attrs.services[key]._model = new Y.juju.models.Charm(charm);
-        service.service_name = key;
-        services.push(service);
+        services.push({
+          origService: {
+            name: key,
+            data: service
+          },
+          charmModel: new Y.juju.models.Charm(charm)
+        });
       }, this);
       services.sort(function(a, b) {
-        return a._model.get('name') > b._model.get('name') ? 1 : -1;
+        return a.charmModel.get('name') > b.charmModel.get('name') ? 1 : -1;
       });
       return services;
     },
@@ -154,17 +159,18 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       @method _renderBundleView
     */
-    _renderBundleView: function(bundleData) {
-      var bundle = new models.Bundle(bundleData);
-      this.set('entity', bundle);
-      var attrs = bundle.getAttrs();
-      attrs.charmIcons = utils.charmIconParser(attrs.charm_metadata);
+    _renderBundleView: function() {
+      var bundle = this.get('entity');
+      var bundleData = bundle.getAttrs();
+      var templateData = Y.merge(bundleData);
+      templateData.charmIcons = utils.charmIconParser(
+          templateData.charm_metadata);
       // Remove the svg files from the file list
-      attrs.files = attrs.files.filter(function(fileName) {
+      templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
-      attrs.services = this._buildCharmList();
-      var content = this.template(attrs);
+      templateData.services = this._buildCharmList();
+      var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
       var options = {size: [480, 360]};
@@ -174,14 +180,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       // remove the flag in the test(test_bundle_details_view.js)
       // when this flag is no longer needed.
       if (window.flags && window.flags.strictBundle) {
-        showTopo = this._positionAnnotationsIncluded(attrs.data.services);
+        showTopo = this._positionAnnotationsIncluded(
+            bundleData.data.services);
       }
       if (showTopo) {
         // Setup the fake backend to create topology to display the canvas-like
         // rendering of the bundle.
         this._setupLocalFakebackend();
         var self = this;
-        this._parseData(bundle).then(function(data) {
+        this._parseData(bundle).then(function() {
           self.environment = new views.BundleTopology(Y.mix({
             db: self.fakebackend.db,
             container: node.one('#bws-bundle'), // Id because of Y.TabView
@@ -190,8 +197,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           self.environment.render();
           // Fired event to test the topology is rendered
           self.fire('topologyRendered');
-        },
-        function(error) {
+        }).then(null, function(error) {
           console.error(error.message, error);
         });
       } else {
@@ -211,7 +217,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       }
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
-      this._renderCharmListing(attrs.services);
+      this._renderCharmListing(templateData.services);
       this.set('rendered', true);
     },
 
@@ -269,15 +275,17 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       @method render
     */
-    render: function(bundleData) {
+    render: function() {
       this.showIndicator(this.get('renderTo'));
-      if (bundleData) {
-        this._renderBundleView(bundleData);
+      var entity = this.get('entity');
+      if (entity) {
+        this._renderBundleView();
       } else {
         this.get('store').bundle(
             this.get('entityId'), {
               'success': function(data) {
-                this._renderBundleView(data);
+                this.set('entity', new models.Bundle(data));
+                this._renderBundleView();
               },
               'failure': this.apiFailure
             },
