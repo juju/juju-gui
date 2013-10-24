@@ -35,6 +35,9 @@ YUI.add('juju-view-bundle', function(Y) {
       templates = views.Templates,
       topoUtils = Y.namespace('juju.topology.utils');
 
+  // The width/height dimensions of each service within a bundle.
+  var SERVICE_SIZE = 96;
+
   /**
     Manage service rendering and events.
 
@@ -134,8 +137,8 @@ YUI.add('juju-view-bundle', function(Y) {
                 'xlink:href': function(d) {
                   return d.icon;
                 },
-                width: 96,
-                height: 96
+                width: SERVICE_SIZE,
+                height: SERVICE_SIZE
               });
       node.append('text').append('tspan')
         .attr('class', 'name')
@@ -193,8 +196,8 @@ YUI.add('juju-view-bundle', function(Y) {
 
       // Size the node for drawing.
       node.attr({
-        'width': function(box) { box.w = 96; return box.w;},
-        'height': function(box) { box.h = 96; return box.h;}
+        'width': function(box) { box.w = SERVICE_SIZE; return box.w;},
+        'height': function(box) { box.h = SERVICE_SIZE; return box.h;}
       });
 
       // Draw a subordinate relation indicator.
@@ -400,7 +403,7 @@ YUI.add('juju-view-bundle', function(Y) {
   BundleTopology.prototype.zoomToFit = function() {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-    var bb = topoUtils.getBoundingBox(vertices, 96, 96);
+    var bb = topoUtils.getBoundingBox(vertices, SERVICE_SIZE, SERVICE_SIZE);
     topo.set('bundleBoundingBox', bb);
     var width = topo.get('width'),
         height = topo.get('height');
