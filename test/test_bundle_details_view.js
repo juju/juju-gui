@@ -226,6 +226,28 @@ describe('Browser bundle detail view', function() {
     view.render();
   });
 
+  it('disabled relation line and label click interactions', function(done) {
+
+    Y.juju.views.createModalPanel = function(rel, self) {
+      // If we hit this method then the relationInteractive flag was not
+      // respected and we are showing a modal panel to remove the relation.
+      assert.fail();
+    };
+
+    view.on('topologyRendered', function(e) {
+      var relLabel = container.one('.rel-label');
+      assert.isNotNull(relLabel);
+      relLabel.simulate('click');
+      assert.isNotNull(container.one('.topology-canvas'));
+      // Check that the bundle topology tab is the landing tab.
+      assert.equal(view.tabview.get('selection').get('index'), 0);
+      done();
+    });
+
+    view.set('entity', new models.Bundle(data));
+    view.render();
+  });
+
   it('renders the charm list tab properly', function() {
     // This is not under test. It's async and only causes trouble in other
     // tests.
