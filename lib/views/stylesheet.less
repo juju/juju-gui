@@ -289,171 +289,162 @@ code {
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
 
-    .navbar-inner {
-        // The following are resets to override Bootstrap styles
+    &,
+    a {
+        color: #d7d3d0;
+        font-size: 14px;
+        font-weight: 300;
+    }
+
+    ul {
         margin: 0;
         padding: 0;
-        background: transparent;
-        min-height: auto;
-        border-radius: 0;
-        box-shadow: none;
-
-        &,
-        a {
-            color: #d7d3d0;
-            font-size: 14px;
-            font-weight: 300;
+        list-style: none;
+    }
+    .right-nav,
+    #browser-nav {
+        & > li,
+        & > li.tab > a {
+            .border-box;
+            display: block;
+            height: @navbar-height;
+            padding: 20px 20px 0 20px;
         }
-
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        .right-nav,
-        #browser-nav {
-            & > li,
-            & > li.tab > a {
-                .border-box;
-                display: block;
-                height: @navbar-height;
-                padding: 20px 20px 0 20px;
-            }
-            & > li {
-                float: left;
-                border-width: 0 1px;
-                border-style: solid;
-                border-left-color: @navbar-border-light;
-                border-right-color: @navbar-border-dark;
-
-                & > a {
-                    &.button {
-                        margin: -8px 0 0 0;
-                    }
-                }
-            }
-        }
-        #browser-nav {
+        & > li {
             float: left;
-            border-right: 1px solid @navbar-border-light;
+            border-width: 0 1px;
+            border-style: solid;
+            border-left-color: @navbar-border-light;
+            border-right-color: @navbar-border-dark;
 
-            & > li {
-                &:first-child {
-                    border-left: none;
+            & > a {
+                &.button {
+                    margin: -8px 0 0 0;
                 }
-                .brand {
-                    margin: -5px 10px 0 0;
-                    padding: 0;
+            }
+        }
+    }
+    #browser-nav {
+        float: left;
+        border-right: 1px solid @navbar-border-light;
+
+        & > li {
+            &:first-child {
+                border-left: none;
+            }
+            .brand {
+                display: block;
+                margin: -5px 10px 0 0;
+                padding: 0;
+            }
+            & > a {
+                &:hover {
+                    text-decoration: none;
                 }
-                & > a {
+            }
+            &.tab a {
+                margin: -20px -20px 0 -20px;
+
+                &.active {
+                    border-bottom: 3px solid @charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 6px;
+                }
+            }
+            &.import-export {
+                padding: 24px 0 0 0;
+
+                a {
+                    display: block;
+                    float: left;
+                    height: 15px;
+                    padding:  0 10px;
+                    line-height: 15px;
+
+                    &:first-child {
+                        border-left: 1px solid @navbar-border-dark;
+                    }
+                    &:last-child {
+                        border-right: 1px solid @navbar-border-light;
+                    }
+                    // Ugly classes to display the correct sprite for the
+                    // state. We might be able to turn this into a mixin
+                    // if we need to redo the same thing often.
+                    &:focus,
                     &:hover {
-                        text-decoration: none;
-                    }
-                }
-                &.tab a {
-                    margin: -20px -20px 0 -20px;
-
-                    &.active {
-                        border-bottom: 3px solid @charm-panel-orange;
-                    }
-                    .sprite {
-                        margin-right: 6px;
-                    }
-                }
-                &.import-export {
-                    padding: 24px 0 0 0;
-
-                    a {
-                        display: block;
-                        float: left;
-                        height: 15px;
-                        padding:  0 10px;
-                        line-height: 15px;
-
-                        &:first-child {
-                            border-left: 1px solid @navbar-border-dark;
-                        }
-                        &:last-child {
-                            border-right: 1px solid @navbar-border-light;
-                        }
-                        // Ugly classes to display the correct sprite for the
-                        // state. We might be able to turn this into a mixin
-                        // if we need to redo the same thing often.
-                        &:focus,
-                        &:hover {
-                            .sprite.hover {
-                                display: block;
-                            }
-                            .sprite.normal {
-                                display: none;
-                            }
-                        }
                         .sprite.hover {
+                            display: block;
+                        }
+                        .sprite.normal {
                             display: none;
                         }
-                        .sprite {
-                            display: block;
-                            margin: 1px 0 0 0;
-                        }
                     }
-                    #import-trigger {
-                        /* XXX bac: remove the hiding when import is implemented. */
+                    .sprite.hover {
                         display: none;
                     }
-                    #export-trigger {
-                        /* XXX huwshimi: remove the following line when import is implemented. */
-                        border: none;
+                    .sprite {
+                        display: block;
+                        margin: 1px 0 0 0;
                     }
                 }
-                &.notifications-nav {
-                    position: relative;
-                    padding: 0;
+                #import-trigger {
+                    /* XXX bac: remove the hiding when import is implemented. */
+                    display: none;
+                }
+                #export-trigger {
+                    /* XXX huwshimi: remove the following line when import is implemented. */
+                    border: none;
+                }
+            }
+            &.notifications-nav {
+                position: relative;
+                padding: 0;
 
-                    #notifications {
-                        & > span {
-                            .border-box;
-                            display: block;
-                            height: @navbar-height;
-                            padding: 15px 20px 0 20px;
+                #notifications {
+                    & > span {
+                        .border-box;
+                        display: block;
+                        height: @navbar-height;
+                        padding: 15px 20px 0 20px;
 
-                            &.open {
-                                background-color: #000;
-                            }
-                            #notify-indicator {
-                                .button;
-                                margin: 0 9px 0 0;
-                                padding: 6px 12px;
-                            }
+                        &.open {
+                            background-color: #000;
+                        }
+                        #notify-indicator {
+                            .button;
+                            margin: 0 9px 0 0;
+                            padding: 6px 12px;
                         }
                     }
                 }
             }
         }
-        .right-nav {
-            float: right;
-            margin: 0;
-            border-left: 1px solid @navbar-border-dark;
+    }
+    .right-nav {
+        float: right;
+        margin: 0;
+        border-left: 1px solid @navbar-border-dark;
 
-            & > li:last-child {
-                border-right: none;
-            }
-            a.button.inverse {
+        & > li:last-child {
+            border-right: none;
+        }
+        a.button.inverse {
+            background-color: #1f1b18;
+
+            &:hover {
                 background-color: #1f1b18;
-
-                &:hover {
-                    background-color: #1f1b18;
-                }
             }
-            .help-dropdown {
-                display: none;
-                position: relative;
+        }
+        .help-dropdown {
+            display: none;
+            position: relative;
 
-                .expand {
-                    margin-left: 5px;
+            .expand {
+                margin-left: 5px;
 
-                    .hidden {
-                        display: none;
-                    }
+                .hidden {
+                    display: none;
                 }
             }
         }
