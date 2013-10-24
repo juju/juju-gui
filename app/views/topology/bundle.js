@@ -355,7 +355,7 @@ YUI.add('juju-view-bundle', function(Y) {
     // BundleModule provides an icon centric view
     // of services till service module can support this directly.
     topo.addModule(views.BundleModule);
-    topo.addModule(views.RelationModule);
+    topo.addModule(views.RelationModule, { disableRelationInteraction: true });
     topo.addModule(views.PanZoomModule);
   }
 
