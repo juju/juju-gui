@@ -131,15 +131,14 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       Build and order a list of charms.
 
       @method _buildCharmList
+      @param {Object} the bundle entity attrs.
       @return {Array} the ordered list of charms in the bundle.
 
      */
-    _buildCharmList: function() {
-      // 'entity' is a bundle here.
-      var attrs = this.get('entity').getAttrs();
+    _buildCharmList: function(bundleData) {
       var services = [];
-      Y.Object.each(attrs.services, function(service, key) {
-        var charm = attrs.charm_metadata[key];
+      Y.Object.each(bundleData.services, function(service, key) {
+        var charm = bundleData.charm_metadata[key];
         services.push({
           origService: {
             name: key,
@@ -162,6 +161,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _renderBundleView: function() {
       var bundle = this.get('entity');
       var bundleData = bundle.getAttrs();
+      // Copy the bundle for use in the template so we can modify the content
+      // without munipulating the entity.
       var templateData = Y.merge(bundleData);
       templateData.charmIcons = utils.charmIconParser(
           templateData.charm_metadata);
@@ -169,7 +170,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       templateData.files = templateData.files.filter(function(fileName) {
         return !/\.svg$/.test(fileName);
       });
-      templateData.services = this._buildCharmList();
+      templateData.services = this._buildCharmList(bundleData);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
@@ -195,7 +196,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
             store: self.get('store')
           }, options));
           self.environment.render();
-          // Fired event to test the topology is rendered
+          // Fire event to listen to during the tests so that we know when
+          // it's rendered.
           self.fire('topologyRendered');
         }).then(null, function(error) {
           console.error(error.message, error);
@@ -218,7 +220,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
       this._renderCharmListing(templateData.services);
-      this.set('rendered', true);
     },
 
     /**

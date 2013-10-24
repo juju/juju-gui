@@ -82,13 +82,10 @@ describe('Browser bundle detail view', function() {
     assert.equal(view instanceof Y.juju.browser.views.BrowserBundleView, true);
   });
 
-  it('displays the bundle data in a tabview', function(done) {
-    view.after('renderedChange', function(e) {
-      assert.isNotNull(container.one('.yui3-tabview'));
-      done();
-    });
+  it('displays the bundle data in a tabview', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
+    assert.isNotNull(container.one('.yui3-tabview'));
   });
 
   it('fetches the readme when requested', function(done) {
@@ -104,11 +101,9 @@ describe('Browser bundle detail view', function() {
       done();
     };
     view.set('store', fakeStore);
-    view.after('renderedChange', function(e) {
-      container.one('a.readme').simulate('click');
-    });
     view.set('entity', new models.Bundle(data));
     view.render();
+    container.one('a.readme').simulate('click');
   });
 
   it('fetches a source file when requested', function(done) {
@@ -124,25 +119,19 @@ describe('Browser bundle detail view', function() {
       done();
     };
     view.set('store', fakeStore);
-    view.after('renderedChange', function(e) {
-      container.one('a.code').simulate('click');
-      var codeNode = container.one('#bws-code');
-      codeNode.all('select option').item(2).set('selected', 'selected');
-      codeNode.one('select').simulate('change');
-    });
     view.set('entity', new models.Bundle(data));
     view.render();
+    container.one('a.code').simulate('click');
+    var codeNode = container.one('#bws-code');
+    codeNode.all('select option').item(2).set('selected', 'selected');
+    codeNode.one('select').simulate('change');
   });
 
-  it('renders the proper charm icons into the header', function(done) {
-    view.after('renderedChange', function(e) {
-      assert.equal(
-          container.one('.header .details .charms').all('img').size(),
-          4);
-      done();
-    });
+  it('renders the proper charm icons into the header', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
+    assert.equal(
+        container.one('.header .details .charms').all('img').size(), 4);
   });
 
   it('deploys a bundle when \'add\' button is clicked', function(done) {
@@ -152,15 +141,13 @@ describe('Browser bundle detail view', function() {
       assert.isObject(data);
       done();
     });
-    view.after('renderedChange', function(e) {
-      container.one('.bundle .add').simulate('click');
-    });
     view.set('entity', new models.Bundle(data));
     view.render();
+    container.one('.bundle .add').simulate('click');
   });
 
   it('fails gracefully if services don\'t provide xy annotations',
-     function(done) {
+     function() {
        window.flags = { strictBundle: true };
        view._parseData = function() {
          return new Y.Promise(function(resolve) { resolve(); });
@@ -183,16 +170,13 @@ describe('Browser bundle detail view', function() {
               }
             };
           }});
-       view.after('renderedChange', function(e) {
-         assert.isNull(container.one('#bws-bundle'));
-         assert.isNull(container.one('a[href=#bws-bundle]'));
-         // Check that the charms tab is the landing tab
-         assert.equal(view.tabview.get('selection').get('index'), 2);
-         window.flags = {};
-         done();
-       });
        view.set('entity', new models.Bundle(data));
        view.render();
+       assert.isNull(container.one('#bws-bundle'));
+       assert.isNull(container.one('a[href=#bws-bundle]'));
+       // Check that the charms tab is the landing tab
+       assert.equal(view.tabview.get('selection').get('index'), 2);
+       window.flags = {};
      });
 
   it('renders the bundle topology into the view', function(done) {
