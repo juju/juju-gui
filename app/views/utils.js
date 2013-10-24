@@ -378,26 +378,6 @@ YUI.add('juju-view-utils', function(Y) {
     return panel;
   };
 
-  views.highlightRow = function(row, err) {
-    row.removeClass('highlighted'); // Whether we need to or not.
-    var backgroundColor = 'palegreen',
-        oldColor = row.one('td').getStyle('backgroundColor');
-    if (err) {
-      backgroundColor = 'pink';
-    }
-    // Handle tr:hover in bootstrap css.
-    row.all('td').setStyle('backgroundColor', 'transparent');
-    row.setStyle('backgroundColor', backgroundColor);
-    row.transition(
-        { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-        function() {
-          // Revert to following normal stylesheet rules.
-          row.setStyle('backgroundColor', '');
-          // Undo hover workaround.
-          row.all('td').setStyle('backgroundColor', '');
-        });
-  };
-
   function _addAlertMessage(container, alertClass, message) {
     var div = container.one('#message-area');
 
