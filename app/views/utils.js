@@ -361,7 +361,7 @@ YUI.add('juju-view-utils', function(Y) {
         { value: action_label,
           section: Y.WidgetStdMod.FOOTER,
           action: action_cb,
-          classNames: ['btn-danger', 'btn']
+          classNames: ['button', 'button']
         });
     panel.addButton(
         { value: 'Cancel',
@@ -370,7 +370,7 @@ YUI.add('juju-view-utils', function(Y) {
             e.preventDefault();
             panel.hide();
           },
-          classNames: ['btn']
+          classNames: ['button']
         });
 
     // The default YUI CSS conflicts with the CSS effect we want.

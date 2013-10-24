@@ -986,7 +986,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 subRelDialog.hide();
                 subRelDialog.destroy();
               },
-              classNames: ['btn']
+              classNames: ['button']
             });
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
