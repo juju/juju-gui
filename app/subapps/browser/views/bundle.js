@@ -177,13 +177,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var options = {size: [720, 500]};
       this.hideIndicator(renderTo);
 
-      var showTopo = true;
-      // remove the flag in the test(test_bundle_details_view.js)
-      // when this flag is no longer needed.
-      if (window.flags && window.flags.strictBundle) {
-        showTopo = this._positionAnnotationsIncluded(
-            bundleData.data.services);
-      }
+      var showTopo = this._positionAnnotationsIncluded(
+          bundleData.data.services);
+
       if (showTopo) {
         // Setup the fake backend to create topology to display the canvas-like
         // rendering of the bundle.
