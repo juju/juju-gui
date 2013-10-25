@@ -50,6 +50,7 @@ YUI.add('browser-search-widget', function(Y) {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_SEARCH_CHANGED: 'search_changed',
     EVT_SEARCH_GOHOME: 'go_home',
+    EVT_CHARM_DEPLOY: 'charm_deploy',
 
     TEMPLATE: templates['browser-search'],
 
@@ -207,7 +208,8 @@ YUI.add('browser-search-widget', function(Y) {
         // be false.
         var tokenAttrs = Y.merge(charm.getAttrs(), {
           size: 'tiny',
-          is_approved: false
+          is_approved: false,
+          deployButton: isCategory(charm.get('id')) ? false : true
         });
         var token = new ns.Token(tokenAttrs);
         var html = Y.Node.create(token.TEMPLATE(token.getAttrs()));
@@ -266,6 +268,32 @@ YUI.add('browser-search-widget', function(Y) {
         },
         source: fetchSuggestions
       });
+
+      this.ac._onItemClick = function (ev) {
+          // If the selection is coming from the deployButton then we kind of
+          // ignore the way autocomplete works. It's more of a 'quick search'
+          // with a deploy option. No search is really performed after the
+          // deploy button is selected.
+          if (e.target.hasClass('search_add_to_canvas')) {
+            // wtf is 'this' in this case. Is it scoped correctly?
+
+            debugger;
+
+            // Fire an event up to the View with the charm information so that
+            // it can proceed to build/send the deploy information out to
+            // the environment.
+            var charm = ev.something;
+            this.fire(this.EVT_CHARM_DEPLOY, {
+
+            });
+
+          } else {
+              var selectedNode = e.currentTarget;
+              this.set(ACTIVE_ITEM, itemNode);
+              this.selectItem(itemNode, e);
+          }
+      },
+
       this.ac.render();
 
       this.ac.get('inputNode').on('focus', function(ev) {
@@ -279,8 +307,22 @@ YUI.add('browser-search-widget', function(Y) {
 
       // Stop clicking on charm-tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
+        // The clicks for the deploy buttons fall into here. We want to
+        // halt the click event, but we want the deploy to trigger and go
+        // off and perform that deploy.
+        debugger;
         ev.halt();
       }, 'a', this);
+
+      // Stop clicking on charm-tokens <a> links from navigating.
+      this.get('boundingBox').delegate('click', function(ev) {
+        ev.halt();
+      }, 'a', this);
+
+
+
+
+
     },
 
     /**
@@ -293,6 +335,12 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _suggestionSelected: function(ev) {
       ev.halt();
+
+      // There are two things that can be selected here. If the + icon was
+      // hit, we want to start a deploy process. If it was anything else in a
+      // token, then we want to proceed with opening the details pane for that
+      // charm, perform a search, etc.
+      debugger;
       var change,
           newVal,
           charmid = ev.result.raw.charm.id,
