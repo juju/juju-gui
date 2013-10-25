@@ -35,6 +35,9 @@ YUI.add('juju-view-bundle', function(Y) {
       templates = views.Templates,
       topoUtils = Y.namespace('juju.topology.utils');
 
+  // The width/height dimensions of each service within a bundle.
+  var SERVICE_SIZE = 96;
+
   /**
     Manage service rendering and events.
 
@@ -134,12 +137,9 @@ YUI.add('juju-view-bundle', function(Y) {
                 'xlink:href': function(d) {
                   return d.icon;
                 },
-                width: 96,
-                height: 96
+                width: SERVICE_SIZE,
+                height: SERVICE_SIZE
               });
-      node.append('text').append('tspan')
-        .attr('class', 'name')
-        .text(function(d) { return d.displayName; });
     },
 
     /**
@@ -193,8 +193,8 @@ YUI.add('juju-view-bundle', function(Y) {
 
       // Size the node for drawing.
       node.attr({
-        'width': function(box) { box.w = 96; return box.w;},
-        'height': function(box) { box.h = 96; return box.h;}
+        'width': function(box) { box.w = SERVICE_SIZE; return box.w;},
+        'height': function(box) { box.h = SERVICE_SIZE; return box.h;}
       });
 
       // Draw a subordinate relation indicator.
@@ -355,7 +355,7 @@ YUI.add('juju-view-bundle', function(Y) {
     // BundleModule provides an icon centric view
     // of services till service module can support this directly.
     topo.addModule(views.BundleModule);
-    topo.addModule(views.RelationModule);
+    topo.addModule(views.RelationModule, { disableRelationInteraction: true });
     topo.addModule(views.PanZoomModule);
   }
 
@@ -381,6 +381,12 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var centroid = topoUtils.centroid(vertices);
+    var scale = topo.get('scale'),
+        width = topo.get('width'),
+        height = topo.get('height');
+    var bb = topo.get('bundleBoundingBox');
+    centroid[0] += Math.abs(width - bb.w) * scale;
+    centroid[1] += Math.abs(height - bb.h) * scale;
     this.topology.modules.PanZoomModule.panToPoint({point: centroid});
   };
 
@@ -394,21 +400,16 @@ YUI.add('juju-view-bundle', function(Y) {
   BundleTopology.prototype.zoomToFit = function() {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-    var bb = topoUtils.getBoundingBox(vertices);
+    var bb = topoUtils.getBoundingBox(vertices, SERVICE_SIZE, SERVICE_SIZE);
+    topo.set('bundleBoundingBox', bb);
     var width = topo.get('width'),
         height = topo.get('height');
 
     // Zoom to Fit
-    // We are really only interested in scale down
-    // here when the bundle is too large to
-    // render in the space provided.
-    var maxScale = 1.0;
-    if (bb.w > width || bb.h > height) {
-      maxScale = Math.min(bb.w / width, bb.h / height);
-      maxScale -= 0.05; // Margin
-    }
+    var maxScale = Math.min(width / bb.w, height / bb.h);
+    maxScale -= 0.1; // Margin
     // Clamp Scale
-    maxScale = Math.max(0.25 , Math.min(1.0, maxScale));
+    maxScale = Math.min(1.0, maxScale);
     this.centerViewport(maxScale);
   };
 

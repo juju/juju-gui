@@ -947,7 +947,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // on the dialog.
          panel.all('button').size().should.equal(2);
 
-         dialog_btn = panel.one('.btn-danger');
+         dialog_btn = panel.one('.button');
          dialog_btn.simulate('click');
          container.all('.to-remove')
               .size()

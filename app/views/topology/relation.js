@@ -969,6 +969,7 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     relationClick: function(relation, self) {
+      if (self.get('disableRelationInteraction')) { return; }
       if (relation.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
@@ -986,7 +987,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 subRelDialog.hide();
                 subRelDialog.destroy();
               },
-              classNames: ['btn']
+              classNames: ['button']
             });
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
@@ -1006,7 +1007,15 @@ YUI.add('juju-topology-relation', function(Y) {
 
         Stores an element used for retrieving the cursor's position on drag.
       */
-      dragplane: {}
+      dragplane: {},
+      /**
+        Disabled user interactions on the relation lines and labels.
+
+        @attribute disableRelationInteraction
+        @default undefined
+        @type {Boolean}
+      */
+      disableRelationInteraction: {}
     }
 
   });

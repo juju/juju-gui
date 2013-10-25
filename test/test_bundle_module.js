@@ -79,8 +79,6 @@ describe('topology bundle module', function() {
 
           // We should have the two rendered services
           assert.equal(container.all('.service').size(), 2);
-          assert.deepEqual(container.all('tspan.name').get('text'), [
-            'mysql', 'wordpress']);
           var service = svg.select('.service');
 
           // Sizing
@@ -113,11 +111,11 @@ describe('topology bundle module', function() {
           // that we've scaled the canvas as expected.  In the model.
           assert.equal(
               parseFloat(bundle.topology.get('scale'), 10).toFixed(2),
-              0.48);
+              0.39);
           // and on the canvas.
           var scaleAttr = svg.select('g').attr('transform');
           var match = /scale\(([\d\.]+)\)/.exec(scaleAttr);
-          assert.equal(parseFloat(match[1]).toFixed(2), 0.48);
+          assert.equal(parseFloat(match[1]).toFixed(2), 0.39);
           done();
         }).then(undefined, done);
   });

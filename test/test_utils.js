@@ -66,7 +66,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          );
           panel.show();
           var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn-danger');
+              button = panel_node.all('.button').item(0);
           button.getHTML().should.equal('Action Label');
           button.simulate('click');
           confirmed.should.equal(true);
@@ -83,7 +83,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               function() {confirmed = true;});
           panel.show();
           var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn:not(.btn-danger)');
+              button = panel_node.all('.button').item(1);
           button.getHTML().should.equal('Cancel');
           button.simulate('click');
           confirmed.should.equal(false);
@@ -103,7 +103,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       panel.get('buttons').footer.length.should.equal(2);
       panel.show();
       var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn-danger');
+              button = panel_node.all('.button').item(0);
       button.getHTML().should.equal('Second Action Label');
       button.simulate('click');
       confirmed.should.equal(true);

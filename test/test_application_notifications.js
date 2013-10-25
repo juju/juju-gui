@@ -83,9 +83,6 @@ describe.skip('juju application notifications', function() {
         callback();
       };
 
-      // We skip this part because we have no row to highlight
-      _viewsHighlightRow = views.highlightRow;
-      views.highlightRow = NO_OP;
       done();
     });
   });
@@ -93,7 +90,6 @@ describe.skip('juju application notifications', function() {
   afterEach(function() {
     viewContainer.remove(true);
     window.setTimeout = _setTimeout;
-    views.highlightRow = _viewsHighlightRow;
   });
 
   it('should notify errors in the notifications view', function() {
