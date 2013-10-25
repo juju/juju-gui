@@ -68,6 +68,32 @@ YUI.add('juju-charm-models', function(Y) {
   };
 
   /**
+
+   Load the recent commits into a format we can use nicely.
+
+   @method loadRecentCommits
+
+  */
+  models.loadRecentCommits = function(revisions) {
+    var commits = [];
+
+    if (revisions) {
+      Y.Array.each(revisions, function(commit) {
+        commits.push({
+          author: {
+            name: commit.authors[0].name,
+            email: commit.authors[0].email
+          },
+          date: new Date(commit.date),
+          message: commit.message,
+          revno: commit.revno
+        });
+      });
+    }
+    return commits;
+  };
+
+  /**
    * Helper to use a setter so that we can set null when the api returns an
    * empty object.
    *
@@ -123,34 +149,6 @@ YUI.add('juju-charm-models', function(Y) {
   models.Charm = Y.Base.create('browser-charm', Y.Model, [], {
     // Only care about at most, this number of related charms per interface.
     maxRelatedCharms: 5,
-
-    /**
-
-      Load the recent commits into a format we can use nicely.
-
-      @method _loadRecentCommits
-
-     */
-    _loadRecentCommits: function() {
-      var source = this.get('code_source'),
-          commits = [];
-
-      if (source && source.revisions) {
-        Y.Array.each(source.revisions, function(commit) {
-          commits.push({
-            author: {
-              name: commit.authors[0].name,
-              email: commit.authors[0].email
-            },
-            date: new Date(commit.date),
-            message: commit.message,
-            revno: commit.revno
-          });
-        });
-      }
-
-      return commits;
-    },
 
     /**
      * Parse the relations ATTR from the api into specific provides/requires
@@ -658,7 +656,12 @@ YUI.add('juju-charm-models', function(Y) {
          *
          */
         valueFn: function() {
-          return this._loadRecentCommits();
+          var source = this.get('code_source');
+          var commits = [];
+          if (source) {
+            commits = models.loadRecentCommits(source.revisions);
+          }
+          return commits;
         }
       },
       /**

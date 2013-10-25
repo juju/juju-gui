@@ -165,6 +165,24 @@ YUI.add('juju-bundle-models', function(Y) {
           });
           return count;
         }
+      },
+      /**
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      'recent_commits': {
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the api.
+         *
+         * @method recent_commits.valueFn
+         *
+         */
+        valueFn: function() {
+          return models.loadRecentCommits(this.get('code_source'));
+        }
       }
     }
   });
