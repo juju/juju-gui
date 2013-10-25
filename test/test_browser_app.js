@@ -1251,7 +1251,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
+        window.flags = {};
       });
 
       it('onboarding is not called with a charm id', function() {
@@ -1272,7 +1272,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
+        window.flags = {};
       });
 
       it('onboarding is not called with a search', function() {
@@ -1292,7 +1292,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
+        window.flags = {};
       });
 
       it('/minimized dispatches correctly', function() {
