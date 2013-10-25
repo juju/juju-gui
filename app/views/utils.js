@@ -361,7 +361,7 @@ YUI.add('juju-view-utils', function(Y) {
         { value: action_label,
           section: Y.WidgetStdMod.FOOTER,
           action: action_cb,
-          classNames: ['button', 'button']
+          classNames: ['button']
         });
     panel.addButton(
         { value: 'Cancel',
