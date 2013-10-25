@@ -136,7 +136,8 @@ Go forth and see the typography.less file and use those.
     display: inline-block;
     margin: 0;
     padding: 8px 14px;
-    font-size: 12pt;
+    border: none;
+    font-size: 14px;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-font-smoothing: subpixel-antialiased;
     -o-font-smoothing: subpixel-antialiased;
@@ -173,6 +174,7 @@ a,
 a:hover {
     cursor: pointer;
     color: @charm-panel-orange;
+    text-decoration: none;
 }
 input, button, select, textarea {
     font-family: @font-family;
@@ -189,6 +191,9 @@ svg {
 li {
     line-height: 18px;
 }
+h2 {
+    line-height: 36px;
+}
 h4 {
     font-size: 14px;
 }
@@ -201,6 +206,12 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     color: inherit;
     text-rendering: optimizelegibility;
+}
+ul {
+    padding: 0;
+}
+label {
+    display: block;
 }
 .align-right {
     text-align: right;
@@ -287,218 +298,162 @@ code {
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
 
-    .navbar-inner {
-        // The following are resets to override Bootstrap styles
+    &,
+    a {
+        color: #d7d3d0;
+        font-size: 14px;
+        font-weight: 300;
+    }
+
+    ul {
         margin: 0;
         padding: 0;
-        background: transparent;
-        min-height: auto;
-        border-radius: 0;
-        box-shadow: none;
-
-        &,
-        a {
-            color: #d7d3d0;
-            font-size: 14px;
-            font-weight: 300;
+        list-style: none;
+    }
+    .right-nav,
+    #browser-nav {
+        & > li,
+        & > li.tab > a {
+            .border-box;
+            display: block;
+            height: @navbar-height;
+            padding: 20px 20px 0 20px;
         }
+        & > li {
+            float: left;
+            border-width: 0 1px;
+            border-style: solid;
+            border-left-color: @navbar-border-light;
+            border-right-color: @navbar-border-dark;
 
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+            & > a {
+                &.button {
+                    margin: -8px 0 0 0;
+                }
+            }
         }
-        #browser-nav {
-            padding: 0;
+    }
+    #browser-nav {
+        float: left;
+        border-right: 1px solid @navbar-border-light;
 
-            &:after {
-                content: '';
-                display: block;
-                float: left;
-                height: @navbar-height;
-                background-color: #f00;
-                border-left: 1px solid @navbar-border-light;
+        & > li {
+            &:first-child {
+                border-left: none;
             }
-            & > ul > li,
-            & > ul > li > a {
-                .border-box;
+            .brand {
                 display: block;
-                float: left;
-                height: @navbar-height;
-                padding: 20px 20px 0 20px;
-                border-width: 0 1px;
-                border-style: solid;
-                border-left-color: @navbar-border-light;
-                border-right-color: @navbar-border-dark;
+                margin: -5px 10px 0 0;
+                padding: 0;
             }
-            & > ul > li {
-                float: left;
-
-                &:first-child {
-                    border-left: none;
+            & > a {
+                &:hover {
+                    text-decoration: none;
                 }
-                .brand {
-                  padding-top: 15px;
-                  padding-right: 30px;
-                }
-                & > a {
-                    float: none;
-                    margin: -20px -20px 0 -20px;
-                    border: none;
+            }
+            &.tab a {
+                margin: -20px -20px 0 -20px;
 
+                &.active {
+                    border-bottom: 3px solid @charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 6px;
+                }
+            }
+            &.import-export {
+                padding: 24px 0 0 0;
+
+                a {
+                    display: block;
+                    float: left;
+                    height: 15px;
+                    padding:  0 10px;
+                    line-height: 15px;
+
+                    &:first-child {
+                        border-left: 1px solid @navbar-border-dark;
+                    }
+                    &:last-child {
+                        border-right: 1px solid @navbar-border-light;
+                    }
+                    // Ugly classes to display the correct sprite for the
+                    // state. We might be able to turn this into a mixin
+                    // if we need to redo the same thing often.
+                    &:focus,
                     &:hover {
-                        text-decoration: none;
-                    }
-                    &.active {
-                        border-bottom: 3px solid @charm-panel-orange;
-                    }
-                    i {
-                        margin-right: 6px;
-                    }
-                }
-                &.import-export {
-                    padding: 24px 0 0 0;
-
-                    a {
-                        display: block;
-                        float: left;
-                        height: 15px;
-                        margin: 0;
-                        padding:  0 10px;
-                        line-height: 15px;
-
-                        &:first-child {
-                            border-left: 1px solid @navbar-border-dark;
-                        }
-                        &:last-child {
-                            border-right: 1px solid @navbar-border-light;;
-                        }
-                        // Ugly classes to display the correct sprite for the
-                        // state. We might be able to turn this into a mixin
-                        // if we need to redo the same thing often.
-                        &:focus,
-                        &:hover {
-                            .sprite.hover {
-                                display: block;
-                            }
-                            .sprite.normal {
-                                display: none;
-                            }
-                        }
                         .sprite.hover {
+                            display: block;
+                        }
+                        .sprite.normal {
                             display: none;
                         }
-                        .sprite {
-                            display: block;
-                            margin: 1px 0 0 0;
-                        }
                     }
-                    #import-trigger {
-                        /* XXX bac: remove the hiding when import is implemented. */
+                    .sprite.hover {
                         display: none;
                     }
-                    #export-trigger {
-                        /* XXX huwshimi: remove the following line when import is implemented. */
-                        border: none;
+                    .sprite {
+                        display: block;
+                        margin: 1px 0 0 0;
                     }
                 }
-                &.notifications-nav {
-                    position: relative;
-                    padding: 0;
+                #import-trigger {
+                    /* XXX bac: remove the hiding when import is implemented. */
+                    display: none;
+                }
+                #export-trigger {
+                    /* XXX huwshimi: remove the following line when import is implemented. */
+                    border: none;
+                }
+            }
+            &.notifications-nav {
+                position: relative;
+                padding: 0;
 
-                    #notifications {
-                        & > span {
-                            .border-box;
-                            display: block;
-                            height: @navbar-height;
-                            padding: 15px 20px 0 20px;
+                #notifications {
+                    & > span {
+                        .border-box;
+                        display: block;
+                        height: @navbar-height;
+                        padding: 15px 20px 0 20px;
 
-                            &.open {
-                                background-color: #000;
-
-                                #notify-list {
-                                    .create-border-radius(0);
-                                    top: @navbar-height;
-                                    width: 290px;
-                                    margin: 0;
-                                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-                                }
-                            }
-                            #notify-indicator {
-                                .button;
-                                margin: 0 9px 0 0;
-                                padding: 6px 12px;
-                            }
-                            #notify-list {
-                                .customize-scrollbar;
-                                padding: 0;
-                                background-color: #eee;
-                                border: none;
-                                white-space: normal;
-
-                                &.active {
-                                }
-                                &:before,
-                                &:after {
-                                    display: none;
-                                }
-                                a,
-                                li {
-                                    color: #333;
-                                }
-                                h3 {
-                                    padding: 11px 20px;
-                                    background-color: #000;
-                                    color: #f2f2e6;
-                                    font-size: 16px;
-                                    font-weight: 300;
-                                }
-                                ul {
-                                    max-height: 500px;
-                                    overflow-y: auto;
-
-                                    .notice {
-                                        border-top: 1px solid #efefef;
-                                        border-bottom: 1px solid #e2e2e2;
-                                        padding: 20px;
-
-                                        &:first-child {
-                                            border-top: none;
-                                        }
-                                        &:last-child {
-                                            border-bottom: none;
-                                        }
-                                        h4 {
-                                            font-weight: normal;
-                                            margin-bottom: 10px;
-                                        }
-                                        small {
-                                            display: block;
-                                            margin-top: 5px;
-                                            font-size: 0.7em;
-                                            color: #d0d0d0;
-                                        }
-                                        .error {
-                                            background-color: rgba(255, 0, 0, 0.1);
-                                        }
-                                    }
-                                }
-                            }
+                        &.open {
+                            background-color: #000;
+                        }
+                        #notify-indicator {
+                            .button;
+                            margin: 0 9px 0 0;
+                            padding: 6px 12px;
                         }
                     }
                 }
             }
         }
-        .right-nav {
-            float: right;
-            margin: 0 20px 0 0;
+    }
+    .right-nav {
+        float: right;
+        margin: 0;
+        border-left: 1px solid @navbar-border-dark;
 
-            a.button.inverse {
-                margin-top: 12px;
+        & > li:last-child {
+            border-right: none;
+        }
+        a.button.inverse {
+            background-color: #1f1b18;
+
+            &:hover {
                 background-color: #1f1b18;
+            }
+        }
+        .help-dropdown {
+            display: none;
+            position: relative;
 
-                &:hover {
-                    background-color: #1f1b18;
+            .expand {
+                margin-left: 5px;
+
+                .hidden {
+                    display: none;
                 }
             }
         }
@@ -1083,11 +1038,6 @@ g.unit {
     position: absolute;
     right: 20px;
     top: 40px;
-    // The following is required to override Bootstrap styles for the slider
-    // thumb sprite.
-    img {
-        max-width: none;
-    }
 }
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail,
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail-cap-top,
@@ -1288,8 +1238,8 @@ g.unit {
     .yui3-widget-buttons {
         float: right;
 
-        .btn-danger {
-            margin-right: 1em;
+        .button {
+            margin-left: 10px;
         }
     }
 }
@@ -2036,6 +1986,7 @@ g.unit {
 @import "browser/section-title.less";
 @import "browser/tabview.less";
 @import "content-panel.less";
+@import "dropdown.less";
 @import "juju-inspector.less";
 
 /** Views **/
