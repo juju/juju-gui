@@ -855,7 +855,7 @@ YUI.add('subapp-browser', function(Y) {
       // Only show the onboarding messaging if we're hitting the sidebar view
       // without any extra url bits to the user. It's meant for a fresh user
       // to see, not someone doing what they know they want to do.
-      if (!this._onboarding && window.flags.onboard) {
+      if (!this._onboarding) {
         if (!this._viewState.search &&
             !this._viewState.charmID) {
           this.renderOnboarding();
