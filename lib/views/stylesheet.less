@@ -166,9 +166,13 @@ body {
     margin-top: @navbar-height;
     background-color: #302b28;
     font-family: @font-family;
+    font-weight: 300;
     height: 100%;
     font-size: 13px;
     line-height: 18px;
+    -webkit-font-smoothing: antialiased;
+    // This won't start working until Firefox 25
+    -moz-osx-font-smoothing: grayscale;
 }
 a,
 a:hover {
