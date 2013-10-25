@@ -1247,8 +1247,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           renderEditorial: true,
           renderOnboarding: true
         });
-        
-
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
       });
