@@ -136,7 +136,8 @@ Go forth and see the typography.less file and use those.
     display: inline-block;
     margin: 0;
     padding: 8px 14px;
-    font-size: 12pt;
+    border: none;
+    font-size: 14px;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-font-smoothing: subpixel-antialiased;
     -o-font-smoothing: subpixel-antialiased;
@@ -165,14 +166,19 @@ body {
     margin-top: @navbar-height;
     background-color: #302b28;
     font-family: @font-family;
+    font-weight: 300;
     height: 100%;
     font-size: 13px;
     line-height: 18px;
+    -webkit-font-smoothing: antialiased;
+    // This won't start working until Firefox 25
+    -moz-osx-font-smoothing: grayscale;
 }
 a,
 a:hover {
     cursor: pointer;
     color: @charm-panel-orange;
+    text-decoration: none;
 }
 input, button, select, textarea {
     font-family: @font-family;
@@ -189,6 +195,9 @@ svg {
 li {
     line-height: 18px;
 }
+h2 {
+    line-height: 36px;
+}
 h4 {
     font-size: 14px;
 }
@@ -201,6 +210,12 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     color: inherit;
     text-rendering: optimizelegibility;
+}
+ul {
+    padding: 0;
+}
+label {
+    display: block;
 }
 .align-right {
     text-align: right;
@@ -260,26 +275,8 @@ code {
 }
 
 /* Layout, widgets etc. */
-#viewport-wrapper {
-    position: relative;
-}
-#vp-left-border {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: url(/juju-ui/assets/images/left_shadow.png) repeat-y;
-    margin-left: -12px;
-    width: 12px;
-}
-#vp-right-border {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: url(/juju-ui/assets/images/right_shadow.png) repeat-y;
-    margin-right: -12px;
-    width: 12px;
-}
 
+// The main header above the canvas
 .navbar {
     min-width: 800px;
     // Need to subtract the bottom-border-height.
@@ -287,254 +284,163 @@ code {
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
 
-    .navbar-inner {
-        // The following are resets to override Bootstrap styles
+    &,
+    a {
+        color: #d7d3d0;
+        font-size: 14px;
+        font-weight: 300;
+    }
+
+    ul {
         margin: 0;
         padding: 0;
-        background: transparent;
-        min-height: auto;
-        border-radius: 0;
-        box-shadow: none;
-
-        &,
-        a {
-            color: #d7d3d0;
-            font-size: 14px;
-            font-weight: 300;
+        list-style: none;
+    }
+    .right-nav,
+    #browser-nav {
+        & > li,
+        & > li.tab > a {
+            .border-box;
+            display: block;
+            height: @navbar-height;
+            padding: 20px 20px 0 20px;
         }
+        & > li {
+            float: left;
+            border-width: 0 1px;
+            border-style: solid;
+            border-left-color: @navbar-border-light;
+            border-right-color: @navbar-border-dark;
 
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        #browser-nav {
-            padding: 0;
-
-            &:after {
-                content: '';
-                display: block;
-                float: left;
-                height: @navbar-height;
-                background-color: #f00;
-                border-left: 1px solid @navbar-border-light;
-            }
-            & > ul > li,
-            & > ul > li > a {
-                .border-box;
-                display: block;
-                float: left;
-                height: @navbar-height;
-                padding: 20px 20px 0 20px;
-                border-width: 0 1px;
-                border-style: solid;
-                border-left-color: @navbar-border-light;
-                border-right-color: @navbar-border-dark;
-            }
-            & > ul > li {
-                float: left;
-
-                &:first-child {
-                    border-left: none;
-                }
-                .brand {
-                  padding-top: 15px;
-                  padding-right: 30px;
-                }
-                & > a {
-                    float: none;
-                    margin: -20px -20px 0 -20px;
-                    border: none;
-
-                    &:hover {
-                        text-decoration: none;
-                    }
-                    &.active {
-                        border-bottom: 3px solid @charm-panel-orange;
-                    }
-                    i {
-                        margin-right: 6px;
-                    }
-                }
-                &.import-export {
-                    padding: 24px 0 0 0;
-
-                    a {
-                        display: block;
-                        float: left;
-                        height: 15px;
-                        margin: 0;
-                        padding:  0 10px;
-                        line-height: 15px;
-
-                        &:first-child {
-                            border-left: 1px solid @navbar-border-dark;
-                        }
-                        &:last-child {
-                            border-right: 1px solid @navbar-border-light;;
-                        }
-                        // Ugly classes to display the correct sprite for the
-                        // state. We might be able to turn this into a mixin
-                        // if we need to redo the same thing often.
-                        &:focus,
-                        &:hover {
-                            .sprite.hover {
-                                display: block;
-                            }
-                            .sprite.normal {
-                                display: none;
-                            }
-                        }
-                        .sprite.hover {
-                            display: none;
-                        }
-                        .sprite {
-                            display: block;
-                            margin: 1px 0 0 0;
-                        }
-                    }
-                    #import-trigger {
-                        /* XXX bac: remove the hiding when import is implemented. */
-                        display: none;
-                    }
-                    #export-trigger {
-                        /* XXX huwshimi: remove the following line when import is implemented. */
-                        border: none;
-                    }
-                }
-                &.notifications-nav {
-                    position: relative;
-                    padding: 0;
-
-                    #notifications {
-                        & > span {
-                            .border-box;
-                            display: block;
-                            height: @navbar-height;
-                            padding: 15px 20px 0 20px;
-
-                            &.open {
-                                background-color: #000;
-
-                                #notify-list {
-                                    .create-border-radius(0);
-                                    top: @navbar-height;
-                                    width: 290px;
-                                    margin: 0;
-                                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-                                }
-                            }
-                            #notify-indicator {
-                                .button;
-                                margin: 0 9px 0 0;
-                                padding: 6px 12px;
-                            }
-                            #notify-list {
-                                .customize-scrollbar;
-                                padding: 0;
-                                background-color: #eee;
-                                border: none;
-                                white-space: normal;
-
-                                &.active {
-                                }
-                                &:before,
-                                &:after {
-                                    display: none;
-                                }
-                                a,
-                                li {
-                                    color: #333;
-                                }
-                                h3 {
-                                    padding: 11px 20px;
-                                    background-color: #000;
-                                    color: #f2f2e6;
-                                    font-size: 16px;
-                                    font-weight: 300;
-                                }
-                                ul {
-                                    max-height: 500px;
-                                    overflow-y: auto;
-
-                                    .notice {
-                                        border-top: 1px solid #efefef;
-                                        border-bottom: 1px solid #e2e2e2;
-                                        padding: 20px;
-
-                                        &:first-child {
-                                            border-top: none;
-                                        }
-                                        &:last-child {
-                                            border-bottom: none;
-                                        }
-                                        h4 {
-                                            font-weight: normal;
-                                            margin-bottom: 10px;
-                                        }
-                                        small {
-                                            display: block;
-                                            margin-top: 5px;
-                                            font-size: 0.7em;
-                                            color: #d0d0d0;
-                                        }
-                                        .error {
-                                            background-color: rgba(255, 0, 0, 0.1);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .right-nav {
-            float: right;
-            margin: 0 20px 0 0;
-
-            a.button.inverse {
-                margin-top: 12px;
-                background-color: #1f1b18;
-
-                &:hover {
-                    background-color: #1f1b18;
+            & > a {
+                &.button {
+                    margin: -8px 0 0 0;
                 }
             }
         }
     }
-}
-.bottom-navbar {
-    min-width: 800px;
-    height: @navbar-bottom-height;
-    position: relative;
-    background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
+    #browser-nav {
+        float: left;
+        border-right: 1px solid @navbar-border-light;
 
-    .landscape-controls {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 295px;
-        margin-right: 10px;
-
-        div {
-            float: right;
-            width: 60px;
-
-            .landscape-icon {
-                margin: 10px 0 0 16px;
+        & > li {
+            &:first-child {
+                border-left: none;
             }
-            .icon-divider {
-                margin-top: 8px;
+            .brand {
+                display: block;
+                margin: -5px 10px 0 0;
+                padding: 0;
+            }
+            & > a {
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+            &.tab a {
+                margin: -20px -20px 0 -20px;
+
+                &.active {
+                    border-bottom: 3px solid @charm-panel-orange;
+                }
+                .sprite {
+                    margin-right: 6px;
+                }
+            }
+            &.import-export {
+                padding: 24px 0 0 0;
+
+                a {
+                    display: block;
+                    float: left;
+                    height: 15px;
+                    padding:  0 10px;
+                    line-height: 15px;
+
+                    &:first-child {
+                        border-left: 1px solid @navbar-border-dark;
+                    }
+                    &:last-child {
+                        border-right: 1px solid @navbar-border-light;
+                    }
+                    // Ugly classes to display the correct sprite for the
+                    // state. We might be able to turn this into a mixin
+                    // if we need to redo the same thing often.
+                    &:focus,
+                    &:hover {
+                        .sprite.hover {
+                            display: block;
+                        }
+                        .sprite.normal {
+                            display: none;
+                        }
+                    }
+                    .sprite.hover {
+                        display: none;
+                    }
+                    .sprite {
+                        display: block;
+                        margin: 1px 0 0 0;
+                    }
+                }
+                #import-trigger {
+                    /* XXX bac: remove the hiding when import is implemented. */
+                    display: none;
+                }
+                #export-trigger {
+                    /* XXX huwshimi: remove the following line when import is implemented. */
+                    border: none;
+                }
+            }
+            &.notifications-nav {
+                position: relative;
+                padding: 0;
+
+                #notifications {
+                    & > span {
+                        .border-box;
+                        display: block;
+                        height: @navbar-height;
+                        padding: 15px 20px 0 20px;
+
+                        &.open {
+                            background-color: #000;
+                        }
+                        #notify-indicator {
+                            .button;
+                            margin: 0 9px 0 0;
+                            padding: 6px 12px;
+                        }
+                    }
+                }
             }
         }
+    }
+    .right-nav {
+        float: right;
+        margin: 0;
+        border-left: 1px solid @navbar-border-dark;
 
-        .logo-tab {
-            width: 115px!important;
+        & > li:last-child {
+            border-right: none;
+        }
+        a.button.inverse {
+            background-color: #1f1b18;
 
-            i {
-                margin-top: 1px;
+            &:hover {
+                background-color: #1f1b18;
+            }
+        }
+        .help-dropdown {
+            display: none;
+            position: relative;
+
+            .expand {
                 margin-left: 5px;
+
+                .hidden {
+                    display: none;
+                }
             }
         }
     }
@@ -546,6 +452,7 @@ code {
 }
 #main {
     overflow: hidden;
+
     .view-container {
         overflow-y: auto;
     }
@@ -682,17 +589,11 @@ code {
               font-size: 13px;
               color: @text-colour;
             }
-            &.view-service {
-                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
-            }
             &.add-relation {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
                 .disabled {
                     color: red;
                 }
-            }
-            &.destroy-service {
-                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
             }
             &.landscape-reboot {
                 background-image: url(/juju-ui/assets/images/landscape_restart_menu.png);
@@ -1083,11 +984,6 @@ g.unit {
     position: absolute;
     right: 20px;
     top: 40px;
-    // The following is required to override Bootstrap styles for the slider
-    // thumb sprite.
-    img {
-        max-width: none;
-    }
 }
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail,
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail-cap-top,
@@ -1133,124 +1029,6 @@ g.unit {
 #zoom-out-btn {
     top: 10px;
 }
-
-.create-picker(@width, @top, @listtop, @listbottom) {
-    width: @width;
-
-    .picker-body {
-        width: @width - 15px;
-    }
-    .picker-expanded {
-        display: none;
-        top: @top;
-
-        &.active {
-            z-index: 100;
-            display: block;
-        }
-        .picker-edge {
-            display: block;
-            top: auto;
-            bottom: -10px;
-            margin-left: -3px;
-        }
-        .picker-edge-right {
-            left: auto;
-            right: 0;
-            margin-left: 0;
-            margin-right: -3px;
-        }
-        .picker-list {
-            position: absolute;
-            bottom: @listbottom;
-            top: @listtop;
-            left: 0px;
-            height: 100%;
-            background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            height: 54px;
-            width: @width - 8px;
-            cursor: pointer;
-
-            ul {
-                list-style-type: none;
-                padding-top: 5px;
-                padding-bottom: 5px;
-                margin: 0;
-
-                li {
-                    padding-left: 7px;
-
-                    &.activetick {
-                        background:
-                            url(/juju-ui/assets/images/selected_tick.png)
-                            no-repeat 240px 3px;
-                    }
-                }
-            }
-        }
-    }
-    .picker-edge {
-        position: absolute;
-        top: @top;
-        left: 0;
-    }
-    .picker-body {
-        position: absolute;
-        top: @top;
-        left: 4px;
-        background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
-        height: 20px;
-        padding: 3px 0 0 3px;
-    }
-    .picker-button {
-        position: absolute;
-        top: @top;
-        right: 0;
-    }
-    &.inactive {
-        .picker-edge,
-        .picker-body,
-        .picker-button {
-            display: none;
-        }
-    }
-}
-.picker {
-    position: relative;
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    height: 24px;
-
-    &.charm-filter-picker {
-        .create-picker(270px, @top, @top, initial);
-        left: 11px;
-        padding-bottom: 5px;
-        @top: 0px;
-        top: @top;
-
-        .picker-expanded .picker-list {
-            .create-border-radius(@border-radius);
-            .create-box-shadow(0 0 4px rgba(0,0,0,.51));
-            -moz-background-clip: padding;
-            -webkit-background-clip: padding-box;
-            background-clip: padding-box;
-            background-color: #fff;
-            background: white;
-            height: auto;
-        }
-    }
-    &.zoom-picker {
-        width: 56px;
-
-        .picker-body {
-            width: 36px;
-        }
-    }
-}
 #unit-status {
     .running {
         color: green;
@@ -1288,8 +1066,8 @@ g.unit {
     .yui3-widget-buttons {
         float: right;
 
-        .btn-danger {
-            margin-right: 1em;
+        .button {
+            margin-left: 10px;
         }
     }
 }
@@ -1310,9 +1088,9 @@ g.unit {
         float: right;
     }
 }
-
-#juju-search-charm-panel,
 .juju-inspector {
+    // XXX huwshimi: these classes are redundant  and are overwritten in
+    // juju-inspector.less. They can be remove/migrated as appropriate.
     .create-box-shadow(inset 0 -1px 0 lightgray);
     .customize-scrollbar;
     display: block;
@@ -1538,7 +1316,6 @@ g.unit {
                 z-index: 0;
             }
             span.config-file-upload {
-                background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
                 color: #4c4c4c;
                 font-family: @font-family-medium;
                 position: absolute;
@@ -1550,10 +1327,6 @@ g.unit {
                 width: 149px;
                 z-index: 2;
                 cursor: pointer;
-
-                &:active {
-                  background: url(/juju-ui/assets/images/getfile_button-pressed.png) no-repeat;
-                }
             }
             .config-file-name {
                 position: absolute;
@@ -1650,241 +1423,8 @@ g.unit {
     margin-left: 10px;
     margin-right: 10px;
 }
-.service-view {
-    .juju-service-info-container-bottom-menu {
-        height: 50px;
-        position: relative;
-        color: @navbar-color;
-        text-align: center;
-
-        .filter-control {
-            position: absolute;
-            left: 10px;
-            top: 13px;
-            width: 350px;
-            display: inline-block;
-
-            .filter-label {
-                position: absolute;
-                left: 10px;
-                top: 3px;
-            }
-
-            .control-separator {
-                 padding-top: 0px;
-                 padding-left: 5px;
-
-                 img {
-                    height: 30px;
-                    padding-top: 0px;
-                 }
-            }
-
-            .state-buttons {
-                margin-left: 50px;
-
-                img {
-                    padding-top: 0px;
-                    height: 30px;
-                }
-
-                div {
-                    padding-top: 3px;
-                    width: 70px;
-                    height: 21px;
-                    background:url(/juju-ui/assets/images/toggles.png) -70px 0;
-
-                    &.active {
-                        .white;
-                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
-                    }
-
-                    &:first-child {
-                        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
-
-                        &.active {
-                            .white;
-                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
-                        }
-                    }
-
-                    &:last-child {
-                        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
-
-                        &.active {
-                            .white;
-                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
-                        }
-                    }
-                }
-                span:first-child {
-                    padding-right: 5px;
-                }
-                .white {
-                    a {
-                        color: white !important;
-                    }
-                }
-
-                a {
-                    color: @navbar-color;
-
-                    &:link, &:visited, &:active, &:hover {
-                       text-decoration: none
-                    }
-                }
-            }
-        }
-    }
-    .service-header-partial {
-      .name {
-          padding-top: 38px;
-          padding-left: 46px;
-          height: 73px;
-
-          div:nth-child(1) {
-              font-style: normal;
-              height: 28px;
-              font-size: 24px;
-              color: #292929;
-          }
-
-          div:nth-child(2) {
-              font-style: italic;
-              font-size: 16px;
-              color: #6a737b;
-          }
-        }
-        .menu-items {
-            padding: 6px 0 6px 38px;
-            background: #dedede url(/juju-ui/assets/images/tab_div.png) repeat-x left bottom;
-            border-top: 1px solid #b6b6b6;
-
-            .item {
-                a {
-                     font-size: 12px;
-                     padding-left: 10px;
-                     padding-right: 10px;
-                     color: #292929;
-                }
-                a:link, a:visited, a:active, a:hover {
-                     text-decoration: none
-                }
-
-                .link-active {
-                    color: #dd4814 !important;
-                }
-                .active {
-                     margin-top: 3px;
-                     height: 4px;
-                     background: url(/juju-ui/assets/images/tab_marker.png)
-                       repeat;
-                }
-            }
-        }
-        .controls {
-            .control {
-                float: right;
-
-                .divider {
-                    margin-right: 3px;
-                    height: 13px;
-                    width: 2px;
-                }
-            }
-            .destroy-control {
-                margin-top: -1px;
-
-                a, a:hover, a:active, a:visited {
-                    text-decoration: none;
-                    color: @navbar-color;
-                }
-                img {
-                    margin: -4px 5px 0 0;
-                }
-            }
-            .control-expose {
-                position: relative;
-                margin: -2px 5px 0 0;
-
-                div {
-                    padding-right: 5px;
-                }
-                .on {
-                    font-size: 11px; fill: #ffffff;
-                    position: absolute;
-                    right: 18px;
-                    top: 0;
-                }
-                .off {
-                    font-size: 12px; fill: #292929;
-                    position: absolute;
-                    right: 32px;
-                    top: 1px;
-                }
-            }
-        }
-    }
-    .service-common-controls {
-        position: absolute;
-        left: 355px;
-        top: 10px;
-
-        .control-unit-count {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            width: 305px;
-
-            img {
-                padding-top: 0px;
-            }
-            div {
-                padding-left: 5px;
-            }
-            div:first-child {
-                padding-top: 4px;
-            }
-            input {
-                text-align: right;
-                width: 5em;
-            }
-        }
-    }
-}
 .service-view+.viewlet-manager {
     overflow-y: auto;
-}
-#tooltip {
-    .create-border-radius(@border-radius);
-    text-align: left;
-    background-color: white;
-    border: solid 1px black;
-    padding: 0.2em 0.5em 0.3em;
-    min-width: 20px;
-    max-width: 400px;
-}
-.charm-panel-configure {
-    background-image: url(/juju-ui/assets/images/configure-cog.png);
-    background-repeat: no-repeat;
-    background-position: 230px 38px;
-    border-left: 1px solid @charm-panel-configure-color - #333;
-    background-color: @charm-panel-configure-color;
-    height: 90px;
-    width: @charm-panel-width - @charm-panel-padding-left - 1px;
-    padding-left: @charm-panel-padding-left;
-
-    .title {
-        font-weight: lighter;
-        font-size: 22px;
-        color: @charm-panel-configure-title-color;
-        margin-top: 35px;
-    }
-    .name {
-        font-size: 12px;
-        color: @charm-panel-configure-name-color;
-        margin-top: 5px;
-    }
 }
 #full-screen-mask {
     display: block;
@@ -2036,6 +1576,7 @@ g.unit {
 @import "browser/section-title.less";
 @import "browser/tabview.less";
 @import "content-panel.less";
+@import "dropdown.less";
 @import "juju-inspector.less";
 
 /** Views **/

@@ -26,7 +26,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-o -name 'generateTemplates' \
 	\) -print \
 	| sort | sed -e 's/^\.\///' \
-	| grep -Ev -e '^manifest\.json$$' \
+	| grep -Ev \
 		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \

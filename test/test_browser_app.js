@@ -723,7 +723,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   sidebar: false,
                   renderCharmDetails: false,
                   renderEditorial: false,
-                  renderOnboarding: false,
+                  renderOnboarding: true,
                   renderSearchResults: false
                 };
               };
@@ -1236,7 +1236,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('onboarding is called in build mode', function() {
-        window.flags.onboard = true;
         var req = {
           path: '/sidebar/',
           params: {
@@ -1248,14 +1247,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           renderEditorial: true,
           renderOnboarding: true
         });
-
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
       });
 
       it('onboarding is not called with a charm id', function() {
-        window.flags.onboard = true;
         var req = {
           path: '/sidebar/',
           params: {
@@ -1267,16 +1263,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           sidebar: true,
           renderEditorial: true,
           renderCharmDetails: true,
-          renderOnboarding: false
+          renderOnboarding: true
         });
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
       });
 
       it('onboarding is not called with a search', function() {
-        window.flags.onboard = true;
         var req = {
           path: '/sidebar/search',
           params: {
@@ -1287,12 +1281,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var expected = Y.merge(hits, {
           sidebar: true,
           renderSearchResults: true,
-          renderOnboarding: false
+          renderOnboarding: true
         });
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-        window.flags.onboard = {};
       });
 
       it('/minimized dispatches correctly', function() {
