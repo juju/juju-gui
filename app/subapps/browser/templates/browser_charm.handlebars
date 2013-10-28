@@ -89,7 +89,7 @@
                             <p><em>This is a local charm; only limited information will be available</em></p>
                         {{/if}}
                         <h2>Description</h2>
-                        <p class="respect-whitespace">{{#if isFullscreen}}{{ description }}{{else}}{{ truncate description 300 }}{{/if}}</p>
+                        <p>{{#if isFullscreen}}{{{ description }}}{{else}}{{{ truncate description 300 }}}{{/if}}</p>
                     </div>
 
                     <div class="changelog">
@@ -121,7 +121,7 @@
                                         {{prettyCommits.first.prettyDate}}
                                     </span>
                                     <strong>{{prettyCommits.first.author.name}}</strong>
-                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
+                                    <span>{{{prettyCommits.first.message}}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
                                     </a>
@@ -140,7 +140,7 @@
                                                     {{prettyDate}}
                                                 </span>
                                                 <strong>{{author.name}}</strong>
-                                                <span class="respect-whitespace">{{message}}</span> -
+                                                <span>{{{message}}}</span> -
                                                 <a href="{{ revnoLink }}">
                                                     REVNO{{revno}}
                                                 </a>
