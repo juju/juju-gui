@@ -341,9 +341,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       // Wrap plain text links in descriptions and commit messages with a tags
-      tplData.description = this.sanitizeLinks(tplData.description);
+      tplData.description = this.Linkify(tplData.description);
       tplData.recent_commits.forEach(function(commit) {
-        commit.message = this.sanitizeLinks(commit.message);
+        commit.message = this.Linkify(commit.message);
       }, this);
 
       var tpl = this.template(tplData);
@@ -382,18 +382,22 @@ YUI.add('subapp-browser-charmview', function(Y) {
     /**
        Sanitize links.
 
-       Linkafy links in the plain text descriptions and commit messages.
+       Linkify links in the plain text descriptions and commit messages.
        Wrap launchpad branch locations in spans to wrap them.
 
-       @method sanitizeLinks
+       @method Linkify
      */
-    sanitizeLinks: function(text) {
+    Linkify: function(text) {
+      // Wraps an a tag around links.
       var links = /(\b(https?|http):\/\/[^ ]*[0-9A-Za-z_]+)/ig;
       text = text.replace(links,
           '<a href="$1" target="_blank" class="respect-whitespace">$1</a>');
+
+      // Puts lp branch addresses in spans with respect-whitespace
       var lp_links = /(\b(lp:~)[^ ]*[0-9A-Za-z_]+)/ig;
       text = text.replace(lp_links,
           '<span class="respect-whitespace">$1</span>');
+
       return text;
     },
 
