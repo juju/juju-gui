@@ -536,9 +536,14 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: this._viewState.hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deploy: this.get('deploy'),
-        deployBundle: this.get('deployBundle')
       };
+
+      debugger;
+      if (entityId.indexOf('bundle') !== -1) {
+        extraCfg.deploy = this.get('deployBundle');
+      } else {
+        extraCfg.deploy = this.get('deploy');
+      }
 
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
@@ -701,6 +706,9 @@ YUI.add('subapp-browser', function(Y) {
           extraCfg.withHome = true;
         }
         extraCfg.container = this.get('container');
+        debugger;
+        extraCfg.deploy = this.get('deploy');
+        extraCfg.deployBundle = this.get('deployBundle');
 
         this._fullscreen = new views.FullScreen(
             this._getViewCfg(extraCfg));
@@ -787,9 +795,12 @@ YUI.add('subapp-browser', function(Y) {
       }
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode') || forceSidebar) {
+        debugger;
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
-              container: this.get('container')
+              container: this.get('container'),
+              deploy: this.get('deploy'),
+              deployBundle: this.get('deployBundle')
             }));
         this._sidebar.render();
         this._sidebar.addTarget(this);
@@ -855,7 +866,7 @@ YUI.add('subapp-browser', function(Y) {
       // Only show the onboarding messaging if we're hitting the sidebar view
       // without any extra url bits to the user. It's meant for a fresh user
       // to see, not someone doing what they know they want to do.
-      if (!this._onboarding && window.flags.onboard) {
+      if (!this._onboarding) {
         if (!this._viewState.search &&
             !this._viewState.charmID) {
           this.renderOnboarding();
@@ -1147,6 +1158,14 @@ YUI.add('subapp-browser', function(Y) {
          @type {Function}
        */
       deploy: {},
+
+      /**
+       * @attribute deployBundle
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deployBundle: {},
 
       /**
         The default viewmode

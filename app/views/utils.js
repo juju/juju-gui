@@ -361,7 +361,7 @@ YUI.add('juju-view-utils', function(Y) {
         { value: action_label,
           section: Y.WidgetStdMod.FOOTER,
           action: action_cb,
-          classNames: ['btn-danger', 'btn']
+          classNames: ['button']
         });
     panel.addButton(
         { value: 'Cancel',
@@ -370,32 +370,12 @@ YUI.add('juju-view-utils', function(Y) {
             e.preventDefault();
             panel.hide();
           },
-          classNames: ['btn']
+          classNames: ['button']
         });
 
     // The default YUI CSS conflicts with the CSS effect we want.
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
     return panel;
-  };
-
-  views.highlightRow = function(row, err) {
-    row.removeClass('highlighted'); // Whether we need to or not.
-    var backgroundColor = 'palegreen',
-        oldColor = row.one('td').getStyle('backgroundColor');
-    if (err) {
-      backgroundColor = 'pink';
-    }
-    // Handle tr:hover in bootstrap css.
-    row.all('td').setStyle('backgroundColor', 'transparent');
-    row.setStyle('backgroundColor', backgroundColor);
-    row.transition(
-        { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-        function() {
-          // Revert to following normal stylesheet rules.
-          row.setStyle('backgroundColor', '');
-          // Undo hover workaround.
-          row.all('td').setStyle('backgroundColor', '');
-        });
   };
 
   function _addAlertMessage(container, alertClass, message) {

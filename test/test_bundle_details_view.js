@@ -137,7 +137,7 @@ describe('Browser bundle detail view', function() {
   it('deploys a bundle when \'add\' button is clicked', function(done) {
     // app.js sets this to its deploy bundle method so
     // as long as it's called it's successful.
-    view.set('deployBundle', function(data) {
+    view.set('deploy', function(data) {
       assert.isObject(data);
       done();
     });
@@ -148,7 +148,6 @@ describe('Browser bundle detail view', function() {
 
   it('fails gracefully if services don\'t provide xy annotations',
      function() {
-       window.flags = { strictBundle: true };
        view._parseData = function() {
          return new Y.Promise(function(resolve) { resolve(); });
        };
@@ -170,17 +169,14 @@ describe('Browser bundle detail view', function() {
               }
             };
           }});
-       view.set('entity', new models.Bundle(data));
        view.render();
        assert.isNull(container.one('#bws-bundle'));
        assert.isNull(container.one('a[href=#bws-bundle]'));
        // Check that the charms tab is the landing tab
        assert.equal(view.tabview.get('selection').get('index'), 2);
-       window.flags = {};
      });
 
   it('renders the bundle topology into the view', function(done) {
-    window.flags = { strictBundle: true };
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
@@ -219,10 +215,31 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
       assert.equal(view.tabview.get('selection').get('index'), 0);
-      window.flags = {};
       done();
     });
     view.set('entity', new models.Bundle(entity));
+    view.render();
+  });
+
+  it('disabled relation line and label click interactions', function(done) {
+
+    Y.juju.views.createModalPanel = function(rel, self) {
+      // If we hit this method then the relationInteractive flag was not
+      // respected and we are showing a modal panel to remove the relation.
+      assert.fail();
+    };
+
+    view.on('topologyRendered', function(e) {
+      var relLabel = container.one('.rel-label');
+      assert.isNotNull(relLabel);
+      relLabel.simulate('click');
+      assert.isNotNull(container.one('.topology-canvas'));
+      // Check that the bundle topology tab is the landing tab.
+      assert.equal(view.tabview.get('selection').get('index'), 0);
+      done();
+    });
+
+    view.set('entity', new models.Bundle(data));
     view.render();
   });
 

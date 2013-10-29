@@ -160,7 +160,7 @@ YUI.add('juju-topology-utils', function(Y) {
     return centroid;
   };
 
-  utils.getBoundingBox = function(vertices) {
+  utils.getBoundingBox = function(vertices, boxWidth, boxHeight) {
     var minX = Infinity, maxX = -Infinity,
         minY = Infinity, maxY = -Infinity;
 
@@ -171,9 +171,8 @@ YUI.add('juju-topology-utils', function(Y) {
       if (v[1] > maxY) { maxY = v[1]; }
     });
     return {
-      translateX: minX, translateY: minY,
-      w: maxX - minX, h: maxY - minY};
-
+      translateX: minX - boxWidth / 2, translateY: minY - boxHeight / 2,
+      w: maxX - minX + boxWidth, h: maxY - minY + boxHeight};
   };
 
 }, '0.1.0', {

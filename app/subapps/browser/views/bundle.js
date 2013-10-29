@@ -73,7 +73,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       } else {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
-      this.get('deployBundle')(bundle.get('data'));
+      this.get('deploy')(bundle.get('data'));
     },
 
     /**
@@ -174,16 +174,12 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
-      var options = {size: [480, 360]};
+      var options = {size: [720, 500]};
       this.hideIndicator(renderTo);
 
-      var showTopo = true;
-      // remove the flag in the test(test_bundle_details_view.js)
-      // when this flag is no longer needed.
-      if (window.flags && window.flags.strictBundle) {
-        showTopo = this._positionAnnotationsIncluded(
-            bundleData.data.services);
-      }
+      var showTopo = this._positionAnnotationsIncluded(
+          bundleData.data.services);
+
       if (showTopo) {
         // Setup the fake backend to create topology to display the canvas-like
         // rendering of the bundle.

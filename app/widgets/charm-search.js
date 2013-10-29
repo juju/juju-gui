@@ -50,7 +50,7 @@ YUI.add('browser-search-widget', function(Y) {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_SEARCH_CHANGED: 'search_changed',
     EVT_SEARCH_GOHOME: 'go_home',
-    EVT_CHARM_DEPLOY: 'charm_deploy',
+    EVT_DEPLOY: 'charm_deploy',
 
     TEMPLATE: templates['browser-search'],
 
@@ -276,17 +276,53 @@ YUI.add('browser-search-widget', function(Y) {
           // with a deploy option. No search is really performed after the
           // deploy button is selected.
           if (ev.target.hasClass('search_add_to_canvas')) {
-            // wtf is 'this' in this case. Is it scoped correctly?
-
-            debugger;
+            var isBundle = false,
+                data,
+                found,
+                id;
 
             // Fire an event up to the View with the charm information so that
             // it can proceed to build/send the deploy information out to
             // the environment.
-            var charm = ev.something;
-            this.fire(this.EVT_CHARM_DEPLOY, {
+            id = ev.target.getData('charmId');
 
+            if (!id) {
+              // try to see if this is a bundle clicked on.
+              id = ev.target.getData('bundleId');
+              isBundle = true;
+            }
+            // Find the charm data for the selected item from the set of
+            // results.
+            found = this.get('results').filter(function(result) {
+              if (isBundle) {
+                if (result.raw.bundle.id === id) {
+                  return result;
+                }
+              } else {
+                if (result.raw.charm.id === id) {
+                  return result;
+                }
+              }
             });
+
+            // Make sure that we've found a result before returning.
+            if (found.length === 0) {
+              console.error(
+                  'Clicked deploy on an item we could not find in results.');
+            } else {
+              if (isBundle) {
+                data = found[0].raw.bundle;
+              } else {
+                data = found[0].raw.charm;
+              }
+
+              self.fire(self.EVT_DEPLOY, {
+                id: id,
+                data: data,
+                entityType: isBundle ? 'bundle' : 'charm'
+              });
+            }
+
           } else {
               var itemNode = ev.currentTarget;
               this.set('active_item', itemNode);
@@ -307,10 +343,6 @@ YUI.add('browser-search-widget', function(Y) {
 
       // Stop clicking on charm-tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
-        // The clicks for the deploy buttons fall into here. We want to
-        // halt the click event, but we want the deploy to trigger and go
-        // off and perform that deploy.
-        debugger;
         ev.halt();
       }, 'a', this);
 
@@ -318,10 +350,6 @@ YUI.add('browser-search-widget', function(Y) {
       this.get('boundingBox').delegate('click', function(ev) {
         ev.halt();
       }, 'a', this);
-
-
-
-
 
     },
 
@@ -340,7 +368,6 @@ YUI.add('browser-search-widget', function(Y) {
       // hit, we want to start a deploy process. If it was anything else in a
       // token, then we want to proceed with opening the details pane for that
       // charm, perform a search, etc.
-      debugger;
       var change,
           newVal,
           charmid = ev.result.raw.charm.id,

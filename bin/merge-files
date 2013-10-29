@@ -109,8 +109,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
   var cssFiles = filesToLoad.css;
-  cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
-  cssFiles.push('app/assets/stylesheets/juju-bootstrap.css');
+  cssFiles.push('app/assets/stylesheets/normalize.css');
   cssFiles.push('app/assets/stylesheets/prettify.css');
   cssFiles.push('app/assets/stylesheets/cssgrids-responsive-min.css');
   merge.combineCSS(cssFiles,
