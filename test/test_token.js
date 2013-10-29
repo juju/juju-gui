@@ -263,7 +263,8 @@ describe('charm/bundle token', function() {
     );
 
     var button = token_container.one('.deployButton');
-    assert.equal(button.getAttribute('data-charmid'), 'test');
+    var sprite = button.one('i');
+    assert.equal(sprite.getAttribute('data-charmid'), 'test');
   });
 
 });
