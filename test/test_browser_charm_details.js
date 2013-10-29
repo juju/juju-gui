@@ -204,7 +204,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo'}
         })
       });
-      var url = view._getSourceLink();
+      var url = view._getSourceLink(
+          view.get('entity').get('code_source').location);
       assert.equal('http://bazaar.launchpad.net/~foo/files', url);
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
@@ -266,7 +267,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       ];
       var commits = view._formatCommitsForHtml(
-          revisions, view._getSourceLink());
+          revisions,
+          view._getSourceLink(view.get('entity').get('code_source').location));
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
           commits.first.revnoLink);

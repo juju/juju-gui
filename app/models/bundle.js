@@ -37,13 +37,13 @@ YUI.add('juju-bundle-models', function(Y) {
 
   /**
 
-   Load the recent commits into a format we can use nicely.  Output matches
+   Extract the recent commits into a format we can use nicely.  Output matches
    the analogous function for charms.
 
-   @method loadRecentCommits
-
+   @method extractRecentCommits
+   @return {array} Commit objects.
   */
-  var loadRecentCommits = function(changes) {
+  var extractRecentCommits = function(changes) {
     var commits = [];
 
     if (changes) {
@@ -196,22 +196,22 @@ YUI.add('juju-bundle-models', function(Y) {
         }
       },
       /**
-       * @attribute recent_commits
+       * @attribute recentCommits
        * @default undefined
        * @type {Array} list of objects for each commit.
        *
        */
-      'recent_commits': {
+      recentCommits: {
         /**
          * Return the commits of the charm in a format we can live with from
          * the source code data provided by the api.
          *
-         * @method recent_commits.valueFn
+         * @method recentCommits.valueFn
          *
          */
         valueFn: function() {
           var changes = this.get('changes');
-          return loadRecentCommits(changes);
+          return extractRecentCommits(changes);
         }
       }
     }

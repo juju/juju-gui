@@ -154,18 +154,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     /**
-       Creates the bazaar url for the bundle.
-
-       @method _getSourceLink
-       @private
-     */
-    _getSourceLink: function() {
-      var branch = this.get('entity').get('branch_spec');
-      var url = 'http://bazaar.launchpad.net/' + branch + '/files';
-      return url;
-    },
-
-    /**
       Renders the bundle view template into the DOM.
 
       @method _renderBundleView
@@ -183,9 +171,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(bundleData);
-      templateData.sourceLink = this._getSourceLink();
+      templateData.sourceLink = this._getSourceLink(
+          'lp:' + this.get('entity').get('branch_spec'));
       templateData.prettyCommits = this._formatCommitsForHtml(
-          templateData.recent_commits, templateData.sourceLink);
+          templateData.recentCommits, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');

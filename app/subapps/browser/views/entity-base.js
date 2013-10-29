@@ -155,14 +155,15 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-       Creates the bazaar url for the charm.
+       Creates the Bazaar url for the charm/bundle.
 
        @method _getSourceLink
        @private
+       @param {String} lp_url The short Launchpad URL.
+       @return {String} Bazaar URL.
      */
-    _getSourceLink: function() {
-      var url = this.get('entity').get('code_source').location;
-      url = url.replace('lp:', 'http://bazaar.launchpad.net/');
+    _getSourceLink: function(lp_url) {
+      var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
       return url + '/files';
     },
 

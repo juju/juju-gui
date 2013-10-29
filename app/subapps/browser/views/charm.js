@@ -319,9 +319,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
         });
       }
       if (!templateData.forInspector) {
-        templateData.sourceLink = this._getSourceLink();
+        templateData.sourceLink = this._getSourceLink(
+            this.get('entity').get('code_source').location);
         templateData.prettyCommits = this._formatCommitsForHtml(
-            templateData.recent_commits, templateData.sourceLink);
+            templateData.recentCommits, templateData.sourceLink);
       }
       templateData.interfaceIntro = this._getInterfaceIntroFlag(
           templateData.requires, templateData.provides);
