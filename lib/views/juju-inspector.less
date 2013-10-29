@@ -6,6 +6,7 @@
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
+@inspector-text-color: #fff;
 @inspector-width: 292px;
 @inspector-main-padding: 20px;
 @confirm-button-color: @charm-panel-orange;
@@ -39,7 +40,7 @@
     .left-breakout {
         .type9;
         top: 20px;
-        bottom: @navbar-bottom-height + 20px;
+        bottom: 70px;
         left: auto;
         right: @inspector-width + 71px;
 
@@ -84,7 +85,7 @@
         min-height: 250px;
         border: 0;
         background-color: @inspector-background-color;
-        color: #fff;
+        color: @inspector-text-color;
         /* Can be removed once the old inspector styles are removed. */
         margin: 0;
         font-size: 14px;
@@ -169,7 +170,7 @@
         }
         .controls button,
         .inspector-buttons a {
-            color: #fff;
+            color: @inspector-text-color;
 
             &.cancel-button,
             &.cancel {
@@ -445,7 +446,7 @@
                     url(/juju-ui/assets/images/import.png)
                     right center no-repeat;
                 border: 1px solid #6B6B6B;
-                color: #fff;
+                color: @inspector-text-color;
                 cursor: pointer;
             }
         }
@@ -661,6 +662,7 @@
             margin-bottom: @inspector-controls-height;
         }
         .view-container {
+            overflow-y: auto;
             margin-top: -1px;
 
             .view-content {
@@ -697,8 +699,8 @@
                   }
                 }
                 .resolver {
-                  color: black;
-                  background-color: white;
+                  color: #000;
+                  background-color: #fff;
                   border: 1px solid @inspector-changed-field;
                   border-radius: 1px;
 
@@ -822,7 +824,7 @@
                 border-top: 1px solid @inspector-divider-top;
                 font-size: 16px;
                 font-weight: 200;
-                color: @charm-panel-configure-title-color;
+                color: @inspector-text-color;
 
                 .sprite {
                     vertical-align: -2%;
@@ -881,7 +883,7 @@
                 }
 
                 ul {
-                    background: white;
+                    background: #fff;
                 }
 
                 .chevron {
@@ -935,7 +937,7 @@
 
                 ul {
                     margin-left: 0;
-                    border-bottom: 1px solid @charm-panel-border-color;
+                    border-bottom: 1px solid #BEBEBE;
                 }
 
                 li {
@@ -957,7 +959,7 @@
                 button.unit-action-button {
                     width: 70px;
                     margin: 0 3px 0;
-                    background: @charm-panel-series-color;
+                    background: #CBCBCB;
                 }
                 &.pending {
                     .action-button-wrapper {

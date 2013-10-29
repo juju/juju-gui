@@ -26,7 +26,7 @@
       width: 100%;
       height: @navbar-height;
       z-index: 10000;
-      
+
       i {
         position: relative;
         top: 15px;
@@ -55,7 +55,7 @@
 
         .header,
         .text {
-            color: @charm-panel-configure-title-color;
+            color: @inspector-text-color;
         }
 
         img {
@@ -83,7 +83,7 @@
             a {
                 @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
                 .create-box-shadow(@box-shadow);
-                .create-border-radius(@bws-corner);
+                .create-border-radius(@border-radius);
                 background-color: @inspector-dark;
                 display: inline-block;
                 height: 40px;
