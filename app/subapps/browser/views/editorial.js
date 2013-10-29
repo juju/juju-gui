@@ -94,7 +94,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var featuredCount = featuredCharmObjects.length;
           var featuredTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: window.flags.charmworldv3 ? 'Featured' : 'Featured Charms',
+                name: window.flags.charmworldv3 ?
+                    'Featured' : 'Featured Charms',
                 cutoff: featuredCount,
                 children: featuredCharmObjects
               }, {
