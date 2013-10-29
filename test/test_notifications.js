@@ -447,9 +447,11 @@ describe('notification visual feedback', function() {
         url: function() { return; }
       }
     });
-    notifierBox = Y.Node.create('<div class=".notifier-box"></div>');
+    var wrapper = Y.Node.create('<div class="notifications-nav"></div>');
+    notifierBox = Y.Node.create('<div class="notifier-box"></div>');
     notifierBox.setStyle('display', 'none');
-    Y.one('body').prepend(notifierBox);
+    wrapper.append(notifierBox);
+    Y.one('body').prepend(wrapper);
   });
 
   // Destroy the notifier box created in beforeEach.
@@ -465,7 +467,7 @@ describe('notification visual feedback', function() {
 
   // Assert the notifier box contains the expectedNumber of notifiers.
   var assertNumNotifiers = function(expectedNumber) {
-    assert.equal(expectedNumber, notifierBox.get('children').size());
+    assert.equal(notifierBox.get('children').size(), expectedNumber);
   };
 
   it('should appear when a new error is notified', function() {
