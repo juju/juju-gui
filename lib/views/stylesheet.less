@@ -174,7 +174,9 @@ th {
 
 /* Layout, widgets etc. */
 
-// The main header above the canvas
+/*
+ * The main header above the canvas
+ */
 .navbar {
     min-width: 800px;
     // Need to subtract the bottom-border-height.
@@ -361,6 +363,9 @@ th {
     fill-opacity: 0;
     cursor: move;
 }
+/*
+ * The keyboard shorcut panel
+ */
 #shortcut-help {
     .create-box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.5));
     position: absolute;
@@ -386,6 +391,9 @@ th {
         }
     }
 }
+/*
+ * Intro text that appears on the canvas if there are no deployed services.
+ */
 #environment-help {
     color: #757575;
     text-align: center;
@@ -425,6 +433,9 @@ th {
         margin-top: 2ex;
     }
 }
+/*
+ * The actions menu that appears next to a service block.
+ */
 .environment-menu {
     @border_radius: 20px;
     @background_color: #fff;
@@ -759,6 +770,7 @@ g.unit {
 
 /*
  * Notifier widget.
+ * Contains notifications that appear from the header.
  */
 #notifier-box {
     position: absolute;
@@ -804,6 +816,7 @@ g.unit {
 
 /*
  * Feedback box
+ * Appears as a tab on the side of the canvas.
  */
 #feedback-box {
     position: absolute;
@@ -868,7 +881,6 @@ g.unit {
 .yui3-skin-sam .yui3-slider-y .yui3-slider-thumb-image {
     left: -5px;
 }
-
 #zoom-in-btn,
 #zoom-out-btn {
     position: relative;
@@ -893,7 +905,6 @@ g.unit {
     outline: none;
   }
 }
-
 /*
  * This panel is displayed when deleting relations.
  */
