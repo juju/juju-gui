@@ -1564,7 +1564,7 @@ YUI.add('juju-view-utils', function(Y) {
   /*
    * Check if a flag is set.
    *
-   * {{ifFlag 'flag_name'}}
+   * {{#ifFlag 'flag_name'}} {{/ifFlag}}
    *
    */
   Y.Handlebars.registerHelper('ifFlag', function(flag, options) {

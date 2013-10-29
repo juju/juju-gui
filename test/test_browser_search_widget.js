@@ -328,6 +328,7 @@ describe('search widget autocomplete', function() {
   });
 
   it('fires deploy event when the deploy button is selected', function(done) {
+    window.flags.searchDeploy = true;
     // This is heading into the private, non-publicized events of the AC
     // widget in an effort to hit the html on render after results come
     // back.
@@ -342,6 +343,7 @@ describe('search widget autocomplete', function() {
       assert.equal(ev.entityType, 'charm');
       assert.equal(ev.id, 'precise/apache2-passenger-3');
       assert.equal(ev.data.url, 'cs:precise/apache2-passenger-3');
+      window.flags = {};
       done();
     });
 
