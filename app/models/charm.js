@@ -74,7 +74,7 @@ YUI.add('juju-charm-models', function(Y) {
    @method loadRecentCommits
 
   */
-  models.loadRecentCommits = function(revisions) {
+  var loadRecentCommits = function(revisions) {
     var commits = [];
 
     if (revisions) {
@@ -566,7 +566,7 @@ YUI.add('juju-charm-models', function(Y) {
       is_subordinate: {},
       maintainer: {},
       /*
-        API related metdata information for this charm object.
+        API related metadata information for this charm object.
 
         This includes information such as related charms calculated by the
         back end, but are not directly part of the charms representation.
@@ -659,7 +659,7 @@ YUI.add('juju-charm-models', function(Y) {
           var source = this.get('code_source');
           var commits = [];
           if (source) {
-            commits = models.loadRecentCommits(source.revisions);
+            commits = loadRecentCommits(source.revisions);
           }
           return commits;
         }

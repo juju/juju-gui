@@ -158,4 +158,37 @@ describe('The bundle model', function() {
     assert.equal(instance.constructor.entityType, 'bundle');
   });
 
+  it('has recent_commits', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recent_commits');
+    assert.lengthOf(commits, 3);
+  });
+
+  it('parses author name correctly', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recent_commits');
+    assert.equal('Brad Crittenden', commits[0].author.name);
+    assert.equal('bac@canonical.com', commits[0].author.email);
+  });
+
+  it('has the revnos in reverse order', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recent_commits');
+    assert.equal(3, commits[0].revno);
+    assert.equal(2, commits[1].revno);
+    assert.equal(1, commits[2].revno);
+  });
+
+  it('has the correct date in GMT', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recent_commits');
+    assert.equal('Tue, 03 Sep 2013 14:22:41 GMT', commits[0].date);
+  });
+
+  it('has the commit message', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recent_commits');
+    assert.equal('Correct icon', commits[0].message);
+  });
+
 });

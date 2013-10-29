@@ -36,6 +36,35 @@ YUI.add('juju-bundle-models', function(Y) {
   var models = Y.namespace('juju.models');
 
   /**
+
+   Load the recent commits into a format we can use nicely.  Output matches
+   the analogous function for charms.
+
+   @method loadRecentCommits
+
+  */
+  var loadRecentCommits = function(changes) {
+    var commits = [];
+
+    if (changes) {
+      Y.Array.each(changes, function(change) {
+
+        var author_parts = /^([\s\w]+?) <(.+)>$/.exec(change.authors[0]);
+        var date = new Date(change.created * 1000);
+        commits.push({
+          author: {
+            name: author_parts[1],
+            email: author_parts[2]
+          },
+          date: date.toUTCString(),
+          message: change.message,
+          revno: change.revno
+        });
+      });
+    }
+    return commits;
+  };
+  /**
    * Model to represent the Bundles from the Charmworld API.
    *
    * @class Bundle
@@ -181,7 +210,8 @@ YUI.add('juju-bundle-models', function(Y) {
          *
          */
         valueFn: function() {
-          return models.loadRecentCommits(this.get('code_source'));
+          var changes = this.get('changes');
+          return loadRecentCommits(changes);
         }
       }
     }
