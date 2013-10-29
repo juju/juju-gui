@@ -60,12 +60,12 @@ This is a general guide on how to structure your classes.
 /* Common classes and setup */
 body {
     overflow: hidden;
+    height: 100%;
     margin-top: @navbar-height;
     background-color: #302b28;
     font-family: @font-family;
     font-weight: 300;
-    height: 100%;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 18px;
     -webkit-font-smoothing: antialiased;
     // This won't start working until Firefox 25
@@ -136,9 +136,6 @@ ul.menu {
 .hidden {
     display: none;
     visibility: hidden;
-}
-table tr.highlighted td {
-   background-color: pink !important;
 }
 .customize-scrollbar {
     ::-webkit-scrollbar {
@@ -677,7 +674,7 @@ g.service {
         text-anchor: middle;
         dominant_baseline: central;
         fill: #4f4f4f;
-        font-size: 1.2em;
+        font-size: 18px;
 
         &.active {
             font-style: italic;
@@ -726,11 +723,11 @@ g.service-status {
 }
 g.unit {
     stroke-width: 0; font-weight: bold;
-    font-size: 1.2em;
+    font-size: 18px;
     fill: #1626cf;
 
     .address {
-        fill: #ffffff; font-size: 0.8em;
+        fill: #ffffff; font-size: 14px;
     }
     .unit-border {
         stroke-width: 2px; fill: #a0a0a0;
