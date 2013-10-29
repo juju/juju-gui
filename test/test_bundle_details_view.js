@@ -148,7 +148,6 @@ describe('Browser bundle detail view', function() {
 
   it('fails gracefully if services don\'t provide xy annotations',
      function() {
-       window.flags = { strictBundle: true };
        view._parseData = function() {
          return new Y.Promise(function(resolve) { resolve(); });
        };
@@ -170,17 +169,14 @@ describe('Browser bundle detail view', function() {
               }
             };
           }});
-       view.set('entity', new models.Bundle(data));
        view.render();
        assert.isNull(container.one('#bws-bundle'));
        assert.isNull(container.one('a[href=#bws-bundle]'));
        // Check that the charms tab is the landing tab
        assert.equal(view.tabview.get('selection').get('index'), 2);
-       window.flags = {};
      });
 
   it('renders the bundle topology into the view', function(done) {
-    window.flags = { strictBundle: true };
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
@@ -219,7 +215,6 @@ describe('Browser bundle detail view', function() {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
       assert.equal(view.tabview.get('selection').get('index'), 0);
-      window.flags = {};
       done();
     });
     view.set('entity', new models.Bundle(entity));

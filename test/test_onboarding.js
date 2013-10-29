@@ -40,13 +40,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       container = utils.makeContainer('onboarding');
       env_help = utils.makeContainer('environment-help');
-      window.flags.onboard = true;
     });
 
     afterEach(function() {
       container.remove(true);
       env_help.remove(true);
-      window.flags = {};
     });
 
     after(function() {
