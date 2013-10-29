@@ -447,7 +447,7 @@ describe('notification visual feedback', function() {
         url: function() { return; }
       }
     });
-    notifierBox = Y.Node.create('<div id="notifier-box"></div>');
+    notifierBox = Y.Node.create('<div class=".notifier-box"></div>');
     notifierBox.setStyle('display', 'none');
     Y.one('body').prepend(notifierBox);
   });

@@ -764,12 +764,16 @@ g.unit {
  * Notifier widget.
  * Contains notifications that appear from the header.
  */
-#notifier-box {
+.notifier-box {
     position: absolute;
     top: @navbar-height;
     left: 50%;
     margin: -10px 0 0 -125px;
     z-index: 9999;
+
+    &.bundle {
+        margin: -10px 0 0 150px;
+    }
 
     .yui3-notifier-content {
         @box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -782,6 +786,10 @@ g.unit {
         background-color: #fff;
         color: #333;
         font-size: 12px;
+
+        &.bottom-arrow {
+            width: 177px;
+        }
 
         &:first-child {
             margin-top: 0;
@@ -798,6 +806,10 @@ g.unit {
                 background-color: #fff;
                 -webkit-transform: rotate(45deg);
                 transform: rotate(45deg);
+            }
+            &.bottom-arrow:before {
+                top: inherit;
+                bottom: -5px;
             }
         }
         div:last-child {
