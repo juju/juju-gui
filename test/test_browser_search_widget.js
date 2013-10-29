@@ -327,7 +327,7 @@ describe('search widget autocomplete', function() {
     });
   });
 
-  it('fires a deploy event when the deploy button sprite is selected', function(done) {
+  it('fires deploy event when the deploy button is selected', function(done) {
     // This is heading into the private, non-publicized events of the AC
     // widget in an effort to hit the html on render after results come
     // back.
