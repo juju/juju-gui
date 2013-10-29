@@ -182,7 +182,8 @@ describe('The bundle model', function() {
   it('has the correct date in GMT', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recent_commits');
-    assert.equal('Tue, 03 Sep 2013 14:22:41 GMT', commits[0].date);
+    assert.equal('Tue, 03 Sep 2013 14:22:41 GMT',
+        commits[0].date.toUTCString());
   });
 
   it('has the commit message', function() {

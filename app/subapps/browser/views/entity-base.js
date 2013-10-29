@@ -20,8 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('subapp-browser-entitybaseview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      widgets = Y.namespace('juju.widgets'),
-      DATE_FORMAT = '%d/%b/%y';
+      widgets = Y.namespace('juju.widgets');
 
   /**
     Provides the shared methods for the Charm and Bundle browser views.
@@ -203,18 +202,14 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         firstTmp = commits.shift();
         prettyCommits.first = firstTmp;
         prettyCommits.first.prettyDate = Y.Date.format(
-            prettyCommits.first.date, {
-              format: DATE_FORMAT
-            });
+            prettyCommits.first.date);
         prettyCommits.first.revnoLink = this._getRevnoLink(
             sourceLink, prettyCommits.first.revno);
       }
 
       Y.Array.each(commits, function(commit) {
         commit.prettyDate = Y.Date.format(
-            commit.date, {
-              format: DATE_FORMAT
-            });
+            commit.date);
         commit.revnoLink = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
       }, this);

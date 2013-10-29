@@ -56,7 +56,7 @@ YUI.add('juju-bundle-models', function(Y) {
             name: author_parts[1],
             email: author_parts[2]
           },
-          date: date.toUTCString(),
+          date: date,
           message: change.message,
           revno: change.revno
         });
