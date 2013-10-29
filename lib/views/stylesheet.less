@@ -414,7 +414,6 @@ th {
     h1 {
         line-height: normal;
         margin-bottom: 1ex;
-        font-weight: normal;
         font-size: 26px;
     }
     p {
@@ -593,7 +592,7 @@ div.state-pending {
     }
 }
 
-.unit (@min_height: 20px, @border_radius:3px) {
+.unit(@min_height: 20px, @border_radius:3px) {
     .create-border-radius(@border_radius);
     padding: 5px;
     margin-bottom: 0px;
@@ -758,21 +757,6 @@ g.unit {
   }
 }
 
-#service-footer {
-    text-align: center;
-
-    .footer-right {
-        float: right;
-    }
-    .footer-left {
-        float: left;
-    }
-    input {
-        width: 3em;
-        margin-bottom: 0;
-    }
-}
-
 /*
  * Notifier widget.
  */
@@ -828,6 +812,7 @@ g.unit {
     /* Up the z-index so the feedback box will overlay the zoom slider as it
      * expands when hovered over */
     z-index: 10;
+
     a {
         color: white;
         background-color: @charm-panel-orange;
@@ -836,15 +821,13 @@ g.unit {
         height: 40px;
         font-weight: 500;
         font-size: 16px;
-        padding-top: 0px;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 0px;
+        padding: 0 10px;
         margin-right: 3px;
         -webkit-transition: all 0.15s ease-in-out;
         -moz-transition: all 0.15s ease-in-out;
         transition: all 0.15s ease-in-out;
         .rotate(-90deg);
+
         &:hover {
             text-decoration: none;
             background-color: #df6920;
@@ -854,24 +837,8 @@ g.unit {
 }
 
 /*
- * Overview Module
+ * Canvas zoom control
  */
-#overview {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-#overview-tasks {
-    height: 50px;
-    position: relative;
-    color: #2D2D2D;
-
-    .controls {
-        position: absolute;
-        top: 1px;
-        left: 11px;
-    }
-}
 .zoom-controls {
     position: absolute;
     right: 20px;
