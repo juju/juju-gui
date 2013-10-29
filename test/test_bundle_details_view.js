@@ -137,7 +137,7 @@ describe('Browser bundle detail view', function() {
   it('deploys a bundle when \'add\' button is clicked', function(done) {
     // app.js sets this to its deploy bundle method so
     // as long as it's called it's successful.
-    view.set('deployBundle', function(data) {
+    view.set('deploy', function(data) {
       assert.isObject(data);
       done();
     });

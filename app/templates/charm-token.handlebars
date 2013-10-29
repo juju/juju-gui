@@ -1,9 +1,16 @@
 {{! The token class is used by the deploy method in
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
+
+{{#if deployButton}}
+    <a class="deployButton" href="">
+        <i class="sprite search_add_to_canvas" data-charmid="{{storeId}}"></i>
+    </a>
+{{/if}}
 <a href="/{{storeId}}"
    class="token {{size}} {{#if is_approved}}recommended{{/if}}"
    data-charmid="{{storeId}}">
+
     <span class="block-icon">
         <div class="icon">
             {{#unless iconUrl}}
@@ -16,6 +23,8 @@
     <span class="title">
         {{ name }}
     </span>
+
+
     {{#unless_eq size 'tiny'}}
       <span class="metadata">
           <div><strong>Deployed {{downloads}} {{pluralize 'time' downloads}}</strong></div>

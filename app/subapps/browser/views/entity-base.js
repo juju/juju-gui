@@ -528,7 +528,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
     /**
      * The "deploy" function prompts the user for service configuration and
-     * deploys a service.
+     * deploys a service or bundle.
+     *
+     * The proper deploy function is provided from the browser subapp.
      *
      * @attribute deploy
      * @default undefined

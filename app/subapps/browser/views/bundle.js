@@ -73,7 +73,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       } else {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
-      this.get('deployBundle')(bundle.get('data'));
+      this.get('deploy')(bundle.get('data'));
     },
 
     /**
