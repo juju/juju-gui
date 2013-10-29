@@ -535,10 +535,9 @@ YUI.add('subapp-browser', function(Y) {
       var extraCfg = {
         activeTab: this._viewState.hash,
         entityId: entityId,
-        container: Y.Node.create('<div class="charmview"/>'),
+        container: Y.Node.create('<div class="charmview"/>')
       };
 
-      debugger;
       if (entityId.indexOf('bundle') !== -1) {
         extraCfg.deploy = this.get('deployBundle');
       } else {
@@ -706,7 +705,6 @@ YUI.add('subapp-browser', function(Y) {
           extraCfg.withHome = true;
         }
         extraCfg.container = this.get('container');
-        debugger;
         extraCfg.deploy = this.get('deploy');
         extraCfg.deployBundle = this.get('deployBundle');
 
@@ -795,7 +793,6 @@ YUI.add('subapp-browser', function(Y) {
       }
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode') || forceSidebar) {
-        debugger;
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
               container: this.get('container'),

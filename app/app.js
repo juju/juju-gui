@@ -607,7 +607,6 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} bundle Bundle data.
     */
     deployBundle: function(bundle) {
-      debugger;
       var notifications = this.db.notifications;
       this.env.deployerImport(
           Y.JSON.stringify({
