@@ -79,11 +79,18 @@ a:hover {
 }
 input, button, select, textarea {
     font-family: @font-family;
-    font-weight: normal;
+    font-weight: 300;
 }
 button {
     cursor: pointer;
     -webkit-appearance: button;
+}
+input[type="text"],
+input[type="password"] {
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid @bws-border;
+    border-radius: @border-radius;
 }
 svg {
     stroke-width: 0;
@@ -161,12 +168,8 @@ code {
     font-size: 14px;
     color: #333;
 }
-input[type="text"],
-input[type="password"] {
-    padding: 5px 10px;
-    background-color: #fff;
-    border: 1px solid @bws-border;
-    border-radius: @border-radius;
+th {
+    font-weight: 300;
 }
 
 /* Layout, widgets etc. */
@@ -359,28 +362,27 @@ input[type="password"] {
     cursor: move;
 }
 #shortcut-help {
-    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
+    .create-box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.5));
     position: absolute;
     left: 4%;
     right: 4%;
     top: 8%;
-    bottom: 10%;
+    bottom: 8%;
     opacity: 0.85;
     z-index: 1000;
-    padding: 1em;
+    padding: 20px;
     background-color: black;
-    color: white;
+    border-radius: @border-radius;
+    color: #fff;
 
-    .binding {
-        color: green;
-        text-align: center;
-    }
     table {
-        padding: 2em;
-        margin: 2em;
+        margin: 20px;
 
         th {
             text-align: left;
+        }
+        td {
+            padding: 5px 20px;
         }
     }
 }
@@ -399,6 +401,7 @@ input[type="password"] {
     /* pointer-events does not work in IE 10 except in SVG, so this is just a
        way to slightly improve the experience during transitions. */
     pointer-events: none;
+
     div.vertical-center-floater {
         height: 50%;
         margin-bottom: -250px;
