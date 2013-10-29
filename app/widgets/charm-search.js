@@ -350,11 +350,6 @@ YUI.add('browser-search-widget', function(Y) {
         ev.halt();
       }, 'a', this);
 
-      // Stop clicking on charm-tokens <a> links from navigating.
-      this.get('boundingBox').delegate('click', function(ev) {
-        ev.halt();
-      }, 'a', this);
-
     },
 
     /**
