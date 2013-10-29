@@ -888,39 +888,24 @@ g.unit {
 #zoom-out-btn {
     top: 10px;
 }
-#unit-status {
-    .running {
-        color: green;
-    }
-    .pending {
-        color: yellow;
-    }
-    .error {
-        color: red;
-    }
+.yui3-slider-thumb {
+  &:focus {
+    outline: none;
+  }
 }
-#relations {
-    #unit-status;
 
-    form {
-        margin: 0;
-    }
-}
+/*
+ * This panel is displayed when deleting relations.
+ */
 .yui3-panel {
     .create-border-radius(@border-radius);
     .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
-    background: white;
-    padding: 1.6em;
-    border: solid black 2px;
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding-box;
-    background-clip: padding-box;
-    outline: none;
-    font-weight: normal;
-    letter-spacing: normal;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 
     .yui3-widget-bd {
-        margin-bottom: 1em;
+        margin-bottom: 20px;
     }
     .yui3-widget-buttons {
         float: right;
@@ -939,22 +924,6 @@ g.unit {
         padding-top: 5px;
     }
 }
-.unit-button-palette {
-    float: right;
-}
-#service-relations {
-    .btn {
-        float: right;
-    }
-}
-#destroy-service {
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-.service-view+.viewlet-manager {
-    overflow-y: auto;
-}
 #full-screen-mask {
     display: block;
     position: absolute;
@@ -964,10 +933,12 @@ g.unit {
     height: 100%;
     z-index: 10000;
 }
+
+/*
+ * This is used for the initial page before displaying the canvas
+ * e.g. login, connecting to Juju and browser not supported screens
+ */
 .centered-column {
-    @panel-color: #f5f5f5;
-    @panel-gradient: (@panel-color - #111);
-    @panel-shadow: (@panel-color - #444);
     display: block;
     z-index: 10001;
     position: absolute;
@@ -1010,7 +981,7 @@ g.unit {
             .type9;
             margin: 0 0 20px -20px;
             padding: 10px 20px;
-            background-color: @panel-gradient;
+            background-color: #ddd;
             -webkit-border-top-left-radius: @border-radius;
             -webkit-border-top-right-radius: @border-radius;
             -moz-border-radius-topleft: @border-radius;
@@ -1028,11 +999,6 @@ g.unit {
     #loading-spinner {
         height: 100px;
     }
-}
-.yui3-slider-thumb {
-  &:focus {
-    outline: none;
-  }
 }
 
 /** Browser Setup **/
