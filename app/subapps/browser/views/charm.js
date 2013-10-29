@@ -339,15 +339,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (Y.Object.isEmpty(tplData.provides)) {
         tplData.provides = false;
       }
-
       // Wrap plain text links in descriptions and commit messages with a tags
       tplData.description = this.Linkify(tplData.description);
       tplData.recent_commits.forEach(function(commit) {
         commit.message = this.Linkify(commit.message);
       }, this);
-
       var tpl = this.template(tplData);
-
       // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
@@ -388,16 +385,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
        @method Linkify
      */
     Linkify: function(text) {
-      // Wraps an a tag around links.
-      var links = /(\b(https?|http):\/\/[^ ]*[0-9A-Za-z_]+)/ig;
-      text = text.replace(links,
-          '<a href="$1" target="_blank" class="respect-whitespace">$1</a>');
+      if(text) {
+        // Wraps an a tag around links.
+        var links = /(\b(https?|http):\/\/[^ ]*[0-9A-Za-z_]+)/ig;
+        text = text.replace(links,
+            '<a href="$1" target="_blank" class="respect-whitespace">$1</a>');
 
-      // Puts lp branch addresses in spans with respect-whitespace
-      var lp_links = /(\b(lp:~)[^ ]*[0-9A-Za-z_]+)/ig;
-      text = text.replace(lp_links,
-          '<span class="respect-whitespace">$1</span>');
-
+        // Puts lp branch addresses in spans with respect-whitespace
+        var lp_links = /(\b(lp:~)[^ ]*[0-9A-Za-z_]+)/ig;
+        text = text.replace(lp_links,
+            '<span class="respect-whitespace">$1</span>');
+      }
       return text;
     },
 
@@ -414,7 +412,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     render: function() {
       var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
-
       if (this.get('entity')) {
         this._renderCharmView(this.get('entity'), isFullscreen);
         this.hideIndicator(this.get('renderTo'));
