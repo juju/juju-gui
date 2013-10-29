@@ -385,7 +385,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
        @method Linkify
      */
     Linkify: function(text) {
-      if(text) {
+      if (text) {
         // Wraps an a tag around links.
         var links = /(\b(https?|http):\/\/[^ ]*[0-9A-Za-z_]+)/ig;
         text = text.replace(links,
