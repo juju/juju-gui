@@ -49,13 +49,10 @@
                 <div id="bws-readme"></div>
                 <div id="bws-deploy">
                     <h3>Deploy via the GUI</h3>
-                    <p>Click the `Deploy this bundle` button above.</p>
-                    <p style="padding-left: 50px">-OR-</p>
-                    <p>Drag the bundle listing from the search results onto the canvas.</p>
+                    <p>Click the 'Deploy this bundle' button above, or drag the bundle listing from the search results onto the canvas.</p>
                     <h3>Deploy via quickstart (Under development)</h3>
                     <p>Step 1 - Install quickstart
-                        <pre>sudo add-apt-repository
-ppa:juju-gui/quickstart-beta
+                        <pre>sudo add-apt-repository ppa:juju-gui/quickstart-beta
 sudo apt-get update
 sudo apt-get install juju-quickstart</pre>
                     </p>
@@ -63,9 +60,9 @@ sudo apt-get install juju-quickstart</pre>
                         <pre>juju quickstart &lt;path to deployer file&gt;</pre></p>
                     <h3>Deploy via the deployer</h3>
                     <p>Step 1 - Setup the virtual environment
-                        <pre>virtualenv --system-site-packages deployer
-./deployer/bin/easy_install juju-deployer
-./deployer/bin/juju-deployer -h
+                        <pre>% virtualenv --system-site-packages deployer
+% ./deployer/bin/easy_install juju-deployer
+% ./deployer/bin/juju-deployer -h
                         </pre>
                     </p>
                     <p>Step 2 - Deploy bundle
@@ -186,7 +183,7 @@ sudo apt-get install juju-quickstart</pre>
                         service.
                     </p>
                     <p>
-                        The source code for the bundle has been extracting from the deployer file. Please see the branch for the full, unprocessed deployer file.
+                        The source code for the bundle has been extracted from the deployer file. Please see the branch for the full, unprocessed deployer file.
 
                         <pre>bzr branch lp:{{id}}</pre>
                     </p>
