@@ -31,28 +31,12 @@ Go forth and see the typography.less file and use those.
 @label-color: #292929;
 @text-entry-color: #6d6e70;
 @charm-panel-orange: #dd4814;
-@charm-panel-deploy-button-bottom-gradient: #e65c19;
-@charm-panel-deploy-button-shadow: #8a2d0c;
-@charm-panel-cancel-button-color: #93a39f;
-@charm-panel-cancel-button-bottom-gradient: #818080;
-@charm-panel-cancel-button-shadow: #515050;
 @charm-panel-background-color: #eeeeee;
-@charm-panel-border-color: #BEBEBE;
-@charm-panel-border-top-color: #E0DEDE;
-@charm-panel-series-color: #CBCBCB;
-@charm-panel-configure-color: #505050;
-@charm-panel-padding-left: 10px;
-@charm-panel-width: 292px;
-@navbar-color: #2D2D2D!important;
 @navbar-height: 60px;
 @navbar-border-dark: #191514;
 @navbar-border-light: #2d2928;
-@navbar-bottom-height: 50px;
-@navbar-divider-colour: #333;
 @text-colour: #505050;
 @border-radius: 2px;
-@environment-menu-background-color: #ffffff;
-@environment-menu-hover-background: #f2f2f2;
 
 // Imports need to be after vars.
 @import "typography.less";
@@ -258,7 +242,7 @@ input[type="password"] {
     padding: 5px 10px;
     background-color: #fff;
     border: 1px solid @bws-border;
-    border-radius: @bws-corner;
+    border-radius: @border-radius;
 }
 
 /* Layout, widgets etc. */
@@ -517,7 +501,7 @@ input[type="password"] {
 }
 .environment-menu {
     @border_radius: 20px;
-    @background_color: @environment-menu-background-color;
+    @background_color: #fff;
     .create-border-radius(@border-radius);
     .create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
     display: none;
@@ -588,7 +572,7 @@ input[type="password"] {
                 border-bottom: none;
             }
             &:hover {
-                background-color: @environment-menu-hover-background;
+                background-color: #f2f2f2;
             }
             &.disabled {
                 color: gray;
@@ -955,7 +939,7 @@ g.unit {
 #overview-tasks {
     height: 50px;
     position: relative;
-    color: @navbar-color;
+    color: #2D2D2D;
 
     .controls {
         position: absolute;
