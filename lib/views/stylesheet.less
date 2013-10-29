@@ -55,95 +55,7 @@ This is a general guide on how to structure your classes.
 
 // Imports need to be after vars.
 @import "typography.less";
-
-/* Mixins */
-.animation (...) {
-    -webkit-animation: @arguments;
-    -moz-animation: @arguments;
-    -ms-animation: @arguments;
-    -o-animation: @arguments;
-    animation: @arguments;
-}
-.animation-fill-mode (...) {
-    -webkit-animation-fill-mode: @arguments;
-    -moz-animation-fill-mode: @arguments;
-    -ms-animation-fill-mode: @arguments;
-    -o-animation-fill-mode: @arguments;
-    animation-fill-mode: @arguments;
-}
-.transition (...) {
-    -webkit-transition: @arguments;
-    -moz-transition: @arguments;
-    -ms-transition: @arguments;
-    -o-transition: @arguments;
-    transition: @arguments;
-}
-.create-border-radius(@radius) {
-    -moz-border-radius: @radius;
-    -webkit-border-radius: @radius;
-    border-radius: @radius;
-}
-.create-box-shadow(@arguments) {
-    -moz-box-shadow: @arguments;
-    -webkit-box-shadow: @arguments;
-    box-shadow: @arguments;
-}
-.create-linear-gradient(@gradient-start, @gradient-end) {
-    background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
-    background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
-    background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
-    background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
-    background-image: linear-gradient(top, @gradient-start, @gradient-end);
-    background-repeat: repeat-x;
-}
-/*
- * Rotation transform.  Call with numerical value and units, e.g.
- * .rotate(-90deg);
- */
-.rotate(@angle) {
-    -webkit-transform: rotate(@angle);
-    -moz-transform: rotate(@angle);
-    -ms-transform: rotate(@angle);
-    -o-transform: rotate(@angle);
-    transform: rotate(@angle);
-}
-.border-box {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-.button {
-    .create-border-radius(@border-radius);
-    .create-linear-gradient(@charm-panel-orange, #c03f11);
-    color: #fff;
-    text-decoration:none;
-    display: inline-block;
-    margin: 0;
-    padding: 8px 14px;
-    border: none;
-    font-size: 14px;
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-font-smoothing: subpixel-antialiased;
-    -o-font-smoothing: subpixel-antialiased;
-    font-smoothing: subpixel-antialiased;
-
-    &:hover {
-        background: @charm-panel-orange;
-    }
-    &.inverse {
-        // Using a variable here because LESS strips commas in mixin args.
-        @box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-        .create-box-shadow(@box-shadow);
-        background:  #eeeeee;
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-        &:hover {
-            background: #eeeeee;
-        }
-    }
-}
+@import "mixins.less";
 
 /* Common classes and setup */
 body {
@@ -192,7 +104,7 @@ h4, h5, h6 {
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
     font-family: inherit;
-    font-weight: bold;
+    font-weight: 300;
     color: inherit;
     text-rendering: optimizelegibility;
 }
