@@ -144,18 +144,6 @@ ul.menu {
     display: none;
     visibility: hidden;
 }
-.customize-scrollbar {
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    ::-webkit-scrollbar-thumb {
-        background-color: #bbb;
-        border: 1px solid #a8a8a8;
-    }
-}
 pre {
     margin-bottom: 10px;
     padding: 5px;
@@ -381,7 +369,7 @@ th {
     color: #fff;
 
     table {
-        margin: 20px;
+        margin-top: 20px;
 
         th {
             text-align: left;
@@ -437,12 +425,10 @@ th {
  * The actions menu that appears next to a service block.
  */
 .environment-menu {
-    @border_radius: 20px;
-    @background_color: #fff;
     .create-border-radius(@border-radius);
     .create-box-shadow(0 0 2px rgba(0, 0, 0, 0.3));
     display: none;
-    background-color: @background_color;
+    background-color: #fff;
     color: @text-colour;
     top: 0;
     left: 0;
