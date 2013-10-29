@@ -94,7 +94,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var featuredCount = featuredCharmObjects.length;
           var featuredTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: 'Featured Charms',
+                name: window.flags.charmworldv3 ? 'Featured' : 'Featured Charms',
                 cutoff: featuredCount,
                 children: featuredCharmObjects
               }, {
@@ -110,7 +110,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var popularContainer = tplNode.one('.popular');
           var popularTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: 'Popular Charms',
+                name: window.flags.charmworldv3 ? 'Popular' : 'Popular Charms',
                 cutoff: cutoffs.popular,
                 children: popularCharms.map(function(charm) {
                   return charm.getAttrs();
@@ -127,7 +127,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var newContainer = tplNode.one('.new');
           var newTokenContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: 'New Charms',
+                name: window.flags.charmworldv3 ? 'New' : 'New Charms',
                 cutoff: cutoffs['new'],
                 children: newCharms.map(function(charm) {
                   return charm.getAttrs();
