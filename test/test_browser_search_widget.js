@@ -1,4 +1,4 @@
-/*.only
+/*
 This file is part of the Juju GUI, which lets users view and manage Juju
 environments within a graphical interface (https://launchpad.net/juju-gui).
 Copyright (C) 2012-2013 Canonical Ltd.
@@ -155,7 +155,7 @@ describe('browser search widget', function() {
     });
   });
 
-  it.only('generates a bundle change event when bundle selected', function(done) {
+  it('generates a bundle change event when bundle selected', function(done) {
     search.on(search.EVT_SEARCH_CHANGED, function(ev) {
       assert.equal(ev.newVal, 'TestBundle');
       // The bundle id gets prefixed with the /bundle to help routing.
@@ -171,7 +171,7 @@ describe('browser search widget', function() {
         text: 'TestBundle'
       }
     });
-  })
+  });
 
   it('supports an onHome event', function(done) {
     search.on(search.EVT_SEARCH_GOHOME, function() {
