@@ -185,7 +185,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       templateData.services = this._buildCharmList(bundleData);
       templateData.sourceLink = this._getSourceLink();
       templateData.prettyCommits = this._formatCommitsForHtml(
-        templateData.recent_commits, templateData.sourceLink);
+          templateData.recent_commits, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
