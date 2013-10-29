@@ -247,6 +247,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _setupAutocomplete: function() {
+      var self = this;
       // Bind out helpers to the current objects context, not the auto
       // complete widget context..
       var fetchSuggestions = Y.bind(this._fetchSuggestions, this);
@@ -274,7 +275,7 @@ YUI.add('browser-search-widget', function(Y) {
           // ignore the way autocomplete works. It's more of a 'quick search'
           // with a deploy option. No search is really performed after the
           // deploy button is selected.
-          if (e.target.hasClass('search_add_to_canvas')) {
+          if (ev.target.hasClass('search_add_to_canvas')) {
             // wtf is 'this' in this case. Is it scoped correctly?
 
             debugger;
@@ -286,13 +287,12 @@ YUI.add('browser-search-widget', function(Y) {
             this.fire(this.EVT_CHARM_DEPLOY, {
 
             });
-
           } else {
-              var selectedNode = e.currentTarget;
-              this.set(ACTIVE_ITEM, itemNode);
-              this.selectItem(itemNode, e);
+              var itemNode = ev.currentTarget;
+              this.set('active_item', itemNode);
+              this.selectItem(itemNode, ev);
           }
-      },
+      };
 
       this.ac.render();
 
