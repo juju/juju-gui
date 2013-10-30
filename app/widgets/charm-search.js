@@ -270,63 +270,69 @@ YUI.add('browser-search-widget', function(Y) {
         source: fetchSuggestions
       });
 
+      // Holder for the deploy logic the AC uses when clicking on a deploy
+      // icon from a result item.
+      this.ac._onDeploy = function(ev) {
+        var isBundle = false,
+            data,
+            found,
+            id;
+
+        // Fire an event up to the View with the charm information so that
+        // it can proceed to build/send the deploy information out to
+        // the environment.
+        id = ev.target.getData('charmId');
+
+        if (!id) {
+          // try to see if this is a bundle clicked on.
+          id = ev.target.getData('bundleId');
+          isBundle = true;
+        }
+        // Find the charm data for the selected item from the set of
+        // results.
+        found = this.get('results').filter(function(result) {
+          if (isBundle) {
+            if (result.raw.bundle.id === id) {
+              return result;
+            }
+          } else {
+            if (result.raw.charm.id === id) {
+              return result;
+            }
+          }
+        });
+
+        // Make sure that we've found a result before returning.
+        if (found.length === 0) {
+          console.error(
+              'Clicked deploy on an item we could not find in results.');
+        } else {
+          if (isBundle) {
+            data = found[0].raw.bundle;
+          } else {
+            data = found[0].raw.charm;
+          }
+
+          self.fire(self.EVT_DEPLOY, {
+            id: id,
+            data: data,
+            entityType: isBundle ? 'bundle' : 'charm'
+          });
+
+        }
+
+      };
+
       this.ac._onItemClick = function(ev) {
         // If the selection is coming from the deployButton then we kind of
         // ignore the way autocomplete works. It's more of a 'quick search'
         // with a deploy option. No search is really performed after the
         // deploy button is selected.
         if (ev.target.hasClass('search_add_to_canvas')) {
-          var isBundle = false,
-              data,
-              found,
-              id;
-
-          // Fire an event up to the View with the charm information so that
-          // it can proceed to build/send the deploy information out to
-          // the environment.
-          id = ev.target.getData('charmId');
-
-          if (!id) {
-            // try to see if this is a bundle clicked on.
-            id = ev.target.getData('bundleId');
-            isBundle = true;
-          }
-          // Find the charm data for the selected item from the set of
-          // results.
-          found = this.get('results').filter(function(result) {
-            if (isBundle) {
-              if (result.raw.bundle.id === id) {
-                return result;
-              }
-            } else {
-              if (result.raw.charm.id === id) {
-                return result;
-              }
-            }
-          });
-
-          // Make sure that we've found a result before returning.
-          if (found.length === 0) {
-            console.error(
-                'Clicked deploy on an item we could not find in results.');
-          } else {
-            if (isBundle) {
-              data = found[0].raw.bundle;
-            } else {
-              data = found[0].raw.charm;
-            }
-
-            self.fire(self.EVT_DEPLOY, {
-              id: id,
-              data: data,
-              entityType: isBundle ? 'bundle' : 'charm'
-            });
-
-            // Hide the autocomplete widget. You've selected something
-            // that's not really a suggestion, but it should still go away.
-            this.hide();
-          }
-
+          // Hide the autocomplete widget. You've selected something
+          // that's not really a suggestion, but it should still go away.
+          this.hide();
+          this._onDeploy(ev);
         } else {
           var itemNode = ev.currentTarget;
           this.set('active_item', itemNode);
