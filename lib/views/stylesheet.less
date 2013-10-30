@@ -245,6 +245,7 @@ th {
                 padding: 24px 0 0 0;
 
                 a {
+                    .sprite-hover;
                     display: block;
                     float: left;
                     height: 15px;
@@ -257,24 +258,15 @@ th {
                     &:last-child {
                         border-right: 1px solid @navbar-border-light;
                     }
-                    // Ugly classes to display the correct sprite for the
-                    // state. We might be able to turn this into a mixin
-                    // if we need to redo the same thing often.
+                    .sprite {
+                        display: block;
+                        margin: 1px 0 0 0;
+                    }
                     &:focus,
                     &:hover {
                         .sprite.hover {
                             display: block;
                         }
-                        .sprite.normal {
-                            display: none;
-                        }
-                    }
-                    .sprite.hover {
-                        display: none;
-                    }
-                    .sprite {
-                        display: block;
-                        margin: 1px 0 0 0;
                     }
                 }
                 #import-trigger {

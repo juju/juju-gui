@@ -98,3 +98,17 @@
         border: 1px solid #a8a8a8;
     }
 }
+.sprite-hover {
+    &:focus,
+    &:hover {
+        .sprite.hover {
+            display: inline-block;
+        }
+        .sprite.normal {
+            display: none;
+        }
+    }
+    .sprite.hover {
+        display: none;
+    }
+}
