@@ -1686,10 +1686,11 @@ YUI.add('juju-view-utils', function(Y) {
 
   utils.deployBundleCallback = function(notifications, result) {
     if (result.err) {
-      console.log('import failed', result.err);
+      console.log('bundle import failed:', result.err);
       notifications.add({
-        title: 'Deploy Bundle',
-        message: 'Environment deploy of the bundle failed.<br/>',
+        title: 'Bundle Deployment Failed',
+        message: 'Unable to deploy the bundle. The server returned the ' +
+            'following error: ' + result.err,
         level: 'error'
       });
       return;
