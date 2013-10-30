@@ -1,79 +1,77 @@
-.yui3-skin-sam {
-    .yui3-juju-browser-tabview {
-        .vertical {
-            ul {
-                float: left;
-            }
-            .yui3-juju-browser-tab {
-                display: block;
-            }
+.yui3-juju-browser-tabview {
+    .vertical {
+        ul {
+            float: left;
         }
-        .yui3-tabview-list {
-            padding: 0 20px 0 @tabview-left-padding !important;
-            border-bottom: 1px solid @bws-border;
-
-            li {
-                a {
-                    border: none;
-                }
-                margin-right: 38px;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-                &.yui3-tab-selected a.yui3-tab-label {
-                    background: inherit;
-                    border-bottom: 2px solid @charm-panel-orange;
-                    padding-bottom: 15px;
-                }
-                .yui3-tab-label {
-                    .type9;
-                    background: inherit;
-                    display: block;
-                    padding: 16px 0;
-                    outline: 0;
-                    line-height: 18px;
-                }
-            }
+        .yui3-juju-browser-tab {
+            display: block;
         }
-        .yui3-tabview-panel {
-            padding: 0;
-            background: inherit;
-            border: none;
+    }
+    .yui3-tabview-list {
+        padding: 0 20px 0 @tabview-left-padding !important;
+        border-bottom: 1px solid @bws-border;
 
-            .yui3-tab-panel {
+        li {
+            a {
+                border: none;
+            }
+            margin-right: 38px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+            &.yui3-tab-selected a.yui3-tab-label {
+                background: inherit;
+                border-bottom: 2px solid @charm-panel-orange;
+                padding-bottom: 15px;
+            }
+            .yui3-tab-label {
                 .type9;
-                .border-box;
-                padding: 0 70px 0 @tabview-left-padding;
+                background: inherit;
+                display: block;
+                padding: 16px 0;
+                outline: 0;
+                line-height: 18px;
+            }
+        }
+    }
+    .yui3-tabview-panel {
+        padding: 0;
+        background: inherit;
+        border: none;
 
-                a:hover {
-                    text-decoration: underline;
-                }
-                h1,
-                h2,
-                h3,
-                h4 {
-                    .type5;
-                    margin: 40px 0 20px;
-                    padding-bottom: 0;
-                    border-bottom: 0;
-                }
-                p {
-                    line-height: 1.6;
-                }
-                ul, ol {
-                    margin: 0;
-                    padding: 0;
-                    list-style: none;
-                }
-                pre {
-                    background: #FDF6F2;
-                    border-radius: @border-radius;
-                    padding: 10px 16px;
-                    white-space: pre-wrap;
-                    word-wrap: break-word;
-                    margin-bottom: 9px;
-                }
+        .yui3-tab-panel {
+            .type9;
+            .border-box;
+            padding: 0 70px 0 @tabview-left-padding;
+
+            a:hover {
+                text-decoration: underline;
+            }
+            h1,
+            h2,
+            h3,
+            h4 {
+                .type5;
+                margin: 40px 0 20px;
+                padding-bottom: 0;
+                border-bottom: 0;
+            }
+            p {
+                line-height: 1.6;
+            }
+            ul, ol {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            pre {
+                background: #FDF6F2;
+                border-radius: @border-radius;
+                padding: 10px 16px;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                margin-bottom: 9px;
             }
         }
     }
