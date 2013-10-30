@@ -148,7 +148,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
         var bundle = new models.Bundle(entity);
         deployer(bundle.get('data'));
       } else {
-        deployer = this.get('deploy');
+        deployer = this.get('deployService');
         var charm = new models.Charm(entity);
         var ghostAttributes;
         ghostAttributes = {
@@ -310,12 +310,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
       charmID: {},
 
       /**
-       * @attribute deploy
+       * @attribute deployService
        * @default undefined
        * @type {Function}
        *
        */
-      deploy: {},
+      deployService: {},
 
       /**
        * @attribute deployBundle
