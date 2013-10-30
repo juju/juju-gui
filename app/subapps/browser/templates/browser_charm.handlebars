@@ -1,8 +1,17 @@
-<div class="charm {{#if is_approved}}recommended{{/if}}">
+<div class="charm">
     <div class="content">
         {{#unless forInspector}}
             <div class="header">
-                    {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                {{#if is_approved}}
+                    <div class="recommended">
+                        <i class="sprite recommended-triangle-large"></i>
+                    </div>
+                {{/if}}
+                {{#unless isFullscreen}}
+                  <a href="" class="back icon">
+                      <i class="sprite panel_close"></i>
+                  </a>
+                {{/unless}}
                 <div class="block-icon">
                     <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
                 </div>
@@ -67,13 +76,16 @@
             {{#unless forInspector}}
                 <span id="sharing">
                   <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
-                    <i class="sprite twitter-normal"></i>
+                    <i class="sprite twitter-normal normal"></i>
+                    <i class="sprite twitter-hover hover"></i>
                   </a>
                   <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
-                    <i class="sprite google-normal"></i>
+                    <i class="sprite google-normal normal"></i>
+                    <i class="sprite google-hover hover"></i>
                   </a>
                   <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
-                    <i class="sprite email-normal"></i>
+                    <i class="sprite email-normal normal"></i>
+                    <i class="sprite email-hover hover"></i>
                   </a>
                 </span>
             {{/unless}}

@@ -2,8 +2,13 @@
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
 <a href="/{{storeId}}"
-   class="token {{size}} {{#if is_approved}}recommended{{/if}}"
-   data-charmid="{{storeId}}">
+   class="token {{size}}"
+     data-charmid="{{storeId}}">
+    {{#if is_approved}}
+        <span class="recommended">
+            <i class="sprite recommended-triangle"></i>
+        </span>
+    {{/if}}
     <span class="block-icon">
         <div class="icon">
             {{#unless iconUrl}}
