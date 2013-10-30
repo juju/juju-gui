@@ -91,12 +91,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
             this.search.on(
                 this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
         );
-      }
 
-      if (this.search) {
         this.addEvent(
             this.search.on(
                 this.search.EVT_SEARCH_GOHOME, this._goHome, this)
+        );
+
+        this.addEvent(
+            this.search.on(
+                this.search.EVT_DEPLOY, this._deployEntity, this)
         );
 
         // If the showHome attribute is changed, update our html by adding the
@@ -123,7 +126,36 @@ YUI.add('subapp-browser-mainview', function(Y) {
           }
         }, this);
       }
+
       this._bindViewmodeControls(this.controls);
+    },
+
+    /**
+     * Deploy either a bundle or charm given by the quicksearch widget.
+     *
+     * @method _deployEntity
+     * @param {Y.Event} ev the event object from the widget.
+     *
+     */
+    _deployEntity: function(ev) {
+      var entityType = ev.entityType,
+          entity = ev.data,
+          entityId = ev.id,
+          deployer;
+
+      if (entityType === 'bundle') {
+        deployer = this.get('deployBundle');
+        var bundle = new models.Bundle(entity);
+        deployer(bundle.get('data'));
+      } else {
+        deployer = this.get('deployService');
+        var charm = new models.Charm(entity);
+        var ghostAttributes;
+        ghostAttributes = {
+          icon: this.get('store').iconpath(charm.get('storeId'))
+        };
+        deployer.call(null, charm, ghostAttributes);
+      }
     },
 
     /**
@@ -278,6 +310,22 @@ YUI.add('subapp-browser-mainview', function(Y) {
       charmID: {},
 
       /**
+       * @attribute deployService
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deployService: {},
+
+      /**
+       * @attribute deployBundle
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deployBundle: {},
+
+      /**
          The list of filters to be used in the rendering of the view.
 
          This is always handed down from the subapp, but default to something
@@ -339,6 +387,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-browser-models',
     'juju-models',
+    'juju-bundle-models',
     'querystring-stringify',
     'view',
     'viewmode-controls'

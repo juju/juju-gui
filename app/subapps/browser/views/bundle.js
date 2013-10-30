@@ -38,7 +38,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       // '.token': {
       //   click: '_handleCharmSelection'
       // },
-      '.bundle .add': {
+      '.bundle .add.deploy': {
+        click: '_confirmDeploy'
+      },
+      '.bundle .add.confirm': {
         click: '_deployBundle'
       },
       // Following handlers are provided by entity-base.js
@@ -58,6 +61,23 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     },
 
     template: views.Templates.bundle,
+
+    /**
+      Changes the deploy button to be a confirmation
+
+      @method _confirmDeploy
+      @param {Object} e Click event object.
+    */
+    _confirmDeploy: function(e) {
+      // This is required to stop the following event handlers from triggering.
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      var button = e.currentTarget;
+      button.setHTML('Yes, I\'m sure');
+      button.removeClass('deploy');
+      button.addClass('confirm');
+      this.get('container').one('.notifier-box').removeClass('hidden');
+    },
 
     /**
       Deploys the bundle to the environment via the provided deploy method.
@@ -162,7 +182,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var bundle = this.get('entity');
       var bundleData = bundle.getAttrs();
       // Copy the bundle for use in the template so we can modify the content
-      // without munipulating the entity.
+      // without manipulating the entity.
       var templateData = Y.merge(bundleData);
       templateData.charmIcons = utils.charmIconParser(
           templateData.charm_metadata);
@@ -171,6 +191,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(bundleData);
+      templateData.sourceLink = this._getSourceLink(
+          'lp:' + this.get('entity').get('branch_spec'));
+      templateData.prettyCommits = this._formatCommitsForHtml(
+          templateData.recentCommits, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');

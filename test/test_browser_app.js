@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser fullscreen view', function() {
-      var container, FullScreen, view, views, Y;
+      var container, FullScreen, utils, view, views, Y;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -43,6 +43,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-tests-utils',
             'subapp-browser-fullscreen', function(Y) {
               views = Y.namespace('juju.browser.views');
+              utils = Y.namespace('juju-tests.utils');
               FullScreen = views.FullScreen;
               done();
             });
@@ -176,11 +177,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
+      it('picks up the search widget deploy event', function(done) {
+        var container = utils.makeContainer('subapp-browser'),
+            fakeStore = new Y.juju.charmworld.APIv2({});
+        view = new FullScreen({
+          charmID: 'precise/jenkins-13',
+          store: fakeStore
+        });
+
+        view._deployEntity = function() {
+          container.remove(true);
+          done();
+        };
+
+        view.render(container);
+        view.search.fire(view.search.EVT_DEPLOY);
+      });
+
     });
   })();
 
   (function() {
-    describe('browser minimzed view', function() {
+    describe('browser minimized view', function() {
       var Y, container, view, views, Minimized;
 
       before(function(done) {
@@ -228,7 +246,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser sidebar view', function() {
-      var Y, container, view, views, Sidebar;
+      var Y, container, utils, view, views, Sidebar;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -240,6 +258,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'subapp-browser-sidebar',
             function(Y) {
               views = Y.namespace('juju.browser.views');
+              utils = Y.namespace('juju-tests.utils');
               Sidebar = views.Sidebar;
               done();
             });
@@ -369,6 +388,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.search._onHome({
           halt: function() {}
         });
+      });
+
+      it('picks up the search widget deploy event', function(done) {
+        var container = utils.makeContainer('subapp-browser'),
+            fakeStore = new Y.juju.charmworld.APIv2({});
+        view = new Sidebar({
+          charmID: 'precise/jenkins-13',
+          store: fakeStore
+        });
+
+        view._deployEntity = function() {
+          container.remove(true);
+          done();
+        };
+
+        view.render(container);
+        view.search.fire(view.search.EVT_DEPLOY);
       });
 
     });
