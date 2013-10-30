@@ -439,9 +439,10 @@ YUI.add('juju-view-bundle', function(Y) {
     // We need the actual svg dom node out of the d3 selection
     // If for whatever reason this node isn't in the DOM we don't want
     // to try and select it and have the whole application fall over.
-    if (firstService.node()) {
+    var firstServiceNode = firstService.node();
+    if (firstServiceNode) {
       bundleModule.showServiceDetails.call(
-          firstService.node(), firstService.datum(), bundleModule);
+          firstServiceNode, firstService.datum(), bundleModule);
     }
 
     return this;
