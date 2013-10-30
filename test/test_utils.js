@@ -1435,11 +1435,11 @@ describe('utilities', function() {
         level: 'error'
       };
       utils.deployBundleCallback({
-         add: function(notification) {
+        add: function(notification) {
           assert.deepEqual(notification, expected);
           done();
-         }}, {err: 'bad wolf'});
-      });
+        }}, {err: 'bad wolf'});
+    });
   });
 
 })();
