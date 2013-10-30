@@ -33,8 +33,8 @@ describe('notifier widget', function() {
 
   // Create the notifier box and attach it as first element of the body.
   beforeEach(function() {
-    notifierBox = Y.namespace('juju-tests.utils')
-    .makeContainer('notifier-box');
+    notifierBox = Y.namespace('juju-tests.utils').makeContainer();
+    notifierBox.addClass('notifier-box');
   });
 
   // Destroy the notifier box created in beforeEach.
