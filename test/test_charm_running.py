@@ -201,7 +201,7 @@ class TestNotifications(browser.TestCase, DeployTestMixin):
 
     def get_notifications(self):
         """Return the contents of currently displayed notifications."""
-        notifier_box = self.wait_for_css_selector('#notifier-box')
+        notifier_box = self.wait_for_css_selector('.notifier-box')
         notifications = notifier_box.find_elements_by_xpath('./*')
         return [notification.text for notification in notifications]
 
