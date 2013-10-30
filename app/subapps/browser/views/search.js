@@ -61,8 +61,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
           var recommendedContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: window.flags.charmworldv3 ?
-                    'Recommended' : 'Recommended charms',
+                name: 'Recommended',
                 cutoff: 4,
                 children: results.recommended.map(function(entity) {
                   return entity.getAttrs();
@@ -75,7 +74,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
           var moreContainer = new widgets.browser.TokenContainer(
               Y.merge({
-                name: window.flags.charmworldv3 ? 'More' : 'More charms',
+                name: 'More',
                 cutoff: 4,
                 children: results.more.map(function(entity) {
                   return entity.getAttrs();
