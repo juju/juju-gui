@@ -72,6 +72,11 @@ YUI.add('juju-view-bundle', function(Y) {
         num_units: box.units.size(),
         settings: box.config
       });
+
+      var topo = self.get('component');
+      topo.vis.selectAll('.selected').classed('selected', false);
+      d3.select(this).classed('selected', true);
+
       details.setHTML(templates['bundle-service-details'](context));
       details.show();
     },
@@ -140,6 +145,16 @@ YUI.add('juju-view-bundle', function(Y) {
                 width: SERVICE_SIZE,
                 height: SERVICE_SIZE
               });
+      // Add the highlight svg image to each element
+      node.append('image')
+          .attr({
+            class: 'highlight',
+            width: SERVICE_SIZE + 10,
+            height: SERVICE_SIZE + 10,
+            transform: 'translate(-5,-5)',
+            'xlink:href':
+                '/juju-ui/assets/images/non-sprites/service-highlight.svg'
+          });
     },
 
     /**
@@ -417,6 +432,14 @@ YUI.add('juju-view-bundle', function(Y) {
   BundleTopology.prototype.render = function() {
     this.topology.render();
     this.zoomToFit();
+    // Pass the first service data to the showServiceDetails to select it.
+    var topo = this.topology;
+    var firstService = topo.vis.select('.service');
+    var bundleModule = topo.modules.BundleModule;
+    // We need the actual svg dom node out of the d3 selection
+    bundleModule.showServiceDetails.call(
+        firstService.node(), firstService.datum(), bundleModule);
+
     return this;
   };
 
