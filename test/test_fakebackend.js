@@ -1102,6 +1102,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(result.machines[0].agent_state, 'running');
     });
 
+    it('deploys subordinates without adding units', function() {
+      fakebackend.deploy('cs:precise/puppet-5', callback);
+      assert.equal(deployResult.service.get('name'), 'puppet');
+      assert.equal(deployResult.units.length, 0);
+      assert.equal(deployResult.service.get('units').size(), 0);
+    });
+
     it('adds multiple units', function() {
       fakebackend.deploy('cs:precise/wordpress-15', callback);
       assert.isUndefined(deployResult.error);
