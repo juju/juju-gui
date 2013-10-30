@@ -1,7 +1,6 @@
 <div class="bws-searchbox">
     <form>
-        <img src="/juju-ui/assets/images/browser_searchbox_search_icon.png"
-            alt="Search" class="search" />
+        <i class="search sprite browser_searchbox_search_icon"></i>
         {{! The bws-search name is used by the deploy method in
             test/test_charm_running.py.  If you change this name, change
             the other one too! }}

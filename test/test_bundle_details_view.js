@@ -134,17 +134,34 @@ describe('Browser bundle detail view', function() {
         container.one('.header .details .charms').all('img').size(), 4);
   });
 
-  it('deploys a bundle when \'add\' button is clicked', function(done) {
-    // app.js sets this to its deploy bundle method so
-    // as long as it's called it's successful.
-    view.set('deploy', function(data) {
-      assert.isObject(data);
-      done();
-    });
+  it('shows a confirmation when trying to deploy a bundle', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
-    container.one('.bundle .add').simulate('click');
+    var button = container.one('.bundle .add.deploy');
+    button.simulate('click');
+    assert.isFalse(button.hasClass('deploy'),
+        'add button should not have deploy class');
+    assert.isTrue(button.hasClass('confirm'),
+        'add button is missing confirm class');
+    assert.equal(button.getHTML(), 'Yes, I\'m sure');
+    assert.isFalse(
+        container.one('.notifier-box.bundle').hasClass('hidden'),
+        'notification should not have hidden class');
   });
+
+  it('deploys a bundle when \'add\' and confirmation button is clicked',
+      function(done) {
+        // app.js sets this to its deploy bundle method so
+        // as long as it's called it's successful.
+        view.set('deployBundle', function(data) {
+          assert.isObject(data);
+          done();
+        });
+        view.set('entity', new models.Bundle(data));
+        view.render();
+        container.one('.bundle .add.deploy').simulate('click');
+        container.one('.bundle .add.confirm').simulate('click');
+      });
 
   it('fails gracefully if services don\'t provide xy annotations',
      function() {

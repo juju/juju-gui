@@ -49,14 +49,16 @@
                 // Using a variable here because LESS strips commas in mixin args.
                 @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
                 .create-box-shadow(@box-shadow);
-                .create-border-radius(@bws-corner);
+                .create-border-radius(@border-radius);
                 display: block;
                 height: 40px;
+                min-width: 130px;
                 margin-top: 17px;
                 padding: 0 30px;
                 background-color: @charm-panel-orange;
                 color: #fff;
                 line-height: 40px;
+                text-align: center;
             }
         }
         .details {
@@ -78,7 +80,7 @@
         }
     }
     .providers li a {
-        color: @bws-text;
+        color: @text-colour;
         text-decoration: underline;
     }
     .providers {
@@ -110,7 +112,7 @@
             margin: 0;
         }
         .date {
-            margin-right: 3pt;
+            margin-right: 0.5em;
         }
     }
     .intro {
@@ -146,7 +148,7 @@
             .interface {
                 padding-top: 10px;
                 padding-bottom: 10px;
-                font-size: 10.5pt;
+                font-size: 14px;
             }
             .charm-config {
                 .border-box;
@@ -257,6 +259,7 @@
     }
 }
 
+#bws-fullscreen .bundle,
 #bws-fullscreen .charm {
     background-color: #fff;
     background-image: none;
@@ -290,7 +293,7 @@
                 line-height: 1.55;
 
                 a {
-                    color: @bws-text;
+                    color: @text-colour;
                     text-decoration: underline;
                 }
             }
@@ -331,7 +334,7 @@
                 margin-right: 7px;
             }
             span {
-                color: @bws-text;
+                color: @text-colour;
                 text-decoration: underline;
             }
         }
