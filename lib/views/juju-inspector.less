@@ -21,10 +21,10 @@
 */
 .pulse-green-frames-mixin () {
     0% {
-        background-image: url(/juju-ui/assets/images/field-saved.png);
+        background-image: url(/juju-ui/assets/images/non-sprites/field-saved.png);
     }
     100% {
-        background-image: url(/juju-ui/assets/images/field-saved-finished.png);
+        background-image: url(/juju-ui/assets/images/non-sprites/field-saved-finished.png);
     }
 }
 
@@ -129,11 +129,11 @@
             background-repeat: no-repeat;
 
             &.valid {
-                background-image: url(/juju-ui/assets/images/form-validation-tick.png);
+                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-tick.png);
             }
 
             &.invalid {
-                background-image: url(/juju-ui/assets/images/form-validation-cross.png);
+                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-cross.png);
             }
         }
         input[type=text] {
@@ -710,7 +710,7 @@
                 }
                 .modified {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-changed.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-changed.png);
                   background-repeat: no-repeat;
 
                   &.boolean {
@@ -723,11 +723,11 @@
                 }
                 .conflict-pending {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-conflict.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-conflict.png);
 
                   &.boolean {
                     background-color: inherit;
-                    background-image: url(/juju-ui/assets/images/field-conflict-14.png);
+                    background-image: url(/juju-ui/assets/images/non-sprites/field-conflict-14.png);
                     display: inline-block;
                     width: 14px;
                     height: 14px;
@@ -738,7 +738,7 @@
 
                 .conflict {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-resolved.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-resolved.png);
                 }
 
                 /* Inputs does not need to have the background-image */
@@ -759,7 +759,7 @@
                 }
 
                 .change-saved {
-                    background-image: url(/juju-ui/assets/images/field-saved.png);
+                    background-image: url(/juju-ui/assets/images/non-sprites/field-saved.png);
                     background-position: center right;
                     background-repeat: no-repeat;
                     .animation(pulse-green 1s);
