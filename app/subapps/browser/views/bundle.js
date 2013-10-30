@@ -179,8 +179,9 @@ YUI.add('subapp-browser-bundleview', function(Y) {
 
       var showTopo = this._positionAnnotationsIncluded(
           bundleData.data.services);
+      options.positionServices = !showTopo;
 
-      if (showTopo) {
+      //if (showTopo) {
         // Setup the fake backend to create topology to display the canvas-like
         // rendering of the bundle.
         this._setupLocalFakebackend();
@@ -198,12 +199,12 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         }).then(null, function(error) {
           console.error(error.message, error);
         });
-      } else {
+      /*} else {
         // Remove the bundle tab so it doesn't get PE'd when
         // we instantiate the tabview.
         node.one('#bws-bundle').remove();
         node.one('a[href=#bws-bundle]').get('parentNode').remove();
-      }
+      }*/
 
       renderTo.setHTML(node);
 

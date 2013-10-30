@@ -102,6 +102,23 @@ YUI.add('juju-view-bundle', function(Y) {
       // Process any changed data.
       this.updateData();
 
+      if (topo.get('positionServices')) {
+        var services = Y.Object.values(topo.service_boxes);
+        services.forEach(function(service) {
+          service.w = SERVICE_SIZE;
+          service.h = SERVICE_SIZE;
+        });
+        d3.layout.unscaledPack()
+          .size([width, height])
+          .value(function(d) { return Math.max(d.unit_count, 1); })
+          .padding(300)
+          .nodes({children: services});
+        topo.vis.append('text')
+          .attr('x', 0)
+          .attr('y', height + SERVICE_SIZE)
+          .text('(Bundle did not provide position information; services positioned automatically.)');
+      }
+
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
       var node = this.node;
@@ -154,7 +171,7 @@ YUI.add('juju-view-bundle', function(Y) {
       if (node.empty()) {
         return;
       }
-
+      
       // Apply Position Annotations
       // This is done after the services_boxes
       // binding as the event handler will
@@ -435,6 +452,7 @@ YUI.add('juju-view-bundle', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-topology',
-    'juju-view-utils'
+    'juju-view-utils',
+    'unscaled-pack-layout'
   ]
 });
