@@ -357,7 +357,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(),
         store: fakeStore
       });
-      view.set('deploy', function(charm, serviceAttrs) {
+      view.set('deployService', function(charm, serviceAttrs) {
         var serviceCharm = view.get('entity');
         assert.deepEqual(charm, serviceCharm);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');

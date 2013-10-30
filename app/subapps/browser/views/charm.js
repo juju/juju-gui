@@ -93,7 +93,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ghostAttributes = {
         icon: this.get('store').iconpath(charm.get('storeId'))
       };
-      this.get('deploy').call(null, charm, ghostAttributes);
+      this.get('deployService').call(null, charm, ghostAttributes);
     },
 
     /**

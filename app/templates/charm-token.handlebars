@@ -1,6 +1,14 @@
 {{! The token class is used by the deploy method in
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
+
+{{#if deployButton}}
+    {{#ifFlag 'searchDeploy'}}
+    <a class="deployButton" href="">
+        <i class="sprite search_add_to_canvas" data-charmid="{{storeId}}" title="Deploy service"></i>
+    </a>
+    {{/ifFlag}}
+{{/if}}
 <a href="/{{storeId}}"
    class="token {{size}}"
      data-charmid="{{storeId}}">
@@ -21,6 +29,8 @@
     <span class="title">
         {{ name }}
     </span>
+
+
     {{#unless_eq size 'tiny'}}
       <span class="metadata">
           <div><strong>Deployed {{downloads}} {{pluralize 'time' downloads}}</strong></div>

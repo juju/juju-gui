@@ -2,6 +2,21 @@
     .border-box;
     position: relative;
 
+    .deployButton {
+        display: block;
+        float: right;
+        margin-top: 19px;
+
+        /* Bundle tokens are taller due to the charm icons inside. */
+        &.bundle {
+            margin-top: 34px;
+        }
+
+        i.sprite {
+            display: block;
+        }
+    }
+
     .token {
         display: block;
         // Clear floats:

@@ -526,12 +526,28 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      * The "deploy" function prompts the user for service configuration and
      * deploys a service.
      *
-     * @attribute deploy
+     * The proper deploy function is provided from the browser subapp.
+     *
+     * @attribute deployService
      * @default undefined
      * @type {Function}
      *
      */
-    deploy: {}
+    deployService: {},
+
+    /**
+     * The "deploy" function prompts the user for service configuration and
+     * deploys a service.
+     *
+     * The proper deploy function is provided from the browser subapp.
+     *
+     * @attribute deployBundle
+     * @default undefined
+     * @type {Function}
+     *
+     */
+    deployBundle: {}
+
   };
 
   ns.EntityBaseView = EntityBaseView;
