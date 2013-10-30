@@ -436,8 +436,8 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var firstService = topo.vis.select('.service');
     var bundleModule = topo.modules.BundleModule;
-    // We need the actual svg dom node out of the d3 selection
-    // If for whatever reason this node isn't in the DOM we don't want
+    // We need the actual svg dom node out of the d3 selection.
+    // If for whatever reason this node isn't in the DOM, we don't want
     // to try and select it and have the whole application fall over.
     var firstServiceNode = firstService.node();
     if (firstServiceNode) {
