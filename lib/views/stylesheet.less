@@ -58,13 +58,19 @@ This is a general guide on how to structure your classes.
 @import "mixins.less";
 
 /* Common classes and setup */
+body,
+input,
+button,
+select,
+textarea {
+    font-family: @font-family;
+    font-weight: 300;
+}
 body {
     overflow: hidden;
     height: 100%;
     margin-top: @navbar-height;
     background-color: #302b28;
-    font-family: @font-family;
-    font-weight: 300;
     font-size: 14px;
     line-height: 18px;
     -webkit-font-smoothing: antialiased;
@@ -76,10 +82,6 @@ a:hover {
     cursor: pointer;
     color: @charm-panel-orange;
     text-decoration: none;
-}
-input, button, select, textarea {
-    font-family: @font-family;
-    font-weight: 300;
 }
 button {
     cursor: pointer;
@@ -438,19 +440,19 @@ th {
     .triangle {
         position: absolute;
         top: 22px;
-        width: 0px;
-        height: 0px;
+        width: 0;
+        height: 0;
         border-style: solid;
     }
     &.right .triangle {
         left: -16px;
         border-width: 10px 17.3px 10px 0;
-        border-color: transparent #ffffff transparent transparent;
+        border-color: transparent #fff transparent transparent;
     }
     &.left .triangle {
         right: -16px;
         border-width: 10px 0 10px 17.3px;
-        border-color: transparent transparent transparent #ffffff;
+        border-color: transparent transparent transparent #fff;
 
     }
     .menu-title {
@@ -510,9 +512,6 @@ th {
     }
 
 }
-charms.thumbnails.li {
-    height:4em;
-}
 .subordinate-rel-group {
     display: none;
 
@@ -550,84 +549,6 @@ charms.thumbnails.li {
     tspan {
         text-anchor: middle;
         dominant-baseline: middle;
-    }
-}
-.state-error {
-    stroke: #FF0000;
-}
-.state-started {
-    stroke: #000000;
-}
-.state-pending {
-    stroke: #6597E8;
-}
-div.state-error {
-    @error-color: #c01c20;
-    background-color: @error-color;
-    color: #FFFFFF;
-
-    &:hover {
-        background-color: lighten(@error-color, 10%);
-    }
-}
-div.state-started {
-    @started-color: #d8d8d8;
-    background-color: @started-color;
-
-    &:hover {
-        background-color: lighten(@started-color, 10%);
-    }
-}
-div.state-pending {
-    @pending-color: #fcd305;
-    background-color: @pending-color;
-
-    &:hover {
-        background-color: lighten(@pending-color, 20%);
-    }
-}
-
-.unit(@min_height: 20px, @border_radius:3px) {
-    .create-border-radius(@border_radius);
-    padding: 5px;
-    margin-bottom: 0px;
-    min-height: @min_height;
-    cursor: pointer;
-
-    .agent-state {
-        display: none;
-    }
-}
-ul#unit-large div.unit {
-    .unit(40px);
-}
-ul#unit-medium div.unit {
-    .unit;
-}
-ul#unit-small {
-    margin-left: 0px;
-
-    > li {
-        margin-bottom: 5px;
-        margin-left: 5px;
-
-        > div.unit {
-            .unit;
-            width: 1.7em;
-            text-align: center;
-        }
-    }
-}
-ul#unit-tiny {
-    margin-left: 0px;
-
-    > li {
-        margin-bottom: 3px;
-        margin-left: 3px;
-
-        > div.unit {
-            .unit(0px, 1px);
-        }
     }
 }
 circle.mouse-down-indicator {
@@ -706,16 +627,6 @@ g.service-status {
     path {
         stroke-width: 0;
         fill: #fff;
-
-        &.status-pending {
-            fill: #fcd305;
-        }
-        &.status-running {
-            fill: rgb(57, 180, 74);
-        }
-        &.status-error {
-            fill: #c01c20;
-        }
     }
 }
 g.unit {
@@ -724,7 +635,7 @@ g.unit {
     fill: #1626cf;
 
     .address {
-        fill: #ffffff; font-size: 14px;
+        fill: #fff; font-size: 14px;
     }
     .unit-border {
         stroke-width: 2px; fill: #a0a0a0;
@@ -811,7 +722,7 @@ g.unit {
     z-index: 10;
 
     a {
-        color: white;
+        color: #fff;
         background-color: @charm-panel-orange;
         display: block;
         line-height: 30px;
@@ -921,11 +832,6 @@ g.unit {
 }
 .unit-button-palette {
     float: right;
-}
-#service-relations {
-    .btn {
-        float: right;
-    }
 }
 #destroy-service {
     margin-top: 10px;
