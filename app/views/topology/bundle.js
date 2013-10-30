@@ -136,15 +136,6 @@ YUI.add('juju-view-bundle', function(Y) {
       @method createServiceNode
      */
     createServiceNode: function(node, self) {
-      node.append('image')
-       .classed('service-icon', true)
-       .attr({
-                'xlink:href': function(d) {
-                  return d.icon;
-                },
-                width: SERVICE_SIZE,
-                height: SERVICE_SIZE
-              });
       // Add the highlight svg image to each element
       node.append('image')
           .attr({
@@ -155,6 +146,15 @@ YUI.add('juju-view-bundle', function(Y) {
             'xlink:href':
                 '/juju-ui/assets/images/non-sprites/service-highlight.svg'
           });
+      node.append('image')
+       .classed('service-icon', true)
+       .attr({
+                'xlink:href': function(d) {
+                  return d.icon;
+                },
+                width: SERVICE_SIZE,
+                height: SERVICE_SIZE
+              });
     },
 
     /**
@@ -437,8 +437,12 @@ YUI.add('juju-view-bundle', function(Y) {
     var firstService = topo.vis.select('.service');
     var bundleModule = topo.modules.BundleModule;
     // We need the actual svg dom node out of the d3 selection
-    bundleModule.showServiceDetails.call(
-        firstService.node(), firstService.datum(), bundleModule);
+    // If for whatever reason this node isn't in the DOM we don't want
+    // to try and select it and have the whole application fall over.
+    if (firstService.node()) {
+      bundleModule.showServiceDetails.call(
+          firstService.node(), firstService.datum(), bundleModule);
+    }
 
     return this;
   };
