@@ -334,18 +334,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
       templateData.emailText = escape(
           'Check out this great charm on ' + siteDomain + ': ' + link);
 
-      if (Y.Object.isEmpty(tplData.requires)) {
-        tplData.requires = false;
+      if (Y.Object.isEmpty(templateData.requires)) {
+        templateData.requires = false;
       }
-      if (Y.Object.isEmpty(tplData.provides)) {
-        tplData.provides = false;
+      if (Y.Object.isEmpty(templateData.provides)) {
+        templateData.provides = false;
       }
       // Wrap plain text links in descriptions and commit messages with a tags
-      tplData.description = this.Linkify(tplData.description);
-      tplData.recent_commits.forEach(function(commit) {
+      templateData.description = this.Linkify(templateData.description);
+      templateData.recentCommits.forEach(function(commit) {
         commit.message = this.Linkify(commit.message);
       }, this);
-      var tpl = this.template(tplData);
+      var template = this.template(templateData);
       // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
