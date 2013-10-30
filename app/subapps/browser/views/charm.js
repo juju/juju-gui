@@ -334,16 +334,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
       templateData.emailText = escape(
           'Check out this great charm on ' + siteDomain + ': ' + link);
 
-      if (Y.Object.isEmpty(templateData.requires)) {
-        templateData.requires = false;
+      if (Y.Object.isEmpty(tplData.requires)) {
+        tplData.requires = false;
       }
-      if (Y.Object.isEmpty(templateData.provides)) {
-        templateData.provides = false;
+      if (Y.Object.isEmpty(tplData.provides)) {
+        tplData.provides = false;
       }
-
-      var template = this.template(templateData);
-
-      // Set the content then update the container so that it reloads
+      // Wrap plain text links in descriptions and commit messages with a tags
+      tplData.description = this.Linkify(tplData.description);
+      tplData.recent_commits.forEach(function(commit) {
+        commit.message = this.Linkify(commit.message);
+      }, this);
+      var tpl = this.template(tplData);
+      // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
       renderTo.setHTML(container.setHTML(template));
@@ -375,6 +378,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+       Sanitize links.
+
+       Linkify links in the plain text descriptions and commit messages.
+       Wrap launchpad branch locations in spans to wrap them.
+
+       @method Linkify
+     */
+    Linkify: function(text) {
+      if (text) {
+        // Wraps an a tag around links.
+        var links =
+            /(\b(https?|http):\/\/[-A-Za-z0-9+&@#\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\/%=~_()|]+)/ig;
+        text = text.replace(links,
+            '<a href="$1" target="_blank" class="respect-whitespace">$1</a>');
+
+        // Puts lp branch addresses in spans with respect-whitespace
+        var lp_links = /(\b(lp:~)[^ ]*[0-9A-Za-z_]+)/ig;
+        text = text.replace(lp_links,
+            '<span class="respect-whitespace">$1</span>');
+      }
+      return text;
+    },
+
+    /**
        Render out the view to the DOM.
 
        The View might be given either a entityId, which means go fetch the
@@ -387,7 +414,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     render: function() {
       var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
-
       if (this.get('entity')) {
         this._renderCharmView(this.get('entity'), isFullscreen);
         this.hideIndicator(this.get('renderTo'));
