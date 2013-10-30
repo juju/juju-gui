@@ -308,18 +308,6 @@ $(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
 		app/assets/javascripts/spin.min.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
-	    build-shared/juju-ui/assets/combined-css/rail-x.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-y.png" \
-	    build-shared/juju-ui/assets/combined-css/rail-y.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-x.png" \
-	    build-shared/juju-ui/assets/combined-css/thumb-x.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-y.png" \
-	    build-shared/juju-ui/assets/combined-css/thumb-y.png
 	bin/merge-files
 	mv *.js.map build-shared/juju-ui/assets/
 
@@ -339,10 +327,6 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
 	build-$(1)/juju-ui/assets/sprites.css \
 	build-$(1)/juju-ui/assets/sprites.png \
-	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
-	build-$(1)/juju-ui/assets/combined-css/rail-y.png \
-	build-$(1)/juju-ui/assets/combined-css/thumb-x.png \
-	build-$(1)/juju-ui/assets/combined-css/thumb-y.png \
 	build-$(1)/juju-ui/assets/all-yui.js
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
@@ -370,17 +354,6 @@ define link-files
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
 	ln -sf \
 	    "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-y.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-x.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-y.png" \
 	    build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" \
 	    build-$(1)/juju-ui/assets/
