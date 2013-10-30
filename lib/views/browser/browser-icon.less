@@ -3,14 +3,16 @@
     display: block;
     left: @bws-sidebar-width;
     top: 114px;
-    width: 40px;
-    height: 40px;
-    background: #bbbbbb url(/juju-ui/assets/images/browser_icon.png)
-        no-repeat center center;
+    padding: 7px;
+    background-color: #bbb;
     box-shadow: 3px 0 2px rgba(0, 0, 0, 0.1);
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     z-index: 610;
+
+    i.sprite {
+        display: block;
+    }
 }
 .content-visible .bws-icon {
     left: @bws-sidebar-width + @bws-panel-width;
