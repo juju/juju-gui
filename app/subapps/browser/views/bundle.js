@@ -182,7 +182,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var bundle = this.get('entity');
       var bundleData = bundle.getAttrs();
       // Copy the bundle for use in the template so we can modify the content
-      // without munipulating the entity.
+      // without manipulating the entity.
       var templateData = Y.merge(bundleData);
       templateData.charmIcons = utils.charmIconParser(
           templateData.charm_metadata);
@@ -191,6 +191,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
         return !/\.svg$/.test(fileName);
       });
       templateData.services = this._buildCharmList(bundleData);
+      templateData.sourceLink = this._getSourceLink(
+          'lp:' + this.get('entity').get('branch_spec'));
+      templateData.prettyCommits = this._formatCommitsForHtml(
+          templateData.recentCommits, templateData.sourceLink);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');

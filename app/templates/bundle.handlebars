@@ -95,12 +95,12 @@ sudo apt-get install juju-quickstart</pre>
                     </div>
                     <div class="changelog">
                         <h3 class="section-title">
-                            {{#if recent_commits}}
+                            {{#if recentCommits}}
                                 <a href="" class="expandToggle"
                                     data-state="closed">
                             {{/if}}
                             Change log
-                            {{#if recent_commits}}
+                            {{#if recentCommits}}
                                     <span class="expand">
                                         <i class="sprite expand_icon more"></i>
                                         <i class="sprite contract_icon less hidden"></i>
@@ -108,7 +108,7 @@ sudo apt-get install juju-quickstart</pre>
                                 </a>
                             {{/if}}
                         </h3>
-                        {{#if recent_commits}}
+                        {{#if recentCommits}}
                             <div class="first">
                                 <p>
                                     Latest change:
@@ -123,9 +123,6 @@ sudo apt-get install juju-quickstart</pre>
                                 </p>
                             </div>
                             <div class="remaining hidden">
-                                <p class="maintainer">
-                                    Maintained by {{ maintainer.name }}
-                                </p>
                                 <h4>Earlier changes</h4>
                                 <ul>
                                     {{#prettyCommits.remaining}}

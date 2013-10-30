@@ -621,7 +621,7 @@ describe('test_model.js', function() {
 
     it('maps revisions nicely for us with converted dates', function() {
       instance = new models.Charm(data.charm);
-      var commits = instance.get('recent_commits');
+      var commits = instance.get('recentCommits');
       commits.length.should.equal(10);
 
       // Check that our commits have the right keys constructed from the api
@@ -695,7 +695,7 @@ describe('test_model.js', function() {
 
     it('tracks recent commits in the last 30 days', function() {
       instance = new models.Charm(data.charm);
-      var commits = instance.get('recent_commits'),
+      var commits = instance.get('recentCommits'),
           today = new Date();
 
       // adjust the dates on there manually because the tests will be run on

@@ -467,7 +467,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, append metadata is appended to the charm or bundle
+     * Given a result list, metadata is appended to the charm or bundle
      * as the 'metadata' attribute and convert to objects.
      *
      * @method transformResults

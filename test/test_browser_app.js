@@ -180,7 +180,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   })();
 
   (function() {
-    describe('browser minimzed view', function() {
+    describe('browser minimized view', function() {
       var Y, container, view, views, Minimized;
 
       before(function(done) {
