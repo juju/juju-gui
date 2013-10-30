@@ -169,6 +169,9 @@ describe('Browser bundle detail view', function() {
          return new Y.Promise(function(resolve) { resolve(); });
        };
        view.set('entity', {
+          get: function(name) {
+            return '';
+          },
           getAttrs: function() {
             return {
               charm_metadata: {},

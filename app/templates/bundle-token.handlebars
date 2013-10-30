@@ -9,8 +9,13 @@
     {{/ifFlag}}
 {{/if}}
 <a href="/bundle/{{id}}"
-   class="token {{size}} {{#if is_approved}}recommended{{/if}}"
+   class="token {{size}}"
    data-charmid="/bundle/{{id}}">
+    {{#if is_approved}}
+        <span class="recommended">
+            <i class="sprite recommended-triangle"></i>
+        </span>
+    {{/if}}
     <span class="block-icon">
         <div class="icon">
             <img src="{{charmIconPath id true}}" alt="{{ name }} icon">

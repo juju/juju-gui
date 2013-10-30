@@ -36,6 +36,35 @@ YUI.add('juju-bundle-models', function(Y) {
   var models = Y.namespace('juju.models');
 
   /**
+
+   Extract the recent commits into a format we can use nicely.  Output matches
+   the analogous function for charms.
+
+   @method extractRecentCommits
+   @return {array} Commit objects.
+  */
+  var extractRecentCommits = function(changes) {
+    var commits = [];
+
+    if (changes) {
+      Y.Array.each(changes, function(change) {
+
+        var author_parts = /^([\s\w]+?) <(.+)>$/.exec(change.authors[0]);
+        var date = new Date(change.created * 1000);
+        commits.push({
+          author: {
+            name: author_parts[1],
+            email: author_parts[2]
+          },
+          date: date,
+          message: change.message,
+          revno: change.revno
+        });
+      });
+    }
+    return commits;
+  };
+  /**
    * Model to represent the Bundles from the Charmworld API.
    *
    * @class Bundle
@@ -164,6 +193,25 @@ YUI.add('juju-bundle-models', function(Y) {
             }
           });
           return count;
+        }
+      },
+      /**
+       * @attribute recentCommits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      recentCommits: {
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the api.
+         *
+         * @method recentCommits.valueFn
+         *
+         */
+        valueFn: function() {
+          var changes = this.get('changes');
+          return extractRecentCommits(changes);
         }
       }
     }
