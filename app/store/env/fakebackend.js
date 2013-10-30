@@ -444,7 +444,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         })()
       });
       this.changes.services[service.get('id')] = [service, true];
-      var response = this.addUnit(options.name, options.unitCount);
+
+      var unitCount = options.unitCount;
+      if (!Y.Lang.isValue(unitCount) && !charm.get('is_subordinate')) {
+        // This is the current behavior in both implementations.
+        unitCount = 1;
+      }
+      var response = this.addUnit(options.name, unitCount);
       response.service = service;
       callback(response);
     },
@@ -1495,7 +1501,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // Map the argument name from the deployer format
         // name for unit count.
         if (!serviceData.unitCount) {
-          serviceData.unitCount = serviceData.num_units || 1;
+          serviceData.unitCount = serviceData.num_units;
         }
         if (serviceData.options) {
           serviceData.config = serviceData.options;
