@@ -536,14 +536,10 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: this._viewState.hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
+        deployBundle: this.get('deployBundle'),
+        deployService: this.get('deployService')
       };
 
-      debugger;
-      if (entityId.indexOf('bundle') !== -1) {
-        extraCfg.deploy = this.get('deployBundle');
-      } else {
-        extraCfg.deploy = this.get('deploy');
-      }
 
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
@@ -701,14 +697,14 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (this._hasStateChanged('viewmode') || forceFullscreen) {
-        var extraCfg = {};
+        var extraCfg = {
+          deployService: this.get('deployService'),
+          deployBundle: this.get('deployBundle')
+        };
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
         }
         extraCfg.container = this.get('container');
-        debugger;
-        extraCfg.deploy = this.get('deploy');
-        extraCfg.deployBundle = this.get('deployBundle');
 
         this._fullscreen = new views.FullScreen(
             this._getViewCfg(extraCfg));
@@ -795,11 +791,10 @@ YUI.add('subapp-browser', function(Y) {
       }
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode') || forceSidebar) {
-        debugger;
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
               container: this.get('container'),
-              deploy: this.get('deploy'),
+              deployService: this.get('deployService'),
               deployBundle: this.get('deployBundle')
             }));
         this._sidebar.render();
@@ -1153,11 +1148,11 @@ YUI.add('subapp-browser', function(Y) {
          The "deploy" function prompts the user for service configuration and
          deploys a service.
 
-         @attribute deploy
+         @attribute deployService
          @default undefined
          @type {Function}
        */
-      deploy: {},
+      deployService: {},
 
       /**
        * @attribute deployBundle

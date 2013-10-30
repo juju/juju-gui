@@ -270,64 +270,74 @@ YUI.add('browser-search-widget', function(Y) {
         source: fetchSuggestions
       });
 
-      this.ac._onItemClick = function (ev) {
-          // If the selection is coming from the deployButton then we kind of
-          // ignore the way autocomplete works. It's more of a 'quick search'
-          // with a deploy option. No search is really performed after the
-          // deploy button is selected.
-          if (ev.target.hasClass('search_add_to_canvas')) {
-            var isBundle = false,
-                data,
-                found,
-                id;
+      // Holder for the deploy logic the AC uses when clicking on a deploy
+      // icon from a result item.
+      this.ac._onDeploy = function(ev) {
+        var isBundle = false,
+            data,
+            found,
+            id;
 
-            // Fire an event up to the View with the charm information so that
-            // it can proceed to build/send the deploy information out to
-            // the environment.
-            id = ev.target.getData('charmId');
+        // Fire an event up to the View with the charm information so that
+        // it can proceed to build/send the deploy information out to
+        // the environment.
+        id = ev.target.getData('charmId');
 
-            if (!id) {
-              // try to see if this is a bundle clicked on.
-              id = ev.target.getData('bundleId');
-              isBundle = true;
+        if (!id) {
+          // try to see if this is a bundle clicked on.
+          id = ev.target.getData('bundleId');
+          isBundle = true;
+        }
+        // Find the charm data for the selected item from the set of
+        // results.
+        found = this.get('results').filter(function(result) {
+          if (isBundle) {
+            if (result.raw.bundle.id === id) {
+              return result;
             }
-            // Find the charm data for the selected item from the set of
-            // results.
-            found = this.get('results').filter(function(result) {
-              if (isBundle) {
-                if (result.raw.bundle.id === id) {
-                  return result;
-                }
-              } else {
-                if (result.raw.charm.id === id) {
-                  return result;
-                }
-              }
-            });
-
-            // Make sure that we've found a result before returning.
-            if (found.length === 0) {
-              console.error(
-                  'Clicked deploy on an item we could not find in results.');
-            } else {
-              if (isBundle) {
-                data = found[0].raw.bundle;
-              } else {
-                data = found[0].raw.charm;
-              }
-
-              self.fire(self.EVT_DEPLOY, {
-                id: id,
-                data: data,
-                entityType: isBundle ? 'bundle' : 'charm'
-              });
-            }
-
           } else {
-              var itemNode = ev.currentTarget;
-              this.set('active_item', itemNode);
-              this.selectItem(itemNode, ev);
+            if (result.raw.charm.id === id) {
+              return result;
+            }
           }
+        });
+
+        // Make sure that we've found a result before returning.
+        if (found.length === 0) {
+          console.error(
+              'Clicked deploy on an item we could not find in results.');
+        } else {
+          if (isBundle) {
+            data = found[0].raw.bundle;
+          } else {
+            data = found[0].raw.charm;
+          }
+
+          self.fire(self.EVT_DEPLOY, {
+            id: id,
+            data: data,
+            entityType: isBundle ? 'bundle' : 'charm'
+          });
+
+        }
+
+      };
+
+      this.ac._onItemClick = function(ev) {
+        // If the selection is coming from the deployButton then we kind of
+        // ignore the way autocomplete works. It's more of a 'quick search'
+        // with a deploy option. No search is really performed after the
+        // deploy button is selected.
+        if (ev.target.hasClass('search_add_to_canvas')) {
+          // Hide the autocomplete widget. You've selected something
+          // that's not really a suggestion, but it should still go away.
+          this.hide();
+          this._onDeploy(ev);
+        } else {
+          var itemNode = ev.currentTarget;
+          this.set('active_item', itemNode);
+          this.selectItem(itemNode, ev);
+        }
       };
 
       this.ac.render();
@@ -340,11 +350,6 @@ YUI.add('browser-search-widget', function(Y) {
       // unknown, the widget is being set to position: relative in IE10 which
       // causes rendering errors in the header.
       this.ac.get('boundingBox').setStyle('position', 'absolute');
-
-      // Stop clicking on charm-tokens <a> links from navigating.
-      this.get('boundingBox').delegate('click', function(ev) {
-        ev.halt();
-      }, 'a', this);
 
       // Stop clicking on charm-tokens <a> links from navigating.
       this.get('boundingBox').delegate('click', function(ev) {
@@ -364,18 +369,24 @@ YUI.add('browser-search-widget', function(Y) {
     _suggestionSelected: function(ev) {
       ev.halt();
 
-      // There are two things that can be selected here. If the + icon was
-      // hit, we want to start a deploy process. If it was anything else in a
-      // token, then we want to proceed with opening the details pane for that
-      // charm, perform a search, etc.
       var change,
-          newVal,
-          charmid = ev.result.raw.charm.id,
-          form = this.get('boundingBox').one('form');
+          form = this.get('boundingBox').one('form'),
+          id,
+          isBundle = false,
+          newVal;
 
-      if (charmid.substr(0, 4) === 'cat:') {
+      if (ev.result.raw.charm) {
+        id = ev.result.raw.charm.id;
+      } else {
+        // Currently we have to pretend to be a charm.
+        // XXX: We should support the idea of a bundle separate from charm? Go
+        // with entity? Something to clean up.
+        id = '/bundle/' + ev.result.raw.bundle.id;
+      }
+
+      if (id.substr(0, 4) === 'cat:') {
         form.one('input').set('value', '');
-        var category = charmid.match(/([^\/]+)-\d\/?/);
+        var category = id.match(/([^\/]+)-\d\/?/);
         change = {
           charmID: null,
           search: true,
@@ -393,7 +404,7 @@ YUI.add('browser-search-widget', function(Y) {
         form.one('input').set('value', ev.result.text);
         newVal = ev.result.text;
         change = {
-          charmID: charmid,
+          charmID: id,
           filter: {
             categories: [],
             text: newVal,

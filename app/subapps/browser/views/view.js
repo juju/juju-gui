@@ -130,6 +130,13 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this._bindViewmodeControls(this.controls);
     },
 
+    /**
+     * Deploy either a bundle or charm given by the quicksearch widget.
+     *
+     * @method _deployEntity
+     * @param {Y.Event} ev the event object from the widget.
+     *
+     */
     _deployEntity: function(ev) {
       var entityType = ev.entityType,
           entity = ev.data,
@@ -139,10 +146,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (entityType === 'bundle') {
         deployer = this.get('deployBundle');
         var bundle = new models.Bundle(entity);
-        debugger;
-        this.get('deploy')(bundle.get('data'));
+        deployer(bundle.get('data'));
       } else {
-        deployer = this.get('deploy');
+        deployer = this.get('deployService');
         var charm = new models.Charm(entity);
         var ghostAttributes;
         ghostAttributes = {
@@ -304,12 +310,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
       charmID: {},
 
       /**
-       * @attribute deploy
+       * @attribute deployService
        * @default undefined
        * @type {Function}
        *
        */
-      deploy: {},
+      deployService: {},
 
       /**
        * @attribute deployBundle

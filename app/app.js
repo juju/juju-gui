@@ -572,7 +572,7 @@ YUI.add('juju-gui', function(Y) {
 
       // To use the new service Inspector use the deploy method
       // from the Y.juju.GhostDeployer extension
-      cfg.deploy = Y.bind(this.deployService, this);
+      cfg.deployService = Y.bind(this.deployService, this);
 
       cfg.deployBundle = this.deployBundle.bind(this);
 
@@ -595,7 +595,7 @@ YUI.add('juju-gui', function(Y) {
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
-        cfg.deploy(charm, ghostAttributes);
+        cfg.deployService(charm, ghostAttributes);
       }, this);
     },
 
@@ -607,7 +607,6 @@ YUI.add('juju-gui', function(Y) {
       @param {Object} bundle Bundle data.
     */
     deployBundle: function(bundle) {
-      debugger;
       var notifications = this.db.notifications;
       this.env.deployerImport(
           Y.JSON.stringify({

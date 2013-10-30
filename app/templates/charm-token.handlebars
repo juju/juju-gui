@@ -3,9 +3,11 @@
     one too! }}
 
 {{#if deployButton}}
+    {{#ifFlag 'searchDeploy'}}
     <a class="deployButton" href="">
-        <i class="sprite search_add_to_canvas" data-charmid="{{storeId}}"></i>
+        <i class="sprite search_add_to_canvas" data-charmid="{{storeId}}" title="Deploy service"></i>
     </a>
+    {{/ifFlag}}
 {{/if}}
 <a href="/{{storeId}}"
    class="token {{size}} {{#if is_approved}}recommended{{/if}}"

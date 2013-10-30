@@ -247,6 +247,7 @@ describe('charm/bundle token', function() {
   });
 
   it('renders the deployer button when asked to', function() {
+    window.flags.searchDeploy = true;
     var token = new Token({
       size: 'tiny',
       storeId: 'test',
@@ -263,7 +264,9 @@ describe('charm/bundle token', function() {
     );
 
     var button = token_container.one('.deployButton');
-    assert.equal(button.getAttribute('data-charmid'), 'test');
+    var sprite = button.one('i');
+    assert.equal(sprite.getAttribute('data-charmid'), 'test');
+    window.flags = {};
   });
 
 });

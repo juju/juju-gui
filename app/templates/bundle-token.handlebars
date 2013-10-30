@@ -2,9 +2,11 @@
     test/test_charm_running.py.  If you change this name, change the other
     one too! }}
 {{#if deployButton}}
-    <a class="deployButton" href="">
-        <i class="sprite search_add_to_canvas" data-bundleid="{{id}}"></i>
+    {{#ifFlag 'searchDeploy'}}
+    <a class="deployButton bundle" href="">
+        <i class="sprite search_add_to_canvas" data-bundleid="{{id}}" title="Deploy bundle"></i>
     </a>
+    {{/ifFlag}}
 {{/if}}
 <a href="/bundle/{{id}}"
    class="token {{size}} {{#if is_approved}}recommended{{/if}}"
