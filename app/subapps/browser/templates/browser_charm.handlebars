@@ -2,7 +2,11 @@
     <div class="content">
         {{#unless forInspector}}
             <div class="header">
-                    {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                    {{#unless isFullscreen}}
+                        <a href="" class="back icon">
+                            <i class="sprite panel_close"></i>
+                        </a>
+                    {{/unless}}
                 <div class="block-icon">
                     <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
                 </div>
