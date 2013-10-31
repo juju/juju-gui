@@ -33,11 +33,10 @@ YUI.add('viewlet-service-config', function(Y) {
     template: templates['service-configuration'],
     bindings: {
       config: {
-        // On update make sure undefined isn't sent to the user as viewable
-        // input.
         'update': function(node, val) {
           if (node.getAttribute('type') === 'checkbox') {
-            if (val !== node.get('checked')) {
+            var booleanValue = (val === 'true');
+            if (booleanValue !== node.get('checked')) {
               node.set('checked', val);
               // We cannot simulate a change event here to trigger the textual
               // value to update or else we'll cause databinding to think
@@ -48,6 +47,8 @@ YUI.add('viewlet-service-config', function(Y) {
                                                              val);
             }
           } else {
+            // On update make sure undefined isn't sent to the user as viewable
+            // input.
             if (val === undefined) {
               val = '';
             }

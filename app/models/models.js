@@ -1167,11 +1167,27 @@ YUI.add('juju-models', function(Y) {
         // Process the service_options removing any values
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
-          var optionData = charmOptions && charmOptions[key];
-          var defaultVal = optionData && optionData['default'];
-          var hasDefault = Y.Lang.isValue(defaultVal);
-          if (Y.Lang.isValue(value) && (!hasDefault || value !== defaultVal)) {
-            serviceOptions[key] = value;
+          if (Y.Lang.isValue(value)) {
+            var oldValue = value;
+            var optionData = charmOptions && charmOptions[key];
+            switch (optionData.type) {
+              // case 'boolean':
+              //   console.log(key, value, typeof value);
+              //   value = (value === 'true');
+              //   break;
+              case 'float':
+                value = parseFloat(value);
+                break;
+              case 'int':
+                value = parseInt(value, 10);
+                break;
+            }
+            var defaultVal = optionData && optionData['default'];
+            var hasDefault = Y.Lang.isValue(defaultVal);
+            if (!hasDefault || value !== defaultVal) {
+              // debugger;
+              serviceOptions[key] = value;
+            }
           }
         });
 
