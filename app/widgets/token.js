@@ -183,6 +183,8 @@ YUI.add('browser-token', function(Y) {
 
   }, {
     ATTRS: {
+
+      basket_name: {},
       /**
         Bundle charm metadata
 
