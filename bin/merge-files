@@ -108,6 +108,8 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
+  // We're not including the pre-discovered CSS files so we can only include
+  // the CSS files we want.
   var cssFiles = [];
   cssFiles.push('app/assets/stylesheets/normalize.css');
   cssFiles.push('app/assets/stylesheets/prettify.css');
@@ -124,6 +126,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   cssFiles.push('node_modules/yui/tabview/assets/tabview-core.css');
   cssFiles.push('node_modules/yui/widget-base/assets/widget-base-core.css');
   cssFiles.push('node_modules/yui/widget-stack/assets/widget-stack-core.css');
+
   merge.combineCSS(cssFiles,
     'build-shared/juju-ui/assets/combined-css/all-static.css');
 });
