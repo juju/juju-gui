@@ -204,11 +204,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The service name is provided explicitly.
       fakebackend.deploy(
           'cs:precise/haproxy-18', callback, {name: 'wordpress'});
-      assert.equal(result.error, 'A service with this name already exists.');
+      assert.equal(result.error,
+          'A service with this name already exists. (wordpress)');
       // The service name is derived from charm.
       result = undefined;
       fakebackend.deploy('cs:precise/wordpress-15', callback);
-      assert.equal(result.error, 'A service with this name already exists.');
+      assert.equal(result.error,
+          'A service with this name already exists. (wordpress)');
     });
 
     it('reuses already-loaded charms with the same explicit id.', function() {

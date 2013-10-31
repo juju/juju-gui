@@ -381,10 +381,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         options.name = charm.get('package_name');
       }
       if (this.db.services.getById(options.name)) {
-        return callback({error: 'A service with this name already exists.'});
+        console.log(options);
+        return callback({error: 'A service with this name already exists. (' +
+              options.name + ')'});
       }
       if (options.configYAML) {
         if (!Y.Lang.isString(options.configYAML)) {
+          console.log(options);
           return callback(
               {error: 'Developer error: configYAML is not a string.'});
         }
@@ -394,6 +397,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           options.config = jsyaml.safeLoad(options.configYAML);
         } catch (e) {
           if (e instanceof jsyaml.YAMLException) {
+            console.log(options);
             return callback({error: 'Error parsing YAML.\n' + e});
           }
           throw e;
@@ -1560,7 +1564,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callback({DeploymentId: self._deploymentId});
           }, function(err) {
             deployStatus.Status = 'failed';
-            callback({Error: err.toString()});
+            console.log(err);
+            callback({Error: err.error});
           });
     },
 
