@@ -168,7 +168,14 @@ describe('The bundle model', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
     assert.equal('Brad Crittenden', commits[0].author.name);
-    assert.equal('bac@canonical.com', commits[0].author.email);
+    assert.equal('bac@example.com', commits[0].author.email);
+  });
+
+  it('only the first author is shown', function() {
+    instance = new models.Bundle(data);
+    var commits = instance.get('recentCommits');
+    assert.equal('Jorge O. O\'Castro', commits[1].author.name);
+    assert.equal('jorge@example.com', commits[1].author.email);
   });
 
   it('has the revnos in reverse order', function() {
@@ -190,6 +197,19 @@ describe('The bundle model', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
     assert.equal('Correct icon', commits[0].message);
+  });
+
+  it('parses full name-email string', function() {
+    instance = new models.Bundle();
+    var parts = instance.parseNameEmail(
+        'Jorge O. O\'Castro <jcastro@example.com>');
+    assert.deepEqual(['Jorge O. O\'Castro', 'jcastro@example.com'], parts);
+  });
+
+  it('gracefully handles unparseable name-email', function() {
+    instance = new models.Bundle();
+    var parts = instance.parseNameEmail('Jorge O. Castro');
+    assert.deepEqual(['Jorge O. Castro', 'n/a'], parts);
   });
 
 });
