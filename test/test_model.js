@@ -872,22 +872,22 @@ describe('test_model.js', function() {
         id: 'wordpress',
         charm: 'precise/wordpress-42',
         config: {
-            one: 'foo',
-            two: '2',
-            three: '3.14',
-            four: 'true',
-            five: false
+          one: 'foo',
+          two: '2',
+          three: '3.14',
+          four: 'true',
+          five: false
         }
       });
       db.charms.add([{
-          id: 'precise/wordpress-42',
-          options: {
-            one: {'default': '', type: 'string'},
-            two: {'default': 0, type: 'int'},
-            three: {'default': 0, type: 'float'},
-            four: {'default': undefined, type: 'boolean'},
-            five: {'default': true, type: 'boolean'}
-          }
+        id: 'precise/wordpress-42',
+        options: {
+          one: {'default': '', type: 'string'},
+          two: {'default': 0, type: 'int'},
+          three: {'default': 0, type: 'float'},
+          four: {'default': undefined, type: 'boolean'},
+          five: {'default': true, type: 'boolean'}
+        }
       }]);
       var result = db.exportDeployer().envExport;
       assert.strictEqual(result.services.wordpress.options.one, 'foo');
@@ -902,22 +902,22 @@ describe('test_model.js', function() {
         id: 'wordpress',
         charm: 'precise/wordpress-42',
         config: {
-            one: 'foo',
-            two: '2',
-            three: '3.14',
-            four: 'false',
-            five: true
+          one: 'foo',
+          two: '2',
+          three: '3.14',
+          four: 'false',
+          five: true
         }
       });
       db.charms.add([{
-          id: 'precise/wordpress-42',
-          options: {
-            one: {'default': 'foo', type: 'string'},
-            two: {'default': 0, type: 'int'},
-            three: {'default': 3.14, type: 'float'},
-            four: {'default': undefined, type: 'boolean'},
-            five: {'default': true, type: 'boolean'}
-          }
+        id: 'precise/wordpress-42',
+        options: {
+          one: {'default': 'foo', type: 'string'},
+          two: {'default': 0, type: 'int'},
+          three: {'default': 3.14, type: 'float'},
+          four: {'default': undefined, type: 'boolean'},
+          five: {'default': true, type: 'boolean'}
+        }
       }]);
       var result = db.exportDeployer().envExport;
       assert.isUndefined(result.services.wordpress.options.one);
