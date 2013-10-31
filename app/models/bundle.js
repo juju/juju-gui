@@ -64,7 +64,8 @@ YUI.add('juju-bundle-models', function(Y) {
      and the email set to 'n/a'.
 
      @method parseNameEmail
-     @return {array} [name, emailAddress]
+     @param {String} Name + email string.
+     @return {Array} [name, emailAddress]
     */
     parseNameEmail: function(author) {
       var parts = /^([^<]+?) <(.+)>$/.exec(author);
@@ -79,7 +80,8 @@ YUI.add('juju-bundle-models', function(Y) {
      the analogous function for charms.
 
      @method extractRecentCommits
-     @return {array} Commit objects.
+     @param {Array} List of change objects.
+     @return {Array} Commit objects.
     */
     extractRecentCommits: function(changes) {
       var commits = [];
