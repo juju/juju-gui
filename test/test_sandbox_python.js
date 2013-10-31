@@ -410,7 +410,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var callback = function(result) {
           assert.equal(
               result.err,
-              'A service with this name already exists. (wordpress)');
+              'A service with this name already exists (wordpress).');
           done();
         };
         env.deploy(
