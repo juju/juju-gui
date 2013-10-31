@@ -87,7 +87,7 @@ YUI.add('juju-bundle-models', function(Y) {
       var commits = [];
 
       if (changes) {
-        Y.Array.each(changes, function(change) {
+        changes.forEach(function(change) {
 
           var author_parts = this.parseNameEmail(change.authors[0]);
           var date = new Date(change.created * 1000);
