@@ -1175,7 +1175,7 @@ YUI.add('juju-models', function(Y) {
                 // the db sometimes as booleans and other times as strings
                 // (e.g. "true")? As a quick fix, always convert to boolean
                 // type, but we need to find who writes in the services db and
-                // normalize the values. FWIW In juju-core options are strings.
+                // normalize the values.
                 value = (value + '' === 'true');
                 break;
               case 'float':

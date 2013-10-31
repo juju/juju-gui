@@ -35,8 +35,8 @@ YUI.add('viewlet-service-config', function(Y) {
       config: {
         'update': function(node, val) {
           if (node.getAttribute('type') === 'checkbox') {
-            // In the db boolean options are stored as strings when the delta
-            // arrives. Convert them to booleans.
+            // In the db boolean options can be stored as strings.
+            // Convert them to booleans.
             var booleanValue = (val + '' === 'true');
             if (booleanValue !== node.get('checked')) {
               node.set('checked', booleanValue);
