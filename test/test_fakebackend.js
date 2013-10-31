@@ -751,7 +751,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('disallows malformed charm names', function(done) {
-        fakebackend.getCharm('^invalid', ERROR('Invalid charm id: ^invalid', done));
+        fakebackend.getCharm('^invalid',
+            ERROR('Invalid charm id: ^invalid', done));
       });
 
       it('successfully returns valid charms', function(done) {
