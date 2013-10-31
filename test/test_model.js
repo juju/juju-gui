@@ -867,6 +867,66 @@ describe('test_model.js', function() {
       assert.isUndefined(result.services.puppet.num_units);
     });
 
+    it('exports options preserving their types', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-42',
+        config: {
+            one: 'foo',
+            two: '2',
+            three: '3.14',
+            four: 'true',
+            five: false
+        }
+      });
+      db.charms.add([{
+          id: 'precise/wordpress-42',
+          options: {
+            one: {'default': '', type: 'string'},
+            two: {'default': 0, type: 'int'},
+            three: {'default': 0, type: 'float'},
+            four: {'default': undefined, type: 'boolean'},
+            five: {'default': true, type: 'boolean'}
+          }
+      }]);
+      var result = db.exportDeployer().envExport;
+      assert.strictEqual(result.services.wordpress.options.one, 'foo');
+      assert.strictEqual(result.services.wordpress.options.two, 2);
+      assert.strictEqual(result.services.wordpress.options.three, 3.14);
+      assert.strictEqual(result.services.wordpress.options.four, true);
+      assert.strictEqual(result.services.wordpress.options.five, false);
+    });
+
+    it('avoid exporting options set to their default values', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-42',
+        config: {
+            one: 'foo',
+            two: '2',
+            three: '3.14',
+            four: 'false',
+            five: true
+        }
+      });
+      db.charms.add([{
+          id: 'precise/wordpress-42',
+          options: {
+            one: {'default': 'foo', type: 'string'},
+            two: {'default': 0, type: 'int'},
+            three: {'default': 3.14, type: 'float'},
+            four: {'default': undefined, type: 'boolean'},
+            five: {'default': true, type: 'boolean'}
+          }
+      }]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.wordpress.options.one);
+      assert.strictEqual(result.services.wordpress.options.two, 2);
+      assert.isUndefined(result.services.wordpress.options.three);
+      assert.strictEqual(result.services.wordpress.options.four, false);
+      assert.isUndefined(result.services.wordpress.options.five, false);
+    });
+
     it('exports non-default options', function() {
       db.services.add({
         id: 'wordpress',

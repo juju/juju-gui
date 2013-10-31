@@ -35,8 +35,9 @@ YUI.add('viewlet-service-config', function(Y) {
       config: {
         'update': function(node, val) {
           if (node.getAttribute('type') === 'checkbox') {
-            var booleanValue = (val === 'true');
-            if (booleanValue !== node.get('checked')) {
+            // In the db boolean options are stored as strings.
+            var currentValue = node.get('checked') ? 'true' : 'false';
+            if (val !== currentValue) {
               node.set('checked', val);
               // We cannot simulate a change event here to trigger the textual
               // value to update or else we'll cause databinding to think

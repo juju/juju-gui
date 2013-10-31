@@ -1168,13 +1168,16 @@ YUI.add('juju-models', function(Y) {
         // that are the default value for the charm.
         Y.each(service.get('config'), function(value, key) {
           if (Y.Lang.isValue(value)) {
-            var oldValue = value;
             var optionData = charmOptions && charmOptions[key];
             switch (optionData.type) {
-              // case 'boolean':
-              //   console.log(key, value, typeof value);
-              //   value = (value === 'true');
-              //   break;
+              case 'boolean':
+                // XXX frankban 2013-10-31: why boolean options are stored in
+                // the db sometimes as booleans and other times as strings
+                // (e.g. "true")? As a quick fix, always convert to boolean
+                // type, but we need to find who writes in the services db and
+                // normalize the values. FWIW In juju-core options are strings.
+                value = (value + '' === 'true');
+                break;
               case 'float':
                 value = parseFloat(value);
                 break;
@@ -1185,7 +1188,6 @@ YUI.add('juju-models', function(Y) {
             var defaultVal = optionData && optionData['default'];
             var hasDefault = Y.Lang.isValue(defaultVal);
             if (!hasDefault || value !== defaultVal) {
-              // debugger;
               serviceOptions[key] = value;
             }
           }
