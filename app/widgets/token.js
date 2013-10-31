@@ -216,6 +216,16 @@ YUI.add('browser-token', function(Y) {
       charmIcons: {
         setter: '_charmIconsSetter'
       },
+
+      /**
+       * @attribute deployButton
+       * @default false
+       * @type {Boolean}
+       */
+      deployButton: {
+        value: false
+      },
+
       /**
        * @attribute downloads
        * @default undefined

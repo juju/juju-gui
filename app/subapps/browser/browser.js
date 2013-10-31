@@ -536,9 +536,10 @@ YUI.add('subapp-browser', function(Y) {
         activeTab: this._viewState.hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
-        deploy: this.get('deploy'),
-        deployBundle: this.get('deployBundle')
+        deployBundle: this.get('deployBundle'),
+        deployService: this.get('deployService')
       };
+
 
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
@@ -696,7 +697,10 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (this._hasStateChanged('viewmode') || forceFullscreen) {
-        var extraCfg = {};
+        var extraCfg = {
+          deployService: this.get('deployService'),
+          deployBundle: this.get('deployBundle')
+        };
         if (this._viewState.search || this._viewState.charmID) {
           extraCfg.withHome = true;
         }
@@ -789,7 +793,9 @@ YUI.add('subapp-browser', function(Y) {
       if (this._hasStateChanged('viewmode') || forceSidebar) {
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
-              container: this.get('container')
+              container: this.get('container'),
+              deployService: this.get('deployService'),
+              deployBundle: this.get('deployBundle')
             }));
         this._sidebar.render();
         this._sidebar.addTarget(this);
@@ -1142,11 +1148,19 @@ YUI.add('subapp-browser', function(Y) {
          The "deploy" function prompts the user for service configuration and
          deploys a service.
 
-         @attribute deploy
+         @attribute deployService
          @default undefined
          @type {Function}
        */
-      deploy: {},
+      deployService: {},
+
+      /**
+       * @attribute deployBundle
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deployBundle: {},
 
       /**
         The default viewmode

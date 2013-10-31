@@ -2,6 +2,21 @@
     .border-box;
     position: relative;
 
+    .deployButton {
+        display: block;
+        float: right;
+        margin-top: 19px;
+
+        /* Bundle tokens are taller due to the charm icons inside. */
+        &.bundle {
+            margin-top: 34px;
+        }
+
+        i.sprite {
+            display: block;
+        }
+    }
+
     .token {
         display: block;
         // Clear floats:
@@ -9,12 +24,6 @@
         padding: 20px;
         color: @text-colour;
 
-        &.recommended {
-            margin-top: -1px;
-            background: transparent
-                url(/juju-ui/assets/images/recommended-triangle.png)
-                no-repeat right top;
-        }
         &.tiny {
             min-width: 200px;
 
@@ -58,6 +67,15 @@
             .icon img {
                 width: 96px;
                 height: 96px;
+            }
+        }
+        .recommended {
+            position: absolute;
+            top: -1px;
+            right: 0;
+
+            i.sprite {
+                display: block;
             }
         }
         .block-icon,

@@ -1,12 +1,5 @@
 .bundle,
 .charm {
-    &.recommended {
-        .header {
-            background:
-                url(/juju-ui/assets/images/recommended-triangle-large.png)
-                no-repeat right top, url(/juju-ui/assets/images/paper-bg.jpg) repeat 0 0;
-        }
-    }
     .changelog li,
     .changelog p,
     .details {
@@ -32,6 +25,17 @@
         }
     }
     .header {
+        position: relative;
+
+        .recommended {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            i.sprite {
+                display: block;
+            }
+        }
         .block-icon {
             display: inline-block;
             float: left;
@@ -52,6 +56,7 @@
                 .create-border-radius(@border-radius);
                 display: block;
                 height: 40px;
+                min-width: 130px;
                 margin-top: 17px;
                 padding: 0 30px;
                 background-color: @charm-panel-orange;
@@ -253,6 +258,7 @@
         padding: 17px 70px 16px 16px;
 
         a {
+            .sprite-hover;
             padding-right: 5px;
         }
     }
@@ -263,13 +269,6 @@
     background-color: #fff;
     background-image: none;
 
-    &.recommended {
-        .header {
-            background:
-                url(/juju-ui/assets/images/recommended-triangle-large.png)
-                no-repeat right top;
-        }
-    }
     .header {
         .type13;
         position: relative;
@@ -297,7 +296,9 @@
                 }
             }
         }
-
+        .back.icon {
+            display: none;
+        }
         .block-icon,
         .details {
             display: block;

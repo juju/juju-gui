@@ -72,7 +72,7 @@ YUI.add('juju-notifications', function(Y) {
          */
         addNotifier: function(ev) {
           var notification = ev.model,
-              notifierBox = Y.one('#notifier-box');
+              notifierBox = Y.one('.notifications-nav .notifier-box');
           // Show error notifications only if the DOM contain the notifier box.
           if (notifierBox &&
               !notification.get('isDelta') &&
