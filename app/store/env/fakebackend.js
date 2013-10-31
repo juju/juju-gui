@@ -301,7 +301,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!charmIdParts) {
         return (
             callbacks.failure &&
-            callbacks.failure({error: 'Invalid charm id.'}));
+            callbacks.failure({error: 'Invalid charm id: ' + charmId}));
       }
       var charm = this.db.charms.getById(charmId);
       if (charm) {
@@ -381,10 +381,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         options.name = charm.get('package_name');
       }
       if (this.db.services.getById(options.name)) {
-        return callback({error: 'A service with this name already exists.'});
+        console.log(options);
+        return callback({error: 'A service with this name already exists (' +
+              options.name + ').'});
       }
       if (options.configYAML) {
         if (!Y.Lang.isString(options.configYAML)) {
+          console.log(options);
           return callback(
               {error: 'Developer error: configYAML is not a string.'});
         }
@@ -394,6 +397,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           options.config = jsyaml.safeLoad(options.configYAML);
         } catch (e) {
           if (e instanceof jsyaml.YAMLException) {
+            console.log(options, e);
             return callback({error: 'Error parsing YAML.\n' + e});
           }
           throw e;
@@ -468,7 +472,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        return {error: 'Invalid service id.'};
+        return {error: 'Invalid service id: ' + serviceName};
       }
       // Remove all relations for this service.
       var relations = this.db.relations.get_relations_for_service(service);
@@ -482,9 +486,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var unitNames = service.get('units').get('id');
       var result = this.removeUnits(unitNames);
       if (result.error.length > 0) {
-        return {error: 'Error removing units: ' + result.error};
+        console.log(result, result.error);
+        return {
+          error: 'Error removing units [' + unitNames.join(', ') +
+              '] of ' + serviceName
+        };
       } else if (result.warning.length > 0) {
-        return {error: 'Warning removing units: ' + result.warning};
+        console.log(result, result.warning);
+        return {
+          error: 'Warning removing units [' + unitNames.join(', ') +
+              '] of ' + serviceName
+        };
       }
       // And finally destroy and remove the service.
       this.db.services.remove(service);
@@ -506,7 +518,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        return {error: 'Invalid service id.'};
+        return {error: 'Invalid service id: ' + serviceName};
       }
       var serviceData = service.getAttrs();
       if (!serviceData.constraints) {
@@ -574,7 +586,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!Y.Lang.isNumber(numUnits) ||
           (!is_subordinate && numUnits < 1 ||
           (is_subordinate && numUnits !== 0))) {
-        return {error: 'Invalid number of units.'};
+        return {
+          error: 'Invalid number of units [' + numUnits +
+              '] for service: ' + serviceName
+        };
       }
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
@@ -859,8 +874,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         });
       });
       if (matches.length === 0) {
+        console.log(endpoints);
         result = {error: 'Specified relation is unavailable.'};
       } else if (matches.length > 1) {
+        console.log(endpoints);
         result = {error: 'Ambiguous relationship is not allowed.'};
       } else {
         result = matches[0];
@@ -1560,7 +1577,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callback({DeploymentId: self._deploymentId});
           }, function(err) {
             deployStatus.Status = 'failed';
-            callback({Error: err.toString()});
+            console.log(err);
+            callback({Error: err.error});
           });
     },
 

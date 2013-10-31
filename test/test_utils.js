@@ -1404,7 +1404,7 @@ describe('utilities', function() {
   });
 
   describe('utils.deployBundleCallback', function() {
-    var utils, Y, notification;
+    var utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1413,20 +1413,33 @@ describe('utilities', function() {
       });
     });
 
-    it('creates a notification if bundle import is successful', function(done) {
+    it('adds a notification if bundle import is successful', function(done) {
+      var expected = {
+        title: 'Bundle Deployment Requested',
+        message: 'Bundle deployment request successful. The full deployment ' +
+            'can take some time to complete',
+        level: 'important'
+      };
       utils.deployBundleCallback({
-        add: function() {
+        add: function(notification) {
+          assert.deepEqual(notification, expected);
           done();
         }}, {});
     });
 
-    it('creates a notification if bundle import if not successful',
-       function(done) {
-         utils.deployBundleCallback({
-           add: function() {
-             done();
-           }}, {err: true});
-       });
+    it('adds a notification if a deployment error occurs', function(done) {
+      var expected = {
+        title: 'Bundle Deployment Failed',
+        message: 'Unable to deploy the bundle. The server returned the ' +
+            'following error: bad wolf',
+        level: 'error'
+      };
+      utils.deployBundleCallback({
+        add: function(notification) {
+          assert.deepEqual(notification, expected);
+          done();
+        }}, {err: 'bad wolf'});
+    });
   });
 
 })();

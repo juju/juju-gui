@@ -404,7 +404,9 @@ $(LINK_PROD_FILES):
 
 prep: beautify lint
 
-check: lint test-prod test-debug test-misc docs
+# XXX bac: the order of test-debug and test-prod seems to affect the execution
+# of this target when called by lbox.  Please do note change.
+check: lint test-debug test-prod test-misc docs
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
