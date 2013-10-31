@@ -6,27 +6,28 @@
   "changes": [
     {
       "authors": [
-        "Brad Crittenden <bac@canonical.com>"
+        "Brad Crittenden <bac@example.com>"
       ],
-      "committer": "Brad Crittenden <bac@canonical.com>",
+      "committer": "Brad Crittenden <bac@example.com>",
       "created": 1378218161.439,
       "message": "Correct icon",
       "revno": 3
     },
     {
       "authors": [
-        "Brad Crittenden <bac@canonical.com>"
+        "Jorge O. O'Castro <jorge@example.com>",
+        "Brad Crittenden <bac@example.com>"
       ],
-      "committer": "Brad Crittenden <bac@canonical.com>",
+      "committer": "Brad Crittenden <bac@example.com>",
       "created": 1377718535.465,
       "message": "Added README and icon",
       "revno": 2
     },
     {
       "authors": [
-        "Brad Crittenden <bac@canonical.com>"
+        "Brad Crittenden <bac@example.com>"
       ],
-      "committer": "Brad Crittenden <bac@canonical.com>",
+      "committer": "Brad Crittenden <bac@example.com>",
       "created": 1375449744.902,
       "message": "Initial checking of working config.",
       "revno": 1
