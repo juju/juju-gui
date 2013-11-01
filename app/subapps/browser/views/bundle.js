@@ -201,9 +201,8 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       var options = {size: [720, 500]};
       this.hideIndicator(renderTo);
 
-      var showTopo = this._positionAnnotationsIncluded(
+      options.positionServices = !this._positionAnnotationsIncluded(
           bundleData.data.services);
-      options.positionServices = !showTopo;
 
       this._setupLocalFakebackend();
       var self = this;
