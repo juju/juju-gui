@@ -119,7 +119,7 @@ YUI.add('juju-view-bundle', function(Y) {
           service.model.set('annotations', {
             'gui-x': service.x,
             'gui-y': service.y
-          })
+          });
         });
         // Zoom to fit now so that bundleBoundingBox is populated, allowing
         // us to position text.
@@ -128,7 +128,7 @@ YUI.add('juju-view-bundle', function(Y) {
           .attr('x', topo.get('bundleBoundingBox').translateX)
           .attr('y', height + SERVICE_SIZE)
           .attr('text-anchor', 'start')
-          .text('(Bundle did not provide position information; '+
+          .text('(Bundle did not provide position information; ' +
                 'services positioned automatically.)');
       }
 
@@ -184,7 +184,7 @@ YUI.add('juju-view-bundle', function(Y) {
       if (node.empty()) {
         return;
       }
-      
+
       // Apply Position Annotations
       // This is done after the services_boxes
       // binding as the event handler will
@@ -413,8 +413,7 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var centroid = topoUtils.centroid(vertices);
-    var scale = topo.get('scale'),
-        width = topo.get('width'),
+    var width = topo.get('width'),
         height = topo.get('height');
     var bb = topo.get('bundleBoundingBox');
     // Shift the centroid by the size of a service block.

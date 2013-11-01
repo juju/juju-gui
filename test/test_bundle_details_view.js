@@ -165,12 +165,11 @@ describe('Browser bundle detail view', function() {
 
   it('generates positions if services don\'t provide xy annotations',
      function(done) {
-       Y.Object.values(data.data.services).forEach(function (service) {
+       Y.Object.values(data.data.services).forEach(function(service) {
          service.annotations = {};
        });
        view.set('entity', new models.Bundle(data));
        view.on('topologyRendered', function(e) {
-         debugger;
          assert.isNotNull(container.one('.topology-canvas'));
          // Check that the bundle topology tab is the landing tab.
          assert.equal(view.tabview.get('selection').get('index'), 0);
@@ -178,7 +177,7 @@ describe('Browser bundle detail view', function() {
 
          // Check that an error is shown.
          assert.equal(vis.select('text').text(),
-           '(Bundle did not provide position information; '+
+         '(Bundle did not provide position information; ' +
              'services positioned automatically.)');
 
          // Check that services are positioned.
