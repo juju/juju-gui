@@ -224,11 +224,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       renderTo.setHTML(node);
 
       this._setupTabview();
-      if (!showTopo) {
-        // Select the charms tab as the landing tab if
-        // we aren't showing the bundle topology.
-        this.tabview.selectChild(2);
-      }
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
       this._renderCharmListing(templateData.services);

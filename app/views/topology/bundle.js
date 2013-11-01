@@ -437,7 +437,6 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var bb = topoUtils.getBoundingBox(vertices, SERVICE_SIZE, SERVICE_SIZE);
-    console.log(bb);
     topo.set('bundleBoundingBox', bb);
     var width = topo.get('width'),
         height = topo.get('height');
@@ -447,7 +446,6 @@ YUI.add('juju-view-bundle', function(Y) {
     maxScale -= 0.1; // Margin
     // Clamp Scale
     maxScale = Math.min(1.0, maxScale);
-    console.log(maxScale);
     this.centerViewport(maxScale);
   };
 
