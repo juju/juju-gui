@@ -205,30 +205,21 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           bundleData.data.services);
       options.positionServices = !showTopo;
 
-      //if (showTopo) {
-        // Setup the fake backend to create topology to display the canvas-like
-        // rendering of the bundle.
-        this._setupLocalFakebackend();
-        var self = this;
-        this._parseData(bundle).then(function() {
-          self.environment = new views.BundleTopology(Y.mix({
-            db: self.fakebackend.db,
-            container: node.one('#bws-bundle'), // Id because of Y.TabView
-            store: self.get('store')
-          }, options));
-          self.environment.render();
-          // Fire event to listen to during the tests so that we know when
-          // it's rendered.
-          self.fire('topologyRendered');
-        }).then(null, function(error) {
-          console.error(error.message, error);
-        });
-      /*} else {
-        // Remove the bundle tab so it doesn't get PE'd when
-        // we instantiate the tabview.
-        node.one('#bws-bundle').remove();
-        node.one('a[href=#bws-bundle]').get('parentNode').remove();
-      }*/
+      this._setupLocalFakebackend();
+      var self = this;
+      this._parseData(bundle).then(function() {
+        self.environment = new views.BundleTopology(Y.mix({
+          db: self.fakebackend.db,
+          container: node.one('#bws-bundle'), // Id because of Y.TabView
+          store: self.get('store')
+        }, options));
+        self.environment.render();
+        // Fire event to listen to during the tests so that we know when
+        // it's rendered.
+        self.fire('topologyRendered');
+      }).then(null, function(error) {
+        console.error(error.message, error);
+      });
 
       renderTo.setHTML(node);
 
