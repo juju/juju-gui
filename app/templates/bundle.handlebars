@@ -62,9 +62,11 @@
                 <div id="bws-bundle"></div>
                 <div id="bws-readme"></div>
                 <div id="bws-deploy">
+                    <p>Deploying a bundle will ask your cloud provider to immediately provision all associated machines.</p>
                     <h3>Deploy via the GUI</h3>
                     <p>Click the 'Deploy this bundle' button above, or drag the bundle listing from the search results onto the canvas.</p>
                     <h3>Deploy via quickstart (Under development)</h3>
+                    <p>The quickstart plugin for Juju is an opinionated tool that helps you start Juju quickly and easily.  These commands will help you deploy the bundle to a cloud.</p>
                     <p>Step 1 - Install quickstart
                         <pre>sudo add-apt-repository ppa:juju-gui/quickstart-beta
 sudo apt-get update
@@ -196,7 +198,7 @@ sudo apt-get install juju-quickstart</pre>
                     <p>
                         The source code for the bundle has been extracted from the deployer file. Please see the branch for the full, unprocessed deployer file.
 
-                        <pre>bzr branch lp:{{id}}</pre>
+                        <pre>bzr branch {{sourceLink}}</pre>
                     </p>
                     <p class="intro">
                         <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
