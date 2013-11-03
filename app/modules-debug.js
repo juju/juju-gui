@@ -181,6 +181,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
         },
 
+        'app-patches-extension': {
+          fullpath: '/juju-ui/assets/javascripts/app-patches-extension.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
