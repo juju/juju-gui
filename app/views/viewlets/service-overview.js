@@ -192,6 +192,15 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     var self = this,
         buttonHeight;
 
+    /*
+      The _isLinkSameOrigin method in YUI's pjax.base class does not
+      properly account for IE10's issues when parsing protocol and
+      host from anchor tags unless the tags contain the full protocol
+      and host for relative hrefs.
+    */
+    var wl = window.location;
+    var locationPrefix = wl.protocol + '//' + wl.host;
+
     var categoryWrapperNodes = d3.select(node.getDOMNode())
     .selectAll('.unit-list-wrapper')
     .data(statuses, function(d) {
@@ -237,7 +246,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     serviceUpgradeLi.append('a')
       .attr('href', function(d) {
-          return '/' + d.replace(/^cs:/, '');
+          return locationPrefix + '/' + d.replace(/^cs:/, '');
         })
       .text(function(d) { return d; });
 
@@ -284,7 +293,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     serviceUpgradeOtherCharms
       .append('a')
       .attr('href', function(d) {
-          return '/' + d.replace(/^cs:/, '');
+          return locationPrefix + '/' + d.replace(/^cs:/, '');
         })
       .text(function(d) { return d; });
 

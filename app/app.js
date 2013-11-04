@@ -51,8 +51,7 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer,
-                                                  Y.juju.Patches], {
+                                                  Y.juju.GhostDeployer], {
 
     /*
       Extension properties
@@ -1350,7 +1349,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls',
-    'app-patches-extension'
+    'viewmode-controls'
   ]
 });
