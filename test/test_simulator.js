@@ -183,9 +183,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         agent = new Agent(config);
       });
 
-    afterEach(function() {
-      agent.destroy();
-    });
+      afterEach(function() {
+        agent.destroy();
+      });
 
       it('should start by annotating environment and services', function() {
         agent.start();
@@ -195,7 +195,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'landscape-computers': '/computers/criteria/environment:test',
           'landscape-reboot-alert-url': '+alert:computer-reboot/info#power',
           'landscape-security-alert-url':
-            '+alert:security-upgrades/packages/list?filter=security'};
+              '+alert:security-upgrades/packages/list?filter=security'};
         assert.deepEqual(anno, expected_environment_annotations);
         var wordpress = state.db.services.getById('wordpress');
         anno = wordpress.get('annotations');

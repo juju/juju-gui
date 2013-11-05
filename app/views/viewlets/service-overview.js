@@ -344,13 +344,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     })
     .classed('hidden', false)
     .filter(function(d) {
-      return (d.category === 'landscape-needs-reboot' ||
-              d.category === 'landscape-security-upgrades');
-    })
+          return (d.category === 'landscape-needs-reboot' ||
+                  d.category === 'landscape-security-upgrades');
+        })
     .select('a.landscape')
     .attr('href', function(d) {
-      return utils.getLandscapeURL(environment, self.model);
-    });
+          return utils.getLandscapeURL(environment, self.model);
+        });
 
     categoryWrapperNodes.filter(function(d) {
       return d.type === 'unit' && d.units.length === undefined;
