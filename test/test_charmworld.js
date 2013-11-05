@@ -248,7 +248,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - upgrade available', function(done) {
-      var store = utils.makeFakeStore(3);
+      var store = utils.makeFakeStore();
       var charm = new models.Charm({url: 'cs:precise/wordpress-10'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -261,7 +261,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - no upgrade available', function(done) {
-      var store = utils.makeFakeStore(3);
+      var store = utils.makeFakeStore();
       var charm = new models.Charm({url: 'cs:precise/wordpress-15'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -274,7 +274,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('copies metadata while transforming results', function() {
-      var store = utils.makeFakeStore(3);
+      var store = utils.makeFakeStore();
       var fakebundle = {bundle: {id: 'bundle0'},
                          metadata: 'bundledata'};
       var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
@@ -293,266 +293,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
-  });
-
-  // The tests below are based on copies of the v3 tests above so that removing
-  // support for the v2 charmworld API will be easy.  However, it means that
-  // any edits made to these tests may need to be made to the v3 tests above.
-  describe('Charmworld API v2 interface', function() {
-    var Y, models, conn, data, juju, utils, charmworld,
-        hostname, api;
-
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'datasource-local', 'json-stringify', 'juju-charm-store',
-          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
-          'juju-tests-utils',
-          function(Y) {
-            juju = Y.namespace('juju');
-            charmworld = Y.namespace('juju.charmworld');
-            models = Y.namespace('juju.models');
-            utils = Y.namespace('juju-tests').utils;
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      hostname = 'http://charmworld.example/';
-      api = new charmworld.APIv2({apiHost: hostname});
-    });
-
-    it('constructs the api url correctly based on apiHost', function() {
-      var ds = api.get('datasource');
-
-      ds.get('source').should.eql(hostname + 'api/2/');
-
-      // And it should work without a trailing / as well.
-      hostname = hostname.slice(0, -1);
-      api = new charmworld.APIv2({apiHost: hostname});
-      ds = api.get('datasource');
-      ds.get('source').should.eql(hostname + '/api/2/');
-    });
-
-    it('handles loading interesting content correctly', function(done) {
-      var data = [];
-
-      data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
-      api.set('datasource', new Y.DataSource.Local({source: data}));
-
-      api.interesting({
-        success: function(data) {
-          data.summary.should.equal('wowza');
-          done();
-        },
-        failure: function(data, request) {
-        }
-      }, this);
-
-    });
-
-    it('handles searching correctly', function(done) {
-      var data = [],
-          url;
-      data.push({responseText: Y.JSON.stringify({name: 'foo'})});
-      // Create a monkeypatched datasource we can use to track the generated
-      // apiEndpoint
-      var datasource = new Y.DataSource.Local({source: data});
-      datasource.realSendRequest = datasource.sendRequest;
-      datasource.sendRequest = function(params) {
-        url = params.request;
-        datasource.realSendRequest(params);
-      };
-
-      api.set('datasource', datasource);
-      api.search({text: 'foo'}, {
-        success: function(data) {
-          assert.equal('charms?text=foo', url);
-          assert.equal('foo', data.name);
-          done();
-        },
-        failure: function(data, request) {
-        }
-      }, this);
-      api.destroy();
-    });
-
-    it('constructs cateogry icon paths correctly', function() {
-      var iconPath = api.buildCategoryIconPath('app-servers');
-      assert.equal(
-          iconPath,
-          hostname + 'static/img/category-app-servers-bw.svg');
-    });
-
-    it('makes charm requests to correct URL', function(done) {
-      api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(endpoint, 'charm/CHARM-ID');
-        done();
-      };
-
-      api._charm('CHARM-ID');
-    });
-
-    it('can use a cache to avoid requesting charm data', function(done) {
-      var should_not_happen = function() {
-        assert.isTrue(false, 'Oops, this should not have been called.');
-        done();
-      };
-      var CACHED_CHARM = 'CACHED-CHARM';
-
-      var callbacks = {
-        success: function(data, charm) {
-          assert.equal(charm, CACHED_CHARM);
-          done();
-        },
-        failure: should_not_happen
-      };
-
-      api._makeRequest = should_not_happen;
-
-      var cache = {
-        getById: function(charmID) {
-          return CACHED_CHARM;
-        }};
-
-      api.charm('CHARM-ID', callbacks, false, cache);
-
-    });
-
-    it('will make a request on a cache miss', function(done) {
-      var should_not_happen = function() {
-        assert.isTrue(false, 'Oops, this should not have been called.');
-        done();
-      };
-      var CACHED_CHARM = 'CACHED-CHARM';
-
-      var callbacks = {
-        success: function(data, charm) {
-          assert.equal(charm, CACHED_CHARM);
-          done();
-        },
-        failure: should_not_happen
-      };
-
-      api._makeRequest = function() {
-        // If this was called, then the test is successful.
-        done();
-      };
-
-      var cache = {
-        getById: function(charmID) {
-          return null;
-        }};
-
-      api.charm('CHARM-ID', callbacks, false, cache);
-
-    });
-
-    it('makes autocomplete requests to correct URL', function(done) {
-      var noop = function() {};
-
-      api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(endpoint, 'charms');
-        done();
-      };
-
-      api.autocomplete({text: 'mys'}, {'success': noop});
-    });
-
-    it('makes autocomplete requests with right query flag', function(done) {
-      var noop = function() {};
-
-      api._makeRequest = function(endpoint, callbacks, filters) {
-        assert.equal(filters.autocomplete, 'true');
-        done();
-      };
-
-      api.autocomplete({text: 'mys'}, {'success': noop});
-    });
-
-    it('constructs iconpaths correctly', function() {
-      var iconPath = api.iconpath('precise/mysql-1');
-      assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
-    });
-
-    it('constructs an icon path for local charms', function() {
-      var iconPath = api.iconpath('local:precise/mysql-1');
-      assert.equal(iconPath, hostname + 'static/img/charm_160.svg');
-    });
-
-    it('splits the charm id to remove cs: when necessary', function() {
-      var iconPath = api.iconpath('cs:precise/mysql-1');
-      assert.equal(iconPath, hostname + 'api/2/charm/precise/mysql-1/icon.svg');
-    });
-
-    it('can fetch a charm via a promise', function(done) {
-      // The "promiseCharm" method is just a promise-wrapped version of the
-      // "charm" method.
-      var DATA = 'DATA';
-      var CHARM = 'CHARM';
-      api.charm = function(charmID, callbacks) {
-        callbacks.success(DATA, CHARM);
-      };
-      api.promiseCharm('CHARM-ID', null, 'precise')
-        .then(function(data) {
-            assert.equal(data, DATA);
-            done();
-          });
-    });
-
-    it('finds upgrades for charms - upgrade available', function(done) {
-      var store = utils.makeFakeStore();
-      var charm = new models.Charm({url: 'cs:precise/wordpress-10'});
-      store.promiseUpgradeAvailability(charm)
-        .then(function(upgrade) {
-            assert.equal(upgrade, 'precise/wordpress-15');
-            done();
-          }, function(error) {
-            assert.isTrue(false, 'We should not get here.');
-            done();
-          });
-    });
-
-    it('finds upgrades for charms - no upgrade available', function(done) {
-      var store = utils.makeFakeStore();
-      var charm = new models.Charm({url: 'cs:precise/wordpress-15'});
-      store.promiseUpgradeAvailability(charm)
-        .then(function(upgrade) {
-            assert.isUndefined(upgrade);
-            done();
-          }, function(error) {
-            assert.isTrue(false, 'We should not get here');
-            done();
-          });
-    });
-
-    it('filters results into an array of charms while removing bundles',
-        function() {
-          var store = utils.makeFakeStore();
-          var fakecharm = {charm: {url: 'cs:precise/wordpress-15'}};
-          var fakebundle = {bundle: {id: 'bundle0'}};
-          var other = {foo: {id: 'foo0'}};
-          var results = store.transformResults([fakecharm, fakebundle, other]);
-          var expected = [new models.Charm(fakecharm.charm)];
-          assert.equal(expected.length, results.length);
-          assert.equal(expected[0].get('id'), results[0].get('id'));
-        });
-
-    it('copies metadata while transforming results', function() {
-      var store = utils.makeFakeStore();
-      var fakebundle = {bundle: {id: 'bundle0'},
-                         metadata: 'bundledata'};
-      var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},
-                        metadata: 'charmdata'};
-      var testdata = Y.clone([fakecharm, fakebundle]);
-      fakebundle.bundle.metadata = fakebundle.metadata;
-      fakecharm.charm.metadata = fakecharm.metadata;
-      var expected = [new models.Charm(fakecharm.charm)];
-      var results = store.transformResults(testdata);
-      assert.equal(expected.length, results.length);
-      assert.equal(expected[0].get('id'), results[0].get('id'));
-      assert.equal(expected[0].get('metadata'), results[0].get('metadata'));
-    });
   });
 
   describe('Charmworld API Helper', function() {
@@ -598,41 +338,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // A leading charm store scheme identifier will be stripped.
       assert.equal(apiHelper.normalizeCharmId('cs:precise/wordpress-10'),
           'precise/wordpress-10');
-    });
-
-  });
-
-  describe('Charmworld API feature flag support', function() {
-    var Y, models, conn, juju, app;
-
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'juju-gui',
-          'datasource-local', 'json-stringify', 'juju-charm-store',
-          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
-          'juju-tests-utils',
-          function(Y) {
-            juju = Y.namespace('juju');
-            done();
-          });
-    });
-
-    afterEach(function() {
-      app.destroy();
-      window.flags = {};
-    });
-
-    it('enables the charmworld v2 API if not set', function() {
-      assert.deepEqual(window.flags, {});
-      app = new Y.juju.App({});
-      assert.equal(app.get('store').name, 'APIv2');
-    });
-
-    it('enables the charmworld v3 API if set', function() {
-      window.flags.charmworldv3 = true;
-      app = new Y.juju.App({});
-      assert.equal(app.get('store').name, 'APIv3');
     });
 
   });

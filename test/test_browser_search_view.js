@@ -53,7 +53,7 @@ describe('search view', function() {
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     var sampleData = {
       result: [{
         charm: {
@@ -98,7 +98,7 @@ describe('search view', function() {
   it('renders correctly', function() {
     view.render();
     var container = view.get('container');
-    assert.equal('charms?text=foo', apiURL);
+    assert.equal('search?text=foo', apiURL);
     assert.equal(1, container.all('.yui3-token').size());
     var charmText = container.one('.yui3-token').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
@@ -121,7 +121,7 @@ describe('search view', function() {
   it('handles empty text for search', function() {
     view.set('filters', {text: ''});
     view.render();
-    assert.equal('charms?text=', apiURL);
+    assert.equal('search?text=', apiURL);
   });
 
   it('clicking a charm navigates for fullscreen', function(done) {
@@ -161,7 +161,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -204,7 +204,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -291,7 +291,7 @@ describe('search view', function() {
         }
       }]
     };
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value

@@ -113,7 +113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = juju.newEnvironment({conn: conn});
         env.connect();
         conn.open();
-        fakeStore = new Y.juju.charmworld.APIv2({});
+        fakeStore = new Y.juju.charmworld.APIv3({});
         fakeStore.iconpath = function() {
           return 'charm icon url';
         };
@@ -1207,7 +1207,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets the default icon for local charms without an icon', function() {
-      var iconFakeStore = new Y.juju.charmworld.APIv2({
+      var iconFakeStore = new Y.juju.charmworld.APIv3({
         apiHost: 'http://localhost'
       });
       var services = new models.ServiceList();
@@ -1244,7 +1244,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The mysql charm has an icon from on the server.
       assert.equal(
           boxes['cs:mysql-1'].icon,
-          'http://localhost/api/2/charm/mysql-1/icon.svg'
+          'http://localhost/api/3/charm/mysql-1/file/icon.svg'
       );
     });
   });

@@ -450,7 +450,7 @@ describe('test_model.js', function() {
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           params.callback.success({
