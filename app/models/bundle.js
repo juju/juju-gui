@@ -136,6 +136,7 @@ YUI.add('juju-bundle-models', function(Y) {
         }
       },
       data: {},
+      deployer_file_url: {},
       relations: {
         /**
          Return the relations data as a list of objects.
