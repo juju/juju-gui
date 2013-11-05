@@ -114,7 +114,7 @@ describe('Inspector Overview', function() {
         {id: 'mediawiki/2', agent_state: 'pending',
           charmUrl: 'cs:precise/mediaWiki-14'}]
     ]}});
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function(id) {
       return '/icon/' + id;
     };

@@ -141,7 +141,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('has sharing links', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -278,7 +278,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -338,7 +338,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.iconpath = function() {
         return 'charm icon url';
       };
@@ -368,7 +368,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -408,7 +408,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -516,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -864,7 +864,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -910,7 +910,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -945,7 +945,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -996,7 +996,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value.
