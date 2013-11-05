@@ -86,7 +86,7 @@ describe('Inspector Constraints', function() {
     var conn = new utils.SocketStub();
     var db = new models.Database();
     var service = makeService(db);
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };

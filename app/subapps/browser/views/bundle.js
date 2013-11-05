@@ -196,6 +196,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.recentCommits, templateData.sourceLink);
       templateData.description = views.utils.linkify(templateData.description);
+      if (templateData.deployer_file_url) {
+        templateData.deployer_file_url = decodeURI(
+            templateData.deployer_file_url);
+      }
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');

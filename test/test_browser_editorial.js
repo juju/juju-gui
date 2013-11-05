@@ -72,7 +72,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('renders sidebar with hidden charms', function() {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -93,7 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('shows and hides an indicator', function(done) {
       var hit = 0;
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -120,7 +120,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('renders fullscreen 14/22 charms hidden', function() {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -141,7 +141,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('clicking a charm navigates for fullscreen', function(done) {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -169,7 +169,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('clicking a charm navigates for sidebar', function(done) {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -196,7 +196,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('setting the activeID marks the div active', function() {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -217,7 +217,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('unsetting the activeID will remove the active markings', function() {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -255,7 +255,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('uses passed in cache data if available', function() {
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
