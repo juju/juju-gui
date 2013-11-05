@@ -1112,7 +1112,7 @@ YUI.add('subapp-browser', function(Y) {
 
       /**
          @attribute store
-         @default juju.charmworld.APIv2
+         @default juju.charmworld.APIv3
          @type {Object}
        */
       store: {},

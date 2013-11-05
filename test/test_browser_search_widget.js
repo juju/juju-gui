@@ -223,7 +223,7 @@ describe('search widget autocomplete', function() {
     cleanIconHelper = utils.stubCharmIconPath();
 
     // We need a valid store instance to send back the data.
-    fakeStore = new Y.juju.charmworld.APIv2({});
+    fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value

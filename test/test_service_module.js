@@ -121,7 +121,7 @@ describe('service module events', function() {
   });
 
   beforeEach(function() {
-    fakeStore = new Y.juju.charmworld.APIv2({});
+    fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };
