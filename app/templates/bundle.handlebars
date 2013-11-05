@@ -68,22 +68,23 @@
                     <h3>Deploy via quickstart (Under development)</h3>
                     <p>The quickstart plugin for Juju is an opinionated tool that helps you start Juju quickly and easily.  These commands will help you deploy the bundle to a cloud.</p>
                     <p>Step 1 - Install quickstart
-                        <pre>sudo add-apt-repository ppa:juju-gui/quickstart-beta
-sudo apt-get update
-sudo apt-get install juju-quickstart</pre>
+                        <pre>sudo add-apt-repository ppa:juju-gui/quickstart-beta</pre>
+                        <pre>sudo apt-get update</pre>
+                        <pre>sudo apt-get install juju-quickstart</pre>
                     </p>
-                    <p>Step 2 - Deploy bundle
-                        <pre>juju quickstart &lt;path to deployer file&gt;</pre></p>
+                    <p>Step 2 - Download and deploy bundle
+                        <pre>wget -O bundle.json \</pre>
+                        <pre>    {{deployer_file_url}}</pre>
+                        <pre>juju quickstart bundle.json</pre></p>
                     <h3>Deploy via the deployer</h3>
                     <p>Step 1 - Setup the virtual environment
-                        <pre>% virtualenv --system-site-packages deployer
-% ./deployer/bin/easy_install juju-deployer
-% ./deployer/bin/juju-deployer -h
-                        </pre>
+                        <pre>virtualenv --system-site-packages deployer</pre>
+                        <pre>./deployer/bin/easy_install juju-deployer</pre>
+                        <pre>./deployer/bin/juju-deployer -h</pre>
                     </p>
                     <p>Step 2 - Deploy bundle
-                        <pre>./deployer/bin/juju-deployer -e &lt;JUJU_ENV&gt; -c &lt;deployer_file&gt; &lt;bundle_name&gt;
-                        </pre></p>
+                        <pre>./deployer/bin/juju-deployer -e &lt;JUJU_ENV&gt; -c \</pre>
+                        <pre>    {{deployer_file_url}}</pre></p>
                 </div>
                 <div id="bws-summary">
                     <div class="summary">
