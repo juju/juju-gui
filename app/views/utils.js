@@ -37,6 +37,32 @@ YUI.add('juju-view-utils', function(Y) {
     @class utils
   */
 
+  /**
+     Sanitize links.
+
+     Linkify links in text.  Wrap launchpad branch locations in spans to wrap
+     them.
+
+     @method linkify
+   */
+  var linkify = function(text) {
+    if (text) {
+      text = Y.Escape.html(text);
+      // Wraps an anchor tag around URLs.
+      var links =
+          /(\b(https?|http):\/\/[-A-Za-z0-9+&@#\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\/%=~_()|]+)/ig;
+      text = text.replace(links,
+          '<a href="$1" target="_blank" class="break-word">$1</a>');
+
+      // Puts lp branch addresses in a link with break-word.
+      var lp_links = /(\b(lp:)(~[^ ]*[0-9A-Za-z_]+))/ig;
+      text = text.replace(lp_links,
+          '<a href="https://code.launchpad.net/$3" target="_blank" class="break-word">$1</a>');
+    }
+    return text;
+  };
+  utils.linkify = linkify;
+
   /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -1706,6 +1732,7 @@ YUI.add('juju-view-utils', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
+    'escape',
     'handlebars',
     'node',
     'view',

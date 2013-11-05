@@ -340,10 +340,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (Y.Object.isEmpty(templateData.provides)) {
         templateData.provides = false;
       }
-
+      templateData.description = views.utils.linkify(templateData.description);
       var template = this.template(templateData);
-
-      // Set the content then update the container so that it reloads
+      // Set the content then update the container so that it reload
       // events.
       var renderTo = this.get('renderTo');
       renderTo.setHTML(container.setHTML(template));
@@ -387,7 +386,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     render: function() {
       var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
-
       if (this.get('entity')) {
         this._renderCharmView(this.get('entity'), isFullscreen);
         this.hideIndicator(this.get('renderTo'));

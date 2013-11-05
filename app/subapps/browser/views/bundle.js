@@ -195,6 +195,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
           'lp:' + this.get('entity').get('branch_spec'));
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.recentCommits, templateData.sourceLink);
+      templateData.description = views.utils.linkify(templateData.description);
       var content = this.template(templateData);
       var node = this.get('container').setHTML(content);
       var renderTo = this.get('renderTo');
