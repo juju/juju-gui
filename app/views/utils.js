@@ -97,7 +97,11 @@ YUI.add('juju-view-utils', function(Y) {
   utils.linkify = linkify;
 
   Y.Handlebars.registerHelper('linkify', function(text) {
-    return new Y.Handlebars.SafeString(linkify(text));
+    var result = linkify(text);
+    if (result) {
+      result = new Y.Handlebars.SafeString(result);
+    }
+    return result;
   });
 
   /*jshint bitwise: false*/
