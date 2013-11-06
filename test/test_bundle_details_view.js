@@ -68,7 +68,7 @@ describe('Browser bundle detail view', function() {
     container = utils.makeContainer();
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
-      store: utils.makeFakeStore(3),
+      store: utils.makeFakeStore(),
       db: {},
       entityId: data.id,
       renderTo: container
@@ -163,37 +163,39 @@ describe('Browser bundle detail view', function() {
         container.one('.bundle .add.confirm').simulate('click');
       });
 
-  it('fails gracefully if services don\'t provide xy annotations',
-     function() {
-       view._parseData = function() {
-         return new Y.Promise(function(resolve) { resolve(); });
-       };
-       view.set('entity', {
-          get: function(name) {
-            return '';
-          },
-          getAttrs: function() {
-            return {
-              charm_metadata: {},
-              files: [],
-              data: {
-                services: {
-                  foo: {
-                    annotations: {
-                      'gui-x': '',
-                      'gui-y': ''
-                    }
-                  },
-                  bar: {}
-                }
-              }
-            };
-          }});
+  it('generates positions if services don\'t provide xy annotations',
+     function(done) {
+       Y.Object.values(data.data.services).forEach(function(service) {
+         service.annotations = {};
+       });
+       view.set('entity', new models.Bundle(data));
+       view.on('topologyRendered', function(e) {
+         assert.isNotNull(container.one('.topology-canvas'));
+         // Check that the bundle topology tab is the landing tab.
+         assert.equal(view.tabview.get('selection').get('index'), 0);
+         var vis = d3.select(container.one('svg').getDOMNode());
+
+         // Check that an error is shown.
+         assert.equal(vis.select('text').text(),
+         '(Bundle did not provide position information; ' +
+             'services positioned automatically.)');
+
+         // Check that services are positioned.
+         vis.selectAll('.service').each(function(service) {
+           assert.notEqual(service.x, 0);
+           assert.isNumber(service.x);
+           assert.notEqual(service.y, 0);
+           assert.isNumber(service.y);
+           var annotations = service.model.get('annotations');
+           assert.notEqual(annotations['gui-x'], 0);
+           assert.isNumber(annotations['gui-x']);
+           assert.notEqual(annotations['gui-y'], 0);
+           assert.isNumber(annotations['gui-y']);
+         });
+
+         done();
+       });
        view.render();
-       assert.isNull(container.one('#bws-bundle'));
-       assert.isNull(container.one('a[href=#bws-bundle]'));
-       // Check that the charms tab is the landing tab
-       assert.equal(view.tabview.get('selection').get('index'), 2);
      });
 
   it('renders the bundle topology into the view', function(done) {

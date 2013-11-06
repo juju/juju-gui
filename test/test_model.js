@@ -50,6 +50,14 @@ describe('test_model.js', function() {
       assert.isUndefined(charm.get('owner'));
     });
 
+    it('must accept charm ids without versions.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:~alt-bac/precise/openstack-dashboard'});
+      assert.isUndefined(charm.get('revision'));
+      assert.equal(charm.get('charm_path'),
+          '~alt-bac/precise/openstack-dashboard/json');
+    });
+
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
@@ -442,7 +450,7 @@ describe('test_model.js', function() {
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           params.callback.success({

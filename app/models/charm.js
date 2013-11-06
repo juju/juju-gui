@@ -30,7 +30,7 @@ YUI.add('juju-charm-models', function(Y) {
   var RECENT_DAYS = 30;
 
   var models = Y.namespace('juju.models');
-  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+|HEAD)$/;
+  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+|HEAD))?$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
@@ -404,10 +404,12 @@ YUI.add('juju-charm-models', function(Y) {
          */
         getter: function() {
           var owner = this.get('owner');
+          var revision = this.get('revision');
+          revision = Y.Lang.isValue(revision) ? '-' + revision : '';
           return [
             (owner ? '~' + owner : 'charms'),
             this.get('series'),
-            (this.get('package_name') + '-' + this.get('revision')),
+            (this.get('package_name') + revision),
             'json'
           ].join('/');
         }
@@ -730,7 +732,9 @@ YUI.add('juju-charm-models', function(Y) {
          * @method revision.setter
          */
         setter: function(val) {
-          return parseInt(val, 10);
+          if (val) {
+            return parseInt(val, 10);
+          }
         }
       },
       scheme: {

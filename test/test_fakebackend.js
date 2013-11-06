@@ -580,6 +580,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           }).then(undefined, done);
     });
 
+    it('should stop importing if service names conflict', function(done) {
+      var fakebackend = utils.makeFakeBackend();
+      // If there is a problem within the promises `done` will be called
+      // at the end of each promise chain with the error.
+      utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
+      .then(function() {
+            utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
+            .then(function(resolve) {
+                  assert.equal(resolve.result.error,
+                      'wordpress is already present in the database.' +
+                      ' Change service name and try again.');
+                  assert.equal(resolve.backend.db.services.size(), 2,
+                      'There should only be two services in the database');
+                  done();
+                }).then(null, done);
+          }).then(null, done);
+    });
+
     it('should provide status of imports', function(done) {
       utils.promiseImport('data/wp-deployer.yaml')
         .then(function(resolve) {
@@ -602,7 +620,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, 'Import target ambigious, aborting.');
     });
 
-    it('detects service id collisions', function() {
+    it('detects service id collisions', function(done) {
       fakebackend = utils.makeFakeBackend();
       fakebackend.db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
       var data = {
@@ -610,9 +628,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charm: 'cs:precise/mysql-26',
           num_units: 2, options: {debug: false}}}}
       };
-      assert.throws(function() {
-        fakebackend.importDeployer(data);
-      }, 'mysql is already present in the database.');
+      fakebackend.importDeployer(data, null, function(data) {
+        assert.equal(data.error, 'mysql is already present in the database.' +
+            ' Change service name and try again.');
+        done();
+      });
     });
 
     it('properly implements inheritence in target definitions', function(done) {

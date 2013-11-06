@@ -107,6 +107,36 @@ YUI.add('juju-view-bundle', function(Y) {
       // Process any changed data.
       this.updateData();
 
+      // If the services did not include position annotations, provide a
+      // default layout and warning text.
+      if (topo.get('positionServices')) {
+        var services = Y.Object.values(topo.service_boxes);
+        services.forEach(function(service) {
+          service.w = SERVICE_SIZE;
+          service.h = SERVICE_SIZE;
+        });
+        d3.layout.unscaledPack()
+          .size([width, height])
+          .value(function(d) { return Math.max(d.unit_count, 1); })
+          .padding(300)
+          .nodes({children: services});
+        services.forEach(function(service) {
+          service.model.set('annotations', {
+            'gui-x': service.x,
+            'gui-y': service.y
+          });
+        });
+        // Zoom to fit now so that bundleBoundingBox is populated, allowing
+        // us to position text.
+        topo.fire('zoomToFit');
+        topo.vis.append('text')
+          .attr('x', topo.get('bundleBoundingBox').translateX)
+          .attr('y', height + SERVICE_SIZE)
+          .attr('text-anchor', 'start')
+          .text('(Bundle did not provide position information; ' +
+                'services positioned automatically.)');
+      }
+
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
       var node = this.node;
@@ -341,7 +371,7 @@ YUI.add('juju-view-bundle', function(Y) {
     }
     this.store = options.store;
     if (!this.store) {
-      this.store = new juju.charmworld.APIv2({});
+      this.store = new juju.charmworld.APIv3({});
       this._cleanups.push(this.store.destroy);
     }
     this.container = options.container;
@@ -372,6 +402,8 @@ YUI.add('juju-view-bundle', function(Y) {
     topo.addModule(views.BundleModule);
     topo.addModule(views.RelationModule, { disableRelationInteraction: true });
     topo.addModule(views.PanZoomModule);
+
+    topo.on('zoomToFit', Y.bind(this.zoomToFit, this));
   }
 
   BundleTopology.prototype.centerViewport = function(scale) {
@@ -396,12 +428,15 @@ YUI.add('juju-view-bundle', function(Y) {
     var topo = this.topology;
     var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
     var centroid = topoUtils.centroid(vertices);
-    var scale = topo.get('scale'),
-        width = topo.get('width'),
+    var width = topo.get('width'),
         height = topo.get('height');
     var bb = topo.get('bundleBoundingBox');
-    centroid[0] += Math.abs(width - bb.w) * scale;
-    centroid[1] += Math.abs(height - bb.h) * scale;
+    // Shift the centroid by the size of a service block.
+    // Note: if the size was clamped on the Y axis, we should only clamp by
+    // half the size of a service on the X axis or we risk clipping.
+    var clampedVertically = Math.abs(width - bb.w) < Math.abs(height - bb.w);
+    centroid[0] += SERVICE_SIZE * (clampedVertically ? 1 : 0.5);
+    centroid[1] += SERVICE_SIZE * 0.5;
     this.topology.modules.PanZoomModule.panToPoint({point: centroid});
   };
 
@@ -463,6 +498,7 @@ YUI.add('juju-view-bundle', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-topology',
-    'juju-view-utils'
+    'juju-view-utils',
+    'unscaled-pack-layout'
   ]
 });
