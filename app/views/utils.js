@@ -37,21 +37,27 @@ YUI.add('juju-view-utils', function(Y) {
     @class utils
   */
 
-  /**
-     Sanitize links.
-
-     Linkify links in text.  Wrap launchpad branch locations in spans to wrap
-     them.  HTML escape everywhere possible.
-
-     @method linkify
-   */
-  var _url = /\bhttps?:\/\/[-A-Za-z0-9+&@#\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\/%=~_()|]+/i;
+  // These are tools for the linkify function, below.
+  var _url = new RegExp(
+      '\\bhttps?:\\/\\/' +
+      '[-A-Za-z0-9+&@#\\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\\/%=~_()|]+',
+      'i');
   var _lp = /\blp:~[^ ]*[0-9A-Za-z_]+/i;
   var _long = /\b[\w]{50,}/;
   var _splitter = new RegExp(
       '(?=' + _url.source + '|' + _lp.source + '|' + _long.source + ')', 'i');
-  var _link_template = '<a href="$value" target="_blank" class="break-word">$safe</a>';
+  var _link_template = (
+      '<a href="$value" target="_blank" class="break-word">$safe</a>');
   var _span_template = '<span class="break-word">$safe</span>';
+  /**
+    Linkify links in text.  Wrap launchpad branch locations in spans to wrap
+    them.  Mark long words as needing to break.  HTML escape everywhere
+    possible.
+
+    @method linkify
+    @param {String} text The string to linkify.
+    @return {String} The linkified string.
+   */
   var linkify = function(text) {
     if (text) {
       var segments = [];
@@ -60,7 +66,8 @@ YUI.add('juju-view-utils', function(Y) {
           source = value;
         }
         var safe = Y.Escape.html(source);
-        segments.push(template.replace('$value', value).replace('$safe', safe));
+        segments.push(
+            template.replace('$value', value).replace('$safe', safe));
         segments.push(Y.Escape.html(segment.slice(source.length)));
       };
       text.split(_splitter).forEach(function(segment) {
@@ -70,7 +77,9 @@ YUI.add('juju-view-utils', function(Y) {
         } else {
           match = _lp.exec(segment);
           if (match) {
-            pushMatch('https://code.launchpad.net/' + match[0].slice(3), _link_template, segment, match[0]);
+            pushMatch(
+                'https://code.launchpad.net/' + match[0].slice(3),
+                _link_template, segment, match[0]);
           } else {
             match = _long.exec(segment);
             if (match) {
