@@ -55,7 +55,9 @@ YUI.add('viewlet-inspector-header', function(Y) {
       if (pojoModel.pending) {
         // Check if there is already a service using the default name to
         // trigger the name ux.
-        // If the regex doesn't match, blow up.  It should match.
+        // This regex simply removes the outer parentheses from the
+        // displayName that is set in the ghost-inspector.js updateGhostName
+        // method.  If the regex doesn't match, blow up.  It should match.
         var name = pojoModel.displayName.match(/^\(([^)]*)\)$/)[1];
         if (utils.checkForExistingService(name, viewContainerAttrs.db)) {
           pojoModel.invalidName = 'invalid';

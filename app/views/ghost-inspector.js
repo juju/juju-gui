@@ -170,6 +170,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @param {Y.EventFacade} e event object from valuechange.
     */
     updateGhostName: function(e) {
+      // This code has a fragile dependency: the inspector-header.js render
+      // method expects these parentheses around the model displayName.  If you
+      // change this format, or this code, make sure you look at that method
+      // too.  Hopefully the associated tests will catch it as well.
+      // Also see resetCanvas, below.
       var name = '(' + e.newVal + ')';
       this.model.set('displayName', name);
       this.serviceNameInputStatus(
@@ -184,6 +189,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
       @method resetCanvas
     */
     resetCanvas: function() {
+      // This code has a fragile dependency: the inspector-header.js render
+      // method expects these parentheses around the model displayName.  If you
+      // change this format, or this code, make sure you look at that method
+      // too.  Hopefully the associated tests will catch it as well.
+      // Also see updateGhostName, above.
       this.model.set('displayName', '(' + this.model.get('packageName') + ')');
       this.viewletManager.destroy();
     },
