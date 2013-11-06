@@ -803,7 +803,7 @@ YUI.add('juju-gui', function(Y) {
           instance = view.instance;
       if (!view.dropdown) {
         view.dropdown = new widgets.Dropdown({
-            node: Y.one('#help-dropdown')
+          node: Y.one('#help-dropdown')
         });
         view.dropdown.render();
       }
