@@ -141,6 +141,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(
             views.utils.linkify('foo <script>alert("hi");</script> bar'),
             'foo &lt;script&gt;alert(&quot;hi&quot;);&lt;&#x2F;script&gt; bar');
+        // This variation is a bit of a whitebox test: make sure that strings
+        // after matches are escaped also.  The "<bar>" at the end is the
+        // important bit.
+        assert.equal(
+            views.utils.linkify('foo http://example.com/ <bar>'),
+            'foo <a href="http://example.com/" target="_blank" ' +
+            'class="break-word">' +
+            'http:&#x2F;&#x2F;example.com&#x2F;</a> &lt;bar&gt;');
       });
 
       it('trims', function() {

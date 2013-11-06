@@ -50,9 +50,8 @@ YUI.add('juju-view-utils', function(Y) {
       '<a href="$value" target="_blank" class="break-word">$safe</a>');
   var _span_template = '<span class="break-word">$safe</span>';
   /**
-    Linkify links in text.  Wrap launchpad branch locations in spans to wrap
-    them.  Mark long words as needing to break.  HTML escape everywhere
-    possible.
+    Linkify links in text.  Wrap launchpad branch locations in links.  Mark
+    long words as needing to break.  HTML escape everywhere possible.
 
     @method linkify
     @param {String} text The string to linkify.
@@ -60,30 +59,64 @@ YUI.add('juju-view-utils', function(Y) {
    */
   var linkify = function(text) {
     if (text) {
+      // The function's strategy is to use a regex to split the string
+      // whenever we have a link, a Launchpad branch reference, or a long
+      // word.  The regex is careful to not actually consume anything, because
+      // then we would lose content from the text.  It also does not remember
+      // any matches, because this inserts the matches into the split string,
+      // which can be difficult to work with.
+
+      // After we have the split string, then we walk through each segment of
+      // the array and identify why we split: was it a link?  A Launchpad
+      // branch identifier?  A long word?  Or are we just at the beginning of
+      // the string?  For each of these cases, we reassemble the content, HTML
+      // escaping as much as possible so as to reduce the chance of XSS attack
+      // vectors.
+
+      // This will hold the segments of the resulting string.  After our work,
+      // we join all the segments together and return the result.
       var segments = [];
-      var pushMatch = function(value, template, segment, source) {
-        if (!source) {
-          source = value;
+      /**
+        Process a segment and add its parts to the segments array.
+
+        This is a function to try and make the main loop a bit cleaner.
+
+        @method pushMatch
+        @param {string} segment The full segment, as split from the original
+               string, that we are working with right now.
+        @param {string} match The regex match: the link, Launchpad branch, or
+               long word that comes at the beginning of the segment.
+        @param {string} template A string in which $value is replaced by the
+               unprocessed value, and $safe is replaced by the HTML-escaped
+               match.
+        @param {string or undefined} value to be used in the template.  If
+              this is not provided, the match is used.
+       */
+      var pushMatch = function(segment, match, template, value) {
+        if (!Y.Lang.isValue(value)) {
+          value = match;
         }
-        var safe = Y.Escape.html(source);
+        var safe = Y.Escape.html(match);
         segments.push(
             template.replace('$value', value).replace('$safe', safe));
-        segments.push(Y.Escape.html(segment.slice(source.length)));
+        segments.push(Y.Escape.html(segment.slice(match.length)));
       };
+      // This is the main loop, doing the job described in the comment at the top
+      // of the function.
       text.split(_splitter).forEach(function(segment) {
         var match = _url.exec(segment);
         if (match) {
-          pushMatch(match[0], _link_template, segment);
+          pushMatch(segment, match[0], _link_template);
         } else {
           match = _lp.exec(segment);
           if (match) {
             pushMatch(
-                'https://code.launchpad.net/' + match[0].slice(3),
-                _link_template, segment, match[0]);
+                segment, match[0], _link_template,
+                'https://code.launchpad.net/' + match[0].slice(3));
           } else {
             match = _long.exec(segment);
             if (match) {
-              pushMatch(match[0], _span_template, segment);
+              pushMatch(segment, match[0], _span_template);
             } else {
               segments.push(Y.Escape.html(segment));
             }
