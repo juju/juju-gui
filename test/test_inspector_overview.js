@@ -675,6 +675,19 @@ describe('Inspector Overview', function() {
     assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 5);
     assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 8);
 
+    // Check to make sure that the links to view the charm details in the
+    // upgrade section are full links instead of relative ones to allow
+    // the YUI Pjax module to properly parse them in IE10
+    serviceWrapper.one(SUC).all('.top-upgrade').each(function(node) {
+      // Selects the first anchor tag which is the 'view charm details' link
+      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
+    });
+
+    serviceWrapper.one(SUC).all('.other-charm').each(function(node) {
+      // Selects the first anchor tag which is the 'view charm details' link
+      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
+    });
+
     newContainer.remove(true);
   });
 

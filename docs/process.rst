@@ -155,6 +155,35 @@ Checklist for Making a Stable Release
     ``bzr commit -m 'Set version for release.'``
   - Push the branch directly to the parent (``bzr push :parent`` should work).
 
+- Verify that the section in ``CHANGES.yaml`` for the new release has the
+  expected changelog news items, using the format described in the file.  If
+  you suspect that the changelog does not adequately describe what we
+  accomplished since the last release, do the following.
+
+  - First, relax.  This is a matter of art.  Do your best, and focus on the
+    end user.  These instructions will ask you to make tons of judgements.  Go
+    for it. :-)
+  - Identify the tag of the last release.  This should usually be a three-part
+    identifier such as the one you made in the bzr tag above.  If you are not
+    sure of the tags, try the bzr "tags" command, e.g. ``bzr tags`` or (for
+    less cruft) ``bzr tags -r date:2013-10-17..``.
+  - Look at the logs since the last release tag.  If the last release tag was
+    0.11.0, for instance, use ``bzt log -r tag:'0.11.0'..``.  You might want
+    to pipe this output through less or something similar.
+  - Review each commit from those logs.  If the commit represents a new
+    feature or fix that is interesting to end users, add a bullet for it in
+    the changelog for this release.
+  - Features should come first, working approximately from the features
+    that are most compelling to end users down to the least.
+  - Fixes should come next.  Prefix fixes with "(FIX)" so they are clearly
+    marked.  Sometimes the difference between a feature and a fix is hard to
+    gauge.  Think about it from the perspective of the end user and make your
+    best shot.  Put big fixes first.
+  - Flagged, unreleased features come last.  Mention the feature flag first
+    ('Behind the "charmworldv3" flag, ...') and then summarize progress.  Even
+    if many commits were behind a feature flag, just have a single bullet
+    describing what we accomplished and, perhaps, what remains.
+
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
