@@ -56,12 +56,10 @@ YUI.add('dropdown', function(Y) {
     /**
      * Hide the dropdown panel.
      *
-     * @method _close
-     * @private
+     * @method close
      *
      */
-    _close: function(ev) {
-      ev.halt();
+    close: function() {
       this.get('node').removeClass('open');
     },
 
@@ -79,7 +77,7 @@ YUI.add('dropdown', function(Y) {
         );
         this.addEvent(
             container.on(
-                'clickoutside', this._close, this)
+                'clickoutside', this.close, this)
         );
       }
     },

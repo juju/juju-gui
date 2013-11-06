@@ -128,6 +128,11 @@ YUI.add('juju-gui', function(Y) {
 
       notifications_overview: {
         type: 'juju.views.NotificationsOverview'
+      },
+
+      help_dropdown: {
+        type: 'juju.views.HelpDropdownView',
+        preserve: true
       }
 
     },
@@ -796,23 +801,36 @@ YUI.add('juju-gui', function(Y) {
      * views.  We manually create an instance of this view and insert it into
      * the App's view metadata.
      *
-     * @method show_navbar_views
+     * @method show_notifications_view
      */
-    show_navbar_views: function(req, res, next) {
+    show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
-      if (!view.dropdown) {
-        view.dropdown = new widgets.Dropdown({
-          node: Y.one('#help-dropdown')
-        });
-        view.dropdown.render();
-      }
       if (!instance) {
         view.instance = new views.NotificationsView(
             {container: Y.one('#notifications'),
               env: this.env,
               notifications: this.db.notifications,
               nsRouter: this.nsRouter
+            });
+        view.instance.render();
+      }
+      next();
+    },
+
+    /**
+     * `help_dropdown` is a preserved view that remains rendered on all main
+     * views.  We manually create an instance of this view and insert it into
+     * the App's view metadata.
+     *
+     * @method show_help_dropdown_view
+     */
+    show_help_dropdown_view: function(req, res, next) {
+      var view = this.getViewInfo('help_dropdown'),
+          instance = view.instance;
+      if (!instance) {
+        view.instance = new views.HelpDropdownView({
+            container: Y.one('#help-dropdown')
             });
         view.instance.render();
       }
@@ -1290,7 +1308,8 @@ YUI.add('juju-gui', function(Y) {
         value: [
           // Called on each request.
           { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_navbar_views'},
+          { path: '*', callbacks: 'show_notifications_view'},
+          { path: '*', callbacks: 'show_help_dropdown_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
@@ -1348,7 +1367,6 @@ YUI.add('juju-gui', function(Y) {
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
-    'dropdown',
     'event-key',
     'event-touch',
     'model-controller',
@@ -1356,6 +1374,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls'
+    'viewmode-controls',
+    'help-dropdown'
   ]
 });
