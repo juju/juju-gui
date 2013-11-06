@@ -142,6 +142,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             views.utils.linkify('foo <script>alert("hi");</script> bar'),
             'foo &lt;script&gt;alert(&quot;hi&quot;);&lt;&#x2F;script&gt; bar');
       });
+
+      it('trims', function() {
+        assert.equal(
+            views.utils.linkify('  foo bar  '),
+            'foo bar');
+      });
     });
 
   });

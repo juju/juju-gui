@@ -90,7 +90,12 @@ YUI.add('juju-view-utils', function(Y) {
           }
         }
       });
-      text = segments.join('');
+      // The trim helps out for when the output is used in a whitespace: pre-
+      // line context, which is true in all cases as of this writing.  It
+      // shouldn't affect other uses, but if it does and we want to remove
+      // `trim` from the function, doublecheck that the trim is added back in
+      // elsewhere as desired.
+      text = segments.join('').trim();
     }
     return text;
   };
