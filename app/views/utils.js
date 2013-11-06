@@ -101,8 +101,8 @@ YUI.add('juju-view-utils', function(Y) {
             template.replace('$value', value).replace('$safe', safe));
         segments.push(Y.Escape.html(segment.slice(match.length)));
       };
-      // This is the main loop, doing the job described in the comment at the top
-      // of the function.
+      // This is the main loop, doing the job described in the comment at the
+      // top of the function.
       text.split(_splitter).forEach(function(segment) {
         var match = _url.exec(segment);
         if (match) {
