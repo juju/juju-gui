@@ -91,7 +91,7 @@
                         {{>providers}}
                         <h2>Description</h2>
                         {{#if description}}
-                            <p class="respect-whitespace">{{ truncate description 300 }}</p>
+                            <p class="respect-whitespace">{{linkify description}}</p>
                         {{else}}
                             <p>No description</p>
                         {{/if}}
@@ -115,11 +115,11 @@
                             <div class="first">
                                 <p>
                                     Latest change:
-                                    <span class="date">
+                                    <em class="date">
                                         {{prettyCommits.first.prettyDate}}
-                                    </span>
-                                    <strong>{{prettyCommits.first.author.name}}</strong>
-                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
+                                    </em>
+                                    <em>{{prettyCommits.first.author.name}}</em>
+                                    <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
                                     </a>
@@ -131,11 +131,11 @@
                                     {{#prettyCommits.remaining}}
                                         <li>
                                             <p>
-                                                <span class="date">
+                                                <em class="date">
                                                     {{prettyDate}}
-                                                </span>
-                                                <strong>{{author.name}}</strong>
-                                                <span class="respect-whitespace">{{message}}</span> -
+                                                </em>
+                                                <em>{{author.name}}</em>
+                                                <span class="respect-whitespace">{{linkify message}}</span> -
                                                 <a href="{{ revnoLink }}">
                                                     REVNO{{revno}}
                                                 </a>

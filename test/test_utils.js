@@ -110,6 +110,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       panel.destroy();
     });
 
+  describe('linkify', function() {
+    it('should linkify urls', function() {
+      assert.equal(
+        views.utils.linkify('foo http://example.com/foo?x=1&y=2 bar'),
+        'foo <a href="http://example.com/foo?x=1&y=2" target="_blank" class="break-word">http:&#x2F;&#x2F;example.com&#x2F;foo?x=1&amp;y=2</a> bar');
+    });
+
+    it('should linkify Launchpad references', function() {
+      assert.equal(
+        views.utils.linkify('foo lp:~example/juju-gui/mine bar'),
+        'foo <a href="https://code.launchpad.net/~example/juju-gui/mine" target="_blank" class="break-word">lp:~example&#x2F;juju-gui&#x2F;mine</a> bar');
+    });
+
+    it('should wrap long words', function() {
+      assert.equal(
+        views.utils.linkify('foo supecalifragilisticexpialidociousantidisestablishmentarianism bar'),
+        'foo <span class="break-word">supecalifragilisticexpialidociousantidisestablishmentarianism</span> bar');
+    });
+
+    it('should escape other content', function() {
+      assert.equal(
+        views.utils.linkify('foo <script>alert("hi");</script> bar'),
+        'foo &lt;script&gt;alert(&quot;hi&quot;);&lt;&#x2F;script&gt; bar');
+    });
+  });
+
   });
 }) ();
 
