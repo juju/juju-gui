@@ -159,7 +159,7 @@ describe('notifications', function() {
                     nsRouter: nsRouter});
         view.render();
         // Verify the expected elements appear in the view
-        container.one('#notify-list').should.not.equal(undefined);
+        container.one('.dropdown').should.not.equal(undefined);
         container.destroy();
      });
 
@@ -329,33 +329,6 @@ describe('notifications', function() {
        notice.get('title').should.equal('Problem with mysql/2');
        notice.get('message').should.equal('');
      });
-
-
-  it('should open on click and close on clickoutside', function(done) {
-    var container = Y.Node.create(
-        '<div id="test-container" style="display: none" class="container"/>'),
-        notifications = new models.NotificationList(),
-        env = juju.newEnvironment(),
-        view = new views.NotificationsView({
-          container: container,
-          notifications: notifications,
-          env: env,
-          nsRouter: nsRouter}).render(),
-        indicator;
-
-    Y.one('body').append(container);
-    notifications.add({title: 'testing', 'level': 'error'});
-    indicator = container.one('#notify-indicator');
-
-    indicator.simulate('click');
-    indicator.ancestor().hasClass('open').should.equal(true);
-
-    Y.one('body').simulate('click');
-    indicator.ancestor().hasClass('open').should.equal(false);
-
-    container.remove();
-    done();
-  });
 
 });
 

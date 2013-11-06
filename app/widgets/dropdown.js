@@ -72,18 +72,32 @@ YUI.add('dropdown', function(Y) {
      */
     bindUI: function() {
       var container = this.get('node');
+      if (container) {
+        this.addEvent(
+            container.one('.menu-link').on(
+                'click', this._toggleDropdown, this)
+        );
+        this.addEvent(
+            container.on(
+                'clickoutside', this._close, this)
+        );
+      }
+    },
 
-      this.addEvent(
-          container.one('.menu-link').on(
-              'click', this._toggleDropdown, this)
-      );
-      this.addEvent(
-          container.on(
-              'clickoutside', this._close, this)
-      );
+    /**
+     * Sets up the DOM nodes and renders them to the DOM.
+     *
+     * @method renderUI
+     */
+    renderUI: function() {
+      var container = this.get('node');
+      if (container) {
+        container.addClass('dropdown-menu');
+      }
     }
   }, {
     ATTRS: {
+
       /**
        * @attribute node
        * @default ''
