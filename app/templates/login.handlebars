@@ -4,13 +4,13 @@
     <div class="header">
       {{environment_name}} <span class="provider-type">{{provider_type}}</span>
     </div>
+    <div class="form-error">{{error_text}}</div>
     <form>
       <input type="text" disabled="disabled" value="{{user}}" />
       <input type="password" value="" placeholder="Enter password" />
       <input type="submit" value="Login" />
     </form>
   </div>
-  <div class="error">{{error_text}}</div>
   <div>{{help_text}}</div>
   <div><a href="https://juju.ubuntu.com/" target="_blank">juju.ubuntu.com</a></div>
 </div>

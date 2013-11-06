@@ -66,7 +66,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          );
           panel.show();
           var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn-danger');
+              button = panel_node.all('.button').item(0);
           button.getHTML().should.equal('Action Label');
           button.simulate('click');
           confirmed.should.equal(true);
@@ -83,7 +83,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               function() {confirmed = true;});
           panel.show();
           var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn:not(.btn-danger)');
+              button = panel_node.all('.button').item(1);
           button.getHTML().should.equal('Cancel');
           button.simulate('click');
           confirmed.should.equal(false);
@@ -103,11 +103,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       panel.get('buttons').footer.length.should.equal(2);
       panel.show();
       var panel_node = panel.get('boundingBox'),
-              button = panel_node.one('.btn-danger');
+              button = panel_node.all('.button').item(0);
       button.getHTML().should.equal('Second Action Label');
       button.simulate('click');
       confirmed.should.equal(true);
       panel.destroy();
+    });
+
+    describe('linkify', function() {
+      it('should linkify urls', function() {
+        assert.equal(
+            views.utils.linkify('foo http://example.com/foo?x=1&y=2 bar'),
+            'foo <a href="http://example.com/foo?x=1&y=2" target="_blank" ' +
+            'class="break-word">' +
+            'http:&#x2F;&#x2F;example.com&#x2F;foo?x=1&amp;y=2</a> bar');
+      });
+
+      it('should linkify Launchpad references', function() {
+        assert.equal(
+            views.utils.linkify('foo lp:~example/juju-gui/mine bar'),
+            'foo <a href="https://code.launchpad.net/~example/juju-gui/mine" ' +
+            'target="_blank" class="break-word">' +
+            'lp:~example&#x2F;juju-gui&#x2F;mine</a> bar');
+      });
+
+      it('should wrap long words', function() {
+        assert.equal(
+            views.utils.linkify(
+                'foo supecalifragilisticexpialidocious' +
+                'antidisestablishmentarianism bar'),
+            'foo <span class="break-word">' +
+            'supecalifragilisticexpialidociousantidisestablishmentarianism' +
+            '</span> bar');
+      });
+
+      it('should escape other content', function() {
+        assert.equal(
+            views.utils.linkify('foo <script>alert("hi");</script> bar'),
+            'foo &lt;script&gt;alert(&quot;hi&quot;);&lt;&#x2F;script&gt; bar');
+        // This variation is a bit of a whitebox test: make sure that strings
+        // after matches are escaped also.  The "<bar>" at the end is the
+        // important bit.
+        assert.equal(
+            views.utils.linkify('foo http://example.com/ <bar>'),
+            'foo <a href="http://example.com/" target="_blank" ' +
+            'class="break-word">' +
+            'http:&#x2F;&#x2F;example.com&#x2F;</a> &lt;bar&gt;');
+      });
+
+      it('trims', function() {
+        assert.equal(
+            views.utils.linkify('  foo bar  '),
+            'foo bar');
+      });
     });
 
   });
@@ -1404,7 +1452,7 @@ describe('utilities', function() {
   });
 
   describe('utils.deployBundleCallback', function() {
-    var utils, Y, notification;
+    var utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-view-utils', function(Y) {
@@ -1413,20 +1461,33 @@ describe('utilities', function() {
       });
     });
 
-    it('creates a notification if bundle import is successful', function(done) {
+    it('adds a notification if bundle import is successful', function(done) {
+      var expected = {
+        title: 'Bundle Deployment Requested',
+        message: 'Bundle deployment request successful. The full deployment ' +
+            'can take some time to complete',
+        level: 'important'
+      };
       utils.deployBundleCallback({
-        add: function() {
+        add: function(notification) {
+          assert.deepEqual(notification, expected);
           done();
         }}, {});
     });
 
-    it('creates a notification if bundle import if not successful',
-       function(done) {
-         utils.deployBundleCallback({
-           add: function() {
-             done();
-           }}, {err: true});
-       });
+    it('adds a notification if a deployment error occurs', function(done) {
+      var expected = {
+        title: 'Bundle Deployment Failed',
+        message: 'Unable to deploy the bundle. The server returned the ' +
+            'following error: bad wolf',
+        level: 'error'
+      };
+      utils.deployBundleCallback({
+        add: function(notification) {
+          assert.deepEqual(notification, expected);
+          done();
+        }}, {err: 'bad wolf'});
+    });
   });
 
 })();

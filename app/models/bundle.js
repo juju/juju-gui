@@ -53,8 +53,57 @@ YUI.add('juju-bundle-models', function(Y) {
     initializer: function(cfg) {
       this.loaded = false;
       this.on('load', function() { this.loaded = true; });
-    }
+    },
 
+    /**
+
+     Parse a combined name-email string of the form
+     "Full Name <email.example.com>".
+
+     Any string that is not parseable has the whole string used as the name
+     and the email set to 'n/a'.
+
+     @method parseNameEmail
+     @param {String} Name + email string.
+     @return {Array} [name, emailAddress]
+    */
+    parseNameEmail: function(author) {
+      var parts = /^([^<]+?) <(.+)>$/.exec(author);
+      if (Y.Lang.isNull(parts)) {
+        parts = [null, author, 'n/a'];
+      }
+      return [parts[1], parts[2]];
+    },
+    /**
+
+     Extract the recent commits into a format we can use nicely.  Output matches
+     the analogous function for charms.
+
+     @method extractRecentCommits
+     @param {Array} List of change objects.
+     @return {Array} Commit objects.
+    */
+    extractRecentCommits: function(changes) {
+      var commits = [];
+
+      if (changes) {
+        changes.forEach(function(change) {
+
+          var author_parts = this.parseNameEmail(change.authors[0]);
+          var date = new Date(change.created * 1000);
+          commits.push({
+            author: {
+              name: author_parts[0],
+              email: author_parts[1]
+            },
+            date: date,
+            message: change.message,
+            revno: change.revno
+          });
+        }, this);
+      }
+      return commits;
+    }
   }, {
     /**
       Static to indicate the type of entity so that other code
@@ -87,6 +136,7 @@ YUI.add('juju-bundle-models', function(Y) {
         }
       },
       data: {},
+      deployer_file_url: {},
       relations: {
         /**
          Return the relations data as a list of objects.
@@ -164,6 +214,25 @@ YUI.add('juju-bundle-models', function(Y) {
             }
           });
           return count;
+        }
+      },
+      /**
+       * @attribute recentCommits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      recentCommits: {
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the API.
+         *
+         * @method recentCommits.valueFn
+         *
+         */
+        valueFn: function() {
+          var changes = this.get('changes');
+          return this.extractRecentCommits(changes);
         }
       }
     }

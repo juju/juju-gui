@@ -333,7 +333,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       state.deploy('cs:precise/wordpress-15', function() {});
       var callback = function(result) {
         assert.equal(
-            result.err, 'A service with this name already exists.');
+            result.err, 'A service with this name already exists (wordpress).');
         done();
       };
       env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined,

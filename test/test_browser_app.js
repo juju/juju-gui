@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser fullscreen view', function() {
-      var container, FullScreen, view, views, Y;
+      var container, FullScreen, utils, view, views, Y;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -43,6 +43,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-tests-utils',
             'subapp-browser-fullscreen', function(Y) {
               views = Y.namespace('juju.browser.views');
+              utils = Y.namespace('juju-tests.utils');
               FullScreen = views.FullScreen;
               done();
             });
@@ -74,7 +75,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('must correctly render the initial browser ui', function() {
         var container = Y.one('#subapp-browser');
         view = new FullScreen({
-          store: new Y.juju.charmworld.APIv2({
+          store: new Y.juju.charmworld.APIv3({
             apiHost: 'http://localhost'
           })
         });
@@ -107,7 +108,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('must show the home icons when withHome is set', function() {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv2({});
+            fakeStore = new Y.juju.charmworld.APIv3({});
 
         view = new FullScreen({
           store: fakeStore,
@@ -121,7 +122,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('shows the home icons if the withHome is changed', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv2({});
+            fakeStore = new Y.juju.charmworld.APIv3({});
 
         view = new FullScreen({
           store: fakeStore
@@ -139,7 +140,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv2({});
+            fakeStore = new Y.juju.charmworld.APIv3({});
         view = new FullScreen({
           store: fakeStore
         });
@@ -158,7 +159,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('resets charmid and hash on search', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv2({});
+            fakeStore = new Y.juju.charmworld.APIv3({});
         view = new FullScreen({
           charmID: 'precise/jenkins-13'
         });
@@ -176,11 +177,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
+      it('picks up the search widget deploy event', function(done) {
+        var container = utils.makeContainer('subapp-browser'),
+            fakeStore = new Y.juju.charmworld.APIv3({});
+        view = new FullScreen({
+          charmID: 'precise/jenkins-13',
+          store: fakeStore
+        });
+
+        view._deployEntity = function() {
+          container.remove(true);
+          done();
+        };
+
+        view.render(container);
+        view.search.fire(view.search.EVT_DEPLOY);
+      });
+
     });
   })();
 
   (function() {
-    describe('browser minimzed view', function() {
+    describe('browser minimized view', function() {
       var Y, container, view, views, Minimized;
 
       before(function(done) {
@@ -228,7 +246,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser sidebar view', function() {
-      var Y, container, view, views, Sidebar;
+      var Y, container, utils, view, views, Sidebar;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -240,6 +258,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'subapp-browser-sidebar',
             function(Y) {
               views = Y.namespace('juju.browser.views');
+              utils = Y.namespace('juju-tests.utils');
               Sidebar = views.Sidebar;
               done();
             });
@@ -281,7 +300,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
           container: container,
-          store: new Y.juju.charmworld.APIv2({
+          store: new Y.juju.charmworld.APIv3({
             apiHost: 'http://localhost'
           })
         });
@@ -324,7 +343,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('shows the home icon when instructed', function() {
         var container = Y.one('#subapp-browser');
         view = new Sidebar({
-          store: new Y.juju.charmworld.APIv2({
+          store: new Y.juju.charmworld.APIv3({
             apiHost: 'http://localhost'
           }),
           withHome: true
@@ -355,7 +374,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('routes home when it catches a gohome event', function(done) {
         var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv2({});
+            fakeStore = new Y.juju.charmworld.APIv3({});
         view = new Sidebar({
           store: fakeStore
         });
@@ -369,6 +388,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         view.search._onHome({
           halt: function() {}
         });
+      });
+
+      it('picks up the search widget deploy event', function(done) {
+        var container = utils.makeContainer('subapp-browser'),
+            fakeStore = new Y.juju.charmworld.APIv3({});
+        view = new Sidebar({
+          charmID: 'precise/jenkins-13',
+          store: fakeStore
+        });
+
+        view._deployEntity = function() {
+          container.remove(true);
+          done();
+        };
+
+        view.render(container);
+        view.search.fire(view.search.EVT_DEPLOY);
       });
 
     });
@@ -388,7 +424,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-views',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
-              CharmworldAPI = Y.namespace('juju').charmworld.APIv2;
+              CharmworldAPI = Y.namespace('juju').charmworld.APIv3;
               next = function() {};
               done();
             });
@@ -723,6 +759,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                   sidebar: false,
                   renderCharmDetails: false,
                   renderEditorial: false,
+                  renderOnboarding: true,
                   renderSearchResults: false
                 };
               };
@@ -760,6 +797,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         browser.renderEditorial = function() {
           hits.renderEditorial = true;
+        };
+        browser.renderOnboarding = function() {
+          hits.renderOnboarding = true;
         };
         browser.renderSearchResults = function() {
           hits.renderSearchResults = true;
@@ -1231,6 +1271,59 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
+      it('onboarding is called in build mode', function() {
+        var req = {
+          path: '/sidebar/',
+          params: {
+            viewmode: 'sidebar'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderEditorial: true,
+          renderOnboarding: true
+        });
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+      });
+
+      it('onboarding is not called with a charm id', function() {
+        var req = {
+          path: '/sidebar/',
+          params: {
+            viewmode: 'sidebar',
+            id: '/precise/mysql'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderEditorial: true,
+          renderCharmDetails: true,
+          renderOnboarding: true
+        });
+
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+      });
+
+      it('onboarding is not called with a search', function() {
+        var req = {
+          path: '/sidebar/search',
+          params: {
+            viewmode: 'sidebar',
+            id: 'search'
+          }
+        };
+        var expected = Y.merge(hits, {
+          sidebar: true,
+          renderSearchResults: true,
+          renderOnboarding: true
+        });
+
+        browser.routeView(req, undefined, function() {});
+        assert.deepEqual(hits, expected);
+      });
+
       it('/minimized dispatches correctly', function() {
         var req = {
           path: '/minimized',
@@ -1361,7 +1454,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.sidebar({path: '/'}, null, function() {});
         assert.isTrue(hits.renderCharmDetails);
       });
-
     });
   })();
 })();

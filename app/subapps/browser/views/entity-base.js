@@ -20,8 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('subapp-browser-entitybaseview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      widgets = Y.namespace('juju.widgets'),
-      DATE_FORMAT = '%d/%b/%y';
+      widgets = Y.namespace('juju.widgets');
 
   /**
     Provides the shared methods for the Charm and Bundle browser views.
@@ -156,14 +155,15 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-       Creates the bazaar url for the charm.
+       Creates the Bazaar url for the charm/bundle.
 
        @method _getSourceLink
        @private
+       @param {String} lp_url The short Launchpad URL.
+       @return {String} Bazaar URL.
      */
-    _getSourceLink: function() {
-      var url = this.get('entity').get('code_source').location;
-      url = url.replace('lp:', 'http://bazaar.launchpad.net/');
+    _getSourceLink: function(lp_url) {
+      var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
       return url + '/files';
     },
 
@@ -203,18 +203,14 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         firstTmp = commits.shift();
         prettyCommits.first = firstTmp;
         prettyCommits.first.prettyDate = Y.Date.format(
-            prettyCommits.first.date, {
-              format: DATE_FORMAT
-            });
+            prettyCommits.first.date);
         prettyCommits.first.revnoLink = this._getRevnoLink(
             sourceLink, prettyCommits.first.revno);
       }
 
       Y.Array.each(commits, function(commit) {
         commit.prettyDate = Y.Date.format(
-            commit.date, {
-              format: DATE_FORMAT
-            });
+            commit.date);
         commit.revnoLink = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
       }, this);
@@ -530,12 +526,28 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      * The "deploy" function prompts the user for service configuration and
      * deploys a service.
      *
-     * @attribute deploy
+     * The proper deploy function is provided from the browser subapp.
+     *
+     * @attribute deployService
      * @default undefined
      * @type {Function}
      *
      */
-    deploy: {}
+    deployService: {},
+
+    /**
+     * The "deploy" function prompts the user for service configuration and
+     * deploys a service.
+     *
+     * The proper deploy function is provided from the browser subapp.
+     *
+     * @attribute deployBundle
+     * @default undefined
+     * @type {Function}
+     *
+     */
+    deployBundle: {}
+
   };
 
   ns.EntityBaseView = EntityBaseView;

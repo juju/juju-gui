@@ -1,8 +1,17 @@
-<div class="charm {{#if is_approved}}recommended{{/if}}">
+<div class="charm">
     <div class="content">
         {{#unless forInspector}}
             <div class="header">
-                    {{#unless isFullscreen}}<a href="" class="back icon"></a>{{/unless}}
+                {{#if is_approved}}
+                    <div class="recommended">
+                        <i class="sprite recommended-triangle-large"></i>
+                    </div>
+                {{/if}}
+                {{#unless isFullscreen}}
+                  <a href="" class="back icon">
+                      <i class="sprite panel_close"></i>
+                  </a>
+                {{/unless}}
                 <div class="block-icon">
                     <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
                 </div>
@@ -67,13 +76,16 @@
             {{#unless forInspector}}
                 <span id="sharing">
                   <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">
-                    <i class="sprite twitter-normal"></i>
+                    <i class="sprite twitter-normal normal"></i>
+                    <i class="sprite twitter-hover hover"></i>
                   </a>
                   <a href="https://plus.google.com/share?url={{ link }}" title="Share on G+">
-                    <i class="sprite google-normal"></i>
+                    <i class="sprite google-normal normal"></i>
+                    <i class="sprite google-hover hover"></i>
                   </a>
                   <a href="mailto:?subject={{ emailSubject }}&body={{ emailText }}" title="Share with email">
-                    <i class="sprite email-normal"></i>
+                    <i class="sprite email-normal normal"></i>
+                    <i class="sprite email-hover hover"></i>
                   </a>
                 </span>
             {{/unless}}
@@ -89,39 +101,33 @@
                             <p><em>This is a local charm; only limited information will be available</em></p>
                         {{/if}}
                         <h2>Description</h2>
-                        <p class="respect-whitespace">{{#if isFullscreen}}{{ description }}{{else}}{{ truncate description 300 }}{{/if}}</p>
+                        <p class="respect-whitespace">{{linkify description}}</p>
                     </div>
 
                     <div class="changelog">
                         <h3 class="section-title">
-                            {{#if recent_commits}}
+                            {{#if recentCommits}}
                                 <a href="" class="expandToggle"
                                     data-state="closed">
                             {{/if}}
                             Change log
-                            {{#if recent_commits}}
+                            {{#if recentCommits}}
                                     <span class="expand">
-                                        <span class="more">
-                                            <img src="/juju-ui/assets/images/expand_icon.png"
-                                                alt="Expand" />
-                                        </span>
-                                        <span class="less hidden">
-                                            <img src="/juju-ui/assets/images/contract_icon.png"
-                                                alt="Contract" />
-                                        </span>
+                                        <i class="sprite expand_icon more"></i>
+                                        <i class="sprite contract_icon less hidden"></i>
                                     </span>
                                 </a>
                             {{/if}}
                         </h3>
-                        {{#if recent_commits}}
+                        {{#if recentCommits}}
                             <div class="first">
                                 <p>
                                     Latest change:
-                                    <span class="date">
+                                    <em class="date">
                                         {{prettyCommits.first.prettyDate}}
-                                    </span>
-                                    <strong>{{prettyCommits.first.author.name}}</strong>
-                                    <span class="respect-whitespace">{{prettyCommits.first.message}}</span> -
+                                    </em>
+                                    <em>{{prettyCommits.first.author.name}}</em>
+                                    <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
                                     <a href="{{ prettyCommits.first.revnoLink }}">
                                       REVNO{{prettyCommits.first.revno}}
                                     </a>
@@ -136,11 +142,11 @@
                                     {{#prettyCommits.remaining}}
                                         <li>
                                             <p>
-                                                <span class="date">
+                                                <em class="date">
                                                     {{prettyDate}}
-                                                </span>
-                                                <strong>{{author.name}}</strong>
-                                                <span class="respect-whitespace">{{message}}</span> -
+                                                </em>
+                                                <em>{{author.name}}</em>
+                                                <span class="respect-whitespace">{{linkify message}}</span> -
                                                 <a href="{{ revnoLink }}">
                                                     REVNO{{revno}}
                                                 </a>

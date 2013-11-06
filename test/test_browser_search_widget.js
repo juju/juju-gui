@@ -155,6 +155,24 @@ describe('browser search widget', function() {
     });
   });
 
+  it('generates a bundle change event when bundle selected', function(done) {
+    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
+      assert.equal(ev.newVal, 'TestBundle');
+      // The bundle id gets prefixed with the /bundle to help routing.
+      assert.equal(ev.change.charmID, '/bundle/~hatch/wiki/7/TestBundle');
+      assert.equal(ev.change.filter.categories.length, 0);
+      done();
+    });
+
+    search._suggestionSelected({
+      halt: function() {},
+      result: {
+        raw: {bundle: {id: '~hatch/wiki/7/TestBundle'}},
+        text: 'TestBundle'
+      }
+    });
+  });
+
   it('supports an onHome event', function(done) {
     search.on(search.EVT_SEARCH_GOHOME, function() {
       done();
@@ -188,6 +206,8 @@ describe('search widget autocomplete', function() {
       utils = Y.namespace('juju-tests.utils');
       data = utils.loadFixture('data/autocomplete.json');
 
+      cleanIconHelper = utils.stubCharmIconPath();
+
       // Need the handlebars helper for the token to render.
       Y.Handlebars.registerHelper(
           'charmFilePath',
@@ -203,7 +223,7 @@ describe('search widget autocomplete', function() {
     cleanIconHelper = utils.stubCharmIconPath();
 
     // We need a valid store instance to send back the data.
-    fakeStore = new Y.juju.charmworld.APIv2({});
+    fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.set('datasource', {
       sendRequest: function(params) {
         // Stubbing the server callback value
@@ -305,6 +325,32 @@ describe('search widget autocomplete', function() {
       });
       done();
     });
+  });
+
+  it('fires deploy event when the deploy button is selected', function(done) {
+    // This is heading into the private, non-publicized events of the AC
+    // widget in an effort to hit the html on render after results come
+    // back.
+    search.ac.after('resultsChange', function(ev) {
+      //Find one of the deployable results and trigger click event.
+      var chosenOne = container.one('.search_add_to_canvas');
+      chosenOne.simulate('click');
+    });
+
+    search.on(search.EVT_DEPLOY, function(ev) {
+      // Verify that the event was called with the correct payload to deploy.
+      assert.equal(ev.entityType, 'charm');
+      assert.equal(ev.id, 'precise/apache2-passenger-3');
+      assert.equal(ev.data.url, 'cs:precise/apache2-passenger-3');
+      done();
+    });
+
+    // hack into the ac widget to simulate the valueChange event
+    search.ac._afterValueChange({
+      newVal: 'a',
+      src: 'ui'
+    });
+
   });
 
 });

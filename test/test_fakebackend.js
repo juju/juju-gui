@@ -92,7 +92,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('rejects poorly formed charm ids', function() {
       fakebackend.deploy('shazam!!!!!!', callback);
-      assert.equal(result.error, 'Invalid charm id.');
+      assert.equal(result.error, 'Invalid charm id: shazam!!!!!!');
     });
 
     it('deploys a charm', function() {
@@ -204,11 +204,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The service name is provided explicitly.
       fakebackend.deploy(
           'cs:precise/haproxy-18', callback, {name: 'wordpress'});
-      assert.equal(result.error, 'A service with this name already exists.');
+      assert.equal(result.error,
+          'A service with this name already exists (wordpress).');
       // The service name is derived from charm.
       result = undefined;
       fakebackend.deploy('cs:precise/wordpress-15', callback);
-      assert.equal(result.error, 'A service with this name already exists.');
+      assert.equal(result.error,
+          'A service with this name already exists (wordpress).');
     });
 
     it('reuses already-loaded charms with the same explicit id.', function() {
@@ -528,6 +530,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackend();
+    });
+
     afterEach(function() {
       if (fakebackend) {
         fakebackend.destroy();
@@ -555,9 +561,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             // Verify config.
             var wordpress = fakebackend.db.services.getById('wordpress');
+            var wordpressCharm = fakebackend.db.charms.getById(
+                'cs:precise/wordpress-15');
             var mysql = fakebackend.db.services.getById('mysql');
-            assert.equal(wordpress.get('config.engine'), 'nginx');
+            // This value is different from the default (nginx).
+            assert.equal(wordpressCharm.get('options.engine.default'), 'nginx');
+            assert.equal(wordpress.get('config.engine'), 'apache');
+            // This value is the default, as provided by the charm.
             assert.equal(wordpress.get('config.tuning'), 'single');
+            assert.isTrue(wordpress.get('exposed'));
+            assert.isFalse(mysql.get('exposed'));
 
             // Constraints
             var constraints = mysql.get('constraints');
@@ -565,6 +578,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
             done();
           }).then(undefined, done);
+    });
+
+    it('should stop importing if service names conflict', function(done) {
+      var fakebackend = utils.makeFakeBackend();
+      // If there is a problem within the promises `done` will be called
+      // at the end of each promise chain with the error.
+      utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
+      .then(function() {
+            utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
+            .then(function(resolve) {
+                  assert.equal(resolve.result.error,
+                      'wordpress is already present in the database.' +
+                      ' Change service name and try again.');
+                  assert.equal(resolve.backend.db.services.size(), 2,
+                      'There should only be two services in the database');
+                  done();
+                }).then(null, done);
+          }).then(null, done);
     });
 
     it('should provide status of imports', function(done) {
@@ -589,7 +620,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, 'Import target ambigious, aborting.');
     });
 
-    it('detects service id collisions', function() {
+    it('detects service id collisions', function(done) {
       fakebackend = utils.makeFakeBackend();
       fakebackend.db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
       var data = {
@@ -597,9 +628,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           charm: 'cs:precise/mysql-26',
           num_units: 2, options: {debug: false}}}}
       };
-      assert.throws(function() {
-        fakebackend.importDeployer(data);
-      }, 'mysql is already present in the database.');
+      fakebackend.importDeployer(data, null, function(data) {
+        assert.equal(data.error, 'mysql is already present in the database.' +
+            ' Change service name and try again.');
+        done();
+      });
     });
 
     it('properly implements inheritence in target definitions', function(done) {
@@ -738,7 +771,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('disallows malformed charm names', function(done) {
-        fakebackend.getCharm('^invalid', ERROR('Invalid charm id.', done));
+        fakebackend.getCharm('^invalid',
+            ERROR('Invalid charm id: ^invalid', done));
       });
 
       it('successfully returns valid charms', function(done) {
@@ -766,7 +800,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('returns an error for a missing service', function() {
         var result = fakebackend.getService('^invalid');
-        assert.equal(result.error, 'Invalid service id.');
+        assert.equal(result.error, 'Invalid service id: ^invalid');
       });
 
       it('successfully returns a valid service', function(done) {
@@ -846,7 +880,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('returns an error for a missing service', function() {
         var result = fakebackend.destroyService('missing');
-        assert.equal('Invalid service id.', result.error);
+        assert.equal('Invalid service id: missing', result.error);
       });
 
       it('successfully destroys a valid service', function(done) {
@@ -856,7 +890,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           assert.isUndefined(result.error);
           // Ensure the service can no longer be retrieved.
           result = fakebackend.getService('wordpress');
-          assert.equal(result.error, 'Invalid service id.');
+          assert.equal(result.error, 'Invalid service id: wordpress');
           done();
         });
       });
@@ -875,7 +909,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             assert.equal('wordpress', result);
             // Ensure the destroyed service can no longer be retrieved.
             result = fakebackend.getService('wordpress');
-            assert.equal(result.error, 'Invalid service id.');
+            assert.equal(result.error, 'Invalid service id: wordpress');
             // But the other one exists and has no relations.
             mysql = fakebackend.getService('mysql').result;
             assert.lengthOf(mysql.rels, 0);
@@ -1033,13 +1067,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isUndefined(deployResult.error);
       assert.equal(
           fakebackend.addUnit('wordpress', 'goyesca').error,
-          'Invalid number of units.');
+          'Invalid number of units [goyesca] for service: wordpress');
       assert.equal(
           fakebackend.addUnit('wordpress', 0).error,
-          'Invalid number of units.');
+          'Invalid number of units [0] for service: wordpress');
       assert.equal(
           fakebackend.addUnit('wordpress', -1).error,
-          'Invalid number of units.');
+          'Invalid number of units [-1] for service: wordpress');
     });
 
     it('returns error for invalid number of subordinate units', function() {
@@ -1047,13 +1081,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isUndefined(deployResult.error);
       assert.equal(
           fakebackend.addUnit('puppet', 'goyesca').error,
-          'Invalid number of units.');
+          'Invalid number of units [goyesca] for service: puppet');
       assert.equal(
           fakebackend.addUnit('puppet', 1).error,
-          'Invalid number of units.');
+          'Invalid number of units [1] for service: puppet');
       assert.equal(
           fakebackend.addUnit('puppet', -1).error,
-          'Invalid number of units.');
+          'Invalid number of units [-1] for service: puppet');
       // It also ignores empty requests
       assert.isUndefined(
           fakebackend.addUnit('puppet', 0).error);
@@ -1089,6 +1123,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.match(
           result.machines[0].public_address, /^[^.]+\.example\.com$/);
       assert.equal(result.machines[0].agent_state, 'running');
+    });
+
+    it('deploys subordinates without adding units', function() {
+      fakebackend.deploy('cs:precise/puppet-5', callback);
+      assert.equal(deployResult.service.get('name'), 'puppet');
+      assert.equal(deployResult.units.length, 0);
+      assert.equal(deployResult.service.get('units').size(), 0);
     });
 
     it('adds multiple units', function() {

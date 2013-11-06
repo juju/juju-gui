@@ -409,7 +409,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.after('defaultSeriesChange', function() {
         var callback = function(result) {
           assert.equal(
-              result.err, 'A service with this name already exists.');
+              result.err,
+              'A service with this name already exists (wordpress).');
           done();
         };
         env.deploy(

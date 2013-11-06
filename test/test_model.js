@@ -50,6 +50,14 @@ describe('test_model.js', function() {
       assert.isUndefined(charm.get('owner'));
     });
 
+    it('must accept charm ids without versions.', function() {
+      var charm = new models.Charm(
+          {id: 'cs:~alt-bac/precise/openstack-dashboard'});
+      assert.isUndefined(charm.get('revision'));
+      assert.equal(charm.get('charm_path'),
+          '~alt-bac/precise/openstack-dashboard/json');
+    });
+
     it('must be able to parse hyphenated owner names', function() {
       // Note that an earlier version of the parsing code did not handle
       // hyphens in user names, so this test intentionally includes one.
@@ -442,7 +450,7 @@ describe('test_model.js', function() {
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
-      fakeStore = new Y.juju.charmworld.APIv2({});
+      fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           params.callback.success({
@@ -621,7 +629,7 @@ describe('test_model.js', function() {
 
     it('maps revisions nicely for us with converted dates', function() {
       instance = new models.Charm(data.charm);
-      var commits = instance.get('recent_commits');
+      var commits = instance.get('recentCommits');
       commits.length.should.equal(10);
 
       // Check that our commits have the right keys constructed from the api
@@ -695,7 +703,7 @@ describe('test_model.js', function() {
 
     it('tracks recent commits in the last 30 days', function() {
       instance = new models.Charm(data.charm);
-      var commits = instance.get('recent_commits'),
+      var commits = instance.get('recentCommits'),
           today = new Date();
 
       // adjust the dates on there manually because the tests will be run on
@@ -865,6 +873,112 @@ describe('test_model.js', function() {
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
       var result = db.exportDeployer().envExport;
       assert.isUndefined(result.services.puppet.num_units);
+    });
+
+    it('exports options preserving their types', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-42',
+        config: {
+          one: 'foo',
+          two: '2',
+          three: '3.14',
+          four: 'true',
+          five: false
+        }
+      });
+      db.charms.add([{
+        id: 'precise/wordpress-42',
+        options: {
+          one: {'default': '', type: 'string'},
+          two: {'default': 0, type: 'int'},
+          three: {'default': 0, type: 'float'},
+          four: {'default': undefined, type: 'boolean'},
+          five: {'default': true, type: 'boolean'}
+        }
+      }]);
+      var result = db.exportDeployer().envExport;
+      assert.strictEqual(result.services.wordpress.options.one, 'foo');
+      assert.strictEqual(result.services.wordpress.options.two, 2);
+      assert.strictEqual(result.services.wordpress.options.three, 3.14);
+      assert.strictEqual(result.services.wordpress.options.four, true);
+      assert.strictEqual(result.services.wordpress.options.five, false);
+    });
+
+    it('avoid exporting options set to their default values', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-42',
+        config: {
+          one: 'foo',
+          two: '2',
+          three: '3.14',
+          four: 'false',
+          five: true
+        }
+      });
+      db.charms.add([{
+        id: 'precise/wordpress-42',
+        options: {
+          one: {'default': 'foo', type: 'string'},
+          two: {'default': 0, type: 'int'},
+          three: {'default': 3.14, type: 'float'},
+          four: {'default': undefined, type: 'boolean'},
+          five: {'default': true, type: 'boolean'}
+        }
+      }]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.wordpress.options.one);
+      assert.strictEqual(result.services.wordpress.options.two, 2);
+      assert.isUndefined(result.services.wordpress.options.three);
+      assert.strictEqual(result.services.wordpress.options.four, false);
+      assert.isUndefined(result.services.wordpress.options.five, false);
+    });
+
+    it('exports non-default options', function() {
+      db.services.add({
+        id: 'wordpress',
+        charm: 'precise/wordpress-1',
+        config: {one: '1', two: '2', three: '3', four: '4', five: true},
+        annotations: {'gui-x': 100, 'gui-y': 200}
+      });
+      db.charms.add([{id: 'precise/mysql-1'},
+            {id: 'precise/wordpress-1',
+              options: {
+                one: {
+                  'default': ''
+                },
+                two: {
+                  'default': null
+                },
+                three: {
+                  'default': undefined
+                },
+                four: {
+                  'default': '0'
+                },
+                five: {
+                  'default': false
+                }
+              }
+            }
+          ]);
+      var result = db.exportDeployer().envExport;
+      assert.equal(result.services.wordpress.options.one, '1');
+      assert.equal(result.services.wordpress.options.two, '2');
+      assert.equal(result.services.wordpress.options.three, '3');
+      assert.equal(result.services.wordpress.options.four, '4');
+      assert.equal(result.services.wordpress.options.five, true);
+    });
+
+    it('exports exposed flag', function() {
+      db.services.add({id: 'wordpress', charm: 'precise/wordpress-4'});
+      db.charms.add([{id: 'precise/wordpress-4'}]);
+      var result = db.exportDeployer().envExport;
+      assert.isUndefined(result.services.wordpress.expose);
+      db.services.getById('wordpress').set('exposed', true);
+      result = db.exportDeployer().envExport;
+      assert.isTrue(result.services.wordpress.expose);
     });
 
   });

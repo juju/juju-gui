@@ -141,7 +141,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('has sharing links', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -185,7 +185,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view._locateReadme().should.eql('readme.rst');
 
-      // Matches for caps as well
+      // Matches for caps as well.
       view.get('entity').set('files', [
         'hooks/install',
         'README.md'
@@ -204,7 +204,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           code_source: { location: 'lp:~foo'}
         })
       });
-      var url = view._getSourceLink();
+      var url = view._getSourceLink(
+          view.get('entity').get('code_source').location);
       assert.equal('http://bazaar.launchpad.net/~foo/files', url);
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
@@ -266,7 +267,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       ];
       var commits = view._formatCommitsForHtml(
-          revisions, view._getSourceLink());
+          revisions,
+          view._getSourceLink(view.get('entity').get('code_source').location));
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
           commits.first.revnoLink);
@@ -276,7 +278,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to display the readme content', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -336,7 +338,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.iconpath = function() {
         return 'charm icon url';
       };
@@ -355,7 +357,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(),
         store: fakeStore
       });
-      view.set('deploy', function(charm, serviceAttrs) {
+      view.set('deployService', function(charm, serviceAttrs) {
         var serviceCharm = view.get('entity');
         assert.deepEqual(charm, serviceCharm);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');
@@ -366,7 +368,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should load a file when a hook is selected', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -406,7 +408,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should be able to render markdown as html', function() {
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -514,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -862,7 +864,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -908,7 +910,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -943,7 +945,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -994,10 +996,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
-      var fakeStore = new Y.juju.charmworld.APIv2({});
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
-          // Stubbing the server callback value
+          // Stubbing the server callback value.
           params.callback.success({
             response: {
               results: [{

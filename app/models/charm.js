@@ -30,7 +30,7 @@ YUI.add('juju-charm-models', function(Y) {
   var RECENT_DAYS = 30;
 
   var models = Y.namespace('juju.models');
-  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+|HEAD)$/;
+  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+|HEAD))?$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
@@ -65,6 +65,33 @@ YUI.add('juju-charm-models', function(Y) {
         return result;
       }
     }
+  };
+
+  /**
+
+   Extract the recent commits into a format we can use nicely.
+
+   @method extractRecentCommits
+   @return {array} Commit objects.
+
+  */
+  var extractRecentCommits = function(revisions) {
+    var commits = [];
+
+    if (revisions) {
+      Y.Array.each(revisions, function(commit) {
+        commits.push({
+          author: {
+            name: commit.authors[0].name,
+            email: commit.authors[0].email
+          },
+          date: new Date(commit.date),
+          message: commit.message,
+          revno: commit.revno
+        });
+      });
+    }
+    return commits;
   };
 
   /**
@@ -123,34 +150,6 @@ YUI.add('juju-charm-models', function(Y) {
   models.Charm = Y.Base.create('browser-charm', Y.Model, [], {
     // Only care about at most, this number of related charms per interface.
     maxRelatedCharms: 5,
-
-    /**
-
-      Load the recent commits into a format we can use nicely.
-
-      @method _loadRecentCommits
-
-     */
-    _loadRecentCommits: function() {
-      var source = this.get('code_source'),
-          commits = [];
-
-      if (source && source.revisions) {
-        Y.Array.each(source.revisions, function(commit) {
-          commits.push({
-            author: {
-              name: commit.authors[0].name,
-              email: commit.authors[0].email
-            },
-            date: new Date(commit.date),
-            message: commit.message,
-            revno: commit.revno
-          });
-        });
-      }
-
-      return commits;
-    },
 
     /**
      * Parse the relations ATTR from the api into specific provides/requires
@@ -405,10 +404,12 @@ YUI.add('juju-charm-models', function(Y) {
          */
         getter: function() {
           var owner = this.get('owner');
+          var revision = this.get('revision');
+          revision = Y.Lang.isValue(revision) ? '-' + revision : '';
           return [
             (owner ? '~' + owner : 'charms'),
             this.get('series'),
-            (this.get('package_name') + '-' + this.get('revision')),
+            (this.get('package_name') + revision),
             'json'
           ].join('/');
         }
@@ -568,7 +569,7 @@ YUI.add('juju-charm-models', function(Y) {
       is_subordinate: {},
       maintainer: {},
       /*
-        API related metdata information for this charm object.
+        API related metadata information for this charm object.
 
         This includes information such as related charms calculated by the
         back end, but are not directly part of the charms representation.
@@ -630,7 +631,7 @@ YUI.add('juju-charm-models', function(Y) {
          */
         getter: function() {
           var count = 0,
-              commits = this.get('recent_commits'),
+              commits = this.get('recentCommits'),
               today = new Date(),
               recentAgo = new Date();
           recentAgo.setDate(today.getDate() - RECENT_DAYS);
@@ -644,21 +645,26 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       /**
-       * @attribute recent_commits
+       * @attribute recentCommits
        * @default undefined
        * @type {Array} list of objects for each commit.
        *
        */
-      'recent_commits': {
+      recentCommits: {
         /**
          * Return the commits of the charm in a format we can live with from
          * the source code data provided by the api.
          *
-         * @method recent_commits.valueFn
+         * @method recentCommits.valueFn
          *
          */
         valueFn: function() {
-          return this._loadRecentCommits();
+          var source = this.get('code_source');
+          var commits = [];
+          if (source) {
+            commits = extractRecentCommits(source.revisions);
+          }
+          return commits;
         }
       },
       /**
@@ -726,7 +732,9 @@ YUI.add('juju-charm-models', function(Y) {
          * @method revision.setter
          */
         setter: function(val) {
-          return parseInt(val, 10);
+          if (val) {
+            return parseInt(val, 10);
+          }
         }
       },
       scheme: {

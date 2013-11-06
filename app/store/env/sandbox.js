@@ -1310,9 +1310,10 @@ YUI.add('juju-env-sandbox', function(Y) {
             DeployerId: reply.DeploymentId
           }
         };
-        if (reply.Error) {
-          response.Error = reply.Error;
-        }
+        // Because the error can come in two different formats
+        // depending on the backend we need to check both.
+        response.Error = reply.Error || reply.error;
+
         client.receive(response);
       };
       state.importDeployer(data.Params.YAML, data.Params.Name,

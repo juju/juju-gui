@@ -93,7 +93,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ghostAttributes = {
         icon: this.get('store').iconpath(charm.get('storeId'))
       };
-      this.get('deploy').call(null, charm, ghostAttributes);
+      this.get('deployService').call(null, charm, ghostAttributes);
     },
 
     /**
@@ -303,49 +303,50 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _renderCharmView: function(charm, isFullscreen) {
       this.set('entity', charm);
 
-      var tplData = charm.getAttrs(),
+      var templateData = charm.getAttrs(),
           container = this.get('container');
       var siteDomain = 'jujucharms.com',
           charmPath = this.get('entity').get('storeId'),
           link = 'https://' + siteDomain + '/' + charmPath;
-      tplData.isFullscreen = isFullscreen;
-      tplData.isLocal = tplData.scheme === 'local';
-      tplData.forInspector = this.get('forInspector');
-      if (tplData.files) {
+      templateData.isFullscreen = isFullscreen;
+      templateData.isLocal = templateData.scheme === 'local';
+      templateData.forInspector = this.get('forInspector');
+      if (templateData.files) {
         // Exclude svg files from the source view.
         var regex = /\.svg$/;
-        tplData.files = tplData.files.filter(function(name) {
+        templateData.files = templateData.files.filter(function(name) {
           return !regex.test(name);
         });
       }
-      if (!tplData.forInspector) {
-        tplData.sourceLink = this._getSourceLink();
-        tplData.prettyCommits = this._formatCommitsForHtml(
-            tplData.recent_commits, tplData.sourceLink);
+      if (!templateData.forInspector) {
+        templateData.sourceLink = this._getSourceLink(
+            this.get('entity').get('code_source').location);
+        templateData.prettyCommits = this._formatCommitsForHtml(
+            templateData.recentCommits, templateData.sourceLink);
       }
-      tplData.interfaceIntro = this._getInterfaceIntroFlag(
-          tplData.requires, tplData.provides);
-      tplData.link = escape(link);
-      tplData.twitterText = escape(
+      templateData.interfaceIntro = this._getInterfaceIntroFlag(
+          templateData.requires, templateData.provides);
+      templateData.link = escape(link);
+      templateData.twitterText = escape(
           'Check out this great charm on ' + siteDomain + ': ' + link);
-      tplData.emailSubject = escape(
+      templateData.emailSubject = escape(
           'Check out this great charm on ' + siteDomain + '!');
-      tplData.emailText = escape(
+      templateData.emailText = escape(
           'Check out this great charm on ' + siteDomain + ': ' + link);
 
-      if (Y.Object.isEmpty(tplData.requires)) {
-        tplData.requires = false;
+      if (Y.Object.isEmpty(templateData.requires)) {
+        templateData.requires = false;
       }
-      if (Y.Object.isEmpty(tplData.provides)) {
-        tplData.provides = false;
+      if (Y.Object.isEmpty(templateData.provides)) {
+        templateData.provides = false;
       }
 
-      var tpl = this.template(tplData);
+      var template = this.template(templateData);
 
-      // Set the content then update the container so that it reload
+      // Set the content then update the container so that it reloads
       // events.
       var renderTo = this.get('renderTo');
-      renderTo.setHTML(container.setHTML(tpl));
+      renderTo.setHTML(container.setHTML(template));
 
       this._setupTabview();
       this._dispatchTabEvents(this.tabview);
@@ -365,7 +366,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // with .empty or something before rendering the charm view should work.
       // But it doesn't so we scroll the nav bar into view, load the charm
       // view at the top of the content.
-      if (!tplData.forInspector) {
+      if (!templateData.forInspector) {
         // Do NOT use scrollIntoView as IE will move the whole environment. We
         // just reset the scrollTop directly which jumps, but works cross
         // browser.

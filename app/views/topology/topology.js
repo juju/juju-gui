@@ -235,6 +235,11 @@ YUI.add('juju-topology', function(Y) {
   }, {
     ATTRS: {
       /**
+       * @property {Object} boundingBox
+       * A bounding-box for all of the services
+       */
+      boundingBox: {},
+      /**
        * @property {models.Database} db
        */
       db: {},
@@ -297,7 +302,6 @@ YUI.add('juju-topology', function(Y) {
     'juju-topology-relation',
     'juju-topology-panzoom',
     'juju-topology-viewport',
-    'juju-topology-landscape',
     'juju-topology-importexport',
     'juju-topology-utils'
   ]

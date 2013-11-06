@@ -301,7 +301,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!charmIdParts) {
         return (
             callbacks.failure &&
-            callbacks.failure({error: 'Invalid charm id.'}));
+            callbacks.failure({error: 'Invalid charm id: ' + charmId}));
       }
       var charm = this.db.charms.getById(charmId);
       if (charm) {
@@ -381,10 +381,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         options.name = charm.get('package_name');
       }
       if (this.db.services.getById(options.name)) {
-        return callback({error: 'A service with this name already exists.'});
+        console.log(options);
+        return callback({error: 'A service with this name already exists (' +
+              options.name + ').'});
       }
       if (options.configYAML) {
         if (!Y.Lang.isString(options.configYAML)) {
+          console.log(options);
           return callback(
               {error: 'Developer error: configYAML is not a string.'});
         }
@@ -394,6 +397,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           options.config = jsyaml.safeLoad(options.configYAML);
         } catch (e) {
           if (e instanceof jsyaml.YAMLException) {
+            console.log(options, e);
             return callback({error: 'Error parsing YAML.\n' + e});
           }
           throw e;
@@ -444,7 +448,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         })()
       });
       this.changes.services[service.get('id')] = [service, true];
-      var response = this.addUnit(options.name, options.unitCount);
+
+      var unitCount = options.unitCount;
+      if (!Y.Lang.isValue(unitCount) && !charm.get('is_subordinate')) {
+        // This is the current behavior in both implementations.
+        unitCount = 1;
+      }
+      var response = this.addUnit(options.name, unitCount);
       response.service = service;
       callback(response);
     },
@@ -462,7 +472,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        return {error: 'Invalid service id.'};
+        return {error: 'Invalid service id: ' + serviceName};
       }
       // Remove all relations for this service.
       var relations = this.db.relations.get_relations_for_service(service);
@@ -476,9 +486,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var unitNames = service.get('units').get('id');
       var result = this.removeUnits(unitNames);
       if (result.error.length > 0) {
-        return {error: 'Error removing units: ' + result.error};
+        console.log(result, result.error);
+        return {
+          error: 'Error removing units [' + unitNames.join(', ') +
+              '] of ' + serviceName
+        };
       } else if (result.warning.length > 0) {
-        return {error: 'Warning removing units: ' + result.warning};
+        console.log(result, result.warning);
+        return {
+          error: 'Warning removing units [' + unitNames.join(', ') +
+              '] of ' + serviceName
+        };
       }
       // And finally destroy and remove the service.
       this.db.services.remove(service);
@@ -500,7 +518,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        return {error: 'Invalid service id.'};
+        return {error: 'Invalid service id: ' + serviceName};
       }
       var serviceData = service.getAttrs();
       if (!serviceData.constraints) {
@@ -568,7 +586,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!Y.Lang.isNumber(numUnits) ||
           (!is_subordinate && numUnits < 1 ||
           (is_subordinate && numUnits !== 0))) {
-        return {error: 'Invalid number of units.'};
+        return {
+          error: 'Invalid number of units [' + numUnits +
+              '] for service: ' + serviceName
+        };
       }
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
@@ -853,8 +874,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         });
       });
       if (matches.length === 0) {
+        console.log(endpoints);
         result = {error: 'Specified relation is unavailable.'};
       } else if (matches.length > 1) {
+        console.log(endpoints);
         result = {error: 'Ambiguous relationship is not allowed.'};
       } else {
         result = matches[0];
@@ -1351,7 +1374,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!data) {return;}
       options = options || {};
       var db = this.db;
-      var rewriteIds = options.rewriteIds || false;
       var targetBundle = options.targetBundle;
       var useGhost = options.useGhost;
       if (useGhost === undefined) {
@@ -1368,9 +1390,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var seen = [];
 
       /**
-        Helper to build out an inheritence chain
+        Helper to build out an inheritance chain
 
-        @method setupinheritance
+        @method setupInheritance
         @param {Object} base object currently being inspected.
         @param {Array} baseList chain of ancestors to later inherit.
         @param {Object} bundleData import data used to resolve ancestors.
@@ -1410,50 +1432,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
         Y.mix(source, ancestor, true, undefined, 0, true);
       });
 
-      // Create an id mapping. This will track the ids of objects
-      // read from data as they are mapped into db. When options
-      // rewriteIds is true this is required for services, but some
-      // types of object ids ('relations' for example) can always
-      // be rewritten but depend on the use of the proper ids.
-      // By building this mapping now we can detect collisions
-      // prior to mutating the database.
-      var serviceIdMap = {};
-      /**
-       Helper to generate the next valid service id.
-       @method nextServiceId
-       @return {String} next service id to use.
-      */
-      function nextServiceId(modellist, id) {
-        var existing = modellist.getById(id);
-        var count = 0;
-        var target;
-        while (existing) {
-          count += 1;
-          target = id + '-' + count;
-          existing = modellist.getById(target);
-        }
-        return target;
-      }
-
+      var error = '';
       Object.keys(source.services).forEach(function(serviceName) {
-        var current = source.services[serviceName];
         var existing = db.services.getById(serviceName);
-        var targetId = serviceName;
         if (existing) {
-          if (!rewriteIds) {
-            throw new Error(serviceName +
-                ' is already present in the database.');
-          }
-          targetId = nextServiceId(db.services, serviceName);
-          current.id = targetId;
+          console.log(source);
+          error = serviceName + ' is already present in the database.' +
+              ' Change service name and try again.';
         }
-        serviceIdMap[serviceName] = targetId;
+        source.services[serviceName].name = serviceName;
       });
 
-      return {
-        services: source.services,
-        relations: source.relations
-      };
+      if (error) {
+        return { error: error };
+      } else {
+        return {
+          services: source.services,
+          relations: source.relations
+        };
+      }
     },
 
     /**
@@ -1491,11 +1488,20 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var ingestedData = this.ingestDeployer(data, options);
       var servicePromises = [];
+      // If there is an error in the ingestedData then return with the error.
+      if (ingestedData.error) {
+        callback(ingestedData);
+        return;
+      }
       Y.each(ingestedData.services, function(serviceData) {
         // Map the argument name from the deployer format
         // name for unit count.
         if (!serviceData.unitCount) {
-          serviceData.unitCount = serviceData.num_units || 1;
+          serviceData.unitCount = serviceData.num_units;
+        }
+        if (serviceData.options) {
+          serviceData.config = serviceData.options;
+          delete serviceData.options;
         }
         servicePromises.push(
             self.promiseDeploy(serviceData.charm, serviceData));
@@ -1530,7 +1536,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               }
 
               // Expose
-              if (serviceData.exposed) {
+              if (serviceData.expose) {
                 self.expose(serviceId);
               }
 
@@ -1550,7 +1556,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callback({DeploymentId: self._deploymentId});
           }, function(err) {
             deployStatus.Status = 'failed';
-            callback({Error: err.toString()});
+            console.log(err);
+            callback({Error: err.error});
           });
     },
 
@@ -1559,7 +1566,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      exists to aid tests which use the import system to quickly
      generate fixtures.
 
-     @method promiseDeploy
+     @method promiseImport
      @param {String} YAMLData YAML data to import.
      @param {String} [name] Bundle name to import.
      @return {Promise} After the import is run.

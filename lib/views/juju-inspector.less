@@ -6,6 +6,7 @@
 @inspector-divider-top: rgba(255, 255, 255, 0.05);
 @inspector-status-border-color: #E2E2E2;
 @inspector-subtitle-color: #555555;
+@inspector-text-color: #fff;
 @inspector-width: 292px;
 @inspector-main-padding: 20px;
 @confirm-button-color: @charm-panel-orange;
@@ -20,10 +21,10 @@
 */
 .pulse-green-frames-mixin () {
     0% {
-        background-image: url(/juju-ui/assets/images/field-saved.png);
+        background-image: url(/juju-ui/assets/images/non-sprites/field-saved.png);
     }
     100% {
-        background-image: url(/juju-ui/assets/images/field-saved-finished.png);
+        background-image: url(/juju-ui/assets/images/non-sprites/field-saved-finished.png);
     }
 }
 
@@ -39,7 +40,7 @@
     .left-breakout {
         .type9;
         top: 20px;
-        bottom: @navbar-bottom-height + 20px;
+        bottom: 70px;
         left: auto;
         right: @inspector-width + 71px;
 
@@ -77,16 +78,18 @@
     .juju-inspector {
         .create-border-radius(@border-radius);
         position: absolute;
+        z-index: 500;
         top: 20px;
         right: 70px;
         width: @inspector-width;
         min-height: 250px;
         border: 0;
         background-color: @inspector-background-color;
-        color: #fff;
+        color: @inspector-text-color;
         /* Can be removed once the old inspector styles are removed. */
         margin: 0;
         font-size: 14px;
+        font-weight: 400;
 
 
         ::-webkit-scrollbar-track {
@@ -112,8 +115,8 @@
         input[type=text]::-ms-clear {
             display: none;
         }
+        textarea,
         input[type=text] {
-            .border-box;
             .create-border-radius(@border-radius);
             .create-box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.7));
             width: 100%;
@@ -126,15 +129,17 @@
             background-repeat: no-repeat;
 
             &.valid {
-                background-image: url(/juju-ui/assets/images/form-validation-tick.png);
+                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-tick.png);
             }
 
             &.invalid {
-                background-image: url(/juju-ui/assets/images/form-validation-cross.png);
+                background-image: url(/juju-ui/assets/images/non-sprites/form-validation-cross.png);
             }
         }
+        input[type=text] {
+            .border-box;
+        }
         textarea {
-            margin: 0;
             width: 96%;
         }
         /* Buttons */
@@ -165,7 +170,7 @@
         }
         .controls button,
         .inspector-buttons a {
-            color: #fff;
+            color: @inspector-text-color;
 
             &.cancel-button,
             &.cancel {
@@ -441,7 +446,7 @@
                     url(/juju-ui/assets/images/import.png)
                     right center no-repeat;
                 border: 1px solid #6B6B6B;
-                color: #fff;
+                color: @inspector-text-color;
                 cursor: pointer;
             }
         }
@@ -534,11 +539,6 @@
                     .icon {
                         margin-right: 10px;
                         vertical-align: top;
-
-                        img {
-                            /* bootstrap sets this to middle */
-                            vertical-align: baseline;
-                        }
                     }
                     .icon,
                     .icon img {
@@ -570,9 +570,9 @@
                         text-decoration: underline;
                     }
                     .close {
-                        /* Required to overwrite bootstrap styles */
-                        opacity: 1;
                         display: block;
+                        float: right;
+                        cursor: pointer;
 
                         .sprite {
                             vertical-align: top;
@@ -662,6 +662,8 @@
             margin-bottom: @inspector-controls-height;
         }
         .view-container {
+            overflow-x: hidden;
+            overflow-y: auto;
             margin-top: -1px;
 
             .view-content {
@@ -698,8 +700,8 @@
                   }
                 }
                 .resolver {
-                  color: black;
-                  background-color: white;
+                  color: #000;
+                  background-color: #fff;
                   border: 1px solid @inspector-changed-field;
                   border-radius: 1px;
 
@@ -709,7 +711,7 @@
                 }
                 .modified {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-changed.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-changed.png);
                   background-repeat: no-repeat;
 
                   &.boolean {
@@ -722,11 +724,11 @@
                 }
                 .conflict-pending {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-conflict.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-conflict.png);
 
                   &.boolean {
                     background-color: inherit;
-                    background-image: url(/juju-ui/assets/images/field-conflict-14.png);
+                    background-image: url(/juju-ui/assets/images/non-sprites/field-conflict-14.png);
                     display: inline-block;
                     width: 14px;
                     height: 14px;
@@ -737,7 +739,7 @@
 
                 .conflict {
                   background-color: @inspector-changed-field;
-                  background-image: url(/juju-ui/assets/images/field-resolved.png);
+                  background-image: url(/juju-ui/assets/images/non-sprites/field-resolved.png);
                 }
 
                 /* Inputs does not need to have the background-image */
@@ -758,7 +760,7 @@
                 }
 
                 .change-saved {
-                    background-image: url(/juju-ui/assets/images/field-saved.png);
+                    background-image: url(/juju-ui/assets/images/non-sprites/field-saved.png);
                     background-position: center right;
                     background-repeat: no-repeat;
                     .animation(pulse-green 1s);
@@ -823,7 +825,7 @@
                 border-top: 1px solid @inspector-divider-top;
                 font-size: 16px;
                 font-weight: 200;
-                color: @charm-panel-configure-title-color;
+                color: @inspector-text-color;
 
                 .sprite {
                     vertical-align: -2%;
@@ -882,7 +884,7 @@
                 }
 
                 ul {
-                    background: white;
+                    background: #fff;
                 }
 
                 .chevron {
@@ -936,7 +938,7 @@
 
                 ul {
                     margin-left: 0;
-                    border-bottom: 1px solid @charm-panel-border-color;
+                    border-bottom: 1px solid #BEBEBE;
                 }
 
                 li {
@@ -958,7 +960,7 @@
                 button.unit-action-button {
                     width: 70px;
                     margin: 0 3px 0;
-                    background: @charm-panel-series-color;
+                    background: #CBCBCB;
                 }
                 &.pending {
                     .action-button-wrapper {

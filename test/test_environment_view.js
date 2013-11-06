@@ -113,7 +113,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env = juju.newEnvironment({conn: conn});
         env.connect();
         conn.open();
-        fakeStore = new Y.juju.charmworld.APIv2({});
+        fakeStore = new Y.juju.charmworld.APIv3({});
         fakeStore.iconpath = function() {
           return 'charm icon url';
         };
@@ -644,45 +644,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
     });
 
-    it('must be able to use Landscape annotations', function() {
-      var landscape = new views.Landscape();
-      var wordpress = db.services.getById('wordpress');
-      landscape.set('db', db);
-      // Mock out enough of the annotations to
-      // allow a full render with landscape data.
-      db.environment.set('annotations', {
-        'landscape-url': 'http://host',
-        'landscape-computers': '/foo',
-        'landscape-reboot-alert-url': '+reboot'
-      });
-      db.environment['landscape-needs-reboot'] = true;
-      db.services.each(function(s) {
-        s.set('annotations', {
-          'landscape-computers': '/service'
-        });
-      });
-      wordpress['landscape-needs-reboot'] = true;
-      wordpress['landscape-security-upgrades'] = false;
-
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env,
-        landscape: landscape,
-        store: fakeStore
-      }).render();
-
-      var rebootItem = container.one('.landscape-controls .restart-control');
-      rebootItem.one('a').get('href').should.equal('http://host/foo+reboot');
-
-      // Test that we can match a single badge rendered on the wordpress
-      // service.
-      var wpNode = view.topo.modules.ServiceModule.getServiceNode('wordpress');
-      var hasBadge = d3.select(wpNode).select('.landscape-badge');
-      hasBadge[0][0].should.not.equal(null);
-    });
-
-
     it('must be able to render subordinate relation indicators',
        function() {
          new views.environment({
@@ -986,7 +947,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // on the dialog.
          panel.all('button').size().should.equal(2);
 
-         dialog_btn = panel.one('.btn-danger');
+         dialog_btn = panel.one('.button');
          dialog_btn.simulate('click');
          container.all('.to-remove')
               .size()
@@ -1246,7 +1207,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets the default icon for local charms without an icon', function() {
-      var iconFakeStore = new Y.juju.charmworld.APIv2({
+      var iconFakeStore = new Y.juju.charmworld.APIv3({
         apiHost: 'http://localhost'
       });
       var services = new models.ServiceList();
@@ -1283,7 +1244,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The mysql charm has an icon from on the server.
       assert.equal(
           boxes['cs:mysql-1'].icon,
-          'http://localhost/api/2/charm/mysql-1/icon.svg'
+          'http://localhost/api/3/charm/mysql-1/file/icon.svg'
       );
     });
   });

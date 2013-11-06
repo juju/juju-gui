@@ -3,6 +3,36 @@
   "basket_name": "wiki",
   "basket_revision": 5,
   "branch_deleted": false,
+  "changes": [
+    {
+      "authors": [
+        "Brad Crittenden <bac@example.com>"
+      ],
+      "committer": "Brad Crittenden <bac@example.com>",
+      "created": 1378218161.439,
+      "message": "Correct icon",
+      "revno": 3
+    },
+    {
+      "authors": [
+        "Jorge O. O'Castro <jorge@example.com>",
+        "Brad Crittenden <bac@example.com>"
+      ],
+      "committer": "Brad Crittenden <bac@example.com>",
+      "created": 1377718535.465,
+      "message": "Added README and icon",
+      "revno": 2
+    },
+    {
+      "authors": [
+        "Brad Crittenden <bac@example.com>"
+      ],
+      "committer": "Brad Crittenden <bac@example.com>",
+      "created": 1375449744.902,
+      "message": "Initial checking of working config.",
+      "revno": 1
+    }
+  ],
   "charm_metadata": {
     "haproxy": {
       "categories": [
@@ -1076,24 +1106,40 @@
     "services": {
       "haproxy": {
         "charm": "haproxy",
-        "num_units": 5
+        "num_units": 5,
+        "annotations": {
+          "gui-x": 1,
+          "gui-y": 1
+        }
       },
       "mediawiki": {
         "charm": "mediawiki",
         "num_units": 9,
         "options": {
           "name": "Intranet"
+        },
+        "annotations": {
+          "gui-x": 1,
+          "gui-y": 1
         }
       },
       "memcached": {
         "charm": "memcached",
-        "num_units": 3
+        "num_units": 3,
+        "annotations": {
+          "gui-x": 1,
+          "gui-y": 1
+        }
       },
       "mysql": {
         "charm": "mysql",
         "num_units": 3,
         "options": {
           "tuning-level": "safest"
+        },
+        "annotations": {
+          "gui-x": 1,
+          "gui-y": 1
         }
       }
     }

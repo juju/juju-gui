@@ -40,13 +40,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     beforeEach(function() {
       container = utils.makeContainer('onboarding');
       env_help = utils.makeContainer('environment-help');
-      window.flags.onboard = true;
     });
 
     afterEach(function() {
       container.remove(true);
       env_help.remove(true);
-      window.flags = {};
     });
 
     after(function() {
@@ -98,6 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(env_help.hasClass('hidden'));
       assert.equal(container.getComputedStyle('display'), 'block');
       assert.isTrue(background.hasClass('state-0'));
+      assert.equal(onboard.get('seen'), 'exists');
     });
 
     it('updates background css properly', function() {
@@ -160,5 +159,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(container.getComputedStyle('display'), 'none');
       assert.isFalse(env_help.hasClass('hidden'));
     });
+
+    it('should not be shown if seen before', function() {
+      var onboard = new OnboardingView({
+        container: container
+      });
+
+      localStorage.setItem('onboarding', true);
+      onboard.render();
+      var background = container.one('#onboarding-background');
+      assert.isTrue(background instanceof Y.Node);
+    });
+
   });
 })();

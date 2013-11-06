@@ -45,11 +45,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var requires = ['node',
       'juju-tests-utils', 'juju-models', 'juju-charm-models',
       'juju-fakebackend-simulator'];
-    var Y, state, Simulator, simulator, utils;
+    var Y, state, Simulator, simulator, utils, Agent, DEFAULT_AGENTS;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        Simulator = Y.namespace('juju.environments').Simulator;
+        var ns = Y.namespace('juju.environments');
+        Simulator = ns.Simulator;
+        Agent = ns.Agent;
+        DEFAULT_AGENTS = ns.DEFAULT_AGENTS;
         utils = Y.namespace('juju-tests.utils');
         done();
       });
@@ -64,7 +67,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
-      simulator.destroy();
+      if (simulator) {
+        simulator.destroy();
+      }
       state.destroy();
     });
 
@@ -168,6 +173,97 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       state.logout();
       simulator.start();
+    });
+
+    describe('Landscape simulator', function() {
+      var agent;
+      beforeEach(function() {
+        var config = Y.merge(DEFAULT_AGENTS.landscape);
+        config.state = state;
+        agent = new Agent(config);
+      });
+
+      afterEach(function() {
+        agent.destroy();
+      });
+
+      it('should start by annotating environment and services', function() {
+        agent.start();
+        var anno = state.db.environment.get('annotations');
+        var expected_environment_annotations = {
+          'landscape-url': 'http://landscape.example.com',
+          'landscape-computers': '/computers/criteria/environment:test',
+          'landscape-reboot-alert-url': '+alert:computer-reboot/info#power',
+          'landscape-security-alert-url':
+              '+alert:security-upgrades/packages/list?filter=security'};
+        assert.deepEqual(anno, expected_environment_annotations);
+        var wordpress = state.db.services.getById('wordpress');
+        anno = wordpress.get('annotations');
+        assert.equal(
+            anno['landscape-computers'],
+            '+service:wordpress');
+        // They were recorded as changed.
+        anno = state.nextAnnotations();
+        assert.strictEqual(anno.annotations.env, state.db.environment);
+        assert.strictEqual(anno.services.wordpress, wordpress);
+      });
+
+      it('should annotate units when running', function() {
+        agent.set('reboot_chance_per_unit', 0);
+        agent.set('upgrade_chance_per_unit', 0);
+        agent.start();
+        state.nextAnnotations();
+        agent.run();
+        var unit = state.db.services.getById('wordpress').get('units').item(0);
+        assert.deepEqual(
+            unit.annotations,
+            {'landscape-computer': '+unit:wordpress-0'});
+        var anno = state.nextAnnotations();
+        assert.equal(Object.keys(anno.units).length, 3); // All units changed.
+      });
+
+      it('should not annotate reboot or upgrade if no chance', function() {
+        agent.set('reboot_chance_per_unit', 0);
+        agent.set('upgrade_chance_per_unit', 0);
+        agent.start();
+        agent.run();
+        state.nextAnnotations();
+        agent.run();
+        assert.isNull(state.nextAnnotations()); // Nothing changed.
+        var unit = state.db.services.getById('wordpress').get('units').item(0);
+        assert.isUndefined(unit.annotations['landscape-needs-reboot']);
+        assert.isUndefined(unit.annotations['landscape-security-upgrades']);
+      });
+
+      it('should annotate reboot if chance succeeds', function() {
+        agent.set('reboot_chance_per_unit', 0);
+        agent.set('upgrade_chance_per_unit', 0);
+        agent.start();
+        agent.run();
+        state.nextAnnotations();
+        agent.set('reboot_chance_per_unit', 1);
+        agent.run();
+        var anno = state.nextAnnotations();
+        assert.equal(Object.keys(anno.units).length, 3); // All units changed.
+        var unit = state.db.services.getById('wordpress').get('units').item(0);
+        assert.isTrue(unit.annotations['landscape-needs-reboot']);
+        assert.isUndefined(unit.annotations['landscape-security-upgrades']);
+      });
+
+      it('should annotate upgrade if chance succeeds', function() {
+        agent.set('reboot_chance_per_unit', 0);
+        agent.set('upgrade_chance_per_unit', 0);
+        agent.start();
+        agent.run();
+        state.nextAnnotations();
+        agent.set('upgrade_chance_per_unit', 1);
+        agent.run();
+        var anno = state.nextAnnotations();
+        assert.equal(Object.keys(anno.units).length, 3); // All units changed.
+        var unit = state.db.services.getById('wordpress').get('units').item(0);
+        assert.isUndefined(unit.annotations['landscape-needs-reboot']);
+        assert.isTrue(unit.annotations['landscape-security-upgrades']);
+      });
     });
 
   });

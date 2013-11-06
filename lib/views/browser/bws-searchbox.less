@@ -17,26 +17,23 @@
             margin: 0;
             padding: 0 40px 0 10px;
             background-color: #fff;
-            border: 1px solid @bws-border;
-            border-radius: @bws-corner;
-            font-size: 12pt;
-            color: @bws-text-placeholder;
-        }
-        &.active input {
-            // Need to overwrite the bootstrap focus border.
-            border-color: @charm-panel-orange;
-            color: @bws-text;
-        }
-        // Need to overwrite bootstrap box shadow on focus.
-        input,
-        &.active input {
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            border: 1px solid @bws-border;
+            outline: none;
+            border-radius: @border-radius;
+            font-size: 16px;
+            color: #bbb;
+        }
+        &.active input {
+            border-color: @charm-panel-orange;
+            color: @text-colour;
         }
     }
 
     .yui3-aclist {
       z-index: 15;
       width: 100%;
+      background-color: #fff;
 
       .yui3-aclist-content {
         border: 1px solid #bbb;
@@ -70,11 +67,12 @@
                 }
             }
 
-            .token {
+            .token.tiny {
                 padding: 8px 0;
 
                 .title {
                     .type15;
+                    margin-top: 2px;
                 }
 
                 .icon,
@@ -109,8 +107,8 @@
     }
 }
 
-.yui3-skin-sam .yui3-aclist-item-hover {
-  background: rgb(238,238,238);
+.yui3-aclist-item-hover {
+  background-color: #eee;
 }
 
 #subapp-browser .browser-nav {

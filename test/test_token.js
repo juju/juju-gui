@@ -246,4 +246,25 @@ describe('charm/bundle token', function() {
     assert.equal(token_container.one('span.charms').all('img').size(), 4);
   });
 
+  it('renders the deployer button when asked to', function() {
+    var token = new Token({
+      size: 'tiny',
+      storeId: 'test',
+      deployButton: true,
+      description: 'some description',
+      mainCategory: 'app-servers',
+      iconUrl: 'http://localhost.svg'
+    });
+
+    token.render(token_container);
+    assert.notEqual(
+        token_container.get('innerHTML').indexOf('deployButton'),
+        -1
+    );
+
+    var button = token_container.one('.deployButton');
+    var sprite = button.one('i');
+    assert.equal(sprite.getAttribute('data-charmid'), 'test');
+  });
+
 });

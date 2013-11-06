@@ -2,38 +2,39 @@
     .border-box;
     position: relative;
 
+    .deployButton {
+        display: block;
+        float: right;
+        margin-top: 19px;
+
+        /* Bundle tokens are taller due to the charm icons inside. */
+        &.bundle {
+            margin-top: 34px;
+        }
+
+        i.sprite {
+            display: block;
+        }
+    }
+
     .token {
         display: block;
         // Clear floats:
         overflow: auto;
         padding: 20px;
-        color: @bws-text;
+        color: @text-colour;
 
-        &.recommended {
-            margin-top: -1px;
-            background: transparent
-                url(/juju-ui/assets/images/recommended-triangle.png)
-                no-repeat right top;
-        }
         &.tiny {
             min-width: 200px;
 
-            .charm-icon,
             .icon {
                 margin-right: 12px;
                 position: relative;
             }
-            .charm-icon,
-            .charm-icon img,
             .icon,
             .icon img {
                 width: 48px;
                 height: 48px;
-            }
-            .charm-icon {
-                background: transparent
-                    url(/juju-ui/assets/images/charm_48.png)
-                    left top no-repeat;
             }
             .metadata,
             .description {
@@ -41,22 +42,14 @@
             }
         }
         &.small {
-            .charm-icon,
             .icon {
                 margin-right: 10px;
                 position: relative;
             }
-            .charm-icon,
-            .charm-icon img,
             .icon,
             .icon img {
                 width: 50px;
                 height: 50px;
-            }
-            .charm-icon {
-                background: transparent
-                    url(/juju-ui/assets/images/charm_48.png)
-                    left top no-repeat;
             }
             .metadata {
                 text-overflow: ellipsis;
@@ -66,22 +59,23 @@
             }
         }
         &.large {
-            .charm-icon,
             .icon {
                 margin-right: 16px;
                 position: relative;
             }
-            .charm-icon,
-            .charm-icon img,
             .icon,
             .icon img {
                 width: 96px;
                 height: 96px;
             }
-            .charm-icon {
-                background: transparent
-                    url(/juju-ui/assets/images/charm_96.png)
-                    left top no-repeat;
+        }
+        .recommended {
+            position: absolute;
+            top: -1px;
+            right: 0;
+
+            i.sprite {
+                display: block;
             }
         }
         .block-icon,

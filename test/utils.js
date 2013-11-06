@@ -139,13 +139,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return charms;
     })(),
 
-    makeFakeStore: function(version) {
-      var fakeStore;
-      if (version === 3) {
-        fakeStore = new Y.juju.charmworld.APIv3({});
-      } else {
-        fakeStore = new Y.juju.charmworld.APIv2({});
-      }
+    makeFakeStore: function() {
+      var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
         store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
         var charmName = store_id.split('/')[1];
@@ -193,10 +188,14 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       @param {String} YAMLBundleURL File to import.
       @param {String} [name] Name of bundle to load, optional when
              only one target in the bundle.
+      @param {Object} fakebackend An instance of fakebackend from the
+              utils makeFakeBackend() method.
       @return {Promise} Outlined in description.
     */
-    promiseImport: function(YAMLBundleURL, name) {
-      var fakebackend = this.makeFakeBackend();
+    promiseImport: function(YAMLBundleURL, name, fakebackend) {
+      if (!fakebackend) {
+        fakebackend = this.makeFakeBackend();
+      }
       var db = fakebackend.db;
       db.environment.set('defaultSeries', 'precise');
       var fixture = jujuTests.utils.loadFixture(YAMLBundleURL);

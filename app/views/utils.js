@@ -37,6 +37,111 @@ YUI.add('juju-view-utils', function(Y) {
     @class utils
   */
 
+  // These are tools for the linkify function, below.
+  var _url = new RegExp(
+      '\\bhttps?:\\/\\/' +
+      '[-A-Za-z0-9+&@#\\/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#\\/%=~_()|]+',
+      'i');
+  var _lp = /\blp:~[^ ]*[0-9A-Za-z_]+/i;
+  var _long = /\b[\w]{50,}/;
+  var _splitter = new RegExp(
+      '(?=' + _url.source + '|' + _lp.source + '|' + _long.source + ')', 'i');
+  var _link_template = (
+      '<a href="$value" target="_blank" class="break-word">$safe</a>');
+  var _span_template = '<span class="break-word">$safe</span>';
+  /**
+    Linkify links in text.  Wrap launchpad branch locations in links.  Mark
+    long words as needing to break.  HTML escape everywhere possible.
+
+    @method linkify
+    @param {String} text The string to linkify.
+    @return {String} The linkified string.
+   */
+  var linkify = function(text) {
+    if (text) {
+      // The function's strategy is to use a regex to split the string
+      // whenever we have a link, a Launchpad branch reference, or a long
+      // word.  The regex is careful to not actually consume anything, because
+      // then we would lose content from the text.  It also does not remember
+      // any matches, because this inserts the matches into the split string,
+      // which can be difficult to work with.
+
+      // After we have the split string, then we walk through each segment of
+      // the array and identify why we split: was it a link?  A Launchpad
+      // branch identifier?  A long word?  Or are we just at the beginning of
+      // the string?  For each of these cases, we reassemble the content, HTML
+      // escaping as much as possible so as to reduce the chance of XSS attack
+      // vectors.
+
+      // This will hold the segments of the resulting string.  After our work,
+      // we join all the segments together and return the result.
+      var segments = [];
+      /**
+        Process a segment and add its parts to the segments array.
+
+        This is a function to try and make the main loop a bit cleaner.
+
+        @method pushMatch
+        @param {string} segment The full segment, as split from the original
+               string, that we are working with right now.
+        @param {string} match The regex match: the link, Launchpad branch, or
+               long word that comes at the beginning of the segment.
+        @param {string} template A string in which $value is replaced by the
+               unprocessed value, and $safe is replaced by the HTML-escaped
+               match.
+        @param {string or undefined} value to be used in the template.  If
+              this is not provided, the match is used.
+       */
+      var pushMatch = function(segment, match, template, value) {
+        if (!Y.Lang.isValue(value)) {
+          value = match;
+        }
+        var safe = Y.Escape.html(match);
+        segments.push(
+            template.replace('$value', value).replace('$safe', safe));
+        segments.push(Y.Escape.html(segment.slice(match.length)));
+      };
+      // This is the main loop, doing the job described in the comment at the
+      // top of the function.
+      text.split(_splitter).forEach(function(segment) {
+        var match = _url.exec(segment);
+        if (match) {
+          pushMatch(segment, match[0], _link_template);
+        } else {
+          match = _lp.exec(segment);
+          if (match) {
+            pushMatch(
+                segment, match[0], _link_template,
+                'https://code.launchpad.net/' + match[0].slice(3));
+          } else {
+            match = _long.exec(segment);
+            if (match) {
+              pushMatch(segment, match[0], _span_template);
+            } else {
+              segments.push(Y.Escape.html(segment));
+            }
+          }
+        }
+      });
+      // The trim helps out for when the output is used in a whitespace: pre-
+      // line context, which is true in all cases as of this writing.  It
+      // shouldn't affect other uses, but if it does and we want to remove
+      // `trim` from the function, doublecheck that the trim is added back in
+      // elsewhere as desired.
+      text = segments.join('').trim();
+    }
+    return text;
+  };
+  utils.linkify = linkify;
+
+  Y.Handlebars.registerHelper('linkify', function(text) {
+    var result = linkify(text);
+    if (result) {
+      result = new Y.Handlebars.SafeString(result);
+    }
+    return result;
+  });
+
   /*jshint bitwise: false*/
   /**
     Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
@@ -361,7 +466,7 @@ YUI.add('juju-view-utils', function(Y) {
         { value: action_label,
           section: Y.WidgetStdMod.FOOTER,
           action: action_cb,
-          classNames: ['btn-danger', 'btn']
+          classNames: ['button']
         });
     panel.addButton(
         { value: 'Cancel',
@@ -370,64 +475,12 @@ YUI.add('juju-view-utils', function(Y) {
             e.preventDefault();
             panel.hide();
           },
-          classNames: ['btn']
+          classNames: ['button']
         });
 
     // The default YUI CSS conflicts with the CSS effect we want.
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
     return panel;
-  };
-
-  views.highlightRow = function(row, err) {
-    row.removeClass('highlighted'); // Whether we need to or not.
-    var backgroundColor = 'palegreen',
-        oldColor = row.one('td').getStyle('backgroundColor');
-    if (err) {
-      backgroundColor = 'pink';
-    }
-    // Handle tr:hover in bootstrap css.
-    row.all('td').setStyle('backgroundColor', 'transparent');
-    row.setStyle('backgroundColor', backgroundColor);
-    row.transition(
-        { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-        function() {
-          // Revert to following normal stylesheet rules.
-          row.setStyle('backgroundColor', '');
-          // Undo hover workaround.
-          row.all('td').setStyle('backgroundColor', '');
-        });
-  };
-
-  utils.updateLandscapeBottomBar = function(landscape, env, model, container) {
-    // Landscape annotations are stored in a unit's annotations, but just on
-    // the object in the case of services/environment.
-    var annotations = model.annotations ? model.annotations : model;
-    var envAnnotations = env.get ? env.get('annotations') : env;
-    var controls = container.one('.landscape-controls').hide();
-    var machine = controls.one('.machine-control').hide();
-    var updates = controls.one('.updates-control').hide();
-    var restart = controls.one('.restart-control').hide();
-
-    if (envAnnotations['landscape-url']) {
-      controls.show();
-      var baseLandscapeURL = landscape.getLandscapeURL(model);
-      if (baseLandscapeURL) {
-        machine.show();
-        machine.one('a').setAttribute('href', baseLandscapeURL);
-
-        if (annotations['landscape-security-upgrades']) {
-          updates.show();
-          updates.one('a').setAttribute('href',
-              landscape.getLandscapeURL(model, 'security'));
-        }
-
-        if (annotations['landscape-needs-reboot']) {
-          restart.show();
-          restart.one('a').setAttribute('href',
-              landscape.getLandscapeURL(model, 'reboot'));
-        }
-      }
-    }
   };
 
   function _addAlertMessage(container, alertClass, message) {
@@ -1616,7 +1669,7 @@ YUI.add('juju-view-utils', function(Y) {
   /*
    * Check if a flag is set.
    *
-   * {{ifFlag 'flag_name'}}
+   * {{#ifFlag 'flag_name'}} {{/ifFlag}}
    *
    */
   Y.Handlebars.registerHelper('ifFlag', function(flag, options) {
@@ -1738,10 +1791,11 @@ YUI.add('juju-view-utils', function(Y) {
 
   utils.deployBundleCallback = function(notifications, result) {
     if (result.err) {
-      console.log('import failed', result.err);
+      console.log('bundle import failed:', result.err);
       notifications.add({
-        title: 'Deploy Bundle',
-        message: 'Environment deploy of the bundle failed.<br/>',
+        title: 'Bundle Deployment Failed',
+        message: 'Unable to deploy the bundle. The server returned the ' +
+            'following error: ' + result.err,
         level: 'error'
       });
       return;
@@ -1757,6 +1811,7 @@ YUI.add('juju-view-utils', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
+    'escape',
     'handlebars',
     'node',
     'view',

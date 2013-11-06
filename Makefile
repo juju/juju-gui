@@ -26,7 +26,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-o -name 'generateTemplates' \
 	\) -print \
 	| sort | sed -e 's/^\.\///' \
-	| grep -Ev -e '^manifest\.json$$' \
+	| grep -Ev \
 		-e '^app/assets/javascripts/d3(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/spinner\.js$$' \
@@ -308,18 +308,6 @@ $(BUILD_FILES): $(JSFILES) $(CSS_TARGETS) $(THIRD_PARTY_JS) \
 		app/assets/javascripts/spin.min.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
-	    build-shared/juju-ui/assets/combined-css/rail-x.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-y.png" \
-	    build-shared/juju-ui/assets/combined-css/rail-y.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-x.png" \
-	    build-shared/juju-ui/assets/combined-css/thumb-x.png
-	ln -sf \
-	    "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/thumb-y.png" \
-	    build-shared/juju-ui/assets/combined-css/thumb-y.png
 	bin/merge-files
 	mv *.js.map build-shared/juju-ui/assets/
 
@@ -339,10 +327,6 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
 	build-$(1)/juju-ui/assets/sprites.css \
 	build-$(1)/juju-ui/assets/sprites.png \
-	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
-	build-$(1)/juju-ui/assets/combined-css/rail-y.png \
-	build-$(1)/juju-ui/assets/combined-css/thumb-x.png \
-	build-$(1)/juju-ui/assets/combined-css/thumb-y.png \
 	build-$(1)/juju-ui/assets/all-yui.js
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
@@ -370,17 +354,6 @@ define link-files
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
 	ln -sf \
 	    "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-y.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf \
-	    "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-x.png" \
-	    build-$(1)/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/thumb-y.png" \
 	    build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" \
 	    build-$(1)/juju-ui/assets/
@@ -431,7 +404,9 @@ $(LINK_PROD_FILES):
 
 prep: beautify lint
 
-check: lint test-prod test-debug test-misc docs
+# XXX bac: the order of test-debug and test-prod seems to affect the execution
+# of this target when called by lbox.  Please do note change.
+check: lint test-debug test-prod test-misc docs
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.

@@ -114,7 +114,7 @@ describe('Inspector Overview', function() {
         {id: 'mediawiki/2', agent_state: 'pending',
           charmUrl: 'cs:precise/mediaWiki-14'}]
     ]}});
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function(id) {
       return '/icon/' + id;
     };
@@ -514,6 +514,108 @@ describe('Inspector Overview', function() {
     newContainer.remove(true);
   });
 
+  it('updates the Landscape link when reboot section is revealed', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview,
+        newContainer = utils.makeContainer();
+
+    var units = new Y.LazyModelList();
+
+    units.add({ id: 'mysql/0', agent_state: 'started' });
+
+    var statuses = overview.updateStatusList(units);
+
+    overview.generateAndBindStatusHeaders(
+        newContainer, statuses, db.environment);
+
+    var unitListWrappers = newContainer.all('.unit-list-wrapper');
+
+    assert.equal(unitListWrappers.size(), 6);
+
+    var wrapper4 = unitListWrappers.item(4);
+    assert.isTrue(wrapper4.hasClass('hidden'));
+    var link = wrapper4.one('a.landscape');
+    assert.equal(link.get('href'), '');
+
+    var wrapper5 = unitListWrappers.item(5);
+    assert.isTrue(wrapper5.hasClass('hidden'));
+
+    units.item(0).annotations = {'landscape-needs-reboot': true};
+    var envAnno = {};
+    envAnno['landscape-url'] = 'http://landscape.example.com';
+    envAnno['landscape-computers'] = '/computers/criteria/environment:test';
+    envAnno['landscape-reboot-alert-url'] =
+        '+alert:computer-reboot/info#power';
+    envAnno['landscape-security-alert-url'] =
+        '+alert:security-upgrades/packages/list?filter=security';
+    db.environment.set('annotations', envAnno);
+    service.set('annotations', {
+      'landscape-computers': '+service:mediawiki'});
+
+    statuses = overview.updateStatusList(units);
+
+    overview.generateAndBindStatusHeaders(
+        newContainer, statuses, db.environment);
+
+    assert.isTrue(wrapper5.hasClass('hidden'));
+    assert.isFalse(wrapper4.hasClass('hidden'));
+    assert.equal(
+        link.get('href'),
+        'http://landscape.example.com/computers/criteria/' +
+        'environment:test+service:mediawiki/');
+  });
+
+  it('updates the Landscape link when upgrade section is revealed', function() {
+    var inspector = setUpInspector(),
+        overview = inspector.viewletManager.viewlets.overview,
+        newContainer = utils.makeContainer();
+
+    var units = new Y.LazyModelList();
+
+    units.add({ id: 'mysql/0', agent_state: 'started' });
+
+    var statuses = overview.updateStatusList(units);
+
+    overview.generateAndBindStatusHeaders(
+        newContainer, statuses, db.environment);
+
+    var unitListWrappers = newContainer.all('.unit-list-wrapper');
+
+    assert.equal(unitListWrappers.size(), 6);
+
+    var wrapper4 = unitListWrappers.item(4);
+    assert.isTrue(wrapper4.hasClass('hidden'));
+
+    var wrapper5 = unitListWrappers.item(5);
+    assert.isTrue(wrapper5.hasClass('hidden'));
+    var link = wrapper5.one('a.landscape');
+    assert.equal(link.get('href'), '');
+
+    units.item(0).annotations = {'landscape-security-upgrades': true};
+    var envAnno = {};
+    envAnno['landscape-url'] = 'http://landscape.example.com';
+    envAnno['landscape-computers'] = '/computers/criteria/environment:test';
+    envAnno['landscape-reboot-alert-url'] =
+        '+alert:computer-reboot/info#power';
+    envAnno['landscape-security-alert-url'] =
+        '+alert:security-upgrades/packages/list?filter=security';
+    db.environment.set('annotations', envAnno);
+    service.set('annotations', {
+      'landscape-computers': '+service:mediawiki'});
+
+    statuses = overview.updateStatusList(units);
+
+    overview.generateAndBindStatusHeaders(
+        newContainer, statuses, db.environment);
+
+    assert.isTrue(wrapper4.hasClass('hidden'));
+    assert.isFalse(wrapper5.hasClass('hidden'));
+    assert.equal(
+        link.get('href'),
+        'http://landscape.example.com/computers/criteria/' +
+        'environment:test+service:mediawiki/');
+  });
+
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
@@ -572,6 +674,19 @@ describe('Inspector Overview', function() {
     assert.notEqual(serviceWrapper.one(SUC).getStyle('maxHeight'), undefined);
     assert.equal(serviceWrapper.one(SUC).all('.top-upgrade').size(), 5);
     assert.equal(serviceWrapper.one(SUC).all('.other-charm').size(), 8);
+
+    // Check to make sure that the links to view the charm details in the
+    // upgrade section are full links instead of relative ones to allow
+    // the YUI Pjax module to properly parse them in IE10
+    serviceWrapper.one(SUC).all('.top-upgrade').each(function(node) {
+      // Selects the first anchor tag which is the 'view charm details' link
+      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
+    });
+
+    serviceWrapper.one(SUC).all('.other-charm').each(function(node) {
+      // Selects the first anchor tag which is the 'view charm details' link
+      assert.isTrue(Y.PjaxBase.prototype._isLinkSameOrigin(node.one('a')));
+    });
 
     newContainer.remove(true);
   });

@@ -108,11 +108,25 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
-  var cssFiles = filesToLoad.css;
-  cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
-  cssFiles.push('app/assets/stylesheets/juju-bootstrap.css');
+  // We're not including the pre-discovered CSS files so we can only include
+  // the CSS files we want.
+  var cssFiles = [];
+  cssFiles.push('app/assets/stylesheets/normalize.css');
   cssFiles.push('app/assets/stylesheets/prettify.css');
   cssFiles.push('app/assets/stylesheets/cssgrids-responsive-min.css');
+
+  // Manually include YUI CSS files so we can just include the core files,
+  // don't get any yui3-skin-sam classes and ignore file we don't need.
+  cssFiles.push(
+    'node_modules/yui/app-transitions-css/app-transitions-css-min.css');
+  cssFiles.push(
+    'node_modules/yui/autocomplete-list/assets/autocomplete-list-core.css');
+  cssFiles.push('node_modules/yui/panel/assets/panel-core.css');
+  cssFiles.push('node_modules/yui/slider-base/assets/slider-base-core.css');
+  cssFiles.push('node_modules/yui/tabview/assets/tabview-core.css');
+  cssFiles.push('node_modules/yui/widget-base/assets/widget-base-core.css');
+  cssFiles.push('node_modules/yui/widget-stack/assets/widget-stack-core.css');
+
   merge.combineCSS(cssFiles,
     'build-shared/juju-ui/assets/combined-css/all-static.css');
 });

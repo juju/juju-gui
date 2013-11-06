@@ -1,0 +1,195 @@
+#onboarding-background {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+
+    #onboarding-screen-mask {
+      display: block;
+      position: absolute;
+      top: @navbar-height;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+    }
+
+    #onboarding-header-screen-mask {
+      background-color: rgba(0, 0, 0, 0.75);
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: @navbar-height;
+      z-index: 10000;
+
+      i {
+        position: relative;
+        top: 15px;
+        left: 20px;
+      }
+    }
+
+    #onboarding-message {
+        .create-border-radius(@border-radius);
+        display: block;
+        z-index: 10001;
+        position: relative;
+        top: 100px;
+        left: 350px;
+        width: 320px;
+        background-color: @inspector-background-color;
+        padding: 20px 20px 0;
+
+        .onboarding-cross {
+            float: right;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header,
+        .text {
+            color: @inspector-text-color;
+        }
+
+        img {
+          position: absolute;
+        }
+
+        .panel {
+          display: none;
+          height: 169px;
+        }
+
+        ul {
+            background-color: rgba(34, 30, 28, 0.75);
+            position: relative;
+            list-style: none;
+            height: 57px;
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 20px;
+
+            li {
+              display: inline;
+            }
+
+            a {
+                @box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.3);
+                .create-box-shadow(@box-shadow);
+                .create-border-radius(@border-radius);
+                background-color: @inspector-dark;
+                display: inline-block;
+                height: 40px;
+                margin-top: 17px;
+                padding: 0 29px;
+                color: #fff;
+                line-height: 40px;
+
+                &.onboarding-next,
+                &.onboarding-start,
+                &.onboarding-prev {
+                    float: right;
+                }
+                &.highlight {
+                    background-color: @charm-panel-orange;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    &.state-0 {
+        #onboarding-message {
+            .panel-0 {
+                display: block;
+            }
+            ul a.onboarding-next,
+            ul a.onboarding-prev {
+                display: none;
+            }
+        }
+        #onboarding-screen-mask {
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+    }
+
+    &.state-1 {
+        #onboarding-screen-mask {
+            left: 290px;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-1 {
+                display: block;
+            }
+            ul a.onboarding-next {
+                display: inline-block;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+        }
+    }
+
+    &.state-2 {
+        #onboarding-screen-mask {
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-2 {
+                display: block;
+            }
+            ul a.onboarding-next {
+                display: inline-block;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+            .service-blocks {
+                left: 90px;
+                top: 87px;
+                max-width: none;
+            }
+        }
+    }
+
+    &.state-3 {
+        #onboarding-screen-mask {
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #onboarding-message {
+            .panel-3 {
+                display: block;
+            }
+            ul a.onboarding-close {
+                background-color: @charm-panel-orange;
+                margin-left: 10px;
+                float: right;
+            }
+            ul a.onboarding-next {
+                display: none;
+            }
+            ul a.onboarding-start {
+                display: none;
+            }
+            .service-block {
+                top: 320px;
+                left: 90px;
+            }
+            .inspector {
+                right: -370px;
+                top: 0;
+            }
+        }
+    }
+}
