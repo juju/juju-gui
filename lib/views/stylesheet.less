@@ -279,24 +279,11 @@ th {
             }
             &.notifications-nav {
                 position: relative;
-                padding: 0;
 
-                #notifications {
-                    & > span {
-                        .border-box;
-                        display: block;
-                        height: @navbar-height;
-                        padding: 15px 20px 0 20px;
-
-                        &.open {
-                            background-color: #000;
-                        }
-                        #notify-indicator {
-                            .button;
-                            margin: 0 9px 0 0;
-                            padding: 6px 12px;
-                        }
-                    }
+                #notify-indicator {
+                  .button;
+                  margin: -5px 9px 0 0;
+                  padding: 6px 12px;
                 }
             }
         }
@@ -314,25 +301,6 @@ th {
 
             &:hover {
                 background-color: #1f1b18;
-            }
-        }
-        .help-dropdown {
-            position: relative;
-
-            .expand {
-                margin-left: 5px;
-
-                .less {
-                    display: none;
-                }
-            }
-            &.open {
-                .more {
-                    display: none;
-                }
-                .less {
-                    display: inline-block;
-                }
             }
         }
     }

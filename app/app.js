@@ -796,11 +796,17 @@ YUI.add('juju-gui', function(Y) {
      * views.  We manually create an instance of this view and insert it into
      * the App's view metadata.
      *
-     * @method show_notifications_view
+     * @method show_navbar_views
      */
-    show_notifications_view: function(req, res, next) {
+    show_navbar_views: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
+      if (!view.dropdown) {
+        view.dropdown = new widgets.Dropdown({
+            node: Y.one('#help-dropdown')
+        });
+        view.dropdown.render();
+      }
       if (!instance) {
         view.instance = new views.NotificationsView(
             {container: Y.one('#notifications'),
@@ -1284,7 +1290,7 @@ YUI.add('juju-gui', function(Y) {
         value: [
           // Called on each request.
           { path: '*', callbacks: 'checkUserCredentials'},
-          { path: '*', callbacks: 'show_notifications_view'},
+          { path: '*', callbacks: 'show_navbar_views'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
@@ -1342,6 +1348,7 @@ YUI.add('juju-gui', function(Y) {
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
+    'dropdown',
     'event-key',
     'event-touch',
     'model-controller',

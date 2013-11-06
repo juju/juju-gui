@@ -1,25 +1,24 @@
-<span class="{{open}}">
-  <a href="" id="notify-indicator" data-target="notify-list">
-    {{count}}
-  </a>
-  <span id="notify-list" class="dropdown">
+<a href="" class="menu-link">
+    <span id="notify-indicator">{{ count }}</span>
+    Notifications
+    <span class="expand">
+        <i class="sprite chevron_down more"></i>
+        <i class="sprite chevron_up less"></i>
+    </span>
+</a>
+<span class="dropdown">
     <h3>
-      {{count}} notifications
+        {{count}} notifications
     </h3>
     <ul>
-      {{#notifications}}
-        <li id="{{clientId}}" class="notice">
-          <div>
-            <h4>{{title}}</h4>
-            <div>
-              {{message}}
-            </div>
-            <small data-timestamp="{{timestamp}}"
-                   class="timestamp">{{humanizeTime timestamp}}</small>
-          </div>
-        </li>
-      {{/notifications}}
+        {{#notifications}}
+            <li id="{{clientId}}" class="notice">
+                <h4>{{title}}</h4>
+                {{message}}
+                <small data-timestamp="{{timestamp}}">
+                    {{humanizeTime timestamp}}
+                </small>
+            </li>
+        {{/notifications}}
     </ul>
-  </span>
-  Notifications
 </span>

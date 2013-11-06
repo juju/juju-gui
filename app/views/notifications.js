@@ -90,38 +90,6 @@ YUI.add('juju-notifications', function(Y) {
         },
 
         /**
-         * Event handler for clicking the notification icon.
-         *
-         * @method notifyToggle
-         */
-        notifyToggle: function(evt) {
-          evt.halt();
-          var container = this.get('container'),
-              notifications = this.get('notifications'),
-              target = evt.target.getAttribute('data-target'),
-              el = container.one('#' + target),
-              parent = el.ancestor();
-
-          if (notifications.size() === 0) {
-            return;
-          }
-
-          if (parent && parent.hasClass('open')) {
-            el.hide(true);
-          }
-          else {
-            el.show(true);
-          }
-
-          if (parent) {
-            parent.toggleClass('open');
-          }
-
-          el.toggleClass('active');
-
-        },
-
-        /**
          * Select/click on a notice. Currently this just removes it from the
          * model_list.
          *
@@ -245,9 +213,6 @@ YUI.add('juju-notifications', function(Y) {
         },
 
         events: {
-          '#notify-indicator': {
-            click: 'notifyToggle'
-          }
         },
 
         /**
@@ -262,30 +227,10 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
-        close: function() {
-          var container = this.get('container');
-          if (!container) {
-            return;
-          }
-
-          var indicator = container.one('#notify-indicator'),
-              list = container.one('#notify-list');
-
-          if (!indicator) {
-            return;
-          }
-          var parent = indicator.ancestor();
-
-          if (parent && parent.hasClass('open')) {
-            indicator.ancestor().removeClass('open');
-            list.hide();
-            indicator.removeClass('active');
-          }
-        },
-
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
-          this.get('container').on('clickoutside', this.close, this);
+          var dropdown = new widgets.Dropdown({node: Y.one('#notifications')});
+          dropdown.render();
           return this;
         }
 
@@ -330,6 +275,7 @@ YUI.add('juju-notifications', function(Y) {
     'juju-view-utils',
     'node',
     'handlebars',
-    'notifier'
+    'notifier',
+    'dropdown'
   ]
 });

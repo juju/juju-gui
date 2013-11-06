@@ -155,6 +155,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/viewmode-controls.js'
         },
 
+        'dropdown': {
+          fullpath: '/juju-ui/widgets/dropdown.js'
+        },
+
         'browser-tabview': {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
         },
