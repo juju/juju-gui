@@ -55,6 +55,23 @@ YUI.add('help-dropdown', function(Y) {
           onboarding.render();
         },
 
+        /**
+         * Show the Landscape URL if available.
+         *
+         * @method _displayLandscapeURL
+         * @private
+         */
+        _displayLandscapeURL: function() {
+          var env = this.get('env'),
+              url = this.get('container').one('#landscape-url'),
+              baseLandscapeURL = views.utils.getLandscapeURL(env);
+
+          if (baseLandscapeURL) {
+            url.one('a').setAttribute('href', baseLandscapeURL);
+            url.removeClass('hidden');
+          }
+        },
+
         events: {
           '#start-onboarding': {
             click: '_startOnboarding'
@@ -66,6 +83,7 @@ YUI.add('help-dropdown', function(Y) {
           container.setHTML(this.template());
           this.dropdown = new widgets.Dropdown({node: container});
           this.dropdown.render();
+          this._displayLandscapeURL();
           return this;
         }
       });

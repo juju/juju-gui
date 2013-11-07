@@ -830,7 +830,8 @@ YUI.add('juju-gui', function(Y) {
           instance = view.instance;
       if (!instance) {
         view.instance = new views.HelpDropdownView({
-          container: Y.one('#help-dropdown')
+          container: Y.one('#help-dropdown'),
+          env: this.db.environment
         });
         view.instance.render();
       }
