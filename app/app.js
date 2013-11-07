@@ -125,10 +125,6 @@ YUI.add('juju-gui', function(Y) {
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
-      },
-
-      notifications_overview: {
-        type: 'juju.views.NotificationsOverview'
       }
 
     },
@@ -757,17 +753,6 @@ YUI.add('juju-gui', function(Y) {
     // Route handlers
 
     /**
-     * @method show_notifications_overview
-     */
-    show_notifications_overview: function(req) {
-      this.showView('notifications_overview', {
-        env: this.env,
-        notifications: this.db.notifications,
-        nsRouter: this.nsRouter
-      });
-    },
-
-    /**
      * Show the login screen.
      *
      * @method showLogin
@@ -1308,10 +1293,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
             model: 'browser-charm',
-            namespace: 'gui'},
-          // Notifications.
-          { path: '/notifications/',
-            callbacks: 'show_notifications_overview',
             namespace: 'gui'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
