@@ -302,7 +302,6 @@ YUI.add('juju-topology', function(Y) {
     'juju-topology-relation',
     'juju-topology-panzoom',
     'juju-topology-viewport',
-    'juju-topology-importexport',
     'juju-topology-utils'
   ]
 });

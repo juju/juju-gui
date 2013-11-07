@@ -181,6 +181,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
         },
 
+        'bundle-import-extension': {
+          fullpath: '/juju-ui/assets/javascripts/bundle-import-extension.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
@@ -208,10 +212,6 @@ var GlobalConfig = {
 
         'juju-topology-service': {
           fullpath: '/juju-ui/views/topology/service.js'
-        },
-
-        'juju-topology-importexport': {
-          fullpath: '/juju-ui/views/topology/importexport.js'
         },
 
         'juju-topology-utils': {
