@@ -39,13 +39,13 @@ YUI.add('help-dropdown', function(Y) {
       Y.View, [views.JujuBaseView], {
         template: Templates['help-dropdown'],
 
-      /**
-       * Start the onboarding tutorial.
-       *
-       * @method _startOnboarding
-       * @param {Event} ev the click event from the control.
-       * @private
-       */
+        /**
+         * Start the onboarding tutorial.
+         *
+         * @method _startOnboarding
+         * @param {Event} ev the click event from the control.
+         * @private
+         */
         _startOnboarding: function(ev) {
           ev.halt();
           this.dropdown.close();
@@ -68,7 +68,6 @@ YUI.add('help-dropdown', function(Y) {
           this.dropdown.render();
           return this;
         }
-
       });
   views.HelpDropdownView = HelpDropdownView;
 
@@ -79,6 +78,6 @@ YUI.add('help-dropdown', function(Y) {
     'juju-view-utils',
     'node',
     'handlebars',
-    'dropdown',
+    'dropdown'
   ]
 });
