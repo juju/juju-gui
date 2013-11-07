@@ -7,18 +7,23 @@
     </span>
 </a>
 <span class="dropdown">
-    <h3>
+    <header>
         {{count}} notifications
-    </h3>
-    <ul>
-        {{#notifications}}
-            <li id="{{clientId}}" class="notice">
-                <h4>{{title}}</h4>
-                {{message}}
-                <small data-timestamp="{{timestamp}}">
-                    {{humanizeTime timestamp}}
-                </small>
-            </li>
-        {{/notifications}}
-    </ul>
+    </header>
+    {{#if notifications}}
+        <ul>
+            {{#notifications}}
+                <li id="{{clientId}}" class="notice">
+                    <h4>{{title}}</h4>
+                    {{message}}
+                    <small data-timestamp="{{timestamp}}">
+                        {{humanizeTime timestamp}}
+                    </small>
+                </li>
+            {{/notifications}}
+        </ul>
+    {{else}}
+        <p>No notifications</p>
+    {{/if}}
+    <footer></footer>
 </span>

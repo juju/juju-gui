@@ -46,15 +46,35 @@
         background-color: #eee;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 
-        li {
-            color: #333;
+        &.right {
+            left: auto;
+            right: 0;
+            text-align: right;
         }
-        h3 {
+        &.narrow {
+            width: 230px;
+        }
+        a,
+        p,
+        li {
+            color: @text-colour;
+        }
+        p {
             padding: 11px 20px;
+        }
+        header,
+        footer {
             background-color: #000;
+        }
+        header {
+            padding: 11px 20px;
             color: #f2f2e6;
             font-size: 16px;
             font-weight: 300;
+        }
+        footer {
+            padding: 20px;
+            border-radius: 0 0 @border-radius @border-radius;
         }
         ul {
             max-height: 500px;
@@ -63,13 +83,20 @@
             li {
                 border-top: 1px solid #efefef;
                 border-bottom: 1px solid #e2e2e2;
-                padding: 15px 20px;
 
                 &:first-child {
                     border-top: none;
                 }
                 &:last-child {
                     border-bottom: none;
+                }
+                a {
+                    display: block;
+                    padding: 15px 20px;
+
+                    &:hover {
+                        background-color: #e2e2e2;
+                    }
                 }
             }
             // Notification items
