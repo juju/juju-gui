@@ -51,7 +51,8 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer], {
+                                                  Y.juju.GhostDeployer,
+                                                  Y.juju.BundleImport], {
 
     /*
       Extension properties
@@ -564,6 +565,22 @@ YUI.add('juju-gui', function(Y) {
         exportNode.on('click', function(e) {
           e.halt();
           this.exportYAML();
+        }, this);
+      }
+
+      var importNode = Y.one('#import-trigger');
+      var importFileInput = Y.one('.import-export input[type=file]');
+      // Tests won't have this node.
+      if (importNode && importFileInput) {
+        importNode.on('click', function(e) {
+          e.halt();
+          e.currentTarget.siblings('input[type=file]')
+                                  .item(0).getDOMNode().click();
+        });
+
+        importFileInput.on('change', function(e) {
+          this.sendToDeployer(this.env, this.db,
+                              e.currentTarget.get('files')._nodes);
         }, this);
       }
 
@@ -1345,6 +1362,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls'
+    'viewmode-controls',
+    'bundle-import-extension'
   ]
 });
