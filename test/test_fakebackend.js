@@ -337,6 +337,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '    auto_id: %n\n' +
           '             ^');
     });
+
+    it('honors annotations', function() {
+      var options = {
+        annotations: {
+          'gui-x': '-3',
+          'gui-y': '5'
+        }
+      };
+      fakebackend.deploy('cs:precise/wordpress-15', callback, options);
+      var service = fakebackend.db.services.getById('wordpress');
+      assert.deepEqual(
+          options.annotations,
+          service.get('annotations')
+      );
+      var changes = fakebackend.nextAnnotations();
+      assert.deepEqual(changes.services, {wordpress: service});
+    });
   });
 
   describe('FakeBackend.setCharm', function() {
