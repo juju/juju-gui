@@ -47,6 +47,7 @@ describe('Ghost Inspector', function() {
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
+    env.connect();
   });
 
   afterEach(function(done) {
@@ -73,7 +74,7 @@ describe('Ghost Inspector', function() {
     // Create a ghost service with the fake charm.
     service = db.services.ghostService(charm);
 
-    var fakeStore = new Y.juju.charmworld.APIv2({});
+    var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function(id) {
       return '/icon/' + id;
     };
@@ -92,6 +93,52 @@ describe('Ghost Inspector', function() {
     // an aprox 150ms delay
     return view.createServiceInspector(service, {databinding: {interval: 0}});
   };
+
+  describe('charm name validity', function() {
+    it('shows when a charm name is invalid initially', function() {
+      db.services.add({id: 'mediawiki', charm: 'cs:precise/mediawiki'});
+      inspector = setUpInspector();
+      var model = inspector.model;
+      var serviceNameInput = Y.one('input[name=service-name]');
+      assert.equal(model.get('displayName'), '(mediawiki)');
+      assert.isTrue(serviceNameInput.hasClass('invalid'));
+      assert.isFalse(serviceNameInput.hasClass('valid'));
+    });
+
+    it('shows when a charm name is valid initially', function() {
+      db.services.add({id: 'mediawiki42', charm: 'cs:precise/mediawiki'});
+      inspector = setUpInspector();
+      var model = inspector.model;
+      var serviceNameInput = Y.one('input[name=service-name]');
+      assert.equal(model.get('displayName'), '(mediawiki)');
+      assert.isFalse(serviceNameInput.hasClass('invalid'));
+      assert.isTrue(serviceNameInput.hasClass('valid'));
+    });
+
+    it('shows when a charm name becomes invalid', function() {
+      db.services.add({id: 'mediawiki42', charm: 'cs:precise/mediawiki'});
+      inspector = setUpInspector();
+      var serviceNameInput = Y.one('input[name=service-name]');
+      // This is usually fired by an event.  The event simulation is broken as
+      // of this writing, and we can do more of a unit test this way.
+      inspector.updateGhostName(
+          {newVal: 'mediawiki42', currentTarget: serviceNameInput});
+      assert.isTrue(serviceNameInput.hasClass('invalid'));
+      assert.isFalse(serviceNameInput.hasClass('valid'));
+    });
+
+    it('shows when a charm name becomes valid', function() {
+      db.services.add({id: 'mediawiki', charm: 'cs:precise/mediawiki'});
+      inspector = setUpInspector();
+      var serviceNameInput = Y.one('input[name=service-name]');
+      // This is usually fired by an event.  The event simulation is broken as
+      // of this writing, and we can do more of a unit test this way.
+      inspector.updateGhostName(
+          {newVal: 'mediawiki42', currentTarget: serviceNameInput});
+      assert.isFalse(serviceNameInput.hasClass('invalid'));
+      assert.isTrue(serviceNameInput.hasClass('valid'));
+    });
+  });
 
   it('updates the service name in the topology when changed in the inspector',
       function(done) {

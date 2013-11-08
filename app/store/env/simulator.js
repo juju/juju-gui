@@ -43,7 +43,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
   var DEFAULT_AGENTS = {
     landscape: {
       start: function(context) {
-        // For landscape to work we need to ensure the top level
+        // For landscape to work, we need to ensure the top level
         // env has the proper setup. This happens once.
         var db = context.state.db;
         var envAnno = db.environment.get('annotations');
@@ -67,8 +67,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           var annotations = service.get('annotations') || {};
           var sid = service.get('id');
           if (!annotations['landscape-computers']) {
-            annotations['landscape-computers'] = '/computers/' +
-                'criteria/service:' + sid + '+environment:demonstration';
+            annotations['landscape-computers'] = '+service:' + sid;
             context.state.updateAnnotations(sid, annotations);
           }
         });
@@ -80,12 +79,8 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       @method unitAnnotations
        */
       unitAnnotations: function(context) {
-        context.state.db.services.each(function(service) {
-          if (service.get('pending')) {
-            return;
-          }
+        context.selection.each(function(service) {
           service.get('units').each(function(unit) {
-            // Toggle landscape attributes as though they
             var annotations = unit.annotations || {};
             if (!annotations['landscape-computer']) {
               annotations['landscape-computer'] = '+unit:' + unit.urlName;
@@ -96,33 +91,34 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       },
 
       select: {
-        list: 'services',
-        random: 0.02
+        list: 'services'
       },
 
+      reboot_chance_per_unit: 0.05,
+      upgrade_chance_per_unit: 0.05,
+
       run: function(context) {
-        // Make sure services all have annotation
-        // (Apart from selection)
         context.serviceAnnotations(context);
         context.unitAnnotations(context);
-
-        context.selection.each(function(unit) {
-          var annotations = unit.annotations || {};
-          var changed = false;
-          // Toggle some annotations.
-          if (RAND(0.3)) {
-            annotations['landscape-needs-reboot'] = !annotations[
-                'landscape-needs-reboot'];
-            changed = true;
-          }
-          if (RAND(0.3)) {
-            annotations['landscape-security-upgrades'] = !annotations[
-                'landscape-security-upgrades'];
-            changed = true;
-          }
-          if (changed) {
-            context.state.updateAnnotations(unit.id, annotations);
-          }
+        context.selection.each(function(service) {
+          service.get('units').each(function(unit) {
+            var annotations = unit.annotations || {};
+            var changed = false;
+            // Toggle some annotations.
+            if (RAND(context.reboot_chance_per_unit)) {
+              annotations['landscape-needs-reboot'] = !annotations[
+                  'landscape-needs-reboot'];
+              changed = true;
+            }
+            if (RAND(context.upgrade_chance_per_unit)) {
+              annotations['landscape-security-upgrades'] = !annotations[
+                  'landscape-security-upgrades'];
+              changed = true;
+            }
+            if (changed) {
+              context.state.updateAnnotations(unit.id, annotations);
+            }
+          });
         });
       }
     },
@@ -238,6 +234,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       }
     }
   };
+  Y.namespace('juju.environments').DEFAULT_AGENTS = DEFAULT_AGENTS;
 
   /**
     Agents of backend change. Created automatically,
@@ -358,6 +355,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       }
     }
   });
+  Y.namespace('juju.environments').Agent = Agent;
 
   /**
   Humble make-believe manager.

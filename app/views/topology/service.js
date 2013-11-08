@@ -285,7 +285,8 @@ YUI.add('juju-topology-service', function(Y) {
     @class ServiceModule
    */
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [
-    ServiceModuleCommon], {
+    ServiceModuleCommon,
+    Y.juju.BundleImport], {
     events: {
       scene: {
         '.service': {
@@ -621,7 +622,8 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * Handle deploying a services by dropping a charm onto the canvas.
+     * Handle deploying services by dropping a charm onto the canvas or
+     * dropping a yaml bundle deployer file from your file system.
      *
      * @method canvasDropHandler
      * @param {Y.EventFacade} e the drop event object.
@@ -639,43 +641,8 @@ YUI.add('juju-topology-service', function(Y) {
       var db = topo.get('db');
       var notifications = db.notifications;
       if (fileSources && fileSources.length) {
-        if (!Y.Lang.isFunction(env.deployerImport)) {
-          // Notify the user that their environment is too old and return.
-          notifications.add({
-            title: 'Deployer Import Unsupported',
-            message: 'Your environment is too old to support deployer file' +
-                ' imports directly. Please consider upgrading to use' +
-                ' this feature.',
-            level: 'important'
-          });
-          return;
-        }
-        // Handle dropping Deployer files on the canvas.
-        Y.Array.each(fileSources, function(file) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            // Import each into the environment
-            env.deployerImport(e.target.result, null, function(result) {
-              if (!result.err) {
-                notifications.add({
-                  title: 'Imported Deployer file',
-                  message: 'Import from "' + file.name + '" successful. This ' +
-                      'can take some time to complete.',
-                  level: 'important'
-                });
-              } else {
-                console.warn('import failed', file, result);
-                notifications.add({
-                  title: 'Import Environment Failed',
-                  message: 'Import from "' + file.name +
-                      '" failed.<br/>' + result.err,
-                  level: 'error'
-                });
-              }
-            });
-          };
-          reader.readAsText(file);
-        });
+        // provided by bundle-import-extension.js
+        this.sendToDeployer(env, db, fileSources);
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         var dragData = JSON.parse(dataTransfer.getData('Text'));
@@ -1326,6 +1293,7 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-templates',
     'juju-models',
     'juju-env',
-    'unscaled-pack-layout'
+    'unscaled-pack-layout',
+    'bundle-import-extension'
   ]
 });

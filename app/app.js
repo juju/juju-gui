@@ -51,7 +51,8 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer], {
+                                                  Y.juju.GhostDeployer,
+                                                  Y.juju.BundleImport], {
 
     /*
       Extension properties
@@ -124,10 +125,6 @@ YUI.add('juju-gui', function(Y) {
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
-      },
-
-      notifications_overview: {
-        type: 'juju.views.NotificationsOverview'
       },
 
       help_dropdown: {
@@ -572,6 +569,22 @@ YUI.add('juju-gui', function(Y) {
         }, this);
       }
 
+      var importNode = Y.one('#import-trigger');
+      var importFileInput = Y.one('.import-export input[type=file]');
+      // Tests won't have this node.
+      if (importNode && importFileInput) {
+        importNode.on('click', function(e) {
+          e.halt();
+          e.currentTarget.siblings('input[type=file]')
+                                  .item(0).getDOMNode().click();
+        });
+
+        importFileInput.on('change', function(e) {
+          this.sendToDeployer(this.env, this.db,
+                              e.currentTarget.get('files')._nodes);
+        }, this);
+      }
+
       // Attach SubApplications. The subapps should share the same db.
       cfg.db = this.db;
 
@@ -743,17 +756,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     // Route handlers
-
-    /**
-     * @method show_notifications_overview
-     */
-    show_notifications_overview: function(req) {
-      this.showView('notifications_overview', {
-        env: this.env,
-        notifications: this.db.notifications,
-        nsRouter: this.nsRouter
-      });
-    },
 
     /**
      * Show the login screen.
@@ -1247,8 +1249,8 @@ YUI.add('juju-gui', function(Y) {
       },
       /**
          @attribute store
-         @default Y.juju.charmworld.APIv2
-         @type {Y.juju.charmworld.APIv2}
+         @default Y.juju.charmworld.APIv3
+         @type {Y.juju.charmworld.APIv3}
        */
       store: {
         /**
@@ -1270,11 +1272,7 @@ YUI.add('juju-gui', function(Y) {
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
-          if (window.flags.charmworldv3) {
-            return new Y.juju.charmworld.APIv3(cfg);
-          } else {
-            return new Y.juju.charmworld.APIv2(cfg);
-          }
+          return new Y.juju.charmworld.APIv3(cfg);
         }
       },
 
@@ -1321,10 +1319,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '/charms/*charm_path/',
             callbacks: 'show_charm',
             model: 'browser-charm',
-            namespace: 'gui'},
-          // Notifications.
-          { path: '/notifications/',
-            callbacks: 'show_notifications_overview',
             namespace: 'gui'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
@@ -1376,6 +1370,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-ghost-inspector',
     'juju-view-bundle',
     'viewmode-controls',
-    'help-dropdown'
+    'help-dropdown',
+    'bundle-import-extension'
   ]
 });

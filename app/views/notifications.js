@@ -237,38 +237,6 @@ YUI.add('juju-notifications', function(Y) {
       });
   views.NotificationsView = NotificationsView;
 
-  /**
-   * The 'View All Notifications' view.
-   *
-   * @class NotificationsOverview
-   */
-  var NotificationsOverview = Y.Base.create('NotificationsOverview',
-      NotificationsBaseView, [], {
-        template: Templates.notifications_overview,
-        events: {
-          'li.notice': {
-            click: 'notificationSelect'
-          }
-        },
-        // Actions for selecting a notice
-        selection: {hide: false},
-
-        /**
-         * The overview shows all events by default when real filtering
-         * is present this will have to take options.
-         *
-         * @method getShowable
-         */
-        getShowable: function() {
-          var notifications = this.get('notifications');
-          return notifications.map(function(n) {
-            return n.getAttrs();
-          });
-        }
-      });
-
-  views.NotificationsOverview = NotificationsOverview;
-
 }, '0.1.0', {
   requires: [
     'view',

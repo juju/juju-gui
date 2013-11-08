@@ -1374,7 +1374,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!data) {return;}
       options = options || {};
       var db = this.db;
-      var rewriteIds = options.rewriteIds || false;
       var targetBundle = options.targetBundle;
       var useGhost = options.useGhost;
       if (useGhost === undefined) {
@@ -1433,50 +1432,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
         Y.mix(source, ancestor, true, undefined, 0, true);
       });
 
-      // Create an id mapping. This will track the ids of objects
-      // read from data as they are mapped into db. When options
-      // rewriteIds is true this is required for services, but some
-      // types of object ids ('relations' for example) can always
-      // be rewritten but depend on the use of the proper ids.
-      // By building this mapping now we can detect collisions
-      // prior to mutating the database.
-      var serviceIdMap = {};
-      /**
-       Helper to generate the next valid service id.
-       @method nextServiceId
-       @return {String} next service id to use.
-      */
-      function nextServiceId(modellist, id) {
-        var existing = modellist.getById(id);
-        var count = 0;
-        var target;
-        while (existing) {
-          count += 1;
-          target = id + '-' + count;
-          existing = modellist.getById(target);
-        }
-        return target;
-      }
-
+      var error = '';
       Object.keys(source.services).forEach(function(serviceName) {
-        var current = source.services[serviceName];
         var existing = db.services.getById(serviceName);
-        var targetId = serviceName;
         if (existing) {
-          if (!rewriteIds) {
-            throw new Error(serviceName +
-                ' is already present in the database.');
-          }
-          targetId = nextServiceId(db.services, serviceName);
-          current.id = targetId;
+          console.log(source);
+          error = serviceName + ' is already present in the database.' +
+              ' Change service name and try again.';
         }
-        serviceIdMap[serviceName] = targetId;
+        source.services[serviceName].name = serviceName;
       });
 
-      return {
-        services: source.services,
-        relations: source.relations
-      };
+      if (error) {
+        return { error: error };
+      } else {
+        return {
+          services: source.services,
+          relations: source.relations
+        };
+      }
     },
 
     /**
@@ -1514,6 +1488,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var ingestedData = this.ingestDeployer(data, options);
       var servicePromises = [];
+      // If there is an error in the ingestedData then return with the error.
+      if (ingestedData.error) {
+        callback(ingestedData);
+        return;
+      }
       Y.each(ingestedData.services, function(serviceData) {
         // Map the argument name from the deployer format
         // name for unit count.
@@ -1587,7 +1566,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      exists to aid tests which use the import system to quickly
      generate fixtures.
 
-     @method promiseDeploy
+     @method promiseImport
      @param {String} YAMLData YAML data to import.
      @param {String} [name] Bundle name to import.
      @return {Promise} After the import is run.

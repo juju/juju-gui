@@ -48,25 +48,22 @@ YUI.add('viewlet-inspector-header', function(Y) {
     'render': function(model, viewContainerAttrs) {
       this.container = Y.Node.create(this.templateWrapper);
       var pojoModel = model.getAttrs();
-      if (model instanceof models.Charm) {
-        pojoModel.ghost = true;
-        pojoModel.charmUrl = pojoModel.id;
-      } else if (model instanceof models.Service) {
-        pojoModel.charmUrl = pojoModel.charm;
-      } else {
-        throw 'Programmer error: unknown model type';
-      }
+      pojoModel.charmUrl = pojoModel.charm;
       // Manually add the icon url for the charm since we don't have access to
       // the browser handlebars helper at this location.
       pojoModel.icon = viewContainerAttrs.store.iconpath(pojoModel.charmUrl);
-
-      // Check if there is already a service using the default name to
-      // trigger the name ux.
-      if (utils.checkForExistingService(pojoModel.name,
-          viewContainerAttrs.db)) {
-        pojoModel.invalidName = 'invalid';
-      } else {
-        pojoModel.invalidName = 'valid';
+      if (pojoModel.pending) {
+        // Check if there is already a service using the default name to
+        // trigger the name ux.
+        // This regex simply removes the outer parentheses from the
+        // displayName that is set in the ghost-inspector.js updateGhostName
+        // method.  If the regex doesn't match, blow up.  It should match.
+        var name = pojoModel.displayName.match(/^\(([^)]*)\)$/)[1];
+        if (utils.checkForExistingService(name, viewContainerAttrs.db)) {
+          pojoModel.invalidName = 'invalid';
+        } else {
+          pojoModel.invalidName = 'valid';
+        }
       }
 
       this.container.setHTML(this.template(pojoModel));
