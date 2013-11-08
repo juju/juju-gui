@@ -409,6 +409,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraints = options.constraints;
       }
 
+      var annotations = options.annotations || {};
+
       // In order for the constraints to support the python back end this
       // needs to be an array, so we are converting it back to an object
       // here so that the GUI displays it properly.
@@ -425,6 +427,17 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraintsMap = constraints;
       }
 
+      // We need to set charm default values for the options that have not
+      // been explicitly provided.
+      var charmOptions = charm.get('options') || {};
+      // "config" will hold the service's config values--it will be the
+      // result of this processing.
+      var config = {};
+      var explicitConfig = options.config || {};
+      Object.keys(charmOptions).forEach(function(key) {
+        config[key] = explicitConfig[key] || charmOptions[key]['default'];
+      });
+
       var service = this.db.services.add({
         id: options.name,
         name: options.name,
@@ -432,22 +445,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         constraints: constraintsMap,
         exposed: false,
         subordinate: charm.get('is_subordinate'),
-        // Because we only send the user changed options now
-        // we need to mix those values in to the charm config
-        // options when creating a new model.
-        config: (function() {
-          var charmOptions = charm.get('options') || {};
-          var config = {};
-          if (!options.config) { options.config = {}; }
-          Object.keys(charmOptions).forEach(function(key) {
-            config[key] =
-                options.config[key] ||
-                (charmOptions[key] ? charmOptions[key]['default'] : undefined);
-          });
-          return config;
-        })()
+        annotations: annotations,
+        config: config
       });
       this.changes.services[service.get('id')] = [service, true];
+      if (Object.keys(annotations).length) {
+        this.annotations.services[service.get('id')] = service;
+      }
 
       var unitCount = options.unitCount;
       if (!Y.Lang.isValue(unitCount) && !charm.get('is_subordinate')) {
@@ -1522,28 +1526,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       Y.batch.apply(this, servicePromises)
       .then(function(serviceDeployResult) {
+            // Expose, if requested.
             serviceDeployResult.forEach(function(sdr) {
-              // Update export elements that 'deploy'
-              // doesn't handle
-              var service = sdr.service;
-              var serviceId = service.get('id');
+              var serviceId = sdr.service.get('id');
               var serviceData = ingestedData.services[serviceId];
-
-              // Force the annotation update (deploy doesn't handle this).
-              var anno = serviceData.annotations;
-              if (anno) {
-                self.updateAnnotations(service.get('id'), anno);
-              }
-
-              // Expose
               if (serviceData.expose) {
                 self.expose(serviceId);
               }
-
-              self.changes.services[sdr.service.get('id')] = [
-                sdr.service, true];
             });
 
+            // Create requested relations.
             ingestedData.relations.forEach(function(relationData) {
               var relResult = self.addRelation(
                   relationData[0], relationData[1], true);
