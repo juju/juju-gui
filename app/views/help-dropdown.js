@@ -78,6 +78,11 @@ YUI.add('help-dropdown', function(Y) {
           }
         },
 
+        /**
+         * Sets up the DOM nodes and renders them to the DOM.
+         *
+         * @method render
+         */
         render: function() {
           var container = this.get('container');
           container.setHTML(this.template());
