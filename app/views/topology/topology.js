@@ -171,21 +171,27 @@ YUI.add('juju-topology', function(Y) {
 
     /**
       Builds a coordinate which is outside of the current topology's service
-      boxes.
+      boxes. Include the optional includeVertices list of xy coordinates when
+      calculating the resulting placement.
 
       @method servicePointOutside
+      @param {Array} includeVertices Optional coordinates to be considered.
       @return {array} An x/y coordinate pair.
     */
-    servicePointOutside: function() {
+    servicePointOutside: function(includeVertices) {
       // Existing service boxes are those with x/y attributes set.
       var existingBoxes = Y.Object.values(this.service_boxes)
         .filter(function(box) {
             return box.x !== undefined && !isNaN(box.center[0]);
           });
       // Find a point outside of the set of existing service boxes.
-      return utils.pointOutside(
-          utils.serviceBoxesToVertices(existingBoxes),
-          this.get('servicePadding'));
+      var vertices = utils.serviceBoxesToVertices(existingBoxes);
+      if (includeVertices && includeVertices.length) {
+        includeVertices.forEach(function(item) {
+          vertices.push(item);
+        });
+      }
+      return utils.pointOutside(vertices, this.get('servicePadding'));
     },
 
     /**

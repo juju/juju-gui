@@ -112,8 +112,9 @@ YUI.add('juju-topology-utils', function(Y) {
   */
   utils.serviceBoxesToVertices = function(serviceBoxes) {
     return Y.Array.map(Y.Object.values(serviceBoxes), function(box) {
+      var center = box.center || [false, false];
       // Default undefined x/y attributes to 0.
-      return box.center || [box.x || 0, box.y || 0];
+      return [center[0] || box.x || 0, center[1] || box.y || 0];
     });
   };
 
