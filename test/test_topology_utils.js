@@ -44,7 +44,7 @@ describe('topology utils', function() {
   it('translates service boxes to centers coordinates', function() {
     var serviceBoxes = {
       one: {center: [10, 20]},
-      two: {center: [30, 40]},
+      two: {center: [30, 40]}
     };
     var mungedBoxes = utils.serviceBoxesToVertices(serviceBoxes);
     assert.deepEqual(mungedBoxes, [[10, 20], [30, 40]]);
@@ -53,7 +53,7 @@ describe('topology utils', function() {
   it('translates service boxes falling back to vertices', function() {
     var serviceBoxes = {
       one: {center: [NaN, NaN], x: 20, y: 40},
-      two: {center: [NaN, NaN], x: 100, y:200},
+      two: {center: [NaN, NaN], x: 100, y: 200}
     };
     var mungedBoxes = utils.serviceBoxesToVertices(serviceBoxes);
     assert.deepEqual(mungedBoxes, [[20, 40], [100, 200]]);

@@ -158,12 +158,12 @@ describe('topology', function() {
     it('calculates the proper coordinates with services', function() {
       topo.service_boxes = [{x: 10, y: 20, center: [5, 10]}];
       var coords = topo.servicePointOutside();
-      assert.deepEqual(coords, [padding+5, 10]);
+      assert.deepEqual(coords, [padding + 5, 10]);
     });
 
     it('calculates the coordinates including the given coords', function() {
       var coords = topo.servicePointOutside([[150, 20]]);
-      assert.deepEqual(coords, [padding+150, 20]);
+      assert.deepEqual(coords, [padding + 150, 20]);
     });
 
   });
