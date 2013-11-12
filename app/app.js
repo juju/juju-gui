@@ -125,13 +125,7 @@ YUI.add('juju-gui', function(Y) {
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
-      },
-
-      help_dropdown: {
-        type: 'juju.views.HelpDropdownView',
-        preserve: true
       }
-
     },
 
     /*
@@ -539,6 +533,7 @@ YUI.add('juju-gui', function(Y) {
         } else {
           this.dispatch();
         }
+        this._renderHelpDropdownView();
       }, this);
 
       // Halt the default navigation on the juju logo to allow us to show
@@ -615,6 +610,19 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deployService(charm, ghostAttributes);
       }, this);
+    },
+
+    /**
+     * Handles rendering the help dropdown view on application load.
+     *
+     * @method _renderHelpDropdownView
+     */
+    _renderHelpDropdownView: function() {
+      this.helpDropdown = new views.HelpDropdownView({
+        container: Y.one('#help-dropdown'),
+        env: this.db.environment,
+        onboarding: this.get('subApps').charmbrowser._onboarding
+      }).render();
     },
 
     /**
@@ -815,26 +823,6 @@ YUI.add('juju-gui', function(Y) {
               notifications: this.db.notifications,
               nsRouter: this.nsRouter
             });
-        view.instance.render();
-      }
-      next();
-    },
-
-    /**
-     * `help_dropdown` is a preserved view that remains rendered on all main
-     * views.  We manually create an instance of this view and insert it into
-     * the App's view metadata.
-     *
-     * @method show_help_dropdown_view
-     */
-    show_help_dropdown_view: function(req, res, next) {
-      var view = this.getViewInfo('help_dropdown'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.HelpDropdownView({
-          container: Y.one('#help-dropdown'),
-          env: this.db.environment
-        });
         view.instance.render();
       }
       next();
@@ -1308,7 +1296,6 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'checkUserCredentials'},
           { path: '*', callbacks: 'show_notifications_view'},
-          { path: '*', callbacks: 'show_help_dropdown_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},

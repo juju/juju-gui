@@ -155,10 +155,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/viewmode-controls.js'
         },
 
-        'dropdown': {
-          fullpath: '/juju-ui/widgets/dropdown.js'
-        },
-
         'browser-tabview': {
           fullpath: '/juju-ui/widgets/browser-tabview.js'
         },
@@ -187,6 +183,10 @@ var GlobalConfig = {
 
         'bundle-import-extension': {
           fullpath: '/juju-ui/assets/javascripts/bundle-import-extension.js'
+        },
+
+        'view-dropdown-extension': {
+          fullpath: '/juju-ui/assets/javascripts/view-dropdown-extension.js'
         },
 
         'sub-app': {

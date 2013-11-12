@@ -198,8 +198,20 @@ YUI.add('juju-notifications', function(Y) {
    * @class NotificationsView
    */
   var NotificationsView = Y.Base.create('NotificationsView',
-      NotificationsBaseView, [], {
+      NotificationsBaseView,
+      [
+        Y.Event.EventTracker,
+        Y.juju.Dropdown
+      ], {
         template: Templates.notifications,
+
+        /**
+          Reference to the dropdown widget.
+
+          @property dropdown
+          @type {Y.Object}
+          @default undefined
+        */
 
         /*
          * Actions associated with events. In this case selection events
@@ -210,9 +222,6 @@ YUI.add('juju-notifications', function(Y) {
         selection: {
           hide: false,
           seen: false
-        },
-
-        events: {
         },
 
         /**
@@ -227,11 +236,26 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
+        /**
+          Renders the notification view and the dropdown widget.
+
+          @method render
+        */
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
-          var dropdown = new widgets.Dropdown({node: Y.one('#notifications')});
-          dropdown.render();
+          // Added by the view-dropdown-extension.js
+          this._addDropdownFunc();
           return this;
+        },
+
+        /**
+          Destroys the dropdown widget on destroy.
+
+          @method destructor
+        */
+        destructor: function() {
+          this.dropdown.destroy();
+          this.get('container').remove().destroy(true);
         }
 
       });
@@ -244,6 +268,6 @@ YUI.add('juju-notifications', function(Y) {
     'node',
     'handlebars',
     'notifier',
-    'dropdown'
+    'view-dropdown-extension'
   ]
 });

@@ -182,6 +182,18 @@ YUI.add('juju-view-onboarding', function(Y) {
     },
 
     /**
+      Sets the onboarding index back to 0, and the localstorage onboarding
+      flag to undefined.
+
+      @method reset
+    */
+    reset: function() {
+      this.onboardingIndex = 0;
+      localStorage.setItem('onboarding', undefined);
+      this.get('container').empty();
+    },
+
+    /**
      * Render the page.
      *
      * Reveal the mask element, and show the onboarding window.

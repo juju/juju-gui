@@ -19,101 +19,74 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-/**
- * Provide a dropdown menu for use within the main header navigation.
- *
- * @namespace juju
- * @module widgets
- */
-YUI.add('dropdown', function(Y) {
-  var ns = Y.namespace('juju.widgets');
+YUI.add('view-dropdown-extension', function(Y) {
 
   /**
-   * A dropdown menu that provides additional navigation and content in
-   * the header.
+   * Extension for a Y.View derrived class. Adds the dropdown
+   * functionality to the view. You need to call the _addDropdownFunc
+   * from the render method of the view to trigger because
+   * Y.View's do not offer any render event.
    *
+   * @namespace juju
    * @class Dropdown
-   * @extends {Y.Widget}
    */
-  ns.Dropdown = Y.Base.create('Dropdown', Y.Widget, [
-    Y.Event.EventTracker,
-    Y.WidgetParent
-  ], {
+  function Dropdown() {}
 
+  Dropdown.prototype = {
     /**
      * Toggle the visibility of the dropdown panel.
      *
      * @method _toggleDropdown
      * @param {Event} ev the click event from the control.
-     * @private
-     *
      */
-    _toggleDropdown: function(ev) {
+    __toggleDropdown: function(ev) {
       ev.halt();
-      this.get('node').toggleClass('open');
+      this.get('container').toggleClass('open');
     },
 
     /**
      * Hide the dropdown panel.
      *
      * @method close
-     *
      */
-    close: function() {
-      this.get('node').removeClass('open');
+    __close: function() {
+      this.get('container').removeClass('open');
     },
 
     /**
      * Sets up events and binds them to listeners.
      *
-     * @method bindUI
+     * @method __bindUI
+     * @param {Y.Node} container The views container element.
      */
-    bindUI: function() {
-      var container = this.get('node');
-      if (container) {
-        this.addEvent(
-            container.one('.menu-link').on(
-                'click', this._toggleDropdown, this)
-        );
-        this.addEvent(
-            container.on(
-                'clickoutside', this.close, this)
-        );
-      }
+    __bindUI: function(container) {
+      this.addEvent(
+          container.one('.menu-link').on(
+              'click', this.__toggleDropdown, this));
+      this.addEvent(
+          container.on(
+              'clickoutside', this.__close, this));
     },
 
     /**
      * Sets up the DOM nodes and renders them to the DOM.
      *
-     * @method renderUI
+     * @method _addDropdownFunc
      */
-    renderUI: function() {
-      var container = this.get('node');
+    _addDropdownFunc: function() {
+      var container = this.get('container');
       if (container) {
         container.addClass('dropdown-menu');
+        this.__bindUI(container);
       }
     }
-  }, {
-    ATTRS: {
+  };
 
-      /**
-       * @attribute node
-       * @default ''
-       * @type {Node} the existing HTML to control.
-       */
-      node: {
-        value: ''
-      }
-    }
-  });
+  Y.namespace('juju').Dropdown = Dropdown;
 
 }, '0.1.0', {
   requires: [
-    'base',
     'event-tracker',
-    'handlebars',
-    'juju-templates',
-    'widget',
-    'widget-parent'
+    'view'
   ]
 });

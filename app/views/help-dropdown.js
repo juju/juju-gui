@@ -35,9 +35,18 @@ YUI.add('help-dropdown', function(Y) {
    *
    * @class HelpDropdownView
    */
-  var HelpDropdownView = Y.Base.create('HelpDropdownView',
-      Y.View, [views.JujuBaseView], {
+  var HelpDropdownView = Y.Base.create('HelpDropdownView', Y.View,
+      [
+        Y.juju.Dropdown,
+        Y.Event.EventTracker
+      ], {
         template: Templates['help-dropdown'],
+
+        events: {
+          '.start-onboarding': {
+            click: '_startOnboarding'
+          }
+        },
 
         /**
          * Start the onboarding tutorial.
@@ -48,10 +57,10 @@ YUI.add('help-dropdown', function(Y) {
          */
         _startOnboarding: function(ev) {
           ev.halt();
-          this.dropdown.close();
-          var onboarding = new Y.juju.views.OnboardingView({
-            'container': '#onboarding'
-          });
+          // Added by the view-dropdown-extension.js
+          this.__close(); // Closes itself
+          var onboarding = this.get('onboarding');
+          onboarding.reset();
           onboarding.render();
         },
 
@@ -63,18 +72,12 @@ YUI.add('help-dropdown', function(Y) {
          */
         _displayLandscapeURL: function() {
           var env = this.get('env'),
-              url = this.get('container').one('#landscape-url'),
+              url = this.get('container').one('.landscape-url'),
               baseLandscapeURL = views.utils.getLandscapeURL(env);
 
           if (baseLandscapeURL) {
             url.one('a').setAttribute('href', baseLandscapeURL);
             url.removeClass('hidden');
-          }
-        },
-
-        events: {
-          '#start-onboarding': {
-            click: '_startOnboarding'
           }
         },
 
@@ -86,10 +89,20 @@ YUI.add('help-dropdown', function(Y) {
         render: function() {
           var container = this.get('container');
           container.setHTML(this.template());
-          this.dropdown = new widgets.Dropdown({node: container});
-          this.dropdown.render();
           this._displayLandscapeURL();
+          // Added by the view-dropdown-extension.js
+          this._addDropdownFunc();
           return this;
+        },
+
+        /**
+          Destroys the dropdown widget on destroy.
+
+          @method destructor
+        */
+        destructor: function() {
+          this.dropdown.destroy();
+          this.get('container').remove().destroy(true);
         }
       });
   views.HelpDropdownView = HelpDropdownView;
@@ -97,10 +110,9 @@ YUI.add('help-dropdown', function(Y) {
 }, '0.1.0', {
   requires: [
     'view',
-    'juju-view-onboarding',
     'juju-view-utils',
     'node',
     'handlebars',
-    'dropdown'
+    'view-dropdown-extension'
   ]
 });
