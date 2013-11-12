@@ -30,17 +30,17 @@ describe('dropdown view extension', function() {
                                'node'], function(Y) {
 
       View = Y.Base.create('dropdown', Y.View, [
-          Y.juju.Dropdown,
-          Y.Event.EventTracker
-        ], {
-          template: '<a href="" class="menu-link"></a>' +
-                    '<div class="dropdown"></div>',
+        Y.juju.Dropdown,
+        Y.Event.EventTracker
+      ], {
+        template: '<a href="" class="menu-link"></a>' +
+            '<div class="dropdown"></div>',
 
-          render: function() {
-            this.get('container').setHTML(this.template);
-            this._addDropdownFunc();
-            return this;
-          }
+        render: function() {
+          this.get('container').setHTML(this.template);
+          this._addDropdownFunc();
+          return this;
+        }
       });
       done();
     });

@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe.only('help dropdown view', function() {
+describe('help dropdown view', function() {
 
   var db, envAnno, helpView, views, landscape, models, viewNode, Y;
 
@@ -82,16 +82,17 @@ describe.only('help dropdown view', function() {
   });
 
   it('can start the onboarding visualization', function(done) {
-    var resetCalled = 0,
-        renderCalled = 0;
     helpView = new views.HelpDropdownView({
       container: Y.one('#help-dropdown'),
       env: db.environment
     });
+    var oldfire = helpView.fire;
     helpView.fire = function(type, cfg) {
       assert.equal(type, 'navigate');
       assert.equal(cfg.url, '/sidebar?force-onboarding=true');
-    }
+      helpView.fire = oldfire;
+      done();
+    };
     helpView.render();
     var ob = helpView.get('container').one('.start-onboarding');
     ob.simulate('click');
