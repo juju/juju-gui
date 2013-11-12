@@ -976,10 +976,15 @@ YUI.add('juju-topology-service', function(Y) {
             // outside the existing services.  Setting these attributes
             // will result in annotations being set in the environment
             // below.
-            var pointOutside = topo.servicePointOutside();
+            var pointOutside;
+            var newVertices = [];
             Y.each(new_service_boxes, function(boxModel) {
+              pointOutside = topo.servicePointOutside(newVertices);
               boxModel.x += pointOutside[0] - boxModel.x;
               boxModel.y += pointOutside[1] - boxModel.y;
+              // For each new service added, include the service coordinates
+              // we re-calculating the box placement.
+              newVertices.push([boxModel.x, boxModel.y]);
             });
           }
 

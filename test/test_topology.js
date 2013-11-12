@@ -142,4 +142,30 @@ describe('topology', function() {
         }).then(undefined, done);
   });
 
+  describe('servicePointOutside', function() {
+    var padding = 200;
+
+    beforeEach(function() {
+      topo = new views.Topology();
+      topo.setAttrs({container: container, servicePadding: padding});
+    });
+
+    it('calculates the proper coordinates with no services', function() {
+      var coords = topo.servicePointOutside();
+      assert.deepEqual(coords, [padding, padding]);
+    });
+
+    it('calculates the proper coordinates with services', function() {
+      topo.service_boxes = [{x: 10, y: 20, center: [5, 10]}];
+      var coords = topo.servicePointOutside();
+      assert.deepEqual(coords, [padding + 5, 10]);
+    });
+
+    it('calculates the coordinates including the given coords', function() {
+      var coords = topo.servicePointOutside([[150, 20]]);
+      assert.deepEqual(coords, [padding + 150, 20]);
+    });
+
+  });
+
 });
