@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-describe('help dropdown view', function() {
+describe.only('help dropdown view', function() {
 
   var db, envAnno, helpView, views, landscape, models, viewNode, Y;
 
@@ -27,7 +27,8 @@ describe('help dropdown view', function() {
       'juju-landscape',
       'juju-models',
       'juju-views',
-      'help-dropdown'], function(Y) {
+      'help-dropdown',
+      'juju-tests-utils'], function(Y) {
 
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
@@ -85,15 +86,12 @@ describe('help dropdown view', function() {
         renderCalled = 0;
     helpView = new views.HelpDropdownView({
       container: Y.one('#help-dropdown'),
-      env: db.environment,
-      onboarding: {
-        reset: function() { resetCalled = 1; },
-        render: function() {
-          assert.equal(resetCalled, 1, 'Onboarding reset not called');
-          done();
-        }
-      }
+      env: db.environment
     });
+    helpView.fire = function(type, cfg) {
+      assert.equal(type, 'navigate');
+      assert.equal(cfg.url, '/sidebar?force-onboarding=true');
+    }
     helpView.render();
     var ob = helpView.get('container').one('.start-onboarding');
     ob.simulate('click');

@@ -620,9 +620,13 @@ YUI.add('juju-gui', function(Y) {
     _renderHelpDropdownView: function() {
       this.helpDropdown = new views.HelpDropdownView({
         container: Y.one('#help-dropdown'),
-        env: this.db.environment,
-        onboarding: this.get('subApps').charmbrowser._onboarding
+        env: this.db.environment
       }).render();
+      // pass in onboarding when we no longer need to support
+      // fullscreen mode and interact with it directly
+      this.helpDropdown.on('navigate', function(e) {
+        this.navigate(e.url);
+      }, this);
     },
 
     /**

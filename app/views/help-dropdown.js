@@ -59,9 +59,11 @@ YUI.add('help-dropdown', function(Y) {
           ev.halt();
           // Added by the view-dropdown-extension.js
           this.__close(); // Closes itself
-          var onboarding = this.get('onboarding');
-          onboarding.reset();
-          onboarding.render();
+          // Because we need the app to be in sidebar mode when
+          // the user views the onboarding we navigate to it.
+          // once fullscreen is removed we can interact with
+          // onboarding here instead of in browser.js
+          this.fire('navigate', { url: '/sidebar?force-onboarding=true' });
         },
 
         /**
