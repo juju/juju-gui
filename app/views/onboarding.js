@@ -189,7 +189,7 @@ YUI.add('juju-view-onboarding', function(Y) {
     */
     reset: function() {
       this.onboardingIndex = 0;
-      localStorage.setItem('onboarding', undefined);
+      localStorage.setItem('onboarding', '');
       this.get('container').empty();
     },
 
