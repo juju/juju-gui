@@ -426,18 +426,11 @@ YUI.add('juju-view-bundle', function(Y) {
   */
   BundleTopology.prototype.panToCenter = function() {
     var topo = this.topology;
-    var vertices = topoUtils.serviceBoxesToVertices(topo.service_boxes);
-    var centroid = topoUtils.centroid(vertices);
-    var width = topo.get('width'),
-        height = topo.get('height');
+    // We don't want a polygon centroid for our services: we simply want
+    // the center of the bounding box.
     var bb = topo.get('bundleBoundingBox');
-    // Shift the centroid by the size of a service block.
-    // Note: if the size was clamped on the Y axis, we should only clamp by
-    // half the size of a service on the X axis or we risk clipping.
-    var clampedVertically = Math.abs(width - bb.w) < Math.abs(height - bb.w);
-    centroid[0] += SERVICE_SIZE * (clampedVertically ? 1 : 0.5);
-    centroid[1] += SERVICE_SIZE * 0.5;
-    this.topology.modules.PanZoomModule.panToPoint({point: centroid});
+    var center = [bb.translateX + bb.w / 2, bb.translateY + bb.h / 2];
+    this.topology.modules.PanZoomModule.panToPoint({point: center});
   };
 
 
