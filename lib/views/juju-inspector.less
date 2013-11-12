@@ -82,7 +82,7 @@
         top: 20px;
         right: 70px;
         width: @inspector-width;
-        min-height: 250px;
+        min-height: 100px;
         border: 0;
         background-color: @inspector-background-color;
         color: @inspector-text-color;
@@ -591,6 +591,11 @@
                 color: @text-colour;
                 padding-left: @inspector-main-padding;
             }
+        }
+
+        .viewlet-manager-wrapper {
+            overflow-y: hidden;
+            .transition(max-height 1s);
         }
 
         .viewlet-manager-navigation {

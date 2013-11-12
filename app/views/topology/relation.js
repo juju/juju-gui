@@ -396,6 +396,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Remove the service menu.
       topo.fire('hideServiceMenu');
+      // Signify that a relation is being drawn.
+      topo.fire('addRelationStart');
 
       // Create the dragline and position its endpoints properly.
       context.addRelationDragStart({service: box});
@@ -560,6 +562,8 @@ YUI.add('juju-topology-relation', function(Y) {
         self.cancelRelationBuild();
         self.addRelation(); // Will clear the state.
       }
+      // Signify that the relation drawing has ended.
+      topo.fire('addRelationEnd');
     },
     removeRelation: function(relation, view, confirmButton) {
       var topo = this.get('component');
@@ -659,6 +663,8 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = false;
       topo.fire('show', { selection: vis.selectAll('.service') });
       vis.selectAll('.service').classed('selectable-service', false);
+      // Signify that the relation drawing has ended.
+      topo.fire('addRelationEnd');
     },
 
     /**
