@@ -29,9 +29,7 @@ YUI.add('help-dropdown', function(Y) {
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates;
-if (!views.Templates) {
-  debugger;
-}
+
   /**
    * The view associated with the help dropdown.
    *
@@ -97,6 +95,7 @@ if (!views.Templates) {
           return this;
         }
       });
+
   views.HelpDropdownView = HelpDropdownView;
 
 }, '0.1.0', {

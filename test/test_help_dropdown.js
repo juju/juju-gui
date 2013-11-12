@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('help dropdown view', function() {
 
-  var views, models, db, landscape, Y, viewNode, envAnno;
+  var views, models, db, landscape, Y, viewNode, envAnno, helpView;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -48,10 +48,11 @@ describe('help dropdown view', function() {
 
   afterEach(function() {
     viewNode.remove().destroy(true);
+    helpView.destroy();
   });
 
   it('renders the basic list', function() {
-    var helpView = new views.HelpDropdownView({
+    helpView = new views.HelpDropdownView({
       container: Y.one('#help-dropdown'),
       env: db.environment
     }).render();
@@ -80,7 +81,7 @@ describe('help dropdown view', function() {
   it('can start the onboarding visualization', function(done) {
     var resetCalled = 0,
         renderCalled = 0;
-    var helpView = new views.HelpDropdownView({
+    helpView = new views.HelpDropdownView({
       container: Y.one('#help-dropdown'),
       env: db.environment,
       onboarding: {
