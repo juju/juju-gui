@@ -205,14 +205,6 @@ YUI.add('juju-notifications', function(Y) {
       ], {
         template: Templates.notifications,
 
-        /**
-          Reference to the dropdown widget.
-
-          @property dropdown
-          @type {Y.Object}
-          @default undefined
-        */
-
         /*
          * Actions associated with events. In this case selection events
          * represent policy flags inside the 'notificationSelect' callback.

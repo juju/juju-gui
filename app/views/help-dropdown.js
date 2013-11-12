@@ -61,7 +61,7 @@ YUI.add('help-dropdown', function(Y) {
           this.__close(); // Closes itself
           // Because we need the app to be in sidebar mode when
           // the user views the onboarding we navigate to it.
-          // once fullscreen is removed we can interact with
+          // Once fullscreen is removed we can interact with
           // onboarding here instead of in browser.js
           this.fire('navigate', { url: '/sidebar?force-onboarding=true' });
         },

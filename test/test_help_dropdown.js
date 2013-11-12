@@ -44,7 +44,6 @@ describe('help dropdown view', function() {
   beforeEach(function() {
     envAnno = db.environment.get('annotations');
     viewNode = Y.namespace('juju-tests.utils').makeContainer('help-dropdown');
-    Y.one('body').append(viewNode);
   });
 
   afterEach(function() {
@@ -56,7 +55,7 @@ describe('help dropdown view', function() {
 
   it('renders the basic list', function() {
     helpView = new views.HelpDropdownView({
-      container: Y.one('#help-dropdown'),
+      container: viewNode,
       env: db.environment
     }).render();
     // Landscape url should be hidden
@@ -70,7 +69,7 @@ describe('help dropdown view', function() {
     envAnno['landscape-url'] = 'http://landscape.example.com';
     envAnno['landscape-computers'] = '/computers/criteria/environment:test';
     new views.HelpDropdownView({
-      container: Y.one('#help-dropdown'),
+      container: viewNode,
       env: db.environment
     }).render();
 
@@ -83,16 +82,13 @@ describe('help dropdown view', function() {
 
   it('can start the onboarding visualization', function(done) {
     helpView = new views.HelpDropdownView({
-      container: Y.one('#help-dropdown'),
+      container: viewNode,
       env: db.environment
     });
-    var oldfire = helpView.fire;
-    helpView.fire = function(type, cfg) {
-      assert.equal(type, 'navigate');
-      assert.equal(cfg.url, '/sidebar?force-onboarding=true');
-      helpView.fire = oldfire;
+    helpView.on('navigate', function(e) {
+      assert.equal(e.url, '/sidebar?force-onboarding=true');
       done();
-    };
+    });
     helpView.render();
     var ob = helpView.get('container').one('.start-onboarding');
     ob.simulate('click');

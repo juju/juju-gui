@@ -636,8 +636,9 @@ YUI.add('subapp-browser', function(Y) {
 
       if (force) {
         this._onboarding.reset();
-        this._onboarding.render();
-      } else if (!this._onboarding.get('seen')) {
+      }
+
+      if (!this._onboarding.get('seen')) {
         this._onboarding.render();
       }
     },
