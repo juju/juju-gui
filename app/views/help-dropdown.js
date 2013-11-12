@@ -29,7 +29,9 @@ YUI.add('help-dropdown', function(Y) {
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates;
-
+if (!views.Templates) {
+  debugger;
+}
   /**
    * The view associated with the help dropdown.
    *
@@ -93,16 +95,6 @@ YUI.add('help-dropdown', function(Y) {
           // Added by the view-dropdown-extension.js
           this._addDropdownFunc();
           return this;
-        },
-
-        /**
-          Destroys the dropdown widget on destroy.
-
-          @method destructor
-        */
-        destructor: function() {
-          this.dropdown.destroy();
-          this.get('container').remove().destroy(true);
         }
       });
   views.HelpDropdownView = HelpDropdownView;

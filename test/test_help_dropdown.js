@@ -24,10 +24,10 @@ describe('help dropdown view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
-      'help-dropdown',
       'juju-landscape',
       'juju-models',
-      'juju-views'], function(Y) {
+      'juju-views',
+      'help-dropdown'], function(Y) {
 
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
@@ -36,34 +36,63 @@ describe('help dropdown view', function() {
       landscape = new views.Landscape();
       landscape.set('db', db);
 
-      // Set defaults for testing.
-      envAnno = db.environment.get('annotations');
-
-      viewNode = Y.Node.create('<div id="help-dropdown"></div>');
-      Y.one('body').append(viewNode);
-
       done();
     });
   });
 
-  it('should display the Landscape menu item', function() {
+  beforeEach(function() {
+    envAnno = db.environment.get('annotations');
+    viewNode = Y.Node.create('<div id="help-dropdown"></div>');
+    Y.one('body').append(viewNode);
+  });
+
+  afterEach(function() {
+    viewNode.remove().destroy(true);
+  });
+
+  it('renders the basic list', function() {
     var helpView = new views.HelpDropdownView({
       container: Y.one('#help-dropdown'),
       env: db.environment
-    });
-    helpView.render();
-    viewNode.one('#landscape-url').getStyle('display').should.equal('none');
+    }).render();
+    // Landscape url should be hidden
+    var container = helpView.get('container');
+    assert.equal(
+        container.one('.landscape-url').getStyle('display'), 'none');
+    assert.equal(container.all('li').size(), 5);
+  });
 
+  it('should display the Landscape menu item', function() {
     envAnno['landscape-url'] = 'http://landscape.example.com';
     envAnno['landscape-computers'] = '/computers/criteria/environment:test';
-    viewNode.remove();
-    Y.one('body').append(viewNode);
+    new views.HelpDropdownView({
+      container: Y.one('#help-dropdown'),
+      env: db.environment
+    }).render();
+
+    assert.equal(
+        viewNode.one('.landscape-url').getStyle('display'), 'list-item');
+    assert.equal(
+        viewNode.one('.landscape-url a').get('href'),
+        'http://landscape.example.com/computers/criteria/environment:test/');
+  });
+
+  it('can start the onboarding visualization', function(done) {
+    var resetCalled = 0,
+        renderCalled = 0;
+    var helpView = new views.HelpDropdownView({
+      container: Y.one('#help-dropdown'),
+      env: db.environment,
+      onboarding: {
+        reset: function() { resetCalled = 1; },
+        render: function() {
+          assert.equal(resetCalled, 1, 'Onboarding reset not called');
+          done();
+        }
+      }
+    });
     helpView.render();
-
-    viewNode.one('#landscape-url').getStyle('display').should.not.equal('none');
-    viewNode.one('#landscape-url a').get('href').should
-      .equal('http://landscape.example.com/computers/criteria/environment:test/');
-
-    viewNode.remove();
+    var ob = helpView.get('container').one('.start-onboarding');
+    ob.simulate('click');
   });
 });

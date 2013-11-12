@@ -246,16 +246,6 @@ YUI.add('juju-notifications', function(Y) {
           // Added by the view-dropdown-extension.js
           this._addDropdownFunc();
           return this;
-        },
-
-        /**
-          Destroys the dropdown widget on destroy.
-
-          @method destructor
-        */
-        destructor: function() {
-          this.dropdown.destroy();
-          this.get('container').remove().destroy(true);
         }
 
       });
