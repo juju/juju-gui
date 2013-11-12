@@ -102,6 +102,7 @@ YUI.add('help-dropdown', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
+    'event-tracker',
     'node',
     'handlebars',
     'view-dropdown-extension'

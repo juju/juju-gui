@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('help dropdown view', function() {
 
-  var views, models, db, landscape, Y, viewNode, envAnno, helpView;
+  var db, envAnno, helpView, views, landscape, models, viewNode, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -42,13 +42,15 @@ describe('help dropdown view', function() {
 
   beforeEach(function() {
     envAnno = db.environment.get('annotations');
-    viewNode = Y.Node.create('<div id="help-dropdown"></div>');
+    viewNode = Y.namespace('juju-tests.utils').makeContainer('help-dropdown');
     Y.one('body').append(viewNode);
   });
 
   afterEach(function() {
     viewNode.remove().destroy(true);
-    helpView.destroy();
+    if (helpView) {
+      helpView.destroy();
+    }
   });
 
   it('renders the basic list', function() {

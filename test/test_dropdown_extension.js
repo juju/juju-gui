@@ -29,24 +29,25 @@ describe('dropdown view extension', function() {
                                'node-event-simulate',
                                'node'], function(Y) {
 
-      View = Y.Base.create('dropdown', Y.View, [Y.juju.Dropdown], {
-        template: Y.Node.create([
-          '<div id="dropdown">',
-          '<a href="" class="menu-link"></a>',
-          '<div class="dropdown"></div>',
-          '</div>'
-        ].join('')),
+      View = Y.Base.create('dropdown', Y.View, [
+          Y.juju.Dropdown,
+          Y.Event.EventTracker
+        ], {
+          template: '<a href="" class="menu-link"></a>' +
+                    '<div class="dropdown"></div>',
 
-        render: function() {
-          this._addDropdownFunc();
-        }
+          render: function() {
+            this.get('container').setHTML(this.template);
+            this._addDropdownFunc();
+            return this;
+          }
       });
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = Y.namespace('juju-tests.utils').makeContainer();
     view = new View({ container: container }).render();
   });
 
@@ -59,17 +60,21 @@ describe('dropdown view extension', function() {
     assert.isTrue(container.hasClass('dropdown-menu'));
   });
 
-  it('should open when the primary link is clicked', function() {
-    container.one('.menu-link').simulate('click');
-    assert.isTrue(container.one('#dropdown').hasClass('open'));
+  it('should open when the primary link is clicked', function(done) {
+    var link = container.one('.menu-link');
+    link.after('click', function() {
+      assert.isTrue(container.hasClass('open'));
+      done();
+    });
+    link.simulate('click');
   });
 
-  it('should close when clicking outside the widget', function() {
+  it('should close when clicking outside the view', function() {
     container.one('.menu-link').simulate('click');
-    assert.isTrue(container.one('#dropdown').hasClass('open'));
+    assert.isTrue(container.hasClass('open'));
 
     Y.one('body').simulate('click');
-    assert.isFalse(container.one('#dropdown').hasClass('open'));
+    assert.isFalse(container.hasClass('open'));
   });
 
 });

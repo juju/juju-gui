@@ -258,6 +258,7 @@ YUI.add('juju-notifications', function(Y) {
     'node',
     'handlebars',
     'notifier',
-    'view-dropdown-extension'
+    'view-dropdown-extension',
+    'event-tracker'
   ]
 });

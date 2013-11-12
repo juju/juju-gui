@@ -171,5 +171,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isTrue(background instanceof Y.Node);
     });
 
+    it('sets index to 0, clears out local storage on reset', function() {
+      var onboard = new OnboardingView({
+        container: container
+      }).render();
+      onboard.nextHandler({halt: function() {}});
+      assert.equal(onboard.onboardingIndex, 1);
+
+      localStorage.setItem('onboarding', true);
+
+      onboard.reset();
+      assert.equal(onboard.onboardingIndex, 0);
+      assert.equal(localStorage.getItem('onboarding'), 'undefined');
+    });
+
   });
 })();

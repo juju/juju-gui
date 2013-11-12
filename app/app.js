@@ -687,6 +687,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.helpDropdown) {
+        this.helpDropdown.destroy();
+      }
       if (this._keybindings) {
         this._keybindings.detach();
       }
