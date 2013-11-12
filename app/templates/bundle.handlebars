@@ -77,13 +77,14 @@
                         <pre>    {{deployer_file_url}}</pre>
                         <pre>juju quickstart bundle.json</pre></p>
                     <h3>Deploy via the deployer</h3>
-                    <p>Step 1 - Setup the virtual environment
-                        <pre>virtualenv --system-site-packages deployer</pre>
-                        <pre>./deployer/bin/easy_install juju-deployer</pre>
-                        <pre>./deployer/bin/juju-deployer -h</pre>
+                    <p>The Juju deployer is a tool that the quickstart plugin (above) uses.  It can also be used standalone to give you more control.</p>
+                    <p>Step 1 - Install the deployer
+                        <pre>sudo add-apt-repository ppa:juju/stable</pre>
+                        <pre>sudo apt-get update</pre>
+                        <pre>sudo apt-get install juju-deployer</pre>
                     </p>
                     <p>Step 2 - Deploy bundle
-                        <pre>./deployer/bin/juju-deployer -e &lt;JUJU_ENV&gt; -c \</pre>
+                        <pre>juju deployer -e &lt;JUJU_ENV&gt; -c \</pre>
                         <pre>    {{deployer_file_url}}</pre></p>
                 </div>
                 <div id="bws-summary">
