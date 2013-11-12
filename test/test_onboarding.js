@@ -182,7 +182,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       onboard.reset();
       assert.equal(onboard.onboardingIndex, 0);
-      assert.equal(localStorage.getItem('onboarding'), 'undefined');
+      assert.equal(localStorage.getItem('onboarding'), '');
     });
 
   });
