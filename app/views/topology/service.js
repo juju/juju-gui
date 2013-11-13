@@ -26,12 +26,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 YUI.add('juju-topology-service', function(Y) {
-  var views = Y.namespace('juju.views'),
+  var d3ns = Y.namespace('d3'),
+      importHelpers = Y.namespace('juju').BundleImport,
       models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils'),
       topoUtils = Y.namespace('juju.topology.utils'),
-      d3ns = Y.namespace('d3'),
-      Templates = views.Templates;
+      utils = Y.namespace('juju.views.utils'),
+      views = Y.namespace('juju.views');
 
   var ServiceModuleCommon = function() {};
   /**
@@ -285,8 +285,8 @@ YUI.add('juju-topology-service', function(Y) {
     @class ServiceModule
    */
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [
-    ServiceModuleCommon,
-    Y.juju.BundleImport], {
+    ServiceModuleCommon
+  ], {
     events: {
       scene: {
         '.service': {
@@ -641,8 +641,7 @@ YUI.add('juju-topology-service', function(Y) {
       var db = topo.get('db');
       var notifications = db.notifications;
       if (fileSources && fileSources.length) {
-        // provided by bundle-import-extension.js
-        this.sendToDeployer(env, db, fileSources);
+        importHelpers.sendToDeployer(fileSources, env, db);
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         var dragData = JSON.parse(dataTransfer.getData('Text'));
@@ -1299,6 +1298,6 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-models',
     'juju-env',
     'unscaled-pack-layout',
-    'bundle-import-extension'
+    'bundle-import-helpers'
   ]
 });
