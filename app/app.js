@@ -125,7 +125,6 @@ YUI.add('juju-gui', function(Y) {
         type: 'juju.views.NotificationsView',
         preserve: true
       }
-
     },
 
     /*
@@ -533,6 +532,7 @@ YUI.add('juju-gui', function(Y) {
         } else {
           this.dispatch();
         }
+        this._renderHelpDropdownView();
       }, this);
 
       // Halt the default navigation on the juju logo to allow us to show
@@ -616,6 +616,22 @@ YUI.add('juju-gui', function(Y) {
       }, this);
     },
 
+    /**
+     * Handles rendering the help dropdown view on application load.
+     *
+     * @method _renderHelpDropdownView
+     */
+    _renderHelpDropdownView: function() {
+      this.helpDropdown = new views.HelpDropdownView({
+        container: Y.one('#help-dropdown'),
+        env: this.db.environment
+      }).render();
+      // pass in onboarding when we no longer need to support
+      // fullscreen mode and interact with it directly
+      this.helpDropdown.on('navigate', function(e) {
+        this.navigate(e.url);
+      }, this);
+    },
 
     /**
     Export the YAML for this environment.
@@ -664,6 +680,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.helpDropdown) {
+        this.helpDropdown.destroy();
+      }
       if (this._keybindings) {
         this._keybindings.detach();
       }
@@ -1334,6 +1353,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls'
+    'viewmode-controls',
+    'help-dropdown'
   ]
 });

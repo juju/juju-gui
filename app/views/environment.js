@@ -409,6 +409,30 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
+          Shrinks any open inspectors
+
+          @method shrinkInspector
+        */
+        shrinkInspector: function() {
+          Y.Object.each(this._inspectors, function(inspector) {
+            inspector.viewletManager.get('container')
+                .one('.viewlet-manager-wrapper')
+                .setStyle('max-height', '100px');
+          });
+        },
+
+        /**
+          Expands any open inspectors
+
+          @method expandInspector
+        */
+        expandInspector: function() {
+          Y.Object.each(this._inspectors, function(inspector) {
+            inspector.viewletManager.recalculateHeight();
+          });
+        },
+
+        /**
           Attaches events after the topology has been created.
 
           @method _attachTopoEvents
@@ -416,6 +440,10 @@ YUI.add('juju-view-environment', function(Y) {
         _attachTopoEvents: function() {
           this.topo.on(
               '*:destroyServiceInspector', this.destroyInspector, this);
+          this.topo.on(
+              '*:addRelationStart', this.shrinkInspector, this);
+          this.topo.on(
+              '*:addRelationEnd', this.expandInspector, this);
         }
       }, {
         ATTRS: {

@@ -1324,6 +1324,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
+      it('onboarding is rendered with force-onboarding query', function(done) {
+        var req = {
+          path: '/sidebar'
+        };
+
+        localStorage.setItem('force-onboarding', true);
+
+        browser.renderOnboarding = function(force) {
+          assert.equal(force, 'true');
+          assert.equal(localStorage.getItem('force-onboarding'), '');
+          assert.deepEqual(hits.sidebar, true);
+          done();
+        };
+
+        browser.routeView(req, undefined, function() {});
+      });
+
       it('/minimized dispatches correctly', function() {
         var req = {
           path: '/minimized',

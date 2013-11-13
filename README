@@ -17,17 +17,21 @@ Juju-GUI releases and the current code are `on Launchpad
 
 See also:
 
-- `The new Juju GUI: because a picture paints a thousand words
-  <http://blog.canonical.com/2012/10/29/the-new-juju-gui-because-a-picture-paints-a-thousand-words/>`_
-- a `demo of trunk <http://uistage.jujucharms.com:8080/>`_, which is reset
-  every 15 minutes.
+- a `stable demo <http://jujucharms.com/>`_,
+- a `demo of trunk <http://comingsoon.jujucharms.com/>`_,
+- the `juju quickstart plugin
+  <http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_,
+- our `blog <http://jujugui.wordpress.com/>`_, and
+- the `user-facing docs <https://juju.ubuntu.com/docs/howto-gui-management.html>`_.
 
 Deploy
 ======
 
-Deploying the GUI is easiest with `its charm
+Deploying the GUI is easiest with the `juju quickstart plugin
+<http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_
+or `the Juju GUI charm
 <https://jujucharms.com/~juju-gui/precise/juju-gui>`_.  If you want to simply
-use the GUI, please try it.
+use the GUI, please try those.
 
 If you want to develop the GUI, or you have a deployment goal that the charm
 does not and cannot support, you can try the Makefile commands.  The most
@@ -48,6 +52,5 @@ Some configurable parameters may be found in three files:
 - ``app/config-debug.js``
 - ``app/config-prod.js``
 
-If you are using `the charm
-<https://jujucharms.com/~juju-gui/precise/juju-gui>`_, the end-user
-configuration is available from the charm configuration.
+If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
+end-user configuration is available from the charm configuration.

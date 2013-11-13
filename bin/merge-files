@@ -89,6 +89,7 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/app-subapp-extension.js',
     'app/assets/javascripts/app-cookies-extension.js',
     'app/assets/javascripts/bundle-import-helpers.js',
+    'app/assets/javascripts/view-dropdown-extension.js',
     'app/assets/javascripts/d3-components.js',
     'app/assets/javascripts/d3.min.js',
     'app/assets/javascripts/d3.status.js',

@@ -1048,6 +1048,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.destroy();
     });
 
+    it('resizes the inspector when creating a relation', function(done) {
+      var shrinkInspectorCalled = 0,
+          expandInspectorCalled = 0;
+      view.shrinkInspector = function() { shrinkInspectorCalled = 1; };
+      view.expandInspector = function() { expandInspectorCalled = 1; };
+
+      view.createTopology();
+
+      view.topo.after('addRelationEnd', function() {
+        assert.equal(shrinkInspectorCalled, 1);
+        assert.equal(expandInspectorCalled, 1);
+        done();
+      });
+      view.topo.fire('addRelationStart');
+      view.topo.fire('addRelationEnd');
+    });
+
   });
 
   describe('view model support infrastructure', function() {
