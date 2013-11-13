@@ -591,7 +591,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
-      cfg.deployBudle = importHelpers.deployBundle;
+      cfg.deployBundle = importHelpers.deployBundle;
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
