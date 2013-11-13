@@ -626,7 +626,7 @@ YUI.add('subapp-browser', function(Y) {
      * Create a 'welcome' message walkthrough for new users.
      *
      * @method renderOnboarding
-     * @param {Boolean} force Weather it should force render the onboarding.
+     * @param {Boolean} force Whether it should force render the onboarding.
      */
     renderOnboarding: function(force) {
       // Need to check onboarding exists due to the double dispatch bug.
