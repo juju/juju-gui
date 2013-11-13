@@ -639,7 +639,6 @@ YUI.add('juju-topology-service', function(Y) {
       var fileSources = dataTransfer.files;
       var env = topo.get('env');
       var db = topo.get('db');
-      var notifications = db.notifications;
       if (fileSources && fileSources.length) {
         importHelpers.sendToDeployer(fileSources, env, db);
       } else {
@@ -673,11 +672,11 @@ YUI.add('juju-topology-service', function(Y) {
             // format is YAML, but JSON is a subset of YAML, so we can just
             // encode it this way.
             importHelpers.deployBundle(
-              Y.JSON.stringify({
-                bundle: entityData.data
-              }),
-              env,
-              db
+                Y.JSON.stringify({
+                  bundle: entityData.data
+                }),
+                env,
+                db
             );
           }
         }

@@ -19,8 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('bundle-import-helpers', function(Y) {
-  var ns = Y.namespace('juju'),
-      utils = Y.namespace('juju.views.utils');
+  var ns = Y.namespace('juju');
 
   ns.BundleImport = {
     /**
@@ -29,39 +28,57 @@ YUI.add('bundle-import-helpers', function(Y) {
 
       @method deployBundle
       @param {Object} bundle Bundle data.
+      @param {Environment} env Environment with access to the bundle back end.
+      calls.
+      @param {Database} db The app Database with access to the NotificationList.
     */
-    deployBundle: function(bundle, env, db) {
+    deployBundle: function(bundle, env, db, customCallback) {
+      debugger;
       var notifications = db.notifications;
+
+      var defaultCallback = function(result) {
+        if (result.err) {
+          console.log('bundle import failed:', result.err);
+          notifications.add({
+            title: 'Bundle Deployment Failed',
+            message: 'Unable to deploy the bundle. The server returned the ' +
+                'following error: ' + result.err,
+            level: 'error'
+          });
+        } else {
+          notifications.add({
+            title: 'Bundle Deployment Requested',
+            message: 'Bundle deployment request successful. The full ' +
+                'deployment can take some time to complete',
+            level: 'important'
+          });
+
+          ns.BundleImport._watchDeployment(result.DeploymentId, env, db):
+        }
+
+
+      };
+
       if (!Y.Lang.isFunction(env.deployerImport)) {
         env.deployerImport(
-            Y.JSON.stringify({
-              bundle: bundle
-            }),
+            bundle,
             null,
-            function(result) {
-              if (result.err) {
-                console.log('bundle import failed:', result.err);
-                notifications.add({
-                  title: 'Bundle Deployment Failed',
-                  message: 'Unable to deploy the bundle. The server returned the ' +
-                      'following error: ' + result.err,
-                  level: 'error'
-                });
-                return;
-              }
-
-              notifications.add({
-                title: 'Bundle Deployment Requested',
-                message: 'Bundle deployment request successful. The full ' +
-                    'deployment can take some time to complete',
-                level: 'important'
-              });
-            }
+            customCallback ? customCallback : defaultCallback
         );
       }
     },
 
-    sendToDeployer: function(fileSources, env, db) {
+    /**
+      Deploy one or more files, generally from the import file picker
+      utility.
+
+      @method deployBundleFiles
+      @param {Array} fileSources The list of files from the import control.
+      @param {Environment} env Environment with access to the bundle back end.
+      calls.
+      @param {Database} db The app Database with access to the NotificationList.
+     */
+    deployBundleFiles: function(fileSources, env, db) {
       var notifications = db.notifications;
       if (!Y.Lang.isFunction(env.deployerImport)) {
         // Notify the user that their environment is too old and return.
@@ -78,27 +95,43 @@ YUI.add('bundle-import-helpers', function(Y) {
       // Handle dropping Deployer files on the canvas.
       Y.Array.each(fileSources, function(file) {
         var reader = new FileReader();
+
+        // Once the file has been loaded, deploy it.
         reader.onload = function(e) {
-          // Import each into the environment
-          env.deployerImport(e.target.result, null, function(result) {
-            if (!result.err) {
-              notifications.add({
-                title: 'Imported Deployer file',
-                message: 'Import from "' + file.name + '" successful. This ' +
-                    'can take some time to complete.',
-                level: 'important'
-              });
-            } else {
-              console.warn('import failed', file, result);
-              notifications.add({
-                title: 'Import Environment Failed',
-                message: 'Import from "' + file.name +
-                    '" failed.<br/>' + result.err,
-                level: 'error'
-              });
-            }
-          });
+          ns.BundleImport.deployBundle(
+              e.target.result,
+              env,
+              db,
+              function(result) {
+                if (!result.err) {
+
+                  notifications.add({
+                    title: 'Imported Deployer file',
+                    message: 'Import from "' + file.name +
+                        '" successful. This ' +
+                        'can take some time to complete.',
+                    level: 'important'
+                  });
+
+                } else {
+                  debugger;
+
+                  console.warn('import failed', file, result);
+                  notifications.add({
+                    title: 'Import Environment Failed',
+                    message: 'Import from "' + file.name +
+                        '" failed.<br/>' + result.err,
+                    level: 'error'
+                  });
+
+                  ns.BundleImport._watchDeployment(
+                      result.DeploymentId, env, db):
+                }
+              }
+          );
         };
+
+        // Start the loading process.
         reader.readAsText(file);
       });
     },
@@ -113,7 +146,8 @@ YUI.add('bundle-import-helpers', function(Y) {
       @param {Database} db The db which contains the NotificationList used
       for adding notifications to the system.
      */
-    watchDeployment: function(deploymentId, env, db) {
+    _watchDeployment: function(deploymentId, env, db) {
+      debugger;
       var notifications = db.notifications;
 
       // First generate a watch.
@@ -146,6 +180,7 @@ YUI.add('bundle-import-helpers', function(Y) {
       for adding notifications to the system.
      */
     _processWatchDeploymentUpdates: function(watchId, env, db) {
+      debugger;
       // Now that we've got a watcher we can continue to monitor it for
       // changes. Each time we get a response we check if the deployment
       // is complete. If so, we stop watching.
@@ -153,6 +188,7 @@ YUI.add('bundle-import-helpers', function(Y) {
           notifications = db.notifications;
 
       var processUpdate = function(data) {
+        debugger;
         if (data.err) {
           // Make sure we stop watching. There was an error, ignore
           // further updates.
@@ -190,7 +226,5 @@ YUI.add('bundle-import-helpers', function(Y) {
   };
 
 }, '0.1.0', {
-  requires: [
-    'juju-view-utils'
-  ]
+  requires: []
 });

@@ -574,7 +574,7 @@ YUI.add('juju-gui', function(Y) {
         });
 
         importFileInput.on('change', function(e) {
-          importHelpers.sendToDeployer(
+          importHelpers.deployBundleFiles(
               e.currentTarget.get('files')._nodes,
               this.env,
               this.db
