@@ -305,7 +305,7 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
-  it.only('should deploy a bundle on bundle token drop events', function(done) {
+  it('should deploy a bundle on bundle token drop events', function(done) {
     var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
         fakeEventObject = {

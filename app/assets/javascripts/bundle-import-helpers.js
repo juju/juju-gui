@@ -33,7 +33,6 @@ YUI.add('bundle-import-helpers', function(Y) {
       @param {Database} db The app Database with access to the NotificationList.
     */
     deployBundle: function(bundle, env, db, customCallback) {
-      debugger;
       var notifications = db.notifications;
 
       var defaultCallback = function(result) {
@@ -112,8 +111,6 @@ YUI.add('bundle-import-helpers', function(Y) {
                   });
 
                 } else {
-                  debugger;
-
                   console.warn('import failed', file, result);
                   notifications.add({
                     title: 'Import Environment Failed',
@@ -145,7 +142,6 @@ YUI.add('bundle-import-helpers', function(Y) {
       for adding notifications to the system.
      */
     _watchDeployment: function(deploymentId, env, db) {
-      debugger;
       var notifications = db.notifications;
 
       // First generate a watch.
@@ -178,7 +174,6 @@ YUI.add('bundle-import-helpers', function(Y) {
       for adding notifications to the system.
      */
     _processWatchDeploymentUpdates: function(watchId, env, db) {
-      debugger;
       // Now that we've got a watcher we can continue to monitor it for
       // changes. Each time we get a response we check if the deployment
       // is complete. If so, we stop watching.
@@ -186,7 +181,6 @@ YUI.add('bundle-import-helpers', function(Y) {
           notifications = db.notifications;
 
       var processUpdate = function(data) {
-        debugger;
         if (data.err) {
           // Make sure we stop watching. There was an error, ignore
           // further updates.
