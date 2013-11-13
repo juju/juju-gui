@@ -191,7 +191,7 @@ Checklist for Making a Stable Release
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
-  tarball: ``tar xvzf PATH_TO_TARBALL``.
+  tarball: ``tar xvaf PATH_TO_TARBALL``.
 - Check that read permissions for all are present on all files and
   directories. (``find . ! -perm -a+r``)
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
@@ -234,7 +234,6 @@ Checklist for Making a Stable Release
     string as before.
   - We want a real QA script for the future.
 
-- Also do the same checks after running the command ``NO_BZR=1 make debug``.
 - Now it is time to upload the release.  Head back to your branch and
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process and upload the release, this time to production.
