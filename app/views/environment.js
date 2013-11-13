@@ -409,7 +409,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
-          Hides any open inspectors
+          Shrinks any open inspectors
 
           @method shrinkInspector
         */
@@ -421,6 +421,11 @@ YUI.add('juju-view-environment', function(Y) {
           });
         },
 
+        /**
+          Expands any open inspectors
+
+          @method expandInspector
+        */
         expandInspector: function() {
           Y.Object.each(this._inspectors, function(inspector) {
             inspector.viewletManager.recalculateHeight();

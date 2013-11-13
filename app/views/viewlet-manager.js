@@ -500,7 +500,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       var height = winHeight - headerHeight -
                    vcNavHeight - footerHeight - (TB_SPACING * 3);
 
-      var container = this.get('container');
       var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
       if (wrapper) {
         wrapper.setStyle('maxHeight', height + 'px');
@@ -509,7 +508,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       // subtract the height of the header and footer of the viewlet manager.
       height = height - vcHeaderHeight - vcFooterHeight;
 
-      container.one(this.viewletContainer).setStyle('maxHeight', height + 'px');
+      // This needs to pull from the 'real' container not what was passed in.
+      this.get('container')
+          .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
     },
 
     /**
