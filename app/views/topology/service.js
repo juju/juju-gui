@@ -642,7 +642,7 @@ YUI.add('juju-topology-service', function(Y) {
       var notifications = db.notifications;
       if (fileSources && fileSources.length) {
         // provided by bundle-import-extension.js
-        this.sendToDeployer(env, db, fileSources);
+        this.sendToDeployer(fileSources, env, db);
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         var dragData = JSON.parse(dataTransfer.getData('Text'));

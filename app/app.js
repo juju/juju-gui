@@ -575,8 +575,11 @@ YUI.add('juju-gui', function(Y) {
         });
 
         importFileInput.on('change', function(e) {
-          this.sendToDeployer(this.env, this.db,
-                              e.currentTarget.get('files')._nodes);
+          Y.namespac('juju')BundleImport.sendToDeployer(
+            e.currentTarget.get('files')._nodes,
+            this.env,
+            this.db
+          );
         }, this);
       }
 
@@ -587,7 +590,9 @@ YUI.add('juju-gui', function(Y) {
       // from the Y.juju.GhostDeployer extension
       cfg.deployService = Y.bind(this.deployService, this);
 
-      cfg.deployBundle = this.deployBundle.bind(this);
+      // Provide the bundle deployment helper to the subapps and views to
+      // access in case of an UX interaction that triggers a bundle deploy.
+      cfg.deployBudle = Y.namespace('juju').BundleImport.deployBundle;
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -612,20 +617,6 @@ YUI.add('juju-gui', function(Y) {
       }, this);
     },
 
-    /**
-      Calls the deployer import method with the bundle data
-      to deploy the bundle to the environment.
-
-      @method deployBundle
-      @param {Object} bundle Bundle data.
-    */
-    deployBundle: function(bundle) {
-      var notifications = this.db.notifications;
-      this.env.deployerImport(
-          Y.JSON.stringify({
-            bundle: bundle
-          }), null, Y.bind(utils.deployBundleCallback, null, notifications));
-    },
 
     /**
     Export the YAML for this environment.
