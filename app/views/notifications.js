@@ -90,38 +90,6 @@ YUI.add('juju-notifications', function(Y) {
         },
 
         /**
-         * Event handler for clicking the notification icon.
-         *
-         * @method notifyToggle
-         */
-        notifyToggle: function(evt) {
-          evt.halt();
-          var container = this.get('container'),
-              notifications = this.get('notifications'),
-              target = evt.target.getAttribute('data-target'),
-              el = container.one('#' + target),
-              parent = el.ancestor();
-
-          if (notifications.size() === 0) {
-            return;
-          }
-
-          if (parent && parent.hasClass('open')) {
-            el.hide(true);
-          }
-          else {
-            el.show(true);
-          }
-
-          if (parent) {
-            parent.toggleClass('open');
-          }
-
-          el.toggleClass('active');
-
-        },
-
-        /**
          * Select/click on a notice. Currently this just removes it from the
          * model_list.
          *
@@ -230,7 +198,11 @@ YUI.add('juju-notifications', function(Y) {
    * @class NotificationsView
    */
   var NotificationsView = Y.Base.create('NotificationsView',
-      NotificationsBaseView, [], {
+      NotificationsBaseView,
+      [
+        Y.Event.EventTracker,
+        Y.juju.Dropdown
+      ], {
         template: Templates.notifications,
 
         /*
@@ -242,12 +214,6 @@ YUI.add('juju-notifications', function(Y) {
         selection: {
           hide: false,
           seen: false
-        },
-
-        events: {
-          '#notify-indicator': {
-            click: 'notifyToggle'
-          }
         },
 
         /**
@@ -262,30 +228,15 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
-        close: function() {
-          var container = this.get('container');
-          if (!container) {
-            return;
-          }
+        /**
+          Renders the notification view and the dropdown widget.
 
-          var indicator = container.one('#notify-indicator'),
-              list = container.one('#notify-list');
-
-          if (!indicator) {
-            return;
-          }
-          var parent = indicator.ancestor();
-
-          if (parent && parent.hasClass('open')) {
-            indicator.ancestor().removeClass('open');
-            list.hide();
-            indicator.removeClass('active');
-          }
-        },
-
+          @method render
+        */
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
-          this.get('container').on('clickoutside', this.close, this);
+          // Added by the view-dropdown-extension.js
+          this._addDropdownFunc();
           return this;
         }
 
@@ -298,6 +249,8 @@ YUI.add('juju-notifications', function(Y) {
     'juju-view-utils',
     'node',
     'handlebars',
-    'notifier'
+    'notifier',
+    'view-dropdown-extension',
+    'event-tracker'
   ]
 });

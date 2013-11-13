@@ -72,6 +72,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       var container = this.get('container');
       container.hide();
       Y.one('#environment-help').removeClass('hidden');
+      localStorage.setItem('force-onboarding', '');
     },
 
     /**
@@ -179,6 +180,18 @@ YUI.add('juju-view-onboarding', function(Y) {
     decrementIndex: function() {
       this.onboardingIndex = Math.max(this.onboardingIndex - 1, 0);
 
+    },
+
+    /**
+      Sets the onboarding index back to 0, and the localstorage onboarding
+      flag to undefined.
+
+      @method reset
+    */
+    reset: function() {
+      this.onboardingIndex = 0;
+      localStorage.setItem('onboarding', '');
+      this.get('container').empty();
     },
 
     /**
