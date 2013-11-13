@@ -305,7 +305,7 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
-  it('should deploy a bundle on bundle token drop events', function(done) {
+  it.only('should deploy a bundle on bundle token drop events', function(done) {
     var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
         fakeEventObject = {
@@ -328,10 +328,12 @@ describe('service module events', function() {
           }
         };
 
-    view.topo.set('env', {deployerImport: function(deployerData) {
+    // mock out the Y.BundleImport call.
+    juju.BundleImport.deployBundle = function(deployerData, env, db) {
       assert.include(deployerData, 'BUNDLE DATA');
       done();
-    }});
+    };
+
     serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });

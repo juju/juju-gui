@@ -53,10 +53,8 @@ YUI.add('bundle-import-helpers', function(Y) {
             level: 'important'
           });
 
-          ns.BundleImport._watchDeployment(result.DeploymentId, env, db):
+          ns.BundleImport._watchDeployment(result.DeploymentId, env, db);
         }
-
-
       };
 
       if (!Y.Lang.isFunction(env.deployerImport)) {
@@ -125,7 +123,7 @@ YUI.add('bundle-import-helpers', function(Y) {
                   });
 
                   ns.BundleImport._watchDeployment(
-                      result.DeploymentId, env, db):
+                      result.DeploymentId, env, db);
                 }
               }
           );
