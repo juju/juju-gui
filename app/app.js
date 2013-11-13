@@ -39,7 +39,8 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      importHelpers = juju.BundleImport;
 
   /**
    * The main app class.
@@ -573,7 +574,7 @@ YUI.add('juju-gui', function(Y) {
         });
 
         importFileInput.on('change', function(e) {
-          Y.namespac('juju').BundleImport.sendToDeployer(
+          importHelpers.sendToDeployer(
               e.currentTarget.get('files')._nodes,
               this.env,
               this.db
@@ -590,7 +591,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
-      cfg.deployBudle = Y.namespace('juju').BundleImport.deployBundle;
+      cfg.deployBudle = importHelpers.deployBundle;
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -1318,6 +1319,7 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
+    'bundle-import-helpers',
     'node',
     'model',
     'app-cookies-extension',
@@ -1332,7 +1334,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls',
-    'bundle-import-helpers'
+    'viewmode-controls'
   ]
 });

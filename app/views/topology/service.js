@@ -672,11 +672,13 @@ YUI.add('juju-topology-service', function(Y) {
             // data, so we wrap the entity data in a mapping.  The deployer
             // format is YAML, but JSON is a subset of YAML, so we can just
             // encode it this way.
-            env.deployerImport(
-                Y.JSON.stringify({
-                  bundle: entityData.data
-                }), null,
-                Y.bind(utils.deployBundleCallback, null, notifications));
+            importHelpers.deployBundle(
+              Y.JSON.stringify({
+                bundle: entityData.data
+              }),
+              env,
+              db
+            );
           }
         }
       }
