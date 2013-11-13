@@ -143,17 +143,6 @@ Checklist for Making a Stable Release
   sure there are no 404s or Javascript errors in the console.  Verify that the
   Landscape icons, links, and badges are present when expected.  Additionally,
   run through the steps in the QA Checklist below.
-- Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
-  version string.  It should be bigger than the most recent version found on
-  <https://launchpad.net/juju-gui/stable>.  If the most recent version string
-  is ``unreleased``, do the following.
-
-  - Decide what the next version number should be (see `Semantic Versioning
-    <http://semver.org/>`_) and change ``unreleased`` to that value.
-  - Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
-  - Commit to the branch with this checkin message:
-    ``bzr commit -m 'Set version for release.'``
-  - Push the branch directly to the parent (``bzr push :parent`` should work).
 
 - Verify that the section in ``CHANGES.yaml`` for the new release has the
   expected changelog news items, using the format described in the file.  If
@@ -183,6 +172,19 @@ Checklist for Making a Stable Release
     ('Behind the "charmworldv3" flag, ...') and then summarize progress.  Even
     if many commits were behind a feature flag, just have a single bullet
     describing what we accomplished and, perhaps, what remains.
+
+- Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
+  version string.  It should be bigger than the most recent version found on
+  <https://launchpad.net/juju-gui/stable>.  If the most recent version string
+  is ``unreleased``, decide what the next version number should be (see
+  `Semantic Versioning   <http://semver.org/>`_) and change ``unreleased`` to
+  that value.
+- Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
+- Verify that your changes to the YAML work by running ``make docs``.  Fix
+  any problems identified.
+- Commit to the branch with this checkin message:
+  ``bzr commit -m 'Set version for release.'``
+- Push the branch directly to the parent (``bzr push :parent`` should work).
 
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
@@ -248,10 +250,13 @@ Checklist for Making a Stable Release
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use
   the ``cmp`` command).
+- Go to https://readthedocs.org/builds/juju-gui/ and request a new build.
 - Set the version back to ``unreleased`` by doing the following.
 
   - Restore ``- unreleased:`` as most recent version string in
     ``CHANGES.yaml``.
+  - Verify that your changes to the YAML work by running ``make docs``.  Fix
+    any problems identified.
   - Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version back to unreleased.'``
   - Push the branch directly to the parent (``bzr push :parent`` should work).
@@ -310,6 +315,7 @@ Checklist for Making a Stable Release
   - In a few minutes, the new charm revision should be available in
     <https://jujucharms.com/fullscreen/search/precise/juju-gui/> and
     <http://manage.jujucharms.com/charms/precise/juju-gui>.
+
 
 You are done!
 
