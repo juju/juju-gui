@@ -72,6 +72,7 @@ YUI.add('juju-view-onboarding', function(Y) {
       var container = this.get('container');
       container.hide();
       Y.one('#environment-help').removeClass('hidden');
+      localStorage.setItem('force-onboarding', '');
     },
 
     /**

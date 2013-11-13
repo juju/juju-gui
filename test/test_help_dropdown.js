@@ -86,7 +86,8 @@ describe('help dropdown view', function() {
       env: db.environment
     });
     helpView.on('navigate', function(e) {
-      assert.equal(e.url, '/sidebar?force-onboarding=true');
+      assert.equal(e.url, '/sidebar');
+      assert.equal(localStorage.getItem('force-onboarding'), 'true');
       done();
     });
     helpView.render();

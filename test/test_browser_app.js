@@ -1326,14 +1326,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('onboarding is rendered with force-onboarding query', function(done) {
         var req = {
-          path: '/sidebar?force-onboarding=true',
-          query: {
-            'force-onboarding': true
-          }
+          path: '/sidebar'
         };
 
+        localStorage.setItem('force-onboarding', true);
+
         browser.renderOnboarding = function(force) {
-          assert.isTrue(force);
+          assert.equal(force, 'true');
+          assert.equal(localStorage.getItem('force-onboarding'), '');
           assert.deepEqual(hits.sidebar, true);
           done();
         };

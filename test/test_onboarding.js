@@ -158,6 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       onboard.closeHandler({halt: function() {}});
       assert.equal(container.getComputedStyle('display'), 'none');
       assert.isFalse(env_help.hasClass('hidden'));
+      assert.equal(localStorage.getItem('force-onboarding'), '');
     });
 
     it('should not be shown if seen before', function() {

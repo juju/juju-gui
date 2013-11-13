@@ -866,14 +866,13 @@ YUI.add('subapp-browser', function(Y) {
       // Only show the onboarding messaging if we're hitting the sidebar view
       // without any extra url bits to the user. It's meant for a fresh user
       // to see, not someone doing what they know they want to do.
-      var query;
-      // some tests don't provide these
-      if (req && req.query) {
-        query = req.query['force-onboarding'];
-      }
-      if (!this._onboarding || query) {
+      var force = localStorage.getItem('force-onboarding');
+      // Reset force-onboarding so that the next request to /sidebar acts normal
+      localStorage.setItem('force-onboarding', '');
+
+      if (!this._onboarding || force) {
         if (!this._viewState.search && !this._viewState.charmID) {
-          this.renderOnboarding(query);
+          this.renderOnboarding(force);
         }
       }
 

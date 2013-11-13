@@ -63,7 +63,8 @@ YUI.add('help-dropdown', function(Y) {
           // the user views the onboarding we navigate to it.
           // Once fullscreen is removed we can interact with
           // onboarding here instead of in browser.js
-          this.fire('navigate', { url: '/sidebar?force-onboarding=true' });
+          localStorage.setItem('force-onboarding', true);
+          this.fire('navigate', { url: '/sidebar' });
         },
 
         /**
