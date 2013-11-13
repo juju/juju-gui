@@ -20,7 +20,10 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.13.0:
+    - >
+      Added help and feedback menu to top right, replacing feedback link on
+      side.
     - >
       (FIX) The inspector tries to get out of your way when you are making a
       relation.
