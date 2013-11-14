@@ -71,35 +71,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         var called = false;
         env.deployerWatchUpdate = function(watchId, callback) {
-            if (!called) {
-              called = true;
-              callback({
-                err: undefined,
-                Changes: [
-                  // Copied right from the docs of the charm.
-                  {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
-                   'Queue': 2},
-                  {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                   'Queue': 1},
-                  {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                   'Queue': 0},
-                ]
-              });
-            } else {
-              // Make that this is done now.
-              callback({
-                err: undefined,
-                Changes: [
-                  // Copied right from the docs of the charm.
-                  {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-                   'Queue': 2},
-                  {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                   'Queue': 1},
-                  {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                   'Queue': 0},
-                ]
-              });
-            }
+          if (!called) {
+            called = true;
+            callback({
+              err: undefined,
+              Changes: [
+                // Copied right from the docs of the charm.
+                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
+                 'Queue': 2},
+                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
+                 'Queue': 1},
+                {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
+                 'Queue': 0},
+              ]
+            });
+          } else {
+            // Make that this is done now.
+            callback({
+              err: undefined,
+              Changes: [
+                // Copied right from the docs of the charm.
+                {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
+                 'Queue': 2},
+                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
+                 'Queue': 1},
+                {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
+                 'Queue': 0},
+              ]
+            });
+          }
         };
 
         // Testing  private method is evil, but it does a decent amount of
@@ -110,34 +110,5 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             db
         );
     });
-
-    //it('adds a notification if bundle import is successful', function(done) {
-    //  var expected = {
-    //    title: 'Bundle Deployment Requested',
-    //    message: 'Bundle deployment request successful. The full deployment '
-    //        'can take some time to complete',
-    //    level: 'important'
-    //  };
-    //  utils.deployBundleCallback({
-    //    add: function(notification) {
-    //      assert.deepEqual(notification, expected);
-    //      done();
-    //    }}, {});
-    //});
-
-    //it('adds a notification if a deployment error occurs', function(done) {
-    //  var expected = {
-    //    title: 'Bundle Deployment Failed',
-    //    message: 'Unable to deploy the bundle. The server returned the ' +
-    //        'following error: bad wolf',
-    //    level: 'error'
-    //  };
-    //  utils.deployBundleCallback({
-    //    add: function(notification) {
-    //      assert.deepEqual(notification, expected);
-    //      done();
-    //    }}, {err: 'bad wolf'});
-    //});
-  });
 
 })();
