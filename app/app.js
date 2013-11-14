@@ -565,6 +565,10 @@ YUI.add('juju-gui', function(Y) {
 
       var importNode = Y.one('#import-trigger');
       var importFileInput = Y.one('.import-export input[type=file]');
+      // Grab a reference of these for the nested event calls below.
+      var env = this.env;
+      var db = this.db;
+
       // Tests won't have this node.
       if (importNode && importFileInput) {
         importNode.on('click', function(e) {
@@ -576,8 +580,8 @@ YUI.add('juju-gui', function(Y) {
         importFileInput.on('change', function(e) {
           importHelpers.deployBundleFiles(
               e.currentTarget.get('files')._nodes,
-              this.env,
-              this.db
+              env,
+              db
           );
         }, this);
       }
@@ -591,7 +595,13 @@ YUI.add('juju-gui', function(Y) {
 
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
-      cfg.deployBundle = importHelpers.deployBundle;
+      cfg.deployBundle = function(bundle) {
+        importHelpers.deployBundle(
+            bundle,
+            env,
+            db
+        );
+      };
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
