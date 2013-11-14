@@ -111,8 +111,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ns.BundleImport.deployBundle('test bundle', env, db);
     });
 
-    // Start at the end of the chain and work backwards as there are fewest
-    // parts in the chain at this point.
     it('provides a notification when a deploy watch updates', function(done) {
       var watchId = 1;
       var callNumber = 0;
@@ -174,6 +172,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           db
       );
     });
+
+    it('provides a error when the deploy watch says so', function(done) {
+      var watchId = 1;
+
+      // This will get called twice. First with an update that it was
+      // scheduled, then with a second call that it's complete which stops
+      // the look in the watch.
+      db.notifications.add = function(info) {
+        assert.equal(info.level, 'error');
+        assert.isTrue(info.message.indexOf('boom') !== -1, info.message);
+        done();
+      };
+
+      env.deployerWatchUpdate = function(watchId, callback) {
+        callback({
+          err: undefined,
+          Changes: [
+            // Copied right from the docs of the charm.
+            {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
+              'Queue': 2, 'Error': 'Deploy go boom!'},
+            {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
+              'Queue': 1},
+            {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
+              'Queue': 0}
+          ]
+        });
+      };
+
+      // Testing  private method is evil, but it does a decent amount of
+      // work and we want the aid in debugging issues.
+      ns.BundleImport._processWatchDeploymentUpdates(
+          watchId,
+          env,
+          db
+      );
+    });
+
 
     it('the stack of deploy to watch integrate', function(done) {
       // By stubbing only the env calls to behave properly, we should be able to
