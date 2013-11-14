@@ -596,8 +596,12 @@ YUI.add('juju-gui', function(Y) {
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
       cfg.deployBundle = function(bundle) {
+        // The other views will hand us an Object vs a YAML string. The import
+        // helpers want the yaml string instead.
         importHelpers.deployBundle(
-            bundle,
+            Y.JSON.stringify({
+              bundle: bundle
+            }),
             env,
             db
         );
