@@ -204,13 +204,24 @@ YUI.add('bundle-import-helpers', function(Y) {
           // Just grab the latest change and notify the user of the
           // status.
           var newChange = data.Changes[0];
-          notifications.add({
-            title: 'Updated status for deployment: ' +
-                newChange.DeploymentId,
-            message: 'The deployment is currently: ' +
-                newChange.Status,
-            level: 'important'
-          });
+          // The change could be the result of an error.
+          if (newChange.Error) {
+            notifications.add({
+              title: 'Updated status for deployment: ' +
+                  newChange.DeploymentId,
+              message: 'The deployment errored: ' +
+                  newChange.Error,
+              level: 'error'
+            });
+          } else {
+            notifications.add({
+              title: 'Updated status for deployment: ' +
+                  newChange.DeploymentId,
+              message: 'The deployment is currently: ' +
+                  newChange.Status,
+              level: 'important'
+            });
+          }
 
           // If the status is 'completed' then we're done watching this.
           if (newChange.Status === 'completed') {
