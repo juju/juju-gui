@@ -514,7 +514,6 @@ YUI.add('juju-env-go', function(Y) {
         intermediateCallback = Y.bind(this.handleDeployerWatch,
                                       this, callback);
       }
-      alert('The deployment id is: ' + deploymentId);
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Watch',
@@ -534,7 +533,6 @@ YUI.add('juju-env-go', function(Y) {
       @param {Object} data The servers response to the deployerWatch call.
      */
     handleDeployerWatch: function(userCallback, data) {
-      alert('The watch response is: ' + data.Response.WatcherId);
       var transformedData = {
         err: data.Error,
         WatchId: data.Response.WatcherId
@@ -563,7 +561,6 @@ YUI.add('juju-env-go', function(Y) {
                                       this, callback);
       }
 
-      alert('The update id is: ' + watchId);
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Next',
@@ -583,7 +580,6 @@ YUI.add('juju-env-go', function(Y) {
       call.
      */
     handleDeployerWatchUpdate: function(userCallback, data) {
-      alert('The watch response is: ' + data.Response.Changes);
       var transformedData = {
         err: data.Error,
         Changes: data.Response.Changes
