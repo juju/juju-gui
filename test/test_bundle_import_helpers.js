@@ -75,7 +75,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ns.BundleImport.deployBundle('test bundle', env, db);
     });
 
-    it('provides a deployBundle helper for working with the env', function(done) {
+    it('provides deployBundle helper for working through env', function(done) {
       // Watch the notification for the message that we're hitting the default
       // callback.
       db.notifications.add = function(info) {
@@ -114,65 +114,65 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Start at the end of the chain and work backwards as there are fewest
     // parts in the chain at this point.
     it('provides a notification when a deploy watch updates', function(done) {
-        var watchId = 1;
-        var callNumber = 0;
+      var watchId = 1;
+      var callNumber = 0;
 
-        // This will get called twice. First with an update that it was
-        // scheduled, then with a second call that it's complete which stops
-        // the look in the watch.
-        db.notifications.add = function(info) {
-          if (callNumber === 0) {
-              assert.equal('Updated status for deployment: 42', info.title);
-              assert.equal(info.level, 'important');
-              assert.isTrue(info.message.indexOf('scheduled') !== -1, info.message);
-          } else {
-              assert.equal(info.level, 'important');
-              assert.isTrue(info.message.indexOf('completed') !== -1, info.message);
-              done();
-          }
-          callNumber = callNumber + 1;
-        };
+      // This will get called twice. First with an update that it was
+      // scheduled, then with a second call that it's complete which stops
+      // the look in the watch.
+      db.notifications.add = function(info) {
+        if (callNumber === 0) {
+          assert.equal('Updated status for deployment: 42', info.title);
+          assert.equal(info.level, 'important');
+          assert.isTrue(info.message.indexOf('scheduled') !== -1, info.message);
+        } else {
+          assert.equal(info.level, 'important');
+          assert.isTrue(info.message.indexOf('completed') !== -1, info.message);
+          done();
+        }
+        callNumber = callNumber + 1;
+      };
 
-        var called = false;
-        env.deployerWatchUpdate = function(watchId, callback) {
-          if (!called) {
-            called = true;
-            callback({
-              err: undefined,
-              Changes: [
-                // Copied right from the docs of the charm.
-                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
-                 'Queue': 2},
-                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                 'Queue': 1},
-                {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                 'Queue': 0},
-              ]
-            });
-          } else {
-            // Make that this is done now.
-            callback({
-              err: undefined,
-              Changes: [
-                // Copied right from the docs of the charm.
-                {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-                 'Queue': 2},
-                {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                 'Queue': 1},
-                {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                 'Queue': 0},
-              ]
-            });
-          }
-        };
+      var called = false;
+      env.deployerWatchUpdate = function(watchId, callback) {
+        if (!called) {
+          called = true;
+          callback({
+            err: undefined,
+            Changes: [
+              // Copied right from the docs of the charm.
+              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
+                'Queue': 2},
+              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
+                'Queue': 1},
+              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
+                'Queue': 0}
+            ]
+          });
+        } else {
+          // Make that this is done now.
+          callback({
+            err: undefined,
+            Changes: [
+              // Copied right from the docs of the charm.
+              {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
+                'Queue': 2},
+              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
+                'Queue': 1},
+              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
+                'Queue': 0}
+            ]
+          });
+        }
+      };
 
-        // Testing  private method is evil, but it does a decent amount of
-        // work and we want the aid in debugging issues.
-        ns.BundleImport._processWatchDeploymentUpdates(
-            watchId,
-            env,
-            db
-        );
+      // Testing  private method is evil, but it does a decent amount of
+      // work and we want the aid in debugging issues.
+      ns.BundleImport._processWatchDeploymentUpdates(
+          watchId,
+          env,
+          db
+      );
     });
 
     it('the stack of deploy to watch integrate', function(done) {
@@ -205,11 +205,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Changes: [
               // Copied right from the docs of the charm.
               {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
-               'Queue': 2},
+                'Queue': 2},
               {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-               'Queue': 1},
+                'Queue': 1},
               {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-               'Queue': 0},
+                'Queue': 0}
             ]
           });
         } else {
@@ -219,11 +219,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Changes: [
               // Copied right from the docs of the charm.
               {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-               'Queue': 2},
+                'Queue': 2},
               {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-               'Queue': 1},
+                'Queue': 1},
               {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-               'Queue': 0},
+                'Queue': 0}
             ]
           });
         }
@@ -239,15 +239,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         switch (called) {
           case 0:
             assert.notEqual(
-              info.title.indexOf('requested'), -1, 'not requested');
+                info.title.indexOf('requested'), -1, 'not requested');
             break;
           case 1:
             assert.notEqual(
-              info.message.indexOf('scheduled'), -1, 'not scheduled');
+                info.message.indexOf('scheduled'), -1, 'not scheduled');
             break;
           case 2:
             assert.notEqual(
-              info.message.indexOf('completed'), -1, 'not completed');
+                info.message.indexOf('completed'), -1, 'not completed');
             done();
             break;
         }

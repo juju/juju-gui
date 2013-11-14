@@ -66,7 +66,7 @@ YUI.add('bundle-import-helpers', function(Y) {
         notifications.add({
           title: 'Bundle deployment not available.',
           message: 'Bundle deployments are not currently available for your' +
-                   'environment.',
+              'environment.',
           level: 'error'
         });
       }
@@ -214,10 +214,10 @@ YUI.add('bundle-import-helpers', function(Y) {
 
           // If the status is 'completed' then we're done watching this.
           if (newChange.Status === 'completed') {
-              // There's nothing else to see here.
-              return;
+            // There's nothing else to see here.
+            return;
           } else {
-              env.deployerWatchUpdate(watchId, processUpdate);
+            env.deployerWatchUpdate(watchId, processUpdate);
           }
         }
       };
