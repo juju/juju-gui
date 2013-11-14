@@ -117,6 +117,9 @@ YUI.add('bundle-import-helpers', function(Y) {
                     level: 'important'
                   });
 
+                  ns.BundleImport._watchDeployment(
+                      result.DeploymentId, env, db);
+
                 } else {
                   console.warn('import failed', file, result);
                   notifications.add({
@@ -125,9 +128,6 @@ YUI.add('bundle-import-helpers', function(Y) {
                         '" failed.<br/>' + result.err,
                     level: 'error'
                   });
-
-                  ns.BundleImport._watchDeployment(
-                      result.DeploymentId, env, db);
                 }
               }
           );
