@@ -511,7 +511,7 @@ YUI.add('juju-env-go', function(Y) {
     deployerWatch: function(deploymentId, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerStatus,
+        intermediateCallback = Y.bind(this.handleDeployerWatch,
                                       this, callback);
       }
       alert('The deployment id is: ' + deploymentId);
@@ -559,7 +559,7 @@ YUI.add('juju-env-go', function(Y) {
     deployerWatchUpdate: function(watchId, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerStatus,
+        intermediateCallback = Y.bind(this.handleDeployerWatchUpdate,
                                       this, callback);
       }
 
