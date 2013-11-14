@@ -39,14 +39,14 @@ YUI.add('bundle-import-helpers', function(Y) {
         if (result.err) {
           console.log('bundle import failed:', result.err);
           notifications.add({
-            title: 'Bundle Deployment Failed',
+            title: 'Bundle deployment failed',
             message: 'Unable to deploy the bundle. The server returned the ' +
                 'following error: ' + result.err,
             level: 'error'
           });
         } else {
           notifications.add({
-            title: 'Bundle Deployment Requested',
+            title: 'Bundle deployment requested',
             message: 'Bundle deployment request successful. The full ' +
                 'deployment can take some time to complete',
             level: 'important'
@@ -56,12 +56,19 @@ YUI.add('bundle-import-helpers', function(Y) {
         }
       };
 
-      if (!Y.Lang.isFunction(env.deployerImport)) {
+      if (Y.Lang.isFunction(env.deployerImport)) {
         env.deployerImport(
             bundle,
             null,
             customCallback ? customCallback : defaultCallback
         );
+      } else {
+        notifications.add({
+          title: 'Bundle deployment not available.',
+          message: 'Bundle deployments are not currently available for your' +
+                   'environment.',
+          level: 'error'
+        });
       }
     },
 
@@ -165,6 +172,11 @@ YUI.add('bundle-import-helpers', function(Y) {
       receive updates. Watch the deployment until it's either completed or
       we've gotten an error.
 
+      This will make nested calls upon each update from the server and could
+      be a potential point for recursive callback issues. It appears that we
+      should only get a couple of levels deep in the notification stack and
+      will be safe.
+
       @method watchDeployment
       @param {Integer} watchId The ID of the Watcher from the watchDeployment
       call.
@@ -174,45 +186,45 @@ YUI.add('bundle-import-helpers', function(Y) {
       for adding notifications to the system.
      */
     _processWatchDeploymentUpdates: function(watchId, env, db) {
-      // Now that we've got a watcher we can continue to monitor it for
-      // changes. Each time we get a response we check if the deployment
-      // is complete. If so, we stop watching.
-      var done = false,
-          notifications = db.notifications;
+      var notifications = db.notifications;
 
       var processUpdate = function(data) {
         if (data.err) {
-          // Make sure we stop watching. There was an error, ignore
-          // further updates.
-          done = true;
-
           notifications.add({
             title: 'Error watching deployment',
             message: 'The watch of the deployment errored:' +
                 data.err,
             level: 'error'
           });
+
+          // Break the loop of calling for the next update from the server.
+          return;
+
         } else {
           // Just grab the latest change and notify the user of the
           // status.
           var newChange = data.Changes[0];
-          // If the status is 'completed' then we're done watching this.
-          if (newChange.Status === 'completed') {
-            done = true;
-          }
           notifications.add({
             title: 'Updated status for deployment: ' +
                 newChange.DeploymentId,
             message: 'The deployment is currently: ' +
                 newChange.Status,
-            level: 'info'
+            level: 'important'
           });
+
+          // If the status is 'completed' then we're done watching this.
+          if (newChange.Status === 'completed') {
+              // There's nothing else to see here.
+              return;
+          } else {
+              env.deployerWatchUpdate(watchId, processUpdate);
+          }
         }
       };
 
-      while (!done) {
-        env.deployerWatchUpdate(watchId, processUpdate);
-      }
+      // Make the first call to the env and the processUpdate callback will
+      // handle re-calling on each update.
+      env.deployerWatchUpdate(watchId, processUpdate);
     }
 
   };
