@@ -525,7 +525,8 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Wrapper for the deployerWatch call.
+      Callback to process the environments response to requested a watcher for
+      the deployment specified above.
 
       @method handleDeployerWatch
       @param {Function} userCallback The original callback to the

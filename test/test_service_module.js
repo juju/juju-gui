@@ -328,9 +328,12 @@ describe('service module events', function() {
           }
         };
 
-    // mock out the Y.BundleImport call.
-    juju.BundleImport.deployBundle = function(deployerData, env, db) {
+    // mock out the Y.BundleHelpers call.
+    var _deployBundle = juju.BundleHelpers.deployBundle;
+    juju.BundleHelpers.deployBundle = function(deployerData, env, db) {
       assert.include(deployerData, 'BUNDLE DATA');
+      // Restore the deployBundle call for future tests.
+      juju.BundleHelpers.deployBundle = _deployBundle;
       done();
     };
 

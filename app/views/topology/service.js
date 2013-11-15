@@ -27,7 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-topology-service', function(Y) {
   var d3ns = Y.namespace('d3'),
-      importHelpers = Y.namespace('juju').BundleImport,
+      importHelpers = Y.namespace('juju').BundleHelpers,
       models = Y.namespace('juju.models'),
       topoUtils = Y.namespace('juju.topology.utils'),
       utils = Y.namespace('juju.views.utils'),
