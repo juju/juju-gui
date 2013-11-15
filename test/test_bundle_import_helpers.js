@@ -55,7 +55,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleImport.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', env, db);
     });
 
     it('errors when the bundle import fails from the env', function(done) {
@@ -72,13 +72,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleImport.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', env, db);
     });
 
     it('provides deployBundle helper for working through env', function(done) {
       // Watch the notification for the message that we're hitting the default
       // callback.
+      var hitNotifications = false;
       db.notifications.add = function(info) {
+        hitNotifications = true;
         assert.equal(info.level, 'important');
         assert.notEqual(info.title.indexOf('requested'), -1);
       };
@@ -98,17 +100,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // A watch should be created in the process of submitting the deployment
       // once there's an ID.
-      var _watchDeployment = ns.BundleImport._watchDeployment;
-      ns.BundleImport._watchDeployment = function(id, env, db) {
+      var _watchDeployment = ns.BundleHelpers._watchDeployment;
+      ns.BundleHelpers._watchDeployment = function(id, env, db) {
         assert.equal(id, 10);
         // At this point we've checked the env call, the notification is
         // correct, and now that we've requested a watcher with the right id.
-        ns.BundleImport._watchDeployment = _watchDeployment;
+        ns.BundleHelpers._watchDeployment = _watchDeployment;
+
+        // Make sure we did in fact post our notification to the user.
+        assert.equal(hitNotifications, true);
         done();
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleImport.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', env, db);
     });
 
     it('provides a notification when a deploy watch updates', function(done) {
@@ -166,7 +171,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Testing  private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleImport._processWatchDeploymentUpdates(
+      ns.BundleHelpers._watchDeploymentUpdates(
           watchId,
           env,
           db
@@ -202,7 +207,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Testing  private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleImport._processWatchDeploymentUpdates(
+      ns.BundleHelpers._watchDeploymentUpdates(
           watchId,
           env,
           db
@@ -290,7 +295,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleImport.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', env, db);
 
     });
 

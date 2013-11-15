@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('bundle-import-helpers', function(Y) {
   var ns = Y.namespace('juju');
 
-  ns.BundleImport = {
+  ns.BundleHelpers = {
     /**
       Calls the deployer import method with the bundle data
       to deploy the bundle to the environment.
@@ -52,7 +52,7 @@ YUI.add('bundle-import-helpers', function(Y) {
             level: 'important'
           });
 
-          ns.BundleImport._watchDeployment(result.DeploymentId, env, db);
+          ns.BundleHelpers._watchDeployment(result.DeploymentId, env, db);
         }
       };
 
@@ -102,7 +102,7 @@ YUI.add('bundle-import-helpers', function(Y) {
 
         // Once the file has been loaded, deploy it.
         reader.onload = function(e) {
-          ns.BundleImport.deployBundle(
+          ns.BundleHelpers.deployBundle(
               e.target.result,
               env,
               db,
@@ -117,7 +117,7 @@ YUI.add('bundle-import-helpers', function(Y) {
                     level: 'important'
                   });
 
-                  ns.BundleImport._watchDeployment(
+                  ns.BundleHelpers._watchDeployment(
                       result.DeploymentId, env, db);
 
                 } else {
@@ -161,7 +161,7 @@ YUI.add('bundle-import-helpers', function(Y) {
             level: 'error'
           });
         } else {
-          ns.BundleImport._processWatchDeploymentUpdates(
+          ns.BundleHelpers._watchDeploymentUpdates(
               data.WatchId, env, db);
         }
       });
@@ -185,7 +185,7 @@ YUI.add('bundle-import-helpers', function(Y) {
       @param {Database} db The db which contains the NotificationList used
       for adding notifications to the system.
      */
-    _processWatchDeploymentUpdates: function(watchId, env, db) {
+    _watchDeploymentUpdates: function(watchId, env, db) {
       var notifications = db.notifications;
 
       var processUpdate = function(data) {

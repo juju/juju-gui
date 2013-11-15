@@ -40,7 +40,7 @@ YUI.add('juju-gui', function(Y) {
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      importHelpers = juju.BundleImport;
+      importHelpers = juju.BundleHelpers;
 
   /**
    * The main app class.
@@ -565,9 +565,6 @@ YUI.add('juju-gui', function(Y) {
 
       var importNode = Y.one('#import-trigger');
       var importFileInput = Y.one('.import-export input[type=file]');
-      // Grab a reference of these for the nested event calls below.
-      var env = this.env;
-      var db = this.db;
 
       // Tests won't have this node.
       if (importNode && importFileInput) {
@@ -580,8 +577,8 @@ YUI.add('juju-gui', function(Y) {
         importFileInput.on('change', function(e) {
           importHelpers.deployBundleFiles(
               e.currentTarget.get('files')._nodes,
-              env,
-              db
+              this.env,
+              this.db
           );
         }, this);
       }
@@ -595,6 +592,9 @@ YUI.add('juju-gui', function(Y) {
 
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
+      // Grab a reference of these for the nested event calls below.
+      var env = this.env;
+      var db = this.db;
       cfg.deployBundle = function(bundle) {
         // The other views will hand us an Object vs a YAML string. The import
         // helpers want the yaml string instead.
