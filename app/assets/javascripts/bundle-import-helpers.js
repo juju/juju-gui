@@ -204,13 +204,8 @@ YUI.add('bundle-import-helpers', function(Y) {
           // Just grab the latest change and notify the user of the
           // status.
           var newChange = data.Changes[0];
-          alert('Process Update');
-          alert(!!newChange.Error);
           // The change could be the result of an error.
-          if (newChange.Error) {
-            alert('adding error');
-            alert(newChange.Error);
-            alert(newChange.DeploymentId);
+          if (newChange.Error !== undefined) {
             notifications.add({
               title: 'Updated status for deployment: ' +
                   newChange.DeploymentId,
@@ -219,9 +214,6 @@ YUI.add('bundle-import-helpers', function(Y) {
               level: 'error'
             });
           } else {
-            alert('adding status update');
-            alert(newChange.Status);
-            alert(newChange.DeploymentId);
             notifications.add({
               title: 'Updated status for deployment: ' +
                   newChange.DeploymentId,
