@@ -333,7 +333,7 @@ describe('service module events', function() {
     juju.BundleHelpers.deployBundle = function(deployerData, env, db) {
       assert.include(deployerData, 'BUNDLE DATA');
       // Restore the deployBundle call for future tests.
-      juju.BundleHelpers.deployBundle;
+      juju.BundleHelpers.deployBundle = _deployBundle;
       done();
     };
 
