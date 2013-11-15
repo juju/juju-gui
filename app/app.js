@@ -39,8 +39,8 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      utils = views.utils,
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      importHelpers = juju.BundleHelpers;
 
   /**
    * The main app class.
@@ -51,8 +51,7 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer,
-                                                  Y.juju.BundleImport], {
+                                                  Y.juju.GhostDeployer], {
 
     /*
       Extension properties
@@ -566,6 +565,7 @@ YUI.add('juju-gui', function(Y) {
 
       var importNode = Y.one('#import-trigger');
       var importFileInput = Y.one('.import-export input[type=file]');
+
       // Tests won't have this node.
       if (importNode && importFileInput) {
         importNode.on('click', function(e) {
@@ -575,8 +575,11 @@ YUI.add('juju-gui', function(Y) {
         });
 
         importFileInput.on('change', function(e) {
-          this.sendToDeployer(this.env, this.db,
-                              e.currentTarget.get('files')._nodes);
+          importHelpers.deployBundleFiles(
+              e.currentTarget.get('files')._nodes,
+              this.env,
+              this.db
+          );
         }, this);
       }
 
@@ -587,7 +590,22 @@ YUI.add('juju-gui', function(Y) {
       // from the Y.juju.GhostDeployer extension
       cfg.deployService = Y.bind(this.deployService, this);
 
-      cfg.deployBundle = this.deployBundle.bind(this);
+      // Provide the bundle deployment helper to the subapps and views to
+      // access in case of an UX interaction that triggers a bundle deploy.
+      // Grab a reference of these for the nested event calls below.
+      var env = this.env;
+      var db = this.db;
+      cfg.deployBundle = function(bundle) {
+        // The other views will hand us an Object vs a YAML string. The import
+        // helpers want the yaml string instead.
+        importHelpers.deployBundle(
+            Y.JSON.stringify({
+              bundle: bundle
+            }),
+            env,
+            db
+        );
+      };
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -627,21 +645,6 @@ YUI.add('juju-gui', function(Y) {
       this.helpDropdown.on('navigate', function(e) {
         this.navigate(e.url);
       }, this);
-    },
-
-    /**
-      Calls the deployer import method with the bundle data
-      to deploy the bundle to the environment.
-
-      @method deployBundle
-      @param {Object} bundle Bundle data.
-    */
-    deployBundle: function(bundle) {
-      var notifications = this.db.notifications;
-      this.env.deployerImport(
-          Y.JSON.stringify({
-            bundle: bundle
-          }), null, Y.bind(utils.deployBundleCallback, null, notifications));
     },
 
     /**
@@ -1349,6 +1352,7 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
+    'bundle-import-helpers',
     'node',
     'model',
     'app-cookies-extension',
@@ -1364,7 +1368,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-ghost-inspector',
     'juju-view-bundle',
     'viewmode-controls',
-    'help-dropdown',
-    'bundle-import-extension'
+    'help-dropdown'
   ]
 });

@@ -325,6 +325,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+
     describe('Deployer support', function() {
       it('sends the correct messages on deployer imports', function() {
         env.deployerImport('YAML BLOB');
@@ -351,6 +352,35 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         assert.deepEqual(expected, last_message);
       });
+
+      it('builds a proper watch request', function() {
+        env.deployerWatch(2);
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Deployer',
+          Request: 'Watch',
+          RequestId: 1,
+          Params: {
+            DeploymentId: 2
+          }
+        };
+        assert.deepEqual(expected, last_message);
+      });
+
+      it('builds a proper watch next request', function() {
+        env.deployerWatchUpdate(5);
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Deployer',
+          Request: 'Next',
+          RequestId: 1,
+          Params: {
+            WatcherId: 5
+          }
+        };
+        assert.deepEqual(expected, last_message);
+      });
+
     });
 
     it('sends the correct expose message', function() {

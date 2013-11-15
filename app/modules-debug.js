@@ -181,8 +181,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
         },
 
-        'bundle-import-extension': {
-          fullpath: '/juju-ui/assets/javascripts/bundle-import-extension.js'
+        'bundle-import-helpers': {
+          fullpath: '/juju-ui/assets/javascripts/bundle-import-helpers.js'
         },
 
         'view-dropdown-extension': {
