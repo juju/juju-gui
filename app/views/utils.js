@@ -1789,24 +1789,6 @@ YUI.add('juju-view-utils', function(Y) {
     return charmIcons;
   };
 
-  utils.deployBundleCallback = function(notifications, result) {
-    if (result.err) {
-      console.log('bundle import failed:', result.err);
-      notifications.add({
-        title: 'Bundle Deployment Failed',
-        message: 'Unable to deploy the bundle. The server returned the ' +
-            'following error: ' + result.err,
-        level: 'error'
-      });
-      return;
-    }
-    notifications.add({
-      title: 'Bundle Deployment Requested',
-      message: 'Bundle deployment request successful. The full ' +
-          'deployment can take some time to complete',
-      level: 'important'
-    });
-  };
 
 }, '0.1.0', {
   requires: [

@@ -626,12 +626,17 @@ YUI.add('subapp-browser', function(Y) {
      * Create a 'welcome' message walkthrough for new users.
      *
      * @method renderOnboarding
+     * @param {Boolean} force Whether it should force render the onboarding.
      */
-    renderOnboarding: function() {
+    renderOnboarding: function(force) {
       // Need to check onboarding exists due to the double dispatch bug.
       this._onboarding = new Y.juju.views.OnboardingView({
         'container': '#onboarding'
       });
+
+      if (force) {
+        this._onboarding.reset();
+      }
 
       if (!this._onboarding.get('seen')) {
         this._onboarding.render();
@@ -861,10 +866,13 @@ YUI.add('subapp-browser', function(Y) {
       // Only show the onboarding messaging if we're hitting the sidebar view
       // without any extra url bits to the user. It's meant for a fresh user
       // to see, not someone doing what they know they want to do.
-      if (!this._onboarding) {
-        if (!this._viewState.search &&
-            !this._viewState.charmID) {
-          this.renderOnboarding();
+      var force = localStorage.getItem('force-onboarding');
+      // Reset force-onboarding so that the next request to /sidebar acts normal
+      localStorage.setItem('force-onboarding', '');
+
+      if (!this._onboarding || force) {
+        if (!this._viewState.search && !this._viewState.charmID) {
+          this.renderOnboarding(force);
         }
       }
 

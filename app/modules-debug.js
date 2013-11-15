@@ -181,8 +181,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
         },
 
-        'bundle-import-extension': {
-          fullpath: '/juju-ui/assets/javascripts/bundle-import-extension.js'
+        'bundle-import-helpers': {
+          fullpath: '/juju-ui/assets/javascripts/bundle-import-helpers.js'
+        },
+
+        'view-dropdown-extension': {
+          fullpath: '/juju-ui/assets/javascripts/view-dropdown-extension.js'
         },
 
         'sub-app': {
@@ -233,6 +237,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/notifications.js'
         },
 
+        'juju-help-dropdown': {
+          fullpath: '/juju-ui/views/help-dropdown.js'
+        },
+
         'juju-view-environment': {
           fullpath: '/juju-ui/views/environment.js'
         },
@@ -267,6 +275,7 @@ var GlobalConfig = {
             'd3-components',
             'juju-templates',
             'juju-notifications',
+            'juju-help-dropdown',
             'juju-view-utils',
             'juju-topology',
             'juju-view-environment',

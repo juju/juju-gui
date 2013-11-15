@@ -39,8 +39,8 @@ YUI.add('juju-gui', function(Y) {
   var juju = Y.namespace('juju'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      utils = views.utils,
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      importHelpers = juju.BundleImport;
 
   /**
    * The main app class.
@@ -51,8 +51,7 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer,
-                                                  Y.juju.BundleImport], {
+                                                  Y.juju.GhostDeployer], {
 
     /*
       Extension properties
@@ -126,7 +125,6 @@ YUI.add('juju-gui', function(Y) {
         type: 'juju.views.NotificationsView',
         preserve: true
       }
-
     },
 
     /*
@@ -534,6 +532,7 @@ YUI.add('juju-gui', function(Y) {
         } else {
           this.dispatch();
         }
+        this._renderHelpDropdownView();
       }, this);
 
       // Halt the default navigation on the juju logo to allow us to show
@@ -566,6 +565,10 @@ YUI.add('juju-gui', function(Y) {
 
       var importNode = Y.one('#import-trigger');
       var importFileInput = Y.one('.import-export input[type=file]');
+      // Grab a reference of these for the nested event calls below.
+      var env = this.env;
+      var db = this.db;
+
       // Tests won't have this node.
       if (importNode && importFileInput) {
         importNode.on('click', function(e) {
@@ -575,10 +578,10 @@ YUI.add('juju-gui', function(Y) {
         });
 
         importFileInput.on('change', function(e) {
-          Y.namespac('juju')BundleImport.sendToDeployer(
-            e.currentTarget.get('files')._nodes,
-            this.env,
-            this.db
+          importHelpers.deployBundleFiles(
+              e.currentTarget.get('files')._nodes,
+              env,
+              db
           );
         }, this);
       }
@@ -592,7 +595,17 @@ YUI.add('juju-gui', function(Y) {
 
       // Provide the bundle deployment helper to the subapps and views to
       // access in case of an UX interaction that triggers a bundle deploy.
-      cfg.deployBudle = Y.namespace('juju').BundleImport.deployBundle;
+      cfg.deployBundle = function(bundle) {
+        // The other views will hand us an Object vs a YAML string. The import
+        // helpers want the yaml string instead.
+        importHelpers.deployBundle(
+            Y.JSON.stringify({
+              bundle: bundle
+            }),
+            env,
+            db
+        );
+      };
 
       // Watch specific things, (add units), remove db.update above
       // Note: This hides under the flag as tests don't properly clean
@@ -617,6 +630,22 @@ YUI.add('juju-gui', function(Y) {
       }, this);
     },
 
+    /**
+     * Handles rendering the help dropdown view on application load.
+     *
+     * @method _renderHelpDropdownView
+     */
+    _renderHelpDropdownView: function() {
+      this.helpDropdown = new views.HelpDropdownView({
+        container: Y.one('#help-dropdown'),
+        env: this.db.environment
+      }).render();
+      // pass in onboarding when we no longer need to support
+      // fullscreen mode and interact with it directly
+      this.helpDropdown.on('navigate', function(e) {
+        this.navigate(e.url);
+      }, this);
+    },
 
     /**
     Export the YAML for this environment.
@@ -665,6 +694,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.helpDropdown) {
+        this.helpDropdown.destroy();
+      }
       if (this._keybindings) {
         this._keybindings.detach();
       }
@@ -1320,6 +1352,7 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
+    'bundle-import-helpers',
     'node',
     'model',
     'app-cookies-extension',
@@ -1335,6 +1368,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-ghost-inspector',
     'juju-view-bundle',
     'viewmode-controls',
-    'bundle-import-extension'
+    'help-dropdown'
   ]
 });

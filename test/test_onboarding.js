@@ -158,6 +158,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       onboard.closeHandler({halt: function() {}});
       assert.equal(container.getComputedStyle('display'), 'none');
       assert.isFalse(env_help.hasClass('hidden'));
+      assert.equal(localStorage.getItem('force-onboarding'), '');
     });
 
     it('should not be shown if seen before', function() {
@@ -169,6 +170,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       onboard.render();
       var background = container.one('#onboarding-background');
       assert.isTrue(background instanceof Y.Node);
+    });
+
+    it('sets index to 0, clears out local storage on reset', function() {
+      var onboard = new OnboardingView({
+        container: container
+      }).render();
+      onboard.nextHandler({halt: function() {}});
+      assert.equal(onboard.onboardingIndex, 1);
+
+      localStorage.setItem('onboarding', true);
+
+      onboard.reset();
+      assert.equal(onboard.onboardingIndex, 0);
+      assert.equal(localStorage.getItem('onboarding'), '');
     });
 
   });

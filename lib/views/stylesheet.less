@@ -175,16 +175,13 @@ th {
  */
 .navbar {
     min-width: 800px;
-    // Need to subtract the bottom-border-height.
     height: @navbar-height;
     margin: -@navbar-height 0 0 0;
     background-color: #221e1b;
 
     &,
-    a {
+    & > ul > li > a {
         color: #d7d3d0;
-        font-size: 14px;
-        font-weight: 300;
     }
 
     ul {
@@ -277,24 +274,11 @@ th {
             }
             &.notifications-nav {
                 position: relative;
-                padding: 0;
 
-                #notifications {
-                    & > span {
-                        .border-box;
-                        display: block;
-                        height: @navbar-height;
-                        padding: 15px 20px 0 20px;
-
-                        &.open {
-                            background-color: #000;
-                        }
-                        #notify-indicator {
-                            .button;
-                            margin: 0 9px 0 0;
-                            padding: 6px 12px;
-                        }
-                    }
+                #notify-indicator {
+                  .button;
+                  margin: -5px 9px 0 0;
+                  padding: 6px 12px;
                 }
             }
         }
@@ -312,18 +296,6 @@ th {
 
             &:hover {
                 background-color: #1f1b18;
-            }
-        }
-        .help-dropdown {
-            display: none;
-            position: relative;
-
-            .expand {
-                margin-left: 5px;
-
-                .hidden {
-                    display: none;
-                }
             }
         }
     }
@@ -712,41 +684,6 @@ g.unit {
         }
         div:last-child {
           color: #aaa;
-        }
-    }
-}
-
-/*
- * Feedback box
- * Appears as a tab on the side of the canvas.
- */
-#feedback-box {
-    position: absolute;
-    right: -40px;
-    bottom: 100px;
-    /* Up the z-index so the feedback box will overlay the zoom slider as it
-     * expands when hovered over */
-    z-index: 10;
-
-    a {
-        color: #fff;
-        background-color: @charm-panel-orange;
-        display: block;
-        line-height: 30px;
-        height: 40px;
-        font-weight: 500;
-        font-size: 16px;
-        padding: 0 10px;
-        margin-right: 3px;
-        -webkit-transition: all 0.15s ease-in-out;
-        -moz-transition: all 0.15s ease-in-out;
-        transition: all 0.15s ease-in-out;
-        .rotate(-90deg);
-
-        &:hover {
-            text-decoration: none;
-            background-color: #df6920;
-            margin-right: 13px;
         }
     }
 }

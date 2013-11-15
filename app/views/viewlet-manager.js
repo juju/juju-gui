@@ -499,11 +499,23 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       var height = winHeight - headerHeight -
                    vcNavHeight - footerHeight - (TB_SPACING * 3);
+
+      // The viewlet manager has a couple different wrapper elements which
+      // impact which components are shown. In this case we are grabbing an
+      // internal wrapper to resize without causing the elements to reflow.
+      var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
+      if (wrapper) {
+        wrapper.setStyle('maxHeight', height + 'px');
+      }
+
       // subtract the height of the header and footer of the viewlet manager.
       height = height - vcHeaderHeight - vcFooterHeight;
 
-      this.get('container').one(this.viewletContainer)
-                           .setStyle('maxHeight', height + 'px');
+      // This needs to pull from the 'real' container not what was passed in.
+      // This is because this method can be called to recalculate the height
+      // on another wrapper element, not necessarily the real container.
+      this.get('container')
+          .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
     },
 
     /**

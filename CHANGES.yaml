@@ -21,43 +21,49 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 - unreleased:
+    - >
+      (FIX) The inspector tries to get out of your way when you are making a
+      relation.
+    - >
+      (CLEANUP) Bundle deployment instructions for using quickstart and juju
+      deployer were clarified and brought up to date.
+    - (FIX) Fix bundle visualization so that it does not occasionally clip.
+    - (CHARM FIX) Charm now honors bundle deployment positioning.
+    - >
+      (FIX) Services without positioning are less likely to be automatically
+      positioned on top of themselves.
+    - (FIX) Make sandbox bundle deployment positioning more reliable.
+    - (CLEANUP) Remove remaining old unused notifications code.
 - 0.12.0:
     - >
-     (BETA) In arguably the biggest single new feature of the GUI since its
-     release, the GUI now supports importing, exporting, browsing and
-     deploying "bundles". Bundles are collections of charms and their
-     relations. You can export bundles using the export icon at the top of
-     the GUI (an arrow pointing up out of a box) or shift-d. You can import
-     them using the import icon (an arrow pointing into the box), by
-     dragging yaml files from your computer and dropping then onto the
-     environment, or by deploying bundles found in the store.
+      (BETA) In arguably the biggest single new feature of the GUI since its
+      release, the GUI now supports importing, exporting, browsing and
+      deploying "bundles". Bundles are collections of charms and their
+      relations. You can export bundles using the export icon at the top of
+      the GUI (an arrow pointing up out of a box) or shift-d. You can import
+      them using the import icon (an arrow pointing into the box), by
+      dragging yaml files from your computer and dropping then onto the
+      environment, or by deploying bundles found in the store.
 
-     The bundle functionality is based on the juju-deployer
-     (https://launchpad.net/juju-deployer). Deploying a bundle using the GUI
-     currently only support bundles that use charms from the charm store,
-     rather than local charms. Some of the GUI functionality assembles
-     previously-released functionality, and some of it is brand new, and only
-     available before behind feature flags.
-    - >
-      Add new build mode onboarding information for first time users.
-    - >
-      Add the ability to deploy straight from quicksearch results.
-    - >
-      Reduce the overall sprite and css sizes providing a significant improvement
+      The bundle functionality is based on the juju-deployer
+      (https://launchpad.net/juju-deployer). Deploying a bundle using the GUI
+      currently only support bundles that use charms from the charm store,
+      rather than local charms. Some of the GUI functionality assembles
+      previously-released functionality, and some of it is brand new, and only
+      available before behind feature flags.
+    - Add new build mode onboarding information for first time users.
+    - Add the ability to deploy straight from quicksearch results.
+    - Reduce the overall sprite and css sizes providing a significant improvement
     - >
       Remove footer from the UI and improve the header design providing more room
       for the environment.
     - >
       Improve the environment export to be a valid bundle file.
       in first page load times.
-    - >
-      Update to the charmworld v3 api with support for bundles as well.
-    - >
-      (FIX) Improve font rendering for OSX users.
-    - >
-      (FIX) Correct the cookie warning layout.
-    - >
-      (FIX) Fix IE10 reloading when upgrade charm is selected.
+    - Update to the charmworld v3 api with support for bundles as well.
+    - (FIX) Improve font rendering for OSX users.
+    - (FIX) Correct the cookie warning layout.
+    - (FIX) Fix IE10 reloading when upgrade charm is selected.
 
 - 0.11.0:
     - >

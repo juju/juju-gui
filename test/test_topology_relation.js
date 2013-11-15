@@ -70,6 +70,88 @@ describe('topology relation module', function() {
     assert.equal(firedEventName, 'clearState');
   });
 
+  it('fires \'addRelationStart\' event when making a relation', function() {
+    var flags = {
+      hideServiceMenu: 0,
+      addRelationStart: 0
+    };
+    var topo = {
+      fire: function(e) {
+        flags[e] = 1;
+      },
+      // stubs
+      get: function(val) {
+        if (val === 'container') {
+          return {
+            one: function() {
+              return {
+                hasClass: function() { return false; }
+              };
+            }
+          };
+        }
+      }
+    };
+    // stubs
+    var context = {
+      get: function(val) {
+        if (val === 'component') { return topo; }
+        if (val === 'container') {
+          return {
+            one: function() {
+              return {
+                hasClass: function() { return false; },
+                getDOMNode: function() { return; }
+              };
+            }
+          };
+        }
+      },
+      addRelationDragStart: function() { return; },
+      mousemove: function() { return; },
+      addRelationStart: function() { return; }
+    };
+    view.addRelButtonClicked(null, context);
+    assert.deepEqual(flags, {
+      hideServiceMenu: 1,
+      addRelationStart: 1
+    });
+  });
+
+  it('fires \'addRelationEnd\' event when done making a relation', function() {
+    var counter = 0;
+    var topo = {
+      fire: function(e) {
+        // Other events are fired along side this which we do not care about
+        if (e !== 'addRelationEnd') { return; }
+        assert.equal(e, 'addRelationEnd');
+        counter += 1;
+      },
+      // stubs
+      get: function(val) { return true; },
+      vis: {
+        selectAll: function() {
+          return {
+            classed: function() { return; }
+          };
+        }
+      }
+    };
+    // stubs
+    var context = {
+      get: function(val) {
+        if (val === 'component') { return topo; }
+        return true;
+      },
+      set: function() { return; },
+      ambiguousAddRelationCheck: function() { return; }
+    };
+    view.addRelationDragEnd.call(context);
+    view.cancelRelationBuild.call(context);
+    assert.equal(counter, 2, 'Event should be fired if a relation line is ' +
+        'canceled or completed');
+  });
+
   it('has a list of relations', function() {
     assert.deepEqual(view.relations, []);
   });
