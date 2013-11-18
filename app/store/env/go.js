@@ -502,6 +502,97 @@ YUI.add('juju-env-go', function(Y) {
       userCallback(transformedData);
     },
 
+    /**
+      Register a Watch with the deployment specified.
+
+      The callback will receive an {Object} An object with err, and the
+      generated WatchId.  .
+
+      @method deployerWatch
+      @param {Integer} deploymentId The ID of the deployment from the
+      original deployment call.
+      @param {Function} callback A user callback to return the response data
+      to.
+     */
+    deployerWatch: function(deploymentId, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerWatch,
+                                      this, callback);
+      }
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Watch',
+        Params: {
+          DeploymentId: deploymentId
+        }
+      }, intermediateCallback);
+
+    },
+
+    /**
+      Callback to process the environments response to requested a watcher for
+      the deployment specified above.
+
+      @method handleDeployerWatch
+      @param {Function} userCallback The original callback to the
+      deployerWatch function.
+      @param {Object} data The servers response to the deployerWatch call.
+     */
+    handleDeployerWatch: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        WatchId: data.Response.WatcherId
+      };
+      userCallback(transformedData);
+    },
+
+    /**
+      Wait for an update to a deployer watch created earlier.
+
+      Note: This returns once the server has something to update on. It might
+      wait a while.
+
+      The callback will receive an {Object} An object with err, and the
+      list of Changes.
+
+      @method deployerWatchUpdate
+      @param {Integer} watchId The ID of the watcher created in depployWatch.
+      @param {Function} callback The caller's callback function to process
+      the response.
+     */
+    deployerWatchUpdate: function(watchId, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeployerWatchUpdate,
+                                      this, callback);
+      }
+
+      this._send_rpc({
+        Type: 'Deployer',
+        Request: 'Next',
+        Params: {
+          WatcherId: watchId
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+      Wrapper for the deployerWatchUpdate call.
+
+      @method handleDeployerWatchUpdate
+      @param {Function} userCallback The original callback to the
+      deployerWatchUpdate function.
+      @param {Object} data The servers response to the deployerWatchUpdate
+      call.
+     */
+    handleDeployerWatchUpdate: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error,
+        Changes: data.Response.Changes
+      };
+      userCallback(transformedData);
+    },
 
     /**
        Deploy a charm.

@@ -328,10 +328,15 @@ describe('service module events', function() {
           }
         };
 
-    view.topo.set('env', {deployerImport: function(deployerData) {
+    // mock out the Y.BundleHelpers call.
+    var _deployBundle = juju.BundleHelpers.deployBundle;
+    juju.BundleHelpers.deployBundle = function(deployerData, env, db) {
       assert.include(deployerData, 'BUNDLE DATA');
+      // Restore the deployBundle call for future tests.
+      juju.BundleHelpers.deployBundle = _deployBundle;
       done();
-    }});
+    };
+
     serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
