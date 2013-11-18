@@ -105,6 +105,7 @@ YUI.add('bundle-import-helpers', function(Y) {
         reader.onload = function(e) {
           ns.BundleHelpers.deployBundle(
               e.target.result,
+              undefined,
               env,
               db,
               function(result) {
