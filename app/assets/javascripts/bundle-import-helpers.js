@@ -27,7 +27,7 @@ YUI.add('bundle-import-helpers', function(Y) {
       to deploy the bundle to the environment.
 
       @method deployBundle
-      @param {Object} bundle Bundle data.
+      @param {String} bundle Bundle YAML data.
       @param {String} bundleId Bundle ID for Charmworld.  Optional.
       @param {Environment} env Environment with access to the bundle back end.
       calls.
