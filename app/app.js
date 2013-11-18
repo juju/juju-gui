@@ -636,12 +636,12 @@ YUI.add('juju-gui', function(Y) {
       @method deployBundle
       @param {Object} bundle Bundle data.
     */
-    deployBundle: function(bundle) {
+    deployBundle: function(bundle, bundle_id) {
       var notifications = this.db.notifications;
       this.env.deployerImport(
-          Y.JSON.stringify({
-            bundle: bundle
-          }), null, Y.bind(utils.deployBundleCallback, null, notifications));
+          Y.JSON.stringify({bundle: bundle}),
+          null, bundle_id,
+          Y.bind(utils.deployBundleCallback, null, notifications));
     },
 
     /**

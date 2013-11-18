@@ -417,15 +417,20 @@ YUI.add('juju-env-go', function(Y) {
      * @method deployerImport
      * @param {String} yamlData to import.
      * @param {String} [bundleName] Bundle name to import.
+     * @param {String} [bundleID] Charmworld Bundle ID.
      * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
-    deployerImport: function(yamlData, bundleName, callback) {
+    deployerImport: function(yamlData, bundleName, bundleID, callback) {
       var intermediateCallback;
 
       if (Y.Lang.isFunction(bundleName) && callback === undefined) {
         callback = bundleName;
         bundleName = undefined;
+      }
+      else if (Y.Lang.isFunction(bundleID) && callback === undefined) {
+        callback = bundleID;
+        bundleID = undefined;
       }
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeployerImport,
@@ -436,7 +441,8 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'Import',
         Params: {
           YAML: yamlData,
-          Name: undefined
+          Name: undefined,
+          BundleID: bundleID
         }
       }, intermediateCallback);
     },

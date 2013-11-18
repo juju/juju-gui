@@ -42,7 +42,7 @@ YUI.add('bundle-import-extension', function(Y) {
         var reader = new FileReader();
         reader.onload = function(e) {
           // Import each into the environment
-          env.deployerImport(e.target.result, null, function(result) {
+          env.deployerImport(e.target.result, null, null, function(result) {
             if (!result.err) {
               notifications.add({
                 title: 'Imported Deployer file',
@@ -70,4 +70,3 @@ YUI.add('bundle-import-extension', function(Y) {
 
 
 });
-
