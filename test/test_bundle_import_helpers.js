@@ -91,7 +91,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(bundle, 'test bundle');
         assert.equal(bundleData.id, '~jorge/wiki/wiki');
         assert.equal(
-            bundleData.name, null, 'The name is not currently supported or passed.');
+            bundleData.name, null,
+            'The name is not currently supported or passed.');
         // This is the default callback from the deployBundle method.
         callback({
           err: undefined,

@@ -416,7 +416,8 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method deployerImport
      * @param {String} yamlData to import.
-     * @param {Object} bundleData Object describing the bundle.  Has name and id.  May be null.
+     * @param {Object} bundleData Object describing the bundle.  Has name and
+     *     id.  May be null.
      * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
