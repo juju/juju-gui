@@ -65,7 +65,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
 
-      env.deployerImport = function(bundle, name, bundleid, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         callback({
           err: 'Abort abort!'
         });
@@ -87,11 +87,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Stub out the env call to make sure we check the params and call the
       // provided callback.
-      env.deployerImport = function(bundle, name, bundleid, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         assert.equal(bundle, 'test bundle');
-        assert.equal(bundleid, '~jorge/wiki/wiki');
+        assert.equal(bundleData.id, '~jorge/wiki/wiki');
         assert.equal(
-            name, null, 'The name is not currently supported or passed.');
+            bundleData.name, null, 'The name is not currently supported or passed.');
         // This is the default callback from the deployBundle method.
         callback({
           err: undefined,
@@ -109,7 +109,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ns.BundleHelpers._watchDeployment = _watchDeployment;
 
         // Make sure we did in fact post our notification to the user.
-        assert.equal(hitNotifications, true);
+        assert.equal(true, hitNotifications);
         done();
       };
 
@@ -224,7 +224,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Stub out the env call to make sure we check the params and call the
       // provided callback.
-      env.deployerImport = function(bundle, name, bundleid, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         callback({
           err: undefined,
           DeploymentId: 10

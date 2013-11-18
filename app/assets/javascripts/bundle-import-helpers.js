@@ -28,7 +28,7 @@ YUI.add('bundle-import-helpers', function(Y) {
 
       @method deployBundle
       @param {String} bundle Bundle YAML data.
-      @param {String} bundleId Bundle ID for Charmworld.  Optional.
+      @param {String} bundleId Bundle ID for Charmworld.  May be null.
       @param {Environment} env Environment with access to the bundle back end.
       calls.
       @param {Database} db The app Database with access to the NotificationList.
@@ -58,9 +58,13 @@ YUI.add('bundle-import-helpers', function(Y) {
       };
 
       if (Y.Lang.isFunction(env.deployerImport)) {
+        var bundleData = {
+          name: null,
+          id: bundleId
+        };
         env.deployerImport(
             bundle,
-            null, bundleId,
+            bundleData,
             customCallback ? customCallback : defaultCallback
         );
       } else {

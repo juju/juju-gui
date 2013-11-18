@@ -416,33 +416,30 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method deployerImport
      * @param {String} yamlData to import.
-     * @param {String} [bundleName] Bundle name to import.
-     * @param {String} [bundleID] Charmworld Bundle ID.
+     * @param {Object} bundleData Object describing the bundle.  Has name and id.  May be null.
      * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
-    deployerImport: function(yamlData, bundleName, bundleID, callback) {
+    deployerImport: function(yamlData, bundleData, callback) {
       var intermediateCallback;
+      var name, id;
 
-      if (Y.Lang.isFunction(bundleName) && callback === undefined) {
-        callback = bundleName;
-        bundleName = undefined;
-      }
-      else if (Y.Lang.isFunction(bundleID) && callback === undefined) {
-        callback = bundleID;
-        bundleID = undefined;
-      }
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeployerImport,
                                       this, callback);
       }
+      if (Y.Lang.isValue(bundleData)) {
+        name = bundleData.name;
+        id = bundleData.id;
+      }
+
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Import',
         Params: {
           YAML: yamlData,
-          Name: undefined,
-          BundleID: bundleID
+          Name: name,
+          BundleID: id
         }
       }, intermediateCallback);
     },
