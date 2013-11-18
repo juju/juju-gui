@@ -595,13 +595,14 @@ YUI.add('juju-gui', function(Y) {
       // Grab a reference of these for the nested event calls below.
       var env = this.env;
       var db = this.db;
-      cfg.deployBundle = function(bundle) {
+      cfg.deployBundle = function(bundle, bundleId) {
         // The other views will hand us an Object vs a YAML string. The import
         // helpers want the yaml string instead.
         importHelpers.deployBundle(
             Y.JSON.stringify({
               bundle: bundle
             }),
+            bundleId,
             env,
             db
         );
