@@ -1243,7 +1243,7 @@ YUI.add('juju-view-utils', function(Y) {
       return 'running';
     }
     if ((/-?error$/).test(state)) {
-      // this may no longer be needed because juju-core returns
+      // XXX This may no longer be needed because juju-core returns
       // only 'error' for error agent state.
       return 'error';
     }
