@@ -180,7 +180,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
                   unit.agent_state_info = 'hook failed: ' +
                       interfaceName + '-relation-changed';
                   unit.agent_state_data = {
-                    hook : interfaceName + '-relation-changed',
+                    hook: interfaceName + '-relation-changed',
                     'relation-id': 1,
                     'remote-unit': remoteUnit + '/0'
                   };
