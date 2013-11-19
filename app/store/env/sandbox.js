@@ -1346,6 +1346,41 @@ YUI.add('juju-env-sandbox', function(Y) {
       state.statusDeployer(Y.bind(callback, this));
     },
 
+    handleDeployerWatch: function(data, client, state) {
+      var request = data;
+      var callback = function(reply) {
+        var response = {
+          RequestId: request.RequestId,
+          Response: {
+            LastChanges: reply.LastChanges
+          }
+        };
+        if (reply.Error) {
+          response.Error = reply.Error;
+        }
+        client.receive(response);
+      };
+      state.statusDeployer(Y.bind(callback, this));
+    },
+
+    handleDeployerWatchUpdate: function(data, client, state) {
+      var request = data;
+      var callback = function(reply) {
+        var response = {
+          RequestId: request.RequestId,
+          Response: {
+            WatcherId: reply.WatcherId
+          }
+        };
+        if (reply.Error) {
+          response.Error = reply.Error;
+        }
+        client.receive(response);
+      };
+      state.statusDeployer(Y.bind(callback, this));
+
+
+    },
 
 
     /**

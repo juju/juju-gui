@@ -1584,6 +1584,54 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATED_ERROR);
       }
       callback({LastChanges: this._importChanges});
+    },
+
+    deployerWatch: function(deploymentId, callback) {
+      self._watcherId = 0,
+      self._watchers = [];
+
+      // Make sure that the deploymentId is valid for our recent number we
+      // track.
+      var found = false;
+      this._importChanges.forEach(function(deployStatus) {
+        if (deployStatus.DeploymentId === deploymentId) {
+          callback({
+            Error: "Invalid deployment id"
+          });
+          // In case of error, callback and quit processing.
+          return;
+        }
+      });
+
+      self._watcherId += 1;
+
+      callback({
+        WatcherId: self._watcherId
+      });
+    },
+
+    deployerWatchUpdate: function(watcherId, callback) {
+      // Make sure that the deploymentId is valid for our recent number we
+      // track.
+      var found = false;
+      this._importChanges.forEach(function(deployStatus) {
+        if (deployStatus.DeploymentId === deploymentId) {
+          callback({
+            Error: "Invalid deployment id"
+          });
+          // In case of error, callback and quit processing.
+          return;
+        }
+      });
+
+      self._watcherId += 1;
+
+      callback({
+        WatcherId: self._watcherId
+      });
+
+
+
     }
 
   });
