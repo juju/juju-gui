@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // the look in the watch.
       db.notifications.add = function(info) {
         if (callNumber === 0) {
-          assert.equal('Updated status for deployment: 42', info.title);
+          assert.equal('Updated status for deployment id: 42', info.title);
           assert.equal(info.level, 'important');
           assert.isTrue(info.message.indexOf('scheduled') !== -1, info.message);
         } else {

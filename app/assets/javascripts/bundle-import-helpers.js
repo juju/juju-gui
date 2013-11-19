@@ -213,7 +213,7 @@ YUI.add('bundle-import-helpers', function(Y) {
           // The change could be the result of an error.
           if (newChange.Error !== undefined) {
             notifications.add({
-              title: 'Updated status for deployment: ' +
+              title: 'Updated status for deployment id: ' +
                   newChange.DeploymentId,
               message: 'The deployment errored: ' +
                   newChange.Error,
@@ -221,7 +221,7 @@ YUI.add('bundle-import-helpers', function(Y) {
             });
           } else {
             notifications.add({
-              title: 'Updated status for deployment: ' +
+              title: 'Updated status for deployment id: ' +
                   newChange.DeploymentId,
               message: 'The deployment is currently: ' +
                   newChange.Status,
