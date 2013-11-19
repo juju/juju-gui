@@ -152,31 +152,49 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           service.get('units').each(function(unit) {
             if (RAND(0.95)) { return; }
             var roll = Math.random();
-            if (roll <= 0.25) {
+            if (roll <= 0.35) {
               unit.agent_state = 'started';
               unit.agent_state_info = undefined;
-            } else if (roll <= 0.5) {
-              unit.agent_state = 'install-error';
-              unit.agent_state_info = undefined;
-            } else if (roll <= 0.75) {
+            } else if (roll <= 0.7) {
               unit.agent_state = 'pending';
               unit.agent_state_info = undefined;
             } else if (roll <= 1) {
+              // error block
+              unit.agent_state = 'error';
               var db = context.state.db;
               var serviceName = this.service;
               var relations = db.relations.get_relations_for_service(
                   db.services.getById(serviceName));
-              if (relations.length > 0) {
-                unit.agent_state = 'error';
-                var relation = relations[
-                    Math.floor(Math.random() * relations.length)];
-                var interfaceName;
-                relation.get('endpoints').forEach(function(endpoint) {
-                  if (endpoint[0] !== serviceName) { return; }
-                  interfaceName = endpoint[1].name;
-                });
-                unit.agent_state_info = 'hook failed: ' +
-                    interfaceName + '-relation-changed';
+              if (roll <= 0.8) {
+                if (relations.length > 0) {
+                  var relation = relations[
+                      Math.floor(Math.random() * relations.length)];
+                  var interfaceName, remoteUnit;
+                  relation.get('endpoints').forEach(function(endpoint) {
+                    if (endpoint[0] !== serviceName) {
+                      remoteUnit = endpoint[0];
+                      return;
+                    }
+                    interfaceName = endpoint[1].name;
+                  });
+                  unit.agent_state_info = 'hook failed: ' +
+                      interfaceName + '-relation-changed';
+                  unit.agent_state_data = {
+                    hook: interfaceName + '-relation-changed',
+                    'relation-id': 1,
+                    'remote-unit': remoteUnit + '/0'
+                  };
+                }
+              } else if (roll <= 0.9) {
+                unit.agent_state_info = 'hook failed: "install"';
+                unit.agent_state_data = {
+                  hook: 'install'
+                };
+              } else if (roll <= 1) {
+                unit.agent_state_info = 'hook failed: "config-changed"';
+                unit.agent_state_data = {
+                  hook: 'config-changed'
+                };
               }
             }
             // Put in delta since there is no API for this.
