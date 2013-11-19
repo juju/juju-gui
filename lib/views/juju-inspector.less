@@ -35,14 +35,16 @@
 @keyframes pulse-green {.pulse-green-frames-mixin;}
 
 .yui3-juju-inspector {
+    top: 20px;
+    right: 70px;
+    position: absolute;
+
     .customize-scrollbar;
 
     .left-breakout {
         .type9;
-        top: 20px;
-        bottom: 70px;
         left: auto;
-        right: @inspector-width + 71px;
+        right: @inspector-width;
 
         .charm .yui3-tabview {
             margin-top: 30px;
@@ -72,15 +74,16 @@
                     }
                 }
             }
+            li ul {
+                margin-left: 20px;
+            }
         }
     }
 
     .juju-inspector {
         .create-border-radius(@border-radius);
-        position: absolute;
+        position: relative;
         z-index: 500;
-        top: 20px;
-        right: 70px;
         width: @inspector-width;
         min-height: 100px;
         border: 0;

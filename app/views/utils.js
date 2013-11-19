@@ -1489,18 +1489,6 @@ YUI.add('juju-view-utils', function(Y) {
         return agent_state;
       });
 
-  /*
-   * Show the status and, if present, the status info of the given db instance.
-   */
-  Y.Handlebars.registerHelper('showStatus', function(instance) {
-    // The "instance" argument is typically a unit or a machine model instance.
-    var result = instance.agent_state;
-    if (instance.agent_state_info) {
-      result += ': ' + instance.agent_state_info;
-    }
-    return result;
-  });
-
   Y.Handlebars.registerHelper('any', function() {
     var conditions = Y.Array(arguments, 0, true),
         options = conditions.pop();

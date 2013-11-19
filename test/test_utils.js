@@ -1169,39 +1169,6 @@ describe('utilities', function() {
       assert.equal('is empty', html);
     });
 
-    describe('showStatus', function() {
-      var html, obj, template;
-
-      before(function() {
-        template = Y.Handlebars.compile('{{showStatus instance}}');
-      });
-
-      beforeEach(function() {
-        obj = {agent_state: 'started'};
-      });
-
-      it('shows the instance status correctly', function() {
-        html = template({instance: obj});
-        assert.strictEqual(obj.agent_state, html);
-      });
-
-      it('avoids including status info if not present', function() {
-        [undefined, null, ''].forEach(function(info) {
-          obj.agent_state_info = info;
-          html = template({instance: obj});
-          assert.strictEqual(obj.agent_state, html, 'info: ' + info);
-        });
-      });
-
-      it('includes status info if present', function() {
-        obj.agent_state_info = 'some information';
-        html = template({instance: obj});
-        var expected = obj.agent_state + ': ' + obj.agent_state_info;
-        assert.strictEqual(expected, html);
-      });
-
-    });
-
     describe('if_eq tests', function() {
 
       it('outputs success when equal', function() {
