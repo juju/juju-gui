@@ -343,14 +343,14 @@ describe('service module events', function() {
 
   it('should deploy a bundle on file drop events', function(done) {
     var fakeEventObject = {
-          halt: function() {},
-          _event: {
-            dataTransfer: {
-              // All we need to fake things out is to have a file.
-              files: [1]
-            }
-          }
-        };
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [1]
+        }
+      }
+    };
 
     // mock out the Y.BundleHelpers call.
     var _deployBundle = juju.BundleHelpers.deployBundleFiles;
