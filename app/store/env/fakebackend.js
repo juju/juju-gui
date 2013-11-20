@@ -1589,7 +1589,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     /**
       *no op* Create a watcher for the deployment specified.
 
-      This method is a noop in the fakebackend. We've already sent the user a
+      This method is a no op in the fakebackend. We've already sent the user a
       notification that things are complete in the normal deployer call.
       There's no time to get a watcher and send/sync the watch update down
       the road.

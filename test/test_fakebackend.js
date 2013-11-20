@@ -737,11 +737,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should ignore calls to the deployer watcher', function(done) {
-      // This is no op'd in the fakebackend since it doens't make sense to
-      // provide a watch status as things happen near instantly.
+      // This is no op'd in the fakebackend since it doesn't make sense to
+      // provide a watch status as things happen nearly instantly.
       fakebackend.deployerWatch(10, function(reply) {
         // Should never be called.
-        assert.fail('The watcher callback shoould never be called.');
+        assert.fail('The watcher callback should never be called.');
       });
 
       done();
@@ -749,10 +749,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('should ignore calls to the watcher updater', function(done) {
       // This is no op'd in the fakebackend since it doens't make sense to
-      // provide a watch status as things happen near instantly.
+      // provide a watch status as things happen nearly instantly.
       fakebackend.deployerWatch(10, function(reply) {
         // Should never be called.
-        assert.fail('The watcher update callback shoould never be called.');
+        assert.fail('The watcher update callback should never be called.');
       });
       done();
     });
