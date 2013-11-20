@@ -885,7 +885,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         MachineId: 'machine',
         Ports: 'open_ports',
         Status: 'agent_state',
-        StatusInfo: 'agent_state_info'
+        StatusInfo: 'agent_state_info',
+        StatusData: 'agent_state_data'
       },
       relation: {
         Key: 'relation_id',

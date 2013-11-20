@@ -489,6 +489,7 @@ YUI.add('juju-models', function(Y) {
           machine: {},
           agent_state: {},
           agent_state_info: {},
+          agent_state_data: {},
           // This is empty if there are no relation errors, and otherwise
           // shows only the relations with errors.  The data structure in that
           // case is a hash mapping a local relation name to a list of services
@@ -651,7 +652,8 @@ YUI.add('juju-models', function(Y) {
       public_address: {},
       instance_id: {},
       agent_state: {},
-      agent_state_info: {}
+      agent_state_info: {},
+      agent_state_data: {}
     }
   });
   models.Machine = Machine;

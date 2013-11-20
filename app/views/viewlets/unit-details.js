@@ -96,6 +96,19 @@ YUI.add('viewlet-unit-details', function(Y) {
           }
         }
       },
+      agent_state_data: {
+        'update': function(node, value) {
+          if (value && Object.keys(value).length > 0) {
+            var data = '';
+            Object.keys(value).forEach(function(key) {
+              data += '<li>' + key + ': ' + value[key] + '</li>';
+            });
+            node.one('ul').setHTML(data);
+          } else {
+            node.hide();
+          }
+        }
+      },
       'annotations.landscape-computer': {
         'update': function(node, value) {
           if (value) {

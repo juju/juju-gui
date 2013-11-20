@@ -155,9 +155,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             if (roll <= 0.35) {
               unit.agent_state = 'started';
               unit.agent_state_info = undefined;
+              unit.agent_state_data = {};
             } else if (roll <= 0.7) {
               unit.agent_state = 'pending';
               unit.agent_state_info = undefined;
+              unit.agent_state_data = {};
             } else if (roll <= 1) {
               // error block
               unit.agent_state = 'error';
@@ -177,8 +179,8 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
                     }
                     interfaceName = endpoint[1].name;
                   });
-                  unit.agent_state_info = 'hook failed: ' +
-                      interfaceName + '-relation-changed';
+                  unit.agent_state_info = 'hook failed: "' +
+                      interfaceName + '-relation-changed"';
                   unit.agent_state_data = {
                     hook: interfaceName + '-relation-changed',
                     'relation-id': 1,
