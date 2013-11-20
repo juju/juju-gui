@@ -735,6 +735,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             done();
           }).then(undefined, done);
     });
+
+    it('should ignore calls to the deployer watcher', function(done) {
+       // This is no op'd in the fakebackend since it doens't make sense to
+       // provide a watch status as things happen near instantly.
+       fakebackend.deployerWatch(10, function(reply) {
+         // Should never be called.
+         assert.fail('The watcher callback shoould never be called.');
+       });
+
+       done();
+    });
+
+    it('should ignore calls to the watcher updater', function(done) {
+       // This is no op'd in the fakebackend since it doens't make sense to
+       // provide a watch status as things happen near instantly.
+       fakebackend.deployerWatch(10, function(reply) {
+         // Should never be called.
+         assert.fail('The watcher update callback shoould never be called.');
+       });
+       done();
+    });
+
   });
 
   describe('FakeBackend.uniformOperations', function() {

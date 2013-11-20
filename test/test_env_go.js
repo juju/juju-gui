@@ -368,7 +368,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('builds a proper watch next request', function() {
-        env.deployerWatchUpdate(5);
+        env.deployerNext(5);
         var last_message = conn.last_message();
         var expected = {
           Type: 'Deployer',

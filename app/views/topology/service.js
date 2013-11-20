@@ -640,7 +640,7 @@ YUI.add('juju-topology-service', function(Y) {
       var env = topo.get('env');
       var db = topo.get('db');
       if (fileSources && fileSources.length) {
-        importHelpers.sendToDeployer(fileSources, env, db);
+        importHelpers.deployBundleFiles(fileSources, env, db);
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         var dragData = JSON.parse(dataTransfer.getData('Text'));

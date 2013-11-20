@@ -416,27 +416,31 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method deployerImport
      * @param {String} yamlData to import.
-     * @param {String} [bundleName] Bundle name to import.
+     * @param {Object} bundleData Object describing the bundle.  Has name and
+     *     id.  May be null.
      * @param {Function} callback to trigger.
      * @return {Number} Request Id.
      */
-    deployerImport: function(yamlData, bundleName, callback) {
+    deployerImport: function(yamlData, bundleData, callback) {
       var intermediateCallback;
+      var name, id;
 
-      if (Y.Lang.isFunction(bundleName) && callback === undefined) {
-        callback = bundleName;
-        bundleName = undefined;
-      }
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeployerImport,
                                       this, callback);
       }
+      if (Y.Lang.isValue(bundleData)) {
+        name = bundleData.name;
+        id = bundleData.id;
+      }
+
       this._send_rpc({
         Type: 'Deployer',
         Request: 'Import',
         Params: {
           YAML: yamlData,
-          Name: undefined
+          Name: name,
+          BundleID: id
         }
       }, intermediateCallback);
     },
@@ -550,15 +554,15 @@ YUI.add('juju-env-go', function(Y) {
       The callback will receive an {Object} An object with err, and the
       list of Changes.
 
-      @method deployerWatchUpdate
+      @method deployerNext
       @param {Integer} watchId The ID of the watcher created in depployWatch.
       @param {Function} callback The caller's callback function to process
       the response.
      */
-    deployerWatchUpdate: function(watchId, callback) {
+    deployerNext: function(watchId, callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerWatchUpdate,
+        intermediateCallback = Y.bind(this.handleDeployerNext,
                                       this, callback);
       }
 
@@ -572,15 +576,15 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Wrapper for the deployerWatchUpdate call.
+      Wrapper for the deployerNext call.
 
-      @method handleDeployerWatchUpdate
+      @method handleDeployerNext
       @param {Function} userCallback The original callback to the
-      deployerWatchUpdate function.
-      @param {Object} data The servers response to the deployerWatchUpdate
+      deployerNext function.
+      @param {Object} data The servers response to the deployerNext
       call.
      */
-    handleDeployerWatchUpdate: function(userCallback, data) {
+    handleDeployerNext: function(userCallback, data) {
       var transformedData = {
         err: data.Error,
         Changes: data.Response.Changes

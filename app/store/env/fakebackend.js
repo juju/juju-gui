@@ -1586,52 +1586,42 @@ YUI.add('juju-env-fakebackend', function(Y) {
       callback({LastChanges: this._importChanges});
     },
 
+    /**
+      *no op* Create a watcher for the deployment specified.
+
+      This method is a noop in the fakebackend. We've already sent the user a
+      notification that things are complete in the normal deployer call.
+      There's no time to get a watcher and send/sync the watch update down
+      the road.
+
+      @method deployerWatch
+      @param {Integer} deploymentId The id of the deployment the watch is
+      for.
+      @param {Function} callback The callback to send the watcherId to.
+
+     */
     deployerWatch: function(deploymentId, callback) {
-      self._watcherId = 0,
-      self._watchers = [];
-
-      // Make sure that the deploymentId is valid for our recent number we
-      // track.
-      var found = false;
-      this._importChanges.forEach(function(deployStatus) {
-        if (deployStatus.DeploymentId === deploymentId) {
-          callback({
-            Error: "Invalid deployment id"
-          });
-          // In case of error, callback and quit processing.
-          return;
-        }
-      });
-
-      self._watcherId += 1;
-
-      callback({
-        WatcherId: self._watcherId
-      });
+      // No op in the fakebackend. Just return and ignore the callback.
+      return;
     },
 
-    deployerWatchUpdate: function(watcherId, callback) {
-      // Make sure that the deploymentId is valid for our recent number we
-      // track.
-      var found = false;
-      this._importChanges.forEach(function(deployStatus) {
-        if (deployStatus.DeploymentId === deploymentId) {
-          callback({
-            Error: "Invalid deployment id"
-          });
-          // In case of error, callback and quit processing.
-          return;
-        }
-      });
+    /**
+      *no op* Perform a check for updates of a given deployment watcher.
 
-      self._watcherId += 1;
-
-      callback({
-        WatcherId: self._watcherId
-      });
+      This should never be called and is provided just to aid in grep-ability
+      of the codebase. Typically this is called via the callback in the
+      deployerWatch function.
 
 
+      @method deployerNext
+      @param {Integer} watcherId The id of the watcher from deployerWatch
+      @param {Function} callback The callback to handle the update response
+      from the deployer information.
 
+     */
+    deployerNext: function(watcherId, callback) {
+      // No op in the fakebackend. Just return and ignore the callback.
+      return;
     }
 
   });

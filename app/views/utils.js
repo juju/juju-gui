@@ -1243,6 +1243,8 @@ YUI.add('juju-view-utils', function(Y) {
       return 'running';
     }
     if ((/-?error$/).test(state)) {
+      // XXX This may no longer be needed because juju-core returns
+      // only 'error' for error agent state.
       return 'error';
     }
     // "pending", "installed", and "stopped", plus anything unforeseen

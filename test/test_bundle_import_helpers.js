@@ -55,7 +55,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleHelpers.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', undefined, env, db);
     });
 
     it('errors when the bundle import fails from the env', function(done) {
@@ -65,14 +65,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
 
-      env.deployerImport = function(bundle, name, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         callback({
           err: 'Abort abort!'
         });
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleHelpers.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', '~jorge/wiki/wiki', env, db);
     });
 
     it('provides deployBundle helper for working through env', function(done) {
@@ -87,10 +87,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Stub out the env call to make sure we check the params and call the
       // provided callback.
-      env.deployerImport = function(bundle, name, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         assert.equal(bundle, 'test bundle');
+        assert.equal(bundleData.id, '~jorge/wiki/wiki');
         assert.equal(
-            name, null, 'The name is not currently supported or passed.');
+            bundleData.name, null,
+            'The name is not currently supported or passed.');
         // This is the default callback from the deployBundle method.
         callback({
           err: undefined,
@@ -108,12 +110,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         ns.BundleHelpers._watchDeployment = _watchDeployment;
 
         // Make sure we did in fact post our notification to the user.
-        assert.equal(hitNotifications, true);
+        assert.equal(true, hitNotifications);
         done();
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleHelpers.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', '~jorge/wiki/wiki', env, db);
     });
 
     it('provides a notification when a deploy watch updates', function(done) {
@@ -125,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // the look in the watch.
       db.notifications.add = function(info) {
         if (callNumber === 0) {
-          assert.equal('Updated status for deployment: 42', info.title);
+          assert.equal('Updated status for deployment id: 42', info.title);
           assert.equal(info.level, 'important');
           assert.isTrue(info.message.indexOf('scheduled') !== -1, info.message);
         } else {
@@ -137,7 +139,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var called = false;
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         if (!called) {
           called = true;
           callback({
@@ -190,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
 
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         callback({
           err: undefined,
           Changes: [
@@ -223,7 +225,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Stub out the env call to make sure we check the params and call the
       // provided callback.
-      env.deployerImport = function(bundle, name, callback) {
+      env.deployerImport = function(bundle, bundleData, callback) {
         callback({
           err: undefined,
           DeploymentId: 10
@@ -237,7 +239,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var updated = false;
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         if (!updated) {
           updated = true;
           callback({
@@ -295,7 +297,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       // Start the process by deploying the bundle.
-      ns.BundleHelpers.deployBundle('test bundle', env, db);
+      ns.BundleHelpers.deployBundle('test bundle', undefined, env, db);
 
     });
 

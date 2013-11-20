@@ -27,12 +27,13 @@ YUI.add('bundle-import-helpers', function(Y) {
       to deploy the bundle to the environment.
 
       @method deployBundle
-      @param {Object} bundle Bundle data.
+      @param {String} bundle Bundle YAML data.
+      @param {String} bundleId Bundle ID for Charmworld.  May be null.
       @param {Environment} env Environment with access to the bundle back end.
       calls.
       @param {Database} db The app Database with access to the NotificationList.
     */
-    deployBundle: function(bundle, env, db, customCallback) {
+    deployBundle: function(bundle, bundleId, env, db, customCallback) {
       var notifications = db.notifications;
 
       var defaultCallback = function(result) {
@@ -57,9 +58,13 @@ YUI.add('bundle-import-helpers', function(Y) {
       };
 
       if (Y.Lang.isFunction(env.deployerImport)) {
+        var bundleData = {
+          name: null,
+          id: bundleId
+        };
         env.deployerImport(
             bundle,
-            null,
+            bundleData,
             customCallback ? customCallback : defaultCallback
         );
       } else {
@@ -104,6 +109,7 @@ YUI.add('bundle-import-helpers', function(Y) {
         reader.onload = function(e) {
           ns.BundleHelpers.deployBundle(
               e.target.result,
+              undefined,
               env,
               db,
               function(result) {
@@ -207,7 +213,7 @@ YUI.add('bundle-import-helpers', function(Y) {
           // The change could be the result of an error.
           if (newChange.Error !== undefined) {
             notifications.add({
-              title: 'Updated status for deployment: ' +
+              title: 'Updated status for deployment id: ' +
                   newChange.DeploymentId,
               message: 'The deployment errored: ' +
                   newChange.Error,
@@ -215,7 +221,7 @@ YUI.add('bundle-import-helpers', function(Y) {
             });
           } else {
             notifications.add({
-              title: 'Updated status for deployment: ' +
+              title: 'Updated status for deployment id: ' +
                   newChange.DeploymentId,
               message: 'The deployment is currently: ' +
                   newChange.Status,
@@ -228,14 +234,14 @@ YUI.add('bundle-import-helpers', function(Y) {
             // There's nothing else to see here.
             return;
           } else {
-            env.deployerWatchUpdate(watchId, processUpdate);
+            env.deployerNext(watchId, processUpdate);
           }
         }
       };
 
       // Make the first call to the env and the processUpdate callback will
       // handle re-calling on each update.
-      env.deployerWatchUpdate(watchId, processUpdate);
+      env.deployerNext(watchId, processUpdate);
     }
 
   };
