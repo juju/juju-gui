@@ -139,7 +139,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var called = false;
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         if (!called) {
           called = true;
           callback({
@@ -192,7 +192,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
 
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         callback({
           err: undefined,
           Changes: [
@@ -239,7 +239,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var updated = false;
-      env.deployerWatchUpdate = function(watchId, callback) {
+      env.deployerNext = function(watchId, callback) {
         if (!updated) {
           updated = true;
           callback({

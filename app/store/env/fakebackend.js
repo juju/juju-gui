@@ -1584,6 +1584,44 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATED_ERROR);
       }
       callback({LastChanges: this._importChanges});
+    },
+
+    /**
+      *no op* Create a watcher for the deployment specified.
+
+      This method is a no op in the fakebackend. We've already sent the user a
+      notification that things are complete in the normal deployer call.
+      There's no time to get a watcher and send/sync the watch update down
+      the road.
+
+      @method deployerWatch
+      @param {Integer} deploymentId The id of the deployment the watch is
+      for.
+      @param {Function} callback The callback to send the watcherId to.
+
+     */
+    deployerWatch: function(deploymentId, callback) {
+      // No op in the fakebackend. Just return and ignore the callback.
+      return;
+    },
+
+    /**
+      *no op* Perform a check for updates of a given deployment watcher.
+
+      This should never be called and is provided just to aid in grep-ability
+      of the codebase. Typically this is called via the callback in the
+      deployerWatch function.
+
+
+      @method deployerNext
+      @param {Integer} watcherId The id of the watcher from deployerWatch
+      @param {Function} callback The callback to handle the update response
+      from the deployer information.
+
+     */
+    deployerNext: function(watcherId, callback) {
+      // No op in the fakebackend. Just return and ignore the callback.
+      return;
     }
 
   });

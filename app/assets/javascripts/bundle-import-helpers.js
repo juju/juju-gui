@@ -234,14 +234,14 @@ YUI.add('bundle-import-helpers', function(Y) {
             // There's nothing else to see here.
             return;
           } else {
-            env.deployerWatchUpdate(watchId, processUpdate);
+            env.deployerNext(watchId, processUpdate);
           }
         }
       };
 
       // Make the first call to the env and the processUpdate callback will
       // handle re-calling on each update.
-      env.deployerWatchUpdate(watchId, processUpdate);
+      env.deployerNext(watchId, processUpdate);
     }
 
   };
