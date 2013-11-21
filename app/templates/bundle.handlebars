@@ -29,7 +29,8 @@
                         <li>
                             {{serviceCount}}
                             {{pluralize 'service' serviceCount}} |
-                            {{unitCount}} {{pluralize 'unit' unitCount}}
+                            {{unitCount}} {{pluralize 'unit' unitCount}} |
+                            Deployed {{downloads}} {{pluralize 'time' downloads}}
                         </li>
                         <li>
                             {{#if is_approved}}
@@ -177,6 +178,7 @@
                                                 {{else}}
                                                     1
                                                 {{/if}}
+
                                             </li>
                                         {{/unless}}
                                         {{#if origService.options}}

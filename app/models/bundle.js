@@ -51,6 +51,12 @@ YUI.add('juju-bundle-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
+      // Map this to a name that we can change as the timeframes change
+      // without having to update all users of the code.
+      if (cfg && cfg.downloads_in_past_30_days) {
+        this.set('recent_download_count', cfg.downloads_in_past_30_days);
+      }
+
       this.loaded = false;
       this.on('load', function() { this.loaded = true; });
     },
@@ -137,6 +143,42 @@ YUI.add('juju-bundle-models', function(Y) {
       },
       data: {},
       deployer_file_url: {},
+
+      /**
+        @attribute downloads
+        @default 0
+        @type {Integer}
+
+       */
+      downloads: {
+        /**
+          @method downloads.valueFn
+          @return {Integer} the number of downloads for the bundle.
+
+         */
+        valueFn: function() {
+          return 0;
+        }
+      },
+
+      /**
+        @attribute recent_download_count
+        @default 0
+        @type {Integer}
+
+       */
+      recent_download_count: {
+        /**
+          @method recent_download_count.valueFn
+          @return {Integer} the number of downloads in the 'recent' time
+          frame.
+
+         */
+        valueFn: function() {
+          return 0;
+        }
+      },
+
       relations: {
         /**
          Return the relations data as a list of objects.

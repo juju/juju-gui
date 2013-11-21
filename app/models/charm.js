@@ -467,6 +467,23 @@ YUI.add('juju-charm-models', function(Y) {
           }
         }
       },
+      /**
+        @attribute downloads
+        @default 0
+        @type {Integer}
+
+       */
+      downloads: {
+        /**
+          @method downloads.valueFn
+          @return {Integer} the number of downloads for the charm.
+
+         */
+        valueFn: function() {
+          return 0;
+        }
+      },
+
       files: {
         value: [],
         /**
@@ -671,7 +688,7 @@ YUI.add('juju-charm-models', function(Y) {
        * Mapped from the downloads_in_past_30_days in the API.
        *
        * @attribute recent_download_count
-       * @default undefined
+       * @default 0
        * @type {Int} number of downloads in 'recent' time.
        *
        */

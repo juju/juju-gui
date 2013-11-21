@@ -86,6 +86,9 @@ describe('Browser bundle detail view', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
     assert.isNotNull(container.one('.yui3-tabview'));
+
+    assert.notEqual(container.get('innerHTML').indexOf('Deployed 5'), -1,
+        'Download count is not added to the page.');
   });
 
   it('fetches the readme when requested', function(done) {
