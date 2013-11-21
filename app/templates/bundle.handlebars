@@ -26,11 +26,11 @@
                         <a href="" class="add deploy">Deploy this bundle</a>
                     </div>
                     <ul>
+                        <li>Deployed {{downloads}} {{pluralize 'time' downloads}}</li>
                         <li>
                             {{serviceCount}}
                             {{pluralize 'service' serviceCount}} |
-                            {{unitCount}} {{pluralize 'unit' unitCount}} |
-                            Deployed {{downloads}} {{pluralize 'time' downloads}}
+                            {{unitCount}} {{pluralize 'unit' unitCount}}
                         </li>
                         <li>
                             {{#if is_approved}}
