@@ -109,6 +109,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           if (parseJson) {
             response = Y.JSON.parse(response);
           }
+          break;
         } catch (e) {
           tries -= 1;
         }
