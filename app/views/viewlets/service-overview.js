@@ -265,7 +265,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     var categoryStatusWrapper = categoryWrapperNodes
     .enter()
     .append('div')
-    .classed('unit-list-wrapper hidden', true);
+    .classed('unit-list-wrapper', true);
 
     var categoryStatusHeader = categoryStatusWrapper
     .append('div')
@@ -507,6 +507,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     // D3 header exit section
     categoryWrapperNodes.exit().remove();
+
+    categoryWrapperNodes.order();
   }
 
 
