@@ -474,14 +474,7 @@ YUI.add('juju-charm-models', function(Y) {
 
        */
       downloads: {
-        /**
-          @method downloads.valueFn
-          @return {Integer} the number of downloads for the charm.
-
-         */
-        valueFn: function() {
-          return 0;
-        }
+        value: 0
       },
 
       files: {
@@ -693,14 +686,7 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       recent_download_count: {
-        /**
-         * @method recent_download_count.valueFn
-         * @return {Int} the number of downloads in the 'recent' time frame.
-         *
-         */
-        valueFn: function() {
-          return 0;
-        }
+        value: 0
       },
       /**
         The related charms object is three parts for use in our situations.

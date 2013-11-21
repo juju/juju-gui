@@ -151,14 +151,7 @@ YUI.add('juju-bundle-models', function(Y) {
 
        */
       downloads: {
-        /**
-          @method downloads.valueFn
-          @return {Integer} the number of downloads for the bundle.
-
-         */
-        valueFn: function() {
-          return 0;
-        }
+        value: 0
       },
 
       /**
@@ -168,15 +161,7 @@ YUI.add('juju-bundle-models', function(Y) {
 
        */
       recent_download_count: {
-        /**
-          @method recent_download_count.valueFn
-          @return {Integer} the number of downloads in the 'recent' time
-          frame.
-
-         */
-        valueFn: function() {
-          return 0;
-        }
+        value: 0
       },
 
       relations: {
