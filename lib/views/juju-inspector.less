@@ -921,8 +921,8 @@
             .status-unit-header.pending {
                 background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
             }
-            .status-unit-header.landscape-needs-reboot,
-            .status-unit-header.landscape-security-upgrades {
+            .status-unit-header.landscape,
+            .status-unit-header.landscape {
                 background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
 
@@ -970,17 +970,7 @@
                     margin: 0 3px 0;
                     background: #CBCBCB;
                 }
-                &.pending {
-                    .action-button-wrapper {
-                        display: none;
-                    }
-                }
-                &.running {
-                    .resolve,
-                    .retry {
-                        display: none;
-                    }
-                }
+
             }
 
             .status-unit-content.running ul li {

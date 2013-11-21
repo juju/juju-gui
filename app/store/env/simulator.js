@@ -157,7 +157,13 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               unit.agent_state_info = undefined;
               unit.agent_state_data = {};
             } else if (roll <= 0.7) {
-              unit.agent_state = 'pending';
+              if (roll <= 0.4) {
+                unit.agent_state = 'dying';
+              } else if (roll <= 0.5) {
+                unit.agent_state = 'installing';
+              } else {
+                unit.agent_state = 'pending';
+              }
               unit.agent_state_info = undefined;
               unit.agent_state_data = {};
             } else if (roll <= 1) {
@@ -167,26 +173,24 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               var serviceName = this.service;
               var relations = db.relations.get_relations_for_service(
                   db.services.getById(serviceName));
-              if (roll <= 0.8) {
-                if (relations.length > 0) {
-                  var relation = relations[
-                      Math.floor(Math.random() * relations.length)];
-                  var interfaceName, remoteUnit;
-                  relation.get('endpoints').forEach(function(endpoint) {
-                    if (endpoint[0] !== serviceName) {
-                      remoteUnit = endpoint[0];
-                      return;
-                    }
-                    interfaceName = endpoint[1].name;
-                  });
-                  unit.agent_state_info = 'hook failed: "' +
-                      interfaceName + '-relation-changed"';
-                  unit.agent_state_data = {
-                    hook: interfaceName + '-relation-changed',
-                    'relation-id': 1,
-                    'remote-unit': remoteUnit + '/0'
-                  };
-                }
+              if (roll <= 0.8 && relations.length > 0) {
+                var relation = relations[
+                    Math.floor(Math.random() * relations.length)];
+                var interfaceName, remoteUnit;
+                relation.get('endpoints').forEach(function(endpoint) {
+                  if (endpoint[0] !== serviceName) {
+                    remoteUnit = endpoint[0];
+                    return;
+                  }
+                  interfaceName = endpoint[1].name;
+                });
+                unit.agent_state_info = 'hook failed: "' +
+                    interfaceName + '-relation-changed"';
+                unit.agent_state_data = {
+                  hook: interfaceName + '-relation-changed',
+                  'relation-id': 1,
+                  'remote-unit': remoteUnit + '/0'
+                };
               } else if (roll <= 0.9) {
                 unit.agent_state_info = 'hook failed: "install"';
                 unit.agent_state_data = {

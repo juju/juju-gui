@@ -717,12 +717,6 @@ describe('utilities', function() {
       assert.strictEqual('error', simplifyState(unit));
     });
 
-    it('has the ability to ignore relation errors', function() {
-      var unit = makeUnit('started', true); // Add a relation error.
-      var result = simplifyState(unit, true); // Ignore relation errors.
-      assert.strictEqual('running', result);
-    });
-
     it('translates service error states correctly', function() {
       var states = ['install-error', 'foo-error', '-error', 'error'];
       states.forEach(function(state) {

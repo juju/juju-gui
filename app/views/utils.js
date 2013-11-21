@@ -1226,29 +1226,20 @@ YUI.add('juju-view-utils', function(Y) {
     return relation.scope === 'container';
   };
 
-  /* Given one of the many "real" states return a "UI" state.
-   *
-   * If a state ends in "-error" or is simply "error" then it is an error
-   * state, if it is "started" then it is "running", otherwise it is "pending".
-   */
-  utils.simplifyState = function(unit, ignoreRelationErrors) {
+  /**
+    Given one of the many agent states returned by juju-core,
+    return a simplified version.
+
+    @method simplifyState
+    @param {Object} unit A service unit.
+    @return {String} the filtered agent state of the unit.
+  */
+  utils.simplifyState = function(unit) {
     var state = unit.agent_state;
-    if (state === 'started') {
-      if (!ignoreRelationErrors &&
-          // No longer used in the Go back end.
-          unit.relation_errors &&
-          Y.Object.size(unit.relation_errors)) {
-        return 'error';
-      }
-      return 'running';
-    }
-    if ((/-?error$/).test(state)) {
-      // XXX This may no longer be needed because juju-core returns
-      // only 'error' for error agent state.
-      return 'error';
-    }
+    if (state === 'started') { return 'running'; }
+    if ((/-?error$/).test(state)) { return 'error'; }
     // "pending", "installed", and "stopped", plus anything unforeseen
-    return 'pending';
+    return state;
   };
 
   /**
@@ -1269,6 +1260,20 @@ YUI.add('juju-view-utils', function(Y) {
       ids.push('landscape-security-upgrades');
     }
     return ids;
+  };
+
+  /**
+    Determines the category type for the unit status list of the inspector.
+
+    @method determineCategoryType
+    @param {String} category The category name to test.
+    @param {String} The category type 'error', 'landscape', 'pending', 'running'
+  */
+  utils.determineCategoryType = function(category) {
+    if ((/fail|error/).test(category)) { return 'error'; }
+    if ((/landscape/).test(category)) { return 'landscape'; }
+    if (category === 'running') { return 'running'; }
+    return 'pending';
   };
 
   /**
