@@ -48,15 +48,19 @@ YUI.add('browser-token', function(Y) {
       // Extract the charm/bundle values from the jumble of widget
       // cfg options.
       var attributes;
+      var type;
       if (utils.determineEntityDataType(cfg) === 'charm') {
         attributes = Y.Object.keys(Y.juju.models.Charm.ATTRS);
         this.TEMPLATE = templates['charm-token'];
+        type = 'charm';
       } else {
         attributes = Y.Object.keys(Y.juju.models.Bundle.ATTRS);
         this.TEMPLATE = templates['bundle-token'];
+        type = 'bundle';
       }
       // @property tokenData Contains the extracted information.
       this.tokenData = Y.aggregate({}, cfg, false, attributes);
+      this.tokenData.type = type;
     },
 
     /**
@@ -137,7 +141,9 @@ YUI.add('browser-token', function(Y) {
       var tokenData,
           container = this.get('boundingBox');
       // Adjust the ID to meet model expectations.
-      this.tokenData.id = this.tokenData.url;
+      if (this.tokenData.type === 'charm') {
+        this.tokenData.id = this.tokenData.url;
+      }
       // Since the browser's dataTransfer mechanism only accepts string values
       // we have to JSON encode the data.  This passed-in config includes
       // charm/bundle attributes.

@@ -675,6 +675,7 @@ YUI.add('juju-topology-service', function(Y) {
                 Y.JSON.stringify({
                   bundle: entityData.data
                 }),
+                entityData.id,
                 env,
                 db
             );

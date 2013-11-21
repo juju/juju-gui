@@ -316,7 +316,8 @@ describe('service module events', function() {
             dataTransfer: {
               getData: function(name) {
                 return JSON.stringify({
-                  data: '{"basket_name": "foo", "data": "BUNDLE DATA"}',
+                  data: '{"basket_name": "foo", "data": "BUNDLE DATA",' +
+                        ' "id": "~jorge/basket/thing"}',
                   dataType: 'token-drag-and-drop',
                   iconSrc: src
                 });
@@ -330,8 +331,9 @@ describe('service module events', function() {
 
     // mock out the Y.BundleHelpers call.
     var _deployBundle = juju.BundleHelpers.deployBundle;
-    juju.BundleHelpers.deployBundle = function(deployerData, env, db) {
+    juju.BundleHelpers.deployBundle = function(deployerData, id, env, db) {
       assert.include(deployerData, 'BUNDLE DATA');
+      assert.equal(id, '~jorge/basket/thing');
       // Restore the deployBundle call for future tests.
       juju.BundleHelpers.deployBundle = _deployBundle;
       done();
@@ -353,11 +355,11 @@ describe('service module events', function() {
     };
 
     // mock out the Y.BundleHelpers call.
-    var _deployBundle = juju.BundleHelpers.deployBundleFiles;
+    var _deployBundleFiles = juju.BundleHelpers.deployBundleFiles;
     juju.BundleHelpers.deployBundleFiles = function(files, env, db) {
       assert.deepEqual(files, [1]);
       // Restore the deployBundleFiles call for future tests.
-      juju.BundleHelpers.deployBundleFiles = _deployBundle;
+      juju.BundleHelpers.deployBundleFiles = _deployBundleFiles;
       done();
     };
 
