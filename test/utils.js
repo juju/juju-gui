@@ -101,9 +101,21 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      * @return {Object} fixture data resulting from call.
      */
     loadFixture: function(url, parseJson) {
-      var response = Y.io(url, {sync: true}).responseText;
-      if (parseJson) {
-        response = Y.JSON.parse(response);
+      var tries = 3;
+      var response;
+      while (true) {
+        try {
+          response = Y.io(url, {sync: true}).responseText;
+          if (parseJson) {
+            response = Y.JSON.parse(response);
+          }
+          break;
+        } catch (e) {
+          tries -= 1;
+          if (tries <= 0) {
+            throw e;
+          }
+        }
       }
       return response;
     },
