@@ -176,9 +176,10 @@ describe('charm/bundle token', function() {
 
   it('renders a bundle token properly with data', function() {
     var token = new Token({
-      size: 'small',
       basket_name: 'BASKET-NAME',
+      downloads: 5,
       serviceCount: 4,
+      size: 'small',
       unitCount: 5
     });
 
@@ -189,6 +190,10 @@ describe('charm/bundle token', function() {
     );
     assert.notEqual(
         token_container.get('innerHTML').indexOf('5 units'),
+        -1
+    );
+    assert.notEqual(
+        token_container.get('innerHTML').indexOf('Deployed 5 times'),
         -1
     );
     assert.notEqual(

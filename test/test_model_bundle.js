@@ -153,6 +153,26 @@ describe('The bundle model', function() {
     assert.equal(instance.get('unitCount'), 20);
   });
 
+  it('must provide a downloads attribute', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('downloads'), 5);
+  });
+
+  it('must init a downloads attribute to 0', function() {
+    instance = new models.Bundle();
+    assert.equal(instance.get('downloads'), 0);
+  });
+
+  it('must provide a recent_download_count attribute', function() {
+    instance = new models.Bundle(data);
+    assert.equal(instance.get('recent_download_count'), 3);
+  });
+
+  it('must init a receent_download_count attribute to 0', function() {
+    instance = new models.Bundle();
+    assert.equal(instance.get('recent_download_count'), 0);
+  });
+
   it('has an entityType static property', function() {
     instance = new models.Bundle(data);
     assert.equal(instance.constructor.entityType, 'bundle');
@@ -161,17 +181,19 @@ describe('The bundle model', function() {
   it('has recent commits', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
-    assert.lengthOf(commits, 3);
+    assert.lengthOf(commits, 5);
   });
 
   it('parses author name correctly', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
-    assert.equal('Brad Crittenden', commits[0].author.name);
-    assert.equal('bac@example.com', commits[0].author.email);
+    assert.equal('Benji York', commits[0].author.name);
+    assert.equal('benji.york@canonical.com', commits[0].author.email);
   });
 
   it('only the first author is shown', function() {
+    // Manually added a second author into the test data from the server.
+    // Jorge O. O'Castro <jorge@example.com>
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
     assert.equal('Jorge O. O\'Castro', commits[1].author.name);
@@ -181,22 +203,22 @@ describe('The bundle model', function() {
   it('has the revnos in reverse order', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
-    assert.equal(3, commits[0].revno);
-    assert.equal(2, commits[1].revno);
-    assert.equal(1, commits[2].revno);
+    assert.equal(5, commits[0].revno);
+    assert.equal(4, commits[1].revno);
+    assert.equal(3, commits[2].revno);
   });
 
   it('has the correct date in GMT', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
-    assert.equal('Tue, 03 Sep 2013 14:22:41 GMT',
+    assert.equal('Thu, 03 Oct 2013 15:29:36 GMT',
         commits[0].date.toUTCString());
   });
 
   it('has the commit message', function() {
     instance = new models.Bundle(data);
     var commits = instance.get('recentCommits');
-    assert.equal('Correct icon', commits[0].message);
+    assert.equal('add a series to the bundle\n', commits[0].message);
   });
 
   it('parses full name-email string', function() {

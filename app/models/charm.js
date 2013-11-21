@@ -467,6 +467,16 @@ YUI.add('juju-charm-models', function(Y) {
           }
         }
       },
+      /**
+        @attribute downloads
+        @default 0
+        @type {Integer}
+
+       */
+      downloads: {
+        value: 0
+      },
+
       files: {
         value: [],
         /**
@@ -671,19 +681,12 @@ YUI.add('juju-charm-models', function(Y) {
        * Mapped from the downloads_in_past_30_days in the API.
        *
        * @attribute recent_download_count
-       * @default undefined
+       * @default 0
        * @type {Int} number of downloads in 'recent' time.
        *
        */
       recent_download_count: {
-        /**
-         * @method recent_download_count.valueFn
-         * @return {Int} the number of downloads in the 'recent' time frame.
-         *
-         */
-        valueFn: function() {
-          return 0;
-        }
+        value: 0
       },
       /**
         The related charms object is three parts for use in our situations.
