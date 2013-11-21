@@ -105,7 +105,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       var response;
       while (tries) {
         try {
-          response= Y.io(url, {sync: true}).responseText;
+          response = Y.io(url, {sync: true}).responseText;
           if (parseJson) {
             response = Y.JSON.parse(response);
           }
