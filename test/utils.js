@@ -110,9 +110,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             response = Y.JSON.parse(response);
           }
         } catch (e) {
-          /*jshint debug:true */
-          debugger;
-          /*jshint debug:false */
           tries -= 1;
         }
       }
