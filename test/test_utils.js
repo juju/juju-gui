@@ -1402,7 +1402,7 @@ describe('utilities', function() {
 
       var parsed = utils.charmIconParser(bundleData.charm_metadata);
       var expected = [{
-        id: 'precise/haproxy-18',
+        id: 'precise/haproxy-21',
         name: 'haproxy'
       }, {
         id: 'precise/mediawiki-10',
@@ -1411,7 +1411,7 @@ describe('utilities', function() {
         id: 'precise/memcached-7',
         name: 'memcached'
       }, {
-        id: 'precise/mysql-27',
+        id: 'precise/mysql-29',
         name: 'mysql'
       }];
       assert.deepEqual(parsed, expected);
