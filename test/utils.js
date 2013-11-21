@@ -103,7 +103,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     loadFixture: function(url, parseJson) {
       var tries = 3;
       var response;
-      while (tries) {
+      while (true) {
         try {
           response = Y.io(url, {sync: true}).responseText;
           if (parseJson) {
@@ -112,6 +112,9 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           break;
         } catch (e) {
           tries -= 1;
+          if (tries <= 0) {
+            throw e;
+          }
         }
       }
       return response;
