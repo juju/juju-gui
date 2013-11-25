@@ -1,3 +1,35 @@
+@-webkit-keyframes sidebar-slide-in {
+  from {
+    left: -@bws-sidebar-width;
+  }
+  to {
+    left: 0;
+  }
+}
+@keyframes sidebar-slide-in {
+  from {
+    left: -@bws-sidebar-width;
+  }
+  to {
+    left: 0;
+  }
+}
+@-webkit-keyframes sidebar-details-slide-in {
+  from {
+    left: -@bws-panel-width;
+  }
+  to {
+    left: @bws-sidebar-width;
+  }
+}
+@keyframes sidebar-details-slide-in {
+  from {
+    left: -@bws-panel-width;
+  }
+  to {
+    left: @bws-sidebar-width;
+  }
+}
 #subapp-browser {
   .customize-scrollbar;
   .type9;
@@ -131,6 +163,8 @@
     width: @bws-sidebar-width;
     border-right: 1px solid #a5a5a5;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    -webkit-animation: sidebar-slide-in 0.5s;
+    animation: sidebar-slide-in 0.5s;
 
     .bws-searchbox {
         width: 100%;
@@ -166,5 +200,9 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
+  }
+  .content-visible .bws-view-data {
+    -webkit-animation: sidebar-details-slide-in 0.5s;
+    animation: sidebar-details-slide-in 0.5s;
   }
 }
