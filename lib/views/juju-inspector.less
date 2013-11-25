@@ -916,7 +916,10 @@
                     the flexbox rules that we need. It has no effect in the
                     other supported browsers. */
                     width: 10px;
-                    height: 5px;
+                    height: 5px; // magic number warning see below.
+                    /* For whatever reason this combination of flexbox and inline-block
+                    Does not allow padding-bottom to work in IE10, changing the height
+                    of the element puts the chevron in the appropriate place in all browsers */
                     margin-left: 5px;
                     background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
                 }
