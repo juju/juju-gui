@@ -10,7 +10,11 @@
     border-bottom-right-radius: 4px;
     z-index: 610;
 
+    &:hover i.sprite {
+        margin-left: 5px;
+    }
     i.sprite {
+        .transition(margin-left 0.2s ease-out);
         display: block;
     }
 }
