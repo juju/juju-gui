@@ -1,3 +1,51 @@
+@-webkit-keyframes knot-min-slide-in {
+    from {
+        left: -40px;
+    }
+    to {
+        left: 0;
+    }
+}
+@keyframes knot-min-slide-in {
+    from {
+        left: -40px;
+    }
+    to {
+        left: 0;
+    }
+}
+@-webkit-keyframes knot-sidebar-slide-in {
+    from {
+        left: 0;
+    }
+    to {
+        left: @bws-sidebar-width;
+    }
+}
+@keyframes knot-sidebar-slide-in {
+    from {
+        left: 0;
+    }
+    to {
+        left: @bws-sidebar-width;
+    }
+}
+@-webkit-keyframes knot-content-slide-in {
+    from {
+        left: 0;
+    }
+    to {
+        left: @bws-sidebar-width + @bws-panel-width;
+    }
+}
+@keyframes knot-content-slide-in {
+    from {
+        left: 0;
+    }
+    to {
+        left: @bws-sidebar-width + @bws-panel-width;
+    }
+}
 .bws-icon {
     position: absolute;
     display: block;
@@ -8,12 +56,28 @@
     box-shadow: 3px 0 2px rgba(0, 0, 0, 0.1);
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-    z-index: 610;
+    z-index: 600;
 
+    &:hover i.sprite {
+        margin-left: 5px;
+    }
     i.sprite {
+        .transition(margin-left 0.2s ease-out);
         display: block;
     }
 }
 .content-visible .bws-icon {
     left: @bws-sidebar-width + @bws-panel-width;
+}
+#subapp-browser-min .bws-icon {
+    -webkit-animation: knot-min-slide-in 0.5s;
+    animation: knot-min-slide-in 0.5s;
+}
+#subapp-browser .bws-icon {
+    -webkit-animation: knot-sidebar-slide-in 0.5s;
+    animation: knot-sidebar-slide-in 0.5s;
+}
+#subapp-browser .content-visible .bws-icon {
+    -webkit-animation: knot-content-slide-in 0.5s;
+    animation: knot-content-slide-in 0.5s;
 }
