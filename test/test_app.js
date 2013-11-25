@@ -346,6 +346,56 @@ function injectData(app, data) {
       });
     });
 
+    it('uses the authtoken when there are no credentials', function(done) {
+      var app = makeApp(false);
+      // Override the local window.location object.
+      app.location = {search: '?authtoken=demoToken'};
+      env.setCredentials(null);
+      env.connect();
+      app.after('ready', function() {
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          RequestId: 1,
+          Type: 'GUIToken',
+          Request: 'Login',
+          Params: {Token: 'demoToken'}
+        });
+        assert.equal(app.location.search, '');
+        done();
+      });
+    });
+
+    it('handles multiple authtokens', function(done) {
+      var app = makeApp(false);
+      // Override the local window.location object.
+      app.location = {search: '?authtoken=demoToken&authtoken=discarded'};
+      env.setCredentials(null);
+      env.connect();
+      app.after('ready', function() {
+        assert.equal(conn.messages.length, 1);
+        assert.deepEqual(conn.last_message(), {
+          RequestId: 1,
+          Type: 'GUIToken',
+          Request: 'Login',
+          Params: {Token: 'demoToken'}
+        });
+        assert.equal(app.location.search, '');
+        done();
+      });
+    });
+
+    it('ignores the authtoken if credentials exist', function(done) {
+      var app = makeApp(false);
+      // Override the local window.location object.
+      app.location = {search: '?authtoken=demoToken'};
+      env.connect();
+      app.after('ready', function() {
+        assert.equal(1, conn.messages.length);
+        assertIsLogin(conn.last_message());
+        done();
+      });
+    });
+
     it('displays the login view if credentials are not valid', function(done) {
       var app = makeApp(true); // Create a connected app.
       app.after('ready', function() {

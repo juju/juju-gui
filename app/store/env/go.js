@@ -323,6 +323,12 @@ YUI.add('juju-env-go', function(Y) {
       this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.Error;
       if (this.userIsAuthenticated) {
+        // If this is a token login, set the credentials.
+        var response = data.Response;
+        if (response && response.AuthTag && response.Password) {
+          this.setCredentials({
+            user: response.AuthTag, password: response.Password});
+        }
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
         this._watchAll();
@@ -365,6 +371,28 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
       }
+    },
+
+    /**
+     * Attempt to log the user in with a token.
+     *
+     * @method tokenLogin
+     * @return {undefined} Nothing.
+     */
+    tokenLogin: function(token) {
+      // If the user is already authenticated there is nothing to do.
+      if (this.userIsAuthenticated) {
+        this.fire('login', {data: {result: true}});
+        return;
+      }
+      if (this.pendingLoginResponse) {
+        return;
+      }
+      this._send_rpc({
+        Type: 'GUIToken',
+        Request: 'Login',
+        Params: {Token: token}
+      }, this.handleLogin);
     },
 
     /**

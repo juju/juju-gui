@@ -82,7 +82,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Go Juju environment', function() {
-    var conn, endpointA, endpointB, env, juju, msg, utils, Y, oldHandleLogin;
+    var conn, endpointA, endpointB, env, juju, msg, utils, Y, cleanups;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
@@ -98,109 +98,194 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();
+      cleanups = [];
     });
 
     afterEach(function()  {
-      env.destroy();
+      cleanups.forEach(function(action) {action();});
+      // We need to clear any credentials stored in sessionStorage.
+      env.setCredentials(null);
+      if (env && env.destroy) {env.destroy();}
+      if (conn && conn.destroy) {conn.destroy();}
     });
 
     var noopHandleLogin = function() {
-      // In order to avoid rewriting all of these go tests we need to destroy
-      // the env created in the beforeEach
-      env.destroy();
-      // We need to clear any credentials stored in sessionStorage.
-      env.setCredentials(null);
-      oldHandleLogin = Y.juju.environments.GoEnvironment.handleLogin;
+      var oldHandleLogin = Y.juju.environments.GoEnvironment.handleLogin;
       Y.juju.environments.GoEnvironment.handleLogin = function() {};
-      conn = new utils.SocketStub();
-      env = juju.newEnvironment({
-        conn: conn, user: 'user', password: 'password'
-      }, 'go');
-      env.connect();
+      cleanups.push(function() {
+        Y.juju.environments.GoEnvironment.handleLogin = oldHandleLogin;
+      });
     };
 
-    var resetHandleLogin = function() {
-      Y.juju.environments.GoEnvironment.handleLogin = oldHandleLogin;
-    };
-
-    it('sends the correct login message', function() {
-      noopHandleLogin();
-      env.login();
-      var last_message = conn.last_message();
-      var expected = {
-        Type: 'Admin',
-        Request: 'Login',
-        RequestId: 1,
-        Params: {AuthTag: 'user', Password: 'password'}
-      };
-      assert.deepEqual(expected, last_message);
-      resetHandleLogin();
-    });
-
-    it('resets the user and password if they are not valid', function() {
-      env.login();
-      // Assume login to be the first request.
-      conn.msg({RequestId: 1, Error: 'Invalid user or password'});
-      assert.isNull(env.getCredentials());
-      assert.isTrue(env.failedAuthentication);
-    });
-
-    it('fires a login event on successful login', function() {
-      var loginFired = false;
-      var result;
-      env.on('login', function(evt) {
-        loginFired = true;
-        result = evt.data.result;
+    describe('login', function() {
+      it('sends the correct login message', function() {
+        noopHandleLogin();
+        env.login();
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'Admin',
+          Request: 'Login',
+          RequestId: 1,
+          Params: {AuthTag: 'user', Password: 'password'}
+        };
+        assert.deepEqual(expected, last_message);
       });
-      env.login();
-      // Assume login to be the first request.
-      conn.msg({RequestId: 1, Response: {}});
-      assert.isTrue(loginFired);
-      assert.isTrue(result);
-    });
 
-    it('fires a login event on failed login', function() {
-      var loginFired = false;
-      var result;
-      env.on('login', function(evt) {
-        loginFired = true;
-        result = evt.data.result;
+      it('resets the user and password if they are not valid', function() {
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+        assert.isNull(env.getCredentials());
+        assert.isTrue(env.failedAuthentication);
       });
-      env.login();
-      // Assume login to be the first request.
-      conn.msg({RequestId: 1, Error: 'Invalid user or password'});
-      assert.isTrue(loginFired);
-      assert.isFalse(result);
+
+      it('fires a login event on successful login', function() {
+        var loginFired = false;
+        var result;
+        env.on('login', function(evt) {
+          loginFired = true;
+          result = evt.data.result;
+        });
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({RequestId: 1, Response: {}});
+        assert.isTrue(loginFired);
+        assert.isTrue(result);
+      });
+
+      it('fires a login event on failed login', function() {
+        var loginFired = false;
+        var result;
+        env.on('login', function(evt) {
+          loginFired = true;
+          result = evt.data.result;
+        });
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+        assert.isTrue(loginFired);
+        assert.isFalse(result);
+      });
+
+      it('avoids sending login requests without credentials', function() {
+        env.setCredentials(null);
+        env.login();
+        assert.equal(0, conn.messages.length);
+      });
+
+      it('calls environmentInfo and watchAll ofter login', function() {
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({RequestId: 1, Response: {}});
+        var environmentInfoMessage = conn.last_message(2);
+        // EnvironmentInfo is the second request.
+        var environmentInfoExpected = {
+          Type: 'Client',
+          Request: 'EnvironmentInfo',
+          RequestId: 2,
+          Params: {}
+        };
+        assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
+        var watchAllMessage = conn.last_message();
+        // EnvironmentInfo is the second request.
+        var watchAllExpected = {
+          Type: 'Client',
+          Request: 'WatchAll',
+          RequestId: 3,
+          Params: {}
+        };
+        assert.deepEqual(watchAllExpected, watchAllMessage);
+      });
     });
 
-    it('avoids sending login requests without credentials', function() {
-      env.setCredentials(null);
-      env.login();
-      assert.equal(0, conn.messages.length);
-    });
+    describe('tokenLogin', function() {
+      it('sends the correct tokenLogin message', function() {
+        noopHandleLogin();
+        env.tokenLogin('demoToken');
+        var last_message = conn.last_message();
+        var expected = {
+          Type: 'GUIToken',
+          Request: 'Login',
+          RequestId: 1,
+          Params: {Token: 'demoToken'}
+        };
+        assert.deepEqual(expected, last_message);
+      });
 
-    it('calls environmentInfo and watchAll ofter login', function() {
-      env.login();
-      // Assume login to be the first request.
-      conn.msg({RequestId: 1, Response: {}});
-      var environmentInfoMessage = conn.last_message(2);
-      // EnvironmentInfo is the second request.
-      var environmentInfoExpected = {
-        Type: 'Client',
-        Request: 'EnvironmentInfo',
-        RequestId: 2,
-        Params: {}
-      };
-      assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
-      var watchAllMessage = conn.last_message();
-      // EnvironmentInfo is the second request.
-      var watchAllExpected = {
-        Type: 'Client',
-        Request: 'WatchAll',
-        RequestId: 3,
-        Params: {}
-      };
-      assert.deepEqual(watchAllExpected, watchAllMessage);
+      it('resets the user and password if the token is not valid', function() {
+        env.tokenLogin('badToken');
+        // Assume login to be the first request.
+        conn.msg({
+          RequestId: 1,
+          Error: 'unknown, fulfilled, or expired token',
+          ErrorCode: 'unauthorized access'
+        });
+        assert.isNull(env.getCredentials());
+        assert.isTrue(env.failedAuthentication);
+      });
+
+      it('fires a login event on successful token login', function() {
+        var loginFired = false;
+        var result;
+        env.on('login', function(evt) {
+          loginFired = true;
+          result = evt.data.result;
+        });
+        env.tokenLogin('demoToken');
+        // Assume login to be the first request.
+        conn.msg({
+          RequestId: 1,
+          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+        assert.isTrue(loginFired);
+        assert.isTrue(result);
+        var credentials = env.getCredentials();
+        assert.equal('tokenuser', credentials.user);
+        assert.equal('tokenpasswd', credentials.password);
+      });
+
+      it('fires a login event on failed token login', function() {
+        var loginFired = false;
+        var result;
+        env.on('login', function(evt) {
+          loginFired = true;
+          result = evt.data.result;
+        });
+        env.tokenLogin('badToken');
+        // Assume login to be the first request.
+        conn.msg({
+          RequestId: 1,
+          Error: 'unknown, fulfilled, or expired token',
+          ErrorCode: 'unauthorized access'
+        });
+        assert.isTrue(loginFired);
+        assert.isFalse(result);
+      });
+
+      it('calls environmentInfo and watchAll ofter token login', function() {
+        env.tokenLogin('demoToken');
+        // Assume login to be the first request.
+        conn.msg({
+          RequestId: 1,
+          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+        var environmentInfoMessage = conn.last_message(2);
+        // EnvironmentInfo is the second request.
+        var environmentInfoExpected = {
+          Type: 'Client',
+          Request: 'EnvironmentInfo',
+          RequestId: 2,
+          Params: {}
+        };
+        assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
+        var watchAllMessage = conn.last_message();
+        // EnvironmentInfo is the second request.
+        var watchAllExpected = {
+          Type: 'Client',
+          Request: 'WatchAll',
+          RequestId: 3,
+          Params: {}
+        };
+        assert.deepEqual(watchAllExpected, watchAllMessage);
+      });
     });
 
     it('sends the correct request for environment info', function() {

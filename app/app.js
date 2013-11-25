@@ -500,6 +500,9 @@ YUI.add('juju-gui', function(Y) {
       });
       this.endpointsController.bind();
 
+      // Stash the location object so that tests can override it.
+      this.location = window.location;
+
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
@@ -511,7 +514,39 @@ YUI.add('juju-gui', function(Y) {
           if (credentials && credentials.areAvailable) {
             this.env.login();
           } else {
-            this.checkUserCredentials();
+            // The user can also try to log in with an authentication token.
+            // This will look like ?authtoken=AUTHTOKEN.  For instance,
+            // in the sandbox, try logging in with ?authtoken=demoToken.
+            // To get a real token from the Juju GUI charm's environment
+            // proxy, withing an authenticated websocket session, use a
+            // request like this:
+            // {
+            //   'RequestId': 42,
+            //   'Type': 'GUIToken',
+            //   'Request': 'Create',
+            //   'Params': {},
+            // }
+            // You can then use the token once until it expires, within two
+            // minutes of this writing.
+            var querystring = this.location.search.substring(1);
+            var qs = Y.QueryString.parse(querystring);
+            var authtoken = qs.authtoken;
+            if (Y.Lang.isValue(authtoken)) {
+              // Remove the token from the URL.  If we don't do this, then
+              // logging out will hit this code and try the token again.  In a
+              // real environment, the token will fail, but still it's
+              // unnecessary.
+              delete qs.authtoken;
+              this.location.search = Y.QueryString.stringify(qs);
+              // De-dupe if necessary.
+              if (Y.Lang.isArray(authtoken)) {
+                authtoken = authtoken[0];
+              }
+              // Try a token login.
+              this.env.tokenLogin(authtoken);
+            } else {
+              this.checkUserCredentials();
+            }
           }
         }
       }, this);
@@ -1358,6 +1393,7 @@ YUI.add('juju-gui', function(Y) {
     'model',
     'app-cookies-extension',
     'cookie',
+    'querystring',
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
