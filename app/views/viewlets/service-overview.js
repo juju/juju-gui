@@ -29,11 +29,20 @@ YUI.add('viewlet-inspector-overview', function(Y) {
   var SHOWCOUNT = 5;
 
   var unitListNameMap = {
-    error: 'errored units',
-    pending: 'pending units',
+    'error': function(status) {
+      return status.category;
+    },
+    'pending': function(status) {
+      return status.category + ' units';
+    },
     running: 'running units',
-    'landscape-needs-reboot': 'machines need to be restarted',
-    'landscape-security-upgrades': 'security upgrades available'
+    'landscape': function(status) {
+      var nameMap = {
+        'landscape-needs-reboot': 'machines need to be restarted',
+        'landscape-security-upgrades': 'security upgrades available'
+      };
+      return nameMap[status.category];
+    }
   };
 
   /**
@@ -56,7 +65,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       }
     };
 
-    var name = nameMap[status.type][status.category];
+    var name = nameMap[status.type][status.categoryType];
     return typeof name === 'function' ? name(status) : name;
   }
 
@@ -73,42 +82,88 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     services, this means whether or not an upgrade is available
     [{ type: 'service', upgradeAvailable: true, upgradeTo: ...}].
     */
-  function updateStatusList(values) {
+  function updateStatusList(unitList) {
     var statuses = [],
         unitByStatus = {};
 
-    values.each(function(value) {
-      var category = utils.simplifyState(value);
-      if (!unitByStatus[category]) {
-        unitByStatus[category] = [];
-      }
-      unitByStatus[category].push(value);
+    unitList.each(function(unit) {
+      var category = utils.simplifyState(unit);
+      // If the unit is in error we want it's category to be it's real error.
+      if (category === 'error') { category = unit.agent_state_info; }
+
+      if (!unitByStatus[category]) { unitByStatus[category] = []; }
+      unitByStatus[category].push(unit);
 
       // landscape annotations
-      var lIds = utils.landscapeAnnotations(value);
+      var lIds = utils.landscapeAnnotations(unit);
       lIds.forEach(function(annotation) {
         if (!unitByStatus[annotation]) {
           unitByStatus[annotation] = [];
         }
-        unitByStatus[annotation].push(value);
+        unitByStatus[annotation].push(unit);
       });
     });
 
-    // This will generate a list with all categories.
-    Y.Object.each(unitListNameMap, function(value, key) {
-      var unit = {};
-      if (unitByStatus[key]) {
-        unit = unitByStatus[key];
-      }
-      statuses.push({type: 'unit', category: key, units: unit});
+    Object.keys(unitByStatus).forEach(function(category) {
+      statuses.push({
+        type: 'unit',
+        category: category,
+        categoryType: utils.determineCategoryType(category),
+        units: unitByStatus[category]
+      });
+    });
+    // Disable: Possible strict violation
+    /* jshint -W040 */
+    return sortStatuses(addCharmUpgrade(statuses, this.model));
+  }
+
+  /**
+    Sorts the statuses array into the appropriate order for the unit list.
+
+    @method sortStatuses
+    @param {Array} statuses The statuses array from `updateStatusList`.
+    @return {Array} A sorted array of statuses.
+  */
+  function sortStatuses(statuses) {
+    var indexMap = {
+      'error': 1,
+      'pending': 2,
+      'running': 3,
+      'landscape': 4,
+      'upgrade-service': 5
+    };
+
+    var sortedStatus = statuses.sort(function(a, b) {
+      var ia = indexMap[a.categoryType],
+          ib = indexMap[b.categoryType];
+
+      if (ia < ib) { return -1; }
+      if (ia === ib) { return 0; }
+      return 1;
     });
 
-    // Disable strict violation warning for use of `this`.
-    /* jshint -W040 */
-    var service = this.model;
+    return sortedStatus;
+  }
+
+
+  /**
+    If the charm has available upgrades it adds the upgrade details to the
+    statuses list to be displayed in the unit list in the inspector.
+
+    XXX (Jeff): This is done on every update call, we can probably cache this
+    result for performance later.
+
+    @method addCharmUpgrade
+    @param {Array} statuses An array of statuses from `updateStatusList`.
+    @param {Object} service A reference to the service model.
+    @return {Array} An array of statuses containing the charm upgrade list
+      if applicable.
+  */
+  function addCharmUpgrade(statuses, service) {
     var upgradeServiceStatus = {
       type: 'service',
       category: 'upgrade-service',
+      categoryType: 'upgrade-service',
       upgradeAvailable: service.get('upgrade_available'),
       upgradeTo: service.get('upgrade_to'),
       downgrades: []
@@ -153,23 +208,22 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     different inspector unit lists.
 
     @method generateActionButtonList
-    @param {String} category The unit status category.
+    @param {String} categoryType The unit status category type.
     */
-  function generateActionButtonList(category) {
+  function generateActionButtonList(categoryType) {
     var showingButtons = {},
         buttonTypes = ['resolve', 'retry', 'remove', 'landscape'],
         // if you adjust this list don't forget to edit
         // the list in the unit tests
         buttons = {
           error: ['resolve', 'retry', 'remove'],
-          pending: ['retry', 'remove'],
+          pending: ['remove'],
           running: ['remove'],
-          'landscape-needs-reboot': ['landscape'],
-          'landscape-security-upgrades': ['landscape']
+          landscape: ['landscape']
         };
 
     buttonTypes.forEach(function(buttonType) {
-      buttons[category].forEach(function(allowedButton) {
+      buttons[categoryType].forEach(function(allowedButton) {
         if (buttonType === allowedButton) {
           showingButtons[buttonType] = true;
         }
@@ -211,13 +265,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     var categoryStatusWrapper = categoryWrapperNodes
     .enter()
     .append('div')
-    .classed('unit-list-wrapper hidden', true);
+    .classed('unit-list-wrapper', true);
 
     var categoryStatusHeader = categoryStatusWrapper
     .append('div')
     .attr('class', function(d) {
           return 'status-unit-header ' +
-              'closed-unit-list ' + d.category;
+              'closed-unit-list ' + d.categoryType;
         });
 
     var serviceStatusContentForm = categoryStatusWrapper
@@ -225,7 +279,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     .append('div')
     .attr('class', function(d) {
           return 'status-unit-content ' +
-              'close-unit ' + d.category;
+              'close-unit ' + d.categoryType;
         });
 
     var serviceUpgradeLi = serviceStatusContentForm
@@ -308,7 +362,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     .append('div')
     .attr('class', function(d) {
           return 'status-unit-content ' +
-              'close-unit ' + d.category;
+              'close-unit ' + d.categoryType;
         })
     .append('form');
 
@@ -323,7 +377,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     .classed('action-button-wrapper', true)
     .html(
         function(d) {
-          var context = generateActionButtonList(d.category);
+          var context = generateActionButtonList(d.categoryType);
           var template = templates['unit-action-buttons'](context);
           buttonHeight = template.offsetHeight;
           return template;
@@ -453,6 +507,8 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     // D3 header exit section
     categoryWrapperNodes.exit().remove();
+
+    categoryWrapperNodes.order();
   }
 
 
@@ -501,7 +557,9 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     categoryName: categoryName,
     generateAndBindStatusHeaders: generateAndBindStatusHeaders,
     generateActionButtonList: generateActionButtonList,
-    updateStatusList: updateStatusList
+    updateStatusList: updateStatusList,
+    addCharmUpgrade: addCharmUpgrade,
+    sortStatuses: sortStatuses
   };
 
 }, '0.0.1', {
