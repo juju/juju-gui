@@ -134,15 +134,26 @@ describe('test_model.js', function() {
         agent_state: 'pending'});
       var wp1 = new models.ServiceUnit({
         id: 'wordpress/1',
-        agent_state: 'error'});
-      wordpress.get('units').add([wp0, wp1]);
+        agent_state: 'error',
+        agent_state_info: 'hook failed: "install"'});
+      var wp2 = new models.ServiceUnit({
+        id: 'wordpress/2',
+        agent_state: 'error',
+        agent_state_info: 'hook failed: "db-relation-changed"',
+        agent_state_data: {
+          hook: 'db-relation-changed',
+          'relation-id': 1,
+          'remote-unit': 'mysql/0'
+        }
+      });
+      wordpress.get('units').add([wp0, wp1, wp2]);
 
       assert.deepEqual(mysql.get('units')
                        .get_informative_states_for_service(mysql),
           [{'pending': 2}, {}]);
       assert.deepEqual(wordpress.get('units')
                        .get_informative_states_for_service(wordpress),
-          [{'pending': 1, 'error': 1}, {}]);
+          [{'pending': 1, 'error': 2}, { mysql: 'db-relation-changed'}]);
     });
 
     it('service unit list should update analytics when units are added',
@@ -178,20 +189,21 @@ describe('test_model.js', function() {
                    models.RelationList, true);
     });
 
-    it('relation changes on service update aggregateRelations', function(done) {
-      var service = new models.Service();
-      var relations = service.get('relations');
-      var handler = relations.on(
-          '*:add', function() {
-            // This means that it will update the aggregate
-            // relations for databinding
-            handler.detach();
-            var isObject = yui.Lang.isObject;
-            assert.equal(isObject(service.get('aggregateRelations')), true);
-            done();
-          });
-      relations.add(new models.Relation());
-    });
+    it('relation changes on service update relationChangeTrigger',
+      function(done) {
+        var service = new models.Service();
+        var relations = service.get('relations');
+        var handler = relations.on(
+            '*:add', function() {
+              // This means that it will update the aggregate
+              // relations for databinding
+              handler.detach();
+              var isObject = yui.Lang.isObject;
+              assert.equal(isObject(service.get('relationChangeTrigger')), true);
+              done();
+            });
+        relations.add(new models.Relation());
+      });
 
     it('service unit objects should parse the service name from unit id',
        function() {

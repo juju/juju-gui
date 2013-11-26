@@ -776,6 +776,17 @@
                     .transition(none);
                 }
             }
+
+            .relation-label {
+                padding-left: 10px;
+                background-repeat: no-repeat;
+                background-position: 10px 17px;
+                background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+
+                &.error {
+                    background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+                }
+            }
         }
         .status {
             display: inline-block;

@@ -186,7 +186,7 @@ YUI.add('juju-models', function(Y) {
       this._events.push(
           this.get('relations').on(
               ['*:change', '*:add', '*:remove'], function(e) {
-                this.set('aggregateRelations', e);
+                this.set('relationChangeTrigger', e);
               }, this));
     },
 
@@ -340,14 +340,16 @@ YUI.add('juju-models', function(Y) {
       relations: {},
 
       /**
-        An aggregate of the relations statuses that we use to trigger
-        databinding changes
+        When there is a change to the relation or to any units in the relation
+        this value is changed to trigger changes in the inspector.
 
-        @attribute aggregateRelations
+        @attribute relationChangeTrigger
         @default {}
         @type {Object}
       */
-      aggregateRelations: {},
+      relationChangeTrigger: {
+        value: {}
+      },
 
       /**
         An aggregate of the relation errors that we use to trigger
@@ -580,11 +582,14 @@ YUI.add('juju-models', function(Y) {
       return result;
     },
 
-    /*
-     *  Return information about the state of the set of units for a
-     *  given service in the form of a map of agent states:
-     *  state => number of units in that state
-     */
+    /**
+      Returns information about the state of the set of units for a given
+      service in the form of a map of agent states.
+
+      @method get_informative_states_for_service
+      @param {Object} service The service model.
+      @return {Array} An array of the aggregate map and relation errors
+    */
     get_informative_states_for_service: function(service) {
       var aggregate_map = {},
           relationError = {},
@@ -602,16 +607,16 @@ YUI.add('juju-models', function(Y) {
             if (info !== undefined && info.indexOf('failed') > -1) {
               // If we parse more than the relation info then split this out
               if (info.indexOf('relation') > -1) {
-                var hook = info.split(':')[1].split('-'),
-                    interfaceName = hook.slice(0, hook.length - 2)[0].trim();
-                relationError[unit.service] = interfaceName;
+                var stateData = unit.agent_state_data,
+                    farService = stateData['remote-unit'].split('/')[0];
+                if (farService) {
+                  relationError[farService] = stateData.hook;
+                }
               }
             }
           }
         }
-
       });
-
       return [aggregate_map, relationError];
     },
 
@@ -626,7 +631,9 @@ YUI.add('juju-models', function(Y) {
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate[0]);
-      service.set('aggregateRelationError', aggregate[1]);
+
+      service.set('relationChangeTrigger', { error: aggregate[1] });
+
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',
