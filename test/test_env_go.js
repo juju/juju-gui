@@ -137,20 +137,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         conn.msg({RequestId: 1, Error: 'Invalid user or password'});
         assert.isNull(env.getCredentials());
         assert.isTrue(env.failedAuthentication);
+        assert.isFalse(env.failedTokenAuthentication);
       });
 
       it('fires a login event on successful login', function() {
         var loginFired = false;
-        var result;
+        var result, fromToken;
         env.on('login', function(evt) {
           loginFired = true;
           result = evt.data.result;
+          fromToken = evt.data.fromToken;
         });
         env.login();
         // Assume login to be the first request.
         conn.msg({RequestId: 1, Response: {}});
         assert.isTrue(loginFired);
         assert.isTrue(result);
+        assert.isFalse(fromToken);
+      });
+
+      it('resets failed markers on successful login', function() {
+        env.failedAuthentication = env.failedTokenAuthentication = true;
+        env.login();
+        // Assume login to be the first request.
+        conn.msg({RequestId: 1, Response: {}});
+        assert.isFalse(env.failedAuthentication);
+        assert.isFalse(env.failedTokenAuthentication);
       });
 
       it('fires a login event on failed login', function() {
@@ -221,15 +233,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ErrorCode: 'unauthorized access'
         });
         assert.isNull(env.getCredentials());
-        assert.isTrue(env.failedAuthentication);
+        assert.isTrue(env.failedTokenAuthentication);
+        assert.isFalse(env.failedAuthentication);
       });
 
       it('fires a login event on successful token login', function() {
         var loginFired = false;
-        var result;
+        var result, fromToken;
         env.on('login', function(evt) {
           loginFired = true;
           result = evt.data.result;
+          fromToken = evt.data.fromToken;
         });
         env.tokenLogin('demoToken');
         // Assume login to be the first request.
@@ -238,9 +252,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
         assert.isTrue(loginFired);
         assert.isTrue(result);
+        assert.isTrue(fromToken);
         var credentials = env.getCredentials();
         assert.equal('tokenuser', credentials.user);
         assert.equal('tokenpasswd', credentials.password);
+      });
+
+      it('resets failed markers on successful login', function() {
+        env.failedAuthentication = env.failedTokenAuthentication = true;
+        env.tokenLogin('demoToken');
+        // Assume login to be the first request.
+        conn.msg({
+          RequestId: 1,
+          Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
+        assert.isFalse(env.failedAuthentication);
+        assert.isFalse(env.failedTokenAuthentication);
       });
 
       it('fires a login event on failed token login', function() {

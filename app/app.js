@@ -532,12 +532,6 @@ YUI.add('juju-gui', function(Y) {
             var qs = Y.QueryString.parse(querystring);
             var authtoken = qs.authtoken;
             if (Y.Lang.isValue(authtoken)) {
-              // Remove the token from the URL.  If we don't do this, then
-              // logging out will hit this code and try the token again.  In a
-              // real environment, the token will fail, but still it's
-              // unnecessary.
-              delete qs.authtoken;
-              this.location.search = Y.QueryString.stringify(qs);
               // De-dupe if necessary.
               if (Y.Lang.isArray(authtoken)) {
                 authtoken = authtoken[0];
@@ -929,6 +923,20 @@ YUI.add('juju-gui', function(Y) {
       );
     },
 
+    popLoginRedirectPath: function() {
+      var result = this.redirectPath;
+      delete this.redirectPath;
+      var currentPath = this.get('currentUrl');
+      var loginPath = /^\/login\//;
+      if (currentPath !== '/' && !loginPath.test(currentPath)) {
+        // We used existing credentials or a token to go directly to a url.
+        result = currentPath;
+      } else if (!result || loginPath.test(result)) {
+        result = '/';
+      }
+      return result;
+    },
+
     /**
      * Hide the login mask and redispatch the router.
      *
@@ -941,25 +949,31 @@ YUI.add('juju-gui', function(Y) {
      */
     onLogin: function(e) {
       if (e.data.result) {
-        // We need to save the url to continue on to without redirecting
-        // to root if there are extra path details.
+        // The login was a success.
         this.hideMask();
-        var originalPath = this.get('currentUrl');
-        if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
-          this.redirectPath = originalPath;
+        var redirectPath = this.popLoginRedirectPath();
+        // Handle token authentication.
+        if (e.data.fromToken) {
+          // Alert the user.  In the future, we might want to call out the
+          // password so the user can note it.  That will probably want a
+          // modal or similar.
+          this.env.onceAfter('environmentNameChange', function() {
+            this.db.notifications.add(
+                new models.Notification({
+                  title: 'Logged in with Token',
+                  message: 'You have successfully logged in with a ' +
+                           'single-use authentication token.',
+                  level: 'important'
+                })
+            );
+          }, this);
         }
-        if (originalPath.match(/login/) && this.redirectPath === '/') {
+        if (redirectPath === '/') {
           setTimeout(
               Y.bind(this.showRootView, this), 0);
           return;
         } else {
-          var nsRouter = this.nsRouter;
-
-          this.navigate(
-              nsRouter.url(nsRouter.parse(this.redirectPath)),
-              {overrideAllNamespaces: true});
-          this.redirectPath = null;
-          return;
+          this.navigate(redirectPath, {overrideAllNamespaces: true});
         }
       } else {
         this.showLogin();
@@ -1274,11 +1288,24 @@ YUI.add('juju-gui', function(Y) {
          * @attribute currentUrl.getter
          */
         getter: function() {
-          return [
-            window.location.pathname,
-            window.location.search,
-            window.location.hash
-          ].join('');
+          // The result is a normalized version of the currentURL.
+          // Specifically, it omits any authtokens.
+          var nsRouter = this.nsRouter;
+          // `this.location` is a test-friendly access of window.location.
+          var routes = nsRouter.parse(this.location.toString());
+          if (routes.search) {
+            var qs = Y.QueryString.parse(routes.search);
+            var authtoken = qs.authtoken;
+            if (Y.Lang.isValue(authtoken)) {
+              // Remove the token from the URL.  It is a one-shot, designed to
+              // be consumed.  We don't want it to be in the URL after it has
+              // been used.
+              delete qs.authtoken;
+              routes.search = Y.QueryString.stringify(qs);
+            }
+          }
+          // Use the nsRouter to normalize.
+          return nsRouter.url(routes);
         }
       },
       /**

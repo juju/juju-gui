@@ -360,7 +360,6 @@ function injectData(app, data) {
           Request: 'Login',
           Params: {Token: 'demoToken'}
         });
-        assert.equal(app.location.search, '');
         done();
       });
     });
@@ -379,7 +378,6 @@ function injectData(app, data) {
           Request: 'Login',
           Params: {Token: 'demoToken'}
         });
-        assert.equal(app.location.search, '');
         done();
       });
     });

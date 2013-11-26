@@ -856,9 +856,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientEnvironmentInfo: function(data, client, state) {
       client.receive({
-        ProviderType: state.get('providerType'),
-        DefaultSeries: state.get('defaultSeries'),
-        Name: 'Sandbox'
+        RequestId: data.RequestId,
+        Response: {
+          ProviderType: state.get('providerType'),
+          DefaultSeries: state.get('defaultSeries'),
+          Name: 'Sandbox'
+        }
       });
     },
 

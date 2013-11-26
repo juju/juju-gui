@@ -317,9 +317,11 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method handleLogin
      * @param {Object} data The response returned by the server.
+     * param {Bool} fromToken Whether the login request was via a token.
      * @return {undefined} Nothing.
      */
-    handleLogin: function(data) {
+    handleLogin: function(data, fromToken) {
+      fromToken = !!fromToken; // Normalize.
       this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.Error;
       if (this.userIsAuthenticated) {
@@ -332,12 +334,29 @@ YUI.add('juju-env-go', function(Y) {
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
         this._watchAll();
+        // Clean up for log out text.
+        this.failedAuthentication = this.failedTokenAuthentication = false;
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
-        this.failedAuthentication = true;
+        // Indicate if the authentication were from a token.
+        this.failedAuthentication = !fromToken;
+        this.failedTokenAuthentication = fromToken;
       }
-      this.fire('login', {data: {result: this.userIsAuthenticated}});
+      this.fire('login',
+                {data: {result: this.userIsAuthenticated,
+                        fromToken: fromToken}});
+    },
+
+    /**
+     * React to the results of sending a token login message to the server.
+     *
+     * @method handleTokenLogin
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleTokenLogin: function(data) {
+      this.handleLogin(data, true);
     },
 
     /**
@@ -392,7 +411,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'GUIToken',
         Request: 'Login',
         Params: {Token: token}
-      }, this.handleLogin);
+      }, this.handleTokenLogin);
     },
 
     /**
