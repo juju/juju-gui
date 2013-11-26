@@ -190,20 +190,21 @@ describe('test_model.js', function() {
     });
 
     it('relation changes on service update relationChangeTrigger',
-      function(done) {
-        var service = new models.Service();
-        var relations = service.get('relations');
-        var handler = relations.on(
-            '*:add', function() {
-              // This means that it will update the aggregate
-              // relations for databinding
-              handler.detach();
-              var isObject = yui.Lang.isObject;
-              assert.equal(isObject(service.get('relationChangeTrigger')), true);
-              done();
-            });
-        relations.add(new models.Relation());
-      });
+        function(done) {
+          var service = new models.Service();
+          var relations = service.get('relations');
+          var handler = relations.on(
+              '*:add', function() {
+                // This means that it will update the aggregate
+                // relations for databinding
+                handler.detach();
+                var isObject = yui.Lang.isObject;
+                assert.equal(
+                    isObject(service.get('relationChangeTrigger')), true);
+                done();
+              });
+          relations.add(new models.Relation());
+        });
 
     it('service unit objects should parse the service name from unit id',
        function() {
