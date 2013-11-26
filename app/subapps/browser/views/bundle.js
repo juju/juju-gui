@@ -230,6 +230,10 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
       this._renderCharmListing(templateData.services);
+
+      if (!this.get('isFullscreen')) {
+        this._setCollapsableHeader();
+      }
     },
 
     /**

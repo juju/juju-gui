@@ -6,8 +6,6 @@
     bottom: 0;
     right: 0;
     width: @bws-panel-width;
-    overflow-x: hidden;
-    overflow-y: auto;
     background-color: #fff;
     background-image: none;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
@@ -22,13 +20,19 @@
         .border-box;
     }
     .header {
+        .transition(height 0.2s ease-out);
         .type13;
         position: relative;
+        // Add height for animation.
+        height: 120px;
         padding: 30px;
         background: @bws-background;
         border-bottom: 1px solid @bws-border;
+        // Need to hide the larger elements during the animation.
+        overflow: hidden;
 
         h1 {
+            .transition(margin-top 0.1s ease-out);
             .type2;
             margin: -3px 0 5px 0;
         }
@@ -59,6 +63,25 @@
 
         i.sprite {
             display: block;
+        }
+    }
+    .collapsed {
+        .header {
+            // Change height for animation.
+            height: 40px;
+
+            h1 {
+                margin-top: 5px;
+            }
+        }
+        .yui3-tabview-panel {
+            top: 153px;
+            padding-top: 50px;
+        }
+        #sharing {
+            // Need to hide the sharing icons when scrolled otherwise
+            // it displays under the text.
+            display: none;
         }
     }
 }

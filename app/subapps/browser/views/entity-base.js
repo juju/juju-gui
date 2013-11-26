@@ -242,6 +242,27 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
+      Make the panel header collapse when you scroll
+
+      @method _setCollapsableHeader
+
+     */
+    _setCollapsableHeader: function() {
+      var detailsNode = Y.one('.bws-view-data .charmview'),
+          scrollable = detailsNode.one('.yui3-tabview-panel');
+      if (detailsNode) {
+        scrollable.on('scroll', function(e){
+          if(this.get('scrollTop') > 50){
+            detailsNode.addClass('collapsed');
+          }
+          else {
+            detailsNode.removeClass('collapsed');
+          }
+        });
+      }
+    },
+
+    /**
      * Load the charm's QA data and fill it into the tab when selected.
      *
      * @method _loadQAContent
@@ -431,6 +452,10 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         render: true,
         srcNode: this.get('container').one('.tabs')
       });
+      // Need to reset the scroll position on every tab change.
+      this.tabview.after('selectionChange', function(e) {
+        Y.one('.bws-view-data .yui3-tabview-panel').set('scrollTop', 0);
+      }, this);
     },
 
     /**

@@ -1,4 +1,6 @@
 .yui3-juju-browser-tabview {
+    position: static;
+
     .vertical {
         ul {
             float: left;
@@ -36,9 +38,17 @@
         }
     }
     .yui3-tabview-panel {
+        .transition(top 0.2s ease-out);
+        position: absolute;
+        top: 237px;
+        bottom: 0;
+        left: 0;
+        right: 0;
         padding: 0;
         background: inherit;
         border: none;
+        overflow-x: hidden;
+        overflow-y: auto;
 
         .yui3-tab-panel {
             .type9;

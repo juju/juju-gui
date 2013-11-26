@@ -361,16 +361,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
           this._renderRelatedCharms();
         }
       }
-
-      // XXX: Ideally we shouldn't have to do this; resetting the container
-      // with .empty or something before rendering the charm view should work.
-      // But it doesn't so we scroll the nav bar into view, load the charm
-      // view at the top of the content.
-      if (!templateData.forInspector) {
-        // Do NOT use scrollIntoView as IE will move the whole environment. We
-        // just reset the scrollTop directly which jumps, but works cross
-        // browser.
-        renderTo._node.scrollTop = 0;
+      else {
+          this._setCollapsableHeader();
       }
     },
 
