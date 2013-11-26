@@ -132,6 +132,9 @@ describe('test_model.js', function() {
       var wp0 = new models.ServiceUnit({
         id: 'wordpress/0',
         agent_state: 'pending'});
+      // The order of these errored units is important because there was an old
+      // long standing bug where if the first unit was in relation error it
+      // would drop the error status silently.
       var wp1 = new models.ServiceUnit({
         id: 'wordpress/2',
         agent_state: 'error',
