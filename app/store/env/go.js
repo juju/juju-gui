@@ -343,9 +343,10 @@ YUI.add('juju-env-go', function(Y) {
         this.failedAuthentication = !fromToken;
         this.failedTokenAuthentication = fromToken;
       }
-      this.fire('login',
-                {data: {result: this.userIsAuthenticated,
-                        fromToken: fromToken}});
+      this.fire(
+          'login',
+          {data: {result: this.userIsAuthenticated,
+                  fromToken: fromToken}});
     },
 
     /**

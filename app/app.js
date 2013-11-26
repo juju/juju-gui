@@ -923,11 +923,22 @@ YUI.add('juju-gui', function(Y) {
       );
     },
 
+    /**
+    Get the path to which we should redirect after logging in.  Clear it out
+    afterwards so it is clear that we've consumed it.
+
+    This is logic from the onLogin method factored out to make it easier to
+    test.
+
+    @method popLoginRedirectPath
+    @private
+    @return {String} the path to which we should redirect.
+    */
     popLoginRedirectPath: function() {
       var result = this.redirectPath;
       delete this.redirectPath;
       var currentPath = this.get('currentUrl');
-      var loginPath = /^\/login\//;
+      var loginPath = /^\/login(\/|$)/;
       if (currentPath !== '/' && !loginPath.test(currentPath)) {
         // We used existing credentials or a token to go directly to a url.
         result = currentPath;
@@ -961,8 +972,8 @@ YUI.add('juju-gui', function(Y) {
             this.db.notifications.add(
                 new models.Notification({
                   title: 'Logged in with Token',
-                  message: 'You have successfully logged in with a ' +
-                           'single-use authentication token.',
+                  message: ('You have successfully logged in with a ' +
+                            'single-use authentication token.'),
                   level: 'important'
                 })
             );
@@ -1289,7 +1300,8 @@ YUI.add('juju-gui', function(Y) {
          */
         getter: function() {
           // The result is a normalized version of the currentURL.
-          // Specifically, it omits any authtokens.
+          // Specifically, it omits any authtokens and uses our standard path
+          // normalizing tool (currently the nsRouter).
           var nsRouter = this.nsRouter;
           // `this.location` is a test-friendly access of window.location.
           var routes = nsRouter.parse(this.location.toString());

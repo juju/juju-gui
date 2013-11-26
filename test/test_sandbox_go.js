@@ -220,6 +220,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.tokenLogin('demoToken');
     });
 
+    it('can return environment information.', function(done) {
+      // See FakeBackend's initialization for these default values.
+      var data = {
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Response: {
+            ProviderType: state.get('providerType'),
+            DefaultSeries: state.get('defaultSeries'),
+            Name: 'Sandbox'}};
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
     it('can start the AllWatcher', function(done) {
       var data = {
         Type: 'Client',

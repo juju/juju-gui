@@ -408,12 +408,14 @@ function injectData(app, data) {
     });
 
     it('login method handler is called after successful login', function(done) {
-      var oldOnLogin = Y.juju.App.onLogin;
+      var oldOnLogin = Y.juju.App.prototype.onLogin;
       Y.juju.App.prototype.onLogin = function(e) {
+        // Clean up.
+        Y.juju.App.prototype.onLogin = oldOnLogin;
+        // Begin assertions.
         assert.equal(conn.messages.length, 1);
         assertIsLogin(conn.last_message());
         assert.isTrue(e.data.result, true);
-        Y.juju.App.onLogin = oldOnLogin;
         done();
       };
       var app = new Y.juju.App({ env: env, viewContainer: container });
@@ -421,6 +423,50 @@ function injectData(app, data) {
       app.env.userIsAuthenticated = true;
       app.env.login();
       app.destroy(true);
+    });
+
+    it('creates a notification if logged in with a token', function(done) {
+      // We need to change the prototype before we instantiate.
+      // See the "this.reset()" call in the callback below that cleans up.
+      var stub = utils.makeStubMethod(Y.juju.App.prototype, 'onLogin');
+      var app = makeApp(false);
+      utils.makeStubMethod(app, 'hideMask');
+      app.redirectPath = '/foo/bar/';
+      app.location = {
+        toString: function() {return '/login/';},
+        search: '?authtoken=demoToken'};
+      utils.makeStubMethod(app.env, 'onceAfter');
+      utils.makeStubMethod(app, 'navigate');
+      stub.addCallback(function() {
+        // Clean up.
+        this.reset();
+        // Begin assertions.
+        var e = this.lastArguments()[0];
+        // These two really simply verify that our test prep did what we
+        // expected.
+        assert.isTrue(e.data.result);
+        assert.isTrue(e.data.fromToken);
+        this.passThroughToOriginalMethod(app);
+        assert.isTrue(app.hideMask.calledOnce());
+        assert.isTrue(app.env.onceAfter.calledOnce());
+        var onceAfterArgs = app.env.onceAfter.lastArguments();
+        assert.equal(onceAfterArgs[0], 'environmentNameChange');
+        // Call the event handler so we can verify what it does.
+        onceAfterArgs[1].call(onceAfterArgs[2]);
+        assert.equal(
+            app.db.notifications.item(0).get('title'),
+            'Logged in with Token');
+        assert.isTrue(app.navigate.calledOnce());
+        var navigateArgs = app.navigate.lastArguments();
+        assert.equal(navigateArgs[0], '/foo/bar/');
+        assert.deepEqual(navigateArgs[1], {overrideAllNamespaces: true});
+        done();
+      });
+      env.setCredentials(null);
+      env.connect();
+      conn.msg({
+        RequestId: conn.last_message().RequestId,
+        Response: {AuthTag: 'tokenuser', Password: 'tokenpasswd'}});
     });
 
     it('tries to log in on first connection', function(done) {
@@ -452,6 +498,96 @@ function injectData(app, data) {
       env.logout();
       assert.equal(false, env.userIsAuthenticated);
       assert.equal(null, env.getCredentials());
+    });
+
+    it('normally uses window.location', function() {
+      // A lot of the app's authentication dance uses window.location,
+      // both for redirects after login and for authtokens.  For tests,
+      // the app copies window.location to app.location, so that we
+      // can easily override it.  This test verifies that the initialization
+      // actually does stash window.location as we exprect.
+      var app = makeApp(false);
+      assert.strictEqual(window.location, app.location);
+    });
+
+    describe('popLoginRedirectPath', function() {
+      it('returns and clears redirectPath', function() {
+        var app = makeApp(false);
+        app.redirectPath = '/foo/bar/';
+        app.location = {toString: function() {return '/login/';}};
+        assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
+        assert.isUndefined(app.redirectPath);
+      });
+
+      it('prefers the current path if not login', function() {
+        var app = makeApp(false);
+        app.redirectPath = '/';
+        app.location = {toString: function() {return '/foo/bar/';}};
+        assert.equal(app.popLoginRedirectPath(), '/foo/bar/');
+        assert.isUndefined(app.redirectPath);
+      });
+
+      it('uses root if the redirectPath is /login/', function() {
+        var app = makeApp(false);
+        app.redirectPath = '/login/';
+        app.location = {toString: function() {return '/login/';}};
+        assert.equal(app.popLoginRedirectPath(), '/');
+        assert.isUndefined(app.redirectPath);
+      });
+
+      it('uses root if the redirectPath is /login', function() {
+        var app = makeApp(false);
+        // Missing trailing slash is only difference from previous test.
+        app.redirectPath = '/login';
+        app.location = {toString: function() {return '/login';}};
+        assert.equal(app.popLoginRedirectPath(), '/');
+        assert.isUndefined(app.redirectPath);
+      });
+    });
+
+    describe('currentUrl', function() {
+      it('returns the full current path', function() {
+        var app = makeApp(false);
+        var expected = '/foo/bar/';
+        app.location = {
+          toString: function() {return 'https://foo.com' + expected;}};
+        assert.equal(expected, app.get('currentUrl'));
+        expected = '/';
+        assert.equal(expected, app.get('currentUrl'));
+        expected = '/foo/?bar=bing#shazam';
+        assert.equal(expected, app.get('currentUrl'));
+      });
+
+      it('ignores authtokens', function() {
+        // This is intended to be the canonical current path.  This should
+        // never include authtokens, which are transient and can never be
+        // re-used.
+        var app = makeApp(false);
+        var expected_path = '/foo/bar/';
+        var expected_querystring = '';
+        var expected_hash = '';
+        var expected = function(add_authtoken) {
+          var result = expected_path;
+          var querystring = expected_querystring;
+          if (add_authtoken) {
+            querystring += '&authtoken=demoToken';
+          }
+          if (querystring) {
+            result += '?' + querystring;
+          }
+          result += expected_hash;
+          return result;
+        };
+        app.location = {
+          toString: function() {return 'https://foo.com' + expected(true);}};
+        assert.equal(expected(), app.get('currentUrl'));
+        expected_path = '/';
+        assert.equal(expected(), app.get('currentUrl'));
+        expected_path = '/foo/';
+        expected_querystring = 'bar=bing';
+        expected_hash = '#shazam';
+        assert.equal(expected(), app.get('currentUrl'));
+      });
     });
 
   });
