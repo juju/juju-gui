@@ -44,6 +44,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.destroy();
     });
 
+    // These duplicate more thorough tests in test_env_go.js.
     test('the user is initially assumed to be unauthenticated', function() {
       assert.isFalse(env.userIsAuthenticated);
     });

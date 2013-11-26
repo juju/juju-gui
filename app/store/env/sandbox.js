@@ -820,6 +820,32 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+    Handle GUIToken Login messages to the state object.
+
+    @method handleGUITokenLogin
+    @param {Object} data The contents of the API arguments.
+    @param {Object} client The active ClientConnection.
+    @param {Object} state An instance of FakeBackend.
+    @return {undefined} Side effects only.
+    */
+    handleGUITokenLogin: function(data, client, state) {
+      var response = state.tokenlogin(data.Params.Token);
+      if (response) {
+        client.receive({
+          RequestId: data.RequestId,
+          Response: {AuthTag: response[0], Password: response[1]}
+        });
+      } else {
+        client.receive({
+          RequestId: data.RequestId,
+          Error: 'unknown, fulfilled, or expired token',
+          ErrorCode: 'unauthorized access',
+          Response: {}
+        });
+      }
+    },
+
+    /**
     Handle EnvironmentView messages.
 
     @method handleClientEnvironmentInfo
@@ -830,9 +856,12 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientEnvironmentInfo: function(data, client, state) {
       client.receive({
-        ProviderType: state.get('providerType'),
-        DefaultSeries: state.get('defaultSeries'),
-        Name: 'Sandbox'
+        RequestId: data.RequestId,
+        Response: {
+          ProviderType: state.get('providerType'),
+          DefaultSeries: state.get('defaultSeries'),
+          Name: 'Sandbox'
+        }
       });
     },
 

@@ -44,6 +44,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   FakeBackend.NAME = 'fake-backend';
   FakeBackend.ATTRS = {
     authorizedUsers: {value: {'admin': 'password'}},
+    token: {value: 'demoToken'},
     authenticated: {value: false},
     store: {required: true},
     defaultSeries: {value: 'precise'},
@@ -169,6 +170,26 @@ YUI.add('juju-env-fakebackend', function(Y) {
           authenticated = password === submittedPassword;
       this.set('authenticated', authenticated);
       return authenticated;
+    },
+
+
+    /**
+    Attempt to log a user in with a token.
+
+    @method tokenlogin
+    @param {String} submittedToken The authentication token.
+    @return {Array} [username, password] if successful, or else undefined.
+    */
+    tokenlogin: function(submittedToken) {
+      var token = this.get('token'),
+          authorizedUsers = this.get('authorizedUsers'),
+          authenticated = token === submittedToken;
+      this.set('authenticated', authenticated);
+      if (authenticated) {
+        var username = Object.keys(authorizedUsers)[0];
+        var password = authorizedUsers[username];
+        return [username, password];
+      }
     },
 
     /**
