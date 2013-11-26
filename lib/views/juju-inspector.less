@@ -886,6 +886,11 @@
                 border-top: 1px solid @inspector-divider-top;
                 background-position: 20px center;
                 background-repeat: no-repeat;
+                display: -ms-flexbox;
+                -ms-flex-align: baseline;
+                display: flex;
+                align-content: stretch;
+                align-items: baseline;
 
                 span {
                     margin-right: 5px;
@@ -895,18 +900,41 @@
                     background: #fff;
                 }
 
+                .category-label {
+                    text-overflow: ellipsis;
+                    white-space: normal;
+                    overflow: hidden;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
+
                 .chevron {
                     display: inline-block;
-                    vertical-align: 15%;
+                    /* The above rule is required because IE10 does not support
+                    the flexbox rules that we need. It has no effect in the
+                    other supported browsers. */
                     width: 10px;
-                    height: 3px;
+                    height: 5px; // magic number warning see below.
+                    /* For whatever reason this combination of flexbox and inline-block
+                    Does not allow padding-bottom to work in IE10, changing the height
+                    of the element puts the chevron in the appropriate place in all browsers */
                     margin-left: 5px;
                     background: url("/juju-ui/assets/images/chevron_up.png") no-repeat;
                 }
             }
 
+            .closed-unit-list .category-label {
+                white-space: nowrap;
+            }
+
             .closed-unit-list .chevron {
                 background: url("/juju-ui/assets/images/chevron_down.png") no-repeat;
+            }
+
+            .status-unit-header {
+                background-position: 15px 19px;
             }
 
             .status-unit-header.error {
@@ -921,8 +949,7 @@
             .status-unit-header.pending {
                 background-image: url("/juju-ui/assets/images/inspector-charm-pending.png");
             }
-            .status-unit-header.landscape-needs-reboot,
-            .status-unit-header.landscape-security-upgrades {
+            .status-unit-header.landscape {
                 background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
 
@@ -970,17 +997,7 @@
                     margin: 0 3px 0;
                     background: #CBCBCB;
                 }
-                &.pending {
-                    .action-button-wrapper {
-                        display: none;
-                    }
-                }
-                &.running {
-                    .resolve,
-                    .retry {
-                        display: none;
-                    }
-                }
+
             }
 
             .status-unit-content.running ul li {

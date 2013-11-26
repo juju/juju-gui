@@ -591,7 +591,7 @@ YUI.add('juju-models', function(Y) {
           units_for_service = service.get('units');
 
       units_for_service.each(function(unit) {
-        var state = utils.simplifyState(unit);
+        var state = utils.determineCategoryType(utils.simplifyState(unit));
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         } else {

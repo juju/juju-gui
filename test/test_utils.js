@@ -712,30 +712,19 @@ describe('utilities', function() {
       assert.strictEqual('running', simplifyState(unit));
     });
 
-    it('returns "error" if there is a relation error', function() {
-      var unit = makeUnit('started', true); // Add a relation error.
-      assert.strictEqual('error', simplifyState(unit));
-    });
-
-    it('has the ability to ignore relation errors', function() {
-      var unit = makeUnit('started', true); // Add a relation error.
-      var result = simplifyState(unit, true); // Ignore relation errors.
-      assert.strictEqual('running', result);
-    });
-
     it('translates service error states correctly', function() {
       var states = ['install-error', 'foo-error', '-error', 'error'];
       states.forEach(function(state) {
         var unit = makeUnit(state);
-        assert.strictEqual('error', simplifyState(unit), state);
+        assert.strictEqual(simplifyState(unit), 'error', state);
       });
     });
 
     it('translates service pending states correctly', function() {
       var states = ['pending', 'installed', 'waiting', 'stopped'];
-      states.forEach(function(state) {
+      states.forEach(function(state, index) {
         var unit = makeUnit(state);
-        assert.strictEqual('pending', simplifyState(unit), state);
+        assert.strictEqual(simplifyState(unit), states[index], state);
       });
     });
 
