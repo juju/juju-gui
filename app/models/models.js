@@ -601,14 +601,16 @@ YUI.add('juju-models', function(Y) {
           aggregate_map[state] = 1;
         } else {
           aggregate_map[state] += 1;
-          if (state === 'error') {
-            // If in error status then we need to parse out why it's in error.
-            var info = unit.agent_state_info;
-            if (info !== undefined && info.indexOf('failed') > -1) {
-              // If we parse more than the relation info then split this out
-              if (info.indexOf('relation') > -1) {
-                var stateData = unit.agent_state_data,
-                    farService = stateData['remote-unit'].split('/')[0];
+        }
+        if (state === 'error') {
+          // If in error status then we need to parse out why it's in error.
+          var info = unit.agent_state_info;
+          if (info !== undefined && info.indexOf('failed') > -1) {
+            // If we parse more than the relation info then split this out
+            if (info.indexOf('relation') > -1) {
+              var stateData = unit.agent_state_data;
+              if (stateData) {
+                var farService = stateData['remote-unit'].split('/')[0];
                 if (farService) {
                   relationError[farService] = stateData.hook;
                 }

@@ -133,10 +133,6 @@ describe('test_model.js', function() {
         id: 'wordpress/0',
         agent_state: 'pending'});
       var wp1 = new models.ServiceUnit({
-        id: 'wordpress/1',
-        agent_state: 'error',
-        agent_state_info: 'hook failed: "install"'});
-      var wp2 = new models.ServiceUnit({
         id: 'wordpress/2',
         agent_state: 'error',
         agent_state_info: 'hook failed: "db-relation-changed"',
@@ -144,8 +140,11 @@ describe('test_model.js', function() {
           hook: 'db-relation-changed',
           'relation-id': 1,
           'remote-unit': 'mysql/0'
-        }
-      });
+        }});
+      var wp2 = new models.ServiceUnit({
+        id: 'wordpress/1',
+        agent_state: 'error',
+        agent_state_info: 'hook failed: "install"'});
       wordpress.get('units').add([wp0, wp1, wp2]);
 
       assert.deepEqual(mysql.get('units')
