@@ -518,7 +518,7 @@ YUI.add('juju-gui', function(Y) {
             // This will look like ?authtoken=AUTHTOKEN.  For instance,
             // in the sandbox, try logging in with ?authtoken=demoToken.
             // To get a real token from the Juju GUI charm's environment
-            // proxy, withing an authenticated websocket session, use a
+            // proxy, within an authenticated websocket session, use a
             // request like this:
             // {
             //   'RequestId': 42,

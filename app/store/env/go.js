@@ -339,7 +339,7 @@ YUI.add('juju-env-go', function(Y) {
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
-        // Indicate if the authentication were from a token.
+        // Indicate if the authentication was from a token.
         this.failedAuthentication = !fromToken;
         this.failedTokenAuthentication = fromToken;
       }
