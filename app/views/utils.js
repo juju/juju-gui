@@ -1686,6 +1686,12 @@ YUI.add('juju-view-utils', function(Y) {
     /*jshint debug:false */
   });
 
+  Y.Handlebars.registerHelper('relationStatus', function(value, errors) {
+    if (errors[value]) {
+      return 'error';
+    }
+  });
+
   /*
    * Extension for views to provide an apiFailure method.
    *

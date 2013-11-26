@@ -4,7 +4,7 @@
 </div>
 {{/unless}}
 {{#relations}}
-  <h3>{{far.service}}</h3>
+  <div class="relation-label {{relationStatus far.service ../errors}}"><h3>{{far.service}}</h3></div>
   <h4>Interface: {{interface}}</h4>
   <h4>Name: {{near.name}}</h4>
   <h4>Role: {{near.role}}</h4>
