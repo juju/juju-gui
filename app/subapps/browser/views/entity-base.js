@@ -454,7 +454,10 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       });
       // Need to reset the scroll position on every tab change.
       this.tabview.after('selectionChange', function(e) {
-        Y.one('.bws-view-data .yui3-tabview-panel').set('scrollTop', 0);
+        var panel = Y.one('.bws-view-data .yui3-tabview-panel');
+        if (panel) {
+          panel.set('scrollTop', 0);
+        }
       }, this);
     },
 
