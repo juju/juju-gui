@@ -252,7 +252,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
           scrollable = detailsNode.one('.yui3-tabview-panel');
       if (detailsNode) {
         scrollable.on('scroll', function(e) {
-          if(this.get('scrollTop') > 50){
+          if (this.get('scrollTop') > 50) {
             detailsNode.addClass('collapsed');
           }
           else {

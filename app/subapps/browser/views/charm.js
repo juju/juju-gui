@@ -362,7 +362,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         }
       }
       else {
-          this._setCollapsableHeader();
+        this._setCollapsableHeader();
       }
     },
 
