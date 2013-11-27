@@ -248,9 +248,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
      */
     _setCollapsableHeader: function() {
-      var detailsNode = Y.one('.bws-view-data .charmview'),
-          scrollable = detailsNode.one('.yui3-tabview-panel');
+      var detailsNode = Y.one('.bws-view-data .charmview');
       if (detailsNode) {
+        var scrollable = detailsNode.one('.yui3-tabview-panel');
         scrollable.on('scroll', function(e) {
           if (this.get('scrollTop') > 50) {
             detailsNode.addClass('collapsed');
