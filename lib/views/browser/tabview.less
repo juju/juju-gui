@@ -53,7 +53,7 @@
         .yui3-tab-panel {
             .type9;
             .border-box;
-            padding: 0 70px 0 @tabview-left-padding;
+            padding: 50px 70px 50px @tabview-left-padding;
 
             a:hover {
                 text-decoration: underline;
@@ -66,9 +66,17 @@
                 margin: 40px 0 20px;
                 padding-bottom: 0;
                 border-bottom: 0;
+
+                &:first-child {
+                    margin-top: 0;
+                }
             }
             p {
                 line-height: 1.6;
+
+                &:first-child {
+                    margin-top: 0;
+                }
             }
             ul, ol {
                 margin: 0;
