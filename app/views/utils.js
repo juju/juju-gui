@@ -1690,10 +1690,10 @@ YUI.add('juju-view-utils', function(Y) {
   // normal and peer relations.
   Y.Handlebars.registerHelper('relationStatus', function(relation, errors) {
     var serviceName = '';
-    if (!relation.far) { // It's a peer relation
-      serviceName = relation.near.service;
-    } else {
+    if (relation.far) {
       serviceName = relation.far.service;
+    } else { // It's a peer relation
+      serviceName = relation.near.service;
     }
     if (errors[serviceName]) { return 'error'; }
   });
@@ -1701,10 +1701,10 @@ YUI.add('juju-view-utils', function(Y) {
   // Returns the proper service name to support peer and normal relations for
   // the relations tab in the juju-gui.
   Y.Handlebars.registerHelper('relationServiceName', function(relation) {
-    if (!relation.far) { // It's a peer relation
-      return relation.near.service;
-    } else {
+    if (relation.far) {
       return relation.far.service;
+    } else { // It's a peer relation
+      return relation.near.service;
     }
   });
 
