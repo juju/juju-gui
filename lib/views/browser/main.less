@@ -120,6 +120,19 @@
       width: 100%;
       overflow: visible;
       box-shadow: none;
+
+      .yui3-tabview {
+        position: relative;
+
+        .yui3-tabview-panel {
+            position: static;
+            width: @bws-panel-width;
+
+            .yui3-tab-panel {
+                padding-top: 0;
+            }
+        }
+      }
     }
     #bws-search {
       .search-results {
