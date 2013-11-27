@@ -500,6 +500,9 @@ YUI.add('juju-gui', function(Y) {
       });
       this.endpointsController.bind();
 
+      // Stash the location object so that tests can override it.
+      this.location = window.location;
+
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
@@ -511,7 +514,33 @@ YUI.add('juju-gui', function(Y) {
           if (credentials && credentials.areAvailable) {
             this.env.login();
           } else {
-            this.checkUserCredentials();
+            // The user can also try to log in with an authentication token.
+            // This will look like ?authtoken=AUTHTOKEN.  For instance,
+            // in the sandbox, try logging in with ?authtoken=demoToken.
+            // To get a real token from the Juju GUI charm's environment
+            // proxy, within an authenticated websocket session, use a
+            // request like this:
+            // {
+            //   'RequestId': 42,
+            //   'Type': 'GUIToken',
+            //   'Request': 'Create',
+            //   'Params': {},
+            // }
+            // You can then use the token once until it expires, within two
+            // minutes of this writing.
+            var querystring = this.location.search.substring(1);
+            var qs = Y.QueryString.parse(querystring);
+            var authtoken = qs.authtoken;
+            if (Y.Lang.isValue(authtoken)) {
+              // De-dupe if necessary.
+              if (Y.Lang.isArray(authtoken)) {
+                authtoken = authtoken[0];
+              }
+              // Try a token login.
+              this.env.tokenLogin(authtoken);
+            } else {
+              this.checkUserCredentials();
+            }
           }
         }
       }, this);
@@ -895,6 +924,31 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+    Get the path to which we should redirect after logging in.  Clear it out
+    afterwards so it is clear that we've consumed it.
+
+    This is logic from the onLogin method factored out to make it easier to
+    test.
+
+    @method popLoginRedirectPath
+    @private
+    @return {String} the path to which we should redirect.
+    */
+    popLoginRedirectPath: function() {
+      var result = this.redirectPath;
+      delete this.redirectPath;
+      var currentPath = this.get('currentUrl');
+      var loginPath = /^\/login(\/|$)/;
+      if (currentPath !== '/' && !loginPath.test(currentPath)) {
+        // We used existing credentials or a token to go directly to a url.
+        result = currentPath;
+      } else if (!result || loginPath.test(result)) {
+        result = '/';
+      }
+      return result;
+    },
+
+    /**
      * Hide the login mask and redispatch the router.
      *
      * When the environment gets a response from a login attempt,
@@ -906,25 +960,31 @@ YUI.add('juju-gui', function(Y) {
      */
     onLogin: function(e) {
       if (e.data.result) {
-        // We need to save the url to continue on to without redirecting
-        // to root if there are extra path details.
+        // The login was a success.
         this.hideMask();
-        var originalPath = this.get('currentUrl');
-        if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
-          this.redirectPath = originalPath;
+        var redirectPath = this.popLoginRedirectPath();
+        // Handle token authentication.
+        if (e.data.fromToken) {
+          // Alert the user.  In the future, we might want to call out the
+          // password so the user can note it.  That will probably want a
+          // modal or similar.
+          this.env.onceAfter('environmentNameChange', function() {
+            this.db.notifications.add(
+                new models.Notification({
+                  title: 'Logged in with Token',
+                  message: ('You have successfully logged in with a ' +
+                            'single-use authentication token.'),
+                  level: 'important'
+                })
+            );
+          }, this);
         }
-        if (originalPath.match(/login/) && this.redirectPath === '/') {
+        if (redirectPath === '/') {
           setTimeout(
               Y.bind(this.showRootView, this), 0);
           return;
         } else {
-          var nsRouter = this.nsRouter;
-
-          this.navigate(
-              nsRouter.url(nsRouter.parse(this.redirectPath)),
-              {overrideAllNamespaces: true});
-          this.redirectPath = null;
-          return;
+          this.navigate(redirectPath, {overrideAllNamespaces: true});
         }
       } else {
         this.showLogin();
@@ -1239,11 +1299,25 @@ YUI.add('juju-gui', function(Y) {
          * @attribute currentUrl.getter
          */
         getter: function() {
-          return [
-            window.location.pathname,
-            window.location.search,
-            window.location.hash
-          ].join('');
+          // The result is a normalized version of the currentURL.
+          // Specifically, it omits any authtokens and uses our standard path
+          // normalizing tool (currently the nsRouter).
+          var nsRouter = this.nsRouter;
+          // `this.location` is a test-friendly access of window.location.
+          var routes = nsRouter.parse(this.location.toString());
+          if (routes.search) {
+            var qs = Y.QueryString.parse(routes.search);
+            var authtoken = qs.authtoken;
+            if (Y.Lang.isValue(authtoken)) {
+              // Remove the token from the URL.  It is a one-shot, designed to
+              // be consumed.  We don't want it to be in the URL after it has
+              // been used.
+              delete qs.authtoken;
+              routes.search = Y.QueryString.stringify(qs);
+            }
+          }
+          // Use the nsRouter to normalize.
+          return nsRouter.url(routes);
         }
       },
       /**
@@ -1358,6 +1432,7 @@ YUI.add('juju-gui', function(Y) {
     'model',
     'app-cookies-extension',
     'cookie',
+    'querystring',
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',

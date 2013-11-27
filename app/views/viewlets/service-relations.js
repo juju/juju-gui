@@ -33,19 +33,15 @@ YUI.add('viewlet-service-relations', function(Y) {
     template: templates['service-relations-viewlet'],
 
     bindings: {
-      aggregateRelations: {
+      relationChangeTrigger: {
         'update': function(node, value) {
           var db = this.viewlet.options.db;
           var service = this.viewlet.model;
           var relations = utils.getRelationDataForService(db, service);
           node.setHTML(templates['service-relations-list']({
-            relations: relations
+            relations: relations,
+            errors: value && value.error
           }));
-        }
-      },
-      aggregateRelationError: {
-        'update': function(node, value) {
-          // Aggregate the unit statuses here to display the relation status
         }
       }
     }

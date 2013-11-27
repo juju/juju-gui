@@ -45,6 +45,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
+      // We need to clear any credentials stored in sessionStorage.
+      env.setCredentials(null);
       env.destroy();
       client.destroy();
       juju.destroy();
@@ -152,6 +154,91 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.connect();
       env.setCredentials({user: 'admin', password: 'password'});
       env.login();
+    });
+
+    it('can log in with a token.', function(done) {
+      // See FakeBackend's initialization for these default authentication
+      // values.
+      var data = {
+        Type: 'GUIToken',
+        Request: 'Login',
+        Params: {
+          Token: 'demoToken'
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42, Response: {AuthTag: 'admin', Password: 'password'}};
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.isTrue(state.get('authenticated'));
+        done();
+      };
+      state.logout();
+      assert.isFalse(state.get('authenticated'));
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('does not log in with a bad token.', function(done) {
+      // See FakeBackend's initialization for these default authentication
+      // values.
+      var data = {
+        Type: 'GUIToken',
+        Request: 'Login',
+        Params: {
+          Token: 'badToken'
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Error: 'unknown, fulfilled, or expired token',
+          ErrorCode: 'unauthorized access',
+          Response: {}};
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        assert.isFalse(state.get('authenticated'));
+        done();
+      };
+      state.logout();
+      assert.isFalse(state.get('authenticated'));
+      client.open();
+      client.send(Y.JSON.stringify(data));
+    });
+
+    it('can log in with a token (environment integration).', function(done) {
+      state.logout();
+      env.after('login', function() {
+        assert.isTrue(env.userIsAuthenticated);
+        assert.deepEqual(env.getCredentials(),
+                         {user: 'admin', password: 'password'});
+        done();
+      });
+      env.connect();
+      assert.isFalse(env.getCredentials().areAvailable);
+      env.tokenLogin('demoToken');
+    });
+
+    it('can return environment information.', function(done) {
+      // See FakeBackend's initialization for these default values.
+      var data = {
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        RequestId: 42
+      };
+      client.onmessage = function(received) {
+        var expected = {
+          RequestId: 42,
+          Response: {
+            ProviderType: state.get('providerType'),
+            DefaultSeries: state.get('defaultSeries'),
+            Name: 'Sandbox'}};
+        assert.deepEqual(Y.JSON.parse(received.data), expected);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(data));
     });
 
     it('can start the AllWatcher', function(done) {

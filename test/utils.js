@@ -24,6 +24,77 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
   jujuTests.utils = {
 
+    /**
+     * Make a stub function.  Pass in 0 or more arguments to become responses
+     * that the function cycles through.
+     *
+     * @method makeStubFunction
+     * @return {Function} the new stub function.
+     */
+    makeStubFunction: function() {
+      var responses = Array.prototype.slice.call(arguments, 0);
+      if (responses.length === 0) {
+        responses.push(undefined);
+      }
+      var f = function() {
+        var response = responses[(f._allArguments.length) % responses.length];
+        f._allArguments.push(Array.prototype.slice.call(arguments, 0));
+        f._callbacks.forEach(function(cb) {cb.call(f);});
+        return response;
+      };
+      f._allArguments = [];
+      f._callbacks = [];
+      f.called = function() {
+        return !!f._allArguments.length;
+      };
+      f.calledOnce = function() {
+        return f._allArguments.length === 1;
+      };
+      f.callCount = function() {
+        return f._allArguments.length;
+      };
+      f.lastArguments = function() {
+        return f._allArguments[f._allArguments.length - 1];
+      };
+      f.allArguments = function() {
+        return f._allArguments.slice(0);
+      };
+      f.addCallback = function(cb) {
+        f._callbacks.push(cb);
+      };
+      return f;
+    },
+
+    /**
+     * Make a stub method.  Pass in 0 or more arguments to become responses
+     * that the method cycles through.
+     *
+     * The function has all introspection methods from makeMockFunction,
+     * plus "reset", which resets the object with the original value.
+     * This is pre-bound, so it is easy to pass in as a clean-up function.
+     *
+     * @method makeStubMethod
+     * @param {Object} context the object on which the method will sit.
+     * @param {String} name the name to be replaced.
+     * @return {Function} the new stub function.
+     */
+    makeStubMethod: function(context, name) {
+      var responses = Array.prototype.slice.call(arguments, 2);
+      var original = context[name];
+      var f = context[name] = jujuTests.utils.makeStubFunction.apply(
+          jujuTests.utils, responses);
+      f.reset = function() {
+        context[name] = original;
+      };
+      f.passThroughToOriginalMethod = function(instance) {
+        if (!Y.Lang.isValue(instance)) {
+          instance = context;
+        }
+        return original.apply(instance, f.lastArguments());
+      };
+      return f;
+    },
+
     makeContainer: function(id, visibleContainer) {
       var container = Y.Node.create('<div>');
       if (id) {

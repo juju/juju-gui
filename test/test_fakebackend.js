@@ -60,6 +60,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend.tokenlogin', function() {
+    var requires = ['node', 'juju-env-fakebackend'];
+    var Y, environmentsModule, fakebackend;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('authenticates', function() {
+      fakebackend = new environmentsModule.FakeBackend();
+      assert.equal(fakebackend.get('authenticated'), false);
+      assert.deepEqual(
+          fakebackend.tokenlogin('demoToken'), ['admin', 'password']);
+      assert.equal(fakebackend.get('authenticated'), true);
+    });
+
+    it('refuses to authenticate', function() {
+      fakebackend = new environmentsModule.FakeBackend();
+      assert.equal(fakebackend.get('authenticated'), false);
+      assert.isUndefined(fakebackend.tokenlogin('not the token'));
+      assert.equal(fakebackend.get('authenticated'), false);
+    });
+  });
+
   describe('FakeBackend.deploy', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];

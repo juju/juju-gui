@@ -317,21 +317,47 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @method handleLogin
      * @param {Object} data The response returned by the server.
+     * param {Bool} fromToken Whether the login request was via a token.
      * @return {undefined} Nothing.
      */
-    handleLogin: function(data) {
+    handleLogin: function(data, fromToken) {
+      fromToken = !!fromToken; // Normalize.
       this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.Error;
       if (this.userIsAuthenticated) {
+        // If this is a token login, set the credentials.
+        var response = data.Response;
+        if (response && response.AuthTag && response.Password) {
+          this.setCredentials({
+            user: response.AuthTag, password: response.Password});
+        }
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
         this._watchAll();
+        // Clean up for log out text.
+        this.failedAuthentication = this.failedTokenAuthentication = false;
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
-        this.failedAuthentication = true;
+        // Indicate if the authentication was from a token.
+        this.failedAuthentication = !fromToken;
+        this.failedTokenAuthentication = fromToken;
       }
-      this.fire('login', {data: {result: this.userIsAuthenticated}});
+      this.fire(
+          'login',
+          {data: {result: this.userIsAuthenticated,
+                  fromToken: fromToken}});
+    },
+
+    /**
+     * React to the results of sending a token login message to the server.
+     *
+     * @method handleTokenLogin
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleTokenLogin: function(data) {
+      this.handleLogin(data, true);
     },
 
     /**
@@ -365,6 +391,28 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
       }
+    },
+
+    /**
+     * Attempt to log the user in with a token.
+     *
+     * @method tokenLogin
+     * @return {undefined} Nothing.
+     */
+    tokenLogin: function(token) {
+      // If the user is already authenticated there is nothing to do.
+      if (this.userIsAuthenticated) {
+        this.fire('login', {data: {result: true}});
+        return;
+      }
+      if (this.pendingLoginResponse) {
+        return;
+      }
+      this._send_rpc({
+        Type: 'GUIToken',
+        Request: 'Login',
+        Params: {Token: token}
+      }, this.handleTokenLogin);
     },
 
     /**

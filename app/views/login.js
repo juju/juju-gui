@@ -95,14 +95,20 @@ YUI.add('juju-view-login', function(Y) {
           environment_name_node.get('text') : 'Environment');
       var provider_type = (
           provider_type_node ? provider_type_node.get('text') : '');
+      var error_text = '';
+      if (env.failedAuthentication) {
+        error_text = 'Unknown user or password.';
+      } else if (env.failedTokenAuthentication) {
+        error_text = (
+            'The one-time token was unknown, expired, or already used.');
+      }
       // In order to have events work and the view cleanly be replaced by
       // other views, we need to put the contents in the usual "container"
       // node, even though it is not a child of the mask node.
       this.get('container').setHTML(this.template({
         environment_name: environment_name,
         provider_type: provider_type,
-        error_text: (
-            env.failedAuthentication ? 'Unknown user or password.' : ''),
+        error_text: error_text,
         user: env.get('user') || env.defaultUser,
         help_text: this.get('help_text')
       }));
