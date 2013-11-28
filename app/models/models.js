@@ -191,18 +191,21 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Return true if this service life is "alive", false otherwise.
+      Return true if this service life is 'alive' or 'dying', false otherwise.
 
       A model instance is alive if its life cycle (i.e. the "life" attribute)
-      is set to "alive". Other possible values, as they arrive from the
-      juju-core delta stream, are "dying" and "dead", in which cases the
-      service is not considered alive.
+      is set to 'alive' or 'dying'. The other possible value, as they arrive
+      from the juju-core delta stream is 'dead'.
 
       @method isAlive
       @return {Boolean} Whether this service is alive.
      */
     isAlive: function() {
-      return this.get('life') === ALIVE || 'dying';
+      var life = this.get('life');
+      if (life === ALIVE || life === 'dying') {
+        return true;
+      }
+      return false;
     },
 
     /**

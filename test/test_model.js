@@ -1034,9 +1034,9 @@ describe('test_model.js', function() {
       assert.isTrue(django.isAlive());
     });
 
-    it('instances identify if they are not alive (dying or dead)', function() {
-      assert.isFalse(rails.isAlive(), rails.get('id'));
-      assert.isFalse(wordpress.isAlive(), wordpress.get('id'));
+    it('instances identify if they are not alive (dead)', function() {
+      assert.isTrue(rails.isAlive(), rails.get('id'));
+      assert.isTrue(wordpress.isAlive(), wordpress.get('id'));
       assert.isFalse(mysql.isAlive(), mysql.get('id'));
     });
 
@@ -1052,8 +1052,8 @@ describe('test_model.js', function() {
 
     it('can be filtered so that it returns only visible models', function() {
       var filtered = list.visible();
-      assert.strictEqual(2, filtered.size());
-      assert.deepEqual([django, wordpress], filtered.toArray());
+      assert.strictEqual(filtered.size(), 3);
+      assert.deepEqual(filtered.toArray()[rails, django, wordpress]);
     });
   });
 });

@@ -258,7 +258,7 @@ describe('service module events', function() {
     // There are five services in total.
     assert.strictEqual(5, db.services.size(), 'total');
     // But only three of those are actually displayed.
-    assert.strictEqual(3, Y.Object.size(boxes), 'displayed');
+    assert.strictEqual(4, Y.Object.size(boxes), 'displayed');
     // And they are the visible ones.
     assert.deepPropertyVal(boxes, 'haproxy.model', haproxy);
     assert.deepPropertyVal(boxes, 'django.model', django);
