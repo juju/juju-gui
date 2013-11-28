@@ -161,16 +161,11 @@ YUI.add('juju-view-environment', function(Y) {
               }
             });
 
-            if (started && service.get('life') === 'dying') {
-              var inspector = this.getInspector(service.get('packageName'));
-              if (inspector) { inspector.viewletManager.destroy(); }
-              this.topo.fire('hideServiceMenu');
-            }
           }, this);
 
           // If the service is destroyed from the console then we need to
           // destroy the inspector and hide the service menu.
-          model.after(['lifeChange', 'destroy'], function(e) {
+          model.after(['destroy'], function(e) {
             var service = e.currentTarget;
             // The user can put the service in a dying state from the console
             // but it will not be destroyed if any of its units has errors.

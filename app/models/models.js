@@ -202,7 +202,7 @@ YUI.add('juju-models', function(Y) {
       @return {Boolean} Whether this service is alive.
      */
     isAlive: function() {
-      return this.get('life') === ALIVE;
+      return this.get('life') === ALIVE || 'dying';
     },
 
     /**
@@ -413,14 +413,10 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
-      Return a list of visible model instances.
+      Return a list of visible model instances. A model instance is visible
+      when it is alive or dying.
 
-      A model instance is visible when it is alive or when, even if it is dying
-      or dead, one or more of its units are in an error state.
-      In the latter case, we want to still display the service in order to
-      allow users to retry or resolve its units.
-
-      @method alive
+      @method visible
       @return {Y.ModelList} The resulting visible model instances.
     */
     visible: function() {
