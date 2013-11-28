@@ -248,15 +248,14 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
      */
     _setCollapsableHeader: function() {
-      var detailsNode = Y.one('.bws-view-data .charmview');
-      if (detailsNode) {
-        var scrollable = detailsNode.one('.yui3-tabview-panel');
+      var container = this.get('container');
+      if (container) {
+        var scrollable = container.one('.yui3-tabview-panel');
         scrollable.on('scroll', function(e) {
           if (this.get('scrollTop') > 50) {
-            detailsNode.addClass('collapsed');
-          }
-          else {
-            detailsNode.removeClass('collapsed');
+            container.addClass('collapsed');
+          } else {
+            container.removeClass('collapsed');
           }
         });
       }
@@ -448,13 +447,14 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
 
         @property tabview
       */
+      var container = this.get('container');
       this.tabview = new widgets.browser.TabView({
         render: true,
-        srcNode: this.get('container').one('.tabs')
+        srcNode: container.one('.tabs')
       });
       // Need to reset the scroll position on every tab change.
       this.tabview.after('selectionChange', function(e) {
-        var panel = Y.one('.bws-view-data .yui3-tabview-panel');
+        var panel = container.one('.yui3-tabview-panel');
         if (panel) {
           panel.set('scrollTop', 0);
         }
