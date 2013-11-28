@@ -593,10 +593,12 @@ YUI.add('juju-models', function(Y) {
     get_informative_states_for_service: function(service) {
       var aggregate_map = {},
           relationError = {},
-          units_for_service = service.get('units');
+          units_for_service = service.get('units'),
+          serviceLife = service.get('life');
 
       units_for_service.each(function(unit) {
-        var state = utils.determineCategoryType(utils.simplifyState(unit));
+        var state = utils.determineCategoryType(
+                              utils.simplifyState(unit, serviceLife));
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         } else {
@@ -633,9 +635,7 @@ YUI.add('juju-models', function(Y) {
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate[0]);
-
       service.set('relationChangeTrigger', { error: aggregate[1] });
-
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',

@@ -157,18 +157,8 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               unit.agent_state_info = undefined;
               unit.agent_state_data = {};
             } else if (roll <= 0.7) {
-              if (window.flags && window.flags.simPend) {
-                // Because the GUI does not yet support parsing the 'life'
-                // status attribute from core and including it in the
-                // aggregate status this is here to simply simulate the
-                // functionality in the inspector unit list, until it is.
-                if (roll <= 0.4) {
-                  unit.agent_state = 'dying';
-                } else if (roll <= 0.5) {
-                  unit.agent_state = 'installing';
-                } else {
-                  unit.agent_state = 'pending';
-                }
+              if (roll <= 0.5) {
+                unit.agent_state = 'installing';
               } else {
                 unit.agent_state = 'pending';
               }

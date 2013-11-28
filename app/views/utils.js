@@ -1232,14 +1232,20 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method simplifyState
     @param {Object} unit A service unit.
+    @param {String} life The life status of the units service.
     @return {String} the filtered agent state of the unit.
   */
-  utils.simplifyState = function(unit) {
+  utils.simplifyState = function(unit, life) {
     var state = unit.agent_state;
-    if (state === 'started') { return 'running'; }
-    if ((/-?error$/).test(state)) { return 'error'; }
-    // "pending", "installed", and "stopped", plus anything unforeseen
-    return state;
+    if (life === 'dying') {
+      return 'dying';
+    } else {
+      if (state === 'started') { return 'running'; }
+      if ((/-?error$/).test(state)) { return 'error'; }
+      // "pending", "installed", and "stopped", plus anything unforeseen
+      return state;
+    }
+
   };
 
   /**
@@ -1267,7 +1273,8 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method determineCategoryType
     @param {String} category The category name to test.
-    @param {String} The category type 'error', 'landscape', 'pending', 'running'
+    @return {String} The category type
+      'error', 'landscape', 'pending', 'running'
   */
   utils.determineCategoryType = function(category) {
     if ((/fail|error/).test(category)) { return 'error'; }

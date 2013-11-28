@@ -83,11 +83,14 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     [{ type: 'service', upgradeAvailable: true, upgradeTo: ...}].
     */
   function updateStatusList(unitList) {
+    // Disable: Possible strict violation for the entire function
+    /* jshint -W040 */
     var statuses = [],
-        unitByStatus = {};
+        unitByStatus = {},
+        serviceLife = this.model.get('life');
 
     unitList.each(function(unit) {
-      var category = utils.simplifyState(unit);
+      var category = utils.simplifyState(unit, serviceLife);
       // If the unit is in error we want it's category to be it's real error.
       if (category === 'error') { category = unit.agent_state_info; }
 
@@ -112,8 +115,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         units: unitByStatus[category]
       });
     });
-    // Disable: Possible strict violation
-    /* jshint -W040 */
+
     return sortStatuses(addCharmUpgrade(statuses, this.model));
   }
 
