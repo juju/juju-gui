@@ -1053,7 +1053,7 @@ describe('test_model.js', function() {
     it('can be filtered so that it returns only visible models', function() {
       var filtered = list.visible();
       assert.strictEqual(filtered.size(), 3);
-      assert.deepEqual(filtered.toArray()[rails, django, wordpress]);
+      assert.deepEqual(filtered.toArray(), [rails, django, wordpress]);
     });
   });
 });

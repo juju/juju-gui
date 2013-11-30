@@ -1236,12 +1236,13 @@ YUI.add('juju-view-utils', function(Y) {
     @return {String} the filtered agent state of the unit.
   */
   utils.simplifyState = function(unit, life) {
-    var state = unit.agent_state;
-    if (life === 'dying') {
+    var state = unit.agent_state,
+        inError = (/-?error$/).test(state);
+    if (life === 'dying' && !inError) {
       return 'dying';
     } else {
       if (state === 'started') { return 'running'; }
-      if ((/-?error$/).test(state)) { return 'error'; }
+      if (inError) { return 'error'; }
       // "pending", "installed", and "stopped", plus anything unforeseen
       return state;
     }
