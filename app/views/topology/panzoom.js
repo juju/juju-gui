@@ -259,8 +259,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
       topo.set('translate', Y.mix(evt.translate));
       vis.attr('transform', 'translate(' + topo.get('translate') + ')' +
               ' scale(' + topo.get('scale') + ')');
-      var bgPosition = evt.translate[0] + 'px ' + evt.translate[1] + 'px';
-      Y.one('.topology-canvas').setStyle('backgroundPosition', bgPosition);
+      var canvas = Y.one('.topology-canvas');
+      if (canvas) {
+        var bgPosition = evt.translate[0] + 'px ' + evt.translate[1] + 'px';
+        canvas.setStyle('backgroundPosition', bgPosition);
+      }
       topo.fire('rescaled');
     },
 
