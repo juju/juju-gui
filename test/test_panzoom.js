@@ -90,7 +90,7 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaleCalled);
      });
 
-  it('should have a lower limint on the slider',
+  it('should have a lower limit on the slider',
      function() {
        var evt = { scale: 0.18 };
        var rescaleCalled = false;
@@ -155,4 +155,13 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaled);
      });
 
+  it('should translate the background', function() {
+    var evt =
+        { scale: 1.0,
+          translate: [100, 100]};
+    pz.rescale(evt);
+    assert.equal(
+      viewContainer.one('.topology-canvas').getStyle('backgroundPosition'),
+      '100px 100px');
+  });
 });
