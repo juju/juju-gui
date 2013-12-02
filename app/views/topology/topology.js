@@ -115,6 +115,9 @@ YUI.add('juju-topology', function(Y) {
               .classed('topology-canvas', true);
       }
 
+      // Cache the canvas element for style modifications.
+      this.set('canvas', container.one('.topology-canvas'));
+
       svg = base.append('svg:svg')
                 .attr('width', width)
                 .attr('height', height);
@@ -245,6 +248,10 @@ YUI.add('juju-topology', function(Y) {
        * A bounding-box for all of the services
        */
       boundingBox: {},
+      /**
+       * @property {Y.Node} canvas
+       */
+      canvas: {},
       /**
        * @property {models.Database} db
        */
