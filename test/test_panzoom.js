@@ -161,7 +161,7 @@ describe('pan zoom module', function() {
           translate: [100, 100]};
     pz.rescale(evt);
     assert.equal(
-      viewContainer.one('.topology-canvas').getStyle('backgroundPosition'),
-      '100px 100px');
+        viewContainer.one('.topology-canvas').getStyle('backgroundPosition'),
+        '100px 100px');
   });
 });
