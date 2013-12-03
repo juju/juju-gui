@@ -99,14 +99,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
                   container.one('input[name=number-units]').get('value'), 10)),
           config;
 
-      if (utils.checkForExistingService(serviceName, options.db)) {
+      if (!utils.validateServiceName(serviceName, options.db)) {
         options.db.notifications.add(
             new models.Notification({
               title: 'Attempting to deploy service ' + serviceName,
-              message: 'A service with that name already exists.',
+              message: 'Service name is invalid.',
               level: 'error'
             }));
-        return;
+        return false;
       }
 
       // Check if a file has been uploaded and use that config.

@@ -58,6 +58,7 @@ describe('Ghost Inspector', function() {
       }
       view.destroy();
     }
+    db.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
     container.remove(true);
@@ -137,6 +138,24 @@ describe('Ghost Inspector', function() {
           {newVal: 'mediawiki42', currentTarget: serviceNameInput});
       assert.isFalse(serviceNameInput.hasClass('invalid'));
       assert.isTrue(serviceNameInput.hasClass('valid'));
+    });
+
+    it('won\'t let you deploy a service with an invalid name', function() {
+      db.services.add({id: 'mediawiki', charm: 'cs:precise/mediawiki'});
+      inspector = setUpInspector();
+      var newName = 'foo-2',
+          serviceNameInput = Y.one('input[name=service-name]');
+      // This is usually fired by an event.  The event simulation is broken as
+      // of this writing, and we can do more of a unit test this way.
+      serviceNameInput.set('value', newName);
+      inspector.updateGhostName(
+          {newVal: newName, currentTarget: serviceNameInput});
+      assert.isTrue(serviceNameInput.hasClass('invalid'));
+      assert.isFalse(serviceNameInput.hasClass('valid'));
+      inspector.options.env.deploy = function() {
+        assert.fail('The method should exit before this function is called.');
+      }
+      assert.isFalse(inspector.deployCharm());
     });
   });
 
