@@ -154,7 +154,7 @@ describe('Ghost Inspector', function() {
       assert.isFalse(serviceNameInput.hasClass('valid'));
       inspector.options.env.deploy = function() {
         assert.fail('The method should exit before this function is called.');
-      }
+      };
       assert.isFalse(inspector.deployCharm());
     });
   });
