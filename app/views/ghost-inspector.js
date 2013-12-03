@@ -270,7 +270,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
         db.notifications.add(
             new models.Notification({
               title: 'Error deploying ' + serviceName,
-              message: 'Could not deploy the requested service.',
+              message: 'Could not deploy the requested service. Server ' +
+                'responded with: ' + e.err,
               level: 'error'
             }));
         return;
