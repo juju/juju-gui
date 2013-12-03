@@ -104,6 +104,7 @@ YUI.add('viewlet-unit-details', function(Y) {
               data += '<li>' + key + ': ' + value[key] + '</li>';
             });
             node.one('ul').setHTML(data);
+            node.show();
           } else {
             node.hide();
           }

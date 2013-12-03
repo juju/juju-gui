@@ -155,12 +155,15 @@ YUI.add('juju-databinding', function(Y) {
 
       @method deltaFromChange
       @param {Array} modelChangeKeys array of {String} keys that have changed.
+      @param {Boolean} mixin if you want to mix the modelChangeKeys into the
+        changed value list or filter to use only those bindings. Default false.
       @return {Array} bindings array filtered by keys when present.
     */
-    function deltaFromChange(modelChangeKeys) {
+    function deltaFromChange(modelChangeKeys, mixin) {
       /* jshint -W040 */
       // Ignore 'possible strict violation'
       var bindings = this._bindings;
+      mixin = mixin || false;
       var result = {bindings: [], wildcards: {}};
       // Handle wildcards.
       result.wildcards = indexBindings(bindings, function(binding) {
@@ -172,19 +175,26 @@ YUI.add('juju-databinding', function(Y) {
 
       if (modelChangeKeys !== undefined && modelChangeKeys.length !== 0) {
         // In this branch of the the conditional, we only have a specific set
-        // of keys that have changed, so we want to limit the resulting
+        // of keys that have changed, so we may want to limit the resulting
         // bindings appropriately.
-        // Find the bindings that match the modelChangeKeys.
-        var filteredBindings = bindings.filter(function(binding) {
-          // Change events don't honor nested key paths. This means
-          // we may update bindings that impact multiple DOM nodes
-          // (our granularity is too low).
-          return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
-        });
+        var filteredBindings;
+        if (mixin) {
+          filteredBindings = bindings;
+        } else {
+          // Find the bindings that match the modelChangeKeys.
+          filteredBindings = bindings.filter(function(binding) {
+            // Change events don't honor nested key paths. This means
+            // we may update bindings that impact multiple DOM nodes
+            // (our granularity is too low).
+            return (modelChangeKeys.indexOf(binding.name.split('.')[0]) > -1);
+          });
+        }
+
         // Add dependents.
         // We make an index of all bindings to help with this.
         var index = indexBindings(bindings, null, true);
         var added = {};
+
         filteredBindings.forEach(function(binding) {
           if (binding.name === '*' ||
               binding.name === '+') {
@@ -858,7 +868,8 @@ YUI.add('juju-databinding', function(Y) {
           }
         }, this);
       }
-      delta = deltaFromChange.call(this, this._unappliedChanges);
+
+      delta = deltaFromChange.call(this, this._unappliedChanges, true);
 
       if (this._updateTimeout) {
         this._updateTimeout.cancel();
@@ -905,7 +916,6 @@ YUI.add('juju-databinding', function(Y) {
       // identify conflicts and handle them.
       //
       // This is all done per-binding in the forEach loop below.
-
       var bindingEngine = this;
 
       // updateDOM applies all the changes clearing the buffer.
