@@ -612,7 +612,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_remove_units: function(data) {
       var res = this.get('state').removeUnits(data.unit_names);
-      if (res.error.length > 0) {
+      if (res.error && res.error.length > 0) {
         data.err = res.error;
         data.result = false;
       } else {
