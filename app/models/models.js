@@ -191,18 +191,21 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Return true if this service life is "alive", false otherwise.
+      Return true if this service life is 'alive' or 'dying', false otherwise.
 
       A model instance is alive if its life cycle (i.e. the "life" attribute)
-      is set to "alive". Other possible values, as they arrive from the
-      juju-core delta stream, are "dying" and "dead", in which cases the
-      service is not considered alive.
+      is set to 'alive' or 'dying'. The other possible value, as they arrive
+      from the juju-core delta stream is 'dead'.
 
       @method isAlive
       @return {Boolean} Whether this service is alive.
      */
     isAlive: function() {
-      return this.get('life') === ALIVE;
+      var life = this.get('life');
+      if (life === ALIVE || life === 'dying') {
+        return true;
+      }
+      return false;
     },
 
     /**
@@ -413,14 +416,10 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
-      Return a list of visible model instances.
+      Return a list of visible model instances. A model instance is visible
+      when it is alive or dying.
 
-      A model instance is visible when it is alive or when, even if it is dying
-      or dead, one or more of its units are in an error state.
-      In the latter case, we want to still display the service in order to
-      allow users to retry or resolve its units.
-
-      @method alive
+      @method visible
       @return {Y.ModelList} The resulting visible model instances.
     */
     visible: function() {
@@ -593,10 +592,12 @@ YUI.add('juju-models', function(Y) {
     get_informative_states_for_service: function(service) {
       var aggregate_map = {},
           relationError = {},
-          units_for_service = service.get('units');
+          units_for_service = service.get('units'),
+          serviceLife = service.get('life');
 
       units_for_service.each(function(unit) {
-        var state = utils.determineCategoryType(utils.simplifyState(unit));
+        var state = utils.determineCategoryType(
+                              utils.simplifyState(unit, serviceLife));
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         } else {
@@ -633,9 +634,7 @@ YUI.add('juju-models', function(Y) {
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate[0]);
-
       service.set('relationChangeTrigger', { error: aggregate[1] });
-
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',

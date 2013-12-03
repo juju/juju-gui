@@ -172,7 +172,10 @@ YUI.add('juju-delta-handlers', function(Y) {
         public_address: change.PublicAddress
       };
       var service = db.services.getById(change.Name.split('/')[0]);
-      service.get('units').process_delta(action, unitData, db);
+      if (service) {
+        // The service can be destroyed before the last unit delta comes in.
+        service.get('units').process_delta(action, unitData, db);
+      }
       db.machines.process_delta(action, machineData, db);
     },
 
