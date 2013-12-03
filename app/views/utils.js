@@ -844,6 +844,20 @@ YUI.add('juju-view-utils', function(Y) {
     return (existingService) ? true : false;
   };
 
+  utils.validateServiceName = function(serviceName, db) {
+    if (!utils.checkForExistingService(serviceName, db)) {
+      // Regex re-worked from juju-core to work properly in javascript
+      // http://bazaar.launchpad.net/
+      // ~go-bot/juju-core/trunk/view/head:/names/service.go
+      var regex = /[a-z][a-z0-9]*(?:-[a-z0-9]*[a-z][a-z0-9]*)*/,
+          result = serviceName.match(regex);
+      if (Y.Lang.isArray(result) && result[0] === serviceName) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   utils.validate = function(values, schema) {
     var errors = {};
 

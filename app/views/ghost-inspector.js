@@ -99,14 +99,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
                   container.one('input[name=number-units]').get('value'), 10)),
           config;
 
-      if (utils.checkForExistingService(serviceName, options.db)) {
+      if (!utils.validateServiceName(serviceName, options.db)) {
         options.db.notifications.add(
             new models.Notification({
               title: 'Attempting to deploy service ' + serviceName,
-              message: 'A service with that name already exists.',
+              message: 'The requested service name is invalid.',
               level: 'error'
             }));
-        return;
+        return false;
       }
 
       // Check if a file has been uploaded and use that config.
@@ -175,11 +175,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // change this format, or this code, make sure you look at that method
       // too.  Hopefully the associated tests will catch it as well.
       // Also see resetCanvas, below.
-      var name = '(' + e.newVal + ')';
-      this.model.set('displayName', name);
-      this.serviceNameInputStatus(
-          !utils.checkForExistingService(e.newVal, this.options.db),
-          e.currentTarget);
+      var name = e.newVal,
+          db = this.options.db,
+          serviceName = '(' + name + ')';
+
+      var isValid = utils.validateServiceName(name, db);
+
+      this.model.set('displayName', serviceName);
+      this.serviceNameInputStatus(isValid, e.currentTarget);
     },
 
     /**
@@ -267,7 +270,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
         db.notifications.add(
             new models.Notification({
               title: 'Error deploying ' + serviceName,
-              message: 'Could not deploy the requested service.',
+              message: 'Could not deploy the requested service. Server ' +
+                  'responded with: ' + e.err,
               level: 'error'
             }));
         return;
