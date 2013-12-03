@@ -1439,4 +1439,64 @@ describe('utilities', function() {
     });
   });
 
+  describe('utils.validateServiceName', function() {
+    var utils, yui;
+
+    before(function(done) {
+      YUI(GlobalConfig).use('juju-view-utils', function(Y) {
+        yui = Y;
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('checks for an existing service', function() {
+      var existingCalled = false;
+      var result = utils.validateServiceName('foo', {
+        services: {
+          getById: function(serviceName) {
+            assert.equal(serviceName, 'foo');
+            existingCalled = true;
+            // Simulate returning a service
+            return {};
+          }
+        }});
+
+      assert.isTrue(existingCalled, 'checkForExistingService was not called');
+      // result should be false because we are simulating finding a service
+      // as well as making sure that the db is being checked.
+      assert.isFalse(result, 'returned a valid service');
+    });
+
+    it('validates the service name', function() {
+      var old = utils.checkForExistingService;
+      // false means that no service was found (which is good)
+      utils.checkForExistingService = function() { return false; };
+
+      var values = {
+        'foo': true,
+        'foo-': false,
+        'foo-3': false,
+        'foo-3a': true,
+        'foo-3-3a': false,
+        'foo-3d-12': false,
+        'foo-d-2': false,
+        'foo-d-2a': true,
+        'foo-2a-2a': true
+      };
+
+      Object.keys(values).forEach(function(key) {
+        assert.equal(utils.validateServiceName(key), values[key],
+            key + ' should be ' + values[key] ? 'valid' : 'invalid');
+      });
+
+      // reset it back to normal
+      utils.checkForExistingService = old;
+    });
+
+
+
+
+  });
+
 })();

@@ -175,11 +175,14 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // change this format, or this code, make sure you look at that method
       // too.  Hopefully the associated tests will catch it as well.
       // Also see resetCanvas, below.
-      var name = '(' + e.newVal + ')';
-      this.model.set('displayName', name);
-      this.serviceNameInputStatus(
-          !utils.checkForExistingService(e.newVal, this.options.db),
-          e.currentTarget);
+      var name = e.newVal,
+          db = this.options.db,
+          serviceName = '(' + name + ')';
+
+      var valid = utils.validateServiceName(name, db);
+
+      this.model.set('displayName', serviceName);
+      this.serviceNameInputStatus(valid, e.currentTarget);
     },
 
     /**
