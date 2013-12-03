@@ -103,7 +103,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
         options.db.notifications.add(
             new models.Notification({
               title: 'Attempting to deploy service ' + serviceName,
-              message: 'Service name is invalid.',
+              message: 'The requested service name is invalid.',
               level: 'error'
             }));
         return false;
@@ -179,10 +179,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
           db = this.options.db,
           serviceName = '(' + name + ')';
 
-      var valid = utils.validateServiceName(name, db);
+      var isValid = utils.validateServiceName(name, db);
 
       this.model.set('displayName', serviceName);
-      this.serviceNameInputStatus(valid, e.currentTarget);
+      this.serviceNameInputStatus(isValid, e.currentTarget);
     },
 
     /**

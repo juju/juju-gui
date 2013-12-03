@@ -1463,7 +1463,7 @@ describe('utilities', function() {
         }});
 
       assert.isTrue(existingCalled, 'checkForExistingService was not called');
-      // result should be false because we are simulating finding a service
+      // Result should be false because we are simulating finding a service
       // as well as making sure that the db is being checked.
       assert.isFalse(result, 'returned a valid service');
     });
