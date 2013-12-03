@@ -510,13 +510,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // default.
       var unitNames = service.get('units').get('id');
       var result = this.removeUnits(unitNames);
-      if (result.error.length > 0) {
+      if (result.error && result.error.length > 0) {
         console.log(result, result.error);
         return {
           error: 'Error removing units [' + unitNames.join(', ') +
               '] of ' + serviceName
         };
-      } else if (result.warning.length > 0) {
+      } else if (result.warning && result.warning.length > 0) {
         console.log(result, result.warning);
         return {
           error: 'Warning removing units [' + unitNames.join(', ') +
@@ -705,8 +705,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     */
     removeUnits: function(unitNames) {
       var service, removedUnit,
-          error = [],
-          warning = [];
+          warning, error;
 
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
       // the corresponding machines.
@@ -716,6 +715,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Y.Array.each(unitNames, function(unitName) {
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
+          if (!Y.Lang.isArray(error)) { error = []; }
           error.push(unitName + ' is a subordinate, cannot remove.');
         } else {
           // For now we also need to clean up the services unit list but the
@@ -729,6 +729,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               return;
             }
           }
+          if (!Y.Lang.isArray(warning)) { warning = []; }
           warning.push(unitName + ' does not exist, cannot remove.');
         }
       }, this);

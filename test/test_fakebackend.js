@@ -1220,6 +1220,114 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('FakeBackend.removeUnit', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, unitsRemoveData = '',
+        removeCalled = 0;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackend();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+      removeCalled = 0;
+      unitsRemoveData = '';
+    });
+
+    function modifyDb(isSubordinate, unitIds) {
+      fakebackend.db.services.getById = function() {
+        return {
+          get: function(type) {
+            if (type === 'is_subordinate') { return isSubordinate; }
+            if (type === 'units') {
+              return {
+                remove: function(removeData) {
+                  unitsRemoveData += removeData;
+                  removeCalled += 1;
+                },
+                getById: function() {
+                  return unitIds;
+                }};
+            }}};
+      };
+    }
+
+    it('can remove a single unit', function() {
+      // This assumes that the addUnit tests above pass
+      fakebackend.deploy('cs:precise/wordpress-15', function() {
+        var unitId = 'wordpress/0';
+        modifyDb(false, unitId);
+        var result = fakebackend.removeUnits(unitId);
+        assert.deepEqual(result, {
+          error: undefined,
+          warning: undefined
+        });
+        assert.equal(removeCalled, 1);
+        assert.equal(unitsRemoveData, unitId);
+      });
+    });
+
+    it('can remove multiple units', function() {
+      // This assumes that the addUnit tests above pass
+      fakebackend.deploy('cs:precise/wordpress-15', function() {
+        var unitIds = ['wordpress/0', 'wordpress/1'];
+        modifyDb(false, unitIds);
+
+        var result = fakebackend.removeUnits(unitIds);
+        assert.deepEqual(result, {
+          error: undefined,
+          warning: undefined
+        });
+        assert.equal(removeCalled, 2);
+        // This join thing is kind of ugly but it's simply like this so that
+        // we can share the same simple modify method across all tests.
+        assert.equal(unitsRemoveData, unitIds.join(',') + unitIds.join(','));
+      });
+    });
+
+    it('returns an error when removing a subordinate', function() {
+      // This assumes that the addUnit tests above pass
+      fakebackend.deploy('cs:precise/wordpress-15', function() {
+        var unitId = 'wordpress/0';
+        modifyDb(true, unitId);
+        var result = fakebackend.removeUnits(unitId);
+        assert.deepEqual(result, {
+          error: [
+            'wordpress/0 is a subordinate, cannot remove.'
+          ],
+          warning: undefined
+        });
+        assert.equal(removeCalled, 0);
+        assert.equal(unitsRemoveData, '');
+      });
+    });
+
+    it('returns a warning when removing a service which doesn\'t exist',
+        function() {
+          // This assumes that the addUnit tests above pass
+          fakebackend.deploy('cs:precise/wordpress-15', function() {
+            modifyDb(false, null);
+            var result = fakebackend.removeUnits('wordpress/0');
+            assert.deepEqual(result, {
+              error: undefined,
+              warning: [
+                'wordpress/0 does not exist, cannot remove.'
+              ]
+            });
+          });
+        });
+
+  });
+
   describe('FakeBackend.next*', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
