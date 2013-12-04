@@ -43,6 +43,7 @@
 
     .left-breakout {
         .type9;
+        z-index: 500;
         left: auto;
         right: @inspector-width;
 
@@ -53,6 +54,9 @@
             margin-top: 30px;
         }
         .unit-overview {
+            .header {
+                height: auto;
+            }
             .unit-info-tabs {
                 padding: 30px;
 
@@ -86,7 +90,7 @@
     .juju-inspector {
         .create-border-radius(@border-radius);
         position: relative;
-        z-index: 500;
+        z-index: 501;
         width: @inspector-width;
         min-height: 100px;
         border: 0;
