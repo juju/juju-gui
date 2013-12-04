@@ -20,7 +20,27 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.14.0:
+    - >
+      Added support in the GUI to parse different agent states from Juju 
+      Core, providing more information on service status.  This includes both
+      "pending" and "dying" states. Similarly, units are now divided up by
+      error or status type. This is also now included in the simulator.
+    - >
+      Bundle deployments can now be observed within the GUI, both in sandbox
+      mode and from a real deployer perspective.
+    - On the relationships tab in the inspector, unit errors are now displayed.
+    - Bundle deployment counts are now displayed.
+    - >
+      Automatic login support via a timed token was introduced in order to help
+      the GUI work with the juju quickstart plugin.
+    - Background grid to the canvas now pans with services.
+    - (FIX) Reducing number of units from the inspector no longer causes error.
+    - (FIX) Drag-and-drop now works with bundles from store or file.
+    - (FIX) More robust checking of duplicate service names.
+    - >
+      (FIX) Relation status indicator for peer relations is now positioned
+      correctly.
 - 0.13.0:
     - >
       Added help and feedback menu to top right, replacing feedback link on
