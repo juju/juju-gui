@@ -10,14 +10,11 @@
 # Build a target for JavaScript files.  The find command excludes directories
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
-# find(1) is used here to build a list of JavaScript targets rather than bzr
-# due to the speed of network access being unpredictable (bzr accesses the
-# parent branch, which may be lp:juju-gui, for any command relating to the
-# branch or checkout).  Additionally, working with the release or an export,
-# a developer may not be working in a bzr repository.
+# find(1) is used here to build a list of JavaScript targets  due to the speed
+# of network access being unpredictable. Additionally, working with the
+# release or an export, a developer may not be working in a checkout.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
-	-o -wholename './.bzr*' -prune \
 	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
