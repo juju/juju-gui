@@ -6,47 +6,20 @@
 HACKING
 =======
 
-Here is how to develop on this codebase.
+Here is how to develop on this code base.
 
 Developer Install
 =================
 
 Before you get the GUI you need to get Juju. We use the fresh one from the Juju
-PPA. For PyJuju, the original Python-based implementation, we also use a custom
-branch of Juju that supplies the websocket API we need.  (GoJuju, the newer
-Go-based implementation, will have a websocket API provided for us directly as
-part of the software.)
+PPA.
 
 ::
 
   sudo add-apt-repository ppa:juju/pkgs
   sudo apt-get update
-  sudo apt-get install juju zookeeper
+  sudo apt-get install juju
 
-Next you will also need to get the Juju branch that has API access.
-Currently that work resides in a pipeline of Juju branches. The
-recommended branch to use as a server is ``rapi-rollup`` by hazmat::
-
-  bzr branch lp:~hazmat/juju/rapi-rollup
-
-For rapi-rollup you may need to install a few additional dependencies::
-
-  sudo apt-get install python-txzookeeper python-txaws
-
-For development, we always use a nice testing script in that branch that
-allows you to interact with Juju without actually deploying real machines.  In
-the rapi-rollup branch, run ``python improv.py -h`` to get an idea of its
-capabilities.  Note that your Python needs Twisted and Zookeeper installed,
-but the ``sudo apt-get install juju zookeeper`` command above should have
-already taken care of that for you.
-
-Go ahead and use the branch's ``sample.json`` file to pre-populate the
-environment.  In the future, you might want to investigate the ``large.json``
-also available there.
-
-::
-
-  python improv.py -f sample.json
 
 Now it is time to actually get the GUI itself set up.  Juju GUI uses
 nodejs-based development tools, so you will need ``nodejs`` from Chris
@@ -81,10 +54,27 @@ If you receive an error installing phantomjs, you can manually download and
 unpack the archive and then arrange for the ``phantomjs`` executable to be
 located on your path (e.g., by linking it into ``~/bin``).
 
-The Juju GUI can now be installed and run with::
+The Juju GUI can now be installed and run with:
 
-  bzr branch lp:juju-gui trunk
-  cd trunk
+::
+
+  git clone https://github.com/juju/juju-gui.git
+
+
+However, if you plan on hacking on the Gui, fork the repository on Github and
+pull your clone down to work on.
+
+::
+
+
+  git clone git@github.com:{yourusername}/juju-gui.git
+
+
+Once you've pulled down the code you can start running it with
+
+::
+
+  cd juju-gui
   make devel
 
 It may take a while for the server to start the first time as npm will
@@ -122,58 +112,44 @@ more important targets.  Also note that if you use the "make prod" target
 while using the PyJuju ``rapi-rollup`` improv script, the password you should
 use is "admin," despite the help text you see.
 
-Typical Bzr workflow
-=====================
 
-Bazaar allows you to work in a lot of different workflows. Here is one that
-works well for our environemnt, if you are not already familiar with bzr.
+Typical Github workflow
+=======================
 
-To set up the environment::
+Git allows you to work in a lot of different work flows. Here is one that
+works well for our environment, if you are not already familiar with git.
 
-  bzr init-repo juju-gui
+To set up the environment, first fork the repository and then.
+
+::
+
+  git clone git@github.com:{yourusername}/juju-gui.git
   cd juju-gui
-  bzr branch lp:juju-gui trunk
-  mkdir yourUseName
-  bzr branch trunk/{featureBranchName}
+  git checkout -b {featureBranchName}
+  # Hacky hacky hacky
 
-To link branch to ticket::
 
-  bzr commit --fixes=lp:{ticketNumber}
+To push code for review, cleanup the commit history.
 
-To push code::
+::
 
-  bzr push lp:~{yourUserName}/juju-gui/{featureBranchName}
+  git rebase -i --autosquash
+  git push origin {featureBranchName}
 
-In order to submit code for review we use a tool called lbox. If you are using
-Ubuntu < 13.04 you can install lbox by::
 
-  sudo apt-get install lbox
+In order to submit your code for review, you need to generate a pull request.
+Go to your github repository and generate a pull request to the `juju:develop`
+branch.
 
-If you are using a newer version you will have to build it from source. First
-step is to install Go lang, you can find the instructions on installing it
-here http://golang.org/doc/install#bsd_linux , making sure to set your GOROOT
-environment variable appropriately. After that, you should set up an install
-directory that you can access, such as $HOME/bin/go which you can set as your
-GOPATH directory (see `go help gopath` for more information). For ease of
-use, you can append $GOROOT/bin and $GOPATH/bin to your PATH environment
-variable. Then follow the instructions::
+After review has been signed off on and the test run has updated the pull
+request, a member of the `juju` organization can submit the branch for landing
+with a new comment on the pull request with the content `$$merge$$`.
 
-  sudo go get launchpad.net/lbox
-  sudo go install launchpad.net/lbox
-
-To submit for review::
-
-  lbox propose -cr
-
-After review, to merge into trunk::
-
-  lbox submit
 
 Working with a Real Juju
 ========================
 
-The easiest way to work with a real Juju installation, as opposed to the
-``improv`` script described above, is to use the Juju charm.  See
+The easiest way to work with a real Juju installation, See
 <http://jujucharms.com/~juju-gui/precise/juju-gui> or
 <http://jujucharms.com/charms/precise/juju-gui> for details.
 
