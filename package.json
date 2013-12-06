@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "homepage": "http://launchpad.net/juju-gui",
   "repository": {
-    "type": "bzr",
-    "url": "lp:juju-gui"
+    "type": "git",
+    "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
     "cryptojs": ">= 2.5.3",

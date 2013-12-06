@@ -12,8 +12,10 @@ Juju lets you deploy connected services to the cloud in a convenient,
 vendor-neutral, and powerful way. The GUI lets you visualize and manage
 your work more intuitively from a web browser.
 
-Juju-GUI releases and the current code are `on Launchpad
-<https://launchpad.net/juju-gui>`_.
+Juju-Gui code is hosted `on Github`_
+
+Juju-GUI bugs are tracked on `on Launchpad
+<https://bugs.launchpad.net/juju-gui>`_.
 
 See also:
 
@@ -41,7 +43,7 @@ You will typically want to run one of ``make prod``,  ``make debug`` or ``make
 devel`` to deploy an environment. You might also run ``make test-debug`` and
 ``make test-prod`` to check that everything is ok, and ``make docs`` to
 generate the available documentation for both project and code. See the
-:ref:`HACKING <all-docs>` file for details.
+`HACKING`_  file for details.
 
 Configure
 =========
@@ -54,3 +56,7 @@ Some configurable parameters may be found in three files:
 
 If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
 end-user configuration is available from the charm configuration.
+
+
+.. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING
+.. _on Github: https://github.com/juju/juju-gui
