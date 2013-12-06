@@ -66,7 +66,7 @@ def get_version_from_changes(changes_path):
     - "release" will be the first version number (last change made). If the
       first version number is "unreleased", the second version number will
       be used, extended by "+build.{revno}", where "revno" is the output of
-      "bzr revno".
+      "git describe --always HEAD".
 
     If any errors, ('unknown', 'unknown-version') will be returned.
     """
@@ -95,7 +95,9 @@ def get_version_from_changes(changes_path):
         print 'ERROR: cannot parse changes in {0}'.format(changes_path)
         return unknown_version, unknown_release
     try:
-        revno = subprocess.check_output(['bzr', 'revno']).strip()
+        # Generate a git hash to represent this specific revision point.
+        revno = subprocess.check_output(
+            ['git', 'describe', '--always', 'HEAD']).strip()
     except Exception as err:
         print 'ERROR: cannot get the branch revno - {0}'.format(err)
         revno = 'unknown'
