@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             utils = Y.namespace('juju-tests.utils');
             views = Y.namespace('juju.browser.views');
             EditorialView = views.EditorialView;
-            sampleData = Y.io('data/interesting.json', {sync: true});
+            sampleData = utils.loadFixture('data/interesting.json');
             cleanIconHelper = utils.stubCharmIconPath();
             done();
           });
@@ -78,7 +78,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -99,7 +101,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -126,7 +130,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -147,7 +153,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -175,7 +183,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -202,7 +212,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -223,7 +235,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }
@@ -261,7 +275,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [{
+                responseText: sampleData
+              }]
             }
           });
         }

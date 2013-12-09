@@ -151,8 +151,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       navigateOnHash: false,
   };
 
+
+  // Set the url so we can full path loading fixture files.
+  GlobalConfig.test_url = window.location.origin + "/test/";
+
   // tabview needs to be here since it doesn't auto load it for some reason.
   YUI().use(['node', 'event', 'tabview'], function(Y) {
+
       // Run the tests.
       if (window.mochaPhantomJS) {
           mochaPhantomJS.run();
