@@ -147,10 +147,17 @@ with a new comment on the pull request with the content `$$merge$$`.
 
 Helpful Git tools and aliases
 =============================
+Tools
+-----
 `Git Remote Branch
 <https://github.com/webmat/git_remote_branch>`_ - A tool to simplify working
-with remote branches
+with remote branches (Detailed installation instructions are in their readme).
 
+Aliases
+-------
+If you are unfamiliar with Git aliases, You can find out more information here:
+`How to add Git aliases
+<https://git.wiki.kernel.org/index.php/Aliases>`_
 ::
 
   fetch-pr = "!f() { git fetch $1 refs/pull/$2/head:refs/remotes/pr/$2; }; f"
