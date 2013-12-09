@@ -167,6 +167,38 @@ YUI.add('subapp-browser-editorial', function(Y) {
           cache.charms.add(popularCharms);
           cache.charms.add(featuredCharms);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
+
+          var charmList = this.get('renderTo')
+          var headings = charmList.all('.section-title');
+          var zIndex = 610;
+          headings.each(function(heading) {
+            heading.wrap('<div class="header-placement"></div>');
+            // Need to explicitly set the width for when the object is fixed.
+            heading.setStyle('width', heading.getComputedStyle('width'));
+            heading.setStyle('zIndex', zIndex);
+            zIndex++;
+          });
+          charmList.on('scroll', function(e) {
+            var scrollTop = this.get('scrollTop');
+            headings.each(function(heading) {
+              // Need to get offset for the in place header, not the fixed one.
+              var offsetTop = heading.get('parentNode').get('offsetTop');
+              heading.removeClass('current');
+              if (scrollTop > offsetTop) {
+                if (!heading.hasClass('sticky')) {
+                  heading.addClass('sticky');
+                }
+                // The currently visible sticky heading is the last with the
+                // class 'sticky'. There's probably a smarter way to get the
+                // last item with a specific class though.
+                charmList.all(
+                    '.sticky').slice(-1).get(0)[0].addClass('current');
+              }
+              else if (heading.hasClass('sticky')) {
+                heading.removeClass('sticky');
+              }
+            });
+          });
         },
 
         /**
