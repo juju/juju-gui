@@ -132,14 +132,6 @@ YUI.add('viewmode-controls', function(Y) {
               this
           )
       );
-      this.addEvent(
-          container.one('.fullscreen').on(
-              'click', this._goFullscreen, this)
-      );
-      this.addEvent(
-          container.one('.sidebar').on(
-              'click', this._goSidebar, this)
-      );
 
       this._updateActiveNav(this.get('currentViewmode'));
       this.on('destroy', function(ev) {

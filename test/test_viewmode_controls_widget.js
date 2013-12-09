@@ -71,34 +71,6 @@ describe('viewmode controls widgets', function() {
     assert.equal(controls._events.length, 0);
   });
 
-  it('should fire a fullscreen event when expand clicked', function() {
-    var triggered = false;
-    controls = new ViewmodeControls();
-    controls.render();
-
-    controls.on(controls.EVT_FULLSCREEN, function(ev) {
-      triggered = true;
-    });
-
-    var toggle = container.one('.fullscreen');
-    toggle.simulate('click');
-    triggered.should.eql(true);
-  });
-
-  it('should fire a sidebar event when expand clicked', function() {
-    var triggered = false;
-    controls = new ViewmodeControls();
-    controls.render();
-
-    controls.on(controls.EVT_SIDEBAR, function(ev) {
-      triggered = true;
-    });
-
-    var toggle = container.one('.sidebar');
-    toggle.simulate('click');
-    triggered.should.eql(true);
-  });
-
   it('should fire a toggle viewable event when icon clicked', function() {
     var triggered = false;
     controls = new ViewmodeControls();
