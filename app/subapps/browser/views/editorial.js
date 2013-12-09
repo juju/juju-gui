@@ -168,7 +168,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           cache.charms.add(featuredCharms);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
 
-          var charmList = this.get('renderTo')
+          var charmList = this.get('renderTo');
           var headings = charmList.all('.section-title');
           var zIndex = 610;
           headings.each(function(heading) {
@@ -178,7 +178,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
             heading.setStyle('width', heading.get(
                 'parentNode').getComputedStyle('width'));
             heading.setStyle('zIndex', zIndex);
-            zIndex++;
+            zIndex += 1;
           });
           var stickyHeaders = charmList.all('.stickable');
           charmList.on('scroll', function(e) {
