@@ -1078,69 +1078,9 @@ YUI.add('juju-gui', function(Y) {
           // route on root namespaced paths and this check will no longer
           // be needed
           this.renderEnvironment = false;
-
-          // XXX bug:1217383
-          // We're hiding the subapp from view, but people want to be able to
-          // click on the viewmode controls. We handle that here as a temp
-          // hack until the old :gui: views are gone and we've moved to the
-          // serviceInspector. Then the browser will always be around and can
-          // handle this widget for us. This is horrible and we know it. When
-          // the idea of 'hidden' is removed with the old views this hack will
-          // go away with it.
-          if (!this._controlEvents || this._controlEvents.length === 0) {
-            this._controls = new widgets.ViewmodeControls({
-              currentViewmode: subapps.charmbrowser._viewState.viewmode
-            });
-            this._controls.render();
-            this._controlEvents = [];
-            this._controlEvents.push(
-                this._controls.on(
-                    this._controls.EVT_FULLSCREEN,
-                    function(ev) {
-                      // Navigate away from anything in :gui: and to the
-                      // /fullscreen in :charmbrowser:
-                      this._controls._updateActiveNav('fullscreen');
-                      this.navigate(this.nsRouter.url({
-                        gui: '/',
-                        charmbrowser: '/fullscreen'
-                      }), { overrideAllNamespaces: true });
-
-                    }, this
-                )
-            );
-            this._controlEvents.push(
-                this._controls.on(
-                    this._controls.EVT_SIDEBAR,
-                    function(ev) {
-                      // Navigate away from anything in :gui: and to the
-                      // /sidebar in :charmbrowser:
-                      this._controls._updateActiveNav('sidebar');
-                      this.navigate(this.nsRouter.url({
-                        gui: '/',
-                        charmbrowser: '/sidebar'
-                      }), { overrideAllNamespaces: true });
-                    }, this
-                )
-            );
-          }
-
         } else {
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
-
-          // XXX bug:1217383
-          // Destroy the controls widget we might have had around for a bit.
-          if (this._controlEvents) {
-            this._controlEvents.forEach(function(ev) {
-              ev.detach();
-            });
-            // reset the list to no events.
-            this._controlEvents = [];
-          }
-
-          if (this._controls) {
-            this._controls.destroy();
-          }
         }
 
         charmbrowser.updateVisible();
@@ -1443,7 +1383,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'viewmode-controls',
     'help-dropdown'
   ]
 });
