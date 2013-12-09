@@ -1400,18 +1400,21 @@ describe('utilities', function() {
   });
 
   describe('utils.charmIconParser', function() {
-    var utils, Y;
+    var testUtils, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-view-utils', 'io', function(Y) {
-        utils = Y.namespace('juju.views.utils');
-        done();
-      });
+      Y = YUI(GlobalConfig).use(
+          'juju-view-utils',
+          'juju-tests-utils',
+          'io', function(Y) {
+            utils = Y.namespace('juju.views.utils');
+            testUtils = Y.namespace('juju-tests.utils');
+            done();
+          });
     });
 
     it('Parses and sorts charm data into the required icon format', function() {
-      var bundleData = Y.io('data/browserbundle.json', {sync: true});
-      bundleData = JSON.parse(bundleData.responseText);
+      var bundleData = testUtils.loadFixture('data/browserbundle.json', true);
       var extra = {
         id: 'fooId',
         name: 'fooName',

@@ -166,7 +166,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      * Util to load a fixture (typically as 'data/filename.json').
      *
      * @method loadFixture
-     * @param {String} url to synchronously load.
+     * @param {String} url to synchronously load, appended /test/ base url.
      * @param {Boolean} parseJSON when true return will be processed
      *                  as a JSON blob before returning.
      * @return {Object} fixture data resulting from call.
@@ -174,6 +174,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     loadFixture: function(url, parseJson) {
       var tries = 3;
       var response;
+      url = GlobalConfig.test_url + url;
       while (true) {
         try {
           response = Y.io(url, {sync: true}).responseText;
@@ -268,7 +269,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
      })
 
       @method promiseImport
-      @param {String} YAMLBundleURL File to import.
+      @param {String} YAMLBundleURL File to import based on root path /test/.
       @param {String} [name] Name of bundle to load, optional when
              only one target in the bundle.
       @param {Object} fakebackend An instance of fakebackend from the

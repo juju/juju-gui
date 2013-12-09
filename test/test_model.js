@@ -597,7 +597,7 @@ describe('test_model.js', function() {
   });
 
   describe('Charm test', function() {
-    var data, instance, models, origData, relatedData, sampleData, utils, Y;
+    var data, instance, models, origData, relatedData, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -608,8 +608,7 @@ describe('test_model.js', function() {
         models = Y.namespace('juju.models');
         utils = Y.namespace('juju-tests.utils');
 
-        sampleData = Y.io('data/browsercharm.json', {sync: true});
-        origData = Y.JSON.parse(sampleData.responseText);
+        origData = utils.loadFixture('data/browsercharm.json', true);
         // relatedData is never mutated so it can be used directly.
         relatedData = utils.loadFixture('data/related.json', true).result;
         done();

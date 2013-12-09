@@ -349,8 +349,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.deploy(
           'cs:precise/wordpress-15',
           callback,
-          {configYAML:
-                Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
+          {configYAML: utils.loadFixture('data/mysql-config.yaml')});
       assert.isObject(result.service.get('config'));
       assert.equal(result.service.get('config').tuning, 'super bad');
     });
