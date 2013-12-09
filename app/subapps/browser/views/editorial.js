@@ -172,17 +172,21 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var headings = charmList.all('.section-title');
           var zIndex = 610;
           headings.each(function(heading) {
-            heading.wrap('<div class="header-placement"></div>');
+            heading.wrap('<div class="header-placement"></div>').wrap(
+                '<div class="stickable"></div>');
             // Need to explicitly set the width for when the object is fixed.
-            heading.setStyle('width', heading.getComputedStyle('width'));
+            heading.setStyle('width', heading.get(
+                'parentNode').getComputedStyle('width'));
             heading.setStyle('zIndex', zIndex);
             zIndex++;
           });
+          var stickyHeaders = charmList.all('.stickable');
           charmList.on('scroll', function(e) {
             var scrollTop = this.get('scrollTop');
-            headings.each(function(heading) {
+            stickyHeaders.each(function(heading) {
               // Need to get offset for the in place header, not the fixed one.
               var offsetTop = heading.get('parentNode').get('offsetTop');
+              heading.one('.section-title').setStyle('marginTop', 0);
               heading.removeClass('current');
               if (scrollTop > offsetTop) {
                 if (!heading.hasClass('sticky')) {
@@ -196,6 +200,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
               }
               else if (heading.hasClass('sticky')) {
                 heading.removeClass('sticky');
+              }
+              else if (scrollTop > offsetTop - 53) {
+                var newOffset = -(53 - (offsetTop - scrollTop));
+                // Get the currently visible sticky heading.
+                var insideHeading = charmList.all(
+                    '.sticky').slice(-1).get(0)[0].one('.section-title');
+                insideHeading.setStyle('marginTop', newOffset + 'px');
               }
             });
           });
