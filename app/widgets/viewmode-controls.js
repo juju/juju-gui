@@ -122,8 +122,6 @@ YUI.add('viewmode-controls', function(Y) {
      *
      */
     bindUI: function() {
-      var container = this.get('boundingBox');
-
       this.addEvent(
           Y.one('#content').delegate(
               'click',
@@ -143,7 +141,6 @@ YUI.add('viewmode-controls', function(Y) {
         });
         this._events = [];
       }, this);
-
     },
 
     /**
