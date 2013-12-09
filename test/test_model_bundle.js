@@ -48,8 +48,7 @@ describe('The bundle model', function() {
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
-      var sampleData = Y.io('data/browserbundle.json', {sync: true});
-      origData = Y.JSON.parse(sampleData.responseText);
+      origData = utils.loadFixture('data/browserbundle.json', true);
       done();
     });
   });
