@@ -143,7 +143,7 @@ YUI.add('subapp-browser', function(Y) {
 
       this._viewState = Y.merge(this._viewState, change);
 
-      if (this._viewState.viewmode !== this.get('defaultViewmode') ||
+      if (this._viewState.viewmode !== 'sidebar' ||
           this._viewState.search) {
         //There's no need to add the default view if we
         // don't need it. However it's currently required for search views to
@@ -914,7 +914,7 @@ YUI.add('subapp-browser', function(Y) {
     routeDefault: function(req, res, next) {
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
-      var viewmode = this.get('defaultViewmode');
+      var viewmode = 'sidebar';
       if (req.path.replace(/\//, '') !== '') {
         next();
         return;
@@ -962,7 +962,7 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      var viewmode = this.get('defaultViewmode');
+      var viewmode = 'sidebar';
 
       // If we don't have a valid store we can't do any work here.
       if (!this._hasValidStore()) {
@@ -1029,8 +1029,16 @@ YUI.add('subapp-browser', function(Y) {
         req.params = {};
       }
 
+      // This redirects any requests coming in to fullscreen
+      // to their sidebar equivelent
+      if (req.params.viewmode === 'fullscreen') {
+        var url = req.path.replace('/fullscreen', '');
+        this.navigate(url);
+        return;
+      }
+
       if (!req.params.viewmode) {
-        req.params.viewmode = this.get('defaultViewmode');
+        req.params.viewmode = 'sidebar';
       }
 
       // If the viewmode isn't found, it's not one of our urls. Carry on.
@@ -1169,17 +1177,6 @@ YUI.add('subapp-browser', function(Y) {
        *
        */
       deployBundle: {},
-
-      /**
-        The default viewmode
-
-         @attribute defaultViewmode
-         @default sidebar
-         @type {String}
-       */
-      defaultViewmode: {
-        value: 'sidebar'
-      },
 
       /**
          @attribute minNode
