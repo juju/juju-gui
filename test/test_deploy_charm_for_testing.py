@@ -54,6 +54,7 @@ class TestWaitingForService(unittest.TestCase):
 
         def sleep(seconds):
             raise ZZZZ
+
         with self.assertRaises(ZZZZ):
             wait_for_service(get_service_state, sleep)
 

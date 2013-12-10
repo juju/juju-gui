@@ -211,7 +211,6 @@ class TestCase(unittest.TestCase):
             capabilities = get_capabilities(name)
             driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            printerr('* Platform: local {}'.format(get_platform(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
             capabilities = get_capabilities(browser_name)
@@ -232,7 +231,7 @@ class TestCase(unittest.TestCase):
         driver.implicitly_wait(20)
         driver.set_script_timeout(30)
         # We want to tell saucelabs when all the tests are done.
-        cls.app_url = os.environ['APP_URL']
+        cls.app_url = os.environ.get('APP_URL', 'http://localhost:8888')
         cls.driver = driver
 
     @classmethod

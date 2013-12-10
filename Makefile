@@ -402,7 +402,7 @@ $(LINK_PROD_FILES):
 prep: beautify lint
 
 # XXX bac: the order of test-debug and test-prod seems to affect the execution
-# of this target when called by lbox.  Please do note change.
+# of this target when called by lbox.  Please do not change.
 check: lint test-debug test-prod test-misc docs
 
 test/extracted_startup_code: app/index.html
@@ -423,6 +423,7 @@ test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
 test-prep: test/test_startup.js
 
 test-filtering:
+	# Ensure no tests are disabled.
 	./bin/test-filtering
 
 test-debug: build-debug test-prep
@@ -438,10 +439,34 @@ test-prod-server: build-prod test-prep
 	./test-server.sh prod true
 
 test-misc:
-	PYTHONPATH=lib python test/test_websocketreplay.py
-	PYTHONPATH=lib python test/test_browser.py
-	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
-	PYTHONPATH=bin python test/test_http_server.py
+	PYTHONPATH=lib virtualenv/bin/python test/test_websocketreplay.py
+	PYTHONPATH=lib virtualenv/bin/python test/test_browser.py
+	PYTHONPATH=lib virtualenv/bin/python \
+	    test/test_deploy_charm_for_testing.py
+	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
+
+test-browser: build-devel
+	# Tests that run in the browser.  A server has to be running on
+	# localhost:8888 for this to work.
+	# Make sure no display :34 exists before we start one.
+	DISPLAY=:34 xdpyinfo > /dev/null || exit 1
+	# Start Xvfb as a background process, capturing its PID.
+	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
+	# Wait for the display to be accessible.
+	until (DISPLAY=:34 xdpyinfo > /dev/null); \
+	    do \
+	        echo "Waiting for Xvfb"; \
+	        sleep 1; \
+	    done
+	# Run the tests inside the virtual frame buffer, capturing the result
+	# of the test run.
+	$(eval result := $(shell \
+	    DISPLAY=:34 virtualenv/bin/python test/test_browser.py; \
+	    echo $$?))
+	# Stop the background processes.
+	kill $(xvfb_pid)
+	# Report the result of the test run.
+	exit $(result)
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
