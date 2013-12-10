@@ -117,6 +117,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
             recommendedContainer,
             moreContainer
           ];
+          this.makeStickyHeaders();
         },
 
         /**
