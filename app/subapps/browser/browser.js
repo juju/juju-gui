@@ -746,7 +746,6 @@ YUI.add('subapp-browser', function(Y) {
         // Render the editorial in fullscreen only if we don't have a charmid
         if (this._search) {
           this._search.destroy();
-
         }
         this.renderEditorial(req, res, next);
       }
