@@ -22,34 +22,7 @@ from selenium.common import exceptions
 import browser
 
 
-class TestBasics(browser.TestCase):
-
-    def test_title(self):
-        self.load()
-        self.assertTrue('Juju Admin' in self.driver.title)
-
-    def test_environment_name(self):
-        self.load()
-        self.handle_browser_warning()
-        # The next line attempts to work around an IE 10 fragility.
-        # The symptom we are trying to avoid is an error as follows:
-        # "JavaScript error (WARNING: The server did not provide any stacktrace
-        # information)""
-        self.wait_for_css_selector('svg')
-        body = self.driver.find_element_by_xpath('//body')
-        self.assertTrue('Environment on ' in body.text)
-
-    def test_environment_connection(self):
-        # The GUI connects to the API backend.
-        self.load()
-        self.handle_browser_warning()
-        # The next line attempts to work around an IE 10 fragility.
-        # The symptom we are trying to avoid is an error as follows:
-        # "JavaScript error (WARNING: The server did not provide any stacktrace
-        # information)""
-        self.wait_for_css_selector('svg')
-        script = 'return app && app.env && app.env.get("connected");'
-        self.wait_for_script(script, 'Environment not connected.')
+class TestTests(browser.TestCase):
 
     def test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
@@ -216,6 +189,7 @@ class TestNotifications(browser.TestCase, DeployTestMixin):
         # The service name is arbitrary, and connected to the charm name only
         # by default/convention. Since charms are deployed using the default
         # name, it is safe to reuse one of the service names here.
+        self.deploy('mysql')
         service = self.get_service_names().pop()
         self.deploy(service)
         notifications = self.get_notifications()
@@ -272,45 +246,6 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         self.handle_login()
         unit_name = self.driver.find_element_by_tag_name('h1').text
         self.assertEqual('haproxy/0', unit_name)
-
-
-class TestAuthentication(browser.TestCase):
-
-    def is_authenticated(self):
-        """Return True if the user is authenticated, False otherwise."""
-        script = 'return app.env.userIsAuthenticated;'
-        return self.driver.execute_script(script)
-
-    def process_path(self, path):
-        """Load the given path, log out, log in again."""
-        self.load(path)
-        self.handle_browser_warning()
-        self.handle_login()
-        # Check the initial URL.
-        self.wait_for_path(path, error='Not in the initial path.')
-        self.assertTrue(self.is_authenticated(), 'initial state')
-        # Logout.
-        self.logout()
-        # Check redirection to /login/.
-        self.wait_for_path('/login/', error='Redirection to /login/ failed.')
-        self.assertFalse(self.is_authenticated(), 'after logging out')
-        # Login.
-        self.login()
-        # Ensure we are in the initial URL again.
-        self.wait_for_path(path, error='Post login redirection failed.')
-        self.assertTrue(self.is_authenticated(), 'after logging in again')
-
-    def test_root_page(self):
-        # It is possible to login to and logout from the root page.
-        self.process_path('/')
-
-    def test_service_page(self):
-        # It is possible to login to and logout from the service detail view.
-        self.process_path('/:gui:/service/haproxy/')
-
-    def test_unit_page(self):
-        # It is possible to login to and logout from the unit detail view.
-        self.process_path('/:gui:/unit/haproxy-0/')
 
 
 class TestSandbox(browser.TestCase, DeployTestMixin):

@@ -33,7 +33,7 @@ Closure linter tools locally, and g++ for contextify::
   sudo apt-get update
   sudo apt-get install nodejs imagemagick python-sphinx python-yaml \
     python-tz python-virtualenv python-shelltoolbox python-selenium \
-    python-tornado python-gflags g++
+    python-tornado python-gflags g++ xvfb
 
 See :ref:`Browser Testing <browser-testing>` if you are curious about the
 reason for ``python-shelltoolbox`` and ``python-selenium``.
