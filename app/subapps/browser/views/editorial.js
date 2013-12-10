@@ -171,6 +171,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var charmList = this.get('renderTo');
           var headings = charmList.all('.section-title');
           var zIndex = 610;
+          var headingHeight = 53;
           headings.each(function(heading) {
             heading.wrap('<div class="header-placement"></div>').wrap(
                 '<div class="stickable"></div>');
@@ -201,8 +202,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
               else if (heading.hasClass('sticky')) {
                 heading.removeClass('sticky');
               }
-              else if (scrollTop > offsetTop - 53) {
-                var newOffset = -(53 - (offsetTop - scrollTop));
+              else if (scrollTop > offsetTop - headingHeight) {
+                var newOffset = -(headingHeight - (offsetTop - scrollTop));
                 // Get the currently visible sticky heading.
                 var insideHeading = charmList.all(
                     '.sticky').slice(-1).get(0)[0].one('.section-title');
