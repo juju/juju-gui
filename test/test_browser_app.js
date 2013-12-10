@@ -518,26 +518,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
-      it('* route uses the default viewmode', function() {
-        app = new browser.Browser({defaultViewmode: 'sidebar'});
-        app.sidebar = function() {};
-        var req = {
-          path: '/'
-        };
-
-        app.routeDefault(req, null, next);
-        // The viewmode should be populated now to the default.
-        assert.equal(req.params.viewmode, 'sidebar');
-
-        app = new browser.Browser({defaultViewmode: 'fullscreen'});
-        app.fullscreen = function() {};
-        req = {
-          path: '/'
-        };
-        app.routeDefault(req, null, next);
-        assert.equal(req.params.viewmode, 'fullscreen');
-      });
-
       it('prevents * route from doing more than the default', function() {
         app = new browser.Browser({defaultViewmode: 'sidebar'});
         var req = {
@@ -994,23 +974,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
-      it('/fullscreen dispatches correctly', function() {
+      it('/fullscreen dispatches correctly', function(done) {
         var req = {
           path: '/fullscreen/',
           params: {
             viewmode: 'fullscreen'
           }
         };
-        var expected = Y.merge(hits, {
-          fullscreen: true,
-          renderEditorial: true
-        });
+
+        // Fullscreen urls get redirected to / which is sidebar
+        browser.navigate = function(url) {
+          assert.equal(url, '/');
+          done();
+        };
 
         browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
       });
 
-      it('/fullscreen/charmid dispatches correctly', function() {
+      it('/fullscreen/charmid dispatches correctly', function(done) {
         var req = {
           path: '/fullscreen/precise/apache2-2',
           params: {
@@ -1018,16 +999,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             id: 'precise/apache2-2'
           }
         };
-        var expected = Y.merge(hits, {
-          fullscreen: true,
-          renderCharmDetails: true
-        });
+
+        // Fullscreen urls get redirected to / which is sidebar
+        browser.navigate = function(url) {
+          assert.equal(url, '/precise/apache2-2');
+          done();
+        };
 
         browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
       });
 
-      it('/fullscreen/search/charmid dispatches correctly', function() {
+      it('/fullscreen/search/charmid dispatches correctly', function(done) {
         var req = {
           path: '/fullscreen/search/precise/apache2-2',
           params: {
@@ -1035,13 +1017,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             id: 'precise/apache2-2'
           }
         };
-        var expected = Y.merge(hits, {
-          fullscreen: true,
-          renderCharmDetails: true
-        });
+
+        // Fullscreen urls get redirected to / which is sidebar
+        browser.navigate = function(url) {
+          assert.equal(url, '/search/precise/apache2-2');
+          done();
+        };
 
         browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
       });
 
       it('/sidebar to /sidebar/charmid dispatches correctly', function() {
@@ -1096,97 +1079,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
       });
 
-      it('/fullscreen to /fullscreen/charmid dispatches correctly', function() {
-        var req = {
-          path: '/fullscreen/',
-          params: {
-            viewmode: 'fullscreen'
-          }
-        };
-        browser.routeView(req, undefined, function() {});
-
-        // Now route through to the charmid from here and we should not hit the
-        // editorial content again.
-        resetHits();
-        req = {
-          path: '/fullscreen/precise/apache2-2',
-          params: {
-            viewmode: 'fullscreen',
-            id: 'precise/apache2-2'
-          }
-        };
-
-        var expected = Y.merge(hits, {
-          renderCharmDetails: true
-        });
-
-        browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
-      });
-
-      it('/fullscreen/details to /fullscreen renders editorial', function() {
-        var req = {
-          path: '/fullscreen/precise/apache2-2',
-          params: {
-            viewmode: 'fullscreen',
-            id: 'precise/apache2-2'
-          }
-        };
-        browser.routeView(req, undefined, function() {});
-
-        // Reset the hits and we should not redraw anything to update the view.
-        resetHits();
-        req = {
-          path: '/fullscreen/',
-          params: {
-            viewmode: 'fullscreen'
-          }
-        };
-
-        var expected = Y.merge(hits, {
-          renderEditorial: true
-        });
-
-        browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
-      });
-
-      it('/sidebar to /fullscreen dispatches correctly', function() {
-        window.stop = true;
-        var req = {
-          path: '/sidebar',
-          params: {
-            viewmode: 'sidebar'
-          }
-        };
-        browser.routeView(req, undefined, function() {});
-
-        // Reset the hits and we should not redraw anything to update the view.
-        resetHits();
-        req = {
-          path: '/fullscreen/',
-          params: {
-            viewmode: 'fullscreen'
-          }
-        };
-
-        var expected = Y.merge(hits, {
-          fullscreen: true,
-          renderEditorial: true
-        });
-        browser.routeView(req, undefined, function() {});
-        assert.deepEqual(hits, expected);
-
-        // And the sidebar view should be detached from the subapp now since
-        // it's been replaced.
-        assert.equal(browser._sidebar, undefined);
-      });
-
       it('changing the query string dispatches correctly', function() {
         var req = {
-          path: '/fullscreen/search/',
+          path: '/search/',
           params: {
-            viewmode: 'fullscreen'
+            viewmode: 'sidebar'
           },
           query: {
             text: 'test'
@@ -1207,9 +1104,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('no change to query string does not redraw', function() {
         var req = {
-          path: '/fullscreen/search/',
+          path: '/search/',
           params: {
-            viewmode: 'fullscreen'
+            viewmode: 'sidebar'
           },
           query: {
             text: 'test'
@@ -1227,14 +1124,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('searches without a query string function', function() {
         var req = {
-          path: '/fullscreen/search/',
+          path: '/search/',
           params: {
-            viewmode: 'fullscreen'
+            viewmode: 'sidebar'
           }
         };
 
         var expected = Y.merge(hits, {
-          fullscreen: true,
+          sidebar: true,
           renderSearchResults: true
         });
 
