@@ -281,13 +281,29 @@ describe('Inspector Overview', function() {
     // This order is important.
     var expected = [
       { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [a, b] },
+        units: [
+          {
+            unit: a,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }, {
+            unit: b,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }
+        ] },
       { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [c] },
+        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
       { type: 'unit', category: 'running', categoryType: 'running',
-        units: [d, e] },
+        units: [
+          { unit: d, category: 'running', categoryType: 'running' },
+          { unit: e, category: 'running', categoryType: 'running' }
+        ] },
       { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [e]},
+        categoryType: 'landscape', units: [
+          { unit: e, category: 'landscape-needs-reboot',
+            categoryType: 'landscape'}
+        ]},
       { type: 'service', category: 'upgrade-service',
         categoryType: 'upgrade-service',
         upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
@@ -326,13 +342,29 @@ describe('Inspector Overview', function() {
     // This order is important.
     var expected = [
       { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [a, b] },
+        units: [
+          {
+            unit: a,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }, {
+            unit: b,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }
+        ] },
       { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [c] },
+        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
       { type: 'unit', category: 'running', categoryType: 'running',
-        units: [d, e] },
+        units: [
+          { unit: d, category: 'running', categoryType: 'running' },
+          { unit: e, category: 'running', categoryType: 'running' }
+        ] },
       { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [e]},
+        categoryType: 'landscape', units: [
+          { unit: e, category: 'landscape-needs-reboot',
+            categoryType: 'landscape'}
+        ]},
       { type: 'service', category: 'upgrade-service',
         categoryType: 'upgrade-service',
         upgradeAvailable: true, upgradeTo: 'cs:precise/mediawiki-15',
@@ -375,13 +407,29 @@ describe('Inspector Overview', function() {
     // This order is important.
     var expected = [
       { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [a, b] },
+        units: [
+          {
+            unit: a,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }, {
+            unit: b,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }
+        ] },
       { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [c] },
+        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
       { type: 'unit', category: 'running', categoryType: 'running',
-        units: [d, e] },
+        units: [
+          { unit: d, category: 'running', categoryType: 'running' },
+          { unit: e, category: 'running', categoryType: 'running' }
+        ] },
       { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [e]},
+        categoryType: 'landscape', units: [
+          { unit: e, category: 'landscape-needs-reboot',
+            categoryType: 'landscape'}
+        ]},
       { type: 'service', category: 'upgrade-service',
         categoryType: 'upgrade-service',
         upgradeAvailable: false, upgradeTo: undefined, downgrades: downgrades
@@ -424,13 +472,29 @@ describe('Inspector Overview', function() {
     // This order is important.
     var expected = [
       { type: 'unit', category: 'hook failed: "install"', categoryType: 'error',
-        units: [a, b] },
+        units: [
+          {
+            unit: a,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }, {
+            unit: b,
+            category: 'hook failed: "install"',
+            categoryType: 'error'
+          }
+        ] },
       { type: 'unit', category: 'pending', categoryType: 'pending',
-        units: [c] },
+        units: [{ unit: c, category: 'pending', categoryType: 'pending' }] },
       { type: 'unit', category: 'running', categoryType: 'running',
-        units: [d, e] },
+        units: [
+          { unit: d, category: 'running', categoryType: 'running' },
+          { unit: e, category: 'running', categoryType: 'running' }
+        ] },
       { type: 'unit', category: 'landscape-needs-reboot',
-        categoryType: 'landscape', units: [e]}
+        categoryType: 'landscape', units: [
+          { unit: e, category: 'landscape-needs-reboot',
+            categoryType: 'landscape'}
+        ]}
     ];
     assert.deepEqual(overview.updateStatusList(units), expected);
   });
