@@ -86,8 +86,20 @@ Is Better: Incrementally Escaping Local Maxima
 <http://www.facebook.com/notes/kent-beck/when-worse-is-better-incrementally-escaping-local-maxima/498576730175196>`_.
 
 - Run ``make test-prod`` and ``make test-debug`` and confirm that tests pass.
-- Run ``python improv.py -f sample.json`` in the ``rapi-rollup`` Juju branch,
-  and run ``make server`` with the ``juju-ui`` branch.
+- Prepare for QA. Retrieve their pull request branch into your local checkout.
+
+  ::
+
+    # stash any current WIP you don't wish to commit
+    git stash
+
+    # This assumes you've set up the `juju` remote and `qa-pr`, as described
+    # in the HACKING doc.
+    # It  requests that git fetch the #6 pull request from the Juju repository
+    # and merge it into a new branch called qa-sticky-headers
+    git qa-pr juju 6 qa-sticky-headers
+
+- Run ``make server`` with the qa branch.
 
   - Do not forget to clear the browser cache: ``index.html`` may be sticking
     around because of the cache.manifest.
@@ -97,7 +109,7 @@ Is Better: Incrementally Escaping Local Maxima
   - Spend between 60 and 120 seconds exploring the entire app.  Do different
     things every time.  Try to break the app, generally.
 
-- [Once we support multiple browsers, try them all, at least briefly.]
+- We support multiple browsers. Please try them all, at least briefly.
 - Review the diff, including notes from the above as appropriate.
 
   - Make sure that new code has tests.
