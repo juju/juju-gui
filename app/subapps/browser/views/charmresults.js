@@ -121,7 +121,65 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       }
     },
 
+    /**
+      Makes the headers in the charm lists sticky
 
+      @method makeStickyHeaders
+    */
+    makeStickyHeaders: function() {
+      var charmContainer = this.get('renderTo');
+      var headings = charmContainer.all('.section-title');
+      var headingHeight = 53; // The height of the heading block in pixels
+
+      headings.each(function(heading) {
+        // In order to get Firefox to display the headers with the proper width
+        // we need to set the headings width to the width of its parent.
+        // Firefox in OSX with a trackpad does not include any scrollbar
+        // dimensions so the scroll indicator appears under the headings.
+        heading.setStyle('width', heading.get('parentNode')
+               .getComputedStyle('width'));
+      });
+
+      var stickyHeaders = charmContainer.all('.stickable');
+
+      this._stickyEvent = charmContainer.on('scroll', function(e) {
+        var scrollTop = this.get('scrollTop');
+        stickyHeaders.each(function(heading) {
+          // Need to get offset for the in place header, not the fixed one.
+          var offsetTop = heading.get('parentNode').get('offsetTop');
+
+          // Reset all of the headers to their original positions
+          heading.one('.section-title').setStyle('marginTop', 0);
+          heading.removeClass('current');
+
+          // Apply the calculations to determine where the
+          // header should be positioned relative to the scroll and container
+          if (scrollTop > offsetTop) {
+            heading.addClass('sticky');
+            // The currently visible sticky heading is the last with the
+            // class 'sticky'. There's probably a smarter way to get the
+            // last item with a specific class though.
+            charmContainer.all('.sticky')
+                          .slice(-1)
+                          .item(0)
+                          .addClass('current');
+          } else if (heading.hasClass('sticky')) {
+            // If it is not scrolled up then remove the sticky classes
+            heading.removeClass('sticky');
+          } else if (scrollTop > offsetTop - headingHeight) {
+            // If a new heading is coming in, push the previous one up
+            var newOffset = -(headingHeight - (offsetTop - scrollTop));
+            // Get the currently visible sticky heading.
+            charmContainer.all('.sticky')
+                          .slice(-1)
+                          .item(0)
+                          .one('.section-title')
+                          .setStyle('marginTop', newOffset + 'px');
+          }
+        });
+      });
+
+    },
 
     /**
      * General YUI initializer.
@@ -146,6 +204,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
      *
      */
     destructor: function() {
+      if (this._stickyEvent) {
+        // If the sticky headers weren't created then
+        // this event won't be around to detach.
+        this._stickyEvent.detach();
+      }
       this._cache.charms.destroy();
     }
   }, {

@@ -168,49 +168,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           cache.charms.add(featuredCharms);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
 
-          var charmList = this.get('renderTo');
-          var headings = charmList.all('.section-title');
-          var zIndex = 610;
-          var headingHeight = 53;
-          headings.each(function(heading) {
-            heading.wrap('<div class="header-placement"></div>').wrap(
-                '<div class="stickable"></div>');
-            // Need to explicitly set the width for when the object is fixed.
-            heading.setStyle('width', heading.get(
-                'parentNode').getComputedStyle('width'));
-            heading.setStyle('zIndex', zIndex);
-            zIndex += 1;
-          });
-          var stickyHeaders = charmList.all('.stickable');
-          charmList.on('scroll', function(e) {
-            var scrollTop = this.get('scrollTop');
-            stickyHeaders.each(function(heading) {
-              // Need to get offset for the in place header, not the fixed one.
-              var offsetTop = heading.get('parentNode').get('offsetTop');
-              heading.one('.section-title').setStyle('marginTop', 0);
-              heading.removeClass('current');
-              if (scrollTop > offsetTop) {
-                if (!heading.hasClass('sticky')) {
-                  heading.addClass('sticky');
-                }
-                // The currently visible sticky heading is the last with the
-                // class 'sticky'. There's probably a smarter way to get the
-                // last item with a specific class though.
-                charmList.all(
-                    '.sticky').slice(-1).get(0)[0].addClass('current');
-              }
-              else if (heading.hasClass('sticky')) {
-                heading.removeClass('sticky');
-              }
-              else if (scrollTop > offsetTop - headingHeight) {
-                var newOffset = -(headingHeight - (offsetTop - scrollTop));
-                // Get the currently visible sticky heading.
-                var insideHeading = charmList.all(
-                    '.sticky').slice(-1).get(0)[0].one('.section-title');
-                insideHeading.setStyle('marginTop', newOffset + 'px');
-              }
-            });
-          });
+          this.makeStickyHeaders();
         },
 
         /**
