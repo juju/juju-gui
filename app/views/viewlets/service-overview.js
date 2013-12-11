@@ -108,11 +108,23 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     });
 
     Object.keys(unitByStatus).forEach(function(category) {
+      var categoryType = utils.determineCategoryType(category);
+      // D3's filter is intended to work with the data-set that it is given;
+      // while all this information is available in the DOM via classes, the
+      // use of the DOM in the filter function is discouraged for reasons of
+      // speed; therefor, mix in the categories with the unit to provide all
+      // of this information to D3 in the data-set.
+      var additions = {
+        category: category,
+        categoryType: categoryType
+      };
       statuses.push({
         type: 'unit',
         category: category,
-        categoryType: utils.determineCategoryType(category),
-        units: unitByStatus[category]
+        categoryType: categoryType,
+        units: unitByStatus[category].map(function(unit) {
+          return Y.merge({ unit: unit }, additions);
+        })
       });
     });
 
@@ -235,19 +247,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
   }
 
   /**
-    Binds the statuses data set to d3
+    Generates the list of upgrades/downgrades available for this service.
 
-    @method generateAndBindStatusHeaders
-    @param {Y.Node} node The YUI node object.
-    @param {Array} statuses A key value pair of categories to unit list.
-    @param {Model} environment The Environment model instance.
-    */
-  function generateAndBindStatusHeaders(node, statuses, environment) {
-    /* jshint -W040 */
-    // Ignore 'possible strict violation'
-    var self = this,
-        buttonHeight;
-
+    @method generateD3UpgradeCharmList
+    @param {Object} serviceStatusContentForm the D3 selection for the upgrades
+      list.
+  */
+  function generateD3UpgradeCharmList(serviceStatusContentForm) {
     /*
       The _isLinkSameOrigin method in YUI's pjax.base class does not
       properly account for IE10's issues when parsing protocol and
@@ -256,33 +262,6 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     */
     var wl = window.location;
     var locationPrefix = wl.protocol + '//' + wl.host;
-
-    var categoryWrapperNodes = d3.select(node.getDOMNode())
-    .selectAll('.unit-list-wrapper')
-    .data(statuses, function(d) {
-          return d.category;
-        });
-
-    // D3 header enter section
-    var categoryStatusWrapper = categoryWrapperNodes
-    .enter()
-    .append('div')
-    .classed('unit-list-wrapper', true);
-
-    var categoryStatusHeader = categoryStatusWrapper
-    .append('div')
-    .attr('class', function(d) {
-          return 'status-unit-header ' +
-              'closed-unit-list ' + d.categoryType;
-        });
-
-    var serviceStatusContentForm = categoryStatusWrapper
-    .filter(function(d) { return d.type === 'service'; })
-    .append('div')
-    .attr('class', function(d) {
-          return 'status-unit-content ' +
-              'close-unit ' + d.categoryType;
-        });
 
     var serviceUpgradeLi = serviceStatusContentForm
     .filter(function(d) {
@@ -358,6 +337,52 @@ YUI.add('viewlet-inspector-overview', function(Y) {
       .classed('upgrade-link right-link', true)
       .attr('data-upgradeto', function(d) { return d; })
       .text('Upgrade');
+  }
+
+  /**
+    Binds the statuses data set to d3
+
+    @method generateAndBindStatusHeaders
+    @param {Y.Node} node The YUI node object.
+    @param {Array} statuses A key value pair of categories to unit list.
+    @param {Model} environment The Environment model instance.
+    */
+  function generateAndBindStatusHeaders(node, statuses, environment) {
+    /* jshint -W040 */
+    // Ignore 'possible strict violation'
+    var self = this,
+        buttonHeight;
+
+    var categoryWrapperNodes = d3.select(node.getDOMNode())
+    .selectAll('.unit-list-wrapper')
+    .data(statuses, function(d) {
+          return d.category;
+        });
+
+    // D3 header enter section
+    var categoryStatusWrapper = categoryWrapperNodes
+    .enter()
+    .append('div')
+    .classed('unit-list-wrapper', true);
+
+    var categoryStatusHeader = categoryStatusWrapper
+    .append('div')
+    .attr('class', function(d) {
+          return 'status-unit-header ' +
+              'closed-unit-list ' + d.categoryType;
+        });
+
+    var serviceStatusContentForm = categoryStatusWrapper
+    .filter(function(d) { return d.type === 'service'; })
+    .append('div')
+    .attr('class', function(d) {
+          return 'status-unit-content ' +
+              'close-unit ' + d.categoryType;
+        });
+
+    // The Upgrade Charm list needs to be generated separately from
+    // the typical unit list data in the current UX.
+    generateD3UpgradeCharmList(serviceStatusContentForm);
 
     var unitStatusContentForm = categoryStatusWrapper
     .filter(function(d) { return d.type === 'unit'; })
@@ -402,25 +427,15 @@ YUI.add('viewlet-inspector-overview', function(Y) {
           return d.units.length;
         });
 
-    // Toggles the sections visible or hidden based on if this is a service
-    // status or, if it's a unit status, whether there are units in the list.
+    // Adds the 'Go To Landscape' link to the landscape unit lists
     categoryWrapperNodes.filter(function(d) {
-      return d.type === 'service' || (d.type === 'unit' && d.units.length > 0);
-    })
-    .classed('hidden', false)
-    .filter(function(d) {
-          return (d.category === 'landscape-needs-reboot' ||
+      return (d.category === 'landscape-needs-reboot' ||
                   d.category === 'landscape-security-upgrades');
-        })
+    })
     .select('a.landscape')
     .attr('href', function(d) {
           return utils.getLandscapeURL(environment, self.model);
         });
-
-    categoryWrapperNodes.filter(function(d) {
-      return d.type === 'unit' && d.units.length === undefined;
-    })
-    .classed('hidden', true);
 
     // Add the category label to each heading
     categoryWrapperNodes.select('.category-label')
@@ -429,57 +444,66 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     var unitsList = categoryWrapperNodes
     .filter(function(d) { return d.type === 'unit'; })
     .select('ul')
+    .attr('class', function(d) {
+          return 'category-' + d.category;
+        })
     .selectAll('li')
     .data(function(d) {
           return d.units;
-        }, function(unit) {
-          return unit.id;
+        }, function(item) {
+          return item.unit.id;
         });
 
     // D3 content enter section
+    // Whenever a new unit enters the list create a new li for it
     var unitItem = unitsList.enter()
     .append('li');
 
+    // Adding the checkbox for the unit list items
     unitItem.append('input')
     .attr({
           'type': 'checkbox',
-          'name': function(unit) {
-            return unit.id;
+          'name': function(item) {
+            return item.unit.id;
           }});
-
-    unitItem.append('a').text(
-        function(d) {
-          return d.id;
-        })
-      .attr('data-unit', function(d) {
-          return d.service + '/' + d.number;
-        });
+    unitItem.each(function(d) {
+      var unit = d3.select(this);
+      unit.append('a').text(
+          function(d) {
+            return d.unit.id;
+          })
+        .attr('data-unit', function(d) {
+            return d.unit.service + '/' + d.unit.number;
+          });
+    });
 
     // Handle Landscape actions.
-    unitItem.filter(function() {
-      return Y.Node(this).ancestor('.landscape-needs-reboot');
-    }).append('a').classed('right-link', true).attr({
-      // Retrieve the Landscape reboot URL for the unit.
-      'href': function(d) {
-        return utils.getLandscapeURL(environment, d, 'reboot');
-      },
-      target: '_blank'
-    }).text('Reboot');
+    unitItem.filter(function(d) {
+      return d.category === 'landscape-needs-reboot';
+    })
+      .append('a').classed('right-link', true).attr({
+          // Retrieve the Landscape reboot URL for the unit.
+          'href': function(d) {
+            return utils.getLandscapeURL(environment, d.unit, 'reboot');
+          },
+          target: '_blank'
+        }).text('Reboot');
 
-    unitItem.filter(function() {
-      return Y.Node(this).ancestor('.landscape-security-upgrades');
-    }).append('a').classed('right-link', true).attr({
-      // Retrieve the Landscape security upgrade URL for the unit.
-      'href': function(d) {
-        return utils.getLandscapeURL(environment, d, 'security');
-      },
-      target: '_blank'
-    }).text('Upgrade');
+    unitItem.filter(function(d) {
+      return d.category === 'landscape-security-upgrades';
+    })
+      .append('a').classed('right-link', true).attr({
+          // Retrieve the Landscape security upgrade URL for the unit.
+          'href': function(d) {
+            return utils.getLandscapeURL(environment, d.unit, 'security');
+          },
+          target: '_blank'
+        }).text('Upgrade');
 
     // D3 content update section
     unitsList.sort(
         function(a, b) {
-          return a.number - b.number;
+          return a.unit.number - b.unit.number;
         });
 
     categoryWrapperNodes
