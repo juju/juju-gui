@@ -124,7 +124,7 @@ describe('search view', function() {
     assert.equal('search?text=', apiURL);
   });
 
-  it('clicking a charm navigates for fullscreen', function(done) {
+  it('clicking a charm navigates', function(done) {
     view.render();
     view.on('viewNavigate', function(ev) {
       ev.halt();

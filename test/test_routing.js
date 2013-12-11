@@ -227,17 +227,17 @@ describe('Namespaced Routing', function() {
   it('should properly parse the QS of a given url', function() {
     var router = juju.Router('charmbrowser');
     var qs = router.getQS(
-        '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
+        '/minimized/search/precise/jenkins-5/?text=jenkins#bws-readme');
     assert.equal(qs, 'text=jenkins');
   });
 
   it('should split a url into components properly', function() {
     var router = juju.Router('charmbrowser');
     var components = router.split(
-        '/fullscreen/search/precise/jenkins-5/?text=jenkins#bws-readme');
+        '/minimized/search/precise/jenkins-5/?text=jenkins#bws-readme');
     assert.equal(
         components.pathname,
-        '/fullscreen/search/precise/jenkins-5/');
+        '/minimized/search/precise/jenkins-5/');
     assert.equal(components.hash, 'bws-readme');
     assert.equal(components.search, 'text=jenkins');
   });

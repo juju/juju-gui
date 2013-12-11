@@ -39,7 +39,6 @@ describe('viewmode controls widgets', function() {
       '<div id="content">',
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
-      '<div class="fullscreen"</div>',
       '</div>'
     ].join('')).appendTo(container);
   });
@@ -49,26 +48,6 @@ describe('viewmode controls widgets', function() {
     if (controls) {
       controls.destroy();
     }
-  });
-
-  it('activates the correct div on init', function() {
-    controls = new ViewmodeControls({
-      currentViewmode: 'fullscreen'
-    });
-    controls.render();
-    assert.isTrue(container.one('.fullscreen').hasClass('active'));
-  });
-
-  it('is safe to destroy it without removing dom', function() {
-    controls = new ViewmodeControls({
-      currentViewmode: 'fullscreen'
-    });
-    controls.render();
-    controls.destroy();
-
-    assert.equal(container.all('.fullscreen').size(), 1);
-    assert.equal(container.all('.sidebar').size(), 1);
-    assert.equal(controls._events.length, 0);
   });
 
   it('should fire a toggle viewable event when icon clicked', function() {
@@ -112,7 +91,6 @@ describe('viewmode control extension', function() {
       '<div id="content">',
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
-      '<div class="fullscreen"</div>',
       '</div>'
     ].join('')).appendTo(container);
   });
@@ -123,17 +101,6 @@ describe('viewmode control extension', function() {
       // When the view is destroyed the controls are also destroyed.
       view.destroy();
     }
-  });
-
-  it('can route to fullscreen', function(done) {
-    view = new TestView();
-    controls = new ViewmodeControls();
-    view._bindViewmodeControls(controls);
-    view.on('viewNavigate', function(ev) {
-      assert.equal(ev.change.viewmode, 'fullscreen');
-      done();
-    });
-    controls._goFullscreen({halt: function() {} });
   });
 
   it('can route to sidebar via view controls', function(done) {

@@ -87,12 +87,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _deployBundle: function(e) {
       e.halt();
       var bundle = this.get('entity');
-      if (this.get('isFullscreen')) {
-        this.fire('viewNavigate',
-            {change: {viewmode: 'sidebar', charmID: null}});
-      } else {
-        this.fire('viewNavigate', {change: {charmID: null}});
-      }
+      this.fire('viewNavigate', {change: {charmID: null}});
       this.get('deployBundle')(bundle.get('data'), bundle.get('id'));
     },
 
@@ -230,10 +225,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
       this._renderCharmListing(templateData.services);
-
-      if (!this.get('isFullscreen')) {
-        this._setCollapsableHeader();
-      }
+      this._setCollapsableHeader();
     },
 
     /**

@@ -32,13 +32,11 @@ YUI.add('viewmode-controls', function(Y) {
 
 
   /**
-   * Search widget present in the Charm browser across both fullscreen and
-   * sidebar views.
+   * Search widget present in the Charm browser
    *
    * @class ViewmodeControls
    * @extends {Y.Widget}
    * @event EV_TOGGLE_VIEWABLE toggle if the browser is visible.
-   * @event EV_FULLSCREEN force fullscreen viewmode.
    * @event EV_SIDEBAR force the sidebar viewmode.
    *
    */
@@ -47,22 +45,7 @@ YUI.add('viewmode-controls', function(Y) {
   ], {
     CONTENT_TEMPLATE: null,
     EVT_TOGGLE_VIEWABLE: 'toggle_viewable',
-    EVT_FULLSCREEN: 'fullscreen',
     EVT_SIDEBAR: 'sidebar',
-
-    /**
-     * Expose to the outside world that we've got a request to go fullscreen.
-     *
-     * @method _goFullscreen
-     * @param {Event} ev the click event from the control.
-     * @private
-     *
-     */
-    _goFullscreen: function(ev) {
-      ev.halt();
-      this._updateActiveNav('fullscreen');
-      this.fire(this.EVT_FULLSCREEN);
-    },
 
     /**
      * Expose to the outside world that we've got a request to go sidebar.
@@ -160,7 +143,6 @@ YUI.add('viewmode-controls', function(Y) {
        */
       this.publish(this.EVT_TOGGLE_VIEWABLE);
       this.publish(this.EVT_SIDEBAR);
-      this.publish(this.EVT_FULLSCREEN);
     }
 
   }, {
@@ -202,15 +184,12 @@ YUI.add('viewmode-controls', function(Y) {
      * @param {Y.Widget} controls The viewmode control widget.
      */
     _bindViewmodeControls: function(controls) {
-      this._fullscreen = controls.on(
-          controls.EVT_FULLSCREEN, this._goFullscreen, this);
       this._sidebar = controls.on(
           controls.EVT_SIDEBAR, this._goSidebar, this);
       this._minimized = controls.on(
           controls.EVT_TOGGLE_VIEWABLE, this._toggleMinimized, this);
       this._destroyMe = this.on('destroy', function() {
         // Unbind the View events listening for events from the widget.
-        this._fullscreen.detach();
         this._sidebar.detach();
         this._minimized.detach();
         // Including this event.
@@ -218,23 +197,6 @@ YUI.add('viewmode-controls', function(Y) {
         // Finally, make sure we run destroy on the widget itself to unbind
         // it's own events.
         controls.destroy();
-      });
-    },
-
-    /**
-      Upon clicking the browser icon make sure we re-route to the
-      new form of the UX.
-
-      @method _goFullscreen
-      @param {Event} ev the click event handler on the button.
-
-     */
-    _goFullscreen: function(ev) {
-      ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'fullscreen'
-        }
       });
     },
 

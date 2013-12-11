@@ -63,112 +63,20 @@
       border-bottom: 1px solid #b7b7b9;
   }
   #bws-sidebar .bws-content,
-  #bws-sidebar,
-  #bws-fullscreen {
+  #bws-sidebar {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
   }
-  #bws-sidebar,
-  #bws-fullscreen {
+  #bws-sidebar {
     background: @bws-background;
     z-index: 600;
   }
-  #bws-fullscreen {
-    background-color: #fff;
-    background-image: none;
-  }
-  #bws-fullscreen,
   #bws-sidebar .bws-content {
     overflow-x: hidden;
     overflow-y: auto;
-  }
-  #bws-fullscreen {
-    .charmview {
-        background-color: #fff;
-    }
-    .bws-header,
-    #bws-editorial .content,
-    #bws-search .content,
-    .charmview > .bundle,
-    .charm {
-        width: 1040px;
-        margin: 0 auto;
-    }
-    #bws-editorial .content,
-    #bws-search .content,
-    .charmview > .bundle,
-    .charm {
-        padding-bottom: 50px;
-    }
-    .bws-header-wrapper {
-        background: @bws-background;
-        padding: 20px;
-        border-bottom: 1px solid @bws-border;
-    }
-    .bws-header {
-        padding: 0;
-        border: none;
-    }
-    #bws-editorial {
-        margin-top: -1px;
-    }
-    .bws-view-data {
-      position: static;
-      width: 100%;
-      overflow: visible;
-      box-shadow: none;
-
-      .yui3-tabview {
-        position: relative;
-
-        .yui3-tabview-panel {
-            position: static;
-            width: @bws-panel-width;
-
-            .yui3-tab-panel {
-                padding-top: 0;
-            }
-        }
-      }
-    }
-    #bws-search {
-      .search-results {
-          .border-box;
-          padding: 10px 20px;
-      }
-    }
-    .yui3-charmcontainer {
-        border-bottom: 1px solid @bws-groove-dark;
-
-        .charms {
-            margin-bottom: -1px;
-        }
-    }
-    #bws-search,
-    #bws-editorial {
-        .yui3-token {
-            border-width: 0 1px 1px 1px;
-            border-style: solid;
-            border-left-color: @bws-groove-light;
-            border-right-color: @bws-groove-dark;
-            border-bottom-color: @bws-groove-dark;
-
-            .description {
-                .border-box;
-                height: 80px;
-            }
-        }
-    }
-    .bws-searchbox {
-      display: inline-block
-    }
-    .browser-nav {
-      display: inline-block;
-      padding: 0 0 0 50px;
-    }
   }
   #bws-sidebar {
     z-index: 601;

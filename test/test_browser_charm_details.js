@@ -858,52 +858,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(selected.getAttribute('href'), '#bws-configuration');
     });
 
-    it('renders out the related charms correctly', function(done) {
-      var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      var testContainer = utils.makeContainer();
-      // We don't want any files so we don't have to mock/load them.
-      data.files = [];
-
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: utils.loadFixture('data/related.json')
-              }]
-            }
-          });
-        }
-      });
-
-      view = new CharmView({
-        entity: new models.Charm(data),
-        isFullscreen: true,
-        renderTo: testContainer,
-        store: fakeStore
-      });
-      view.render();
-
-      // We've selected the activeTab specified.
-      var tokens = view.get('container').all('.token');
-      assert.equal(tokens.size(), 5);
-
-      // And clicking on one of those charms navigates correctly.
-      view.on('viewNavigate', function(ev) {
-        ev.halt();
-        // Just make sure we've got an id. The order will vary some depending
-        // on the browser due to many charms with the same score of 10 in the
-        // sample data..
-        assert(ev.change.charmID);
-        assert.isTrue(view.loadedRelatedCharms);
-        testContainer.remove(true);
-        done();
-      });
-      view.get('container').one('.token').simulate('click');
-    });
-
     it('loads related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
       var testContainer = utils.makeContainer();
@@ -927,7 +881,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new CharmView({
         activeTab: '#bws-related-charms',
         entity: new models.Charm(data),
-        isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
       });
@@ -962,7 +915,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new CharmView({
         activeTab: '#bws-related-charms',
         entity: new models.Charm(data),
-        isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
       });
@@ -970,8 +922,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var origLoadRelatedCharms = view._loadRelatedCharms;
       var state = {
         loadCount: 0,
-        hitTabRender: false,
-        hitRelatedRender: false
+        hitTabRender: false
       };
       view._loadRelatedCharms = function(callback) {
         state.loadCount += 1;
@@ -980,14 +931,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view._renderRelatedInterfaceCharms = function() {
         state.hitTabRender = true;
       };
-      view._renderRelatedCharms = function() {
-        state.hitRelatedRender = true;
-      };
       view.render();
 
       assert.equal(state.loadCount, 1);
-      assert(state.hitTabRender);
-      assert(state.hitRelatedRender);
+      assert.isTrue(state.hitTabRender);
     });
 
     it('ignore invalid tab selections', function() {
@@ -1013,7 +960,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new CharmView({
         activeTab: '#bws-does-not-exist',
         entity: new models.Charm(data),
-        isFullscreen: true,
         renderTo: testContainer,
         store: fakeStore
       });

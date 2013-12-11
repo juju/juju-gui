@@ -53,8 +53,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
         _renderSearchResults: function(results) {
           var target = this.get('renderTo'),
               tpl = this.template({
-                count: results.recommended.length + results.more.length,
-                isFullscreen: this.get('isFullscreen')
+                count: results.recommended.length + results.more.length
               }),
               tplNode = Y.Node.create(tpl),
               results_container = tplNode.one('.search-results');
@@ -67,8 +66,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
                   return entity.getAttrs();
                 })}, {
                 additionalChildConfig: {
-                  size: this.get('isFullscreen') ? 'large' : 'small',
-                  isDraggable: !this.get('isFullscreen')
+                  size: 'small',
+                  isDraggable: true
                 }
               }));
 
@@ -80,8 +79,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
                   return entity.getAttrs();
                 })}, {
                 additionalChildConfig: {
-                  size: this.get('isFullscreen') ? 'large' : 'small',
-                  isDraggable: !this.get('isFullscreen')
+                  size: 'small',
+                  isDraggable: true
                 }
               }));
 
