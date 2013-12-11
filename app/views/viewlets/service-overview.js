@@ -109,6 +109,11 @@ YUI.add('viewlet-inspector-overview', function(Y) {
 
     Object.keys(unitByStatus).forEach(function(category) {
       var categoryType = utils.determineCategoryType(category);
+      // D3's filter is intended to work with the data-set that it is given;
+      // while all this information is available in the DOM via classes, the
+      // use of the DOM in the filter function is discouraged for reasons of
+      // speed; therefor, mix in the categories with the unit to provide all
+      // of this information to D3 in the data-set.
       var additions = {
         category: category,
         categoryType: categoryType
@@ -117,31 +122,13 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         type: 'unit',
         category: category,
         categoryType: categoryType,
-        units: pushIntoUnitList(unitByStatus[category], additions)
+        units: unitByStatus[category].map(function(unit) {
+          return Y.merge({ unit: unit }, additions);
+        })
       });
     });
 
     return sortStatuses(addCharmUpgrade(statuses, this.model));
-  }
-
-  /**
-    Adds a reference to each unit in the given list to an object along with
-    all keys and values from the additions object.
-
-    @method pushIntoUnitList
-    @param {Array} list an array of units
-    @param {Object} additions a key/value pair collection of data to add to
-      each unit in the unit list
-    @return {Array} The unit list with the new values pushed into each unit.
-  */
-  function pushIntoUnitList(list, additions) {
-    return list.map(function(item) {
-      var unit = { unit: item };
-      Object.keys(additions).forEach(function(key) {
-        unit[key] = additions[key];
-      });
-      return unit;
-    });
   }
 
   /**
