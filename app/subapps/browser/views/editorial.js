@@ -167,6 +167,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           cache.charms.add(popularCharms);
           cache.charms.add(featuredCharms);
           this.fire(this.EV_CACHE_UPDATED, {cache: cache});
+
+          this.makeStickyHeaders();
         },
 
         /**

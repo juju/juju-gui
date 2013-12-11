@@ -189,10 +189,34 @@
       &.with-home {
         top: 145px;
       }
-
       .section-title {
+        .border-box;
+        position: relative;
+        height: 53px;
         padding-left: 20px;
         padding-right: 20px;
+      }
+      .header-placement,
+      .stickable {
+          height: 53px;
+      }
+
+      .sticky {
+        z-index: 602;
+        position: fixed;
+        overflow: hidden;
+        top: 149px;
+        height: 53px;
+
+        &.current {
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      #bws-search {
+        .sticky {
+          top: 213px;
+        }
       }
       .yui3-token {
         width: 100%;

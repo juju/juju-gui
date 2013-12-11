@@ -121,7 +121,74 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       }
     },
 
+    /**
+      Makes the headers in the charm lists sticky
 
+      @method makeStickyHeaders
+    */
+    makeStickyHeaders: function() {
+      var charmContainer = this.get('renderTo');
+      var headings = charmContainer.all('.section-title');
+      var headingHeight = 53; // The height of the heading block in pixels
+
+      headings.each(function(heading) {
+        // In order to get Firefox to display the headers with the proper width
+        // we need to set the headings width to the width of its parent.
+        // Firefox in OSX with a trackpad does not include any scrollbar
+        // dimensions so the scroll indicator appears under the headings.
+        heading.setStyle('width',
+            heading.get('parentNode').getComputedStyle('width'));
+      });
+
+      var stickyHeaders = charmContainer.all('.stickable');
+      // To avoid a flash in Chrome on Ubuntu we need to add the sticky
+      // class to the first element before the user scrolls.
+      stickyHeaders.item(0).addClass('sticky');
+
+      this._stickyEvent = charmContainer.on('scroll', function(e) {
+        // The number of pixels that the charmContainer is scrolled upward.
+        var scrollTop = this.get('scrollTop');
+        stickyHeaders.each(function(heading, index) {
+          // Need to get offset for the in place header, not the fixed one.
+          // The number of pixels that the heading--in its normal, non-sticky
+          // placement--is offset from the charmContainer, irrespective of
+          // scrolling.
+          var offsetTop = heading.get('parentNode').get('offsetTop');
+
+          // Reset the header to its original position
+          heading.one('.section-title').setStyle('marginTop', 0);
+          heading.removeClass('current');
+
+          // Apply the calculations to determine where the
+          // header should be positioned relative to the scroll and container
+          if (scrollTop > offsetTop) {
+            heading.addClass('sticky');
+            // The currently visible sticky heading is the
+            // last with the class 'sticky'.
+            charmContainer.all('.sticky:last-child').addClass('current');
+          } else if (heading.hasClass('sticky')) {
+            // If it is not scrolled up then remove the sticky classes
+            // We need to leave the first one with the sticky class because
+            // without it Chrome on Ubuntu will flash when it jumps from
+            // position relaive to position fixed.
+            if (index > 0) {
+              heading.removeClass('sticky');
+            }
+          } else if (scrollTop > offsetTop - headingHeight) {
+            // If a new heading is coming in, push the previous one up
+            var newOffset = -(headingHeight - (offsetTop - scrollTop));
+            // Get the currently visible sticky heading.
+            // Because the browser sometimes scrolls the container to the top
+            // when switching between search and editorial views the above code
+            // which adds the sticky class to the first header is required to
+            // avoid throwing an error here.
+            charmContainer.one('.sticky:last-child .section-title')
+                          .setStyle('marginTop', newOffset + 'px');
+          }
+        });
+      });
+
+    },
 
     /**
      * General YUI initializer.
@@ -146,6 +213,11 @@ YUI.add('subapp-browser-charmresults', function(Y) {
      *
      */
     destructor: function() {
+      if (this._stickyEvent) {
+        // If the sticky headers weren't created then
+        // this event won't be around to detach.
+        this._stickyEvent.detach();
+      }
       this._cache.charms.destroy();
     }
   }, {

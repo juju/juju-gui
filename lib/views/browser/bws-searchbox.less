@@ -31,7 +31,10 @@
     }
 
     .yui3-aclist {
-      z-index: 15;
+      // Need the list to appear above the sticky headings in the charm list.
+      // Needs to be on top of the overlay indicator while the sidebar
+      // content is loading (it's zindex is 999)
+      z-index: 1000;
       width: 100%;
       background-color: #fff;
 
