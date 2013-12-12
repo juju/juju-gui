@@ -49,11 +49,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
             featured: 3,
             popular: 2,
             'new': 2
-          },
-          fullscreen: {
-            featured: 6,
-            popular: 3,
-            'new': 3
           }
         },
 
@@ -82,11 +77,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           // Add featured charms
           var featuredCharms = results.featuredCharms;
           var featuredContainer = tplNode.one('.featured');
-          if (this.get('isFullscreen')) {
-            cutoffs = this.cutoffs.fullscreen;
-          } else {
-            cutoffs = this.cutoffs.sidebar;
-          }
+
+          cutoffs = this.cutoffs.sidebar;
 
           var featuredCharmObjects = featuredCharms.map(function(charm) {
                 return charm.getAttrs();
@@ -99,8 +91,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 children: featuredCharmObjects
               }, {
                 additionalChildConfig: {
-                  size: this.get('isFullscreen') ? 'large' : 'small',
-                  isDraggable: !this.get('isFullscreen')
+                  size: 'small',
+                  isDraggable: true
                 }
               }));
           featuredTokenContainer.render(featuredContainer);
@@ -117,7 +109,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 })}, {
                 additionalChildConfig: {
                   size: 'small',
-                  isDraggable: !this.get('isFullscreen')
+                  isDraggable: true
                 }
               }));
           popularTokenContainer.render(popularContainer);
@@ -134,7 +126,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
                 })}, {
                 additionalChildConfig: {
                   size: 'small',
-                  isDraggable: !this.get('isFullscreen')
+                  isDraggable: true
                 }
               }));
           newTokenContainer.render(newContainer);

@@ -33,7 +33,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       widgets = Y.namespace('juju.widgets');
 
   /**
-   * Base shared view for MainView sidebar and fullscreen.
+   * Base view for MainView sidebar.
    *
    * @class MainView
    * @extends {Y.View}
@@ -44,19 +44,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     Y.juju.widgets.ViewmodeControlsViewExtension
   ], {
 
-    /**
-     * When we click the fullscreen toggle UX widget, what url do we route to.
-     * We have to dump this into the template because we can't dynamically
-     * showView/navigate from here.
-     *
-     * Views extending this should implement the url path.
-     *
-     * @attribute _fullscreenTarget
-     * @default ''
-     * @type {String}
-     *
-     */
-    _fullscreenTarget: '',
     /**
      * Extending classes need to specify the template used to render display.
      *
@@ -110,19 +97,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
             // showing home.
             this.search.showHome();
 
-            if (!this.isFullscreen()) {
-              // In the sidebar, the left panel needs the height adjusted to
-              // make room for the home links to show up.
-              container.one('.bws-content').addClass('with-home');
-            }
+            // In the sidebar, the left panel needs the height adjusted to
+            // make room for the home links to show up.
+            container.one('.bws-content').addClass('with-home');
           } else {
             // Ask the widget to remove the home buttons from display.
             this.search.hideHome();
-            if (!this.isFullscreen()) {
-              // We also need to adjust the height of the sidebar now to close
-              // up the space by the home buttons.
-              container.one('.bws-content').removeClass('with-home');
-            }
+            // We also need to adjust the height of the sidebar now to close
+            // up the space by the home buttons.
+            container.one('.bws-content').removeClass('with-home');
           }
         }, this);
       }
@@ -229,14 +212,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
         }
       };
 
-      // If we're in fullscreen and you did a search we clear the charmID to
-      // help make sure that we show you the search results you just asked for
-      // properly.
-      if (this.isFullscreen()) {
-        change.charmID = undefined;
-        change.hash = undefined;
-      }
-
       // Perhaps there's more to this change than just a search change. This
       // might come from places, such as autocomplete, which are a search
       // change, but also want to select a charm id as well.
@@ -277,22 +252,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // Clean up any details view we might have hanging around.
       if (this.details) {
         this.details.destroy(true);
-      }
-    },
-
-    /**
-     * Check if this view is the fullscreen version to help aid us in
-     * template work.
-     *
-     * @method isFullscreen
-     * @return {{Bool}}
-     *
-     */
-    isFullscreen: function() {
-      if (this.name.indexOf('fullscreen') === -1) {
-        return false;
-      } else {
-        return true;
       }
     }
 

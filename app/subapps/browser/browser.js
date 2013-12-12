@@ -39,7 +39,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
     hidden: false,
-    viewmodes: ['minimized', 'fullscreen', 'sidebar'],
+    viewmodes: ['minimized', 'sidebar'],
 
     /**
      * Make sure we destroy views no long used.
@@ -79,10 +79,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._minimized) {
         this._minimized.destroy();
         delete this._minimized;
-      }
-      if (this._fullscreen) {
-        this._fullscreen.destroy();
-        delete this._fullscreen;
       }
       if (this._onboarding) {
         this._onboarding.destroy();
@@ -306,7 +302,7 @@ YUI.add('subapp-browser', function(Y) {
       // Clear out any parts of /sidebar/search, /sidebar, or /search from the
       // id. See if we still really have an id.
       var match =
-          /^\/?(sidebar|fullscreen|minimized|search|test\/index\.html)\/?(search)?\/?/;
+          /^\/?(sidebar|minimized|search|test\/index\.html)\/?(search)?\/?/;
 
       if (id && id.match(match)) {
         // Strip it out.
@@ -421,10 +417,6 @@ YUI.add('subapp-browser', function(Y) {
        @attribute views
      */
     views: {
-      fullscreen: {
-        type: 'juju.browser.views.FullScreen',
-        preserve: false
-      },
       sidebar: {
         type: 'juju.browser.views.Sidebar',
         preserve: false
@@ -458,9 +450,6 @@ YUI.add('subapp-browser', function(Y) {
       }
       if (this._minimized) {
         this._minimized.destroy();
-      }
-      if (this._fullscreen) {
-        this._fullscreen.destroy();
       }
       if (this._details) {
         this._details.destroy();
@@ -549,12 +538,6 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
-      // The details view needs to know if we're using a fullscreen template
-      // or the sidebar version.
-      if (this._viewState.viewmode === 'fullscreen') {
-        extraCfg.isFullscreen = true;
-      }
-
       // Gotten from the sidebar creating the cache.
       var model = this._cache.charms.getById(entityId);
 
@@ -577,9 +560,6 @@ YUI.add('subapp-browser', function(Y) {
     /**
        Render editorial content into the parent view when required.
 
-       The parent view is either fullscreen/sidebar which determines how the
-       editorial content is to be rendered.
-
        @method renderEditorial
        @param {Request} req current request object.
        @param {Response} res current response object.
@@ -590,20 +570,11 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {};
 
-      if (this._viewState.viewmode === 'fullscreen') {
-        // The fullscreen view requires that there be no editorial content if
-        // we're looking at a specific charm. The div we dump our content into
-        // is shared. So if the url is /fullscreen show editorial content, but
-        // if it's not, there's something else handling displaying the
-        // view-data.
-        extraCfg.renderTo = container.one('.bws-view-data');
-        extraCfg.isFullscreen = true;
-      } else {
-        // If this is the sidebar view, then the editorial content goes into a
-        // different div since we can view both editorial content and
-        // view-data (such as a charm details) side by side.
-        extraCfg.renderTo = container.one('.bws-content');
-      }
+      // The editorial content goes into a
+      // different div since we can view both editorial content and
+      // view-data (such as a charm details) side by side.
+      extraCfg.renderTo = container.one('.bws-content');
+
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
@@ -655,12 +626,7 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {};
 
-      if (req.params.viewmode === 'fullscreen') {
-        extraCfg.renderTo = container.one('.bws-view-data');
-        extraCfg.isFullscreen = true;
-      } else {
-        extraCfg.renderTo = container.one('.bws-content');
-      }
+      extraCfg.renderTo = container.one('.bws-content');
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
@@ -682,77 +648,6 @@ YUI.add('subapp-browser', function(Y) {
         this._search.render();
       }
       this._search.addTarget(this);
-    },
-
-    /**
-       Render the fullscreen view to the client.
-
-       @method fullscreen
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
-    fullscreen: function(req, res, next) {
-      // If we've switched to viewmode fullscreen, we need to render it.
-      // We know the viewmode is already fullscreen because we're in this
-      // function.
-      var forceFullscreen = false;
-      if (!this._fullscreen) {
-        forceFullscreen = true;
-      }
-
-      if (this._hasStateChanged('viewmode') || forceFullscreen) {
-        var extraCfg = {
-          deployService: this.get('deployService'),
-          deployBundle: this.get('deployBundle')
-        };
-        if (this._viewState.search || this._viewState.charmID) {
-          extraCfg.withHome = true;
-        }
-        extraCfg.container = this.get('container');
-
-        this._fullscreen = new views.FullScreen(
-            this._getViewCfg(extraCfg));
-        this._fullscreen.render();
-        this._fullscreen.addTarget(this);
-      }
-
-      // Even if we've got an existing View, check if Home should be displayed
-      // or not based on the current view state.
-      if (this._fullscreen) {
-        if (this._viewState.search || this._viewState.charmID) {
-          this._fullscreen.set('withHome', true);
-        } else {
-          this._fullscreen.set('withHome', false);
-        }
-      }
-
-      // If we've changed the charmID or the viewmode has changed and we have
-      // a charmID, render charmDetails.
-      if (this._shouldShowCharm()) {
-        if (this._search) {
-          this._search.destroy();
-        }
-        if (this._editorial) {
-          this._editorial.destroy();
-        }
-        this._detailsVisible(true);
-        this.renderEntityDetails(req, res, next);
-      } else if (this._shouldShowSearch()) {
-        // Render search results if search is in the url and the viewmode or
-        // the search has been changed in the state.
-        this.renderSearchResults(req, res, next);
-      } else if (!this._viewState.search && !this._viewState.charmID) {
-        // Render the editorial in fullscreen only if we don't have a charmid
-        if (this._search) {
-          this._search.destroy();
-        }
-        this.renderEditorial(req, res, next);
-      }
-
-      // Sync that the state has changed.
-      this._saveState();
-      next();
     },
 
     /**
@@ -882,26 +777,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Handle the route for the jujucharms.com landing view.
-
-       @method jujucharms
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-     */
-    jujucharms: function(req, res, next) {
-      // XXX jcsackett July 2, 2013: This is a placeholder function that will
-      // need some reworking when we have assets. It will probably want to
-      // render to body instead of the fullscreen renderto.
-      this.showView('jujucharms', this._getViewCfg(), {
-        'callback': function(view) {
-          // Hold onto the view instance for later reference.
-          this._fullscreen = view;
-        }
-      });
-    },
-
-    /**
       When there's no charm or viewmode default to the default viewmode for all
       pages.
 
@@ -985,7 +860,7 @@ YUI.add('subapp-browser', function(Y) {
 
         // We only want to handle urls without a viwemode calling a specific
         // id for a charm such as /precise/mysql and not
-        // /fullscreen/precise/mysql.
+        // /sidebar/precise/mysql.
         if (this.viewmodes.indexOf(idBits[0]) !== -1) {
           next();
           return;
@@ -1047,7 +922,7 @@ YUI.add('subapp-browser', function(Y) {
         return;
       }
 
-      // for the route /sidebar|minimized|fullscreen it picks up the *id route
+      // for the route /sidebar|minimized| it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
       var id = this._stripViewMode(req.params.id);
@@ -1140,8 +1015,7 @@ YUI.add('subapp-browser', function(Y) {
        */
       routes: {
         value: [
-          // Show the sidebar on all places if its not manually shut off or
-          // turned into a fullscreen route.
+          // Show the sidebar on all places if its not manually shut off
           { path: '*', callbacks: 'routeDefault'},
           { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/:viewmode/', callbacks: 'routeView' },
@@ -1212,7 +1086,6 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-bundleview',
     'subapp-browser-charmresults',
     'subapp-browser-editorial',
-    'subapp-browser-fullscreen',
     'subapp-browser-jujucharms',
     'subapp-browser-minimized',
     'subapp-browser-searchview',

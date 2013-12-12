@@ -83,12 +83,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _addCharmEnvironment: function(ev) {
       ev.halt();
       var charm = this.get('entity');
-      if (this.get('isFullscreen')) {
-        this.fire('viewNavigate',
-            {change: {viewmode: 'sidebar', charmID: null}});
-      } else {
-        this.fire('viewNavigate', {change: {charmID: null}});
-      }
+      this.fire('viewNavigate', {change: {charmID: null}});
       var ghostAttributes;
       ghostAttributes = {
         icon: this.get('store').iconpath(charm.get('storeId'))
@@ -264,43 +259,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-      Render the related charms sidebar. It generates a charm container with
-      the tokens.
-
-      @method _renderRelatedCharms
-      @param {Object} charm the charm model we're rendering the related
-      charms for.
-
-     */
-    _renderRelatedCharms: function() {
-      if (!this.loadedRelatedCharms) {
-        var relatedCharms = this.get('entity').get('relatedCharms');
-        // If there are no overall related charms then just skip it all.
-        if (relatedCharms.overall) {
-          var relatedNode = this.get('container').one('.related-charms');
-          this.relatedTokenContainer = new widgets.browser.TokenContainer(
-              Y.merge({
-                name: 'Related Charms',
-                cutoff: 10,
-                children: relatedCharms.overall
-              }));
-          this.relatedTokenContainer.render(relatedNode);
-          this.hideIndicator(Y.one('.related-charms'));
-        }
-        this.loadedRelatedCharms = true;
-      }
-    },
-
-    /**
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
      * @param {Charm} charm the charm model instance to view.
-     * @param {Boolean} isFullscreen is this display for the fullscreen
-     * experiecne?
-     *
      */
-    _renderCharmView: function(charm, isFullscreen) {
+    _renderCharmView: function(charm) {
       this.set('entity', charm);
 
       var templateData = charm.getAttrs(),
@@ -308,7 +272,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var siteDomain = 'jujucharms.com',
           charmPath = this.get('entity').get('storeId'),
           link = 'https://' + siteDomain + '/' + charmPath;
-      templateData.isFullscreen = isFullscreen;
       templateData.isLocal = templateData.scheme === 'local';
       templateData.forInspector = this.get('forInspector');
       if (templateData.files) {
@@ -351,19 +314,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this._setupTabview();
       this._dispatchTabEvents(this.tabview);
       this._showActiveTab();
-
-      if (isFullscreen) {
-        if (!this.get('entity').get('relatedCharms')) {
-          this.showIndicator(Y.one('.related-charms'));
-          this._loadRelatedCharms(this._renderRelatedCharms);
-        } else {
-          // We have related charm info, get to rendering them.
-          this._renderRelatedCharms();
-        }
-      }
-      else {
-        this._setCollapsableHeader();
-      }
+      this._setCollapsableHeader();
     },
 
     /**
@@ -377,11 +328,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
      */
     render: function() {
-      var isFullscreen = this.get('isFullscreen');
       this.showIndicator(this.get('renderTo'));
 
       if (this.get('entity')) {
-        this._renderCharmView(this.get('entity'), isFullscreen);
+        this._renderCharmView(this.get('entity'));
         this.hideIndicator(this.get('renderTo'));
       } else {
         this.get('store').charm(this.get('entityId'), {
@@ -391,7 +341,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
               charm.set('metadata', data.metadata);
             }
             this.set('charm', charm);
-            this._renderCharmView(charm, isFullscreen);
+            this._renderCharmView(charm);
             this.hideIndicator(this.get('renderTo'));
           },
           'failure': this.apiFailure

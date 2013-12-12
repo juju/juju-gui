@@ -79,7 +79,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           foo: true
         },
 
-        '/:gui:/something/:flags:/foo=10/:charmbrowser:/fullscreen/charm/id': {
+        '/:gui:/something/:flags:/foo=10/:charmbrowser:/minimized/charm/id': {
           foo: '10'
         },
 

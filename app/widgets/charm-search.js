@@ -33,16 +33,14 @@ YUI.add('browser-search-widget', function(Y) {
       templates = Y.namespace('juju.views').Templates;
 
   /**
-   * Search widget present in the Charm browser across both fullscreen and
-   * sidebar views.
+   * Search widget present in the Charm browser
    *
    * @class Search
    * @extends {Y.Widget}
    * @event EV_CLEAR_SEARCH the widget requests all search reset.
    * @event EV_SEARCH_CHANGED the widgets notifies that the search input has
-    changed.
+   *   changed.
    * @event EV_SEARCH_GOHOME Signal that the user clicked the home button.
-   *
    */
   ns.Search = Y.Base.create('search-widget', Y.Widget, [
     Y.Event.EventTracker

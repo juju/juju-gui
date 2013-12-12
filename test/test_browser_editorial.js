@@ -123,59 +123,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
     });
 
-    it('renders fullscreen 14/22 charms hidden', function() {
-      fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: sampleData
-              }]
-            }
-          });
-        }
-      });
-      view = new EditorialView({
-        isFullscreen: true,
-        renderTo: Y.one('.bws-content'),
-        store: fakeStore
-      });
-      view.render();
-      assert(node.all('.yui3-token-hidden').size() === 14);
-    });
-
-    it('clicking a charm navigates for fullscreen', function(done) {
-      fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.set('datasource', {
-        sendRequest: function(params) {
-          // Stubbing the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: sampleData
-              }]
-            }
-          });
-        }
-      });
-      view = new EditorialView({
-        isFullscreen: true,
-        renderTo: Y.one('.bws-content'),
-        store: fakeStore
-      });
-      view.render();
-
-      view.on('viewNavigate', function(ev) {
-        ev.halt();
-        ev.change.charmID.should.eql('precise/ceph-9');
-        done();
-      });
-
-      node.one('.token').simulate('click');
-    });
-
     it('clicking a charm navigates for sidebar', function(done) {
       fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.set('datasource', {

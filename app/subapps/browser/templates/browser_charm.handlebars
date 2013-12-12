@@ -7,11 +7,9 @@
                         <i class="sprite recommended-triangle-large"></i>
                     </div>
                 {{/if}}
-                {{#unless isFullscreen}}
-                  <a href="" class="back icon">
-                      <i class="sprite panel_close"></i>
-                  </a>
-                {{/unless}}
+                <a href="" class="back icon">
+                    <i class="sprite panel_close"></i>
+                </a>
                 <div class="block-icon">
                     <img src="{{charmIconPath storeId}}" alt="{{ name }} icon" class="icon">
                 </div>
@@ -51,9 +49,6 @@
                             <a href="{{ code_source.bugs_link }}">Bugs</a>
                         </li>
                     </ul>
-                    {{#if isFullscreen}}
-                        {{>providers}}
-                    {{/if}}
                 </div>
             </div>
         {{/unless}}
@@ -92,10 +87,8 @@
             <div>
                 <div id="bws-summary">
                     <div class="summary">
-                        {{#unless isFullscreen}}
-                            {{>providers}}
-                            <h2>Summary</h2>
-                        {{/unless}}
+                        {{>providers}}
+                        <h2>Summary</h2>
                         <p>{{ summary }}</p>
                         {{#if isLocal}}
                             <p><em>This is a local charm; only limited information will be available</em></p>
@@ -159,10 +152,6 @@
                             <p>No change history exists.</p>
                         {{/if}}
                     </div>
-                    {{#if isFullscreen}}
-                        <div class="related-charms">
-                        </div>
-                    {{/if}}
                 </div>
                 {{#unless isLocal}}
                     <div id="bws-readme"></div>

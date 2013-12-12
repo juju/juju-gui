@@ -24,178 +24,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       '<div id="content">',
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
-      '<div class="fullscreen"</div>',
       '</div>',
       '<div id="subapp-browser-min"></div>',
       '<div id="subapp-browser"></div>',
       '</div>'
     ].join('')).appendTo(container);
   };
-
-  (function() {
-    describe('browser fullscreen view', function() {
-      var container, FullScreen, utils, view, views, Y;
-
-      before(function(done) {
-        Y = YUI(GlobalConfig).use(
-            'juju-views',
-            'juju-browser',
-            'juju-tests-utils',
-            'subapp-browser-fullscreen', function(Y) {
-              views = Y.namespace('juju.browser.views');
-              utils = Y.namespace('juju-tests.utils');
-              FullScreen = views.FullScreen;
-              done();
-            });
-      });
-
-      beforeEach(function() {
-        container = Y.namespace('juju-tests.utils').makeContainer('container');
-        addBrowserContainer(Y, container);
-        // Mock out a dummy location for the Store used in view instances.
-        window.juju_config = {
-          charmworldURL: 'http://localhost'
-        };
-
-      });
-
-      afterEach(function() {
-        view.destroy();
-        Y.one('#subapp-browser').remove(true);
-        delete window.juju_config;
-        container.remove(true);
-      });
-
-      it('knows that it is fullscreen', function() {
-        view = new FullScreen();
-        view.isFullscreen().should.equal(true);
-      });
-
-      // Ensure the search results are rendered inside the container.
-      it('must correctly render the initial browser ui', function() {
-        var container = Y.one('#subapp-browser');
-        view = new FullScreen({
-          store: new Y.juju.charmworld.APIv3({
-            apiHost: 'http://localhost'
-          })
-        });
-
-        // mock out the data source on the view so that it won't actually make a
-        // request.
-        var emptyData = {
-          responseText: Y.JSON.stringify({
-            result: {
-              'new': [],
-              slider: []
-            }
-          })
-        };
-
-        // Override the store to not call the dummy localhost address.
-        view.get('store').set(
-            'datasource',
-            new Y.DataSource.Local({source: emptyData}));
-        view.render(container);
-
-        // And the hide button is rendered to the container node.
-        assert.isTrue(Y.Lang.isObject(container.one('#bws-fullscreen')));
-        // Also verify that the search widget has rendered into the view code.
-        assert.isTrue(Y.Lang.isObject(container.one('input')));
-
-        // The default is to now show the home buttons on the widget.
-        assert.isFalse(view.get('withHome'));
-      });
-
-      it('must show the home icons when withHome is set', function() {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-
-        view = new FullScreen({
-          store: fakeStore,
-          withHome: true
-        });
-        view.render(container);
-
-        // The default is to now show the home buttons on the widget.
-        assert.isTrue(view.get('withHome'));
-      });
-
-      it('shows the home icons if the withHome is changed', function(done) {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-
-        view = new FullScreen({
-          store: fakeStore
-        });
-        view.render(container);
-
-        view.search.showHome = function() {
-          // The only way to exit the test is that we hit this callback bound to
-          // the change event we trigger below.
-          done();
-        };
-
-        view.set('withHome', true);
-      });
-
-      it('routes home when it catches a gohome event', function(done) {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new FullScreen({
-          store: fakeStore
-        });
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.search, false);
-          assert.equal(ev.change.filter.clear, true);
-          assert.equal(ev.change.hash, undefined);
-          done();
-        });
-
-        view.render(container);
-        view.search._onHome({
-          halt: function() {}
-        });
-      });
-
-      it('resets charmid and hash on search', function(done) {
-        var container = Y.one('#subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new FullScreen({
-          charmID: 'precise/jenkins-13'
-        });
-
-        view.on('viewNavigate', function(ev) {
-          assert.equal(ev.change.filter.text, 'test search');
-          assert.equal(ev.change.charmID, undefined);
-          assert.equal(ev.change.hash, undefined);
-          done();
-        });
-
-        view.render(container);
-        view._searchChanged({
-          newVal: 'test search'
-        });
-      });
-
-      it('picks up the search widget deploy event', function(done) {
-        var container = utils.makeContainer('subapp-browser'),
-            fakeStore = new Y.juju.charmworld.APIv3({});
-        view = new FullScreen({
-          charmID: 'precise/jenkins-13',
-          store: fakeStore
-        });
-
-        view._deployEntity = function() {
-          container.remove(true);
-          done();
-        };
-
-        view.render(container);
-        view.search.fire(view.search.EVT_DEPLOY);
-      });
-
-    });
-  })();
 
   (function() {
     describe('browser minimized view', function() {
@@ -278,11 +112,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
         container.remove(true);
-      });
-
-      it('knows that it is not fullscreen', function() {
-        view = new Sidebar();
-        view.isFullscreen().should.equal(false);
       });
 
       it('reroutes to minimized when toggled', function(done) {
@@ -483,16 +312,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         app._sidebar = mockView;
         app._minimized = mockView;
-        app._fullscreen = mockView;
 
         // Setup some previous state to check for clearing.
-        app._oldState.viewmode = 'fullscreen';
+        app._oldState.viewmode = 'minimized';
         app._viewState.viewmode = 'sidebar';
 
         app.initState();
 
         assert.equal(app._sidebar, undefined, 'sidebar is removed');
-        assert.equal(app._fullscreen, undefined, 'fullscreen is removed');
         assert.equal(app._minimized, undefined, 'minimized is removed');
         assert.equal(app._oldState.viewmode, null, 'old state is reset');
         assert.equal(app._viewState.viewmode, null, 'view state is reset');
@@ -505,10 +332,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'search/foo/bar-66',
           'sidebar/foo/bar-66',
           'minimized/foo/bar-66',
-          'fullscreen/foo/bar-66',
           'sidebar/search/foo/bar-66',
-          'minimized/search/foo/bar-66',
-          'fullscreen/search/foo/bar-66'
+          'minimized/search/foo/bar-66'
         ];
         paths.map(function(id) {
           assert.equal(
@@ -527,13 +352,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         app.routeDefault(req, null, next);
         // The viewmode is ignored. This path isn't meant for this route
         // callable to deal with at all.
-        assert.equal(req.params, undefined);
-
-        app = new browser.Browser({defaultViewmode: 'fullscreen'});
-        req = {
-          path: '/fullscreen'
-        };
-        app.routeDefault(req, null, next);
         assert.equal(req.params, undefined);
       });
 
@@ -564,7 +382,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Stub out the sidebar so we don't render anything.
         app.sidebar = function() {};
         var req = {
-          path: '/fullscreen/precise/mysql-10/'
+          path: '/minimized/precise/mysql-10/'
         };
 
         var testNext = function() {
@@ -623,38 +441,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           filter: undefined
         });
         assert.equal(url, 'sidebar/search');
-
-        // If the viewmode is set to something not sidebar, it's part of the
-        // url.
-        url = app._getStateUrl({
-          viewmode: 'fullscreen',
-          charmID: undefined,
-          search: undefined,
-          filter: undefined
-        });
-        assert.equal(url, 'fullscreen');
-
-        // It takes into account hash.
-        url = app._getStateUrl({
-          viewmode: 'fullscreen',
-          charmID: undefined,
-          hash: '#bws-readme',
-          search: undefined,
-          filter: undefined
-        });
-        assert.equal(url, 'fullscreen#bws-readme');
-
-        // It always puts the hash last.
-        url = app._getStateUrl({
-          viewmode: 'fullscreen',
-          charmID: 'precise/jenkins-2',
-          hash: '#bws-readme',
-          search: true,
-          querystring: 'text=jenkins'
-        });
-        assert.equal(
-            url,
-            'fullscreen/search/precise/jenkins-2?text=jenkins#bws-readme');
       });
 
       it('/charm/id router ignores other urls', function() {
@@ -667,7 +453,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Stub out the sidebar so we don't render anything.
         app.sidebar = function() {};
         var req = {
-          path: 'fullscreen/search'
+          path: 'minimized/search'
         };
 
         app.routeDirectCharmId(req, null, next);
@@ -682,45 +468,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The viewmode should be populated now to the default.
         assert.equal(req.params, undefined);
       });
-
-      it('fullscreen destroys old views not required', function(done) {
-        var searchCleaned = false,
-            editorialCleaned = false;
-
-        app = new browser.Browser({
-          store: new CharmworldAPI({
-            'apiHost': 'http://localhost',
-            'noop': true
-          })
-        });
-
-        app._search = {
-          destroy: function() {
-            searchCleaned = true;
-          }
-        };
-        app._editorial = {
-          destroy: function() {
-            editorialCleaned = true;
-          }
-        };
-
-        // We'll hit the default renderEditorial so stub that out as the catch
-        // that out test is done.
-        app._shouldShowCharm = function() { return true; };
-        app.renderEntityDetails = function() {
-          assert.equal(searchCleaned, true);
-          assert.equal(editorialCleaned, true);
-          done();
-        };
-
-        app.fullscreen({}, {}, function() {});
-      });
-
     });
 
     describe('browser subapp display tree', function() {
-      var Y, browser, container, fullscreenRender, hits, minRender, ns,
+      var Y, browser, container, hits, minRender, ns,
           resetHits, sidebarRender;
 
       before(function(done) {
@@ -734,7 +485,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
               resetHits = function() {
                 hits = {
-                  fullscreen: false,
                   minimized: false,
                   sidebar: false,
                   renderCharmDetails: false,
@@ -794,10 +544,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y.juju.browser.views.Sidebar.prototype.render = function() {
           hits.sidebar = true;
         };
-        fullscreenRender = Y.juju.browser.views.FullScreen.prototype.render;
-        Y.juju.browser.views.FullScreen.prototype.render = function() {
-          hits.fullscreen = true;
-        };
         minRender = Y.juju.browser.views.MinimizedView.prototype.render;
         Y.juju.browser.views.MinimizedView.prototype.render = function() {
           hits.minimized = true;
@@ -813,7 +559,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // Replace the render methods for the main views we replaced for
         // testing hits.
         Y.juju.browser.views.Sidebar.prototype.render = sidebarRender;
-        Y.juju.browser.views.FullScreen.prototype.render = fullscreenRender;
         Y.juju.browser.views.MinimizedView.prototype.render = minRender;
         container.remove(true);
       });
@@ -1267,7 +1012,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         browser._sidebar = mockView;
         browser._minimized = mockView;
-        browser._fullscreen = mockView;
 
         var req = {
           path: '/minimized',
@@ -1287,7 +1031,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         minNode.getComputedStyle('display').should.eql('none');
         browserNode.getComputedStyle('display').should.eql('none');
 
-        assert.equal(hitCount, 3);
+        assert.equal(hitCount, 2);
 
         // The view state needs to also be sync'd and updated even though
         // we're hidden so that we can detect changes in the app state across

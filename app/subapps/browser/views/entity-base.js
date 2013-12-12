@@ -514,16 +514,6 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     },
 
     /**
-       @attribute isFullscreen
-       @default false
-       @type {Boolean}
-
-     */
-    isFullscreen: {
-      value: false
-    },
-
-    /**
      * @attribute renderTo
      * @default {Node} .bws-view-data node.
      * @type {Node}

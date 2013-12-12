@@ -92,9 +92,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       var charmID = charm.getData('charmid');
 
       // Update the UI for the active one.
-      if (!this.get('isFullscreen')) {
-        this._updateActive(ev.currentTarget);
-      }
+      this._updateActive(ev.currentTarget);
 
       var change = {
         charmID: charmID,
@@ -231,18 +229,6 @@ YUI.add('subapp-browser-charmresults', function(Y) {
        *
        */
       activeID: {},
-
-      /**
-       * Is this rendering of the editorial view for fullscreen or sidebar
-       * purposes?
-       *
-       * @attribute isFullscreen
-       * @default false
-       * @type {Boolean}
-       */
-      isFullscreen: {
-        value: false
-      },
 
       /**
        * What is the container node we should render our container into?

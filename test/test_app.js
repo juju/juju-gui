@@ -240,9 +240,6 @@ function injectData(app, data) {
       }, {
         url: '/',
         hidden: false
-      }, {
-        url: '/fullscreen',
-        hidden: false
       }];
 
       Y.Array.each(checkUrls, function(check) {

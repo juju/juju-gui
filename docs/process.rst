@@ -211,7 +211,7 @@ Checklist for Making a Stable Release
   branch's revno.
 - While still in the directory where you extracted the tar file, change
   build-prod/juju-ui/assets/config.js to specify sandbox: true,
-  defaultViewmode: 'fullscreen', user: 'admin', password: 'admin',
+  user: 'admin', password: 'admin',
   simulateEvents: false, and showGetJujuButton: true.
 - Configure a webserver to serve the files, if you have not already.  For
   example, these are nginx instructions.
@@ -324,7 +324,7 @@ Checklist for Making a Stable Release
   - Commit: bzr ci -m "Merged back the new charm release."
   - Push the branch directly to the parent: ``bzr push :parent`` should work.
   - In a few minutes, the new charm revision should be available in
-    <https://jujucharms.com/fullscreen/search/precise/juju-gui/> and
+    <https://jujucharms.com/search/precise/juju-gui/> and
     <http://manage.jujucharms.com/charms/precise/juju-gui>.
 
 
@@ -419,7 +419,7 @@ improv is running.  Additionally, these steps may be completed with both
 - Log out and back in.
 - Search for apache.
 - Ensure results look sane.
-- Go between fullscreen and minimized views in the charm browser.
+- Go between sidebar and minimized views in the charm browser.
 - Visit the internal pages by double clicking a service, ensure
   sanity (this step will go away with future designs).
 
