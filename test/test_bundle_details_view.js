@@ -117,8 +117,11 @@ describe('Browser bundle detail view', function() {
       assert.equal(filename, 'bundles.yaml');
       assert.isFunction(callbacks.success);
       assert.isFunction(callbacks.failure);
-      callbacks.success.call(view, '<div id="testit"></div>');
-      assert.isNotNull(container.one('#testit'));
+      var fileContent = '<div id="testit"></div>';
+      callbacks.success.call(view, fileContent);
+      // The content has been escaped.
+      assert.equal(
+          container.one('.filecontent').get('text'), fileContent);
       done();
     };
     view.set('store', fakeStore);
