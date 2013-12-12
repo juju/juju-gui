@@ -375,7 +375,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           params.callback.success({
             response: {
               results: [{
-                responseText: 'install hook content.'
+                responseText: '<install hook content>'
               }]
             }
           });
@@ -404,7 +404,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.one('#bws-code').one('select').simulate('change');
 
       var content = Y.one('#bws-code').one('div.filecontent');
-      content.get('text').should.eql('install hook content.');
+      // Content is escaped, so we read it out as text, not tags.
+      content.get('text').should.eql('<install hook content>');
     });
 
     it('should be able to render markdown as html', function() {

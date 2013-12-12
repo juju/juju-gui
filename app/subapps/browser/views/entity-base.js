@@ -366,7 +366,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         'success': function(data) {
           if (prettify) {
             // If we say we want JS-prettified, use the prettify module.
-            Y.prettify.renderPrettyPrintedFile(container, data);
+            Y.prettify.renderPrettyPrintedFile(container, Y.Escape.html(data));
           } else if (filename.slice(-3) === '.md') {
             // else if it's a .md file, render the markdown to html.
             container.setHTML(Y.Markdown.toHTML(data));
