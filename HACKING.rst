@@ -151,7 +151,8 @@ branch.
 
 After review has been signed off on and the test run has updated the pull
 request, a member of the `juju` organization can submit the branch for landing
-with a new comment on the pull request with the content `$$merge$$`.
+with a new comment on the pull request including the string `:shipit:` (yes,
+that's a squirrel with a gray fedora).
 
 Once the code has been landed you can remove your feature branch from both the
 remote and your local fork. Github provides a button to do so in the bottom of
