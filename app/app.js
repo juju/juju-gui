@@ -840,6 +840,7 @@ YUI.add('juju-gui', function(Y) {
       if (environmentInstance) {
         environmentInstance.topo.update();
       }
+      this.set('loggedIn', false);
       this.env.logout();
       return;
     },
@@ -899,6 +900,8 @@ YUI.add('juju-gui', function(Y) {
           this.navigate('/login/', { overrideAllNamespaces: true });
           return;
         }
+      } else if (!this.get('loggedIn')) {
+        return;
       }
       next();
     },
@@ -963,6 +966,7 @@ YUI.add('juju-gui', function(Y) {
         // The login was a success.
         this.hideMask();
         var redirectPath = this.popLoginRedirectPath();
+        this.set('loggedIn', true);
         // Handle token authentication.
         if (e.data.fromToken) {
           // Alert the user.  In the future, we might want to call out the
@@ -979,13 +983,7 @@ YUI.add('juju-gui', function(Y) {
             );
           }, this);
         }
-        if (redirectPath === '/') {
-          setTimeout(
-              Y.bind(this.showRootView, this), 0);
-          return;
-        } else {
-          this.navigate(redirectPath, {overrideAllNamespaces: true});
-        }
+        this.navigate(redirectPath, {overrideAllNamespaces: true});
       } else {
         this.showLogin();
       }
@@ -1227,6 +1225,16 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charmworldURL: {},
+      /**
+        A flag to indicate if the user is actually logged into the environment.
+
+        @attribute loggedIn
+        @default false
+        @type {Boolean}
+      */
+      loggedIn: {
+        value: false
+      },
       /**
        * @attribute currentUrl
        * @default '/'
