@@ -192,7 +192,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       });
       templateData.services = this._buildCharmList(bundleData);
       templateData.sourceLink = this._getSourceLink(
-          'lp:' + this.get('entity').get('branch_spec'));
+          'lp:' + bundle.get('branch_spec'));
       templateData.prettyCommits = this._formatCommitsForHtml(
           templateData.recentCommits, templateData.sourceLink);
       if (templateData.deployer_file_url) {

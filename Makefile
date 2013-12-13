@@ -268,7 +268,7 @@ lint-yuidoc: $(JSFILES)
 recess: node_modules/recess
 	@# We need to grep for "Perfect" because recess does not set a
 	@# non-zero exit code if it rejects a file.  If this fails, run the
-	@# recess command below without the grep to get recess' report.
+	@# recess command below without the grep to get recess report.
 	node_modules/recess/bin/recess lib/views/stylesheet.less \
 	    --config recess.json | grep -q Perfect
 
