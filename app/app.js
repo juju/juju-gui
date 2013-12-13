@@ -892,6 +892,7 @@ YUI.add('juju-gui', function(Y) {
       // form was never shown - this handles that edge case.
       var noCredentials = !(credentials && credentials.areAvailable);
       if (noCredentials) {
+        this.set('loggedIn', false);
         // If there are no stored credentials redirect to the login page
         if (!req || req.path !== '/login/') {
           // Set the original requested path in the event the user has
