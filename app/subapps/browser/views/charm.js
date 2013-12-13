@@ -71,6 +71,33 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+       Creates the Bazaar url for the charm/bundle.
+
+       @method _getSourceLink
+       @protected
+       @param {String} lp_url The short Launchpad URL.
+       @return {String} Bazaar URL for browsing code.
+     */
+    _getSourceLink: function(lp_url) {
+      // Get the full URL to the Launchpad branch.
+      var url = ns.EntityBaseView.prototype._getSourceLink(lp_url);
+      // Append the file-browsing part.
+      return url + '/files';
+    },
+
+    /**
+       Creates the url for a given revision of the charm.
+
+       @method _getRevnoLink
+       @protected
+       @param {String} sourceLink The charm's source_link.
+       @param {String} revno The charm commit's revision number.
+     */
+    _getRevnoLink: function(sourceLink, revno) {
+      return sourceLink.replace('files', 'revision/') + revno;
+    },
+
+    /**
      * Begin the service creation process by showing the service configuration
      * form.
      *

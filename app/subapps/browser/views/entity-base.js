@@ -164,19 +164,19 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      */
     _getSourceLink: function(lp_url) {
       var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
-      return url + '/files';
+      return url;
     },
 
     /**
-       Creates the url for a given revision of the charm.
+       Creates the url for a given revision of the entity.
 
        @method _getRevnoLink
        @private
-       @param {String} sourceLink The charm's source_link.
-       @param {String} revno The charm commit's revision number.
+       @param {String} sourceLink The entity's source_link.
+       @param {String} revno The entity commit's revision number.
      */
     _getRevnoLink: function(sourceLink, revno) {
-      return sourceLink.replace('files', 'revision/') + revno;
+      return sourceLink + '/' + revno;
     },
 
     /**

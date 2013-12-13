@@ -345,4 +345,18 @@ describe('Browser bundle detail view', function() {
     assert.equal(selected.getAttribute('href'), '#bws-services');
   });
 
+
+  it('can generate source and revno links from its charm', function() {
+    view.set('entity', new models.Bundle(data));
+    var branchUrl = 'lp:' + view.get('entity').get('branch_spec');
+    var url = view._getSourceLink(branchUrl);
+    var expected =
+        'http://bazaar.launchpad.net/~benji/charms/bundles/wiki/bundle';
+    assert.equal(expected, url);
+    var revnoLink = view._getRevnoLink(url, 1);
+    assert.equal(expected + '/1', revnoLink);
+  });
+
+
+
 });
