@@ -423,19 +423,19 @@ The following is a list of pertinent Makefile variables.
   Set this to any non-empty value to force the Makefile to believe it is
   working with a trunk checkout. Example usage::
 
-    IS_TRUNK_BRANCH=1 make dist
+    IS_TRUNK_BRANCH=0 make dist
 
 ``BRANCH_IS_CLEAN``
   Set this to any non-empty value to force the Makefile to believe that the
   current code tree has no changes. Example usage::
 
-    BRANCH_IS_CLEAN=1 make dist
+    BRANCH_IS_CLEAN=0 make dist
 
 ``BRANCH_IS_GOOD``
   Set this to any non-empty value to force the Makefile to bypass checks of
   ``IS_TRUNK_BRANCH`` and ``BRANCH_IS_CLEAN``. Example usage::
 
-    BRANCH_IS_GOOD=1 make dist
+    BRANCH_IS_GOOD=0 make dist
 
 Updating the ``nodejs`` dependencies
 ====================================

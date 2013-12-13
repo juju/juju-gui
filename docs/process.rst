@@ -27,7 +27,7 @@ Checklist for Preparing for a Review
 - Round-trips with reviewers are expensive. Try to eliminate them.
 
   - Pre-review your diff!  Tip: you can diff your branch against a local
-    trunk named "trunk" with "bzr diff -r ancestor:../trunk/".
+    trunk named "develop" with "git diff develop..HEAD".
 
     - All new code should have tests.  If it does not, be prepared to explain
       why to skeptical reviewers.
@@ -147,14 +147,13 @@ Making Releases
 Checklist for Making a Stable Release
 -------------------------------------
 
-- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
-- If you are using a pre-existing branch, make sure it is up-to-date:
-  ``bzr pull``.
-- Visually QA the GUI against improv both with and without the --landscape
-  switch.  Load the app, open the charm panel, go to an inner page, and make
-  sure there are no 404s or Javascript errors in the console.  Verify that the
-  Landscape icons, links, and badges are present when expected.  Additionally,
-  run through the steps in the QA Checklist below.
+- Get a clean branch of the juju repository.
+  ``git clone git@github.com:juju/juju-gui.git``
+- Visually QA the GUI against the sandbox. Load the app, open the charm panel,
+  go to an inner page, and make sure there are no 404s or Javascript errors in
+  the console.  Verify that the Landscape icons, links, and badges are present
+  when expected.  Additionally, run through the steps in the QA Checklist
+  below.
 
 - Verify that the section in ``CHANGES.yaml`` for the new release has the
   expected changelog news items, using the format described in the file.  If
@@ -165,12 +164,10 @@ Checklist for Making a Stable Release
     end user.  These instructions will ask you to make tons of judgements.  Go
     for it. :-)
   - Identify the tag of the last release.  This should usually be a three-part
-    identifier such as the one you made in the bzr tag above.  If you are not
-    sure of the tags, try the bzr "tags" command, e.g. ``bzr tags`` or (for
-    less cruft) ``bzr tags -r date:2013-10-17..``.
+    identifier such as the one you made in the git tag above.  If you are not
+    sure of the tags, try the ``git tag`` command.
   - Look at the logs since the last release tag.  If the last release tag was
-    0.11.0, for instance, use ``bzt log -r tag:'0.11.0'..``.  You might want
-    to pipe this output through less or something similar.
+    0.11.0, for instance, use ``git log 0.11.0..HEAD``.
   - Review each commit from those logs.  If the commit represents a new
     feature or fix that is interesting to end users, add a bullet for it in
     the changelog for this release.
@@ -191,12 +188,21 @@ Checklist for Making a Stable Release
   is ``unreleased``, decide what the next version number should be (see
   `Semantic Versioning   <http://semver.org/>`_) and change ``unreleased`` to
   that value.
-- Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
 - Verify that your changes to the YAML work by running ``make docs``.  Fix
   any problems identified.
 - Commit to the branch with this checkin message:
-  ``bzr commit -m 'Set version for release.'``
-- Push the branch directly to the parent (``bzr push :parent`` should work).
+  ``git commit -a -m 'Set version for release.'``
+- Push the branch directly to the parent (``git push origin develop`` should work).
+
+- Update the ``master`` branch to build the release from.
+
+  - Checkout master: ``git checkout master``
+  - Merge in the develop changes since the last release: ``git merge
+    develop``.
+  - Push the updated master: ``git push origin master``
+
+- Set a git tag for the release, e.g.: ``git tag 0.1.5``.
+- Push the updated tag to the parent, e.g.: ``git push --tags``
 
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
@@ -213,31 +219,11 @@ Checklist for Making a Stable Release
   build-prod/juju-ui/assets/config.js to specify sandbox: true,
   user: 'admin', password: 'admin',
   simulateEvents: false, and showGetJujuButton: true.
-- Configure a webserver to serve the files, if you have not already.  For
-  example, these are nginx instructions.
+- Serve the app with a python module.
 
-  - ``sudo apt-get install nginx``
-  - Create a jujugui file in /etc/nginx/sites-available with content similar to
-    the following, but replacing the root with the path to the build-prod
-    directory of where you have expanded the tarball::
+  - cd build-prod && python -m SimpleHTTPServer
 
-      server {
-        listen 80 default_server;
-        listen [::]:80 default_server ipv6only=on;
-        root /home/gary/tmp/juju-gui/build-prod;
-        index index.html;
-        server_name localhost;
-        location / {
-          try_files $uri $uri/ /index.html;
-        }
-      }
-
-  - In /etc/nginx/sites-enabled, remove any existing symlinks (such as to
-    "default") and add a symlink to /etc/nginx/sites-avilable/jujugui.
-  - ``sudo service nginx restart`` (or ``sudo service nginx start``).
-
-- Go to the localhost port on which the app is running (80 if you use the
-  instructions above).
+- Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.
 
   - Load the app, open the charm panel, go to an inner page, and make
@@ -261,7 +247,12 @@ Checklist for Making a Stable Release
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use
   the ``cmp`` command).
-- Go to https://readthedocs.org/builds/juju-gui/ and request a new build.
+- Now go back to the develop branch to set things back into an unreleased
+  state.
+
+  - git checkout develop
+  - git merge master
+
 - Set the version back to ``unreleased`` by doing the following.
 
   - Restore ``- unreleased:`` as most recent version string in
@@ -269,8 +260,8 @@ Checklist for Making a Stable Release
   - Verify that your changes to the YAML work by running ``make docs``.  Fix
     any problems identified.
   - Commit to the branch with this checkin message:
-    ``bzr commit -m 'Set version back to unreleased.'``
-  - Push the branch directly to the parent (``bzr push :parent`` should work).
+    ``git commit -a -m 'Set version back to unreleased.'``
+  - Push the branch directly to the parent (``git push origin develop`` should work).
 
 - Make a new release of the juju-gui charm by doing the following.
 
@@ -333,12 +324,12 @@ You are done!
 Checklist for Making a Developer Release
 ----------------------------------------
 
-- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
-- If you are using a pre-existing branch, make sure it is up-to-date:
-  ``bzr pull``.
+- Check out your develop branch. ``git checkout develop``.
+- Make sure you've pulled the latest changes from trunk. ``git pull juju
+  develop``.
 - Run through the QA Checklist (below).
 - Verify that the top-most version in ``CHANGES.yaml`` is ``unreleased``.
-- Run ``bzr revno``.  The revno should be bigger than the most recent release
+- Run ``git describe --always HEAD``.  The revno should be bigger than the most recent release
   found on `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
@@ -351,19 +342,21 @@ Checklist for Making a Developer Release
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
-- While still in the directory where you extracted the tar file, run the
-  command: ``NO_BZR=1 make prod``.
-- Start the ``improv.py`` script as described in the HACKING file.
+- Serve the app with a python module.
+
+  - cd build-prod && python -m SimpleHTTPServer
+
 - Go to the URL shown in the terminal.
-- In Chrome and Firefox, QA the application.
+- Load the app, open the charm panel, go to an inner page, and make
+  sure there are no 404s or Javascript errors in the console.
+- Ensure that the ``/juju-ui/version.js`` URL shows the same version
+  string as before.
+- We want a real QA script for the future.
 
-  - Load the app, open the charm panel, go to an inner page, and make
-    sure there are no 404s or Javascript errors in the console.
-  - Ensure that the ``/juju-ui/version.js`` URL shows the same version
-    string as before.
-  - We want a real QA script for the future.
+- Also do the same checks for the debug build.
 
-- Also do the same checks after running the command ``NO_BZR=1 make debug``.
+  - cd ../build-debug && python -m SimpleHTTPServer
+
 - Now it is time to upload the release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process and upload the release.
@@ -433,9 +426,10 @@ update the cache file stored in Launchpad.
 Checklist for Uploading a Cache File
 ------------------------------------
 
-- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
-- If you are using a pre-existing branch, make sure it is up-to-date:
-  ``bzr pull``.
+- Get a clean branch of the juju repository.
+  ``git clone git@github.com:juju/juju-gui.git``
+- If you are using your own pre-existing branch, make sure it is up-to-date:
+  ``git pull origin {yourbranch}``.
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
 - Create the tarball: ``PROD=1 make npm-cache``.  The cache
