@@ -266,9 +266,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           revno: 2
         }
       ];
-      var commits = view._formatCommitsForHtml(
-          revisions,
-          view._getSourceLink(view.get('entity').get('code_source').location));
+      var url = view._getSourceLink(
+          view.get('entity').get('code_source').location);
+      var commits = view._formatCommitsForHtml(revisions, url);
       assert.equal(
           'http://bazaar.launchpad.net/~foo/revision/1',
           commits.first.revnoLink);
