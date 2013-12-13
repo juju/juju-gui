@@ -47,14 +47,8 @@ EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
 ### Release-specific variables - see docs/process.rst for an overview. ###
-# Provide the ability to build a release package without using bzr, for
-# lightweight checkouts.
-ifdef NO_BZR
-BZR_REVNO=0
-BRANCH_IS_GOOD=1
-else
-BZR_REVNO=$(shell bzr revno)
-endif
+SHA=$(shell git describe --always HEAD)
+
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
@@ -83,7 +77,7 @@ ifneq ($(ULTIMATE_VERSION), unreleased)
 	"unreleased" in CHANGES.yaml)
 endif
 endif
-RELEASE_VERSION=$(PENULTIMATE_VERSION)+build.$(BZR_REVNO)
+RELEASE_VERSION=$(PENULTIMATE_VERSION)+build.$(SHA)
 SERIES=trunk
 endif
 # If we are doing a production release (as opposed to a trial-run release) we
@@ -94,29 +88,30 @@ endif
 RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
 RELEASE_FILE=releases/$(RELEASE_NAME).xz
 RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
-NPM_CACHE_VERSION=$(BZR_REVNO)
+NPM_CACHE_VERSION=$(SHA)
 NPM_CACHE_FILE=$(CURDIR)/releases/npm-cache-$(NPM_CACHE_VERSION).tgz
 NPM_SIGNATURE=$(NPM_CACHE_FILE).asc
 # Is the branch being released a branch of trunk?
 ifndef BRANCH_IS_GOOD
 ifndef IS_TRUNK_BRANCH
-IS_TRUNK_BRANCH=$(shell bzr info | grep \
-	'parent branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
-	> /dev/null && echo 1)
+IS_TRUNK_BRANCH=$(shell git branch -av | grep '* master' 1>&2 2> /dev/null; echo $$?)
 endif
 # Does the branch on disk have uncomitted/unpushed changes?
 ifndef BRANCH_IS_CLEAN
-BRANCH_IS_CLEAN=$(shell [ -z "`bzr status`" ] && bzr missing --this && echo 1)
+BRANCH_IS_CLEAN=$(shell git diff-index --quiet --cached HEAD 1>&2 2> /dev/null; echo $$?)
 endif
+
+
 # Is it safe to do a release of the branch?  For trial-run releases you can
 # override this check on the command line by setting the BRANCH_IS_GOOD
 # environment variable.
-ifneq ($(strip $(IS_TRUNK_BRANCH)),)
-ifneq ($(strip $(BRANCH_IS_CLEAN)),)
-BRANCH_IS_GOOD=1
+ifeq ($(IS_TRUNK_BRANCH), 0)
+ifeq ($(BRANCH_IS_CLEAN), 0)
+BRANCH_IS_GOOD=0
 endif
 endif
 endif
+
 ### End of release-specific variables ###
 TEMPLATE_TARGETS=$(shell find app -type f -regextype posix-extended -regex '.+\.(handlebars|partial)')
 
@@ -526,7 +521,7 @@ build-prod: build-shared | $(LINK_PROD_FILES)
 build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
 
-# This really depends on CHANGES.yaml, the bzr revno changing, and the build
+# This really depends on CHANGES.yaml, the git sha changing, and the build
 # /juju-ui directory existing.  We are vaguely trying to approximate the second
 # one by connecting it to our pertinent versioned files.  The first target
 # creates the directory, and directories are a bit tricky with Makefiles so we
@@ -535,7 +530,7 @@ build-shared/juju-ui/assets:
 # regardless of whether we are doing a "Stable" or "Development" release.
 build-shared/juju-ui/version.js: build-shared/juju-ui/assets CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
-	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(BZR_REVNO)'];" \
+	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(SHA)'];" \
 	    > build-shared/juju-ui/version.js
 
 upload_release.py:
@@ -557,8 +552,8 @@ else
 	@echo "*********************** RELEASE FAILED ***********************"
 	@echo "**************************************************************"
 	@echo
-	@echo "To make a release, you must either be in a branch of"
-	@echo "lp:juju-gui without uncommitted/unpushed changes, or you must"
+	@echo "To make a release, you must either be in the master branch of"
+	@echo "juju/juju-gui without uncommitted/unpushed changes, or you must"
 	@echo "override one of the pertinent variable names to force a "
 	@echo "release."
 	@echo
@@ -573,22 +568,8 @@ $(RELEASE_SIGNATURE): $(RELEASE_FILE)
 	gpg --armor --sign --detach-sig $(RELEASE_FILE)
 
 dist: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
-ifndef NO_BZR
 	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
 	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
-else
-	@echo "**************************************************************"
-	@echo "*********************** DIST FAILED **************************"
-	@echo "**************************************************************"
-	@echo
-	@echo "You may not make dist while the NO_BZR flag is defined."
-	@echo "Please run this target without the NO_BZR flag defined if you"
-	@echo "wish to upload a release."
-	@echo
-	@echo "See docs/process.rst for more information"
-	@echo
-	@false
-endif
 
 $(NPM_SIGNATURE): $(NPM_CACHE_FILE)
 	gpg --armor --sign --detach-sig $(NPM_CACHE_FILE)
@@ -620,9 +601,9 @@ else
 	@echo "**************************************************************"
 	@echo
 	@echo "To create and upload an NPM cache file to Launchpad you must"
-	@echo "be in a branch of lp:juju-gui without uncommitted/unpushed"
-	@echo "changes, or you must override one of the pertinent variable "
-	@echo "names to force an upload."
+	@echo "be in the master branch of juju/juju-gui without "
+	@echo "uncommitted/unpushed changes, or you must override one of the "
+	@echo "pertinent variable names to force an upload."
 	@echo
 	@echo "See docs/process.rst for more information"
 	@echo
