@@ -170,11 +170,10 @@ by pulling from the original Juju repository.
 
 ::
 
-  git checkout develop
-  git pull juju develop
-  # You can update the fork on github by pushing your local develop branch
-  # up.
-  git push origin develop
+  # Using the alias from the Helpful aliases section, update your fork with
+  # the latest code in the juju develop branch.
+  git juju-sync
+
   # And start your second feature branch.
   git checkout -b {featureBranch2}
 
@@ -218,10 +217,15 @@ documentation to make working with the Juju Gui easier.
   # trunk (the "juju" remote's develop branch). To do this, it also updates your
   # local develop branch with the newest code from trunk.
   # In the example below, "juju" is the name of your remote, "6" is the pull
-  # request number, and "qa-stick-headers" is whatever branch name you want
+  # request number, and "qa-sticky-headers" is whatever branch name you want
   # for the pull request.
   # git qa-pr juju 6 qa-sticky-headers
   qa-pr = "!sh -c 'git checkout develop; git pull $0 develop; git checkout -b $2; git fetch-pr $0 $1; git merge pr/$1'"
+
+  # Update your local develop branch with the latest from the juju remote.
+  # Then make sure to push that back up to your fork on github to keep
+  # everything in sync.
+  juju-sync = "!f() { git checkout develop && git pull juju develop && git push origin develop; }; f"
 
 
 Working with a Real Juju
