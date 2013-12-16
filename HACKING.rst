@@ -45,7 +45,7 @@ importantly, to support testing from the command line, ``phantomjs`` and
 
 ::
 
-  sudo npm install -g jshint@2.1.3 mocha-phantomjs@2.0.0 phantomjs@1.9.1-0
+  sudo npm install -g jshint@2.1.3 mocha-phantomjs@3.2.0 phantomjs@1.9.1-0
 
 Note: Make sure to get the latest phantomjs from npm and not rely on an older
 .deb packaged version. mocha-phantomjs will fail silently when running.
