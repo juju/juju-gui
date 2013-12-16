@@ -65,6 +65,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container.remove(true);
       });
 
+      it('fails hard to test landing', function() {
+        assert(false, 'die die die');
+      });
+
       it('toggles to sidebar', function(done) {
         var container = Y.one('#subapp-browser');
         view = new Minimized();
