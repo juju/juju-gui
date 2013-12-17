@@ -454,7 +454,10 @@ test-misc:
 	    test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
 
-test-browser: build-prod
+test-browser: build-prod build-debug
+	# Use the debug config but the prod server in hopes that the slow CI
+	# server will be fast enough to run tests.
+	cp build-debug/juju-ui/assets/config.js build-prod/juju-ui/assets/config.js
 	# Start the web server we will be testing against.
 	(cd build-prod && \
 	    python ../bin/http_server.py 8888 2> /dev/null & \
