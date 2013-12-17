@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
+
+import os
 import unittest
 
 from selenium.common import exceptions
@@ -66,6 +68,16 @@ class TestAuthentication(browser.TestCase):
         self.handle_login()
         # Check the initial URL.
         self.wait_for_path(path, error='Not in the initial path.')
+
+        # Check the onboarding box if it's available.
+        try:
+            onboarding = self.driver.find_element_by_css_selector(
+                '.onboarding-close')
+            if onboarding:
+                onboarding.click()
+        except exceptions.NoSuchElementException:
+            pass
+
         self.assertTrue(self.is_authenticated(), 'initial state')
         # Logout.
         self.logout()
@@ -91,5 +103,5 @@ class TestAuthentication(browser.TestCase):
         self.process_path('/:gui:/unit/haproxy-0/')
 
 if __name__ == '__main__':
-    browser.browser_name = 'local-firefox'
+    browser.browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'local-firefox')
     unittest.main()
