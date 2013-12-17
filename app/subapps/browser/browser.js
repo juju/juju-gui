@@ -597,13 +597,19 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Create a 'welcome' message walkthrough for new users.
-     *
-     * @method renderOnboarding
-     * @param {Boolean} force Whether it should force render the onboarding.
-     */
+      Create a 'welcome' message walkthrough for new users.
+
+      Note: onboarding control and creation needs to stay in the charmbrowser
+      code because we don't want to show the onboarding code if the
+      browser is showing charm details or search results.
+
+      @method renderOnboarding
+      @param {Boolean} force Whether it should force render the onboarding.
+    */
     renderOnboarding: function(force) {
-      // Need to check onboarding exists due to the double dispatch bug.
+      // The sidebar method which calls this method checks to make sure that
+      // onboarding doesn't exist prior to calling this method due to the
+      // double dispatch bug.
       this._onboarding = new Y.juju.views.OnboardingView({
         'container': '#onboarding'
       });
