@@ -52,9 +52,6 @@ SHA=$(shell git describe --always HEAD)
 # This is where the ci-check target stores the PID of the server under test.
 TEST_SERVER_PID=ci-check-gui-server.pid
 BROWSER_TEST_FAILED_FILE=browser-test-failed
-APP_URL=$(shell python -c \
-	'import socket; \
-	 print "http://%s:8888" % socket.gethostbyname(socket.gethostname())')
 
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
@@ -415,7 +412,7 @@ ci-check:
 	# Report any server already running and abort.
 	! netstat -tnap 2> /dev/null | grep ":8888 " | grep " LISTEN "
 	# Run the browser tests against a remote browser (uses Sauce Labs).
-	APP_URL=${APP_URL} JUJU_GUI_TEST_BROWSER="chrome" make test-browser
+	JUJU_GUI_TEST_BROWSER="chrome" make test-browser
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
