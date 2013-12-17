@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
+
+import os
 import unittest
 
 from selenium.common import exceptions
@@ -91,5 +93,5 @@ class TestAuthentication(browser.TestCase):
         self.process_path('/:gui:/unit/haproxy-0/')
 
 if __name__ == '__main__':
-    browser.browser_name = 'local-firefox'
+    browser.browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'local-firefox')
     unittest.main()

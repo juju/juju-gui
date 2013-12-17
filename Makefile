@@ -52,6 +52,9 @@ SHA=$(shell git describe --always HEAD)
 # This is where the ci-check target stores the PID of the server under test.
 TEST_SERVER_PID=ci-check-gui-server.pid
 BROWSER_TEST_FAILED_FILE=browser-test-failed
+APP_URL=$(shell python -c \
+	'import socket; \
+	 print "http://%s:8888" % socket.gethostbyname(socket.gethostname())')
 
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
@@ -403,10 +406,16 @@ prep: beautify lint
 # XXX bac: the order of test-debug and test-prod seems to affect the execution
 # of this target when called by lbox.  Please do not change.
 # You can disable the colored mocha output by setting ENV var MOCHA_NO_COLOR=1
-check: lint test-debug test-prod test-misc docs test-browser
+check: lint test-debug test-prod test-misc test-browser docs
 
-# This is what gets run in CI for a branch to land.
+# This is what gets run in CI for a branch to land.  Since an external service
+# (Sauce Labs) is invoked to test the server, the machine running these tests
+# must have an externally routable IP.
 ci-check:
+	# Report any server already running and abort.
+	! netstat -tnap 2> /dev/null | grep ":8888 " | grep " LISTEN "
+	# Run the browser tests against a remote browser (uses Sauce Labs).
+	APP_URL=${APP_URL} JUJU_GUI_TEST_BROWSER="chrome" make test-browser
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
@@ -448,7 +457,7 @@ test-misc:
 	    test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
 
-test-browser: build-devel
+test-browser: build-debug
 	# Start the web server we will be testing against.
 	(cd build-debug && \
 	    python ../bin/http_server.py 8888 2> /dev/null & \
@@ -473,7 +482,7 @@ test-browser: build-devel
 	kill `cat $(TEST_SERVER_PID)`
 	rm $(TEST_SERVER_PID)
 	# If the test failed, tell make.
-	rm $(BROWSER_TEST_FAILED_FILE) 2> /dev/null || exit 0 && exit 1
+	! rm $(BROWSER_TEST_FAILED_FILE) 2> /dev/null
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
