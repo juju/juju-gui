@@ -69,11 +69,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var container = Y.one('#subapp-browser');
         view = new Minimized();
         view.on('viewNavigate', function(ev) {
-          assert(ev.change.viewmode === 'sidebar');
+          assert.equal(ev.change.viewmode, 'sidebar');
           done();
         });
         view.render(container);
-        view.controls._toggleViewable({halt: function() {}});
+        view._toggleMinimized({halt: function() {}});
       });
     });
   })();
@@ -88,7 +88,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-models',
             'juju-views',
             'juju-tests-utils',
-            'node-event-simulate',
             'subapp-browser-sidebar',
             function(Y) {
               views = Y.namespace('juju.browser.views');
@@ -118,11 +117,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var container = Y.one('#subapp-browser');
         view = new Sidebar();
         view.on('viewNavigate', function(ev) {
-          assert(ev.change.viewmode === 'minimized');
+          assert.equal(ev.change.viewmode, 'minimized');
           done();
         });
         view.render(container);
-        container.one('.bws-icon').simulate('click');
+        view._showMinimizedView({halt: function() {}});
       });
 
       it('must correctly render the initial browser ui', function(done) {
