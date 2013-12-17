@@ -12,7 +12,7 @@ Juju lets you deploy connected services to the cloud in a convenient,
 vendor-neutral, and powerful way. The GUI lets you visualize and manage
 your work more intuitively from a web browser.
 
-Juju-Gui code is hosted `on Github`_
+Juju-GUI code is hosted `on Github`_
 
 Juju-GUI bugs are tracked on `on Launchpad
 <https://bugs.launchpad.net/juju-gui>`_.
@@ -58,5 +58,5 @@ If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
 end-user configuration is available from the charm configuration.
 
 
-.. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING
+.. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
 .. _on Github: https://github.com/juju/juju-gui

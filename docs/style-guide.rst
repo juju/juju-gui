@@ -164,7 +164,7 @@ Embedded documentation
 We use YUIDoc to document the application's internals.  YUIDoc comment
 blocks start with ``/**`` and end with ``*/``. Once you add or change
 comment blocks, generate the HTML pages and check them (as described in
-the :ref:`HACKING <all-docs>` document).
+the `HACKING`_ document).
 
 Full documentation for the various `YUIDoc directives`_ is available.
 Note that YUIDoc also supports the `Markdown syntax`_.
@@ -219,3 +219,6 @@ block will appear in the HTML pages, albeit with a few not-working links.
 For instance, for a closure named ``callback``, you may want to use the
 ``@method behaviors.timestamp.callback`` directive for greater
 expressiveness.
+
+
+.. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
