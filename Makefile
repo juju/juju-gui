@@ -403,7 +403,7 @@ prep: beautify lint
 # XXX bac: the order of test-debug and test-prod seems to affect the execution
 # of this target when called by lbox.  Please do not change.
 # You can disable the colored mocha output by setting ENV var MOCHA_NO_COLOR=1
-check: lint test-debug test-prod test-misc test-browser docs
+check: lint test-debug test-prod test-misc docs
 
 # This is what gets run in CI for a branch to land.  Since an external service
 # (Sauce Labs) is invoked to test the server, the machine running these tests
