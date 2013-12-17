@@ -184,7 +184,7 @@ Checklist for Making a Stable Release
 
 - Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
   version string.  It should be bigger than the most recent version found on
-  <https://launchpad.net/juju-gui/stable>.  If the most recent version string
+  <https://github.com/juju/juju-gui>.  If the most recent version string
   is ``unreleased``, decide what the next version number should be (see
   `Semantic Versioning   <http://semver.org/>`_) and change ``unreleased`` to
   that value.
@@ -236,13 +236,7 @@ Checklist for Making a Stable Release
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process and upload the release, this time to production.
 
-  - Note that, one time per computer, you will again have to accept the
-    Launchpadlib security token: In Launchpad, the staging site and the
-    production have fully separate databases, including authentication.  What
-    is done in production will in many cases eventually be copied over to
-    staging, but never vice versa.  Staging data is destroyed periodically.
-
-- Go to <https://launchpad.net/juju-gui/stable> and verify that you see
+- Go to <https://github.com/juju/juju-gui/releases> and verify that you see
   a new release and a new download file.
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use
@@ -330,7 +324,7 @@ Checklist for Making a Developer Release
 - Run through the QA Checklist (below).
 - Verify that the top-most version in ``CHANGES.yaml`` is ``unreleased``.
 - Run ``git describe --always HEAD``.  The revno should be bigger than the most recent release
-  found on `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
+  found on `Github <https://github.com/juju/juju-gui>`_.
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
 - Create the tarball: ``make distfile``.  The process will end by reporting
@@ -361,13 +355,7 @@ Checklist for Making a Developer Release
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process and upload the release.
 
-  - Note that, one time per computer, you will again have to accept the
-    Launchpadlib security token: In Launchpad, the staging site and the
-    production have fully separate databases, including authentication.  What
-    is done in production will in many cases eventually be copied over to
-    staging, but never vice versa.  Staging data is destroyed periodically.
-
-- Go to <https://launchpad.net/juju-gui/trunk> and verify that you see
+- Go to <https://github.com/juju/juju-gui/releases> and verify that you see
   a new release and a new download file.
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use
