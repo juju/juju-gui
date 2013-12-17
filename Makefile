@@ -462,8 +462,6 @@ test-browser: build-debug
 	(cd build-debug && \
 	    python ../bin/http_server.py 8888 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
-	# Make sure no display :34 exists before we start one.
-	DISPLAY=:34 xdpyinfo > /dev/null || exit 1
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
 	# Run the tests inside the virtual frame buffer.  If any tests fail a
