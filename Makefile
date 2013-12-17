@@ -454,9 +454,9 @@ test-misc:
 	    test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
 
-test-browser: build-debug
+test-browser: build-prod
 	# Start the web server we will be testing against.
-	(cd build-debug && \
+	(cd build-prod && \
 	    python ../bin/http_server.py 8888 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
