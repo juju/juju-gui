@@ -729,7 +729,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Fullscreen urls get redirected to / which is sidebar
         browser.navigate = function(url) {
-          assert.equal(url, '/');
+          assert.equal(url, '');
           done();
         };
 
@@ -747,7 +747,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Fullscreen urls get redirected to / which is sidebar
         browser.navigate = function(url) {
-          assert.equal(url, '/precise/apache2-2');
+          assert.equal(url, 'precise/apache2-2');
           done();
         };
 
@@ -765,7 +765,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         // Fullscreen urls get redirected to / which is sidebar
         browser.navigate = function(url) {
-          assert.equal(url, '/search/precise/apache2-2');
+          assert.equal(url, 'sidebar/search/precise/apache2-2');
           done();
         };
 
