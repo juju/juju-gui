@@ -230,7 +230,6 @@ class TestCase(unittest.TestCase):
         # Enable implicit waits for all browsers (DOM polling behavior)
         driver.implicitly_wait(20)
         driver.set_script_timeout(30)
-        driver.set_page_load_timeout(90)
         # We want to tell saucelabs when all the tests are done.
         cls.app_url = os.environ.get('APP_URL', 'http://localhost:8888')
         cls.driver = driver
