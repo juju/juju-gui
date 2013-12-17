@@ -36,15 +36,11 @@ YUI.add('subapp-browser-minimized', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [
-    Y.juju.widgets.ViewmodeControlsViewExtension
-  ], {
+  ns.MinimizedView = Y.Base.create('browser-view-minimized', Y.View, [], {
     template: views.Templates.minimized,
 
     events: {
-      '.bws-icon': {
-        click: '_toggleViewState'
-      }
+      'a.bws-icon': { click: '_toggleMinimized' }
     },
 
     /**
@@ -62,7 +58,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
 
       this.fire('viewNavigate', {
         change: {
-          viewmode: this.get('oldViewMode')
+          viewmode: 'sidebar'
         }
       });
     },
@@ -87,13 +83,6 @@ YUI.add('subapp-browser-minimized', function(Y) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
       this.get('container').setHTML(tplNode);
-      // Make sure the controls starts out setting the correct active state
-      // based on the current viewmode for our View.
-      this.controls = new Y.juju.widgets.ViewmodeControls({
-        currentViewmode: this.get('oldViewMode')
-      });
-      this.controls.render();
-      this._bindViewmodeControls(this.controls);
     }
 
   }, {
@@ -122,7 +111,6 @@ YUI.add('subapp-browser-minimized', function(Y) {
     'base',
     'juju-templates',
     'juju-views',
-    'view',
-    'viewmode-controls'
+    'view'
   ]
 });
