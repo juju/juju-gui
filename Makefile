@@ -466,12 +466,6 @@ test-browser: build-debug
 	DISPLAY=:34 xdpyinfo > /dev/null || exit 1
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
-	# Wait for the display to be accessible.
-	until (DISPLAY=:34 xdpyinfo > /dev/null); \
-	    do \
-	        echo "Waiting for Xvfb"; \
-	        sleep 1; \
-	    done
 	# Run the tests inside the virtual frame buffer.  If any tests fail a
 	# marker file is created.
 	rm -rf $(BROWSER_TEST_FAILED_FILE)
