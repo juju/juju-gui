@@ -49,6 +49,10 @@ EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 ### Release-specific variables - see docs/process.rst for an overview. ###
 SHA=$(shell git describe --always HEAD)
 
+# This is where the ci-check target stores the PID of the server under test.
+TEST_SERVER_PID=ci-check-gui-server.pid
+BROWSER_TEST_FAILED_FILE=browser-test-failed
+
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
@@ -401,6 +405,15 @@ prep: beautify lint
 # You can disable the colored mocha output by setting ENV var MOCHA_NO_COLOR=1
 check: lint test-debug test-prod test-misc docs
 
+# This is what gets run in CI for a branch to land.  Since an external service
+# (Sauce Labs) is invoked to test the server, the machine running these tests
+# must have an externally routable IP.
+ci-check:
+	# Report any server already running and abort.
+	! netstat -tnap 2> /dev/null | grep ":8888 " | grep " LISTEN "
+	# Run the browser tests against a remote browser (uses Sauce Labs).
+	JUJU_GUI_TEST_BROWSER="chrome" make test-browser
+
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
 	cat app/index.html | \
@@ -441,28 +454,24 @@ test-misc:
 	    test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
 
-test-browser: build-devel
-	# Tests that run in the browser.  A server has to be running on
-	# localhost:8888 for this to work.
-	# Make sure no display :34 exists before we start one.
-	DISPLAY=:34 xdpyinfo > /dev/null || exit 1
+test-browser: build-debug
+	# Start the web server we will be testing against.
+	(cd build-debug && \
+	    python ../bin/http_server.py 8888 2> /dev/null & \
+	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
-	# Wait for the display to be accessible.
-	until (DISPLAY=:34 xdpyinfo > /dev/null); \
-	    do \
-	        echo "Waiting for Xvfb"; \
-	        sleep 1; \
-	    done
-	# Run the tests inside the virtual frame buffer, capturing the result
-	# of the test run.
-	$(eval result := $(shell \
-	    DISPLAY=:34 virtualenv/bin/python test/test_browser.py; \
-	    echo $$?))
+	# Run the tests inside the virtual frame buffer.  If any tests fail a
+	# marker file is created.
+	rm -rf $(BROWSER_TEST_FAILED_FILE)
+	DISPLAY=:34 virtualenv/bin/python test/test_browser.py || \
+	    touch $(BROWSER_TEST_FAILED_FILE)
 	# Stop the background processes.
 	kill $(xvfb_pid)
-	# Report the result of the test run.
-	exit $(result)
+	kill `cat $(TEST_SERVER_PID)`
+	rm $(TEST_SERVER_PID)
+	# If the test failed, tell make.
+	! rm $(BROWSER_TEST_FAILED_FILE) 2> /dev/null
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
