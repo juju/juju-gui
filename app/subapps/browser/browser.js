@@ -39,7 +39,10 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
     hidden: false,
-    viewmodes: ['minimized', 'sidebar'],
+    // Even though fullscreen is no longer a valid mode we need it in the list
+    // so that the routing code still knows how to redirect fullscreen
+    // requests to the sidebar views.
+    viewmodes: ['minimized', 'sidebar', 'fullscreen'],
 
     /**
      * Make sure we destroy views no long used.
@@ -904,14 +907,6 @@ YUI.add('subapp-browser', function(Y) {
         req.params = {};
       }
 
-      // This redirects any requests coming in to fullscreen
-      // to their sidebar equivelent
-      if (req.params.viewmode === 'fullscreen') {
-        var url = req.path.replace('/fullscreen', '');
-        this.navigate(url);
-        return;
-      }
-
       if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';
       }
@@ -936,7 +931,27 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this[req.params.viewmode](req, res, next);
+        // This redirects any requests coming in to fullscreen to their
+        // sidebar equivelent. It gets done here because we are relying
+        // on the current routing code to switch from fullscreen to sidebar
+        // to take advantage of its double dispatch mitigation code.
+        if (req.params.viewmode === 'fullscreen') {
+          var self = this;
+          // This setTimeout is required because the double dispatch events
+          // happen in an unpredictable order so we simply let them complete
+          // then navigate away to avoid issues where we are trying to render
+          // while other views are in the middle of being torn down.
+          setTimeout(function() {
+            self.fire('viewNavigate', {
+              change: {
+                viewmode: 'sidebar'
+              }
+            });
+          }, 0);
+          return;
+        } else {
+          this[req.params.viewmode](req, res, next);
+        }
       } else {
         // Update the app state even though we're not showing anything.
         this._saveState();
