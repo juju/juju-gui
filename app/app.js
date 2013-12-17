@@ -670,8 +670,8 @@ YUI.add('juju-gui', function(Y) {
         container: Y.one('#help-dropdown'),
         env: this.db.environment
       }).render();
-      // pass in onboarding when we no longer need to support
-      // fullscreen mode and interact with it directly
+      // See `renderOnboarding()` in browser.js and `_startOnboarding()`
+      // in help-dropdown.js for why this is done like this.
       this.helpDropdown.on('navigate', function(e) {
         this.navigate(e.url);
       }, this);
