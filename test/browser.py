@@ -25,6 +25,7 @@ import getpass
 import httplib
 import json
 import os
+import socket
 import subprocess
 import sys
 import unittest
@@ -43,6 +44,11 @@ import shelltoolbox
 
 # Utility function to print to stderr.
 printerr = partial(print, file=sys.stderr)
+
+# Set a socket timeout to help selenium wait for page load. Selenium loads in
+# debug mode and all the single JS files take a while to load. The
+# set_page_load_timeout fails to work.
+socket.setdefaulttimeout(120)
 
 # Add ../lib to sys.path to get the retry module.
 root_path = os.path.dirname(os.path.dirname(os.path.normpath(__file__)))
