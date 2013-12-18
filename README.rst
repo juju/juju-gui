@@ -31,9 +31,8 @@ Deploy
 
 Deploying the GUI is easiest with the `juju quickstart plugin
 <http://jujugui.wordpress.com/2013/11/07/juju-quickstart-plugin-alpha-but-useful/>`_
-or `the Juju GUI charm
-<https://jujucharms.com/~juju-gui/precise/juju-gui>`_.  If you want to simply
-use the GUI, please try those.
+or `the Juju GUI charm <https://jujucharms.com/precise/juju-gui>`_.  If you
+want to simply use the GUI, please try those.
 
 If you want to develop the GUI, or you have a deployment goal that the charm
 does not and cannot support, you can try the Makefile commands.  The most
