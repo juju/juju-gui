@@ -40,8 +40,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
    *
    */
   ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
-    Y.Event.EventTracker,
-    Y.juju.widgets.ViewmodeControlsViewExtension
+    Y.Event.EventTracker
   ], {
 
     /**
@@ -109,8 +108,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
           }
         }, this);
       }
-
-      this._bindViewmodeControls(this.controls);
     },
 
     /**
@@ -161,8 +158,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
-     * Render out the main search widget and controls shared across various
-     * views.
+     * Render out the main search widget.
      *
      * @method _renderSearchWidget
      * @param {Node} node the node to render into.
@@ -185,13 +181,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
         });
         this.search.render(node.one('.bws-header'));
       }
-
-      // Make sure the controls starts out setting the correct active state
-      // based on the current viewmode for our View.
-      this.controls = new widgets.ViewmodeControls({
-        currentViewmode: this.get('viewmode')
-      });
-      this.controls.render();
     },
 
     /**
@@ -220,27 +209,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
       }
 
       this.fire('viewNavigate', {change: change});
-    },
-
-    /**
-       Toggle the visibility of the browser. Bound to nav controls in the
-       view, however this will be expanded to be controlled from the new
-       constant nav menu outside of the view once it's completed.
-
-       This is called by the ViewmodeControlsViewExtension.
-
-       @method _toggleMinimized
-       @param {Event} ev event to trigger the toggle.
-
-     */
-    _toggleMinimized: function(ev) {
-      ev.halt();
-
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'minimized'
-        }
-      });
     },
 
     /**
@@ -312,26 +280,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        */
       store: {},
 
-      /**
-       * The view needs to be able to tell widgets and controls what the
-       * current viewmode is. It determines this by which subclassing view is
-       * currently being rendered.
-       *
-       * @attribute viewmode
-       * @type {String}
-       *
-       */
-      viewmode: {
-        /**
-         * @method viewmode.valueFn
-         * @return {String} the current view mode.
-         *
-         */
-        valueFn: function() {
-          return this.name.match(/[a-z]+$/);
-        }
-      },
-
       withHome: {
         value: false
       }
@@ -348,7 +296,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-models',
     'juju-bundle-models',
     'querystring-stringify',
-    'view',
-    'viewmode-controls'
+    'view'
   ]
 });
