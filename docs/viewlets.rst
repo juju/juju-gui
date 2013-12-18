@@ -121,7 +121,7 @@ object.  For example::
   // This can be wrapped in a feature flag if need be.
   viewletsNS.units = {
     name: 'units',
-    template: Templates['show_units_small'],
+    template: Templates['unitOverview'],
     selectBindTarget: function(model) {
       return model.get('units');
     }

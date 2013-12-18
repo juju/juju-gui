@@ -1,6 +1,0 @@
-{{#unless serviceIsJujuGUI}}
-  <div class="destroy-control control">
-    <a id="destroy-service" data-toggle="modal" href="#destroy-service-modal">
-    <img src="/juju-ui/assets/images/destroy_icon.png" />Destroy</a>
-  </div>
-{{/unless}}

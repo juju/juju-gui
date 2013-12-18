@@ -1,5 +1,0 @@
-<div class="service-view bottom-navbar">
-  <div class="juju-service-info-container-bottom-menu">
-    {{> service-footer-common-controls}}
-  </div>
-</div>
