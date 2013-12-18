@@ -1395,7 +1395,6 @@ YUI.add('juju-view-inspector', function(Y) {
     'juju-models',
     'juju-model-controller',
     'juju-viewlet-manager',
-    'juju-view-service',
     'juju-view-utils',
     'node',
     'panel',
