@@ -226,15 +226,6 @@ function injectData(app, data) {
       app._controlEvents = [fakeEv, fakeEv];
 
       var checkUrls = [{
-        url: ':gui:/service/memcached/',
-        hidden: true
-      }, {
-        url: ':gui:/charms/precise/memcached-1/json/',
-        hidden: true
-      }, {
-        url: ':gui:/unit/mediawiki-7/',
-        hidden: true
-      }, {
         url: '/logout',
         hidden: true
       }, {

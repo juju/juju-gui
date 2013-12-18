@@ -75,7 +75,6 @@ YUI.add('juju-gui', function(Y) {
      * @attribute views
      */
     views: {
-
       login: {
         type: 'juju.views.login',
         preserve: false
@@ -84,41 +83,6 @@ YUI.add('juju-gui', function(Y) {
       environment: {
         type: 'juju.views.environment',
         preserve: true
-      },
-
-      service: {
-        type: 'juju.views.service',
-        preserve: false,
-        parent: 'environment'
-      },
-
-      service_config: {
-        type: 'juju.views.service_config',
-        preserve: false,
-        parent: 'service'
-      },
-
-      service_constraints: {
-        type: 'juju.views.service_constraints',
-        preserve: false,
-        parent: 'service'
-      },
-
-      service_relations: {
-        type: 'juju.views.service_relations',
-        preserve: false,
-        parent: 'service'
-      },
-
-      unit: {
-        type: 'juju.views.unit',
-        preserve: false,
-        parent: 'service'
-      },
-
-      charm: {
-        type: 'juju.views.charm',
-        preserve: false
       },
 
       notifications: {
@@ -1052,7 +1016,7 @@ YUI.add('juju-gui', function(Y) {
     /**
        Determine if the browser or environment should be rendered or not.
 
-       When hitting internal :gui: views, the browser needs to disappear
+       When hitting static views the browser needs to disappear
        entirely from the UX for users. However, when we pop back it needs to
        appear back in the previous state.
 
@@ -1066,7 +1030,7 @@ YUI.add('juju-gui', function(Y) {
      */
     toggleStaticViews: function(req, res, next) {
       var url = req.url,
-          match = /(logout|:gui:\/(charms|service|unit))/;
+          match = /logout/;
       var subapps = this.get('subApps');
 
       if (subapps && subapps.charmbrowser) {
@@ -1081,10 +1045,8 @@ YUI.add('juju-gui', function(Y) {
           charmbrowser.hidden = false;
           this.renderEnvironment = true;
         }
-
         charmbrowser.updateVisible();
       }
-
       next();
     },
 
@@ -1333,14 +1295,6 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           { path: '*', callbacks: 'authorizeCookieUse'},
-          // Charms.
-          //XXX jcsackett July 31 2013 This path is only needed until we turn
-          //on the service inspector. When we remove the charm view, we can (and
-          //should) remove this as well.
-          { path: '/charms/*charm_path/',
-            callbacks: 'show_charm',
-            model: 'browser-charm',
-            namespace: 'gui'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
