@@ -28,6 +28,9 @@ The test script has a few system dependencies::
 
 It does not require that the Makefile be run.
 
+Note: ``python-selenium`` is not available on Ubuntu 12.04 so it is included in
+the Juju-GUI repository in ``/archives/selenium-2.39.0.tar.gz``.
+
 
 Running the tests
 =================
