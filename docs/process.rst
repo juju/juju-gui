@@ -216,9 +216,8 @@ Checklist for Making a Stable Release
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, change
-  build-prod/juju-ui/assets/config.js to specify sandbox: true,
-  user: 'admin', password: 'admin',
-  simulateEvents: false, and showGetJujuButton: true.
+  build-prod/juju-ui/assets/config.js to specify simulateEvents: false
+  and showGetJujuButton: true.
 - Serve the app with a python module.
 
   - cd build-prod && python -m SimpleHTTPServer

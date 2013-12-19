@@ -25,7 +25,6 @@ import getpass
 import httplib
 import json
 import os
-import socket
 import subprocess
 import sys
 import unittest
@@ -44,11 +43,6 @@ import shelltoolbox
 
 # Utility function to print to stderr.
 printerr = partial(print, file=sys.stderr)
-
-# Set a socket timeout to help selenium wait for page load. Selenium loads in
-# debug mode and all the single JS files take a while to load. The
-# set_page_load_timeout fails to work.
-socket.setdefaulttimeout(120)
 
 # Add ../lib to sys.path to get the retry module.
 root_path = os.path.dirname(os.path.dirname(os.path.normpath(__file__)))
@@ -142,12 +136,12 @@ def get_capabilities(browser_name):
             # Juju GUI supports Firefox >= 16 (quantal base).  At the time of
             # this comment the default version used in Saucelabs, if none is
             # specified, is 11.
-            {'platform': 'Linux', 'version': '16'},
+            {'platform': 'Linux', 'version': '25'},
         ),
         'ie': (
             desired.INTERNETEXPLORER,
             # Internet Explorer version must be >= 10.
-            {'platform': 'Windows 2012', 'version': '10'},
+            {'platform': 'Windows 7', 'version': '10'},
         ),
     }
     if browser_name in choices:

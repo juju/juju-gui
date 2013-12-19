@@ -38,10 +38,10 @@ var juju_config = {
   // ignored (the port/protocol behavior overrides socket_url).
   socket_protocol: 'ws',
   socket_port: 8081,
-  user: undefined,
-  password: undefined,
+  user: 'admin',
+  password: 'admin',
   apiBackend: 'go', // Value can be 'python' or 'go'.
-  sandbox: false,
+  sandbox: true,
   // When in sandbox mode should we create events to simulate a live env.
   // You can also use the :flags:/simulateEvents feature flag.
   simulateEvents: false,
