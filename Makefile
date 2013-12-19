@@ -412,7 +412,12 @@ ci-check: check
 	# Report any server already running and abort.
 	! netstat -tnap 2> /dev/null | grep ":8888 " | grep " LISTEN "
 	# Run the browser tests against a remote browser (uses Sauce Labs).
+	echo "Starting tests against Firefox"
+	JUJU_GUI_TEST_BROWSER="firefox" make test-browser
+	echo "Starting tests against Chrome"
 	JUJU_GUI_TEST_BROWSER="chrome" make test-browser
+	echo "Starting tests against IE"
+	JUJU_GUI_TEST_BROWSER="ie" make test-browser
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
@@ -454,9 +459,9 @@ test-misc:
 	    test/test_deploy_charm_for_testing.py
 	PYTHONPATH=bin virtualenv/bin/python test/test_http_server.py
 
-test-browser: build-debug
+test-browser: build-prod
 	# Start the web server we will be testing against.
-	(cd build-debug && \
+	(cd build-prod && \
 	    python ../bin/http_server.py 8888 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
@@ -464,7 +469,7 @@ test-browser: build-debug
 	# Run the tests inside the virtual frame buffer.  If any tests fail a
 	# marker file is created.
 	rm -rf $(BROWSER_TEST_FAILED_FILE)
-	DISPLAY=:34 virtualenv/bin/python test/test_browser.py || \
+	DISPLAY=:34 virtualenv/bin/python test/test_browser.py -v || \
 	    touch $(BROWSER_TEST_FAILED_FILE)
 	# Stop the background processes.
 	kill $(xvfb_pid)
@@ -623,11 +628,11 @@ else
 endif
 
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: beautify build build-files build-devel clean clean-all clean-deps \
-	clean-docs code-doc debug devel docs dist gjslint help \
+.PHONY: beautify build build-files build-devel ci-check clean clean-all \
+	clean-deps clean-docs code-doc debug devel docs dist gjslint help \
 	install-npm-packages jshint lint lint-yuidoc main-doc npm-cache \
-	npm-cache-file prep prod recess server spritegen test test-debug \
-	test-misc test-prep test-prod undocumented view-code-doc view-docs \
-	view-main-doc
+	npm-cache-file prep prod recess server spritegen test \
+	test-debug test-misc test-prep test-prod undocumented view-code-doc \
+	view-docs view-main-doc
 
 .DEFAULT_GOAL := all
