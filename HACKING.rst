@@ -360,9 +360,9 @@ Proposing Branches
 
 We use ``lbox`` to propose branches for review and submit them to the trunk.
 Gustavo Niemeyer has `a helpful blogpost`_ about this tool.  See the
-`Process document
+`Process Document - preparing for a review
 <https://github.com/juju/juju-gui/blob/develop/docs/process.rst#checklist-for-preparing-for-a-review>`_
-for a step-by-step checklist on how to prepare branches for review.
+, for a step-by-step checklist on how to prepare branches for review.
 
 .. _`a helpful blogpost`:
     http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
@@ -388,8 +388,9 @@ releases by hand or in the charm.
 Making Releases
 ===============
 
-See the `Process document <https://github.com/juju/juju-gui/blob/develop/docs/process.rst#making-releases>`_
-for step-by-step checklists to make developer and stable releases.  The
+See the `Process Document - making releases
+<https://github.com/juju/juju-gui/blob/develop/docs/process.rst#making-releases>`_
+, for step-by-step checklists to make developer and stable releases.  The
 following is additional detail and an overview.
 
 To make a release, you must either be in a checkout of ``lp:juju-gui``
