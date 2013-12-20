@@ -971,6 +971,23 @@
                 background-image: url("/juju-ui/assets/images/inspector-charm-landscape.png");
             }
 
+            .status-unit-content.running ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.pending ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.error ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
+            }
+            .status-unit-content.landscape-security-upgrades ul li,
+            .status-unit-content.landscape-needs-reboot ul li {
+                background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
+            }
+        }
+
+        .overview-unit-list,
+        .relation-wrapper {
             .status-unit-content {
                 .transition(.25s, max-height .3s);
                 overflow: hidden;
@@ -1015,21 +1032,14 @@
                     margin: 0 3px 0;
                     background: #CBCBCB;
                 }
-
             }
-
-            .status-unit-content.running ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-running.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.pending ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-pending-list.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.error ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-error.png") no-repeat scroll 35px center;
-            }
-            .status-unit-content.landscape-security-upgrades ul li,
-            .status-unit-content.landscape-needs-reboot ul li {
-                background: url("/juju-ui/assets/images/inspector-charm-landscape.png") no-repeat scroll 35px center;
+        }
+        .relation-wrapper {
+            .status-unit-content {
+                ul {
+                    margin: 0;
+                    border-bottom: none;
+                }
             }
         }
 

@@ -1211,39 +1211,6 @@ describe('utilities', function() {
         assert.strictEqual('fails', html);
       });
     });
-
-    describe('relation status and name helpers', function() {
-      it('shows the relation name for peer and normal relations', function() {
-        var tmpl = '{{relationServiceName rel}}';
-        var template = Y.Handlebars.compile(tmpl);
-        // normal relation
-        var html = template({ rel: { far: { service: 'foo' }}});
-        assert.strictEqual(html, 'foo');
-        // peer relation
-        html = template({rel: { near: { service: 'bar' }}});
-        assert.strictEqual(html, 'bar');
-      });
-
-      it('shows the proper status for peer and normal relations', function() {
-        var tmpl = '{{relationStatus rel errors}}';
-        var template = Y.Handlebars.compile(tmpl);
-        var normal = { far: { service: 'foo' }},
-            peer = { near: { service: 'bar' }};
-        // normal green relation
-        var html = template({ rel: normal, errors: {}});
-        assert.strictEqual(html, '');
-        // peer green relation
-        html = template({rel: peer, errors: {}});
-        assert.strictEqual(html, '');
-        // normal red relation
-        html = template({ rel: normal, errors: { foo: 'hook failed'}});
-        assert.strictEqual(html, 'error');
-        // peer red relation
-        html = template({ rel: peer, errors: { bar: 'hook failed'}});
-        assert.strictEqual(html, 'error');
-      });
-    });
-
   });
 })();
 
