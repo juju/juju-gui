@@ -1237,7 +1237,10 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.isSubordinateRelation = function(relation) {
-    return relation.scope === 'container';
+    return (relation.target && relation.source ?
+        relation.target.model.get('subordinate') ||
+        relation.source.model.get('subordinate') : true) &&
+        relation.scope === 'container';
   };
 
   /**
