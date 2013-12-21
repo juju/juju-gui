@@ -22,10 +22,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('viewlet-service-relations', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
-      templates = Y.namespace('juju.views').Templates,
-      plugins = Y.namespace('juju.plugins'),
-      models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils');
+      templates = views.Templates,
+      utils = views.utils;
 
 
   /**
@@ -48,7 +46,7 @@ YUI.add('viewlet-service-relations', function(Y) {
         }
         if (errors[serviceName]) {
           relation.status = 'error';
-          relation.units = addErroredUnits(service, errors);
+          relation.units = _addErroredUnits(service, errors);
         }
       });
     }
@@ -58,12 +56,12 @@ YUI.add('viewlet-service-relations', function(Y) {
   /**
     Adds the list of errored units to the relation object.
 
-    @method addErroredUnits
+    @method _addErroredUnits
     @param {Object} service The service model.
     @param {errors} Juju status_data_info error status.
     @return {Array} An array of the units which are in relation error.
   */
-  function addErroredUnits(service, errors) {
+  function _addErroredUnits(service, errors) {
     var units = [];
     service.get('units').each(function(unit) {
       if (unit.agent_state === 'error') {
@@ -79,11 +77,11 @@ YUI.add('viewlet-service-relations', function(Y) {
     Takes the supplied relation and unit data an generates a d3 controlled
     relation and unit list DOM representation.
 
-    @method generateAndBindRelationsList
+    @method _generateAndBindRelationsList
     @param {Y.Node} node The databound node to render the relations info into.
     @param {Array} relations The list of relations to display.
   */
-  function generateAndBindRelationsList(node, relations) {
+  function _generateAndBindRelationsList(node, relations) {
     // New relation enter
     var relationWrappers = d3.select(node.getDOMNode())
     .selectAll('.relation-wrapper')
@@ -173,7 +171,7 @@ YUI.add('viewlet-service-relations', function(Y) {
 
           if (relations.length > 0) {
             node.empty(); // Remove the no-relations messages
-            generateAndBindRelationsList(node, relations);
+            _generateAndBindRelationsList(node, relations);
           } else {
             node.setHTML(
                 '<div class="view-content">This service has no relations.' +
@@ -181,13 +179,17 @@ YUI.add('viewlet-service-relations', function(Y) {
           }
         }
       }
+    },
+
+    // To allow for unit testing the functions
+    export: {
+      _addRelationsErrorState: _addRelationsErrorState
     }
   };
 
 }, '0.0.1', {
   requires: [
     'node',
-    'juju-charm-models',
     'juju-view'
   ]
 });
