@@ -54,6 +54,7 @@ If you receive an error installing phantomjs, you can manually download and
 unpack the archive and then arrange for the ``phantomjs`` executable to be
 located on your path (e.g., by linking it into ``~/bin``).
 
+
 The Juju GUI can now be installed and run with:
 
 ::
@@ -69,6 +70,31 @@ pull your clone down to work on.
 
   git clone git@github.com:{yourusername}/juju-gui.git
 
+
+If you are working on a different operating system or simply do not want
+global installs for your development environment, a vagrant image is provided.
+This will use VirtualBox to run a development environment in an Ubuntu
+virtual machine, installing all the dependencies and setting up network such
+that you can modify files locally but run the development server from the VM.
+
+After getting `Vagrant <http://vagrantup.com>`_, simply run the following from
+your working directory:
+
+::
+  
+  vagrant up
+
+After the machine builds, boots, and provisions, you can ssh using the
+following:
+
+::
+
+  vagrant ssh
+
+From the vagrant, you can run all of the make targets in ``/vagrant`` and
+access the GUI or test servers from the host using the IP address
+``192.168.33.10``. Once you are done, you can either ``vagrant suspend``,
+``vagrant halt``, or ``vagrant destroy`` the machine from your host.
 
 Once you've pulled down the code you can start running it with
 
