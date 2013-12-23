@@ -22,56 +22,6 @@ from selenium.common import exceptions
 import browser
 
 
-class TestTests(browser.TestCase):
-
-    def test_gui_unit_tests(self):
-        # Ensure Juju GUI unit tests pass.
-        def tests_completed(driver):
-            stats = driver.execute_script('return testRunner.stats;')
-            # Return when tests completed or a failure occurred.
-            # The duration and end values are only specified after the tests
-            # complete. Sometimes only one or the other are available, for
-            # reasons yet to be determined.
-            if stats.get('duration') or stats.get('end') or stats['failures']:
-                return stats['tests'], stats['failures']
-
-        def run_tests():
-            # Ensure the window receives focus. In Firefox, blur/focus unit
-            # tests fail if the window in which they are running is not
-            # focused. See https://bugzilla.mozilla.org/show_bug.cgi?id=566671
-            self.driver.execute_script('window.focus();')
-            self.wait_for_css_selector('#mocha-stats')
-            try:
-                total, failures = self.wait_for(
-                    tests_completed, 'Unable to complete test run.',
-                    timeout=600)
-            except exceptions.TimeoutException:
-                msg = "Tests did not complete. Check video and timeout value"
-                browser.printerr(msg)
-                browser.printerr("Test Runner Stats:")
-                browser.printerr(
-                    self.driver.execute_script('return testRunner.stats;'))
-                browser.printerr("Re-raising TimeoutException")
-                raise
-            return total, failures
-        self.load('/test/')
-        for i in range(5):
-            total, failures = run_tests()
-            if failures and i < 4 and total < 100:
-                # XXX bug 1161937 gary 2013-03-29
-                # We sometimes see initial failures and we don't know why :-(.
-                # Reload and retry.
-                msg = '{} failure(s) running {} tests.  Retrying.'.format(
-                    failures, total)
-                browser.printerr(msg)
-                self.driver.refresh()
-            else:
-                break
-        if failures:
-            msg = '{} failure(s) running {} tests.'.format(failures, total)
-            self.fail(msg)
-
-
 class DeployTestMixin(object):
     """Mixin exposing a deploy method."""
 

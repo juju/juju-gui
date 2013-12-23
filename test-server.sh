@@ -7,8 +7,12 @@ else
     MOCHA="mocha-phantomjs"
 fi
 
+if [ $TEST_PORT ] ; then
+    PORT=$(TEST_PORT)
+fi
+
 fn=`tempfile`
-(node ./test-server.js $1 | tee $fn )  &
+(node ./test-server.js $1 $(PORT) | tee $fn )  &
 sleep 2
 if [ -n "$2" ]; then
     xdg-open `cat $fn`
@@ -21,4 +25,3 @@ else
 fi
 
 rm $fn
-

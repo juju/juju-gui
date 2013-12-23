@@ -410,7 +410,7 @@ check: lint test-debug test-prod test-misc docs
 # must have an externally routable IP.
 ci-check: check
 	# Report any server already running and abort.
-	! netstat -tnap 2> /dev/null | grep ":8888 " | grep " LISTEN "
+	! netstat -tnap 2> /dev/null | grep ":$(PORT) " | grep " LISTEN "
 	# Run the browser tests against a remote browser (uses Sauce Labs).
 	echo "Starting tests against Firefox"
 	JUJU_GUI_TEST_BROWSER="firefox" make test-browser
@@ -418,6 +418,13 @@ ci-check: check
 	JUJU_GUI_TEST_BROWSER="chrome" make test-browser
 	echo "Starting tests against IE"
 	JUJU_GUI_TEST_BROWSER="ie" make test-browser
+	echo "Starting unit tests against Firefox"
+	JUJU_GUI_TEST_BROWSER="firefox" make test-browser-mocha
+	echo "Starting unit tests against Chrome"
+	JUJU_GUI_TEST_BROWSER="chrome" make test-browser-mocha
+	echo "Starting unit tests against IE"
+	JUJU_GUI_TEST_BROWSER="ie" make test-browser-mocha
+
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.
@@ -462,7 +469,7 @@ test-misc:
 test-browser: build-prod
 	# Start the web server we will be testing against.
 	(cd build-prod && \
-	    python ../bin/http_server.py 8888 2> /dev/null & \
+	    python ../bin/http_server.py $(PORT) 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
@@ -479,6 +486,33 @@ test-browser: build-prod
 	rm $(TEST_SERVER_PID)
 	# If the test failed, tell make.
 	! rm $(BROWSER_TEST_FAILED_FILE) 2> /dev/null
+
+test-browser-mocha: build-prod
+	# XXX #1263748 - this is duplicated from test-browser and should be
+	# scripted to be shared code to 'run a test'.
+# Start the web server we will be testing against.
+ifndef PORT
+	$(error PORT is not set)
+endif
+
+	(node ./test-server.js prod $(PORT) 2> /dev/null & \
+	    echo $$!>$(TEST_SERVER_PID))
+	# Start Xvfb as a background process, capturing its PID.
+	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
+	# Run the tests inside the virtual frame buffer.  If any tests fail a
+	# marker file is created.
+	rm -rf $(BROWSER_TEST_FAILED_FILE)
+	DISPLAY=:34 virtualenv/bin/python test/test_mocha_selenium.py -v || \
+	    touch $(BROWSER_TEST_FAILED_FILE)
+	# Stop the background processes.
+	kill $(xvfb_pid)
+	echo $(TEST_SERVER_PID)
+	cat $(TEST_SERVER_PID)
+	kill `cat $(TEST_SERVER_PID)`
+	rm $(TEST_SERVER_PID)
+	# If the test failed, tell make.
+	! rm $(BROWSER_TEST_FAILED_FILE) 2> /dev/null
+
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"

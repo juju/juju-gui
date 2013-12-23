@@ -209,9 +209,11 @@ describe('The bundle model', function() {
 
   it('has the correct date in GMT', function() {
     instance = new models.Bundle(data);
+    // IE doesn't format 03 but as just 3. They also end in UTC vs GMT. So we
+    // regex the match to say this is close enough to work in each browser.
+    var expected = /^Thu, 0?3 Oct 2013 15:29:36/;
     var commits = instance.get('recentCommits');
-    assert.equal('Thu, 03 Oct 2013 15:29:36 GMT',
-        commits[0].date.toUTCString());
+    assert(commits[0].date.toUTCString().match(expected));
   });
 
   it('has the commit message', function() {

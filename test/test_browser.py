@@ -102,6 +102,7 @@ class TestAuthentication(browser.TestCase):
         # It is possible to login to and logout from the unit detail view.
         self.process_path('/:gui:/unit/haproxy-0/')
 
+
 if __name__ == '__main__':
     browser.browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'local-firefox')
     unittest.main()

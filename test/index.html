@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <!--
 This file is part of the Juju GUI, which lets users view and manage Juju
@@ -27,12 +28,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script>
     // Default window.flags to an empty object.
     window.flags = {};
+    // This is only the Mocha timeout. There's a selenium timeout in
+    //  test_mocha_selenium as well that can effect CI test runs.
+    var TIMEOUT = 100000;
     var assert = chai.assert,
         expect = chai.expect,
         should = chai.should();
     mocha.reporter('html');
     mocha.ui('bdd');
-    mocha.setup({ignoreLeaks: false, timeout: 30000});
+    mocha.setup({ignoreLeaks: false, timeout: TIMEOUT});
   </script>
 
   <!-- Load up YUI base, app modules, and test utils -->
@@ -147,12 +151,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Do not attempt to dispatch a new route when an anchor tag appears in
       // the url. This is intended to keep charm details from reloading on tab
       // selection in the browser.
-      navigateOnHash: false,
+      navigateOnHash: false
   };
 
 
   // Set the url so we can full path loading fixture files.
-  GlobalConfig.test_url = window.location.origin + "/test/";
+  GlobalConfig.test_url = window.location.protocol + '//' + window.location.host + "/test/";
 
   // tabview needs to be here since it doesn't auto load it for some reason.
   YUI().use(['node', 'event', 'tabview'], function(Y) {
