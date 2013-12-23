@@ -1237,7 +1237,22 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.isSubordinateRelation = function(relation) {
-    return relation.scope === 'container';
+    // Pending relations that are currently in the process of being created
+    // will not necessarily have a target and a source; so check for them
+    // first before checking whether target or source is a subordinate.
+    var source = relation.source,
+        target = relation.target,
+        subordinateModel = true;
+    if (target && source) {
+      subordinateModel = target.model.get('subordinate') ||
+          source.model.get('subordinate');
+    }
+    // Relation types of juju-info may have a relation scope of container
+    // without necessarily being an actual subordinate relation by virtue of
+    // the fact that the service itself may not actually be a subordinate; thus,
+    // make sure that at least one of the services is a subordinate *and* the
+    // scope is container (which may be inverted, e.g.: puppet and puppetmaster)
+    return subordinateModel && relation.scope === 'container';
   };
 
   /**

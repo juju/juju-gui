@@ -974,11 +974,13 @@ describe('utilities', function() {
 
     beforeEach(function() {
       source = {
+        model: { get: function() {} },
         modelId: function() {
           return 'source-id';
         }
       };
       target = {
+        model: { get: function() {} },
         modelId: function() {
           return 'target-id';
         }
@@ -1016,11 +1018,13 @@ describe('utilities', function() {
 
     it('includes endpoint names in its ID, if they exist', function() {
       var source = {
+        model: { get: function() {} },
         modelId: function() {
           return 'source-id';
         }
       };
       var target = {
+        model: { get: function() {} },
         modelId: function() {
           return 'target-id';
         }
@@ -1042,6 +1046,8 @@ describe('utilities', function() {
           return {scope: 'container'};
         }
       };
+      // Return true when checking source.model.get('subordinate')
+      source.model.get = function() { return true; };
       var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isTrue(relation.isSubordinate);
     });
@@ -1052,7 +1058,21 @@ describe('utilities', function() {
           return {scope: 'not-container'};
         }
       };
+      // Return false when checking source.model.get('subordinate')
+      source.model.get = function() { return false; };
       var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.isFalse(relation.isSubordinate);
+      // Return true for subordinate, but maintain non-container scope.
+      source.model.get = function() { return true; };
+      relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.isFalse(relation.isSubordinate);
+      // Return false for subordinate on both models but 'container' for scope
+      source.model.get = function() { return false; };
+      target.model.get = function() { return false; };
+      inputRelation.getAttrs = function() {
+        return { scope: 'container' };
+      };
+      relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
     });
 
