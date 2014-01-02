@@ -84,6 +84,9 @@ You can also run these in SauceLabs manually by using the following:
 BitRotted Instructions that require updating into the new CI world.
 ===================================================================
 
+Note: ``python-selenium`` is not available on Ubuntu 12.04 so it is included in
+the Juju-GUI repository in ``/archives/selenium-2.39.0.tar.gz``.
+
 
 Running the tests
 =================

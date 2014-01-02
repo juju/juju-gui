@@ -24,19 +24,19 @@ PPA.
 Now it is time to actually get the GUI itself set up.  Juju GUI uses
 nodejs-based development tools, so you will need ``nodejs`` from Chris
 Lea's node PPA. You also need ImageMagick for sprite generation, python-sphinx
-and python-yaml to build docs, PyTZ to make releases, python-shelltoolbox and
-python-selenium for browser tests, and python-virtualenv to build the Google
-Closure linter tools locally, and g++ for contextify::
+and python-yaml to build docs, PyTZ to make releases, python-virtualenv to build
+the Google Closure linter tools locally, and g++ for contextify
+
+::
 
   sudo add-apt-repository ppa:chris-lea/node.js
-  sudo add-apt-repository ppa:gophers/go
   sudo apt-get update
   sudo apt-get install nodejs imagemagick python-sphinx python-yaml \
-    python-tz python-virtualenv python-shelltoolbox python-selenium \
-    python-tornado python-gflags g++ xvfb
+    python-tz python-virtualenv python-tornado python-gflags g++ xvfb
 
-See :ref:`Browser Testing <browser-testing>` if you are curious about the
-reason for ``python-shelltoolbox`` and ``python-selenium``.
+In order to set up browser testing see the `Browser Testing
+<https://github.com/juju/juju-gui/blob/develop/docs/browser-testing.rst>`_
+documentation.
 
 The jshint linter will be installed locally per branch, but if you want editor
 integration, you may want to install ``jshint`` globally in your system.  More
@@ -45,7 +45,17 @@ importantly, to support testing from the command line, ``phantomjs`` and
 
 ::
 
-  sudo npm install -g jshint@2.1.3 mocha-phantomjs@3.2.0 phantomjs@1.9.1-0
+  npm install -g jshint@2.3.0 mocha-phantomjs@3.2.0 phantomjs@1.9.2-5
+
+Note: If you get a permissions error attempting to install the above npm modules
+globally you will need to modify the permissions of a couple folders on your
+system. If any of these folders do not exist you will first need to create
+them.
+
+::
+
+  sudo chown -R `whoami` ~/.npm
+  sudo chown -R `whoami` /usr/local/lib/node_modules
 
 Note: Make sure to get the latest phantomjs from npm and not rely on an older
 .deb packaged version. mocha-phantomjs will fail silently when running.
@@ -325,8 +335,9 @@ directory.  You can build and view the docs by running::
 
   make view-code-doc
 
-See the :ref:`style guide <embedded-docs>` document for details on how to
-write the embedded documentation.
+See the `style guide
+<https://github.com/juju/juju-gui/blob/develop/docs/style-guide.rst>`_
+document for details on how to write the embedded documentation.
 
 Project Documentation
 ---------------------
@@ -349,8 +360,9 @@ Proposing Branches
 
 We use ``lbox`` to propose branches for review and submit them to the trunk.
 Gustavo Niemeyer has `a helpful blogpost`_ about this tool.  See the
-:ref:`Process document <preparing-reviews>` for a step-by-step checklist on how
-to prepare branches for review.
+`Process Document - preparing for a review
+<https://github.com/juju/juju-gui/blob/develop/docs/process.rst#checklist-for-preparing-for-a-review>`_
+, for a step-by-step checklist on how to prepare branches for review.
 
 .. _`a helpful blogpost`:
     http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
@@ -376,9 +388,10 @@ releases by hand or in the charm.
 Making Releases
 ===============
 
-See the :ref:`Process document <make-releases>` for step-by-step checklists to
-make developer and stable releases.  The following is additional detail and an
-overview.
+See the `Process Document - making releases
+<https://github.com/juju/juju-gui/blob/develop/docs/process.rst#making-releases>`_
+, for step-by-step checklists to make developer and stable releases.  The
+following is additional detail and an overview.
 
 To make a release, you must either be in a checkout of ``lp:juju-gui``
 without uncommitted changes, or you must override one of the
