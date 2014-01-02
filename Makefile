@@ -479,7 +479,11 @@ test-browser: build-prod
 	DISPLAY=:34 virtualenv/bin/python test/test_browser.py -v || \
 	    touch $(BROWSER_TEST_FAILED_FILE)
 	# Stop the background processes.
-	kill $(xvfb_pid)
+	# Note: We do not kill the vxfb process since it's shared and safe to leave
+	# shared. If, in the future, we wish to take advantage of tools like
+	# taking image snapshots we can make this configurable at that time.
+	# kill $(xvfb_pid)
+
 	echo $(TEST_SERVER_PID)
 	cat $(TEST_SERVER_PID)
 	kill `cat $(TEST_SERVER_PID)`
@@ -505,7 +509,11 @@ endif
 	DISPLAY=:34 virtualenv/bin/python test/test_mocha_selenium.py -v || \
 	    touch $(BROWSER_TEST_FAILED_FILE)
 	# Stop the background processes.
-	kill $(xvfb_pid)
+	# Note: We do not kill the vxfb process since it's shared and safe to leave
+	# shared. If, in the future, we wish to take advantage of tools like
+	# taking image snapshots we can make this configurable at that time.
+	# kill $(xvfb_pid)
+
 	echo $(TEST_SERVER_PID)
 	cat $(TEST_SERVER_PID)
 	kill `cat $(TEST_SERVER_PID)`
