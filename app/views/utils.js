@@ -1723,28 +1723,6 @@ YUI.add('juju-view-utils', function(Y) {
     /*jshint debug:false */
   });
 
-  // Returns 'error' if the relation in question is in error. Supports both
-  // normal and peer relations.
-  Y.Handlebars.registerHelper('relationStatus', function(relation, errors) {
-    var serviceName = '';
-    if (relation.far) {
-      serviceName = relation.far.service;
-    } else { // It's a peer relation
-      serviceName = relation.near.service;
-    }
-    if (errors[serviceName]) { return 'error'; }
-  });
-
-  // Returns the proper service name to support peer and normal relations for
-  // the relations tab in the juju-gui.
-  Y.Handlebars.registerHelper('relationServiceName', function(relation) {
-    if (relation.far) {
-      return relation.far.service;
-    } else { // It's a peer relation
-      return relation.near.service;
-    }
-  });
-
   /*
    * Extension for views to provide an apiFailure method.
    *
