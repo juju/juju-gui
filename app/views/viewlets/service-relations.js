@@ -41,11 +41,16 @@ YUI.add('viewlet-service-relations', function(Y) {
         var serviceName = '';
         if (relation.far) {
           serviceName = relation.far.service;
-        } else { // It's a peer relation
+        } else {
+          // It's a peer relation
           serviceName = relation.near.service;
         }
         if (errors[serviceName]) {
           relation.status = 'error';
+          // A new relation object is passed in on every update.
+          // A Relation object does not contain any unit information or
+          // direct reference to a service so the units property does not
+          // need to be reset to empty.
           relation.units = _addErroredUnits(service, errors);
         }
       });

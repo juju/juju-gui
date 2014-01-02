@@ -67,6 +67,9 @@ describe('Inspector Relations Tab', function() {
     var result = _addRelationsErrorState([relation], error, service);
     // modify to compare
     relation.status = 'error';
+    // The relation object does not contain any service or unit objects.
+    // The units object is pushed into the relation object for units
+    // which are in error only.
     relation.units = units;
     assert.deepEqual(result, [relation]);
   });
