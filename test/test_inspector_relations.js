@@ -19,11 +19,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Relations Tab', function() {
 
-  var Y, utils, models, views, viewlet, _addRelationsErrorState;
+  var Y, utils, models, views, viewlet, viewUtils, _addRelationsErrorState;
 
   var modules = [
     'juju-templates',
     'viewlet-service-relations',
+    'juju-tests-utils',
+    'juju-view-utils',
+    'juju-viewlet-manager', // Required for utils.renderViewlet
     'lazy-model-list'
   ];
 
@@ -32,11 +35,158 @@ describe('Inspector Relations Tab', function() {
       utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
-      viewlet = Y.namespace('juju.viewlets.relations');
+      viewUtils = views.utils;
+      viewlet = Y.juju.viewlets.relations;
       _addRelationsErrorState = viewlet.export._addRelationsErrorState;
       done();
     });
   });
+
+  function ViewletGenerator(config) {
+    /* jshint -W040 */
+    this.viewlet = config.viewlet || {};
+    this.oldGRDFS = {};
+    this.container = {};
+    this.model = {};
+    this.viewletManager = {};
+    this.relationType = config.relationType || 0;
+  }
+  ViewletGenerator.prototype = {
+    setup: function() {
+      this.oldGRDFS = viewUtils.getRelationDataForService;
+      var relationType = this.relationType,
+          _relationData = this._relationData;
+      // Stub out this method to return dummy relation data
+      viewUtils.getRelationDataForService = function() {
+        return _relationData(relationType);
+      };
+      this.container = utils.makeContainer();
+      this.model = new Y.Model({});
+      this.viewletManager = utils.renderViewlet(
+          this.viewlet, this.model, this.container);
+      return {
+        viewletManager: this.viewletManager
+      };
+    },
+
+    teardown: function() {
+      this.viewletManager.destroy();
+      this.model.destroy();
+      this.container.remove().destroy(true);
+      viewUtils.getRelationDataForService = this.oldGRDFS;
+    },
+
+    _relationData: function(key) {
+      // So....Many.....Mocks
+      var relationData = {
+        // no relation
+        0: [],
+        // single relation
+        1: [{
+          clientId: 'relation_59',
+          id: 'wordpress:db mysql:db',
+          relation_id: 'wordpress:db mysql:db',
+          endpoints: [
+            ['wordpress', {'role': 'client', 'name': 'db'}],
+            ['mysql', {'role': 'server', 'name': 'db'}]
+          ],
+          pending: false,
+          scope: 'global',
+          display_name: 'db:db',
+          'interface': 'mysql',
+          near: { 'service': 'wordpress', 'role': 'client', 'name': 'db' },
+          far: { 'service': 'mysql', 'role': 'server', 'name': 'db' },
+          ident: 'wordpress:db mysql:db'
+        }],
+        // Double relation
+        2: [{
+          clientId: 'relation_54',
+          id: 'wordpress:db mysql:db',
+          relation_id: 'wordpress:db mysql:db',
+          endpoints: [
+            ['wordpress', {role: 'client', name: 'db' }],
+            ['mysql', { role: 'server', name: 'db' }]
+          ],
+          pending: false,
+          scope: 'global',
+          display_name: 'db:db',
+          'interface': 'mysql',
+          near: { 'service': 'wordpress', 'role': 'client', 'name': 'db' },
+          far: { 'service': 'mysql', 'role': 'server', 'name': 'db' },
+          ident: 'wordpress:db mysql:db'
+        }, {
+          clientId: 'relation_149',
+          id: 'apache2:reverseproxy wordpress:website',
+          relation_id: 'apache2:reverseproxy wordpress:website',
+          endpoints: [
+            ['apache2', { role: 'client', name: 'reverseproxy' }],
+            ['wordpress', { role: 'server', name: 'website' }]
+          ],
+          pending: false,
+          scope: 'global',
+          display_name: 'reverseproxy:website',
+          'interface': 'http',
+          near: { service: 'wordpress', role: 'server', name: 'website' },
+          far: { service: 'apache2', role: 'client', name: 'reverseproxy' },
+          ident: 'apache2:reverseproxy wordpress:website'
+        }],
+        // Peer relation
+        'peer': [{
+          'interface': 'reversenginx',
+          clientId: 'relation_5',
+          id: 'wordpress:loadbalancer',
+          relation_id: 'wordpress:loadbalancer',
+          endpoints: [
+            ['wordpress', { role: 'peer', name: 'loadbalancer' }]
+          ],
+          pending: false,
+          scope: 'global',
+          display_name: 'loadbalancer',
+          near: { service: 'wordpress', role: 'peer', name: 'loadbalancer' },
+          ident: 'wordpress:loadbalancer'
+        }],
+        // Errored relation
+        'error': [{
+          clientId: 'relation_54',
+          id: 'wordpress:db mysql:db',
+          relation_id: 'wordpress:db mysql:db',
+          endpoints: [
+            ['wordpress', { role: 'client', name: 'db' }],
+            ['mysql', { role: 'server', name: 'db' }]
+          ],
+          pending: false,
+          scope: 'global',
+          display_name: 'db:db',
+          'interface': 'mysql',
+          near: { service: 'wordpress', role: 'client', name: 'db' },
+          far: { service: 'mysql', role: 'server', name: 'db' },
+          ident: 'wordpress:db mysql:db',
+          status: 'error',
+          units: [{
+            id: 'wordpress/69',
+            agent_state: 'error',
+            clientId: 'serviceUnit_323',
+            service: 'wordpress',
+            number: 69,
+            urlName: 'wordpress-69',
+            name: 'serviceUnit',
+            displayName: 'wordpress/69',
+            charmUrl: 'cs:precise/wordpress-21',
+            machine: '71',
+            agent_state_info: 'hook failed: \'db-relation-changed\'',
+            agent_state_data: {
+              hook: 'db-relation-changed',
+              'relation-id': 1,
+              'remote-unit': 'mysql/0'
+            },
+            open_ports: [],
+            annotations: { 'landscape-computer': '+unit:wordpress-69' }
+          }]
+        }]
+      };
+      return relationData[key];
+    }
+  };
 
   // Unit tests
   it('does not add status if no units are in relation error', function() {
@@ -72,6 +222,120 @@ describe('Inspector Relations Tab', function() {
     // which are in error only.
     relation.units = units;
     assert.deepEqual(result, [relation]);
+  });
+
+
+  // Requires DOM
+  it('shows a "No Relations" message when there are no relations', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet
+    });
+
+    var vm = vg.setup().viewletManager;
+
+    assert.equal(
+        vm.get('container').one('.view-content').getHTML(),
+        'This service has no relations.');
+
+    vg.teardown();
+  });
+
+  it('shows single relation details', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet,
+      relationType: 1
+    });
+
+    var vm = vg.setup().viewletManager,
+        vmContainer = vm.get('container');
+
+    assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
+    assert.equal(vmContainer.one('.relation-label h3').getHTML(), 'mysql');
+
+    var details = vmContainer.all('h4');
+    assert.equal(details.item(0).getHTML(), 'Interface: mysql');
+    assert.equal(details.item(1).getHTML(), 'Name: db');
+    assert.equal(details.item(2).getHTML(), 'Role: client');
+    assert.equal(details.item(3).getHTML(), 'Scope: global');
+
+    vg.teardown();
+  });
+
+  it('shows multiple relations details', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet,
+      relationType: 2
+    });
+
+    var vm = vg.setup().viewletManager,
+        vmContainer = vm.get('container');
+
+    assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
+    var labels = vmContainer.all('.relation-label h3');
+
+    assert.equal(labels.item(0).getHTML(), 'mysql');
+    assert.equal(labels.item(1).getHTML(), 'apache2');
+
+    var details = vmContainer.all('h4');
+    assert.equal(details.item(0).getHTML(), 'Interface: mysql');
+    assert.equal(details.item(1).getHTML(), 'Name: db');
+    assert.equal(details.item(2).getHTML(), 'Role: client');
+    assert.equal(details.item(3).getHTML(), 'Scope: global');
+
+    assert.equal(details.item(4).getHTML(), 'Interface: http');
+    assert.equal(details.item(5).getHTML(), 'Name: website');
+    assert.equal(details.item(6).getHTML(), 'Role: server');
+    assert.equal(details.item(7).getHTML(), 'Scope: global');
+
+    vg.teardown();
+  });
+
+  it('shows peer relation details', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet,
+      relationType: 'peer'
+    });
+
+    var vm = vg.setup().viewletManager,
+        vmContainer = vm.get('container');
+
+    assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
+    assert.equal(vmContainer.one('.relation-label h3').getHTML(), 'wordpress');
+
+    var details = vmContainer.all('h4');
+    assert.equal(details.item(0).getHTML(), 'Interface: reversenginx');
+    assert.equal(details.item(1).getHTML(), 'Name: loadbalancer');
+    assert.equal(details.item(2).getHTML(), 'Role: peer');
+    assert.equal(details.item(3).getHTML(), 'Scope: global');
+
+    vg.teardown();
+  });
+
+  it('shows the units which have relation hooks in error', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet,
+      relationType: 'error'
+    });
+
+    var vm = vg.setup().viewletManager,
+        vmContainer = vm.get('container');
+
+    assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
+    // Make sure the error icon is visible
+    assert.equal(
+        vmContainer.one('.relation-label.error h3').getHTML(), 'mysql');
+
+    var details = vmContainer.all('h4');
+    assert.equal(details.item(0).getHTML(), 'Interface: mysql');
+    assert.equal(details.item(1).getHTML(), 'Name: db');
+    assert.equal(details.item(2).getHTML(), 'Role: client');
+    assert.equal(details.item(3).getHTML(), 'Scope: global');
+
+    assert.equal(
+        vmContainer.one('.status-unit-content ul li a').getHTML(),
+        'wordpress/69');
+
+    vg.teardown();
   });
 
 });

@@ -287,7 +287,33 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
              .then(function(result) {
                return {result: result, backend: fakebackend};
              });
+    },
+
+    /**
+      Renders a viewlet into the specified container passing through all
+      additional options to the viewlet.
+
+      Requires the 'juju-viewlet-manager' module.
+
+      @method renderViewlet
+      @param {Object} viewlet A reference to the viewlet to render.
+      @param {Object} model The object to use as the model.
+      @param {Object} container The container to render the viewlet into.
+    */
+    renderViewlet: function(viewlet, model, container) {
+      container.append('<div class="juju-inspector"></div>');
+      var viewletManager = new Y.juju.viewlets.ViewletManager({
+        viewlets: [viewlet],
+        container: container,
+        viewletContainer: '.viewlet-manager',
+        model: model,
+        template: '<div class="viewlet-manager"></div>'
+      });
+
+      viewletManager.render();
+      return viewletManager;
     }
+
   });
 }, '0.1.0', {
   requires: [
