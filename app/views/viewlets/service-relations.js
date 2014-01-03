@@ -196,6 +196,7 @@ YUI.add('viewlet-service-relations', function(Y) {
   requires: [
     'node',
     'juju-view',
-    'd3'
+    'd3',
+    'juju-view-utils'
   ]
 });

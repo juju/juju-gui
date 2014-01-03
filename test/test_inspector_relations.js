@@ -43,6 +43,7 @@ describe('Inspector Relations Tab', function() {
   });
 
   function ViewletGenerator(config) {
+    // Ignore possible strict violation
     /* jshint -W040 */
     this.viewlet = config.viewlet || {};
     this.oldGRDFS = {};
