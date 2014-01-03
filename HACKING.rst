@@ -70,6 +70,39 @@ pull your clone down to work on.
   git clone git@github.com:{yourusername}/juju-gui.git
 
 
+If you are working on an operating system other than Ubuntu or simply do not
+want global installs for your development environment, a vagrant image is
+provided. This will use VirtualBox to run a development environment in an Ubuntu
+virtual machine, installing all the dependencies and setting up networking such
+that you can modify files locally but run the development server from the VM.
+
+After getting `Vagrant <http://vagrantup.com>`_ and the latest version of
+`VirtualBox <http://virtualbox.org>`_ (at least 4.3), simply run the following
+from your working directory:
+
+::
+  
+  vagrant up
+
+You may see a warning about guest additions not matching the version of
+VirtualBox, but this does not affect our development environment. After the
+machine builds, boots, and provisions, you can ssh using the following:
+
+::
+
+  vagrant ssh
+
+If provisioning fails for any reason, you can reprovision with the following:
+
+::
+
+  vagrant reload --provision
+
+From the vagrant, you can run all of the make targets in ``/vagrant`` and
+access the GUI or test servers from the host using the IP address
+``192.168.33.10``. Once you are done, you can either ``vagrant suspend``,
+``vagrant halt``, or ``vagrant destroy`` the machine from your host.
+
 Once you've pulled down the code you can start running it with
 
 ::
