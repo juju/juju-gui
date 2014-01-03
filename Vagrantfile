@@ -5,7 +5,9 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # Every Vagrant virtual environment requires a box to build off of.
+  # Every Vagrant virtual environment requires a box to build off of.  Use a
+  # raring 64bit box; if it does not exist, vagrant up will fetch a box and
+  # name it properly.
   config.vm.box = "raring64"
 
   # The url from where the 'config.vm.box' box will be fetched if it
@@ -20,4 +22,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Provision with dependencies.
   config.vm.provision :shell, :path => "vagrant-provision.sh"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.memory = 1024
+  end
 end
