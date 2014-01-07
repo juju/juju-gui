@@ -39,7 +39,7 @@ Vim runtime files are in a non-stock location::
 
     E484: Can't open file /usr/local/share/vim/syntax/syntax.vim
 
-Because Ubutnu packagers changed the location of Vim's runtime files,
+Because Ubuntu packagers changed the location of Vim's runtime files,
 you have to tell the stock Vim where to find them when running Vim::
 
     VIMRUNTIME=/usr/share/vim/vim73/ src/vim
