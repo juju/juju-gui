@@ -21,19 +21,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Charmworld API v3 interface', function() {
-    var Y, models, conn, data, juju, utils, charmworld, hostname, api;
-
+    var api, charmworld, conn, data, factory, hostname, juju, models, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'datasource-local', 'json-stringify', 'juju-charm-store',
           'datasource-io', 'io', 'array-extras', 'juju-charm-models',
-          'juju-tests-utils', 'juju-bundle-models',
+          'juju-tests-factory', 'juju-tests-utils', 'juju-bundle-models',
           function(Y) {
             juju = Y.namespace('juju');
             charmworld = Y.namespace('juju.charmworld');
             models = Y.namespace('juju.models');
             utils = Y.namespace('juju-tests').utils;
+            factory = Y.namespace('juju-tests').factory;
             done();
           });
     });
@@ -248,7 +248,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - upgrade available', function(done) {
-      var store = utils.makeFakeStore();
+      var store = factory.makeFakeStore();
       var charm = new models.Charm({url: 'cs:precise/wordpress-10'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -261,7 +261,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('finds upgrades for charms - no upgrade available', function(done) {
-      var store = utils.makeFakeStore();
+      var store = factory.makeFakeStore();
       var charm = new models.Charm({url: 'cs:precise/wordpress-15'});
       store.promiseUpgradeAvailability(charm)
         .then(function(upgrade) {
@@ -274,7 +274,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('copies metadata while transforming results', function() {
-      var store = utils.makeFakeStore();
+      var store = factory.makeFakeStore();
       var fakebundle = {bundle: {id: 'bundle0'},
                          metadata: 'bundledata'};
       var fakecharm = {charm: {url: 'cs:precise/wordpress-15'},

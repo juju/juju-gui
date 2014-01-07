@@ -43,9 +43,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.simulator', function() {
     var requires = ['node',
-      'juju-tests-utils', 'juju-models', 'juju-charm-models',
-      'juju-fakebackend-simulator'];
-    var Y, state, Simulator, simulator, utils, Agent, DEFAULT_AGENTS;
+      'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models', 'juju-fakebackend-simulator'
+    ];
+    var Agent, DEFAULT_AGENTS, factory, simulator, Simulator, state, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -54,16 +55,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         Agent = ns.Agent;
         DEFAULT_AGENTS = ns.DEFAULT_AGENTS;
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function(done) {
-      utils.promiseImport('data/wp-deployer.yaml', 'wordpress-prod')
-      .then(function(resolve) {
-            state = resolve.backend;
-            done();
-          });
+      utils.promiseImport(
+          'data/wp-deployer.yaml',
+          'wordpress-prod',
+          factory.makeFakeBackend()
+      ).then(function(resolve) {
+        state = resolve.backend;
+        done();
+      });
     });
 
     afterEach(function() {

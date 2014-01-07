@@ -93,18 +93,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.deploy', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, result, callback;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, result, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       result = undefined;
       callback = function(response) {
         result = response;
@@ -388,18 +391,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.setCharm', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, result, callback, service;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+
+    var Y, factory, fakebackend, utils, result, callback, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
       fakebackend.deploy('cs:precise/wordpress-15', callback);
@@ -450,18 +457,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.expose', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, result, callback, service;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, result, callback, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
       fakebackend.deploy('cs:precise/wordpress-15', callback);
@@ -508,18 +518,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.unexpose', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, result, callback, service;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, result, callback, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       result = undefined;
       callback = function(response) { result = response; };
       fakebackend.deploy('cs:precise/wordpress-15', callback);
@@ -566,19 +579,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend deployer support', function() {
-    var requires = ['node',
-      'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils;
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
     });
 
     afterEach(function() {
@@ -588,47 +604,50 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should support YAML imports', function(done) {
-      utils.promiseImport('data/wp-deployer.yaml')
-        .then(function(resolve) {
-            var result = resolve.result;
-            fakebackend = resolve.backend;
-            assert.equal(result.Error, undefined);
-            assert.equal(result.DeploymentId, 1,
-                         'deployment id incorrect');
-            assert.isNotNull(fakebackend.db.services.getById('wordpress'),
-                             'failed to import wordpress');
-            assert.isNotNull(fakebackend.db.services.getById('mysql'),
-                             'failed to import mysql');
-            assert.equal(fakebackend.db.relations.size(), 1,
-                         'failed to import relations');
-            // Verify units created.
-            assert.equal(fakebackend.db.services.getById('wordpress')
-                         .get('units').size(), 2,
-                         'Unit count wrong');
+      utils.promiseImport(
+          'data/wp-deployer.yaml',
+          undefined,
+          factory.makeFakeBackend()
+      ).then(function(resolve) {
+        var result = resolve.result;
+        fakebackend = resolve.backend;
+        assert.equal(result.Error, undefined);
+        assert.equal(result.DeploymentId, 1,
+                     'deployment id incorrect');
+        assert.isNotNull(fakebackend.db.services.getById('wordpress'),
+                         'failed to import wordpress');
+        assert.isNotNull(fakebackend.db.services.getById('mysql'),
+                         'failed to import mysql');
+        assert.equal(fakebackend.db.relations.size(), 1,
+                     'failed to import relations');
+        // Verify units created.
+        assert.equal(fakebackend.db.services.getById('wordpress')
+                     .get('units').size(), 2,
+                     'Unit count wrong');
 
-            // Verify config.
-            var wordpress = fakebackend.db.services.getById('wordpress');
-            var wordpressCharm = fakebackend.db.charms.getById(
-                'cs:precise/wordpress-15');
-            var mysql = fakebackend.db.services.getById('mysql');
-            // This value is different from the default (nginx).
-            assert.equal(wordpressCharm.get('options.engine.default'), 'nginx');
-            assert.equal(wordpress.get('config.engine'), 'apache');
-            // This value is the default, as provided by the charm.
-            assert.equal(wordpress.get('config.tuning'), 'single');
-            assert.isTrue(wordpress.get('exposed'));
-            assert.isFalse(mysql.get('exposed'));
+        // Verify config.
+        var wordpress = fakebackend.db.services.getById('wordpress');
+        var wordpressCharm = fakebackend.db.charms.getById(
+            'cs:precise/wordpress-15');
+        var mysql = fakebackend.db.services.getById('mysql');
+        // This value is different from the default (nginx).
+        assert.equal(wordpressCharm.get('options.engine.default'), 'nginx');
+        assert.equal(wordpress.get('config.engine'), 'apache');
+        // This value is the default, as provided by the charm.
+        assert.equal(wordpress.get('config.tuning'), 'single');
+        assert.isTrue(wordpress.get('exposed'));
+        assert.isFalse(mysql.get('exposed'));
 
-            // Constraints
-            var constraints = mysql.get('constraints');
-            assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
-            assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
-            done();
-          }).then(undefined, done);
+        // Constraints
+        var constraints = mysql.get('constraints');
+        assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
+        assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
+        done();
+      }).then(undefined, done);
     });
 
     it('should stop importing if service names conflict', function(done) {
-      var fakebackend = utils.makeFakeBackend();
+      var fakebackend = factory.makeFakeBackend();
       // If there is a problem within the promises `done` will be called
       // at the end of each promise chain with the error.
       utils.promiseImport('data/wp-deployer.yaml', null, fakebackend)
@@ -646,29 +665,31 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should provide status of imports', function(done) {
-      utils.promiseImport('data/wp-deployer.yaml')
-        .then(function(resolve) {
-            fakebackend = resolve.backend;
-            fakebackend.statusDeployer(
-                function(status) {
-                  assert.lengthOf(status.LastChanges, 1);
-                  assert.equal(status.LastChanges[0].Status, 'completed');
-                  assert.equal(status.LastChanges[0].DeploymentId, 1);
-                  assert.isNumber(status.LastChanges[0].Timestamp);
-                  done();
-                });
-          });
+      utils.promiseImport(
+          'data/wp-deployer.yaml',
+          undefined,
+          factory.makeFakeBackend()
+      ).then(function(resolve) {
+        fakebackend = resolve.backend;
+        fakebackend.statusDeployer(function(status) {
+          assert.lengthOf(status.LastChanges, 1);
+          assert.equal(status.LastChanges[0].Status, 'completed');
+          assert.equal(status.LastChanges[0].DeploymentId, 1);
+          assert.isNumber(status.LastChanges[0].Timestamp);
+          done();
+        });
+      });
     });
 
     it('throws an error with more than one import target', function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       assert.throws(function() {
         fakebackend.importDeployer({a: {}, b: {}});
       }, 'Import target ambigious, aborting.');
     });
 
     it('detects service id collisions', function(done) {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       fakebackend.db.services.add({id: 'mysql', charm: 'cs:precise/mysql-26'});
       var data = {
         a: {services: {mysql: {
@@ -683,7 +704,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('properly implements inheritence in target definitions', function(done) {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       var data = {
         a: {services: {mysql: {charm: 'cs:precise/mysql-26',
           num_units: 2, options: {debug: false}}}},
@@ -711,7 +732,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('properly builds relations on import', function(done) {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       var data = {
         a: {
           services: {
@@ -725,7 +746,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           relations: [['mysql', 'wordpress']]
         }};
 
-      fakebackend.promiseImport(data)
+      fakebackend.promiseImport(data, undefined, factory.makeFakeBackend())
           .then(function() {
             var mysql = fakebackend.db.services.getById('mysql');
             var wordpress = fakebackend.db.services.getById('wordpress');
@@ -748,22 +769,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Use import to import many charms and then resolve them with a few
       // different keys.
       var defaultSeries = 'precise';
-      utils.promiseImport('data/blog.yaml', 'wordpress-prod')
-        .then(function(resolve) {
-            var db = resolve.backend.db;
-            assert.isNotNull(db.charms.find('wordpress', defaultSeries));
-            assert.isNotNull(db.charms.find('precise/wordpress',
-                                            defaultSeries));
-            assert.isNotNull(db.charms.find('precise/wordpress'));
-            assert.isNotNull(db.charms.find('cs:precise/wordpress'));
-            assert.isNotNull(db.charms.find('cs:precise/wordpress-999'));
-            // Can't find this w/o a series
-            assert.isNull(db.charms.find('wordpress'));
-            // Find fails on missing items as well.
-            assert.isNull(db.charms.find('foo'));
-            assert.isNull(db.charms.find('foo', defaultSeries));
-            done();
-          }).then(undefined, done);
+      utils.promiseImport(
+          'data/blog.yaml',
+          'wordpress-prod',
+          factory.makeFakeBackend()
+      ).then(function(resolve) {
+        var db = resolve.backend.db;
+        assert.isNotNull(db.charms.find('wordpress', defaultSeries));
+        assert.isNotNull(db.charms.find('precise/wordpress',
+                                        defaultSeries));
+        assert.isNotNull(db.charms.find('precise/wordpress'));
+        assert.isNotNull(db.charms.find('cs:precise/wordpress'));
+        assert.isNotNull(db.charms.find('cs:precise/wordpress-999'));
+        // Can't find this w/o a series
+        assert.isNull(db.charms.find('wordpress'));
+        // Find fails on missing items as well.
+        assert.isNull(db.charms.find('foo'));
+        assert.isNull(db.charms.find('foo', defaultSeries));
+        done();
+      }).then(undefined, done);
     });
 
     it('should ignore calls to the deployer watcher', function(done) {
@@ -790,19 +814,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend.uniformOperations', function() {
-    var requires = ['node',
-      'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils;
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
     });
 
     afterEach(function() {
@@ -1105,18 +1132,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addUnit', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, deployResult, callback;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -1221,19 +1251,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.removeUnit', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, unitsRemoveData = '',
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils;
+    var unitsRemoveData = '',
         removeCalled = 0;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
     });
 
     afterEach(function() {
@@ -1329,18 +1363,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.next*', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, deployResult, callback;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -1452,18 +1489,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.addRelation', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, deployResult, callback;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -1726,18 +1766,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('FakeBackend.removeRelation', function() {
     var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils;
+      'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
+      'juju-charm-models'
+    ];
+    var Y, factory, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      fakebackend = utils.makeFakeBackend();
+      fakebackend = factory.makeFakeBackend();
     });
 
     afterEach(function() {

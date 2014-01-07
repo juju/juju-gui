@@ -320,12 +320,13 @@ describe('Endpoints map', function() {
 });
 
 describe('Endpoints map handlers', function() {
-  var Y, juju, utils, models, app, conn, env, controller, destroyMe;
+  var app, conn, controller, destroyMe, env, factory, juju, models, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
                                'juju-models',
                                'juju-tests-utils',
+                               'juju-tests-factory',
                                'juju-endpoints-controller',
                                'juju-controllers',
                                'juju-charm-store',
@@ -333,6 +334,7 @@ describe('Endpoints map handlers', function() {
     function(Y) {
       juju = Y.namespace('juju');
       utils = Y.namespace('juju-tests.utils');
+      factory = Y.namespace('juju-tests.factory');
       models = Y.namespace('juju.models');
       done();
     });
@@ -347,7 +349,7 @@ describe('Endpoints map handlers', function() {
     app = new Y.juju.App({
       env: env,
       consoleEnabled: true,
-      store: utils.makeFakeStore()
+      store: factory.makeFakeStore()
     });
     app.showView(new Y.View());
     destroyMe.push(app);
@@ -383,7 +385,7 @@ describe('Endpoints map handlers', function() {
 
   it('should update endpoints map when non-pending services are added',
      function(done) {
-       var store = utils.makeFakeStore();
+       var store = factory.makeFakeStore();
        var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
        app.db.charms.add({id: charm_id});
