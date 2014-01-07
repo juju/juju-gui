@@ -22,23 +22,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('sandbox.GoJujuAPI', function() {
     var requires = [
-      'jsyaml',
-      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-go',
-      'juju-models', 'promise'];
-    var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
-        client, env, utils;
+      'jsyaml', 'juju-env-sandbox', 'juju-tests-utils',
+      'juju-tests-factory', 'juju-env-go', 'juju-models', 'promise'
+    ];
+    var client, env, environmentsModule, factory, juju,
+        sandboxModule, state, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackend();
+      state = factory.makeFakeBackend();
       juju = new sandboxModule.GoJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.GoEnvironment({conn: client});

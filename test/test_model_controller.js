@@ -19,19 +19,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Model Controller Promises', function() {
-  var modelController, yui, env, db, conn, environment, load, serviceError,
-      getService, cleanups, aEach, utils;
+  var aEach, cleanups, conn, db, env, environment, factory, getService,
+      load, modelController, serviceError, utils, yui, Y;
 
   before(function(done) {
     YUI(GlobalConfig).use(
-        'juju-models', 'model-controller', 'juju-charm-models',
-        'juju-view-environment', 'juju-tests-utils', function(Y) {
+        'juju-charm-models', 'juju-models', 'juju-tests-factory',
+        'juju-tests-utils', 'juju-view-environment', 'model-controller',
+        function(Y) {
           var environments = Y.juju.environments;
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
           getService = environments.PythonEnvironment.prototype.get_service;
           aEach = Y.Array.each;
           utils = Y.namespace('juju-tests.utils');
+          factory = Y.namespace('juju-tests.factory');
           done();
         });
   });
@@ -45,7 +47,7 @@ describe('Model Controller Promises', function() {
     modelController = new yui.juju.ModelController({
       db: db,
       env: env,
-      store: utils.makeFakeStore()
+      store: factory.makeFakeStore()
     });
     cleanups = [];
   });
@@ -258,7 +260,7 @@ describe('Model Controller Promises', function() {
       loaded: true,
       charm: charmId
     });
-    modelController.set('store', utils.makeFakeStore());
+    modelController.set('store', factory.makeFakeStore());
     var promise = modelController.getServiceWithCharm(serviceId);
     promise.then(
         function(result) {

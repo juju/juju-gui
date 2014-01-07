@@ -19,7 +19,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('Browser bundle detail view', function() {
-  var Y, cleanUp, utils, data, container, view, fakestore, browser, models;
+
+  var browser, cleanUp, container, data, factory, fakestore, models, utils,
+      view, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -34,16 +36,18 @@ describe('Browser bundle detail view', function() {
         'subapp-browser-bundleview',
         'juju-view-utils',
         'juju-tests-utils',
+        'juju-tests-factory',
         'event-simulate',
         'node-event-simulate',
         function(Y) {
           models = Y.namespace('juju.models');
           utils = Y.namespace('juju-tests.utils');
+          factory = Y.namespace('juju-tests.factory');
           data = utils.loadFixture('data/browserbundle.json', true);
 
           // Required to register the handlebars helpers
           browser = new Y.juju.subapps.Browser({
-            store: utils.makeFakeStore()
+            store: factory.makeFakeStore()
           });
 
           done();
@@ -53,7 +57,7 @@ describe('Browser bundle detail view', function() {
   beforeEach(function() {
     view = generateBundleView();
     view._setupLocalFakebackend = function() {
-      this.fakebackend = utils.makeFakeBackend();
+      this.fakebackend = factory.makeFakeBackend();
     };
     cleanUp = utils.stubCharmIconPath();
   });
@@ -64,11 +68,15 @@ describe('Browser bundle detail view', function() {
     cleanUp();
   });
 
+  after(function() {
+    browser.destroy();
+  });
+
   function generateBundleView(options) {
     container = utils.makeContainer();
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
-      store: utils.makeFakeStore(),
+      store: factory.makeFakeStore(),
       db: {},
       entityId: data.id,
       renderTo: container
@@ -92,7 +100,7 @@ describe('Browser bundle detail view', function() {
   });
 
   it('fetches the readme when requested', function(done) {
-    var fakeStore = utils.makeFakeStore();
+    var fakeStore = factory.makeFakeStore();
     fakeStore.file = function(id, filename, entityType, callbacks) {
       assert.equal(entityType, 'bundle');
       assert.equal(id, data.id);
@@ -110,7 +118,7 @@ describe('Browser bundle detail view', function() {
   });
 
   it('fetches a source file when requested', function(done) {
-    var fakeStore = utils.makeFakeStore();
+    var fakeStore = factory.makeFakeStore();
     fakeStore.file = function(id, filename, entityType, callbacks) {
       assert.equal(entityType, 'bundle');
       assert.equal(id, data.id);
@@ -356,7 +364,5 @@ describe('Browser bundle detail view', function() {
     var revnoLink = view._getRevnoLink(url, 1);
     assert.equal(expected + '/1', revnoLink);
   });
-
-
 
 });

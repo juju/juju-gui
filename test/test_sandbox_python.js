@@ -22,22 +22,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('sandbox.PyJujuAPI', function() {
     var requires = [
-      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
-      'juju-models', 'promise'];
-    var Y, sandboxModule, ClientConnection, environmentsModule, state, juju,
-        client, env, utils, cleanups;
+      'juju-env-sandbox', 'juju-tests-utils', 'juju-tests-factory',
+      'juju-env-python', 'juju-models', 'promise'
+    ];
+    var cleanups, client, env, environmentsModule, factory,
+        juju, sandboxModule, state, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
         done();
       });
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackend();
+      state = factory.makeFakeBackend();
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});
@@ -336,7 +338,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy.', function(done) {
-      // We begin logged in.  See utils.makeFakeBackend.
+      // We begin logged in.  See factory.makeFakeBackend.
       var data = {
         op: 'deploy',
         charm_url: 'cs:precise/wordpress-15',
@@ -374,7 +376,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('can deploy (environment integration).', function(done) {
-      // We begin logged in.  See utils.makeFakeBackend.
+      // We begin logged in.  See factory.makeFakeBackend.
       env.after('defaultSeriesChange', function() {
         var callback = function(result) {
           assert.isUndefined(result.err);

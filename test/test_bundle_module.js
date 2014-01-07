@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('topology bundle module', function() {
   var utils, views, Y, bundleModule;
-  var bundle, container, fakebackend;
+  var bundle, container, factory, fakebackend;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -29,10 +29,12 @@ describe('topology bundle module', function() {
       'juju-charm-store',
       'juju-models',
       'juju-tests-utils',
+      'juju-tests-factory',
       'node-event-simulate'
     ],
     function(Y) {
       utils = Y.namespace('juju-tests.utils');
+      factory = Y.namespace('juju-tests.factory');
       views = Y.namespace('juju.views');
       done();
     });
@@ -45,7 +47,7 @@ describe('topology bundle module', function() {
 
   function promiseBundle(options, visableContainer) {
     container = utils.makeContainer('canvas', true);
-    fakebackend = utils.makeFakeBackend();
+    fakebackend = factory.makeFakeBackend();
     fakebackend.db.environment.set('defaultSeries', 'precise');
 
     options = options || {};

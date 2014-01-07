@@ -210,50 +210,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   // Split jujuTests.utils definition, so that charms can be cached
   // right away, while at the same time reusing the loadFixture method.
   Y.mix(jujuTests.utils, {
-
-    _cached_charms: (function() {
-      var url, charms = {},
-          names = [
-            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
-            'memcached', 'puppetmaster'];
-      Y.Array.each(names, function(name) {
-        url = 'data/' + name + '-api-response.json';
-        charms[name] = jujuTests.utils.loadFixture(url, true);
-      });
-      return charms;
-    })(),
-
-    makeFakeStore: function() {
-      var fakeStore = new Y.juju.charmworld.APIv3({});
-      fakeStore.charm = function(store_id, callbacks, bindscope, cache) {
-        store_id = this.apiHelper.normalizeCharmId(store_id, 'precise');
-        var charmName = store_id.split('/')[1];
-        charmName = charmName.split('-', 1);
-        if (Y.Lang.isArray(charmName)) {
-          charmName = charmName[0];
-        }
-        if (charmName in jujuTests.utils._cached_charms) {
-          var response = jujuTests.utils._cached_charms[charmName];
-          if (cache) {
-            cache.add(response.charm);
-          }
-          callbacks.success(response);
-        } else {
-          callbacks.failure(new Error('Unable to load charm ' + charmName));
-        }
-      };
-      return fakeStore;
-    },
-
-    makeFakeBackend: function() {
-      var fakeStore = this.makeFakeStore();
-      var fakebackend = new Y.juju.environments.FakeBackend({
-        store: fakeStore
-      });
-      fakebackend.login('admin', 'password');
-      return fakebackend;
-    },
-
     /**
      Return a promise to return a working fakebackend
      with imported YAML as its bundle. This returns
@@ -273,13 +229,10 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       @param {String} [name] Name of bundle to load, optional when
              only one target in the bundle.
       @param {Object} fakebackend An instance of fakebackend from the
-              utils makeFakeBackend() method.
+              factory makeFakeBackend() method.
       @return {Promise} Outlined in description.
     */
     promiseImport: function(YAMLBundleURL, name, fakebackend) {
-      if (!fakebackend) {
-        fakebackend = this.makeFakeBackend();
-      }
       var db = fakebackend.db;
       db.environment.set('defaultSeries', 'precise');
       var fixture = jujuTests.utils.loadFixture(YAMLBundleURL);
