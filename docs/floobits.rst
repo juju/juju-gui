@@ -49,6 +49,10 @@ or to run GVim::
     VIMRUNTIME=/usr/share/vim/vim73/ src/gvim
 
 
+This environment varaible is safe to add to your .bashrc/.zshrc or other
+system configuration.
+
+
 Installing the plugin
 ---------------------
 
