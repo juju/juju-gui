@@ -410,7 +410,7 @@ check: lint test-debug test-prod test-misc docs
 # must have an externally routable IP.
 ci-check: check
 	# Report any server already running and abort.
-	! netstat -tnap 2> /dev/null | grep ":$(PORT) " | grep " LISTEN "
+	! netstat -tnap 2> /dev/null | grep ":$(TEST_PORT) " | grep " LISTEN "
 	# Run the browser tests against a remote browser (uses Sauce Labs).
 	echo "Starting tests against Firefox"
 	JUJU_GUI_TEST_BROWSER="firefox" make test-browser
@@ -469,7 +469,7 @@ test-misc:
 test-browser: build-prod
 	# Start the web server we will be testing against.
 	(cd build-prod && \
-	    python ../bin/http_server.py $(PORT) 2> /dev/null & \
+	    python ../bin/http_server.py $(TEST_PORT) 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
@@ -495,11 +495,11 @@ test-browser-mocha: build-prod
 	# XXX #1263748 - this is duplicated from test-browser and should be
 	# scripted to be shared code to 'run a test'.
 # Start the web server we will be testing against.
-ifndef PORT
-	$(error PORT is not set)
+ifndef TEST_PORT
+	$(error TEST_PORT is not set)
 endif
 
-	(node ./test-server.js prod $(PORT) 2> /dev/null & \
+	(TEST_PORT=$(TEST_PORT) node ./test-server.js prod 2> /dev/null & \
 	    echo $$!>$(TEST_SERVER_PID))
 	# Start Xvfb as a background process, capturing its PID.
 	$(eval xvfb_pid := $(shell Xvfb :34 2> /dev/null & echo $$!))
