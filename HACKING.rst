@@ -326,6 +326,12 @@ Running Unit Tests
 ``make test-prod`` or ``make test-debug`` will run the CLI based test
 runner. If you need to debug a test in the browser, use ``make test-server``.
 
+To run the test server on a specific port use the ENV variable `TEST_PORT`.
+
+::
+
+    TEST_PORT=9000 make test-server
+
 Running Lint
 ============
 
