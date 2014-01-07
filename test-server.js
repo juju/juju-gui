@@ -45,7 +45,7 @@ app.get('/juju-ui/:file', function(req, res) {
 });
 
 var server = http.createServer(app);
-// Bind 0 requests a random port which we read back.
-var port = process.env.PORT || 0;
+// When run via the test-server.sh the PORT is set via an ENV variable.
+var port = process.env.PORT || 8888;
 server.listen(process.env.PORT);
 console.log('http://0.0.0.0:' + server.address().port + '/test/index.html');
