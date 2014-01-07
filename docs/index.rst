@@ -20,6 +20,7 @@ Juju GUI documentation
    databinding
    viewlets
    analytics
+   floobits
 
 |   `Readme`_
 |   `Hacking`_
@@ -35,6 +36,7 @@ Juju GUI documentation
 |   `Databinding`_
 |   `Viewlets`_
 |   `Analytics`_
+|   `Collaborating using Floobits`_
 
 .. _Readme: https://github.com/juju/juju-gui/blob/develop/README.rst
 .. _Hacking: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
@@ -50,3 +52,4 @@ Juju GUI documentation
 .. _Databinding: https://github.com/juju/juju-gui/blob/develop/docs/databinding.rst
 .. _Viewlets: https://github.com/juju/juju-gui/blob/develop/docs/viewlets.rst
 .. _Analytics: https://github.com/juju/juju-gui/blob/develop/docs/analytics.rst
+.. _Collaborating using Floobits: https://github.com/juju/juju-gui/blob/develop/docs/floobits.rst

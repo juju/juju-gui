@@ -66,7 +66,6 @@ pull your clone down to work on.
 
 ::
 
-
   git clone git@github.com:{yourusername}/juju-gui.git
 
 
@@ -81,7 +80,7 @@ After getting `Vagrant <http://vagrantup.com>`_ and the latest version of
 from your working directory:
 
 ::
-  
+
   vagrant up
 
 You may see a warning about guest additions not matching the version of
