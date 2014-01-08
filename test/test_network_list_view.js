@@ -42,7 +42,7 @@ describe('Network view list - Prototype', function() {
   });
 
   //after()
-  
+
   afterEach(function() {
     viewContainer.remove(true);
   });
@@ -52,7 +52,7 @@ describe('Network view list - Prototype', function() {
       db: db
     });
     view.render(viewContainer);
-    assert.isNotNull(viewContainer.one('.add-network'))
+    assert.isNotNull(viewContainer.one('.add-network'));
   });
 
   it('should add a network on click', function(done) {
@@ -61,7 +61,7 @@ describe('Network view list - Prototype', function() {
     });
     view.render(viewContainer);
     db.networks.on('add', function(evt) {
-      assert.equal(evt.model.get('name'), 'foo');
+      assert.equal(evt.model.get('name').substring(0,3), 'net');
       done();
     });
     viewContainer.one('.add-network').simulate('click');
