@@ -134,8 +134,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var networks = utils.getElementsValuesMapping(
           container, '.hidden-checkbox');
 
-      console.log(networks);
-
       // Turn networks hash into an array of true networks.
       var networksList = [];
       for (var network in networks) {
@@ -148,8 +146,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // Override the service networks attribute with the correct networks.
       // Hacky solution for UI prototype.
       model.setAttrs({networks: networks});
-
-      console.log(model.getAttrs());
 
       options.env.deploy(
           model.get('charm'),
