@@ -381,7 +381,13 @@ YUI.add('juju-topology-service', function(Y) {
 
           @event panToCenter
         */
-        panToCenter: 'panToCenter'
+        panToCenter: 'panToCenter',
+        /**
+          Fade services that aren't in the network list
+
+          @event fadeNotNetworks
+        */
+        fadeNotNetworks: 'fadeNotNetworks'
       }
     },
 
@@ -1148,6 +1154,37 @@ YUI.add('juju-topology-service', function(Y) {
       selection.transition()
             .duration(400)
             .attr('opacity', alpha !== undefined && alpha || '0.2');
+    },
+
+    /**
+      Fade all services that are not in the selected
+      network.
+
+      @method fadeNotNetworks
+    */
+    fadeNotNetworks: function(evt) {
+      var topo = this.get('component');
+      var vis = topo.vis;
+      var selectedNetworks = evt.networks;
+      topo.fire('show', {
+        selection: vis.selectAll('.service')
+          .filter(function(d) { return !d.pending; })
+      });
+      var sel = vis.selectAll('.service')
+              .filter(function(d) {
+                var serviceNetworks = d.model.get('networks');
+                for (var i = 0; i < serviceNetworks.length; i += 1) {
+                  for (var j = 0; j < selectedNetworks.length; j += 1) {
+                    if (serviceNetworks[i] === selectedNetworks[j]) {
+                      return true;
+                    }
+                  }
+                }
+                return false;
+              });
+      Y.fire('fade', {
+        selection: sel
+      });
     },
 
     /**

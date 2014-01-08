@@ -1013,7 +1013,8 @@ YUI.add('juju-models', function(Y) {
   var Network = Y.Base.create('network', Y.Model, [], {
     initializer: function() {}
   }, {
-    // Docs on attribute syntax - http://yuilibrary.com/yui/docs/attribute/index.html
+    // Docs on attribute syntax -
+    // http://yuilibrary.com/yui/docs/attribute/index.html
     // main benefit is events and property access.
     ATTRS: {
       'name': {},
@@ -1023,8 +1024,6 @@ YUI.add('juju-models', function(Y) {
   });
   models.Network = Network;
 
-  /**
-  */
   var NetworkList = Y.Base.create('networkList', Y.ModelList, [], {
     model: Network
 
