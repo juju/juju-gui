@@ -1,12 +1,15 @@
 {{#networks}}
-  <div class="settings-wrapper">
-   <label for="{{name}}">{{title}}</label>
-    <div>
-      {{name}}
-      <input class="network-field {{name}}" type="checkbox" name="{{name}}"
-          value="{{value}}" data-bind="networks.{{name}}" />
-      {{#if unit }}<span class="text-in-input">{{unit}}</span>{{/if}}
-    </div>
-    {{>conflict-ux}}
+  <div class="toggle single-line settings-wrapper">
+   <label>{{name}}</label>
+   <div class="toggle-switch">
+     <input type="checkbox" class="hidden-checkbox" id="{{name}}-toggle" name="{{name}}" value="{value}" unchecked>
+     <label for="{{name}}-toggle">
+       <div class="handle"></div>
+     </label>
+   </div>
+   <div class="textvalue"></div>
+     <!-- Clear the floating slider/textvalue. -->
+   <div class="clearall"></div>
+   {{>conflict-ux}}
   </div>
 {{/networks}}

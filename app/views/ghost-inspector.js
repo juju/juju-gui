@@ -132,7 +132,9 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
       // Get networks with true/false values indicating service connection.
       var networks = utils.getElementsValuesMapping(
-          container, '.network-field');
+          container, '.hidden-checkbox');
+
+      console.log(networks);
 
       // Turn networks hash into an array of true networks.
       var networksList = [];
