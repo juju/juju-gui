@@ -54,20 +54,23 @@
         {{/unless}}
 
         <div class="tabs">
-            <ul class="nav">
-                <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
-                {{#unless isLocal}}
-                    <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
-                {{/unless}}
-                {{#unless forInspector}}
-                <li><a href="#bws-related-charms" class="bws-related-charms">Related Charms</a></li>
-                {{/unless}}
-                {{#unless isLocal}}
-                    <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
-                    <li><a href="#bws-code" class="bws-code">Code</a></li>
-                    <li><a href="#bws-features" class="bws-features">Features</a></li>
-                {{/unless}}
-            </ul>
+            <nav>
+                <ul>
+                    <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
+                    {{#unless isLocal}}
+                        <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
+                    {{/unless}}
+                    {{#unless forInspector}}
+                    <li><a href="#bws-related-charms" class="bws-related-charms">Related Charms</a></li>
+                    {{/unless}}
+                    {{#unless isLocal}}
+                        <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
+                        <li><a href="#bws-code" class="bws-code">Code</a></li>
+                        <li><a href="#bws-features" class="bws-features">Features</a></li>
+                    {{/unless}}
+                </ul>
+                <div class="selected"></div>
+            </nav>
             {{#unless forInspector}}
                 <span id="sharing">
                   <a href="http://twitter.com/home?status={{ twitterText }}" title="Share on twitter">

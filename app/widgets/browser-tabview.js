@@ -44,16 +44,28 @@ YUI.add('browser-tabview', function(Y) {
      *
      * @method _setTab
      * @param {String} The id of the tab to switch to.
+     * @param {Node} The corresponding tab anchor.
      *
      */
-    _setTab: function(tabId) {
+    _setTab: function(tabId, link) {
       var container = this.get('contentBox'),
           tabCarousel = container.one('.tab-carousel'),
           tabs = container.all('.tab-panel'),
+          selectedNode = container.one('nav .selected'),
           tab = container.one('#' + tabId),
           tabWidth = 750,
-          position = -(parseInt(tabs.indexOf(tab)) * tabWidth);
+          position = -(parseInt(tabs.indexOf(tab)) * tabWidth),
+          linkWidth = link.getComputedStyle('width'),
+          linkPosition = link.getX() - container.getX();
+
+      // Move the tab countainer to the requested tab.
       tabCarousel.setStyle('left', position + 'px');
+
+      // Move the active tab indicator.
+      selectedNode.setStyle('width', linkWidth);
+      selectedNode.setStyle('left', linkPosition + 'px');
+
+      // Fire the changed event.
       this.fire('selectionChange', {newVal: tabId});
     },
 
@@ -64,10 +76,10 @@ YUI.add('browser-tabview', function(Y) {
      */
     renderUI: function() {
       var container = this.get('contentBox');
-      container.all('.nav a').on('click', function(e) {
+      container.all('nav a').on('click', function(e) {
           // XXX: Need a better, more secure way of gettin the ID?
           var tabId = e.target.get('href').split('#')[1];
-          this._setTab(tabId);
+          this._setTab(tabId, e.target);
       }, this);
     }
   }, {

@@ -1,15 +1,8 @@
 .yui3-juju-browser-tabview {
     position: static;
 
-    .vertical {
-        ul {
-            float: left;
-        }
-        .yui3-juju-browser-tab {
-            display: block;
-        }
-    }
-    .nav {
+    nav {
+        position: relative;
         padding: 0 20px 0 @tabview-left-padding !important;
         border-bottom: 1px solid @bws-border;
 
@@ -30,11 +23,14 @@
             &:last-child {
                 margin-right: 0;
             }
-            &.yui3-tab-selected a.yui3-tab-label {
-                background: inherit;
-                border-bottom: 2px solid @charm-panel-orange;
-                padding-bottom: 15px;
-            }
+        }
+        .selected {
+            .transition(all 0.3s ease-out);
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            height: 2px;
+            background-color: @charm-panel-orange;
         }
     }
     .tab-panels {
