@@ -65,11 +65,12 @@ YUI.add('juju-ghost-inspector', function(Y) {
         }
         ghostService.set('icon', ghostAttributes.icon);
 
-        var networks = [];
+        // Identify all networks that the service could connect to.
+        var availableNetworks = [];
         this.db.networks.each(function(net) {
-          networks.push(net.getAttrs());
+          availableNetworks.push(net.getAttrs());
         });
-        ghostService.set('networks', networks);
+        ghostService.set('availableNetworks', availableNetworks);
       }
       var environment = this.views.environment.instance;
       environment.createServiceInspector(ghostService);
@@ -145,6 +146,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // Override the service networks attribute with the correct networks.
       // Hacky solution for UI prototype.
       model.setAttrs({networks: networks});
+
+      console.log(model.getAttrs());
 
       options.env.deploy(
           model.get('charm'),
