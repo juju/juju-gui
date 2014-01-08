@@ -564,6 +564,16 @@ YUI.add('juju-topology-relation', function(Y) {
       // Signify that the relation drawing has ended.
       topo.fire('addRelationEnd');
     },
+
+    /**
+      Calls remove relation on the env
+
+      @method removeRelation
+      @param {Object} relation The relation model instance.
+      @param {Object} view The topology RelationModule instance
+      @param {Object} confirmButton A reference to the confirmButton node
+        element in the popup alert.
+    */
     removeRelation: function(relation, view, confirmButton) {
       var topo = this.get('component');
       var env = topo.get('env');
@@ -617,7 +627,14 @@ YUI.add('juju-topology-relation', function(Y) {
       confirmButton.set('disabled', false);
     },
 
-    removeRelationConfirm: function(d, context, view) {
+    /**
+      Shows a dialogue to the user when they are trying to remove a relation.
+
+      @method removeRelationConfirm
+      @param {Object} relation The relation model attributes.
+      @param {Object} view The RelationModule instance.
+    */
+    removeRelationConfirm: function(relation, view) {
       // Destroy the dialog if it already exists to prevent cluttering
       // up the DOM.
       if (!Y.Lang.isUndefined(view.get('rmrelation_dialog'))) {
@@ -632,7 +649,7 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(d, view, confirmButton);
+            view.removeRelation(relation, view, confirmButton);
           },
           this)));
     },
@@ -997,7 +1014,7 @@ YUI.add('juju-topology-relation', function(Y) {
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
       } else {
-        self.removeRelationConfirm(relation, this, self);
+        self.removeRelationConfirm(relation, self);
       }
     }
 

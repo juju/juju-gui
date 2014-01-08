@@ -154,6 +154,7 @@
         }
         /* Buttons */
         button.unit-action-button,
+        button.remove-relation
         .controls button,
         .inspector-buttons a {
             .create-border-radius(@border-radius);
@@ -165,6 +166,7 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         button.unit-action-button,
+        button.remove-relation,
         .controls button,
         .inspector-buttons a {
             display: inline-block;
@@ -988,6 +990,11 @@
 
         .overview-unit-list,
         .relation-wrapper {
+            .unit-action-button {
+                width: 70px;
+                margin: 0 3px 0;
+                background: #CBCBCB;
+            }
             .status-unit-content {
                 .transition(.25s, max-height .3s);
                 overflow: hidden;
@@ -1026,12 +1033,6 @@
                 input[type="checkbox"] {
                     margin-right: 30px;
                 }
-
-                button.unit-action-button {
-                    width: 70px;
-                    margin: 0 3px 0;
-                    background: #CBCBCB;
-                }
             }
         }
         .relation-wrapper {
@@ -1039,6 +1040,13 @@
                 ul {
                     margin: 0;
                     border-bottom: none;
+                }
+            }
+            .errored-units {
+                text-align: center;
+                border-top: 1px solid #e2e2e2;
+                button.remove-relation {
+                    margin: 10px 0;
                 }
             }
         }
