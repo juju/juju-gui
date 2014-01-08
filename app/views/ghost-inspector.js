@@ -324,8 +324,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
         constraints: constraints
       });
 
-      console.log(ghostService.getAttrs());
-
       // Transition the ghost viewModel to the new
       // service. It's alive!
       var boxModel = topo.service_boxes[ghostId];
