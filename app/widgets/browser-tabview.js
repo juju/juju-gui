@@ -53,7 +53,7 @@ YUI.add('browser-tabview', function(Y) {
           selectedNode = container.one('nav .selected'),
           tab = container.one('#' + tabId),
           tabWidth = 750,
-          position = -(parseInt(tabs.indexOf(tab)) * tabWidth),
+          position = -(tabs.indexOf(tab) * tabWidth),
           linkWidth = link.getComputedStyle('width'),
           linkPosition = link.getX() - container.getX();
 
@@ -76,9 +76,9 @@ YUI.add('browser-tabview', function(Y) {
     renderUI: function() {
       var container = this.get('contentBox');
       container.all('nav a').on('click', function(e) {
-          // XXX: Need a better, more secure way of gettin the ID?
-          var tabId = e.target.get('href').split('#')[1];
-          this._setTab(tabId, e.target);
+        // XXX: Need a better, more secure way of gettin the ID?
+        var tabId = e.target.get('href').split('#')[1];
+        this._setTab(tabId, e.target);
       }, this);
     }
   }, {
