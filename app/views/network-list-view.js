@@ -29,16 +29,25 @@ YUI.add('juju-view-networklist', function(Y) {
 
     initializer: function() {},
 
-    render: function(node) {
+    render: function() {
       var container = this.get('container');
-      container.append(Y.juju.views.Templates['network-list']());
-      node.append(container);
+      var networks = [];
+
+      this.get('db').networks.each(function(net) {
+        networks.push(net.getAttrs());
+      });
+
+      container.setHTML(Y.juju.views.Templates['network-list'](
+          {networks: networks}));
+      Y.one('.network-list').setHTML(container);
+
+      this.fire('render');
     },
 
     /**
-    	Add a network.
+      Add a network.
 
-    	@method addNetwork
+      @method addNetwork
     */
     addNetwork: function(evt) {
       this.get('db').networks.create({
@@ -49,6 +58,7 @@ YUI.add('juju-view-networklist', function(Y) {
       this.get('db').networks.each(function(net) {
         console.log(net.getAttrs());
       });
+      this.render();
     }
 
   }, {

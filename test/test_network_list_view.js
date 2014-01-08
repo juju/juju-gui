@@ -37,12 +37,13 @@ describe('Network view list - Prototype', function() {
 
   beforeEach(function() {
     viewContainer = Y.namespace('juju-tests.utils')
-      .makeContainer('container');
+      .makeContainer();
+    viewContainer.addClass('network-list');
     db = new models.Database();
   });
 
   //after()
-  
+
   afterEach(function() {
     viewContainer.remove(true);
   });
@@ -51,19 +52,23 @@ describe('Network view list - Prototype', function() {
     var view = new views.NetworkListView({
       db: db
     });
-    view.render(viewContainer);
-    assert.isNotNull(viewContainer.one('.add-network'))
+    view.render();
+    assert.isNotNull(viewContainer.one('.add-network'));
   });
 
-  it('should add a network on click', function(done) {
-    var view = new views.NetworkListView({
-      db: db
-    });
-    view.render(viewContainer);
-    db.networks.on('add', function(evt) {
-      assert.equal(evt.model.get('name'), 'foo');
-      done();
-    });
-    viewContainer.one('.add-network').simulate('click');
-  });
+  it('should add a network on click and display it in the network list',
+     function(done) {
+       var view = new views.NetworkListView({
+         db: db
+       });
+       view.render();
+       db.networks.on('add', function(evt) {
+         assert.equal(evt.model.get('name'), 'foo');
+       });
+       view.on('render', function() {
+         assert.equal(Y.one('.network').get('text'), 'foo');
+         done();
+       });
+       viewContainer.one('.add-network').simulate('click');
+     });
 });
