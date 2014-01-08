@@ -61,18 +61,8 @@ class TestTests(browser.TestCase):
             return total, failures
 
         self.load('/test/index.html')
-        for i in range(5):
-            total, failures = run_tests()
-            if failures and i < 4 and total < 100:
-                # XXX bug 1161937 gary 2013-03-29
-                # We sometimes see initial failures and we don't know why :-(.
-                # Reload and retry.
-                msg = '{} failure(s) running {} tests.  Retrying.'.format(
-                    failures, total)
-                browser.printerr(msg)
-                self.driver.refresh()
-            else:
-                break
+        total, failures = run_tests()
+
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
