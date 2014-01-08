@@ -54,7 +54,6 @@ YUI.add('browser-tabview', function(Y) {
           tabWidth = 750,
           position = -(parseInt(tabs.indexOf(tab)) * tabWidth);
       tabCarousel.setStyle('left', position + 'px');
-      tabCarousel.setStyle('height', tab.getStyle('height'));
       this.fire('selectionChange', {newVal: tabId});
     },
 
