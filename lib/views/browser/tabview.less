@@ -1,43 +1,39 @@
 .yui3-juju-browser-tabview {
     position: static;
 
-    .vertical {
-        ul {
-            float: left;
-        }
-        .yui3-juju-browser-tab {
-            display: block;
-        }
-    }
-    .yui3-tabview-list {
+    nav {
+        position: relative;
         padding: 0 20px 0 @tabview-left-padding !important;
         border-bottom: 1px solid @bws-border;
 
         li {
-            a {
-                border: none;
-            }
+            display: inline-block;
             margin-right: 38px;
 
-            &:last-child {
-                margin-right: 0;
-            }
-            &.yui3-tab-selected a.yui3-tab-label {
-                background: inherit;
-                border-bottom: 2px solid @charm-panel-orange;
-                padding-bottom: 15px;
-            }
-            .yui3-tab-label {
+            a {
                 .type9;
                 background: inherit;
                 display: block;
                 padding: 16px 0;
+                border: none;
                 outline: 0;
                 line-height: 18px;
             }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+        .selected {
+            .transition(all 0.3s ease-out);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background-color: @charm-panel-orange;
         }
     }
-    .yui3-tabview-panel {
+    .tab-panels {
         .transition(top 0.2s ease-out);
         position: absolute;
         top: 237px;
@@ -50,46 +46,57 @@
         overflow-x: hidden;
         overflow-y: auto;
 
-        .yui3-tab-panel {
-            .type9;
-            .border-box;
-            padding: 50px 70px 50px @tabview-left-padding;
+        .tab-carousel {
+            .transition(left 0.3s ease-out);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10000px;
+            overflow: hidden;
 
-            a:hover {
-                text-decoration: underline;
-            }
-            h1,
-            h2,
-            h3,
-            h4 {
-                .type5;
-                margin: 40px 0 20px;
-                padding-bottom: 0;
-                border-bottom: 0;
+            .tab-panel {
+                .type9;
+                .border-box;
+                float: left;
+                width: 750px;
+                padding: 50px 70px 50px @tabview-left-padding;
 
-                &:first-child {
-                    margin-top: 0;
+                a:hover {
+                    text-decoration: underline;
                 }
-            }
-            p {
-                line-height: 1.6;
+                h1,
+                h2,
+                h3,
+                h4 {
+                    .type5;
+                    margin: 40px 0 20px;
+                    padding-bottom: 0;
+                    border-bottom: 0;
 
-                &:first-child {
-                    margin-top: 0;
+                    &:first-child {
+                        margin-top: 0;
+                    }
                 }
-            }
-            ul, ol {
-                margin: 0;
-                padding: 0;
-                list-style: none;
-            }
-            pre {
-                background: #FDF6F2;
-                border-radius: @border-radius;
-                padding: 10px 16px;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                margin-bottom: 9px;
+                p {
+                    line-height: 1.6;
+
+                    &:first-child {
+                        margin-top: 0;
+                    }
+                }
+                ul, ol {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+                }
+                pre {
+                    background: #FDF6F2;
+                    border-radius: @border-radius;
+                    padding: 10px 16px;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                    margin-bottom: 9px;
+                }
             }
         }
     }

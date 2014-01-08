@@ -20,8 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Provides new tab and tabview widgets with some additional functions for
- * jujugui.
+ * Provides tabview widget with sliding carousel functionality. It requires an
+ * existing HTML structure (an example of the markup can be found in
+ * test/test_tabview.js) and enhances that HTML to animate between tabs.
  *
  * @namespace juju
  * @module browser
@@ -35,31 +36,110 @@ YUI.add('browser-tabview', function(Y) {
    * tabs horizontally rendered like Y.TabView, or vertically.
    *
    * @class Y.juju.widgets.browser.TabView
-   * @extends {Y.TabView}
+   * @extends {Y.View}
    */
-  ns.TabView = Y.Base.create('juju-browser-tabview', Y.TabView, [], {
+  ns.TabView = Y.Base.create('juju-browser-tabview', Y.View, [], {
+    events: {
+      'nav a': {
+        click: 'clickTab'
+      }
+    },
+
+    /**
+     * Switch the visible tab.
+     *
+     * @method clickTab
+     * @param {Event} ev the click event created.
+     *
+     */
+    clickTab: function(e) {
+      this.setTab(e.currentTarget);
+    },
+
+    /**
+     * Switch the visible tab.
+     *
+     * @method setTab
+     * @param {Node} The corresponding tab anchor.
+     *
+     */
+    setTab: function(link) {
+      var container = this.get('container'),
+          tabId = link.get('hash'),
+          otherTabs = container.all('.tab-panel:not(' + tabId + ')'),
+          tab = container.one(tabId),
+          position = -(this.tabs.indexOf(tab) * this.tabWidth),
+          linkWidth = link.getComputedStyle('width'),
+          linkPosition = link.getX() - container.getX();
+
+      // Move the tab countainer to the requested tab.
+      this.tabCarousel.setStyle('left', position + 'px');
+
+      // Set the active link.
+      this.links.removeClass('active');
+      link.addClass('active');
+
+      // Move the active tab indicator.
+      this.selectedNode.setStyle('width', linkWidth);
+      this.selectedNode.setStyle('left', linkPosition + 'px');
+
+      // All tabs should be visible during the animation, but we want the
+      // scrollbar to be the height of the new tab or the height of the visible
+      // area, whichever is bigger.
+      tab.setStyle('height', 'auto');
+      var tabHeight = tab.getComputedStyle('height'),
+          newHeight = this.panelsHeight >
+          tabHeight ? this.panelsHeight : tabHeight;
+      otherTabs.setStyle('height', newHeight);
+
+      // Once the animation is complete reduce the height of all tabs except
+      // the visible tab so the container only scrolls for the visible tab.
+      this.tabCarousel.on('transitionend', function() {
+        var activeTab = container.one(tabId);
+        if (activeTab) {
+          activeTab.setStyle('height', 'auto');
+          otherTabs.setStyle('height', '1px');
+        }
+        this.fire('selectionChangeComplete');
+      }, this);
+
+      // Set the selected tab.
+      this.set('selection', link);
+    },
 
     /**
      * Renders the DOM nodes for the widget.
      *
-     * @method renderUI
+     * @method render
      */
-    renderUI: function() {
-      ns.TabView.superclass.renderUI.apply(this);
-      if (this.get('vertical')) {
-        this.get('contentBox').addClass('vertical');
-      }
+    render: function() {
+      var container = this.get('container');
+
+      // Cache node references.
+      this.links = container.all('nav a');
+      this.tabCarousel = container.one('.tab-carousel');
+      this.tabPanels = container.one('.tab-panels');
+      this.panelsHeight = this.tabPanels.getComputedStyle('height');
+      this.tabs = container.all('.tab-panel');
+      this.selectedNode = container.one('nav .selected');
+      this.tabWidth = 750;
+
+      // Set the base class.
+      container.addClass('yui3-juju-browser-tabview');
+
+      // Set the current selection to the first tab.
+      this.setTab(container.one('nav a'));
     }
   }, {
     ATTRS: {
-
       /**
-       * @attribute vertical
-       * @default false
-       * @type {boolean}
-       */
-      vertical: {
-        value: false
+        The current tab link node.
+
+        @attribute selection
+        @default ''
+      */
+      selection: {
+        value: ''
       }
     }
   });
@@ -67,7 +147,6 @@ YUI.add('browser-tabview', function(Y) {
 }, '0.1.0', {
   requires: [
     'array-extras',
-    'base',
-    'tabview'
+    'base'
   ]
 });

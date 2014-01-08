@@ -79,7 +79,6 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('gallery-markdown');
   reqs.push('gallery-timer');
   reqs.push('loader-base');
-  reqs.push('tabview');
 
   // Get all of the YUI files and their dependencies
   var filesToLoad = merge.getYUIFiles(reqs);
@@ -125,7 +124,6 @@ require('yui').YUI().use(['yui'], function(Y) {
     'node_modules/yui/autocomplete-list/assets/autocomplete-list-core.css');
   cssFiles.push('node_modules/yui/panel/assets/panel-core.css');
   cssFiles.push('node_modules/yui/slider-base/assets/slider-base-core.css');
-  cssFiles.push('node_modules/yui/tabview/assets/tabview-core.css');
   cssFiles.push('node_modules/yui/widget-base/assets/widget-base-core.css');
   cssFiles.push('node_modules/yui/widget-stack/assets/widget-stack-core.css');
 
