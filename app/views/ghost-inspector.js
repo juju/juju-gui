@@ -134,13 +134,13 @@ YUI.add('juju-ghost-inspector', function(Y) {
           container, '.network-field');
 
       // Turn networks hash into an array of true networks.
-      var networks_list = [];
+      var networksList = [];
       for (var network in networks) {
         if (networks[network]) {
-          networks_list.push(network);
+          networksList.push(network);
         }
       }
-      networks = networks_list;
+      networks = networksList;
 
       // Override the service networks attribute with the correct networks.
       // Hacky solution for UI prototype.
