@@ -20,8 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Provides new tab and tabview widgets with some additional functions for
- * jujugui.
+ * Provides tabview widget with sliding carousel functionality.
  *
  * @namespace juju
  * @module browser
@@ -35,7 +34,7 @@ YUI.add('browser-tabview', function(Y) {
    * tabs horizontally rendered like Y.TabView, or vertically.
    *
    * @class Y.juju.widgets.browser.TabView
-   * @extends {Y.TabView}
+   * @extends {Y.Widget}
    */
   ns.TabView = Y.Base.create('juju-browser-tabview', Y.Widget, [], {
 
