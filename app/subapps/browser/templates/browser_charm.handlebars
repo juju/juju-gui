@@ -54,7 +54,7 @@
         {{/unless}}
 
         <div class="tabs">
-            <ul>
+            <ul class="nav">
                 <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
                 {{#unless isLocal}}
                     <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
@@ -84,222 +84,227 @@
                   </a>
                 </span>
             {{/unless}}
-            <div>
-                <div id="bws-summary">
-                    <div class="summary">
-                        {{>providers}}
-                        <h2>Summary</h2>
-                        <p>{{ summary }}</p>
-                        {{#if isLocal}}
-                            <p><em>This is a local charm; only limited information will be available</em></p>
-                        {{/if}}
-                        <h2>Description</h2>
-                        <p class="respect-whitespace">{{linkify description}}</p>
-                    </div>
+            <div class="tab-panels">
+                <div class="tab-carousel">
+                    <div id="bws-summary" class="tab-panel">
+                        <div class="summary">
+                            {{>providers}}
+                            <h2>Summary</h2>
+                            <p>{{ summary }}</p>
+                            {{#if isLocal}}
+                                <p><em>This is a local charm; only limited information will be available</em></p>
+                            {{/if}}
+                            <h2>Description</h2>
+                            <p class="respect-whitespace">{{linkify description}}</p>
+                        </div>
 
-                    <div class="changelog">
-                        <h3 class="section-title">
-                            {{#if recentCommits}}
-                                <a href="" class="expandToggle"
-                                    data-state="closed">
-                            {{/if}}
-                            Change log
-                            {{#if recentCommits}}
-                                    <span class="expand">
-                                        <i class="sprite expand_icon more"></i>
-                                        <i class="sprite contract_icon less hidden"></i>
-                                    </span>
-                                </a>
-                            {{/if}}
-                        </h3>
-                        {{#if recentCommits}}
-                            <div class="first">
-                                <p>
-                                    Latest change:
-                                    <em class="date">
-                                        {{prettyCommits.first.prettyDate}}
-                                    </em>
-                                    <em>{{prettyCommits.first.author.name}}</em>
-                                    <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
-                                    <a href="{{ prettyCommits.first.revnoLink }}">
-                                      REVNO{{prettyCommits.first.revno}}
+                        <div class="changelog">
+                            <h3 class="section-title">
+                                {{#if recentCommits}}
+                                    <a href="" class="expandToggle"
+                                        data-state="closed">
+                                {{/if}}
+                                Change log
+                                {{#if recentCommits}}
+                                        <span class="expand">
+                                            <i class="sprite expand_icon more"></i>
+                                            <i class="sprite contract_icon less hidden"></i>
+                                        </span>
                                     </a>
-                                </p>
+                                {{/if}}
+                            </h3>
+                            {{#if recentCommits}}
+                                <div class="first">
+                                    <p>
+                                        Latest change:
+                                        <em class="date">
+                                            {{prettyCommits.first.prettyDate}}
+                                        </em>
+                                        <em>{{prettyCommits.first.author.name}}</em>
+                                        <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
+                                        <a href="{{ prettyCommits.first.revnoLink }}">
+                                          REVNO{{prettyCommits.first.revno}}
+                                        </a>
+                                    </p>
+                                </div>
+                                <div class="remaining hidden">
+                                    <p class="maintainer">
+                                        Maintained by {{ maintainer.name }}
+                                    </p>
+                                    <h4>Earlier changes</h4>
+                                    <ul>
+                                        {{#prettyCommits.remaining}}
+                                            <li>
+                                                <p>
+                                                    <em class="date">
+                                                        {{prettyDate}}
+                                                    </em>
+                                                    <em>{{author.name}}</em>
+                                                    <span class="respect-whitespace">{{linkify message}}</span> -
+                                                    <a href="{{ revnoLink }}">
+                                                        REVNO{{revno}}
+                                                    </a>
+                                                </p>
+                                            </li>
+                                        {{/prettyCommits.remaining}}
+                                    </ul>
+                                </div>
+                            {{else}}
+                                <p>No change history exists.</p>
+                            {{/if}}
+                        </div>
+                        {{#if isFullscreen}}
+                            <div class="related-charms">
                             </div>
-                            <div class="remaining hidden">
-                                <p class="maintainer">
-                                    Maintained by {{ maintainer.name }}
-                                </p>
-                                <h4>Earlier changes</h4>
-                                <ul>
-                                    {{#prettyCommits.remaining}}
-                                        <li>
-                                            <p>
-                                                <em class="date">
-                                                    {{prettyDate}}
-                                                </em>
-                                                <em>{{author.name}}</em>
-                                                <span class="respect-whitespace">{{linkify message}}</span> -
-                                                <a href="{{ revnoLink }}">
-                                                    REVNO{{revno}}
-                                                </a>
-                                            </p>
+                        {{/if}}
+                    </div>
+                    {{#unless isLocal}}
+                        <div id="bws-readme" class="tab-panel"></div>
+                    {{/unless}}
+                    {{#unless forInspector}}
+                    <div id="bws-related-charms" class="tab-panel">
+                        <p class="intro">
+                            Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
+                            {{#if interfaceIntro.noRequiresNoProvides}}
+                                <br />
+                                <br />
+                                This charm does not have any interfaces.
+                            {{/if}}
+                            {{#if interfaceIntro.noRequiresOneProvides}}
+                                This charm provides only one interface to another charm.
+                            {{/if}}
+                            {{#if interfaceIntro.noRequiresManyProvides}}
+                                This charm requires no interfaces to be provided by other charms, but provides several interfaces that can be used by other charms.
+                            {{/if}}
+                            {{#if interfaceIntro.oneRequiresNoProvides}}
+                                This charm requires only one interface to be provided by another charm.
+                            {{/if}}
+                            {{#if interfaceIntro.oneRequiresOneProvides}}
+                                This charm requires only one interface to be provided by another charm. Similarly, this charm provides one interface that can be used by other charms.
+                            {{/if}}
+                            {{#if interfaceIntro.oneRequiresManyProvides}}
+                                This charm requires only one interface to be provided by another charm, but provides several interfaces that can be used by other charms.
+                            {{/if}}
+                            {{#if interfaceIntro.manyRequiresNoProvides}}
+                                This charm requires certain interfaces to be provided by other charms, but provides no interfaces itself.
+                            {{/if}}
+                            {{#if interfaceIntro.manyRequiresOneProvides}}
+                                This charm requires certain interfaces to be provided by other charms, but provides only one interface to another charm.
+                            {{/if}}
+                            {{#if interfaceIntro.manyRequiresManyProvides}}
+                                This charm requires certain interfaces to be provided by other charms. Similarly, this charm provides other interfaces that can be used by other charms.
+                            {{/if}}
+                        </p>
+                        {{#if requires}}
+                            <div class="yui3-g">
+                                <div class="interfaces-heading yui3-u-1-2">
+                                    <h3>Requires</h3>
+                                </div>
+                                {{#unless isLocal}}
+                                    <div class="interfaces-heading yui3-u-1-2">
+                                        <h3>Related Charms</h3>
+                                    </div>
+                                {{/unless}}
+                                <div class="yui3-u-1-3">
+                                </div>
+
+                                <ul class="interface-list yui3-u-1">
+                                    {{#arrayObject requires}}
+                                        <li class="interface-row yui3-g">
+                                            <div class="interface yui3-u-1-2">
+                                                <h4>{{value.interface}}</h4>
+                                                <div>{{key}}</div>
+                                            </div>
+
+                                            <div class="related yui3-u-1-2" data-interface="provides-{{value.interface}}">
+                                            </div>
                                         </li>
-                                    {{/prettyCommits.remaining}}
+                                    {{/arrayObject}}
                                 </ul>
                             </div>
-                        {{else}}
-                            <p>No change history exists.</p>
                         {{/if}}
-                    </div>
-                </div>
-                {{#unless isLocal}}
-                    <div id="bws-readme"></div>
-                {{/unless}}
-
-                {{#unless forInspector}}
-                <div id="bws-related-charms">
-                    <p class="intro">
-                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
-                        {{#if interfaceIntro.noRequiresNoProvides}}
-                            <br />
-                            <br />
-                            This charm does not have any interfaces.
-                        {{/if}}
-                        {{#if interfaceIntro.noRequiresOneProvides}}
-                            This charm provides only one interface to another charm.
-                        {{/if}}
-                        {{#if interfaceIntro.noRequiresManyProvides}}
-                            This charm requires no interfaces to be provided by other charms, but provides several interfaces that can be used by other charms.
-                        {{/if}}
-                        {{#if interfaceIntro.oneRequiresNoProvides}}
-                            This charm requires only one interface to be provided by another charm.
-                        {{/if}}
-                        {{#if interfaceIntro.oneRequiresOneProvides}}
-                            This charm requires only one interface to be provided by another charm. Similarly, this charm provides one interface that can be used by other charms.
-                        {{/if}}
-                        {{#if interfaceIntro.oneRequiresManyProvides}}
-                            This charm requires only one interface to be provided by another charm, but provides several interfaces that can be used by other charms.
-                        {{/if}}
-                        {{#if interfaceIntro.manyRequiresNoProvides}}
-                            This charm requires certain interfaces to be provided by other charms, but provides no interfaces itself.
-                        {{/if}}
-                        {{#if interfaceIntro.manyRequiresOneProvides}}
-                            This charm requires certain interfaces to be provided by other charms, but provides only one interface to another charm.
-                        {{/if}}
-                        {{#if interfaceIntro.manyRequiresManyProvides}}
-                            This charm requires certain interfaces to be provided by other charms. Similarly, this charm provides other interfaces that can be used by other charms.
-                        {{/if}}
-                    </p>
-                    {{#if requires}}
-                        <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-2">
-                                <h3>Requires</h3>
-                            </div>
-                            {{#unless isLocal}}
+                        {{#if provides}}
+                            <div class="yui3-g">
                                 <div class="interfaces-heading yui3-u-1-2">
-                                    <h3>Related Charms</h3>
+                                    <h3>Provides</h3>
                                 </div>
-                            {{/unless}}
-                            <div class="yui3-u-1-3">
+                                {{#unless isLocal}}
+                                    <div class="interfaces-heading yui3-u-1-2">
+                                        <h3>Related Charms</h3>
+                                    </div>
+                                {{/unless}}
+                                <div class="yui3-u-1-3">
+                                </div>
                             </div>
+                            <ul class="interface-list">
+                                {{#arrayObject provides}}
+                                    <li class="interface-row yui3-g-u-1">
+                                        <div class="yui3-g">
+                                            <div class="interface yui3-u-1-2">
+                                                <h4>{{value.interface}}</h4>
+                                                <div>{{key}}</div>
+                                            </div>
 
-                            <ul class="interface-list yui3-u-1">
-                                {{#arrayObject requires}}
-                                    <li class="interface-row yui3-g">
-                                        <div class="interface yui3-u-1-2">
-                                            <h4>{{value.interface}}</h4>
-                                            <div>{{key}}</div>
-                                        </div>
-
-                                        <div class="related yui3-u-1-2" data-interface="provides-{{value.interface}}">
+                                            <div class="related yui3-u-1-2" data-interface="requires-{{value.interface}}">
+                                            </div>
                                         </div>
                                     </li>
                                 {{/arrayObject}}
                             </ul>
-                        </div>
-                    {{/if}}
-                    {{#if provides}}
-                        <div class="yui3-g">
-                            <div class="interfaces-heading yui3-u-1-2">
-                                <h3>Provides</h3>
-                            </div>
-                            {{#unless isLocal}}
-                                <div class="interfaces-heading yui3-u-1-2">
-                                    <h3>Related Charms</h3>
-                                </div>
-                            {{/unless}}
-                            <div class="yui3-u-1-3">
-                            </div>
-                        </div>
-                        <ul class="interface-list">
-                            {{#arrayObject provides}}
-                                <li class="interface-row yui3-g-u-1">
-                                    <div class="yui3-g">
-                                        <div class="interface yui3-u-1-2">
-                                            <h4>{{value.interface}}</h4>
-                                            <div>{{key}}</div>
-                                        </div>
-
-                                        <div class="related yui3-u-1-2" data-interface="requires-{{value.interface}}">
-                                        </div>
-                                    </div>
-                                </li>
-                            {{/arrayObject}}
-                        </ul>
-                    {{/if}}
-                </div>
-                {{! Do not show the related charms tab when for inspector}}
-                {{/unless}}
-                {{#unless isLocal}}
-                    <div id="bws-configuration">
-                        <p class="intro">
-                            These are the ways in which you can configure this
-                            charm to best suit your deployment. You can change the
-                            default configuration settings either before or after
-                            you have deployed the charm, if necessary.
-                        </p>
-                        {{#if options}}
-                            <dl>
-                                {{#arrayObject options}}
-                                    <dt>
-                                        <dfn>{{key}}</dfn>
-                                        <em>{{value.type}}</em>
-                                    </dt>
-                                    <dd>
-                                        <div>Default: {{value.default}}</div>
-                                        <p>{{value.description}}</p>
-                                    </dd>
-                                {{/arrayObject}}
-                            </dl>
-                        {{else}}
-                          <p>This charm does not expose any configuration options.</p>
                         {{/if}}
                     </div>
-                    <div id="bws-code">
-                        <p class="intro">
-                            The source code of the charm includes scripts, metadata,
-                            and other supporting files to describe and install a
-                            service.
-                        </p>
-                        <p class="intro">
-                            <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
-                            target="help">Please contribute to this charm!</a>
-                        </p>
-                        <p class="intro">
-                            Select a file below to view the contents.
-                        </p>
-                        <select>
-                            <option>Select --</option>
-                            {{#each files}}
-                                <option value="{{ . }}">{{ . }}</option>
-                            {{/each}}
-                        </select>
-                        <div class="filecontent">
+                    {{! Do not show the related charms tab when for inspector}}
+                    {{/unless}}
+                    {{#unless isLocal}}
+                        <div id="bws-configuration" class="tab-panel">
+                            <p class="intro">
+                                These are the ways in which you can configure this
+                                charm to best suit your deployment. You can change the
+                                default configuration settings either before or after
+                                you have deployed the charm, if necessary.
+                            </p>
+                            {{#if options}}
+                                <dl>
+                                    {{#arrayObject options}}
+                                        <dt>
+                                            <dfn>{{key}}</dfn>
+                                            <em>{{value.type}}</em>
+                                        </dt>
+                                        <dd>
+                                            <div>Default: {{value.default}}</div>
+                                            <p>{{value.description}}</p>
+                                        </dd>
+                                    {{/arrayObject}}
+                                </dl>
+                            {{else}}
+                              <p>This charm does not expose any configuration options.</p>
+                            {{/if}}
                         </div>
-                    </div>
-                    <div id="bws-features"></div>
-                {{/unless}}
+                        <div id="bws-code" class="tab-panel">
+                            <p class="intro">
+                                The source code of the charm includes scripts, metadata,
+                                and other supporting files to describe and install a
+                                service.
+                            </p>
+                            <p class="intro">
+                                <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
+                                target="help">Please contribute to this charm!</a>
+                            </p>
+                            <p class="intro">
+                                Select a file below to view the contents.
+                            </p>
+                            <select>
+                                <option>Select --</option>
+                                {{#each files}}
+                                    <option value="{{ . }}">{{ . }}</option>
+                                {{/each}}
+                            </select>
+                            <div class="filecontent">
+                            </div>
+                        </div>
+                        <div id="bws-features" class="tab-panel"></div>
+                    {{/unless}}
+                </div>
             </div>
         </div>
     </div>

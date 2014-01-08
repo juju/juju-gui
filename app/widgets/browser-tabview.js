@@ -37,7 +37,26 @@ YUI.add('browser-tabview', function(Y) {
    * @class Y.juju.widgets.browser.TabView
    * @extends {Y.TabView}
    */
-  ns.TabView = Y.Base.create('juju-browser-tabview', Y.TabView, [], {
+  ns.TabView = Y.Base.create('juju-browser-tabview', Y.Widget, [], {
+
+    /**
+     * Switch the visible tab.
+     *
+     * @method _setTab
+     * @param {String} The id of the tab to switch to.
+     *
+     */
+    _setTab: function(tabId) {
+      var container = this.get('contentBox'),
+          tabCarousel = container.one('.tab-carousel'),
+          tabs = container.all('.tab-panel'),
+          tab = container.one('#' + tabId),
+          tabWidth = 750,
+          position = -(parseInt(tabs.indexOf(tab)) * tabWidth);
+      tabCarousel.setStyle('left', position + 'px');
+      tabCarousel.setStyle('height', tab.getStyle('height'));
+      this.fire('selectionChange', {newVal: tabId});
+    },
 
     /**
      * Renders the DOM nodes for the widget.
@@ -45,29 +64,21 @@ YUI.add('browser-tabview', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      ns.TabView.superclass.renderUI.apply(this);
-      if (this.get('vertical')) {
-        this.get('contentBox').addClass('vertical');
-      }
+      var container = this.get('contentBox');
+      container.all('.nav a').on('click', function(e) {
+          // XXX: Need a better, more secure way of gettin the ID?
+          var tabId = e.target.get('href').split('#')[1];
+          this._setTab(tabId);
+      }, this);
     }
   }, {
     ATTRS: {
-
-      /**
-       * @attribute vertical
-       * @default false
-       * @type {boolean}
-       */
-      vertical: {
-        value: false
-      }
     }
   });
 
 }, '0.1.0', {
   requires: [
     'array-extras',
-    'base',
-    'tabview'
+    'base'
   ]
 });

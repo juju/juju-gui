@@ -397,6 +397,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'juju-views',
     'juju-view-utils',
     'node',
+    'node-event-simulate',
     'prettify',
     'view'
   ]
