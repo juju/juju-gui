@@ -1055,4 +1055,6 @@ describe('test_model.js', function() {
       assert.deepEqual(filtered.toArray(), [rails, django, wordpress]);
     });
   });
+
+  
 });

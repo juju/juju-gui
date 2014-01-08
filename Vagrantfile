@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  # See https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1252872 for 
+  # See https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1252872 for
   # why we need to use Raring.
   config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
 
