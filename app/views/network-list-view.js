@@ -36,9 +36,9 @@ YUI.add('juju-view-networklist', function(Y) {
     },
 
     /**
-    	Add a network.
+        Add a network.
 
-    	@method addNetwork
+        @method addNetwork
     */
     addNetwork: function(evt) {
       this.get('db').networks.create({

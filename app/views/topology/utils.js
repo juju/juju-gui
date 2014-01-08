@@ -119,6 +119,23 @@ YUI.add('juju-topology-utils', function(Y) {
   };
 
   /**
+   Helper method to perform intersection between two lists
+  */
+  utils.intersect = function(listA, listB) {
+    var intersect = [];
+    for (var i = 0; i < listA.length; i += 1) {
+      for (var k = 0; k < listB.length; k += 1) {
+        if (listA[i] === listB[k]) {
+          intersect.push(listA[i]);
+          break;
+        }
+      }
+    }
+    return intersect;
+  };
+
+
+  /**
     Given a set of vertices, find the centroid and pan to that location.
 
     @method centroid
