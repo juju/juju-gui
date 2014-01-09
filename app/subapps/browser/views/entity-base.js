@@ -132,20 +132,20 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     _dispatchTabEvents: function(tabview) {
       this.addEvent(
           tabview.after('selectionChange', function(e) {
-            switch (e.newVal) {
-              case 'bws-features':
+            switch (e.newVal.get('hash')) {
+              case '#bws-features':
                 if (!this._qaContentLoaded) {
                   this._loadQAContent();
                 }
                 this._qaContentLoaded = true;
                 break;
-              case 'bws-related-charms':
+              case '#bws-related-charms':
                 if (!this._interfacesContentLoaded) {
                   this._loadInterfacesTabCharms();
                 }
                 this._interfacesContentLoaded = true;
                 break;
-              case 'bws-readme':
+              case '#bws-readme':
                 if (!this._readmeContentLoaded) {
                   this._loadReadmeTab();
                 }

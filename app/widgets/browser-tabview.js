@@ -46,12 +46,13 @@ YUI.add('browser-tabview', function(Y) {
      * @param {Node} The corresponding tab anchor.
      *
      */
-    _setTab: function(tabId, link) {
+    _setTab: function(link) {
       var container = this.get('contentBox'),
+          links = container.all('nav a'),
           tabCarousel = container.one('.tab-carousel'),
           tabs = container.all('.tab-panel'),
           selectedNode = container.one('nav .selected'),
-          tab = container.one('#' + tabId),
+          tab = container.one(link.get('hash')),
           tabWidth = 750,
           position = -(tabs.indexOf(tab) * tabWidth),
           linkWidth = link.getComputedStyle('width'),
@@ -60,12 +61,19 @@ YUI.add('browser-tabview', function(Y) {
       // Move the tab countainer to the requested tab.
       tabCarousel.setStyle('left', position + 'px');
 
+      // Set the active link
+      links.removeClass('active');
+      link.addClass('active');
+
       // Move the active tab indicator.
       selectedNode.setStyle('width', linkWidth);
       selectedNode.setStyle('left', linkPosition + 'px');
 
+      // Set the selected tab
+      this.set('selection', link);
+
       // Fire the changed event.
-      this.fire('selectionChange', {newVal: tabId});
+      this.fire('selectionChange');
     },
 
     /**
@@ -75,14 +83,25 @@ YUI.add('browser-tabview', function(Y) {
      */
     renderUI: function() {
       var container = this.get('contentBox');
+
+      // Set the current selection to the first tab
+      this._setTab(container.one('nav a'));
+
       container.all('nav a').on('click', function(e) {
-        // XXX: Need a better, more secure way of gettin the ID?
-        var tabId = e.target.get('href').split('#')[1];
-        this._setTab(tabId, e.target);
+        this._setTab(e.target);
       }, this);
     }
   }, {
     ATTRS: {
+      /**
+        The current tab link node.
+
+        @attribute selection
+        @default ''
+      */
+      selection: {
+        value: ''
+      }
     }
   });
 

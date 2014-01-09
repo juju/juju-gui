@@ -93,7 +93,7 @@ describe('Browser bundle detail view', function() {
   it('displays the bundle data in a tabview', function() {
     view.set('entity', new models.Bundle(data));
     view.render();
-    assert.isNotNull(container.one('.yui3-tabview'));
+    assert.isNotNull(container.one('.yui3-juju-browser-tabview'));
 
     assert.notEqual(container.get('innerHTML').indexOf('Deployed 5'), -1,
         'Download count is not added to the page.');
@@ -186,7 +186,7 @@ describe('Browser bundle detail view', function() {
        view.on('topologyRendered', function(e) {
          assert.isNotNull(container.one('.topology-canvas'));
          // Check that the bundle topology tab is the landing tab.
-         assert.equal(view.tabview.get('selection').get('index'), 0);
+         assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
          var vis = d3.select(container.one('svg').getDOMNode());
 
          // Check that an error is shown.
@@ -250,7 +250,7 @@ describe('Browser bundle detail view', function() {
     view.on('topologyRendered', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
-      assert.equal(view.tabview.get('selection').get('index'), 0);
+      assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
       done();
     });
     view.set('entity', new models.Bundle(entity));
@@ -271,7 +271,7 @@ describe('Browser bundle detail view', function() {
       relLabel.simulate('click');
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
-      assert.equal(view.tabview.get('selection').get('index'), 0);
+      assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
       done();
     });
 
@@ -349,7 +349,7 @@ describe('Browser bundle detail view', function() {
     };
     view.set('entity', new models.Bundle(data));
     view.render();
-    var selected = view.get('container').one('.yui3-tab-selected a');
+    var selected = view.get('container').one('nav .active');
     assert.equal(selected.getAttribute('href'), '#bws-services');
   });
 

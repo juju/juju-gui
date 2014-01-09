@@ -47,20 +47,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('exists', function() {
       assert.isObject(tabview);
     });
-
-    it('can be rendered horizontally', function() {
-      assert.isFalse(tabview.get('vertical'));
-      tabview.render(container);
-      assert.isNull(container.one('.vertical'));
-    });
-
-    it('can be rendered vertically', function() {
-      tabview = new Y.juju.widgets.browser.TabView({vertical: true});
-      assert.isTrue(tabview.get('vertical'));
-
-      tabview.render(container);
-      assert.isObject(container.one('.vertical'));
-    });
   });
 
 })();
