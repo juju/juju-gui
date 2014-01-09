@@ -63,10 +63,11 @@ describe('Network view list - Prototype', function() {
        });
        view.render();
        db.networks.on('add', function(evt) {
-         assert.equal(evt.model.get('name'), 'foo');
+         assert.equal(evt.model.get('name').substring(0, 3), 'net');
        });
        view.on('render', function() {
-         assert.equal(view.get('container').one('.network').get('text'), 'foo');
+         assert.equal(view.get('container').one('.network')
+           .get('text').substring(0, 3), 'net');
          done();
        });
        viewContainer.one('.add-network').simulate('click');
