@@ -717,12 +717,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var sel = vis.selectAll('.service')
               .classed('selectable-service', true)
               .filter(function(d) {
-                return (d.id in invalidRelationTargets &&
-                          d.id !== service.id);
-              }).filter(function(d) {
-                // Filter services that dont share a network
-                return (topoUtils.intersect(service.get('networks'),
-                          d.model.get('networks')).length == 0);
+                return ((d.id in invalidRelationTargets &&
+                          d.id !== service.id) || (topoUtils.intersect(service.get('networks'),
+                          d.model.get('networks')).length === 0));
               });
       topo.fire('fade', { selection: sel });
       sel.classed('selectable-service', false);

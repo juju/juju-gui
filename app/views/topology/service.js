@@ -121,6 +121,8 @@ YUI.add('juju-topology-service', function(Y) {
     })
         .classed('subordinate', true);
 
+    node.classed('pending', function(d) { return d.pending; });
+
     // Size the node for drawing.
     node.attr({
       'width': function(box) { box.w = 190; return box.w;},
