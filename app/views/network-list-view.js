@@ -75,7 +75,7 @@ YUI.add('juju-view-networklist', function(Y) {
       @param {Object} evt The evt fired from hitting the network button
     */
     fadeServices: function(evt) {
-      var networkid = evt.currentTarget.get('networkId');
+      var networkid = evt.currentTarget.getAttribute('data-network');
       this.fire('fadeNotNetworks', {
         networks: [networkid]
       });
