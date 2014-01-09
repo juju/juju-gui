@@ -49,9 +49,6 @@ YUI.add('juju-view-networklist', function(Y) {
         'cidr': '192.168.0.128/25',
         'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
-      this.get('db').networks.each(function(net) {
-        console.log(net.getAttrs());
-      });
       nameIncrementer += 1;
     }
 
