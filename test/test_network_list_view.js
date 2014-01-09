@@ -66,7 +66,7 @@ describe('Network view list - Prototype', function() {
          assert.equal(evt.model.get('name'), 'foo');
        });
        view.on('render', function() {
-         assert.equal(Y.one('.network').get('text'), 'foo');
+         assert.equal(view.get('container').one('.network').get('text'), 'foo');
          done();
        });
        viewContainer.one('.add-network').simulate('click');
