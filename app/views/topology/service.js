@@ -1174,10 +1174,8 @@ YUI.add('juju-topology-service', function(Y) {
               .filter(function(d) {
                 var serviceNetworks = d.model.get('networks');
                 for (var i = 0; i < serviceNetworks.length; i += 1) {
-                  for (var j = 0; j < selectedNetworks.length; j += 1) {
-                    if (serviceNetworks[i] === selectedNetworks[j]) {
-                      return true;
-                    }
+                  if (selectedNetworks.indexOf(serviceNetworks[i]) !== -1) {
+                    return true;
                   }
                 }
                 return false;

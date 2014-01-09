@@ -31,6 +31,7 @@ YUI.add('juju-view-networklist', function(Y) {
       Renders the network list viewport.
 
       @method render
+      @param {Object} node The element that we render this view into.
     */
     render: function(node) {
       var container = this.get('container');
@@ -59,6 +60,7 @@ YUI.add('juju-view-networklist', function(Y) {
       that has been clicked
 
       @method fadeServices
+      @param {Object} evt The evt fired from hitting the network button
     */
     fadeServices: function(evt) {
       var networkid = evt.currentTarget.get('networkId');
