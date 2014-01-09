@@ -719,8 +719,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 return (d.id in invalidRelationTargets &&
                           d.id !== service.id);
               }).filter(function(d) {
-                // Filter services that dont share
-                // a network
+                // Filter services that dont share a network
                 return (utils.intersect(service.model.get('networks'),
                           d.model.get('networks')).length !== 0);
               });
