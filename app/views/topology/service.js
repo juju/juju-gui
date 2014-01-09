@@ -1176,7 +1176,7 @@ YUI.add('juju-topology-service', function(Y) {
               .filter(function(d) {
                 var serviceNetworks = d.model.get('networks');
                 for (var i = 0; i < serviceNetworks.length; i += 1) {
-                  if (selectedNetworks.indexOf(serviceNetworks[i]) !== -1) {
+                  if (selectedNetworks.indexOf(serviceNetworks[i]) === -1) {
                     return true;
                   }
                 }
