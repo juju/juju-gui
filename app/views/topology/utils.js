@@ -127,7 +127,7 @@ YUI.add('juju-topology-utils', function(Y) {
    @return {array} A list representing an intersect between both parameters
   */
   utils.intersect = function(listA, listB) {
-    var intersect = [];:
+    var intersect = [];
     for (var i = 0; i < listA.length; i += 1) {
       for (var k = 0; k < listB.length; k += 1) {
         if (listA[i] === listB[k]) {
