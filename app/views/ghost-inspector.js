@@ -64,13 +64,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
           annotations['gui-y'] = ghostAttributes.coordinates[1];
         }
         ghostService.set('icon', ghostAttributes.icon);
-
-        // Identify all networks that the service could connect to.
-        var availableNetworks = [];
-        this.db.networks.each(function(net) {
-          availableNetworks.push(net.getAttrs());
-        });
-        ghostService.set('availableNetworks', availableNetworks);
       }
       var environment = this.views.environment.instance;
       environment.createServiceInspector(ghostService);
