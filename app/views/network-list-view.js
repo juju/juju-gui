@@ -15,10 +15,14 @@ General Public License for more details.
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 'use strict';
 
 
 YUI.add('juju-view-networklist', function(Y) {
+
+  // Incrementer for keeping placeholder names and IDs unique when testing
+  var nameIncrementer = 0;
 
   var NetworkListView = Y.Base.create('networkListView', Y.View, [], {
 
@@ -35,8 +39,17 @@ YUI.add('juju-view-networklist', function(Y) {
     */
     render: function(node) {
       var container = this.get('container');
-      container.append(Y.juju.views.Templates['network-list']());
-      node.append(container);
+      var networks = [];
+
+      this.get('db').networks.each(function(net) {
+        networks.push(net.getAttrs());
+      });
+
+      container.setHTML(Y.juju.views.Templates['network-list'](
+          {networks: networks}));
+      Y.one('.network-list').setHTML(container);
+
+      this.fire('render');
     },
 
     /**
@@ -46,13 +59,12 @@ YUI.add('juju-view-networklist', function(Y) {
     */
     addNetwork: function(evt) {
       this.get('db').networks.create({
-        'name': 'foo',
+        'name': 'net' + nameIncrementer,
         'cidr': '192.168.0.128/25',
-        'networkId': '985hq3784d834dh78q3qo84dnq'
+        'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
-      this.get('db').networks.each(function(net) {
-        console.log(net.getAttrs());
-      });
+      nameIncrementer += 1;
+      this.render();
     },
 
     /**
@@ -64,7 +76,7 @@ YUI.add('juju-view-networklist', function(Y) {
     */
     fadeServices: function(evt) {
       var networkid = evt.currentTarget.get('networkId');
-      Y.fire('fadeNotNetworks', {
+      this.fire('fadeNotNetworks', {
         networks: [networkid]
       });
     }

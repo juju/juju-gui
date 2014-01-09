@@ -1180,7 +1180,7 @@ YUI.add('juju-topology-service', function(Y) {
                 }
                 return false;
               });
-      Y.fire('fade', {
+      topo.fire('fade', {
         selection: sel
       });
     },
