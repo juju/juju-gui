@@ -658,7 +658,7 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Sends a message to the server only.
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     constraints, networks, callback) {
+                     constraints, callback) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(this.handleDeploy, this,
@@ -686,7 +686,6 @@ YUI.add('juju-env-go', function(Y) {
               Config: stringifyObjectValues(config),
               ConfigYAML: config_raw,
               Constraints: constraints,
-              Networks: networks,
               CharmUrl: charm_url,
               NumUnits: num_units
             }

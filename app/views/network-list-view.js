@@ -32,10 +32,19 @@ YUI.add('juju-view-networklist', function(Y) {
 
     initializer: function() {},
 
-    render: function(node) {
+    render: function() {
       var container = this.get('container');
-      container.append(Y.juju.views.Templates['network-list']());
-      node.append(container);
+      var networks = [];
+
+      this.get('db').networks.each(function(net) {
+        networks.push(net.getAttrs());
+      });
+
+      container.setHTML(Y.juju.views.Templates['network-list'](
+          {networks: networks}));
+      Y.one('.network-list').setHTML(container);
+
+      this.fire('render');
     },
 
     /**
@@ -50,6 +59,7 @@ YUI.add('juju-view-networklist', function(Y) {
         'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
       nameIncrementer += 1;
+      this.render();
     }
 
   }, {
