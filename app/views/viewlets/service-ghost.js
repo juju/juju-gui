@@ -79,6 +79,7 @@ YUI.add('viewlet-service-ghost', function(Y) {
         context.constraints = utils.getConstraints(
             // There are no current constraints in play.
             {}, viewletMgrAttrs.env.genericConstraints);
+        context.networks = model.get('availableNetworks');
       }
       this.container.setHTML(this.template(context));
       this.container.all('textarea.config-field').plug(

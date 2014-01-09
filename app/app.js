@@ -1105,14 +1105,6 @@ YUI.add('juju-gui', function(Y) {
       if (!this.networkListView) {
         Y.one('#main').append('<div class="network-list"></div>');
         var container = Y.one('.network-list');
-        container.setStyles({ // Prototype code only; inline styles
-          'position': 'absolute',
-          'top': 100,
-          'right': 100,
-          'background-color': '#fff',
-          'color': '#000',
-          'border': '1px solid #000'
-        });
         this.networkListView = new juju.views.NetworkListView({
           env: this.env,
           db: this.db

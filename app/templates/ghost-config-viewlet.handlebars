@@ -21,6 +21,17 @@
   </div>
   {{/if}}
 
+  {{#if networks}}
+  <!-- Networks added in -->
+  <h2 class="join-bottom">
+    <i class="sprite inspector_networks"></i>
+    Networks
+  </h2>
+  <div class="view-content join-top service-networks">
+    {{> service-networks-viewlet}}
+  </div>
+  {{/if}}
+
   {{#if settings}}
   <!-- Service configuration form -->
   <h2 class="join-bottom">

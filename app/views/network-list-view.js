@@ -21,6 +21,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-view-networklist', function(Y) {
 
+  // Incrementer for keeping placeholder names and IDs unique when testing
+  var nameIncrementer = 0;
+
   var NetworkListView = Y.Base.create('networkListView', Y.View, [], {
 
     events: {
@@ -29,26 +32,34 @@ YUI.add('juju-view-networklist', function(Y) {
 
     initializer: function() {},
 
-    render: function(node) {
+    render: function() {
       var container = this.get('container');
-      container.append(Y.juju.views.Templates['network-list']());
-      node.append(container);
+      var networks = [];
+
+      this.get('db').networks.each(function(net) {
+        networks.push(net.getAttrs());
+      });
+
+      container.setHTML(Y.juju.views.Templates['network-list'](
+          {networks: networks}));
+      Y.one('.network-list').setHTML(container);
+
+      this.fire('render');
     },
 
     /**
-        Add a network.
+      Add a network.
 
-        @method addNetwork
+      @method addNetwork
     */
     addNetwork: function(evt) {
       this.get('db').networks.create({
-        'name': 'foo',
+        'name': 'net' + nameIncrementer,
         'cidr': '192.168.0.128/25',
-        'networkId': '985hq3784d834dh78q3qo84dnq'
+        'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
-      this.get('db').networks.each(function(net) {
-        console.log(net.getAttrs());
-      });
+      nameIncrementer += 1;
+      this.render();
     }
 
   }, {

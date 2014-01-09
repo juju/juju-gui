@@ -1021,8 +1021,6 @@ YUI.add('juju-models', function(Y) {
   });
   models.Network = Network;
 
-  /**
-  */
   var NetworkList = Y.Base.create('networkList', Y.ModelList, [], {
     model: Network
 
