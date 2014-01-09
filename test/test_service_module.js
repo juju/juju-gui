@@ -266,6 +266,19 @@ describe('service module events', function() {
     assert.deepPropertyVal(boxes, 'wordpress.model', wordpress);
   });
 
+  it('should fade pending services but not deployed services', function() {
+    db.services.add([
+      {id: 'rails', pending: true}
+    ]);
+    serviceModule.update();
+    assert.isTrue(topo.service_boxes.rails.pending);
+    assert.isFalse(topo.service_boxes.haproxy.pending);
+    // Assert that there are two services on the canvas, but only one is
+    // classed pending.
+    assert.equal(topo.vis.selectAll('.service')[0].length, 2);
+    assert.equal(topo.vis.selectAll('.service.pending')[0].length, 1);
+  });
+
   it('should deploy a service on charm token drop events', function(done) {
     var src = '/juju-ui/assets/svgs/service_health_mask.svg',
         preventCount = 0,
