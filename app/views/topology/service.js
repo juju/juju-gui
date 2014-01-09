@@ -198,6 +198,8 @@ YUI.add('juju-topology-service', function(Y) {
 
     node.select('.name').text(function(d) { return d.displayName; });
 
+    node.select('.network-name').text(function(d) { return d.networks; });
+
     node.select('.charm-label')
                     .attr({'style': function(d) {
           // Programmatically size the font.
@@ -1111,6 +1113,13 @@ YUI.add('juju-topology-service', function(Y) {
       node.append('text').append('tspan')
         .attr('class', 'name')
         .text(function(d) { return d.displayName; });
+
+      node.append('text').append('tspan')
+        .attr('class', 'name network-name')
+        .attr({
+            'x': 40,
+            'y': 175
+          });
 
       // Append status charts to service nodes.
       var status_graph = node.append('g')
