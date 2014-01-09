@@ -29,6 +29,7 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -720,8 +721,8 @@ YUI.add('juju-topology-relation', function(Y) {
                           d.id !== service.id);
               }).filter(function(d) {
                 // Filter services that dont share a network
-                return (utils.intersect(service.model.get('networks'),
-                          d.model.get('networks')).length !== 0);
+                return (topoUtils.intersect(service.get('networks'),
+                          d.model.get('networks')).length == 0);
               });
       topo.fire('fade', { selection: sel });
       sel.classed('selectable-service', false);
