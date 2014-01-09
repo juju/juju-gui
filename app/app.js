@@ -1110,6 +1110,11 @@ YUI.add('juju-gui', function(Y) {
           db: this.db
         });
         this.networkListView.render(container);
+        this.networkListView.on('fadeNotNetworks', function(evt) {
+          this.views.environment.instance.topo.fire('fadeNotNetworks', {
+            networks: evt.networks
+          });
+        }, this);
       }
 
       next();

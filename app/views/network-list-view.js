@@ -27,12 +27,17 @@ YUI.add('juju-view-networklist', function(Y) {
   var NetworkListView = Y.Base.create('networkListView', Y.View, [], {
 
     events: {
-      '.add-network': { click: 'addNetwork' }
+      '.add-network': { click: 'addNetwork' },
+      '.network': { click: 'fadeServices' }
     },
 
-    initializer: function() {},
+    /**
+      Renders the network list viewport.
 
-    render: function() {
+      @method render
+      @param {Object} node The element that we render this view into.
+    */
+    render: function(node) {
       var container = this.get('container');
       var networks = [];
 
@@ -60,6 +65,20 @@ YUI.add('juju-view-networklist', function(Y) {
       });
       nameIncrementer += 1;
       this.render();
+    },
+
+    /**
+      Fade the services that aren't in the network
+      that has been clicked
+
+      @method fadeServices
+      @param {Object} evt The evt fired from hitting the network button
+    */
+    fadeServices: function(evt) {
+      var networkid = evt.currentTarget.get('networkId');
+      this.fire('fadeNotNetworks', {
+        networks: [networkid]
+      });
     }
 
   }, {
