@@ -60,21 +60,16 @@ YUI.add('juju-view-networklist', function(Y) {
       @method addNetwork
     */
     addNetwork: function(evt) {
-
       var inputs = utils.getElementsValuesMapping(
           this.get('container'),
           '.input');
-
-      console.log(inputs);
 
       this.get('db').networks.create({
         'name': inputs['network-name'],
         'cidr': inputs['network-cidr'],
         'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
-      this.get('db').networks.each(function(net) {
-        console.log(net.getAttrs());
-      });
+
       nameIncrementer += 1;
       this.render();
     },
@@ -87,7 +82,7 @@ YUI.add('juju-view-networklist', function(Y) {
       @param {Object} evt The evt fired from hitting the network button
     */
     fadeServices: function(evt) {
-      var networkid = evt.currentTarget.get('networkId');
+      var networkid = evt.currentTarget.getAttribute('data-network');
       this.fire('fadeNotNetworks', {
         networks: [networkid]
       });
