@@ -1,4 +1,15 @@
-<span class="button add-network">+ Add Network</span>
-{{#each networks}}
+<div class="panel">
+
+  <label for="network-name" class="text-in-input">Name</label>
+  <input class="input" type="text" name="network-name" />
+
+  <label for="network-cidr" class="text-in-input">CIDR</label>
+  <input class="input" type="text" name="network-cidr" />
+
+  <span class="button add-network">+ Add Network</span>
+
+  {{#each networks}}
   <a class="button network">{{name}}</a>
-{{/each}}
+  {{/each}}
+
+</div>
