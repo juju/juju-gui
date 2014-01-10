@@ -21,6 +21,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-view-networklist', function(Y) {
 
+  var utils = Y.namespace('juju.views').utils;
+
   // Incrementer for keeping placeholder names and IDs unique when testing
   var nameIncrementer = 0;
 
@@ -58,11 +60,16 @@ YUI.add('juju-view-networklist', function(Y) {
       @method addNetwork
     */
     addNetwork: function(evt) {
+      var inputs = utils.getElementsValuesMapping(
+          this.get('container'),
+          '.input');
+
       this.get('db').networks.create({
-        'name': 'net' + nameIncrementer,
-        'cidr': '192.168.0.128/25',
+        'name': inputs['network-name'],
+        'cidr': inputs['network-cidr'],
         'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
+
       nameIncrementer += 1;
       this.render();
     },
