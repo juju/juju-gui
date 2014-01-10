@@ -253,6 +253,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/onboarding.js'
         },
 
+        'juju-view-networklist': {
+          fullpath: '/juju-ui/views/network-list-view.js'
+        },
+
         'juju-templates': {
           fullpath: '/juju-ui/templates.js'
         },
@@ -276,7 +280,8 @@ var GlobalConfig = {
             'juju-topology',
             'juju-view-environment',
             'juju-view-login',
-            'juju-landscape'
+            'juju-landscape',
+            'juju-view-networklist'
           ]
         },
 

@@ -26,6 +26,8 @@ See also:
 - our `blog <http://jujugui.wordpress.com/>`_, and
 - the `user-facing docs <https://juju.ubuntu.com/docs/howto-gui-management.html>`_.
 
+This branch in particular is for a networking prototype.
+
 Deploy
 ======
 

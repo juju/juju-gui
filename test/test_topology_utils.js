@@ -99,4 +99,16 @@ describe('topology utils', function() {
     existing.push([300, 300]);
     assert.deepEqual(utils.centroid(existing), [200, 200]);
   });
+
+  it('should be able to perform list intersections', function() {
+    var listA = ['jack', 'john', 'sam', 'brad'];
+    var listB = ['jeff', 'matt', 'jack'];
+    var listC = [];
+    var listD = ['jeff', 'matt'];
+
+    assert.deepEqual(utils.intersect(listA, listB), ['jack']);
+    assert.deepEqual(utils.intersect(listA, listC), []);
+    assert.deepEqual(utils.intersect(listA, listD), []);
+  });
+
 });

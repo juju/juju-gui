@@ -1097,6 +1097,30 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Renders the network list view into the environment
+
+      @method renderNetworkList
+    */
+    renderNetworkList: function(req, res, next) {
+      if (!this.networkListView) {
+        Y.one('#main').append('<div class="network-list"></div>');
+        var container = Y.one('.network-list');
+        this.networkListView = new juju.views.NetworkListView({
+          env: this.env,
+          db: this.db
+        });
+        this.networkListView.render(container);
+        this.networkListView.on('fadeNotNetworks', function(evt) {
+          this.views.environment.instance.topo.fire('fadeNotNetworks', {
+            networks: evt.networks
+          });
+        }, this);
+      }
+
+      next();
+    },
+
+    /**
      * Object routing support
      *
      * This utility helps map from model objects to routes
@@ -1294,6 +1318,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'renderNetworkList' },
           { path: '*', callbacks: 'authorizeCookieUse'},
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }

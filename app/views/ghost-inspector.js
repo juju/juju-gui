@@ -123,6 +123,23 @@ YUI.add('juju-ghost-inspector', function(Y) {
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
+      // Get networks with true/false values indicating service connection.
+      var networks = utils.getElementsValuesMapping(
+          container, '.hidden-checkbox');
+
+      // Turn networks hash into an array of true networks.
+      var networksList = [];
+      for (var network in networks) {
+        if (networks[network]) {
+          networksList.push(network);
+        }
+      }
+      networks = networksList;
+
+      // Override the service networks attribute with the correct networks.
+      // Hacky solution for UI prototype.
+      model.setAttrs({networks: networks});
+
       options.env.deploy(
           model.get('charm'),
           serviceName,

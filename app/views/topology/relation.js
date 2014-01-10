@@ -29,6 +29,7 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topoUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -855,6 +856,28 @@ YUI.add('juju-topology-relation', function(Y) {
         endpoints: endpoints,
         pending: true
       });
+
+      // Throw error if connecting two services in non-routable networks
+      db.services.getById(endpoints[0][0]).get('networks').forEach(
+          function(net) {
+            if (db.services.getById(endpoints[1][0])
+              .get('networks').indexOf(net) === -1) {
+              topo.set('netrelationerr_dialog', views.createModalPanel(
+                  'These services are in different networks' +
+                      ' and are not routable',
+                  '#netrelationerr-modal-panel',
+                  this).addButton(
+                  { value: 'Continue',
+                    section: Y.WidgetStdMod.FOOTER,
+                    // hide dialog
+                    action: function(e) {
+                      e.preventDefault();
+                      this.hide();
+                    },
+                    classNames: ['button']
+                  }));
+            }
+          });
 
       // Firing the update event on the db will properly redraw the
       // graph and reattach events.

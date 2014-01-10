@@ -407,7 +407,15 @@ YUI.add('juju-models', function(Y) {
             return charm || undefined;
           }
         }
-      }
+      },
+      /**
+        Network ids.
+        ex) ['public', 'private']
+
+        @attribute networks
+        @type {Array}
+      */
+      networks: {}
     }
   });
   models.Service = Service;
@@ -1002,6 +1010,23 @@ YUI.add('juju-models', function(Y) {
     }
   };
 
+  var Network = Y.Base.create('network', Y.Model, [], {
+    initializer: function() {}
+  }, {
+    ATTRS: {
+      'name': {},
+      'cidr': {},
+      'networkId': {} // Provider Network ID
+    }
+  });
+  models.Network = Network;
+
+  var NetworkList = Y.Base.create('networkList', Y.ModelList, [], {
+    model: Network
+
+  });
+  models.NetworkList = NetworkList;
+
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       // Single model for environment database is bound to.
@@ -1011,6 +1036,7 @@ YUI.add('juju-models', function(Y) {
       this.relations = new RelationList();
       this.notifications = new NotificationList();
       this.machines = new MachineList();
+      this.networks = new NetworkList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
       // fetched on demand (they're static).
@@ -1019,6 +1045,7 @@ YUI.add('juju-models', function(Y) {
         'machine': Machine,
         'service': Service,
         'relation': Relation,
+        'network': Network,
         'charm': models.Charm
       };
 
@@ -1033,7 +1060,7 @@ YUI.add('juju-models', function(Y) {
      */
     destructor: function() {
       [this.services, this.relations,
-        this.machines,
+        this.machines, this.networks,
         this.charms, this.environment,
         this.notifications].forEach(function(ml) {
         ml.detachAll();
