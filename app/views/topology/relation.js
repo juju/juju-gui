@@ -751,16 +751,20 @@ YUI.add('juju-topology-relation', function(Y) {
       var container = view.get('container');
       var topo = view.get('component');
 
+      var networks = this.ambiguousNetworkAddRelationCheck(m, view, context);
+
       if (endpoints && endpoints.length === 1) {
         // Create a relation with the only available endpoint.
         var ep = endpoints[0];
         var endpoints_item = [
           [ep[0].service,
            { name: ep[0].name,
-             role: 'server' }],
+             role: 'server',
+             network: 'blah1'}],
           [ep[1].service,
            { name: ep[1].name,
-             role: 'client' }]];
+             role: 'client',
+             network: 'blah1'}]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }
@@ -780,7 +784,8 @@ YUI.add('juju-topology-relation', function(Y) {
       }
 
       menu.append(Templates
-              .ambiguousRelationList({endpoints: endpoints}));
+              .ambiguousRelationList(
+          {endpoints: endpoints, networks: networks}));
 
       // For each endpoint choice, delegate a click event to add the specified
       // relation. Use event delegation in order to avoid weird behaviors
@@ -817,6 +822,37 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
+    },
+
+    /*
+     * Test if the pending relation is network ambiguous.  Display a menu if so,
+     * create the relation if not.
+     */
+    ambiguousNetworkAddRelationCheck: function(m, view, context) {
+      var endpoints = view.get(
+          'addRelationStart_possibleEndpoints')[m.id];
+      var topo = view.get('component');
+      var db = topo.get('db');
+
+      // Check for ambiguous network relation
+      var netone = db.services.getById(endpoints[0][0].service).get('networks');
+      var nettwo = db.services.getById(endpoints[0][1].service).get('networks');
+
+      // find the number of networks that both services share
+      var sharednets = [];
+      netone.forEach(function(net) {
+        nettwo.forEach(function(net2) {
+          sharednets.push({'one': net, 'two': net2});
+        });
+      });
+
+      if (sharednets.length === 1) {
+        if (sharednets[0].one === sharednets[0].two) {
+          return;
+        }
+      }
+
+      return sharednets;
     },
 
     /*
@@ -921,6 +957,7 @@ YUI.add('juju-topology-relation', function(Y) {
           endpoints: endpoints,
           pending: false,
           scope: result.scope
+
         });
       }
       topo.update();
