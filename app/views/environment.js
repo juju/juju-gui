@@ -106,8 +106,9 @@ YUI.add('juju-view-environment', function(Y) {
         */
         createServiceInspector: function(model, config) {
           config = config || {};
+          var db = this.get('db');
           var type = 'service',
-              charm = this.get('db').charms.getById(model.get('charm'));
+              charm = db.charms.getById(model.get('charm'));
 
           // This method is called with a charm or service depending on if it's
           // called from the charm browser or from the environment. If it is
@@ -118,6 +119,13 @@ YUI.add('juju-view-environment', function(Y) {
             model.set('packageName', charm.get('package_name'));
             config.charmModel = charm;
           }
+
+          // Identify all networks that the service could connect to.
+          var availableNetworks = [];
+          db.networks.each(function(net) {
+            availableNetworks.push(net.getAttrs());
+          });
+          model.set('availableNetworks', availableNetworks);
 
           // If the user is trying to open the same inspector twice
           var serviceInspector = this.getInspector(model.get('id'));
