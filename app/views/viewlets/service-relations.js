@@ -145,6 +145,16 @@ YUI.add('viewlet-service-relations', function(Y) {
             .append('a')
             .text(function(d) { return d.id; });
 
+    unitWrapper
+    .append('div')
+    .classed('errored-units', true)
+    .html(function(d) {
+          if (d.units && d.units.length > 0) {
+            return '<button data-relation="' + d.relation_id +
+                '" class="remove-relation">Remove Relation</button>';
+          }
+        });
+
     // Relation status update
     relationWrappers.select('.relation-label')
     .attr('class', function(d) {

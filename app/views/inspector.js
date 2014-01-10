@@ -1074,6 +1074,22 @@ YUI.add('juju-view-inspector', function(Y) {
           env.remove_units(unitName);
         });
       }
+    },
+
+    /**
+      This handles removing the relation between two services when the user
+      clicks the remove relation button in the relation tab in the inspector.
+
+      @method _removeRelation
+      @param {Object} e The event facade from clicking on the remove relation
+        button.
+    */
+    _removeRelation: function(e) {
+      var relation = this.options.db.relations.getById(
+          e.currentTarget.getData('relation')).getAttrs();
+      var relationModule = this.options.environment.topo.modules.RelationModule;
+
+      relationModule.removeRelationConfirm(relation, relationModule);
     }
   };
 
