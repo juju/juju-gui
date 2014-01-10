@@ -64,12 +64,18 @@ YUI.add('juju-view-networklist', function(Y) {
           this.get('container'),
           '.input');
 
+      var networkName = inputs['network-name'];
+
+      // If the user doesn's specify a network name, generate one.
+      // Otherwise use the given name.
+      if (networkName === '') {
+        networkName = 'net' + nameIncrementer;
+      }
       this.get('db').networks.create({
-        'name': inputs['network-name'],
+        'name': networkName,
         'cidr': inputs['network-cidr'],
         'networkId': '985hq3784d834dh78q3qo84dnq' + nameIncrementer
       });
-
       nameIncrementer += 1;
       this.render();
     },
