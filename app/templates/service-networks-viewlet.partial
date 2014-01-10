@@ -2,7 +2,7 @@
   <div class="toggle single-line settings-wrapper">
    <label>{{name}}</label>
    <div class="toggle-switch">
-     <input type="checkbox" class="hidden-checkbox" id="{{name}}-toggle" name="{{name}}" value="{value}" unchecked>
+     <input type="checkbox" class="hidden-checkbox" id="{{name}}-toggle" name="{{name}}" value="{value}" {{#if value}}checked{{else}}unchecked{{/if}}>
      <label for="{{name}}-toggle">
        <div class="handle"></div>
      </label>

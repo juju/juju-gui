@@ -198,6 +198,8 @@ YUI.add('juju-topology-service', function(Y) {
 
     node.select('.name').text(function(d) { return d.displayName; });
 
+    node.select('.network-name').text(function(d) { return d.networks; });
+
     node.select('.charm-label')
                     .attr({'style': function(d) {
           // Programmatically size the font.
@@ -1112,6 +1114,13 @@ YUI.add('juju-topology-service', function(Y) {
         .attr('class', 'name')
         .text(function(d) { return d.displayName; });
 
+      node.append('text').append('tspan')
+        .attr('class', 'name network-name')
+        .attr({
+            'x': 40,
+            'y': 175
+          });
+
       // Append status charts to service nodes.
       var status_graph = node.append('g')
         .attr('transform', 'translate(15, 152)')
@@ -1176,7 +1185,7 @@ YUI.add('juju-topology-service', function(Y) {
               .filter(function(d) {
                 var serviceNetworks = d.model.get('networks');
                 for (var i = 0; i < serviceNetworks.length; i += 1) {
-                  if (selectedNetworks.indexOf(serviceNetworks[i]) !== -1) {
+                  if (selectedNetworks.indexOf(serviceNetworks[i]) === -1) {
                     return true;
                   }
                 }
