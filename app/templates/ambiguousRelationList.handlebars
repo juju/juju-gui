@@ -10,5 +10,13 @@
         </li>
         {{/relationslist}}
     </ul>
+
+    <ul>
+      {{#each networks}}
+        <li>
+          {{one}} &rarr; {{two}}
+        </li>
+      {{/each}}
+    </ul>
     <button class="cancel button">Cancel</button>
 </div>

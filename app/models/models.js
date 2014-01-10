@@ -741,6 +741,7 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       scope: {},
+      networks: [],
       display_name: {
         'getter': function(value) {
           if (value) { return value;}
