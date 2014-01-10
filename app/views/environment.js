@@ -118,14 +118,14 @@ YUI.add('juju-view-environment', function(Y) {
             type = 'ghost';
             model.set('packageName', charm.get('package_name'));
             config.charmModel = charm;
-
-            // Identify all networks that the service could connect to.
-            var availableNetworks = [];
-            db.networks.each(function(net) {
-              availableNetworks.push(net.getAttrs());
-            });
-            model.set('availableNetworks', availableNetworks);
           }
+
+          // Identify all networks that the service could connect to.
+          var availableNetworks = [];
+          db.networks.each(function(net) {
+            availableNetworks.push(net.getAttrs());
+          });
+          model.set('availableNetworks', availableNetworks);
 
           // If the user is trying to open the same inspector twice
           var serviceInspector = this.getInspector(model.get('id'));
