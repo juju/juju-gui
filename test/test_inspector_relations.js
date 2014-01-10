@@ -339,4 +339,20 @@ describe('Inspector Relations Tab', function() {
     vg.teardown();
   });
 
+  it('shows a remove relations button when units are in error', function() {
+    var vg = new ViewletGenerator({
+      viewlet: viewlet,
+      relationType: 'error'
+    });
+
+    var vm = vg.setup().viewletManager,
+        vmContainer = vm.get('container'),
+        button = vmContainer.one('button.remove-relation');
+
+    assert.isNotNull(button, 'No remove relation button found');
+    assert.equal(button.getData('relation'), 'wordpress:db mysql:db');
+
+    vg.teardown();
+  });
+
 });
