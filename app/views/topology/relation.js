@@ -761,12 +761,10 @@ YUI.add('juju-topology-relation', function(Y) {
         var endpoints_item = [
           [ep[0].service,
            { name: ep[0].name,
-             role: 'server',
-             network: 'blah1'}],
+             role: 'server'}],
           [ep[1].service,
            { name: ep[1].name,
-             role: 'client',
-             network: 'blah1'}]];
+             role: 'client'}]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }
@@ -840,7 +838,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var netone = db.services.getById(endpoints[0][0].service).get('networks');
       var nettwo = db.services.getById(endpoints[0][1].service).get('networks');
 
-      // find the number of networks that both services share
+      // Generate a list of all possible network combinations
       var sharednets = [];
       netone.forEach(function(net) {
         nettwo.forEach(function(net2) {
@@ -848,6 +846,8 @@ YUI.add('juju-topology-relation', function(Y) {
         });
       });
 
+      // If there is only one shared network then return as you don't need
+      // to pick from multiple network combinations.
       if (sharednets.length === 1) {
         if (sharednets[0].one === sharednets[0].two) {
           return;
