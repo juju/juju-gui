@@ -3,6 +3,12 @@
     <span>N</span>
   </div>
   <div id="network-list">
+    <label for="network-name" class="text-in-input">Name</label>
+    <input class="input" type="text" name="network-name" />
+
+    <label for="network-cidr" class="text-in-input">CIDR</label>
+    <input class="input" type="text" name="network-cidr" />
+
     <span class="button add-network">+ Add Network</span>
     {{#each networks}}
       <a data-network="{{name}}" class="button network">{{name}}</a>

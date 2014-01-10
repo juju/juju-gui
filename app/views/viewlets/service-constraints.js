@@ -49,9 +49,27 @@ YUI.add('viewlet-service-constraints', function(Y) {
     'render': function(service, options) {
       var constraints = utils.getConstraints(
           service.get('constraints') || {}, options.env.genericConstraints);
+      // This implementation for connected networks is not ideal.
+      // Once the real data models are in place this can be fixed.
+      var availableNetworks = service.get('availableNetworks');
+      var networks = service.get('networks');
+      var connectedNetworks = [];
+      availableNetworks.forEach(function(available) {
+        var connectedNetwork = {
+          name: available.name,
+          value: false
+        };
+        networks.forEach(function(network) {
+          if (available.name === network) {
+            connectedNetwork.value = true;
+          }
+        });
+        connectedNetworks.push(connectedNetwork);
+      });
       var contents = this.template({
         service: service,
-        constraints: constraints
+        constraints: constraints,
+        networks: connectedNetworks
       });
       this.container = Y.Node.create(this.templateWrapper);
       this.container.setHTML(contents);
