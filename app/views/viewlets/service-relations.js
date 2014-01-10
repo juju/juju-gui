@@ -126,7 +126,6 @@ YUI.add('viewlet-service-relations', function(Y) {
     relationWrapper.append('h4')
                    .text(function(d) { return 'Scope: ' + d.scope; });
 
-
     // Relation unit list
     var unitWrapper = relationWrapper.append('div')
                                      .classed('status-unit-content', true);
