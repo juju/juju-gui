@@ -1,4 +1,12 @@
-<span class="button add-network">+ Add Network</span>
-{{#each networks}}
-  <a data-network="{{name}}" class="button network">{{name}}</a>
-{{/each}}
+<div id="network-list-wrapper">
+  <div id="network-list-toggle">
+    <span>N</span>
+  </div>
+  <div id="network-list">
+    <span class="button add-network">+ Add Network</span>
+    {{#each networks}}
+      <a data-network="{{name}}" class="button network">{{name}}</a>
+    {{/each}}
+  </div>
+  <div id="network-blah"></div>
+</div>

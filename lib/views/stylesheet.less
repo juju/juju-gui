@@ -867,12 +867,39 @@ g.unit {
  */
 .network-list{
     position: absolute;
-    top: 100px;
-    right: 100px;
-    width: 150px;
-    background-color: #ffffff;
+    top: 30px;
+    right: 80px;
+    max-width: 34px;
+    max-height: 34px;
+    min-height: 34px;
     color: #000000;
-    border: 1px solid #000000;
+    overflow: hidden;
+    transition: 0.5s;
+
+    &:hover {
+      max-width: 500px;
+      max-height: 500px;
+    } 
+   
+    #network-list-wrapper {
+      float:right;
+      width: 182px; 
+    }
+ 
+    #network-list {
+      float:right;
+      width: 148px;
+    }
+
+    #network-list-toggle {
+      color: #ffffff;
+      float:right;
+      width: 34px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      background-color: rgb(187, 187, 187);
+      text-align:center;
+    }
 
     .button {
       width: 120px;
