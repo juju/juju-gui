@@ -36,7 +36,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer('container');
-      tabview = new Y.juju.widgets.browser.TabView();
+      var testcontent = [
+        '<div class="tabs">',
+        '<nav><ul>',
+        '<li><a href="#test1">Test1</a></li>',
+        '<li><a href="#test2">Test2</a></li>',
+        '</ul>',
+        '<div class="selected"></div>',
+        '</nav>',
+        '<div class="tab-panels"><div class="tab-carousel">',
+        '<div id="test1" class="tab-panel"></div>',
+        '<div id="test2" class="tab-panel"></div>',
+        '</div></div></div>'
+      ].join();
+      Y.Node.create(testcontent).appendTo(container);
+      tabview = new Y.juju.widgets.browser.TabView({
+        srcNode: container.one('.tabs')
+      });
     });
 
     afterEach(function() {
@@ -46,6 +62,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('exists', function() {
       assert.isObject(tabview);
+    });
+
+    it('first tab is set on setup', function() {
+      tabview.render(container);
+      assert.equal(tabview.get('selection'), container.one('nav a'));
+    });
+
+    it('position changes to selected tab', function() {
+      tabview.render(container);
+      var contentBox = tabview.get('contentBox');
+      var tabCarousel = contentBox.one('.tab-carousel');
+      contentBox.one('nav a[href="#test2"]').simulate('click');
+      assert.equal(tabCarousel.getStyle('left'), '-750px');
+    });
+
+    it('selected tab is set', function() {
+      tabview.render(container);
+      var contentBox = tabview.get('contentBox');
+      var link = contentBox.one('nav a[href="#test2"]');
+      link.simulate('click');
+      assert.equal(tabview.get('selection'), link);
+    });
+
+    it('change event is fired when the carousel has moved', function(done) {
+      tabview.render(container);
+      var contentBox = tabview.get('contentBox');
+      var tabCarousel = contentBox.one('.tab-carousel');
+      var eventCount = 0;
+      tabview.on('selectionChange', function(e) {
+        // Need to ignore the first selectionChange event that is fired upon
+        // the TabView setup.
+        eventCount++;
+        if (eventCount === 2) {
+          assert.equal(tabCarousel.getStyle('left'), '-750px');
+          done();
+        }
+      });
+      contentBox.one('nav a[href="#test2"]').simulate('click');
     });
   });
 

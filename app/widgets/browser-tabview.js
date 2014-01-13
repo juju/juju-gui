@@ -61,7 +61,7 @@ YUI.add('browser-tabview', function(Y) {
       // Move the tab countainer to the requested tab.
       tabCarousel.setStyle('left', position + 'px');
 
-      // Set the active link
+      // Set the active link.
       links.removeClass('active');
       link.addClass('active');
 
@@ -69,7 +69,7 @@ YUI.add('browser-tabview', function(Y) {
       selectedNode.setStyle('width', linkWidth);
       selectedNode.setStyle('left', linkPosition + 'px');
 
-      // Set the selected tab
+      // Set the selected tab.
       this.set('selection', link);
 
       // Fire the changed event.
