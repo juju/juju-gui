@@ -42,7 +42,6 @@ YUI.add('browser-tabview', function(Y) {
      * Switch the visible tab.
      *
      * @method _setTab
-     * @param {String} The id of the tab to switch to.
      * @param {Node} The corresponding tab anchor.
      *
      */
@@ -50,9 +49,13 @@ YUI.add('browser-tabview', function(Y) {
       var container = this.get('contentBox'),
           links = container.all('nav a'),
           tabCarousel = container.one('.tab-carousel'),
+          tabPanels = container.one('.tab-panels'),
+          tabPanelsHeight = tabPanels.getComputedStyle('height'),
           tabs = container.all('.tab-panel'),
           selectedNode = container.one('nav .selected'),
-          tab = container.one(link.get('hash')),
+          tabId = link.get('hash'),
+          otherTabs = container.all('.tab-panel:not(' + tabId + ')'),
+          tab = container.one(tabId),
           tabWidth = 750,
           position = -(tabs.indexOf(tab) * tabWidth),
           linkWidth = link.getComputedStyle('width'),
@@ -68,6 +71,21 @@ YUI.add('browser-tabview', function(Y) {
       // Move the active tab indicator.
       selectedNode.setStyle('width', linkWidth);
       selectedNode.setStyle('left', linkPosition + 'px');
+
+      // All tabs should be visible during the animation, but we want the
+      // scrollbar to be the height of the new tab or the height of the visible
+      // area, whichever is bigger.
+      tab.setStyle('height', 'auto');
+      var tabHeight = tab.getComputedStyle('height'),
+          newHeight = tabPanelsHeight > tabHeight ? tabPanelsHeight : tabHeight;
+      otherTabs.setStyle('height', newHeight);
+
+      // Once the animation is complete reduce the height of all tabs except
+      // the visible tab so the container only scrolls for the visible tab.
+      Y.later(300, this, function() {
+        otherTabs.setStyle('height', '1px');
+        tab.setStyle('height', 'auto');
+      }, [], false);
 
       // Set the selected tab.
       this.set('selection', link);
