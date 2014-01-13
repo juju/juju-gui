@@ -93,7 +93,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       tabview.on('selectionChange', function(e) {
         // Need to ignore the first selectionChange event that is fired upon
         // the TabView setup.
-        eventCount++;
+        eventCount += 1;
         if (eventCount === 2) {
           assert.equal(tabCarousel.getStyle('left'), '-750px');
           done();
