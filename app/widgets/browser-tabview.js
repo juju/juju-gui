@@ -84,7 +84,10 @@ YUI.add('browser-tabview', function(Y) {
       // the visible tab so the container only scrolls for the visible tab.
       Y.later(300, this, function() {
         otherTabs.setStyle('height', '1px');
-        tab.setStyle('height', 'auto');
+        var activeTab = container.one(tabId);
+        if (activeTab) {
+          activeTab.setStyle('height', 'auto');
+        }
       }, [], false);
 
       // Set the selected tab.
