@@ -71,25 +71,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('position changes to selected tab', function() {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox');
-      var tabCarousel = contentBox.one('.tab-carousel');
+      var contentBox = tabview.get('contentBox'),
+          tabCarousel = contentBox.one('.tab-carousel');
       contentBox.one('nav a[href="#test2"]').simulate('click');
       assert.equal(tabCarousel.getStyle('left'), '-750px');
     });
 
     it('selected tab is set', function() {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox');
-      var link = contentBox.one('nav a[href="#test2"]');
+      var contentBox = tabview.get('contentBox'),
+          link = contentBox.one('nav a[href="#test2"]');
       link.simulate('click');
       assert.equal(tabview.get('selection'), link);
     });
 
     it('change event is fired when the selection has changed', function(done) {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox');
-      var tabCarousel = contentBox.one('.tab-carousel');
-      var eventCount = 0;
+      var contentBox = tabview.get('contentBox'),
+          tabCarousel = contentBox.one('.tab-carousel'),
+          eventCount = 0;
       tabview.on('selectionChange', function(e) {
         // Need to ignore the first selectionChange event that is fired upon
         // the TabView setup.
@@ -104,9 +104,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('completed event is fired when the carousel has moved', function(done) {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox');
-      var tabCarousel = contentBox.one('.tab-carousel');
-      var eventCount = 0;
+      var contentBox = tabview.get('contentBox'),
+          eventCount = 0;
       tabview.on('selectionChangeComplete', function(e) {
         // Need to ignore the first selectionChange event that is fired upon
         // the TabView setup.
