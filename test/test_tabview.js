@@ -85,7 +85,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(tabview.get('selection'), link);
     });
 
-    it('change event is fired when the carousel has moved', function(done) {
+    it('change event is fired when the selection has changed', function(done) {
       tabview.render(container);
       var contentBox = tabview.get('contentBox');
       var tabCarousel = contentBox.one('.tab-carousel');
@@ -96,6 +96,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         eventCount += 1;
         if (eventCount === 2) {
           assert.equal(tabCarousel.getStyle('left'), '-750px');
+          done();
+        }
+      });
+      contentBox.one('nav a[href="#test2"]').simulate('click');
+    });
+
+    it('completed event is fired when the carousel has moved', function(done) {
+      tabview.render(container);
+      var contentBox = tabview.get('contentBox');
+      var tabCarousel = contentBox.one('.tab-carousel');
+      var eventCount = 0;
+      tabview.on('selectionChangeComplete', function(e) {
+        // Need to ignore the first selectionChange event that is fired upon
+        // the TabView setup.
+        eventCount += 1;
+        if (eventCount === 2) {
+          assert.equal(contentBox.one('#test1').getStyle('height'), '1px');
+          assert.equal(contentBox.one('#test2').getStyle('height'), 'auto');
           done();
         }
       });

@@ -83,11 +83,12 @@ YUI.add('browser-tabview', function(Y) {
       // Once the animation is complete reduce the height of all tabs except
       // the visible tab so the container only scrolls for the visible tab.
       Y.later(300, this, function() {
-        otherTabs.setStyle('height', '1px');
         var activeTab = container.one(tabId);
         if (activeTab) {
           activeTab.setStyle('height', 'auto');
+          otherTabs.setStyle('height', '1px');
         }
+        this.fire('selectionChangeComplete');
       }, [], false);
 
       // Set the selected tab.
