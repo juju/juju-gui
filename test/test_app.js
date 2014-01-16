@@ -413,6 +413,51 @@ function injectData(app, data) {
       app.destroy(true);
     });
 
+    it('navigates to requested url on login', function() {
+      var stubit = utils.makeStubMethod;
+      var oldPopRedirectMethod = Y.juju.App.prototype.popLoginRedirectPath;
+      Y.juju.App.prototype.popLoginRedirectPath = function() {
+        Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
+        return '/foo/bar';
+      };
+      var app = makeApp(false);
+      stubit(app, 'hideMask');
+      stubit(app, 'navigate');
+      stubit(app, 'dispatch');
+      app.onLogin({ data: { result: true } });
+      assert.equal(app.navigate.calledOnce(), true);
+      assert.deepEqual(app.navigate.lastArguments(), [
+        '/foo/bar',
+        { overrideAllNamespaces: true }]);
+      assert.equal(app.dispatch.calledOnce(), false);
+    });
+
+    it('navigates to requested url with hash on login', function() {
+      // In order to support bookmarking the current tab in the charm details
+      // we have navigateOnHash http://yuilibrary.com/yui/docs/api/classes/
+      // PjaxBase.html#attr_navigateOnHash set to false. This causes issues
+      // if the user is not yet logged in and requests a url with a hash in it
+      // becaause the router will then refuse to navigate to it. By navigating
+      // then manually dispatching it forces the application to render the
+      // proper view.
+      var stubit = utils.makeStubMethod;
+      var oldPopRedirectMethod = Y.juju.App.prototype.popLoginRedirectPath;
+      Y.juju.App.prototype.popLoginRedirectPath = function() {
+        Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
+        return '/foo/bar#baz';
+      };
+      var app = makeApp(false);
+      stubit(app, 'hideMask');
+      stubit(app, 'navigate');
+      stubit(app, 'dispatch');
+      app.onLogin({ data: { result: true } });
+      assert.equal(app.navigate.calledOnce(), true);
+      assert.deepEqual(app.navigate.lastArguments(), [
+        '/foo/bar#baz',
+        { overrideAllNamespaces: true }]);
+      assert.equal(app.dispatch.calledOnce(), true);
+    });
+
     it('creates a notification if logged in with a token', function(done) {
       // We need to change the prototype before we instantiate.
       // See the "this.reset()" call in the callback below that cleans up.
@@ -432,11 +477,11 @@ function injectData(app, data) {
         var e = this.lastArguments()[0];
         // These two really simply verify that our test prep did what we
         // expected.
-        assert.isTrue(e.data.result);
-        assert.isTrue(e.data.fromToken);
+        assert.equal(e.data.result, true);
+        assert.equal(e.data.fromToken, true);
         this.passThroughToOriginalMethod(app);
-        assert.isTrue(app.hideMask.calledOnce());
-        assert.isTrue(app.env.onceAfter.calledOnce());
+        assert.equal(app.hideMask.calledOnce(), true);
+        assert.equal(app.env.onceAfter.calledOnce(), true);
         var onceAfterArgs = app.env.onceAfter.lastArguments();
         assert.equal(onceAfterArgs[0], 'environmentNameChange');
         // Call the event handler so we can verify what it does.
@@ -444,7 +489,7 @@ function injectData(app, data) {
         assert.equal(
             app.db.notifications.item(0).get('title'),
             'Logged in with Token');
-        assert.isTrue(app.navigate.calledOnce());
+        assert.equal(app.navigate.calledOnce(), true);
         var navigateArgs = app.navigate.lastArguments();
         assert.equal(navigateArgs[0], '/foo/bar/');
         assert.deepEqual(navigateArgs[1], {overrideAllNamespaces: true});
