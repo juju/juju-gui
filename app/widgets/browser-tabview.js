@@ -63,37 +63,30 @@ YUI.add('browser-tabview', function(Y) {
      */
     setTab: function(link) {
       var container = this.get('container'),
-          links = container.all('nav a'),
-          tabCarousel = container.one('.tab-carousel'),
-          tabPanels = container.one('.tab-panels'),
-          tabPanelsHeight = tabPanels.getComputedStyle('height'),
-          tabs = container.all('.tab-panel'),
-          selectedNode = container.one('nav .selected'),
           tabId = link.get('hash'),
           otherTabs = container.all('.tab-panel:not(' + tabId + ')'),
           tab = container.one(tabId),
-          tabWidth = 750,
-          position = -(tabs.indexOf(tab) * tabWidth),
+          position = -(this.tabs.indexOf(tab) * this.tabWidth),
           linkWidth = link.getComputedStyle('width'),
           linkPosition = link.getX() - container.getX();
 
       // Move the tab countainer to the requested tab.
-      tabCarousel.setStyle('left', position + 'px');
+      this.tabCarousel.setStyle('left', position + 'px');
 
       // Set the active link.
-      links.removeClass('active');
+      this.links.removeClass('active');
       link.addClass('active');
 
       // Move the active tab indicator.
-      selectedNode.setStyle('width', linkWidth);
-      selectedNode.setStyle('left', linkPosition + 'px');
+      this.selectedNode.setStyle('width', linkWidth);
+      this.selectedNode.setStyle('left', linkPosition + 'px');
 
       // All tabs should be visible during the animation, but we want the
       // scrollbar to be the height of the new tab or the height of the visible
       // area, whichever is bigger.
       tab.setStyle('height', 'auto');
       var tabHeight = tab.getComputedStyle('height'),
-          newHeight = tabPanelsHeight > tabHeight ? tabPanelsHeight : tabHeight;
+          newHeight = this.tabPanelsHeight > tabHeight ? this.tabPanelsHeight : tabHeight;
       otherTabs.setStyle('height', newHeight);
 
       // Once the animation is complete reduce the height of all tabs except
@@ -121,8 +114,20 @@ YUI.add('browser-tabview', function(Y) {
      */
     render: function() {
       var container = this.get('container');
+
+      // Cache node references.
+      this.links = container.all('nav a');
+      this.tabCarousel = container.one('.tab-carousel');
+      this.tabPanels = container.one('.tab-panels');
+      this.tabPanelsHeight = this.tabPanels.getComputedStyle('height');
+      this.tabs = container.all('.tab-panel');
+      this.selectedNode = container.one('nav .selected');
+      this.tabWidth = 750;
+
+      // Set the base class.
       container.addClass('yui3-juju-browser-tabview');
-      // Set the current selection to the first tab
+
+      // Set the current selection to the first tab.
       this.setTab(container.one('nav a'));
     }
   }, {
