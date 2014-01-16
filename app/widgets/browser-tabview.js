@@ -40,7 +40,7 @@ YUI.add('browser-tabview', function(Y) {
     events: {
       'nav a': {
         click: 'clickTab'
-      },
+      }
     },
 
     /**
