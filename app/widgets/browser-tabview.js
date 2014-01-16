@@ -20,8 +20,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- * Provides tabview widget with sliding carousel functionality. An example of
- * the markup can be found in test/test_tabview.js
+ * Provides tabview widget with sliding carousel functionality. It requires an
+ * existing HTML structure (an example of the markup can be found in
+ * test/test_tabview.js) and enhances that HTML to animate between tabs.
  *
  * @namespace juju
  * @module browser
