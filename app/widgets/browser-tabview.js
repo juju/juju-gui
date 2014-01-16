@@ -102,9 +102,6 @@ YUI.add('browser-tabview', function(Y) {
 
       // Set the selected tab.
       this.set('selection', link);
-
-      // Fire the changed event.
-      this.fire('selectionChange');
     },
 
     /**
