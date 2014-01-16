@@ -51,7 +51,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ].join();
       Y.Node.create(testcontent).appendTo(container);
       tabview = new Y.juju.widgets.browser.TabView({
-        srcNode: container.one('.tabs')
+        container: container.one('.tabs')
       });
     });
 
@@ -71,24 +71,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('position changes to selected tab', function() {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox'),
-          tabCarousel = contentBox.one('.tab-carousel');
-      contentBox.one('nav a[href="#test2"]').simulate('click');
+      var tabContainer = tabview.get('container'),
+          tabCarousel = tabContainer.one('.tab-carousel');
+      tabContainer.one('nav a[href="#test2"]').simulate('click');
       assert.equal(tabCarousel.getStyle('left'), '-750px');
     });
 
     it('selected tab is set', function() {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox'),
-          link = contentBox.one('nav a[href="#test2"]');
+      var tabContainer = tabview.get('container'),
+          link = tabContainer.one('nav a[href="#test2"]');
       link.simulate('click');
       assert.equal(tabview.get('selection'), link);
     });
 
     it('change event is fired when the selection has changed', function(done) {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox'),
-          tabCarousel = contentBox.one('.tab-carousel'),
+      var tabContainer = tabview.get('container'),
+          tabCarousel = tabContainer.one('.tab-carousel'),
           eventCount = 0;
       tabview.on('selectionChange', function(e) {
         // Need to ignore the first selectionChange event that is fired upon
@@ -99,24 +99,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
       });
-      contentBox.one('nav a[href="#test2"]').simulate('click');
+      tabContainer.one('nav a[href="#test2"]').simulate('click');
     });
 
     it('completed event is fired when the carousel has moved', function(done) {
       tabview.render(container);
-      var contentBox = tabview.get('contentBox'),
+      var tabContainer = tabview.get('container'),
           eventCount = 0;
       tabview.on('selectionChangeComplete', function(e) {
         // Need to ignore the first selectionChange event that is fired upon
         // the TabView setup.
         eventCount += 1;
         if (eventCount === 2) {
-          assert.equal(contentBox.one('#test1').getStyle('height'), '1px');
-          assert.equal(contentBox.one('#test2').getStyle('height'), 'auto');
+          assert.equal(tabContainer.one('#test1').getStyle('height'), '1px');
+          assert.equal(tabContainer.one('#test2').getStyle('height'), 'auto');
           done();
         }
       });
-      contentBox.one('nav a[href="#test2"]').simulate('click');
+      tabContainer.one('nav a[href="#test2"]').simulate('click');
     });
   });
 

@@ -34,19 +34,35 @@ YUI.add('browser-tabview', function(Y) {
    * tabs horizontally rendered like Y.TabView, or vertically.
    *
    * @class Y.juju.widgets.browser.TabView
-   * @extends {Y.Widget}
+   * @extends {Y.View}
    */
-  ns.TabView = Y.Base.create('juju-browser-tabview', Y.Widget, [], {
+  ns.TabView = Y.Base.create('juju-browser-tabview', Y.View, [], {
+    events: {
+      'nav a': {
+        click: 'clickTab'
+      },
+    },
 
     /**
      * Switch the visible tab.
      *
-     * @method _setTab
+     * @method clickTab
+     * @param {Event} ev the click event created.
+     *
+     */
+    clickTab: function(e) {
+      this.setTab(e.target);
+    },
+
+    /**
+     * Switch the visible tab.
+     *
+     * @method setTab
      * @param {Node} The corresponding tab anchor.
      *
      */
-    _setTab: function(link) {
-      var container = this.get('contentBox'),
+    setTab: function(link) {
+      var container = this.get('container'),
           links = container.all('nav a'),
           tabCarousel = container.one('.tab-carousel'),
           tabPanels = container.one('.tab-panels'),
@@ -101,17 +117,13 @@ YUI.add('browser-tabview', function(Y) {
     /**
      * Renders the DOM nodes for the widget.
      *
-     * @method renderUI
+     * @method render
      */
-    renderUI: function() {
-      var container = this.get('contentBox');
-
+    render: function() {
+      var container = this.get('container');
+      container.addClass('yui3-juju-browser-tabview');
       // Set the current selection to the first tab
-      this._setTab(container.one('nav a'));
-
-      container.all('nav a').on('click', function(e) {
-        this._setTab(e.target);
-      }, this);
+      this.setTab(container.one('nav a'));
     }
   }, {
     ATTRS: {

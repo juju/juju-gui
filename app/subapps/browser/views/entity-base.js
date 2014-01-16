@@ -449,9 +449,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       */
       var container = this.get('container');
       this.tabview = new widgets.browser.TabView({
-        render: true,
-        srcNode: container.one('.tabs')
+        container: container.one('.tabs')
       });
+      this.tabview.render();
       // Need to reset the scroll position on every tab change.
       this.tabview.after('selectionChange', function(e) {
         var panel = container.one('.tab-panels');
