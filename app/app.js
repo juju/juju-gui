@@ -949,6 +949,16 @@ YUI.add('juju-gui', function(Y) {
           }, this);
         }
         this.navigate(redirectPath, {overrideAllNamespaces: true});
+        // If the redirectPath has a hash then it will not dispatch after log in
+        // because navigateOnHash is set to false so that we can use hash's to
+        // show the correct tab in the charm details pages. This issue only
+        // presents itself until the next delta comes in and the application
+        // hits it's double dispatch and dispatches the url again. As a
+        // workaround we check if there is a hash in the url and then dispatch
+        // manually.
+        if (redirectPath.indexOf('#') > -1) {
+          this.dispatch();
+        }
       } else {
         this.showLogin();
       }
