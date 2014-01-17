@@ -532,7 +532,6 @@ YUI.add('subapp-browser', function(Y) {
         deployService: this.get('deployService')
       };
 
-
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
       if (this._details && this._hasStateChanged('hash') &&
@@ -681,6 +680,9 @@ YUI.add('subapp-browser', function(Y) {
       this._minimized.set(
           'oldViewMode',
           this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
+
+      this._saveState();
+      next();
     },
 
     /**
@@ -996,9 +998,6 @@ YUI.add('subapp-browser', function(Y) {
         } else {
           minview.hide();
           browser.show();
-          // @todo remove this when the browser is in the default view since
-          // we'll be using the hidden/minimized to move it back.
-          this.get('container').setStyle('display', 'block');
         }
       }
     }
