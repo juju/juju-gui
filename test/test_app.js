@@ -414,6 +414,8 @@ function injectData(app, data) {
     });
 
     it('navigates to requested url on login', function() {
+      // The difference between this test and the following one is that this
+      // tests the path where there is no hash in the url.
       var stubit = utils.makeStubMethod;
       var oldPopRedirectMethod = Y.juju.App.prototype.popLoginRedirectPath;
       Y.juju.App.prototype.popLoginRedirectPath = function() {
@@ -429,6 +431,8 @@ function injectData(app, data) {
       assert.deepEqual(app.navigate.lastArguments(), [
         '/foo/bar',
         { overrideAllNamespaces: true }]);
+      // dispatch should not be called if there is no hash in the url.
+      // dispatch should be called in the test below where there is a hash.
       assert.equal(app.dispatch.calledOnce(), false);
     });
 
