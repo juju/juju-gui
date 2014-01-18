@@ -467,6 +467,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The viewmode should be populated now to the default.
         assert.equal(req.params, undefined);
       });
+
+      it('minmized updates state and moves to next', function() {
+        app = new browser.Browser({
+          store: new CharmworldAPI({
+            'apiHost': 'http://localhost',
+            'noop': true
+          })
+        });
+
+        // Set _minimized to prevent it from actually rendering the View. We
+        // only care about the state management going no.
+        app._minimized = {
+          set: function() {},
+          destroy: function() {}
+        };
+
+        // And we hard set that the viewmode was in _sidebar.
+        app._viewState.viewmode = 'sidebar';
+
+        var req = {
+          'viewmode': 'minimized'
+        };
+
+        app.minimized(req, null, next);
+        assert.equal(app._viewState.viewmode, 'sidebar');
+        assert.equal(app._oldState.viewmode, 'sidebar');
+
+      });
     });
 
     describe('browser subapp display tree', function() {
