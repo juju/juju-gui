@@ -20,6 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+- unreleased:
 - 0.15.0:
     - >
       Fullscreen mode has been removed. Old urls are automatically mapped to
