@@ -88,7 +88,8 @@ YUI.add('browser-tabview', function(Y) {
       // area, whichever is bigger.
       tab.setStyle('height', 'auto');
       var tabHeight = tab.getComputedStyle('height'),
-          newHeight = this.tabPanelsHeight > tabHeight ? this.tabPanelsHeight : tabHeight;
+          newHeight = this.panelsHeight >
+          tabHeight ? this.panelsHeight : tabHeight;
       otherTabs.setStyle('height', newHeight);
 
       // Once the animation is complete reduce the height of all tabs except
@@ -118,7 +119,7 @@ YUI.add('browser-tabview', function(Y) {
       this.links = container.all('nav a');
       this.tabCarousel = container.one('.tab-carousel');
       this.tabPanels = container.one('.tab-panels');
-      this.tabPanelsHeight = this.tabPanels.getComputedStyle('height');
+      this.panelsHeight = this.tabPanels.getComputedStyle('height');
       this.tabs = container.all('.tab-panel');
       this.selectedNode = container.one('nav .selected');
       this.tabWidth = 750;

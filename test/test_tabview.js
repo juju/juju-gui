@@ -101,8 +101,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var tabContainer = tabview.get('container'),
           eventCount = 0;
       tabview.on('selectionChangeComplete', function(e) {
-        // Need to ignore the first selectionChangeComplete event that is fired upon
-        // the TabView setup.
+        // Need to ignore the first selectionChangeComplete event that is fired
+        // upon the TabView setup.
         eventCount += 1;
         if (eventCount === 2) {
           assert.equal(tabContainer.one('#test1').getStyle('height'), '1px');
