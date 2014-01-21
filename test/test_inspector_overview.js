@@ -25,7 +25,8 @@ describe('Inspector Overview', function() {
 
   before(function(done) {
     var requires = ['juju-gui', 'juju-views', 'juju-tests-utils',
-      'event-key', 'juju-charm-store', 'juju-charm-models'];
+      'event-key', 'juju-charm-store', 'juju-charm-models',
+      'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           utils = Y.namespace('juju-tests.utils');

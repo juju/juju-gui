@@ -49,173 +49,176 @@
         {{/unless}}
 
         <div class="tabs">
-            <ul>
-                <li><a href="#bws-bundle" class="bundle">Bundle</a></li>
-                <li><a href="#bws-readme" class="readme">Readme</a></li>
-                <li><a href="#bws-deploy" class="deploy">Deploy</a></li>
-                <li><a href="#bws-summary" class="summary">Summary</a></li>
-                <li><a href="#bws-services" class="services">Services</a></li>
-                <li><a href="#bws-code" class="code">Code</a></li>
-            </ul>
-            <div>
-                <div id="bws-bundle"></div>
-                <div id="bws-readme"></div>
-                <div id="bws-deploy">
-                    <p>Deploying a bundle will ask your cloud provider to immediately provision all associated machines.</p>
-                    <h3>Deploy via the GUI</h3>
-                    <p>Click the 'Deploy this bundle' button above, or drag the bundle listing from the search results onto the canvas.</p>
-                    <h3>Deploy via quickstart</h3>
-                    <p>The quickstart plugin for Juju is an opinionated tool that helps you start Juju quickly and easily.  These commands will help you deploy the bundle to a cloud.</p>
-                    <p>Step 1 - Install quickstart
-                        <pre>sudo add-apt-repository ppa:juju/stable</pre>
-                        <pre>sudo apt-get update</pre>
-                        <pre>sudo apt-get install juju-quickstart</pre>
-                    </p>
-                    <p>Step 2 - Deploy bundle
-                        <pre>juju quickstart {{permanent_url}} [-e &lt;JUJU_ENV&gt;]</pre>
-                    </p>
-                    <h3>Deploy via the deployer</h3>
-                    <p>The Juju deployer is a tool that the quickstart plugin (above) uses.  It can also be used standalone to give you more control.</p>
-                    <p>Step 1 - Install the deployer
-                        <pre>sudo add-apt-repository ppa:juju/stable</pre>
-                        <pre>sudo apt-get update</pre>
-                        <pre>sudo apt-get install juju-deployer</pre>
-                    </p>
-                    <p>Step 2 - Deploy bundle
-                        <pre>juju deployer -e &lt;JUJU_ENV&gt; -c \</pre>
-                        <pre>    {{deployer_file_url}}</pre></p>
-                </div>
-                <div id="bws-summary">
-                    <div class="summary">
-                        {{>providers}}
-                        <h2>Description</h2>
-                        {{#if description}}
-                            <p class="respect-whitespace">{{linkify description}}</p>
-                        {{else}}
-                            <p>No description</p>
-                        {{/if}}
+            <nav>
+                <ul>
+                    <li><a href="#bws-bundle" class="bundle">Bundle</a></li>
+                    <li><a href="#bws-readme" class="readme">Readme</a></li>
+                    <li><a href="#bws-deploy" class="deploy">Deploy</a></li>
+                    <li><a href="#bws-summary" class="summary">Summary</a></li>
+                    <li><a href="#bws-services" class="services">Services</a></li>
+                    <li><a href="#bws-code" class="code">Code</a></li>
+                </ul>
+                <div class="selected"></div>
+            </nav>
+            <div class="tab-panels">
+                <div class="tab-carousel">
+                    <div id="bws-bundle" class="tab-panel"></div>
+                    <div id="bws-readme" class="tab-panel"></div>
+                    <div id="bws-deploy" class="tab-panel">
+                        <p>Deploying a bundle will ask your cloud provider to immediately provision all associated machines.</p>
+                        <h3>Deploy via the GUI</h3>
+                        <p>Click the 'Deploy this bundle' button above, or drag the bundle listing from the search results onto the canvas.</p>
+                        <h3>Deploy via quickstart (Under development)</h3>
+                        <p>The quickstart plugin for Juju is an opinionated tool that helps you start Juju quickly and easily.  These commands will help you deploy the bundle to a cloud.</p>
+                        <p>Step 1 - Install quickstart
+                            <pre>sudo add-apt-repository ppa:juju-gui/quickstart-beta</pre>
+                            <pre>sudo apt-get update</pre>
+                            <pre>sudo apt-get install juju-quickstart</pre>
+                        </p>
+                        <p>Step 2 - Deploy bundle
+                            <pre>juju quickstart {{permanent_url}} [-e &lt;JUJU_ENV&gt;]</pre>
+                        </p>
+                        <h3>Deploy via the deployer</h3>
+                        <p>The Juju deployer is a tool that the quickstart plugin (above) uses.  It can also be used standalone to give you more control.</p>
+                        <p>Step 1 - Install the deployer
+                            <pre>sudo add-apt-repository ppa:juju/stable</pre>
+                            <pre>sudo apt-get update</pre>
+                            <pre>sudo apt-get install juju-deployer</pre>
+                        </p>
+                        <p>Step 2 - Deploy bundle
+                            <pre>juju deployer -e &lt;JUJU_ENV&gt; -c \</pre>
+                            <pre>    {{deployer_file_url}}</pre></p>
                     </div>
-                    <div class="changelog">
-                        <h3 class="section-title">
-                            {{#if recentCommits}}
-                                <a href="" class="expandToggle"
-                                    data-state="closed">
+                    <div id="bws-summary" class="tab-panel">
+                        <div class="summary">
+                            {{>providers}}
+                            <h2>Description</h2>
+                            {{#if description}}
+                                <p class="respect-whitespace">{{linkify description}}</p>
+                            {{else}}
+                                <p>No description</p>
                             {{/if}}
-                            Change log
-                            {{#if recentCommits}}
-                                    <span class="expand">
-                                        <i class="sprite expand_icon more"></i>
-                                        <i class="sprite contract_icon less hidden"></i>
-                                    </span>
-                                </a>
-                            {{/if}}
-                        </h3>
-                        {{#if recentCommits}}
-                            <div class="first">
-                                <p>
-                                    Latest change:
-                                    <em class="date">
-                                        {{prettyCommits.first.prettyDate}}
-                                    </em>
-                                    <em>{{prettyCommits.first.author.name}}</em>
-                                    <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
-                                    <a href="{{ prettyCommits.first.revnoLink }}">
-                                      REVNO{{prettyCommits.first.revno}}
+                        </div>
+                        <div class="changelog">
+                            <h3 class="section-title">
+                                {{#if recentCommits}}
+                                    <a href="" class="expandToggle"
+                                        data-state="closed">
+                                {{/if}}
+                                Change log
+                                {{#if recentCommits}}
+                                        <span class="expand">
+                                            <i class="sprite expand_icon more"></i>
+                                            <i class="sprite contract_icon less hidden"></i>
+                                        </span>
                                     </a>
-                                </p>
-                            </div>
-                            <div class="remaining hidden">
-                                <h4>Earlier changes</h4>
-                                <ul>
-                                    {{#prettyCommits.remaining}}
-                                        <li>
-                                            <p>
-                                                <em class="date">
-                                                    {{prettyDate}}
-                                                </em>
-                                                <em>{{author.name}}</em>
-                                                <span class="respect-whitespace">{{linkify message}}</span> -
-                                                <a href="{{ revnoLink }}">
-                                                    REVNO{{revno}}
-                                                </a>
-                                            </p>
-                                        </li>
-                                    {{/prettyCommits.remaining}}
-                                </ul>
-                            </div>
-                        {{else}}
-                            <p>No change history exists.</p>
-                        {{/if}}
-                    </div>
-                </div>
-                <div id="bws-services">
-                    <p>
-                        These are the services that the bundle will deploy.
-                        Non-default configuration values are listed.
-                    </p>
-                    <div class="yui3-g">
-                        <div class="interfaces-heading yui3-u-1-2">
-                            <h3>Charm</h3>
-                        </div>
-                        <div class="interfaces-heading yui3-u-1-2">
-                            <h3>Config</h3>
-                        </div>
-                    </div>
-                    <ul class="interface-list">
-                        {{#each services}}
-                            <li class="interface-row yui3-g">
-                                <div class="yui3-u-1-2" data-config="{{ origService.name }}"></div>
-                                <div class="yui3-u-1-2 charm-config">
+                                {{/if}}
+                            </h3>
+                            {{#if recentCommits}}
+                                <div class="first">
+                                    <p>
+                                        Latest change:
+                                        <em class="date">
+                                            {{prettyCommits.first.prettyDate}}
+                                        </em>
+                                        <em>{{prettyCommits.first.author.name}}</em>
+                                        <span class="respect-whitespace">{{linkify prettyCommits.first.message}}</span> -
+                                        <a href="{{ prettyCommits.first.revnoLink }}">
+                                          REVNO{{prettyCommits.first.revno}}
+                                        </a>
+                                    </p>
+                                </div>
+                                <div class="remaining hidden">
+                                    <h4>Earlier changes</h4>
                                     <ul>
-                                        <li>Service name: {{ origService.name }}</li>
-                                        {{#unless charmModel.is_subordinate}}
+                                        {{#prettyCommits.remaining}}
                                             <li>
-
-                                                Number of units:
-                                                {{#if origService.data.num_units }}
-                                                    {{ origService.data.num_units }}
-                                                {{else}}
-                                                    1
-                                                {{/if}}
-
+                                                <p>
+                                                    <em class="date">
+                                                        {{prettyDate}}
+                                                    </em>
+                                                    <em>{{author.name}}</em>
+                                                    <span class="respect-whitespace">{{linkify message}}</span> -
+                                                    <a href="{{ revnoLink }}">
+                                                        REVNO{{revno}}
+                                                    </a>
+                                                </p>
                                             </li>
-                                        {{/unless}}
-                                        {{#if origService.options}}
-                                            {{#arrayObject origService.options}}
-                                                <li>{{ key }}: {{ value }}</li>
-                                            {{/arrayObject}}
-                                        {{/if}}
+                                        {{/prettyCommits.remaining}}
                                     </ul>
                                 </div>
-                            </li>
-                        {{/each}}
-                    </ul>
-                </div>
-                <div id="bws-code">
-                    <p class="intro">
-                        The source code of the bundle includes scripts, metadata,
-                        and other supporting files to describe and install a
-                        service.
-                    </p>
-                    <p>
-                        The source code for the bundle has been extracted from the deployer file. Please see the branch for the full, unprocessed deployer file.
+                            {{else}}
+                                <p>No change history exists.</p>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div id="bws-services" class="tab-panel">
+                        <p>
+                            These are the services that the bundle will deploy.
+                            Non-default configuration values are listed.
+                        </p>
+                        <div class="yui3-g">
+                            <div class="interfaces-heading yui3-u-1-2">
+                                <h3>Charm</h3>
+                            </div>
+                            <div class="interfaces-heading yui3-u-1-2">
+                                <h3>Config</h3>
+                            </div>
+                        </div>
+                        <ul class="interface-list">
+                            {{#each services}}
+                                <li class="interface-row yui3-g">
+                                    <div class="yui3-u-1-2" data-config="{{ origService.name }}"></div>
+                                    <div class="yui3-u-1-2 charm-config">
+                                        <ul>
+                                            <li>Service name: {{ origService.name }}</li>
+                                            {{#unless charmModel.is_subordinate}}
+                                                <li>
+                                                    Number of units:
+                                                    {{#if origService.data.num_units }}
+                                                        {{ origService.data.num_units }}
+                                                    {{else}}
+                                                        1
+                                                    {{/if}}
+                                                </li>
+                                            {{/unless}}
+                                            {{#if origService.options}}
+                                                {{#arrayObject origService.options}}
+                                                    <li>{{ key }}: {{ value }}</li>
+                                                {{/arrayObject}}
+                                            {{/if}}
+                                        </ul>
+                                    </div>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    <div id="bws-code" class="tab-panel">
+                        <p class="intro">
+                            The source code of the bundle includes scripts, metadata,
+                            and other supporting files to describe and install a
+                            service.
+                        </p>
+                        <p>
+                            The source code for the bundle has been extracted from the deployer file. Please see the branch for the full, unprocessed deployer file.
 
-                        <pre>bzr branch {{sourceLink}}</pre>
-                    </p>
-                    <p class="intro">
-                        <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
-                        target="help">Please contribute to this bundle!</a>
-                    </p>
-                    <p class="intro">
-                        Select a file below to view the contents.
-                    </p>
-                    <select>
-                        <option>Select --</option>
-                        {{#each files}}
-                            <option value="{{ . }}">{{ . }}</option>
-                        {{/each}}
-                    </select>
-                    <div class="filecontent">
+                            <pre>bzr branch {{sourceLink}}</pre>
+                        </p>
+                        <p class="intro">
+                            <a href="https://juju.ubuntu.com/docs/authors-charm-store.html"
+                            target="help">Please contribute to this bundle!</a>
+                        </p>
+                        <p class="intro">
+                            Select a file below to view the contents.
+                        </p>
+                        <select>
+                            <option>Select --</option>
+                            {{#each files}}
+                                <option value="{{ . }}">{{ . }}</option>
+                            {{/each}}
+                        </select>
+                        <div class="filecontent">
+                        </div>
                     </div>
                 </div>
             </div>

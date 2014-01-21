@@ -28,7 +28,8 @@ describe('help dropdown view', function() {
       'juju-models',
       'juju-views',
       'help-dropdown',
-      'juju-tests-utils'], function(Y) {
+      'juju-tests-utils',
+      'node-event-simulate'], function(Y) {
 
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');

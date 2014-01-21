@@ -36,7 +36,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       container = utils.makeContainer('container');
-      tabview = new Y.juju.widgets.browser.TabView();
+      var testcontent = [
+        '<div class="tabs">',
+        '<nav><ul>',
+        '<li><a href="#test1">Test1</a></li>',
+        '<li><a href="#test2">Test2</a></li>',
+        '</ul>',
+        '<div class="selected"></div>',
+        '</nav>',
+        '<div class="tab-panels"><div class="tab-carousel">',
+        '<div id="test1" class="tab-panel"></div>',
+        '<div id="test2" class="tab-panel"></div>',
+        '</div></div></div>'
+      ].join();
+      Y.Node.create(testcontent).appendTo(container);
+      tabview = new Y.juju.widgets.browser.TabView({
+        container: container.one('.tabs')
+      });
     });
 
     afterEach(function() {
@@ -48,18 +64,54 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isObject(tabview);
     });
 
-    it('can be rendered horizontally', function() {
-      assert.isFalse(tabview.get('vertical'));
+    it('initializes showing it\'s first tab', function() {
       tabview.render(container);
-      assert.isNull(container.one('.vertical'));
+      assert.equal(tabview.get('selection'), container.one('nav a'));
     });
 
-    it('can be rendered vertically', function() {
-      tabview = new Y.juju.widgets.browser.TabView({vertical: true});
-      assert.isTrue(tabview.get('vertical'));
-
+    it('changes position to the selected tab', function() {
       tabview.render(container);
-      assert.isObject(container.one('.vertical'));
+      var tabContainer = tabview.get('container'),
+          tabCarousel = tabContainer.one('.tab-carousel');
+      tabContainer.one('nav a[href="#test2"]').simulate('click');
+      assert.equal(tabCarousel.getStyle('left'), '-750px');
+    });
+
+    it('sets selected tabs', function() {
+      tabview.render(container);
+      var tabContainer = tabview.get('container'),
+          link = tabContainer.one('nav a[href="#test2"]');
+      link.simulate('click');
+      assert.equal(tabview.get('selection'), link);
+    });
+
+    it('fires a change event when the selection has changed', function(done) {
+      tabview.render(container);
+      var tabContainer = tabview.get('container'),
+          tabCarousel = tabContainer.one('.tab-carousel');
+      tabview.on('selectionChange', function(e) {
+        assert.equal(tabCarousel.getStyle('left'), '-750px');
+        done();
+      });
+      tabContainer.one('nav a[href="#test2"]').simulate('click');
+    });
+
+    it('fires a completed event when the carousel has moved', function(done) {
+      tabview.render(container);
+      var tabContainer = tabview.get('container'),
+          eventCount = 0;
+      tabview.on('selectionChangeComplete', function(e) {
+        // Need to ignore the first selectionChangeComplete event that is fired
+        // upon the TabView setup.
+        eventCount += 1;
+        if (eventCount === 2) {
+          assert.equal(tabContainer.one('#test1').getStyle('height'), '1px');
+          assert.equal(tabContainer.one('#test2').getStyle('height'), 'auto');
+          done();
+        }
+      });
+      tabview.setTab(tabContainer.one('nav a[href="#test2"]'));
+      tabContainer.one('.tab-carousel').fire('transitionend');
     });
   });
 

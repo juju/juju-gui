@@ -25,7 +25,8 @@ describe('Ghost Inspector', function() {
   before(function(done) {
     var requires = [
       'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
-      'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange'];
+      'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange',
+      'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');

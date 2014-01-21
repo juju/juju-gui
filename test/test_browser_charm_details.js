@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('Browser charm view', function() {
     var container, CharmView, cleanIconHelper, models, node, utils, view,
-        views, Y;
+        views, Y, testContainer;
 
 
     before(function(done) {
@@ -65,6 +65,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     afterEach(function() {
       if (view) {
         view.destroy();
+      }
+      if (testContainer) {
+        testContainer.remove(true);
       }
       node.remove(true);
       delete window.juju_config;
@@ -855,13 +858,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       // We've selected the activeTab specified.
-      var selected = view.get('container').one('.yui3-tab-selected a');
+      var selected = view.get('container').one('nav .active');
       assert.equal(selected.getAttribute('href'), '#bws-configuration');
     });
 
     it('loads related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      var testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer();
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -895,7 +898,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('only loads the interface data once', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      var testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer();
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -940,7 +943,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('ignore invalid tab selections', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      var testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer();
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -967,7 +970,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.one('.yui3-tab-selected a').getAttribute('href'),
+          testContainer.one('nav .active').getAttribute('href'),
           '#bws-summary');
     });
 
