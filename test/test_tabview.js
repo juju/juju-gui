@@ -64,12 +64,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.isObject(tabview);
     });
 
-    it('first tab is set on setup', function() {
+    it('initializes showing it\'s first tab', function() {
       tabview.render(container);
       assert.equal(tabview.get('selection'), container.one('nav a'));
     });
 
-    it('position changes to selected tab', function() {
+    it('changes position to the selected tab', function() {
       tabview.render(container);
       var tabContainer = tabview.get('container'),
           tabCarousel = tabContainer.one('.tab-carousel');
@@ -77,7 +77,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(tabCarousel.getStyle('left'), '-750px');
     });
 
-    it('selected tab is set', function() {
+    it('sets selected tabs', function() {
       tabview.render(container);
       var tabContainer = tabview.get('container'),
           link = tabContainer.one('nav a[href="#test2"]');
@@ -85,7 +85,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(tabview.get('selection'), link);
     });
 
-    it('change event is fired when the selection has changed', function(done) {
+    it('fires a change event when the selection has changed', function(done) {
       tabview.render(container);
       var tabContainer = tabview.get('container'),
           tabCarousel = tabContainer.one('.tab-carousel');
@@ -96,7 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       tabContainer.one('nav a[href="#test2"]').simulate('click');
     });
 
-    it('completed event is fired when the carousel has moved', function(done) {
+    it('fires a completed event when the carousel has moved', function(done) {
       tabview.render(container);
       var tabContainer = tabview.get('container'),
           eventCount = 0;

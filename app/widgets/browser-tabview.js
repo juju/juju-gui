@@ -86,8 +86,7 @@ YUI.add('browser-tabview', function(Y) {
       // area, whichever is bigger.
       tab.setStyle('height', 'auto');
       var tabHeight = tab.getComputedStyle('height'),
-          newHeight = this.panelsHeight >
-          tabHeight ? this.panelsHeight : tabHeight;
+          newHeight = Math.max(tabHeight, this.panelsHeight);
       otherTabs.setStyle('height', newHeight);
 
       // Once the animation is complete reduce the height of all tabs except
