@@ -472,7 +472,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         var tab = this.get('container')
                       .one('.tabs a[href="' + activeTab + '"]');
         if (tab) {
-          tab.simulate('click');
+          this.tabview.setTab(tab);
         }
       }
     }

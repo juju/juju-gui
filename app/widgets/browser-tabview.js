@@ -53,7 +53,7 @@ YUI.add('browser-tabview', function(Y) {
      *
      */
     clickTab: function(e) {
-      this.setTab(e.target);
+      this.setTab(e.currentTarget);
     },
 
     /**
