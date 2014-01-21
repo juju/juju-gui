@@ -20,7 +20,23 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.15.0:
+    - >
+      Fullscreen mode has been removed. Old urls are automatically mapped to
+      their sidebar equivalents.
+    - Inspector performance greatly improved for large numbers of units.
+    - Update Features tab with new information from the current charm audit.
+    - Inspector relations tab now shows the units involved in a relation error.
+    - Add charm browser animations.
+    - >
+      This is out first release from our Github hosted repository. Docs have
+      been updated throughout for working on the Juju Gui.
+    - >
+      The HACKING docs are updated for working on the Juju Gui with Vagrant. A
+      Vagrantfile and provision script are provided.
+    - >
+      (FIX) Inspector height calculations are updated so the expose/destroy
+      buttons always show in scroll.
 - 0.14.0:
     - >
       Added support in the GUI to parse different agent states from Juju 
