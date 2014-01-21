@@ -100,7 +100,7 @@ YUI.add('browser-tabview', function(Y) {
           otherTabs.setStyle('height', '1px');
         }
         this.fire('selectionChangeComplete');
-      });
+      }, this);
 
       // Set the selected tab.
       this.set('selection', link);

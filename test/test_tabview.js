@@ -88,16 +88,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('change event is fired when the selection has changed', function(done) {
       tabview.render(container);
       var tabContainer = tabview.get('container'),
-          tabCarousel = tabContainer.one('.tab-carousel'),
-          eventCount = 0;
+          tabCarousel = tabContainer.one('.tab-carousel');
       tabview.on('selectionChange', function(e) {
-        // Need to ignore the first selectionChange event that is fired upon
-        // the TabView setup.
-        eventCount += 1;
-        if (eventCount === 2) {
-          assert.equal(tabCarousel.getStyle('left'), '-750px');
-          done();
-        }
+        assert.equal(tabCarousel.getStyle('left'), '-750px');
+        done();
       });
       tabContainer.one('nav a[href="#test2"]').simulate('click');
     });
@@ -116,7 +110,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           done();
         }
       });
-      tabContainer.one('nav a[href="#test2"]').simulate('click');
+      tabview.setTab(tabContainer.one('nav a[href="#test2"]'));
+      tabContainer.one('.tab-carousel').fire('transitionend');
     });
   });
 
