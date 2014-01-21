@@ -497,8 +497,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
       if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-      var height = winHeight - headerHeight -
-                   vcNavHeight - footerHeight - (TB_SPACING * 3);
+      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
 
       // The viewlet manager has a couple different wrapper elements which
       // impact which components are shown. In this case we are grabbing an
@@ -509,7 +508,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       }
 
       // subtract the height of the header and footer of the viewlet manager.
-      height = height - vcHeaderHeight - vcFooterHeight;
+      height = height - vcHeaderHeight - vcFooterHeight - (TB_SPACING * 3);
 
       // This needs to pull from the 'real' container not what was passed in.
       // This is because this method can be called to recalculate the height
