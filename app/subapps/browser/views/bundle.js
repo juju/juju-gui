@@ -326,7 +326,6 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     'juju-view-bundle',
     'subapp-browser-entitybaseview',
     'browser-overlay-indicator',
-    'event-tracker',
-    'node-event-simulate'
+    'event-tracker'
   ]
 });

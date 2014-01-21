@@ -50,7 +50,6 @@ YUI.add('browser-tabview', function(Y) {
      *
      * @method clickTab
      * @param {Event} ev the click event created.
-     *
      */
     clickTab: function(e) {
       this.setTab(e.currentTarget);
@@ -61,7 +60,6 @@ YUI.add('browser-tabview', function(Y) {
      *
      * @method setTab
      * @param {Node} The corresponding tab anchor.
-     *
      */
     setTab: function(link) {
       var container = this.get('container'),
@@ -94,7 +92,10 @@ YUI.add('browser-tabview', function(Y) {
 
       // Once the animation is complete reduce the height of all tabs except
       // the visible tab so the container only scrolls for the visible tab.
-      this.tabCarousel.on('transitionend', function() {
+      var handler = this.tabCarousel.on('transitionend', function() {
+        // Because this event will fire shortly after this method completes we
+        // can detach it here instead of setting up a destructor sequence.
+        handler.detach();
         var activeTab = container.one(tabId);
         if (activeTab) {
           activeTab.setStyle('height', 'auto');
@@ -130,6 +131,7 @@ YUI.add('browser-tabview', function(Y) {
       // Set the current selection to the first tab.
       this.setTab(container.one('nav a'));
     }
+
   }, {
     ATTRS: {
       /**
