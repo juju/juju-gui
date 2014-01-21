@@ -235,7 +235,7 @@ Checklist for Making a Stable Release
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process and upload the release, this time to production.
 
-- Go to <https://github.com/juju/juju-gui/releases> and verify that you see
+- Go to <https://launchpad.net/juju-gui/+download> and verify that you see
   a new release and a new download file.
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use
@@ -354,7 +354,7 @@ Checklist for Making a Developer Release
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process and upload the release.
 
-- Go to <https://github.com/juju/juju-gui/releases> and verify that you see
+- Go to <https://launchpad.net/juju-gui/+download> and verify that you see
   a new release and a new download file.
 - Download the file and compare it to the original tarball in the
   ``release/`` directory, verifying that they are identical (hint: use

@@ -175,12 +175,11 @@
                                             {{#unless charmModel.is_subordinate}}
                                                 <li>
                                                     Number of units:
-                                                    {{#if num_units }}
-                                                        {{ num_units }}
+                                                    {{#if origService.data.num_units }}
+                                                        {{ origService.data.num_units }}
                                                     {{else}}
                                                         1
                                                     {{/if}}
-
                                                 </li>
                                             {{/unless}}
                                             {{#if origService.options}}

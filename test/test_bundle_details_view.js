@@ -97,6 +97,11 @@ describe('Browser bundle detail view', function() {
 
     assert.notEqual(container.get('innerHTML').indexOf('Deployed 5'), -1,
         'Download count is not added to the page.');
+
+    // Verify that the num_units is represented correctly.
+    assert(
+        container.one('.charm-config').get('innerHTML').match(/units:\s+5/),
+        'Expected to find the number of units to be 5, but not found.');
   });
 
   it('fetches the readme when requested', function(done) {
