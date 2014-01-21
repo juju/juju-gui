@@ -132,20 +132,20 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     _dispatchTabEvents: function(tabview) {
       this.addEvent(
           tabview.after('selectionChange', function(e) {
-            switch (e.newVal.get('label')) {
-              case 'Features':
+            switch (e.newVal.get('hash')) {
+              case '#bws-features':
                 if (!this._qaContentLoaded) {
                   this._loadQAContent();
                 }
                 this._qaContentLoaded = true;
                 break;
-              case 'Related Charms':
+              case '#bws-related-charms':
                 if (!this._interfacesContentLoaded) {
                   this._loadInterfacesTabCharms();
                 }
                 this._interfacesContentLoaded = true;
                 break;
-              case 'Readme':
+              case '#bws-readme':
                 if (!this._readmeContentLoaded) {
                   this._loadReadmeTab();
                 }
@@ -250,7 +250,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
     _setCollapsableHeader: function() {
       var container = this.get('container');
       if (container) {
-        var scrollable = container.one('.yui3-tabview-panel');
+        var scrollable = container.one('.tab-panels');
         scrollable.on('scroll', function(e) {
           if (this.get('scrollTop') > 50) {
             container.addClass('collapsed');
@@ -449,12 +449,12 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       */
       var container = this.get('container');
       this.tabview = new widgets.browser.TabView({
-        render: true,
-        srcNode: container.one('.tabs')
+        container: container.one('.tabs')
       });
+      this.tabview.render();
       // Need to reset the scroll position on every tab change.
       this.tabview.after('selectionChange', function(e) {
-        var panel = container.one('.yui3-tabview-panel');
+        var panel = container.one('.tab-panels');
         if (panel) {
           panel.set('scrollTop', 0);
         }
@@ -472,7 +472,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         var tab = this.get('container')
                       .one('.tabs a[href="' + activeTab + '"]');
         if (tab) {
-          tab.get('parentNode').simulate('click');
+          this.tabview.setTab(tab);
         }
       }
     }
