@@ -102,6 +102,10 @@ YUI.add('bundle-import-helpers', function(Y) {
       }
 
       // Handle dropping Deployer files on the canvas.
+      if (!Y.Lang.isArray(fileSources)) {
+        fileSources = [fileSources];
+      }
+
       Y.Array.each(fileSources, function(file) {
         var reader = new FileReader();
 
