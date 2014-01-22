@@ -20,7 +20,9 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 0.15.1:
+    - Replace TabView with a new animating sliding tabs component.
+    - (FIX) #1251426 unit counts in the bundle view are incorrect.
 - 0.15.0:
     - >
       Fullscreen mode has been removed. Old urls are automatically mapped to
