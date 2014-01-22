@@ -270,6 +270,27 @@ describe('search widget autocomplete', function() {
     assert.equal(bb.getStyle('position'), 'absolute');
   });
 
+  it('defaults to listening to suggestions state', function() {
+    // The widget can ignore any future results for completion suggestions
+    // that are in flight.
+    assert.equal(search.ignoreInFlight, false);
+  });
+
+  it('ignore in flight suggestion calls during form submission', function() {
+    search.get('boundingBox').one('form').simulate('submit');
+    assert.equal(search.ignoreInFlight, true);
+  });
+
+  it('reset back to accepting suggest requests on focus', function() {
+    // If the widget is ignoring in flight suggestion calls, focusing on the
+    // input should turn it back on for responding to results.
+    search.get('boundingBox').one('form').simulate('submit');
+    assert.equal(search.ignoreInFlight, true);
+    search.get('boundingBox').one('input').simulate('focus');
+    search.get('boundingBox').one('input').trigger('focus');
+    assert.equal(search.ignoreInFlight, false);
+  });
+
   it('supports autocompletion while entering text', function(done) {
     // Create our own search instance.
     search.destroy();
