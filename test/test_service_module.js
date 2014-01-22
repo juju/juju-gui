@@ -357,12 +357,13 @@ describe('service module events', function() {
   });
 
   it('should deploy a bundle on file drop events', function(done) {
+    var file = { name: '', type: '' };
     var fakeEventObject = {
       halt: function() {},
       _event: {
         dataTransfer: {
           // All we need to fake things out is to have a file.
-          files: [1]
+          files: [file]
         }
       }
     };
@@ -370,7 +371,7 @@ describe('service module events', function() {
     // mock out the Y.BundleHelpers call.
     var _deployBundleFiles = juju.BundleHelpers.deployBundleFiles;
     juju.BundleHelpers.deployBundleFiles = function(files, env, db) {
-      assert.deepEqual(files, [1]);
+      assert.deepEqual(files, file);
       // Restore the deployBundleFiles call for future tests.
       juju.BundleHelpers.deployBundleFiles = _deployBundleFiles;
       done();
