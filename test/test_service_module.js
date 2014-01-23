@@ -381,4 +381,35 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
+  it('should deploy a local charm on .zip file drop events', function(done) {
+    var file = {
+      // Using a complex name to make sure the extension filtering works
+      name: 'foo-bar.baz.zip',
+      type: 'application/zip'
+    };
+    var fakeEventObject = {
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [file]
+        }
+      }
+    };
+
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
+    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+      assert.deepEqual(files, file);
+      assert.isObject(env);
+      assert.isObject(db);
+      // Restore the deployBundleFiles call for future tests.
+      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
+      done();
+    };
+
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
+
 });

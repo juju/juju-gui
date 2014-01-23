@@ -173,7 +173,16 @@ YUI.add('juju-env-base', function(Y) {
       value: [
         'update_annotations'
       ]
-    }
+    },
+
+    /**
+      The event handler attached to the charm upload xhr events. Stored so that
+      we can detach it after the file has been uploaded.
+
+      @attribute xhrEventHandler
+      @type {Function}
+    */
+    'xhrEventHandler': {}
   };
 
   Y.extend(BaseEnvironment, Y.Base, {
