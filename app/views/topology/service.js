@@ -1326,6 +1326,7 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-models',
     'juju-env',
     'unscaled-pack-layout',
-    'bundle-import-helpers'
+    'bundle-import-helpers',
+    'local-charm-import-helpers'
   ]
 });
