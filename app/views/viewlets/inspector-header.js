@@ -43,6 +43,17 @@ YUI.add('viewlet-inspector-header', function(Y) {
             }
           }
         }
+      },
+      life: {
+        'update': function(node, value) {
+          // Show/hide the "service being destroyed" message in the inspector
+          // header based on the current life-cycle status of the service.
+          if (value === 'dying') {
+            node.removeClass('hidden');
+          } else {
+            node.addClass('hidden');
+          }
+        }
       }
     },
     'render': function(model, viewContainerAttrs) {
