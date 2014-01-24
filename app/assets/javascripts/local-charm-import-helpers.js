@@ -24,7 +24,33 @@ YUI.add('local-charm-import-helpers', function(Y) {
   ns.localCharmHelpers = {
 
     deployLocalCharm: function(file, env, db) {
+      // We will eventually be adding a dialogue of some
+      // sort to allow the user to confiure this value.
+      var series = env.get('defaultSeries'),
+          notifications = db.notifications;
 
+      env.uploadLocalCharm(
+          file,
+          series,
+          function(e) {
+            // progress callback
+          },
+          function(e) {
+            if (e.type === 'error') {
+              notifications.add({
+                title: 'Import failed',
+                message: 'Import from "' + file.name + '" failed.',
+                level: 'error'
+              });
+              console.log('error', e);
+            } else {
+              notifications.add({
+                title: 'Imported local charm file',
+                message: 'Import from "' + file.name + '" successful.',
+                level: 'important'
+              });
+            }
+          });
     }
 
   };

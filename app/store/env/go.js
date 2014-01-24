@@ -448,6 +448,86 @@ YUI.add('juju-env-go', function(Y) {
       }, this.handleEnvironmentInfo);
     },
 
+    /**
+      Handles uploading a local charm to Juju
+
+      @method uploadLocalCharm
+      @param {Object} file The file object from the fileSources event object.
+      @param {String} series The series to deploy this local charm into.
+      @param {Function} progress The callback to handle xhr progress events.
+      @param {Function} callback The callback to call after the upload returns
+        success or failure.
+    */
+    uploadLocalCharm: function(file, series, progress, callback) {
+      // Ensure that they are logged in and authenticated before uploading.
+      if (!this.userIsAuthenticated) {
+        console.warn('Attempted upload files without providing credentials.');
+        this.fire('login', {data: {result: false}});
+        return;
+      }
+
+      var credentials = this.getCredentials();
+      var xhr = this._generateXHRRequest();
+      var eventHandler =
+          this._xhrEventHandler.bind(this, callback, progress, xhr);
+
+      xhr.addEventListener('progress', eventHandler, false);
+      xhr.addEventListener('load', eventHandler, false);
+
+      // we store this handler so that we can detach the events later.
+      this.set('xhrEventHandler', eventHandler);
+
+      xhr.open(
+          'POST',
+          '/juju-core/charms?series=' + series,
+          true,
+          credentials.user,
+          credentials.password
+      );
+
+      xhr.setRequestHeader('Content-Type', 'application/zip');
+      xhr.send(file);
+    },
+
+    /**
+      Generates a new XMLHttpRequest instance using
+      the passed in configuration object.
+
+      XMLHttpRequest is read-only so we need a method
+      to stub out while testing.
+
+      @method _generateXHRRequest
+      @param {Object} [config] The configuration object for XMLHttpRequest.
+      @return {Object} A new XMLHttpRequest instance.
+    */
+    _generateXHRRequest: function(config) {
+      config = config || {};
+      return new XMLHttpRequest(config);
+    },
+
+    /**
+      The callback from the xhr progress and load events.
+
+      @method _xhrEventHandler
+      @param {Function} callback The uploadLocalCharm callback.
+      @param {Function} progress The uploadLocalCharm progress event callback.
+      @param {Object} xhr Reference to the XHR intance.
+      @param {Object} e The event object from either of the events.
+    */
+    _xhrEventHandler: function(callback, progress, xhr, e) {
+      if (e.type === 'progress' && typeof progress === 'function') {
+        progress(e);
+        return; // explicit return on progress
+      } else if (e.type === 'load' && typeof callback === 'function') {
+        // if it's not a progress event it's a load event which is fired when
+        // it's finished the transmission for whatever reason.
+        var eventHandler = this.get('eventHandler');
+        xhr.removeEventListener('progress', eventHandler);
+        xhr.removeEventListener('load', eventHandler);
+        callback(e);
+      }
+    },
+
     /*
     Deployer support
 
