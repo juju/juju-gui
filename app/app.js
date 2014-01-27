@@ -440,7 +440,6 @@ YUI.add('juju-gui', function(Y) {
       // When the viewport tells us that something large wants to take over the
       // (majority) of the screen we want to hide the sidebar.
       this.on('*:viewportTakeoverStarting', function(e) {
-        debugger;
         var charmbrowser = this.get('subApps').charmbrowser;
         // Capture the original view mode so we can set it back later.
         var originalViewMode = charmbrowser.getViewMode();
