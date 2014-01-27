@@ -437,6 +437,29 @@ YUI.add('juju-gui', function(Y) {
         this.navigate(e.url);
       }, this);
 
+      // When the viewport tells us that something large wants to take over the
+      // (majority) of the screen we want to hide the sidebar.
+      this.on('*:viewportTakeoverStarting', function(e) {
+        debugger;
+        var charmbrowser = this.get('subApps').charmbrowser;
+        // Capture the original view mode so we can set it back later.
+        var originalViewMode = charmbrowser.getViewMode();
+        // Once the takeover has ended, put the original view mode back.
+        this.on('*:viewportTakeoverEnding', function(e) {
+          charmbrowser.fire('viewNavigate', {
+            change: {
+              viewmode: originalViewMode
+            }
+          });
+        }, this);
+        // Minimize the sidebar because something big wants more space.
+        charmbrowser.fire('viewNavigate', {
+          change: {
+            viewmode: 'minimized'
+          }
+        });
+      }, this);
+
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 

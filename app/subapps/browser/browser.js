@@ -1000,6 +1000,16 @@ YUI.add('subapp-browser', function(Y) {
           browser.show();
         }
       }
+    },
+
+    /**
+      Return the current viewmode.
+
+      @method getViewMode
+      @return {undefined} Nothing.
+    */
+    getViewMode: function() {
+      return this._viewState.viewmode;
     }
   }, {
     ATTRS: {
