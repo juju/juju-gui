@@ -467,6 +467,8 @@ YUI.add('juju-env-go', function(Y) {
       }
 
       var credentials = this.getCredentials();
+      var authHeader = this._createAuthorizationHeader(
+          credentials.user, credentials.password);
       var xhr = this._generateXHRRequest();
       var eventHandler =
           this._xhrEventHandler.bind(this, callback, progress, xhr);
@@ -477,16 +479,25 @@ YUI.add('juju-env-go', function(Y) {
       // we store this handler so that we can detach the events later.
       this.set('xhrEventHandler', eventHandler);
 
-      xhr.open(
-          'POST',
-          '/juju-core/charms?series=' + series,
-          true,
-          credentials.user,
-          credentials.password
-      );
+      xhr.open('POST', '/juju-core/charms?series=' + series, true);
 
+      xhr.setRequestHeader('Authorization', authHeader);
       xhr.setRequestHeader('Content-Type', 'application/zip');
       xhr.send(file);
+    },
+
+    /**
+      Create and return a value for the HTTP "Authorization" header.
+      The resulting value includes the given credentials.
+
+      @method _createAuthorizationHeader
+      @param {String} username The user name.
+      @param {String} password The password associated to the user name.
+      @return {String} The resulting "Authorization" header value.
+    */
+    _createAuthorizationHeader: function(username, password) {
+      var hash = btoa(username + ':' + password);
+      return 'Basic ' + hash;
     },
 
     /**
