@@ -648,7 +648,9 @@ YUI.add('juju-topology-service', function(Y) {
           // of mixed types we handle each file individually.
           var ext = file.name.split('.').slice(-1).toString();
 
-          if (file.type === 'application/zip' && ext === 'zip') {
+          if ((file.type === 'application/zip' ||
+               file.type === 'application/x-zip-compressed') &&
+              ext === 'zip') {
             localCharmHelpers.deployLocalCharm(file, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
