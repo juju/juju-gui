@@ -48,7 +48,9 @@ YUI.add('juju-topology-viewport', function(Y) {
     events: {
       yui: {
         windowresize: 'resized',
-        rendered: 'resized'
+        rendered: 'resized',
+        takeoverStarting: 'takeoverStarting',
+        takeoverEnding: 'takeoverEnding'
       }
     },
 
@@ -104,6 +106,37 @@ YUI.add('juju-topology-viewport', function(Y) {
     },
 
     /**
+     * React to the fact that a display element wants to use a large portion of
+     * the viewport.
+     *
+     * @method takeoverStarting
+     * @static
+     * @return {undefined} Nothing, this function generates only side effects.
+     */
+    takeoverStarting: function() {
+      // All we do here is fire an event so higher layers of the application
+      // can react to the viewport takeover starting.
+      var topo = this.get('component');
+      topo.fire('viewportTakeoverStarting');
+    },
+
+    /**
+     * React to the fact that a large display element is finished using the
+     * viewport.
+     *
+     * @method takeoverEnding
+     * @static
+     * @return {undefined} Nothing, this function generates only side effects.
+     */
+    takeoverEnding: function() {
+      // All we do here is fire an event so higher layers of the application
+      // can react to the viewport takeover ending.
+      console.log('viewportTakeoverEnding');
+      var topo = this.get('component');
+      topo.fire('viewportTakeoverEnding');
+    },
+
+    /**
      * Set the visualization size based on the viewport.
      *
      * The beforePageSizeRecalculation and afterPageSizeRecalculation events
@@ -111,8 +144,8 @@ YUI.add('juju-topology-viewport', function(Y) {
      * size, such as the charm panel, to get out of the way before we compute
      * sizes.
      *
-     * @return {undefined} Nothing, this function generates only side effects.
      * @method resized
+     * @return {undefined} Nothing, this function generates only side effects.
      */
     resized: function() {
       var container = this.getContainer();

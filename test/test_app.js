@@ -241,6 +241,23 @@ function injectData(app, data) {
       });
     });
 
+    it('reacts to viewportTakeoverStarting events correctly', function() {
+      // When a viewportTakeoverStarting event is fired the app minimizes the
+      // sidebar.
+      app = constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+
+      app.fire('viewportTakeoverStarting');
+
+
+    });
+
   });
 })();
 

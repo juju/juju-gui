@@ -48,4 +48,4 @@ var server = http.createServer(app);
 // When run via the test-server.sh the PORT is set via an ENV variable.
 var port = process.env.TEST_PORT || 8888;
 server.listen(port);
-console.log('http://0.0.0.0:' + server.address().port + '/test/index.html');
+//console.log('http://0.0.0.0:' + server.address().port + '/test/index.html');
