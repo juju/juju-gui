@@ -524,10 +524,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('opens and sends an XHR request with the proper data', function() {
         var _generateXHRRequestCalled = false,
             openCalled = false,
-            setRequestHeaderCalled = false,
             sendCalled = false,
             addEventListenerCallCount = 0,
             addEventListenerEvents = [],
+            addHeaders = [],
+            setHeaderCallCount = 0,
             SERIES = 'precise',
             FILEOBJ = { name: 'foo' };
 
@@ -545,14 +546,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               assert.equal(type, 'POST');
               assert.equal(url, '/juju-core/charms?series=' + SERIES);
               assert.equal(async, true);
-              assert.equal(username, 'user');
-              assert.equal(password, 'password');
               openCalled = true;
             },
             setRequestHeader: function(key, val) {
-              assert.strictEqual(key, 'Content-Type');
-              assert.strictEqual(val, 'application/zip');
-              setRequestHeaderCalled = true;
+              var header = {};
+              header[key] = val;
+              addHeaders.push(header);
+              setHeaderCallCount += 1;
             },
             send: function(file) {
               assert.deepEqual(file, FILEOBJ);
@@ -565,10 +565,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         assert.equal(_generateXHRRequestCalled, true);
         assert.equal(openCalled, true);
-        assert.equal(setRequestHeaderCalled, true);
         assert.equal(sendCalled, true);
         assert.equal(addEventListenerCallCount, 2);
         assert.deepEqual(addEventListenerEvents, ['progress', 'load']);
+        assert.deepEqual(setHeaderCallCount, 2);
+        assert.deepEqual(addHeaders, [
+          {'Authorization': 'Basic dXNlcjpwYXNzd29yZA=='},
+          {'Content-Type': 'application/zip'}
+        ]);
         // Test the storing of the event handler so we can detach it later.
         assert.isFunction(env.get('xhrEventHandler'));
       });
