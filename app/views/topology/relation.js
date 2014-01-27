@@ -29,6 +29,7 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -257,29 +258,33 @@ YUI.add('juju-topology-relation', function(Y) {
         return;
       }
 
-      Y.each(Y.Array.filter(self.relations, function(relation) {
-        return relation.source.id === service.id ||
-            relation.target.id === service.id;
-      }), function(relation) {
-        var rel_group = d3.select('#' + utils.generateSafeDOMId(relation.id));
-        var connectors = relation.source
-                  .getConnectorPair(relation.target);
-        var s = connectors[0];
-        var t = connectors[1];
-        rel_group.select('line')
-              .attr('x1', s[0])
-              .attr('y1', s[1])
-              .attr('x2', t[0])
-              .attr('y2', t[1]);
-        rel_group.select('.rel-label')
-              .attr('transform', function(d) {
-              return 'translate(' +
-                  [Math.max(s[0], t[0]) -
-                       Math.abs((s[0] - t[0]) / 2),
-                       Math.max(s[1], t[1]) -
-                       Math.abs((s[1] - t[1]) / 2)] + ')';
+      Y.each(
+          Y.Array.filter(
+              self.relations,
+              function(relation) {
+                return relation.source.id === service.id ||
+                   relation.target.id === service.id;
+              }
+          ), function(relation) {
+            var rel_group = d3.select(
+                '#' + utils.generateSafeDOMId(relation.id));
+            var connectors = relation.source
+                      .getConnectorPair(relation.target);
+            var s = connectors[0];
+            var t = connectors[1];
+            rel_group.select('line')
+                  .attr('x1', s[0])
+                  .attr('y1', s[1])
+                  .attr('x2', t[0])
+                  .attr('y2', t[1]);
+            // Find the label for this relation line and adjust it to the mid
+            // point.
+            var label = rel_group.select('.rel-label');
+            label.attr('transform', function(d) {
+              var points = topUtils.findCenterPoint(s, t);
+              return 'translate(' + points + ')';
             });
-      });
+          });
     },
 
     drawRelationGroup: function() {
@@ -760,6 +765,10 @@ YUI.add('juju-topology-relation', function(Y) {
     /*
      * Test if the pending relation is ambiguous.  Display a menu if so,
      * create the relation if not.
+     *
+     * @param {Object} m The endpoint for the drop point on the service.
+     * @param {Object} view The current view context.
+     * @param {Object} context The target rectangle.
      */
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
@@ -795,8 +804,9 @@ YUI.add('juju-topology-relation', function(Y) {
         menu.one('.menu').remove(true);
       }
 
-      menu.append(Templates
-              .ambiguousRelationList({endpoints: endpoints}));
+      menu.append(Templates.ambiguousRelationList({
+        endpoints: endpoints
+      }));
 
       // For each endpoint choice, delegate a click event to add the specified
       // relation. Use event delegation in order to avoid weird behaviors
@@ -825,8 +835,9 @@ YUI.add('juju-topology-relation', function(Y) {
       // Display the menu at the service endpoint.
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
-      menu.setStyle('top', m.y * z + tr[1]);
-      menu.setStyle('left', m.x * z + m.w * z + tr[0]);
+      var locateAt = topUtils.locateRelativePointOnCanvas(m, tr, z);
+      menu.setStyle('left', locateAt[0]);
+      menu.setStyle('top', locateAt[1]);
       menu.addClass('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
@@ -1049,6 +1060,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'node',
     'event',
     'juju-models',
-    'juju-env'
+    'juju-env',
+    'juju-topology-utils'
   ]
 });

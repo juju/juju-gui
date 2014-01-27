@@ -176,6 +176,45 @@ YUI.add('juju-topology-utils', function(Y) {
       w: maxX - minX + boxWidth, h: maxY - minY + boxHeight};
   };
 
+  /**
+   * Find the center point of two existing points specified.
+   *
+   * @method findCenterPoint
+   * @param {Array} one The first point to use. Array of x,y coords.
+   * @param {Array} two The second point to use. Array of x,y coords.
+   * @return {Array} The x,y of the center of the line between the two points.
+   *
+   */
+  utils.findCenterPoint = function(one, two) {
+    var points = [
+      Math.max(one[0], two[0]) - Math.abs((one[0] - two[0]) / 2),
+      Math.max(one[1], two[1]) - Math.abs((one[1] - two[1]) / 2)
+    ];
+    return points;
+  };
+
+  /**
+   * Find the x,y coordinates of a point taking into account zoom/offset of
+   * current canvas view.
+   *
+   * @method locateRelativePointOnCanvas
+   * @param {Object} endpoint Contains an x/y coordinate.
+   * @param {Object} offset The offset view of the canvas.
+   * @param {Array} scale The canvas current scale.
+   *
+   */
+  utils.locateRelativePointOnCanvas = function(endpoint, offset, scale) {
+    // Return in x,y point form. X being the left value and Y being the top
+    // position.
+    var updatedPoint = [
+      endpoint.x * scale + endpoint.w * scale + offset[0],
+      endpoint.y * scale + offset[1]
+    ];
+    return updatedPoint;
+  };
+
+
+
 }, '0.1.0', {
   requires: [
     'd3'
