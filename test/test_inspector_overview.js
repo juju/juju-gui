@@ -857,20 +857,37 @@ describe('Inspector Overview', function() {
 
     var service = db.services.getById('mediawiki');
     assert.isFalse(service.get('charmChanged'));
-    assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
+    assert.isTrue(
+        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
 
     db.onDelta({data: {result: [
       ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
     ]}});
 
     assert.isTrue(service.get('charmChanged'));
-    assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
+    assert.isFalse(
+        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
     inspector.viewletManager.get('environment')
       .createServiceInspector = function(model, attrs) {
           assert.isFalse(model.get('charmChanged'));
           done();
         };
     newContainer.one('.rerender-config').simulate('click');
+  });
+
+  it('reflects that a service is dying', function() {
+    var inspector = setUpInspector();
+    var viewlets = inspector.viewletManager.viewlets;
+    var newContainer = viewlets.inspectorHeader.container;
+    var service = db.services.getById('mediawiki');
+    // The service is considered to be alive by default.
+    assert.strictEqual(service.get('life'), 'alive');
+    assert.strictEqual(
+        newContainer.one('[data-bind=life]').hasClass('hidden'), true);
+    // The inspector message is shown when the service's life is set to dying.
+    service.set('life', 'dying');
+    assert.strictEqual(
+        newContainer.one('[data-bind=life]').hasClass('hidden'), false);
   });
 
   it('toggles exposure', function() {

@@ -62,6 +62,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _fetchSuggestions: function(query, callback) {
+      var self = this;
       var filters = this.get('filters');
       filters.text = query;
 
@@ -78,6 +79,13 @@ YUI.add('browser-search-widget', function(Y) {
         autocompleteSource(
             filters, {
               'success': function(data) {
+                // Determine if the suggestions are still wished for. The user
+                // might have clicked away or hit enter to search with what
+                // they have already.
+                if (self.ignoreInFlight) {
+                  return;
+                }
+
                 var catData = this._suggestCategoryOptions(query);
                 if (catData) {
                   data.result = catData.concat(data.result);
@@ -95,6 +103,20 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
+     * When the AC input has focus adjust css properties to note it's active.
+     *
+     * @method _handleInputFocus
+     * @param {Event} ev the focus event from YUI.
+     *
+     */
+    _handleInputFocus: function(ev) {
+      // Make sure we reset to respond to suggestions coming in.
+      this.ignoreInFlight = false;
+      // Update the styling to represent an active input.
+      this._setActive();
+    },
+
+    /**
      * Halt page reload from form submit and let the app know we have a new
      * search.
      *
@@ -103,6 +125,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
+      this.ignoreInFlight = true;
       var form = this.get('boundingBox').one('form'),
           value = form.one('input').get('value');
 
@@ -454,8 +477,7 @@ YUI.add('browser-search-widget', function(Y) {
               'submit', this._handleSubmit, this)
       );
       this.addEvent(
-          container.one('input').on(
-              'focus', this._setActive, this)
+          container.one('input').on('focus', this._handleInputFocus, this)
       );
       this.addEvent(
           container.one('input').on(
@@ -526,6 +548,9 @@ YUI.add('browser-search-widget', function(Y) {
        */
       this.publish(this.EVT_SEARCH_CHANGED);
       this.publish(this.EVT_SEARCH_GOHOME);
+
+      // Make sure we default to responding to AC calls.
+      this.ignoreInFlight = false;
     },
 
     /**

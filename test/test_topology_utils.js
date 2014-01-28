@@ -99,4 +99,45 @@ describe('topology utils', function() {
     existing.push([300, 300]);
     assert.deepEqual(utils.centroid(existing), [200, 200]);
   });
+
+  it('finds the center of a line between two points', function() {
+    var point_one = [0, 10],
+        point_two = [0, 20];
+
+    assert.deepEqual([0, 15], utils.findCenterPoint(point_one, point_two));
+  });
+
+  it('finds the center of a non-flat line', function() {
+    var point_one = [0, 0],
+        point_two = [13, 23];
+
+    assert.deepEqual(
+        [6.5, 11.5],
+        utils.findCenterPoint(point_one, point_two)
+    );
+  });
+
+  it('finds the center a line given decimal endpoints', function() {
+    var point_one = [0, 0],
+        point_two = [13.3, 23.54];
+
+    assert.deepEqual(
+        [6.65, 11.77],
+        utils.findCenterPoint(point_one, point_two)
+    );
+  });
+
+  it('repositions the coordinate based on offset and scale.', function() {
+    var endpoint = {x: 10, y: 20, w: 5},
+        offset = [13, 23],
+        scale = 1.5;
+
+    // X = 15 + 7.5 + 13
+    // Y = 20 * 1.5 + 23
+    assert.deepEqual(
+        [35.5, 53],
+        utils.locateRelativePointOnCanvas(endpoint, offset, scale)
+    );
+  });
+
 });
