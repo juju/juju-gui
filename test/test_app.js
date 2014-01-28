@@ -55,6 +55,7 @@ function injectData(app, data) {
     var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
+      debugger;
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
@@ -247,7 +248,7 @@ function injectData(app, data) {
 
 (function() {
 
-  describe('Application authentication', function() {
+  describe.only('Application authentication', function() {
     var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
     var conn, container, destroyMe, env, juju, utils, Y;
     var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
@@ -263,7 +264,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -272,7 +273,6 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();
@@ -720,10 +720,11 @@ function injectData(app, data) {
       container = Y.Node.create('<div id="test" class="container"></div>');
     });
 
-    afterEach(function() {
+    afterEach(function(done) {
       if (app) {
         app.destroy({remove: true});
       }
+      done();
     });
 
     it('instantiates correctly', function() {

@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('notifier widget', function() {
+describe.only('notifier widget', function() {
   var Notifier, notifierBox, Y;
 
   before(function(done) {
@@ -33,14 +33,8 @@ describe('notifier widget', function() {
 
   // Create the notifier box and attach it as first element of the body.
   beforeEach(function() {
-    notifierBox = Y.namespace('juju-tests.utils').makeContainer();
+    notifierBox = Y.namespace('juju-tests.utils').makeContainer(this);
     notifierBox.addClass('notifier-box');
-  });
-
-  // Destroy the notifier box created in beforeEach.
-  afterEach(function() {
-    notifierBox.remove();
-    notifierBox.destroy(true);
   });
 
   // Factory rendering and returning a notifier instance.

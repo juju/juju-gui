@@ -64,7 +64,7 @@ describe('topology', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer();
+    container = utils.makeContainer(this);
     container.append(Y.Node.create('<button/>')
              .addClass('thing'))
              .append(Y.Node.create('<button/>')
@@ -73,8 +73,6 @@ describe('topology', function() {
   });
 
   afterEach(function() {
-    container.remove();
-    container.destroy();
     if (topo) {
       topo.unbind();
     }
@@ -114,7 +112,7 @@ describe('topology', function() {
 
   it('should be able to create a bundle display topology', function(done) {
     container.destroy(true);
-    container = utils.makeContainer();
+    container = utils.makeContainer(this);
 
     utils.promiseImport(
         'data/wp-deployer.yaml',
@@ -139,7 +137,6 @@ describe('topology', function() {
       // and the one relation between them
       assert.equal(container.all('.relation').size(), 1);
 
-      container.remove(true);
       bundle.destroy();
       done();
     }).then(undefined, done);

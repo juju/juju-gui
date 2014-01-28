@@ -71,7 +71,7 @@ describe.skip('juju application notifications', function() {
       'ns-routing-app-extension'],
     function(Y) {
       viewContainer = Y.namespace('juju-tests.utils')
-        .makeContainer('container');
+        .makeContainer(this, 'container');
       db = new models.Database();
       nsRouter = Y.namespace('juju').Router('charmbrowser');
 

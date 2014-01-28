@@ -55,7 +55,7 @@ describe('Browser bundle detail view', function() {
   });
 
   beforeEach(function() {
-    view = generateBundleView();
+    view = generateBundleView(this);
     view._setupLocalFakebackend = function() {
       this.fakebackend = factory.makeFakeBackend();
     };
@@ -63,7 +63,6 @@ describe('Browser bundle detail view', function() {
   });
 
   afterEach(function() {
-    container.remove().destroy(true);
     view.destroy();
     cleanUp();
   });
@@ -72,8 +71,8 @@ describe('Browser bundle detail view', function() {
     browser.destroy();
   });
 
-  function generateBundleView(options) {
-    container = utils.makeContainer();
+  function generateBundleView(context, options) {
+    container = utils.makeContainer(context);
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
       store: factory.makeFakeStore(),

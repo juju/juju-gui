@@ -19,22 +19,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('prettify', function() {
-  var container, Y;
+  var container, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-tests-utils',
       'prettify'], function(Y) {
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
-  });
-
-  afterEach(function() {
-    container.remove(true);
+    container = utils.makeContainer(this, 'container');
   });
 
   it('exists', function() {

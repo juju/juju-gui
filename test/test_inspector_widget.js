@@ -30,11 +30,10 @@ describe('Inspector Widget', function() {
   });
 
   beforeEach(function() {
-    container = Y['juju-tests'].utils.makeContainer('container');
+    container = Y['juju-tests'].utils.makeContainer(this, 'container');
   });
 
   afterEach(function() {
-    container.remove(true);
     if (inspector) {
       inspector.destroy();
     }

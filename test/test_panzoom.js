@@ -39,7 +39,7 @@ describe('pan zoom module', function() {
   });
 
   beforeEach(function() {
-    viewContainer = utils.makeContainer();
+    viewContainer = utils.makeContainer(this);
     db = new models.Database();
     var view = new views.environment({container: viewContainer, db: db});
     view.render();
@@ -47,12 +47,6 @@ describe('pan zoom module', function() {
     pz = view.topo.modules.PanZoomModule;
     topo = pz.get('component');
     vis = topo.vis;
-  });
-
-  afterEach(function() {
-    if (viewContainer) {
-      viewContainer.remove(true);
-    }
   });
 
   function fixTranslate(translate) {
