@@ -39,7 +39,7 @@ describe('Inspector Settings', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -55,7 +55,6 @@ describe('Inspector Settings', function() {
     }
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
   });
 
   var setUpInspector = function(options) {

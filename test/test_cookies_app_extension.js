@@ -34,7 +34,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       container.setHTML('<div class="cookie-policy" style="display:none;">' +
           '<a class="link-cta"></a></div>');
       node = container.one('.cookie-policy');
@@ -43,7 +43,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       Y.Cookie.remove('_cookies_accepted');
-      container.remove(true);
     });
 
     it('calling check makes the node visible', function() {

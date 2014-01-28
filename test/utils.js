@@ -95,7 +95,20 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return f;
     },
 
-    makeContainer: function(id, visibleContainer) {
+    makeContainer: function(ctx, id, visibleContainer) {
+      // You must pass a context and it must be a valid object.
+      if (arguments.length < 1) {
+        throw (
+            'makeContainer requires a context in order to track containers' +
+            'to cleanup.');
+      }
+
+      if (typeof ctx !== 'object') {
+        throw (
+            'makeContainer requires a context object in order to track ' +
+            'containers to cleanup.');
+      }
+
       var container = Y.Node.create('<div>');
       if (id) {
         container.set('id', id);
@@ -106,6 +119,19 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         container.setStyle('top', '-10000px');
         container.setStyle('left', '-10000px');
       }
+
+      // Add the destroy ability to the test hook context to be run on
+      // afterEach automatically.
+<<<<<<< HEAD
+      ctx._cleanups.push(function() {
+        container.remove(true);
+        container.destroy();
+=======
+      ctx.addCleanup(function() {
+        container.remove(true);
+>>>>>>> 25f20b8... Get initial working demo of the auto cleanup makeContainer
+      });
+
       return container;
     },
 

@@ -127,7 +127,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer('content');
+      container = testUtils.makeContainer(this, 'content');
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -149,7 +149,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function(done) {
-      container.remove(true);
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];

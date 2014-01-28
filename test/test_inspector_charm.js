@@ -48,9 +48,6 @@ describe('Inspector Charm', function() {
       fakeStore.destroy();
     }
 
-    if (testContainer) {
-      testContainer.remove(true);
-    }
   });
 
   it('should ensure the viewlet exists', function() {
@@ -59,7 +56,7 @@ describe('Inspector Charm', function() {
 
   it('renders the viewlet with a charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', false);
-    testContainer = utils.makeContainer();
+    testContainer = utils.makeContainer(this);
     testContainer.setHTML('<div class="left-breakout"></div>');
 
     fakeStore = new Y.juju.charmworld.APIv3({});
@@ -98,7 +95,7 @@ describe('Inspector Charm', function() {
 
   it('renders the viewlet with a cached charm', function(done) {
     var data = utils.loadFixture('data/browsercharm.json', true);
-    testContainer = utils.makeContainer();
+    testContainer = utils.makeContainer(this);
     testContainer.setHTML('<div class="left-breakout"></div>');
 
     fakeStore = new Y.juju.charmworld.APIv3({});

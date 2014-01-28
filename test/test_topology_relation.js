@@ -33,14 +33,11 @@ describe('topology relation module', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer();
+    container = utils.makeContainer(this);
     view = new views.RelationModule();
-
   });
 
   afterEach(function() {
-    container.remove();
-    container.destroy();
     if (topo) {
       topo.unbind();
     }
