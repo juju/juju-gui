@@ -247,6 +247,110 @@ function injectData(app, data) {
 
 (function() {
 
+  // Sometimes a large display element needs lots of space in the viewport.  To
+  // accommodate that eventuality, a set of events can be fired to manage
+  // making room for said large elements.
+
+  describe('Viewport takeover handling', function() {
+    var Y, app, container, utils, juju, env, conn;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+          function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      window._gaq = [];
+      container = Y.one('#main')
+        .appendChild(Y.Node.create('<div/>'))
+          .set('id', 'test-container')
+          .addClass('container')
+          .append(Y.Node.create('<span/>')
+            .set('id', 'environment-name'))
+          .append(Y.Node.create('<span/>')
+            .addClass('provider-type'))
+          .hide();
+
+    });
+
+    afterEach(function(done) {
+      app.after('destroy', function() {
+        container.remove(true);
+        sessionStorage.setItem('credentials', null);
+        done();
+      });
+
+      app.destroy();
+    });
+
+    function constructAppInstance(config) {
+      config = config || {};
+      if (config.env && config.env.connect) {
+        config.env.connect();
+      }
+      config.container = container;
+      config.viewContainer = container;
+
+      app = new Y.juju.App(config);
+      app.navigate = function() {};
+      app.showView(new Y.View());
+      injectData(app);
+      return app;
+    }
+
+    it('minimizes the sidebar on viewportTakeoverStarting', function(done) {
+      app = constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+
+      // When a viewportTakeoverStarting event is fired the app minimizes the
+      // sidebar.
+      app.get('subApps').charmbrowser.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.viewmode, 'minimized');
+        done();
+      });
+
+      app.fire('viewportTakeoverStarting');
+    });
+
+    it('restores the sidebar on viewportTakeoverEnding', function(done) {
+      app = constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+
+      app.fire('viewportTakeoverStarting');
+
+      // When a viewportTakeoverEnding event is fired the app resotes the
+      // sidebar.
+      app.get('subApps').charmbrowser.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.viewmode, 'sidebar');
+        done();
+      });
+
+      app.fire('viewportTakeoverEnding');
+    });
+
+  });
+})();
+
+
+(function() {
+
   describe('Application authentication', function() {
     var FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
     var conn, container, destroyMe, env, juju, utils, Y;

@@ -461,6 +461,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // remove the element from the DOM
         existing.container.remove(true);
         this.get('container').one(this.slots[existing.slot]).hide();
+        console.log('firing viewletSlotClosing');
+        this.fire('viewletSlotClosing');
       }
     },
 
