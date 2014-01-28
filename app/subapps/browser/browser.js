@@ -52,6 +52,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     _cleanOldViews: function(newViewMode) {
+      // XXX newViewMode is unused.
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
         if (this[viewAttr]) {
@@ -144,7 +145,7 @@ YUI.add('subapp-browser', function(Y) {
 
       if (this._viewState.viewmode !== 'sidebar' ||
           this._viewState.search) {
-        //There's no need to add the default view if we
+        // There's no need to add the default view if we
         // don't need it. However it's currently required for search views to
         // match our current routes.
         urlParts.push(this._viewState.viewmode);
@@ -1009,7 +1010,8 @@ YUI.add('subapp-browser', function(Y) {
       @return {undefined} Nothing.
     */
     getViewMode: function() {
-      return this._viewState.viewmode;
+      // If no view mode is set, "sidebar" is the default.
+      return this._viewState.viewmode || 'sidebar';
     }
   }, {
     ATTRS: {

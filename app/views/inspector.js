@@ -859,7 +859,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
-      this.options.environment.topo.fire('takeoverStarting');
+      this.options.environment.topo.fire('viewportTakeoverStarting');
     },
 
     /**
@@ -985,10 +985,10 @@ YUI.add('juju-view-inspector', function(Y) {
     onShowCharmDetails: function(ev) {
       ev.halt();
       var db = this.viewletManager.get('db');
-      var charmId = ev.currentTarget.getAttribute('data-charmid');
+      var charmId = ev.currentTarget.getData('charmid');
       var charm = db.charms.getById(charmId);
       this.viewletManager.showViewlet('charmDetails', charm);
-      this.options.environment.topo.fire('takeoverStarting');
+      this.options.environment.topo.fire('viewportTakeoverStarting');
     },
 
     /**
@@ -1395,8 +1395,7 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.showViewlet('inspectorHeader', model);
       this.viewletManager.showViewlet(options.viewletList[0]);
       this.viewletManager.on('viewletSlotClosing', function() {
-        console.log('viewletSlotClosing -> takeoverEnding');
-        self.options.environment.topo.fire('takeoverEnding');
+        self.options.environment.topo.fire('viewportTakeoverEnding');
       });
     }
 
