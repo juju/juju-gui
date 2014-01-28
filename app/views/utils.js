@@ -1255,7 +1255,42 @@ YUI.add('juju-view-utils', function(Y) {
     return subordinateModel && relation.scope === 'container';
   };
 
-  /**
+  var _relationCollection = {};
+
+  Object.defineProperties(_relationCollection, {
+    aggregatedStatus: {
+      // XXX Makyo 2014-01-24: return 'healthy' for now (card on board)
+      value: 'healthy'
+    }
+  });
+
+  function RelationCollection(source, target, relations) {
+    var r = Object.create(_relationCollection);
+    r.source = source;
+    r.target = target;
+    r.relations = relations;
+    r.id = relations[0].id;
+    r.compositeId = relations[0].id;
+    return r;
+  }
+
+  views.RelationCollection = RelationCollection;
+  
+  views.toRelationCollections = function(relations) {
+    var collections = {};
+    relations.forEach(function(relation) {
+      var key = [relation.source.id, relation.target.id].sort().join();
+      if (collections[key]) {
+        collections[key].relations.push(relation);
+      } else {
+        collections[key] = new RelationCollection(
+          relation.source, relation.target, [relation]);
+      }
+    });
+    return Y.Object.values(collections);
+  };
+
+  /*
     Given one of the many agent states returned by juju-core,
     return a simplified version.
 
