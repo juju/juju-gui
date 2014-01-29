@@ -66,6 +66,10 @@ describe('service module annotations', function() {
     serviceModule.destroy();
   });
 
+  afterEach(function() {
+    serviceModule.destroy();
+  });
+
   // Test the drag end handler.
   it('should set location annotations on service block drag end',
      function() {

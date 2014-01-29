@@ -19,7 +19,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe.only('notifier widget', function() {
+// XXX #1274249: notifier tests fail with auto cleaning containers.
+describe.skip('notifier widget', function() {
   var Notifier, notifierBox, Y;
 
   before(function(done) {
