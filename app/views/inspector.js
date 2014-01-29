@@ -859,7 +859,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
-      this.options.environment.topo.fire('viewportTakeoverStarting');
+      this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
     /**
@@ -988,7 +988,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var charmId = ev.currentTarget.getData('charmid');
       var charm = db.charms.getById(charmId);
       this.viewletManager.showViewlet('charmDetails', charm);
-      this.options.environment.topo.fire('viewportTakeoverStarting');
+      this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
     /**
@@ -1395,8 +1395,8 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.showViewlet('inspectorHeader', model);
       this.viewletManager.showViewlet(options.viewletList[0]);
       this.viewletManager.on('viewletSlotClosing', function() {
-        self.options.environment.topo.fire('viewportTakeoverEnding');
-      });
+        this.viewletManager.fire('inspectorTakeoverEnding');
+      }, this);
     }
 
     ServiceInspector.prototype = controllerPrototype;
