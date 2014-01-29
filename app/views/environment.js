@@ -51,12 +51,6 @@ YUI.add('juju-view-environment', function(Y) {
       this._inspectors = {};
     },
 
-
-    destructor: function() {
-
-
-    },
-
     /**
      * Wrapper around topo.update. Rather than re-rendering a whole
      * topology, the view can require data updates when needed.
@@ -469,6 +463,7 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
+    'event-tracker',
     'handlebars-base',
     'juju-models',
     'juju-templates',

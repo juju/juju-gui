@@ -51,7 +51,8 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer], {
+                                                  Y.juju.GhostDeployer,
+                                                  Y.Event.EventTracker], {
 
     /*
       Extension properties
@@ -1099,29 +1100,33 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          this.views.environment.instance.on('envTakeOverStarting', function(ev) {
-            // When told that someone wants to take over the view, let them
-            // have it.
-            debugger;
-            var charmbrowser = this.get('subApps').charmbrowser;
-            // Capture the original view mode so we can set it back later.
-            var originalViewMode = charmbrowser.getViewMode();
-            // Once the takeover has ended, put the original view mode back.
-            this.views.environment.instance.on('envTakeOverEnding', function(e) {
+          this.addEvent(
+            this.views.environment.instance.on('envTakeOverStarting', function(ev) {
+              // When told that someone wants to take over the view, let them
+              // have it.
               debugger;
+              var charmbrowser = this.get('subApps').charmbrowser;
+              // Capture the original view mode so we can set it back later.
+              var originalViewMode = charmbrowser.getViewMode();
+              // Once the takeover has ended, put the original view mode back.
+              this.addEvent(
+                this.views.environment.instance.on('envTakeOverEnding', function(e) {
+                  debugger;
+                  charmbrowser.fire('viewNavigate', {
+                    change: {
+                      viewmode: originalViewMode
+                    }
+                  });
+                }, this)
+              );
+              // Minimize the sidebar because something big wants more space.
               charmbrowser.fire('viewNavigate', {
                 change: {
-                  viewmode: originalViewMode
+                  viewmode: 'minimized'
                 }
               });
-            }, this);
-            // Minimize the sidebar because something big wants more space.
-            charmbrowser.fire('viewNavigate', {
-              change: {
-                viewmode: 'minimized'
-              }
-            });
-          }, this);
+            }, this)
+          );
 
         },
         render: true
@@ -1365,6 +1370,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-import-helpers',
+    'event-tracker',
     'node',
     'model',
     'app-cookies-extension',

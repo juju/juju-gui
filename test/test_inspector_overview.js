@@ -1029,7 +1029,7 @@ describe('Inspector Overview', function() {
 
   describe('viewport takeover handling', function() {
 
-    it('showUnitDetails fires viewportTakeoverStarting', function() {
+    it('showUnitDetails fires inspectorTakeoverStarting', function() {
       inspector = setUpInspector(null, true);
       var fauxEvent = {
         halt: function() {},
@@ -1052,7 +1052,7 @@ describe('Inspector Overview', function() {
       inspector.showUnitDetails(fauxEvent);
     });
 
-    it('onShowCharmDetails fires viewportTakeoverStarting', function() {
+    it('onShowCharmDetails fires inspectorTakeoverStarting', function() {
       inspector = setUpInspector(null, true);
       var fauxEvent = {
         halt: function() {},
