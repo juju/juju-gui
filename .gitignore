@@ -24,3 +24,4 @@ test/extracted_startup_code
 libpeerconnection.log
 .vagrant
 .floo*
+*.pyc

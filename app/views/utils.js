@@ -1257,13 +1257,33 @@ YUI.add('juju-view-utils', function(Y) {
 
   var _relationCollection = {};
 
+  /*
+   * Fill out properties of related collections.  These mostly just aggregate
+   * various relation attributes in ways conducive to displaying a collection
+   * of relations appropriately.
+   */
   Object.defineProperties(_relationCollection, {
     aggregatedStatus: {
       // XXX Makyo 2014-01-24: return 'healthy' for now (card on board)
       value: 'healthy'
+    },
+    isSubordinate: {
+      get: function() {
+        return Y.Array.every(this.relations, function(relation) {
+          return relation.isSubordinate;
+        });
+      }
     }
   });
 
+  /**
+   * @method RelationCollection
+   * @param {Object} source The source-service.
+   * @param {Object} target The target-service.
+   * @param {Array} relations An array of relations connecting those two
+   *   services.
+   * @return {RelationCollection} A relation collection.
+   */
   function RelationCollection(source, target, relations) {
     var r = Object.create(_relationCollection);
     r.source = source;
@@ -1275,7 +1295,7 @@ YUI.add('juju-view-utils', function(Y) {
   }
 
   views.RelationCollection = RelationCollection;
-  
+
   views.toRelationCollections = function(relations) {
     var collections = {};
     relations.forEach(function(relation) {
@@ -1284,7 +1304,7 @@ YUI.add('juju-view-utils', function(Y) {
         collections[key].relations.push(relation);
       } else {
         collections[key] = new RelationCollection(
-          relation.source, relation.target, [relation]);
+            relation.source, relation.target, [relation]);
       }
     });
     return Y.Object.values(collections);

@@ -648,7 +648,10 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(relation, view, confirmButton);
+            // XXX Makyo 2014-01-28 This will need to be the relation chosen
+            // for removal, once the menu is in place. For now, just remove
+            // the first one.
+            view.removeRelation(relation.relations[0], view, confirmButton);
           },
           this)));
     },

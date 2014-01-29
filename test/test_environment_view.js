@@ -1019,6 +1019,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           fauxController.destroy();
         });
 
+    it('stores relations in collections', function() {
+      db.onDelta({data: { 'result': [
+        ['relation', 'add', {
+          'interface': 'mysql',
+          'scope': 'global',
+          'endpoints':
+           [['mysql', {'role': 'server', 'name': 'db'}],
+            ['mediawiki', {'role': 'client', 'name': 'db'}]],
+           'id': 'relation-0000000011'
+        }],
+        ['relation', 'add', {
+          'interface': 'mysql-slave',
+          'scope': 'global',
+          'endpoints':
+           [['mysql', {'role': 'server', 'name': 'db-slave'}],
+            ['mediawiki', {'role': 'client', 'name': 'db-slave'}]],
+           'id': 'relation-0000000012'
+        }]
+      ]}});
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+      var module = view.topo.modules.RelationModule;
+      // RelationCollections have an aggregatedStatus.
+      assert.equal(module.relations[0].aggregatedStatus, 'healthy');
+      // RelationCollections can store more than one relation.
+      assert.equal(module.relations[2].relations.length, 2);
+      // Only one line is drawn (that is, there are four container relations,
+      // but only three lines on the canvas).
+      assert.equal(view.topo.vis.selectAll('line').size(),
+          module.relations.length);
+      assert.equal(module.relations.length, 3);
+      assert.equal(db.relations.filter(function(relation) {
+        return relation.get('scope') !== 'container';
+      }).length, 4);
+    });
+
     it('propagates the getModelURL function to the topology', function() {
       var getModelURL = function() {
         return 'placeholder value';
