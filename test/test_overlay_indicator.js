@@ -19,26 +19,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('overlay indicator', function() {
-  var container, indicator, widget, Y;
+  var container, indicator, utils, widget, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-overlay-indicator',
       'juju-tests-utils', 'node'],
     function(Y) {
       widget = Y.juju.widgets.browser;
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer(this, 'container');
   });
 
   afterEach(function() {
     if (indicator) {
       indicator.destroy();
     }
-    container.remove(true);
   });
 
   it('exists', function() {

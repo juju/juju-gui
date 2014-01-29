@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('onboarding process', function() {
-    var container, env_help, OnboardingView, views, utils, Y;
+    var container, env_help, onboard, OnboardingView, views, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -38,17 +38,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = utils.makeContainer('onboarding');
-      env_help = utils.makeContainer('environment-help');
+      container = utils.makeContainer(this, 'onboarding');
+      env_help = utils.makeContainer(this, 'environment-help');
     });
 
     afterEach(function() {
-      container.remove(true);
-      env_help.remove(true);
-    });
-
-    after(function() {
-
+      if (onboard) {
+        onboard.destroy();
+      }
     });
 
     it('should exist in the views namespace', function() {
@@ -56,12 +53,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('inits values correctly', function() {
-      var onboard = new OnboardingView();
+      onboard = new OnboardingView();
       assert.equal(onboard.onboardingIndex, 0);
     });
 
     it('increments screen index correctly', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -73,7 +70,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('decrements screen index correctly', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -86,7 +83,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('renders correctly on first load', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -100,7 +97,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('updates background css properly', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -119,7 +116,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('displays correct stage of onboarding', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -148,7 +145,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('closes onboarding', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -162,7 +159,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should not be shown if seen before', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       });
 
@@ -173,7 +170,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets index to 0, clears out local storage on reset', function() {
-      var onboard = new OnboardingView({
+      onboard = new OnboardingView({
         container: container
       }).render();
       onboard.nextHandler({halt: function() {}});

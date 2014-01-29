@@ -46,7 +46,7 @@ describe('search view', function() {
   beforeEach(function() {
     // Mock out a dummy location for the Store used in view instances.
     window.juju_config = {charmworldURL: 'http://charmworld.example'};
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     view = new Y.juju.browser.views.BrowserSearchView({
       filters: {text: 'foo'}
     });
@@ -84,7 +84,6 @@ describe('search view', function() {
   afterEach(function() {
     delete window.juju_config;
     view.destroy();
-    container.remove(true);
   });
 
   after(function() {
