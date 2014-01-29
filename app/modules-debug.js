@@ -177,6 +177,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/app-cookies-extension.js'
         },
 
+        'local-charm-import-helpers': {
+          fullpath: '/juju-ui/assets/javascripts/local-charm-import-helpers.js'
+        },
+
         'bundle-import-helpers': {
           fullpath: '/juju-ui/assets/javascripts/bundle-import-helpers.js'
         },

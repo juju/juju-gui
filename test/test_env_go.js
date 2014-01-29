@@ -494,6 +494,116 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('Local charm upload support', function() {
+
+      it('prevents non authorized users from sneding files', function(done) {
+        env.userIsAuthenticated = false;
+        var warn = console.warn,
+            called = false;
+
+        console.warn = function(msg) {
+          assert.equal(
+              msg, 'Attempted upload files without providing credentials.');
+          called = true;
+        };
+        var handler = env.on('login', function(e) {
+          assert.deepEqual(e.data, {result: false});
+          assert.equal(called, true, 'Console warning not called');
+          handler.detach();
+          console.warn = warn;
+          done();
+        });
+        env.uploadLocalCharm();
+      });
+
+      it('generates an XMLHTTPRequest instance', function() {
+        var xhr = env._generateXHRRequest();
+        assert.equal(xhr instanceof XMLHttpRequest, true);
+      });
+
+      it('opens and sends an XHR request with the proper data', function() {
+        var _generateXHRRequestCalled = false,
+            openCalled = false,
+            sendCalled = false,
+            addEventListenerCallCount = 0,
+            addEventListenerEvents = [],
+            addHeaders = [],
+            setHeaderCallCount = 0,
+            SERIES = 'precise',
+            FILEOBJ = { name: 'foo' };
+
+        env.userIsAuthenticated = true;
+        env._generateXHRRequest = function() {
+          _generateXHRRequestCalled = true;
+          return {
+            addEventListener: function(eventName, handler, dir) {
+              addEventListenerEvents.push(eventName);
+              assert.isFunction(handler);
+              assert.equal(dir, false);
+              addEventListenerCallCount += 1;
+            },
+            open: function(type, url, async, username, password) {
+              assert.equal(type, 'POST');
+              assert.equal(url, '/juju-core/charms?series=' + SERIES);
+              assert.equal(async, true);
+              openCalled = true;
+            },
+            setRequestHeader: function(key, val) {
+              var header = {};
+              header[key] = val;
+              addHeaders.push(header);
+              setHeaderCallCount += 1;
+            },
+            send: function(file) {
+              assert.deepEqual(file, FILEOBJ);
+              sendCalled = true;
+            }
+          };
+        };
+
+        env.uploadLocalCharm(FILEOBJ, SERIES);
+
+        assert.equal(_generateXHRRequestCalled, true);
+        assert.equal(openCalled, true);
+        assert.equal(sendCalled, true);
+        assert.equal(addEventListenerCallCount, 2);
+        assert.deepEqual(addEventListenerEvents, ['progress', 'load']);
+        assert.deepEqual(setHeaderCallCount, 2);
+        assert.deepEqual(addHeaders, [
+          {'Authorization': 'Basic dXNlcjpwYXNzd29yZA=='},
+          {'Content-Type': 'application/zip'}
+        ]);
+        // Test the storing of the event handler so we can detach it later.
+        assert.isFunction(env.get('xhrEventHandler'));
+      });
+
+      it('calls the progress callback on the progress event', function(done) {
+        var e = { type: 'progress'};
+        env._xhrEventHandler(null, function(event) {
+          assert.deepEqual(event, e);
+          done();
+        }, null, e);
+      });
+
+      it('calls the default callback on the load event', function(done) {
+        var e = { type: 'load'},
+            removeEventListenerCount = 0,
+            removeEventListenerEvents = [];
+        env._xhrEventHandler(function(event) {
+          assert.deepEqual(event, e);
+          assert.equal(removeEventListenerCount, 2);
+          assert.deepEqual(removeEventListenerEvents, ['progress', 'load']);
+          done();
+        }, null, {
+          removeEventListener: function(eventName) {
+            removeEventListenerEvents.push(eventName);
+            removeEventListenerCount += 1;
+          }
+        }, e);
+      });
+
+    });
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();

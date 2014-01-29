@@ -27,7 +27,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-topology-service', function(Y) {
   var d3ns = Y.namespace('d3'),
-      importHelpers = Y.namespace('juju').BundleHelpers,
+      bundleImportHelpers = Y.namespace('juju').BundleHelpers,
+      localCharmHelpers = Y.namespace('juju').localCharmHelpers,
       models = Y.namespace('juju.models'),
       topoUtils = Y.namespace('juju.topology.utils'),
       utils = Y.namespace('juju.views.utils'),
@@ -623,8 +624,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * Handle deploying services by dropping a charm onto the canvas or
-     * dropping a yaml bundle deployer file from your file system.
+     * Handle deploying services by dropping a charm from the charm browser,
+     * a bundle yaml deployer file, or zip containing a local charm
+     * onto the canvas.
      *
      * @method canvasDropHandler
      * @param {Y.EventFacade} e the drop event object.
@@ -636,51 +638,76 @@ YUI.add('juju-topology-service', function(Y) {
       e.halt();
       var topo = this.get('component');
       var evt = e._event;
-      var dataTransfer = evt.dataTransfer;
-      var fileSources = dataTransfer.files;
+      var fileSources = evt.dataTransfer.files;
       var env = topo.get('env');
       var db = topo.get('db');
       if (fileSources && fileSources.length) {
-        importHelpers.deployBundleFiles(fileSources, env, db);
+        // If it is a file from the users file system being dropped.
+        Array.prototype.forEach.call(fileSources, function(file) {
+          // In order to support the user dragging and dropping multiple files
+          // of mixed types we handle each file individually.
+          var ext = file.name.split('.').slice(-1).toString();
+
+          if ((file.type === 'application/zip' ||
+               file.type === 'application/x-zip-compressed') &&
+              ext === 'zip') {
+            localCharmHelpers.deployLocalCharm(file, env, db);
+          } else {
+            // We are going to assume it's a bundle if it's not a zip
+            bundleImportHelpers.deployBundleFiles(file, env, db);
+          }
+        });
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
-        var dragData = JSON.parse(dataTransfer.getData('Text'));
-        var translation = topo.get('translate');
-        var scale = topo.get('scale');
-        var ghostAttributes = { coordinates: [] };
-        // The following magic number 71 is the height of the header and is
-        // required to position the service in the proper y position.
-        var dropXY = [evt.clientX, (evt.clientY - 71)];
+        this._deployFromCharmbrowser(evt, topo);
+      }
+    },
 
-        // Take the x,y offset (translation) of the topology view into
-        // account.
-        Y.Array.each(dropXY, function(_, index) {
-          ghostAttributes.coordinates[index] =
-              (dropXY[index] - translation[index]) / scale;
-        });
-        if (dragData.dataType === 'token-drag-and-drop') {
-          // The entiy (charm or bundle) data was JSON encoded because the
-          // dataTransfer mechanism only allows for string values.
-          var entityData = Y.JSON.parse(dragData.data);
-          if (utils.determineEntityDataType(entityData) === 'charm') {
-            // Add the icon url to the ghost attributes for the ghost icon
-            ghostAttributes.icon = dragData.iconSrc;
-            var charm = new models.Charm(entityData);
-            Y.fire('initiateDeploy', charm, ghostAttributes);
-          } else {
-            // The deployer format requires a top-level key to hold the bundle
-            // data, so we wrap the entity data in a mapping.  The deployer
-            // format is YAML, but JSON is a subset of YAML, so we can just
-            // encode it this way.
-            importHelpers.deployBundle(
-                Y.JSON.stringify({
-                  bundle: entityData.data
-                }),
-                entityData.id,
-                env,
-                db
-            );
-          }
+    /**
+      Called from canvasDropHandler.
+
+      Handles deploying a charm or bundle from the charmbrowser.
+
+      @method _deployFromCharmbrowser
+      @param {Object} evt The drop event.
+      @param {Object} topo The environment.
+    */
+    _deployFromCharmbrowser: function(evt, topo) {
+      var dragData = JSON.parse(evt.dataTransfer.getData('Text'));
+      var translation = topo.get('translate');
+      var scale = topo.get('scale');
+      var ghostAttributes = { coordinates: [] };
+      // The following magic number 71 is the height of the header and is
+      // required to position the service in the proper y position.
+      var dropXY = [evt.clientX, (evt.clientY - 71)];
+
+      // Take the x,y offset (translation) of the topology view into account.
+      Y.Array.each(dropXY, function(_, index) {
+        ghostAttributes.coordinates[index] =
+            (dropXY[index] - translation[index]) / scale;
+      });
+      if (dragData.dataType === 'token-drag-and-drop') {
+        // The entiy (charm or bundle) data was JSON encoded because the
+        // dataTransfer mechanism only allows for string values.
+        var entityData = Y.JSON.parse(dragData.data);
+        if (utils.determineEntityDataType(entityData) === 'charm') {
+          // Add the icon url to the ghost attributes for the ghost icon
+          ghostAttributes.icon = dragData.iconSrc;
+          var charm = new models.Charm(entityData);
+          Y.fire('initiateDeploy', charm, ghostAttributes);
+        } else {
+          // The deployer format requires a top-level key to hold the bundle
+          // data, so we wrap the entity data in a mapping. The deployer
+          // format is YAML, but JSON is a subset of YAML, so we can just
+          // encode it this way.
+          bundleImportHelpers.deployBundle(
+              Y.JSON.stringify({
+                bundle: entityData.data
+              }),
+              entityData.id,
+              topo.get('env'),
+              topo.get('db')
+          );
         }
       }
     },
@@ -1301,6 +1328,7 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-models',
     'juju-env',
     'unscaled-pack-layout',
-    'bundle-import-helpers'
+    'bundle-import-helpers',
+    'local-charm-import-helpers'
   ]
 });

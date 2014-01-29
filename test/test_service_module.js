@@ -357,12 +357,13 @@ describe('service module events', function() {
   });
 
   it('should deploy a bundle on file drop events', function(done) {
+    var file = { name: '', type: '' };
     var fakeEventObject = {
       halt: function() {},
       _event: {
         dataTransfer: {
           // All we need to fake things out is to have a file.
-          files: [1]
+          files: [file]
         }
       }
     };
@@ -370,9 +371,75 @@ describe('service module events', function() {
     // mock out the Y.BundleHelpers call.
     var _deployBundleFiles = juju.BundleHelpers.deployBundleFiles;
     juju.BundleHelpers.deployBundleFiles = function(files, env, db) {
-      assert.deepEqual(files, [1]);
+      assert.deepEqual(files, file);
       // Restore the deployBundleFiles call for future tests.
       juju.BundleHelpers.deployBundleFiles = _deployBundleFiles;
+      done();
+    };
+
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
+
+  it('deploys a local charm on .zip file drop events', function(done) {
+    var file = {
+      // Using a complex name to make sure the extension filtering works
+      name: 'foo-bar.baz.zip',
+      // This MIME type is used in Chrome and Firefox, see the
+      // following test for uploading a charm zip using IE11.
+      type: 'application/zip'
+    };
+    var fakeEventObject = {
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [file]
+        }
+      }
+    };
+
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
+    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+      assert.deepEqual(files, file);
+      assert.isObject(env);
+      assert.isObject(db);
+      // Restore the deployBundleFiles call for future tests.
+      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
+      done();
+    };
+
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
+
+  it('deploys a local charm on .zip file drop events (IE)', function(done) {
+    var file = {
+      // Using a complex name to make sure the extension filtering works
+      name: 'foo-bar.baz.zip',
+      // This MIME type is used only in IE11 see the above test
+      // for the MIME type used in Firefox and Chrome.
+      type: 'application/x-zip-compressed'
+    };
+    var fakeEventObject = {
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [file]
+        }
+      }
+    };
+
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
+    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+      assert.deepEqual(files, file);
+      assert.isObject(env);
+      assert.isObject(db);
+      // Restore the deployBundleFiles call for future tests.
+      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
       done();
     };
 
