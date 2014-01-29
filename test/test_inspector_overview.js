@@ -1026,4 +1026,51 @@ describe('Inspector Overview', function() {
     });
   });
 
+  describe('viewport takeover handling', function() {
+
+    it('showUnitDetails fires inspectorTakeoverStarting', function() {
+      inspector = setUpInspector(null, true);
+      var fauxEvent = {
+        halt: function() {},
+        currentTarget: {
+          getData: function(name) {
+            assert.equal(name, 'unit');
+            return 'mediawiki/1';
+          }
+        }
+      };
+      inspector.viewletManager.set('db', {
+        services: {
+          getById: function() {return db.services.getById('mediawiki');}
+        },
+        relations: {
+          get_relations_for_service: function() {return [];}
+        }
+      });
+
+      inspector.showUnitDetails(fauxEvent);
+    });
+
+    it('onShowCharmDetails fires inspectorTakeoverStarting', function() {
+      inspector = setUpInspector(null, true);
+      var fauxEvent = {
+        halt: function() {},
+        currentTarget: {
+          getData: function(name) {
+            assert.equal(name, 'charmid');
+            return 'precise/mediawiki-14';
+          }
+        }
+      };
+      inspector.viewletManager.set('db', {
+        charms: {
+          getById: function(id) {return db.charms.getById(id);}
+        }
+      });
+
+      inspector.onShowCharmDetails(fauxEvent);
+    });
+
+  });
+
 });
