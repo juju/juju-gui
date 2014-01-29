@@ -1024,6 +1024,40 @@ YUI.add('juju-gui', function(Y) {
       Y.all('.environment-name').set('text', environmentName);
     },
 
+    onEnvTakeOverStarting: function(ev) {
+      // When told that someone wants to take over the view, let them
+      // have it.
+      debugger;
+      var charmbrowser = this.get('subApps').charmbrowser;
+      // Capture the original view mode so we can set it back later.
+      var originalViewMode = charmbrowser.getViewMode();
+      // Once the takeover has ended, put the original view mode back.
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
+      };
+      this._takeOverEnding = this.views.environment.instance.on(
+          'envTakeOverEnding', function(e) {
+            debugger;
+            charmbrowser.fire('viewNavigate', {
+                change: {
+                  viewmode: originalViewMode
+                }
+            });
+
+            this._takeOverEnding.detach();
+            this._takeOverEnding = null;
+          },
+          this
+      );
+      // Minimize the sidebar because something big wants more space.
+      charmbrowser.fire('viewNavigate', {
+        change: {
+          viewmode: 'minimized'
+        }
+      });
+    },
+
     /**
        Determine if the browser or environment should be rendered or not.
 
@@ -1102,29 +1136,7 @@ YUI.add('juju-gui', function(Y) {
           this.views.environment.instance.rendered();
           this.addEvent(
             this.views.environment.instance.on('envTakeOverStarting', function(ev) {
-              // When told that someone wants to take over the view, let them
-              // have it.
-              debugger;
-              var charmbrowser = this.get('subApps').charmbrowser;
-              // Capture the original view mode so we can set it back later.
-              var originalViewMode = charmbrowser.getViewMode();
-              // Once the takeover has ended, put the original view mode back.
-              this.addEvent(
-                this.views.environment.instance.on('envTakeOverEnding', function(e) {
-                  debugger;
-                  charmbrowser.fire('viewNavigate', {
-                    change: {
-                      viewmode: originalViewMode
-                    }
-                  });
-                }, this)
-              );
-              // Minimize the sidebar because something big wants more space.
-              charmbrowser.fire('viewNavigate', {
-                change: {
-                  viewmode: 'minimized'
-                }
-              });
+              this.onEnvTakeOverStarting(ev);
             }, this)
           );
 
