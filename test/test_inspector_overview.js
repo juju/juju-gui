@@ -44,7 +44,7 @@ describe('Inspector Overview', function() {
   beforeEach(function() {
     exposeCalled = false;
     unexposeCalled = false;
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -70,7 +70,6 @@ describe('Inspector Overview', function() {
     }
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
 
     if (client) {
       client.destroy();
@@ -576,7 +575,7 @@ describe('Inspector Overview', function() {
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -664,7 +663,7 @@ describe('Inspector Overview', function() {
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -708,7 +707,7 @@ describe('Inspector Overview', function() {
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -752,7 +751,7 @@ describe('Inspector Overview', function() {
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -791,7 +790,7 @@ describe('Inspector Overview', function() {
     // Re-create the container; d3 is smart enough to keep the existing
     // ordering of the wrappers in this test.
     newContainer.remove(true);
-    newContainer = utils.makeContainer();
+    newContainer = utils.makeContainer(this);
 
     overview.generateAndBindStatusHeaders(
         newContainer, statuses, db.environment);

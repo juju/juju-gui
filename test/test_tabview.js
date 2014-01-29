@@ -35,7 +35,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       var testcontent = [
         '<div class="tabs">',
         '<nav><ul>',
