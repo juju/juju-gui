@@ -51,6 +51,12 @@ YUI.add('juju-view-environment', function(Y) {
           this._inspectors = {};
         },
 
+
+        destructor: function() {
+
+
+        },
+
         /**
          * Wrapper around topo.update. Rather than re-rendering a whole
          * topology, the view can require data updates when needed.
@@ -140,6 +146,12 @@ YUI.add('juju-view-environment', function(Y) {
 
           serviceInspector = new views.ServiceInspector(model, combinedConfig);
 
+          // If the serviceInspector wishes to take over the screen, pass that
+          // information along to those listening.
+          serviceInspector.viewletManager.on('inspectorTakeOverStarting', function(ev) {
+            this.fire('environmentTakeOverStarting')
+          }, this);
+
           // Because the inspector can trigger it's own destruction we need to
           // listen for the event and remove it from the list of open inspectors
           serviceInspector.viewletManager.after('destroy', function(e) {
@@ -150,6 +162,7 @@ YUI.add('juju-view-environment', function(Y) {
             // soon-ish anyway in favor of a new approach.
             this.topo.fire('hideServiceMenu');
           }, this);
+
 
           // If the service is destroyed from the console then we need to
           // destroy the inspector and hide the service menu.
@@ -166,6 +179,16 @@ YUI.add('juju-view-environment', function(Y) {
               inspector.viewletManager.destroy();
             });
           }
+
+          serviceInspector.viewletManager.on('inspectorTakeoverStarting', function(ev) {
+            debugger;
+            this.fire('envTakeOverStarting');
+          }, this);
+
+          serviceInspector.viewletManager.on('inspectorTakeoverEnding', function(ev) {
+            debugger;
+            this.fire('envTakeOverEnding');
+          }, this);
 
           this.setInspector(serviceInspector);
           return serviceInspector;
@@ -382,8 +405,6 @@ YUI.add('juju-view-environment', function(Y) {
           @method destroyInspector
         */
         destroyInspector: function() {
-          // We only have a single inspector - this will need to be
-          // expanded on when/if this changes.
           Y.Object.each(this._inspectors, function(inspector) {
             inspector.viewletManager.destroy();
           });

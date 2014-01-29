@@ -437,28 +437,6 @@ YUI.add('juju-gui', function(Y) {
         this.navigate(e.url);
       }, this);
 
-      // When the viewport tells us that something large wants to take over the
-      // (majority) of the screen we want to hide the sidebar.
-      this.on('*:viewportTakeoverStarting', function(e) {
-        var charmbrowser = this.get('subApps').charmbrowser;
-        // Capture the original view mode so we can set it back later.
-        var originalViewMode = charmbrowser.getViewMode();
-        // Once the takeover has ended, put the original view mode back.
-        this.on('*:viewportTakeoverEnding', function(e) {
-          charmbrowser.fire('viewNavigate', {
-            change: {
-              viewmode: originalViewMode
-            }
-          });
-        }, this);
-        // Minimize the sidebar because something big wants more space.
-        charmbrowser.fire('viewNavigate', {
-          change: {
-            viewmode: 'minimized'
-          }
-        });
-      }, this);
-
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
@@ -1121,6 +1099,32 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          // Make sure we bind and listen to the view for any events that we
+          // care about.
+          this.views.environment.instance.on('envTakeOverStarting', function(ev) {
+            // When told that someone wants to take over the view, let them
+            // have it.
+            debugger;
+            var charmbrowser = this.get('subApps').charmbrowser;
+            // Capture the original view mode so we can set it back later.
+            var originalViewMode = charmbrowser.getViewMode();
+            // Once the takeover has ended, put the original view mode back.
+            this.views.environment.instance.on('envTakeOverEnding', function(e) {
+              debugger;
+              charmbrowser.fire('viewNavigate', {
+                change: {
+                  viewmode: originalViewMode
+                }
+              });
+            }, this);
+            // Minimize the sidebar because something big wants more space.
+            charmbrowser.fire('viewNavigate', {
+              change: {
+                viewmode: 'minimized'
+              }
+            });
+          }, this);
+
         },
         render: true
       });
