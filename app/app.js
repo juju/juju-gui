@@ -1099,8 +1099,6 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          // Make sure we bind and listen to the view for any events that we
-          // care about.
           this.views.environment.instance.on('envTakeOverStarting', function(ev) {
             // When told that someone wants to take over the view, let them
             // have it.
