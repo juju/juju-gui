@@ -349,18 +349,18 @@ YUI.add('juju-topology-relation', function(Y) {
         rect = label.append('rect');
       }
       rect.attr('width', function(d) {
-          if (!window.flags.relationCollections) {
-            return d.display_name.length * 10 + 10;
-          }
-          return 20;
-        })
+        if (!window.flags.relationCollections) {
+          return d.display_name.length * 10 + 10;
+        }
+        return 20;
+      })
         .attr('height', 20)
         .attr('x', function() {
-          if (!window.flags.relationCollections) {
-            return -parseInt(d3.select(this).attr('width'), 10) / 2;
-          }
-          return -10;
-        })
+            if (!window.flags.relationCollections) {
+              return -parseInt(d3.select(this).attr('width'), 10) / 2;
+            }
+            return -10;
+          })
         .attr('y', -10)
         .attr('rx', 10)
         .attr('ry', 10);
@@ -675,8 +675,8 @@ YUI.add('juju-topology-relation', function(Y) {
             // for removal, once the menu is in place. For now, just remove
             // the first one.
             view.removeRelation(
-              relation.relations? relation.relations[0] : relation, 
-              view, confirmButton);
+                relation.relations ? relation.relations[0] : relation,
+                view, confirmButton);
           },
           this)));
     },
