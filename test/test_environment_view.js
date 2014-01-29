@@ -1019,6 +1019,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('stores relations in collections', function() {
+      window.flags = {
+        'relationCollections': true
+      };
       db.onDelta({data: { 'result': [
         ['relation', 'add', {
           'interface': 'mysql',
@@ -1056,6 +1059,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(db.relations.filter(function(relation) {
         return relation.get('scope') !== 'container';
       }).length, 4);
+      window.flags = {};
     });
 
     it('propagates the getModelURL function to the topology', function() {

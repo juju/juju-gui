@@ -228,6 +228,9 @@ YUI.add('juju-topology-relation', function(Y) {
           decorated.push(decoratedRelation);
         }
       });
+      if (!window.flags.relationCollections) {
+        return decorated;
+      }
       return views.toRelationCollections(decorated);
     },
 
@@ -320,6 +323,9 @@ YUI.add('juju-topology-relation', function(Y) {
       // the menu.  This will be part of the styling card.
       g.selectAll('.rel-label').remove();
       g.selectAll('rect').remove();
+      if (!window.flags.relationCollections) {
+        g.selectAll('text').remove();
+      }
       var label = g.append('g')
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
@@ -333,14 +339,31 @@ YUI.add('juju-topology-relation', function(Y) {
                      Math.max(s[1], t[1]) -
                      Math.abs((s[1] - t[1]) / 2)] + ')';
               });
-      label.append('rect')
-              .attr('width', 20)
-              .attr('height', 20)
-              .attr('x', -10)
-              .attr('y', -10)
-              .attr('rx', 10)
-              .attr('ry', 10);
-
+      label.append('text')
+        .append('tspan')
+        .text(function(d) {return d.display_name; });
+      var rect;
+      if (!window.flags.relationCollections) {
+        rect = label.insert('rect', 'text');
+      } else {
+        rect = label.append('rect');
+      }
+      rect.attr('width', function(d) {
+          if (!window.flags.relationCollections) {
+            return d.display_name.length * 10 + 10;
+          }
+          return 20;
+        })
+        .attr('height', 20)
+        .attr('x', function() {
+          if (!window.flags.relationCollections) {
+            return -parseInt(d3.select(this).attr('width'), 10) / 2;
+          }
+          return -10;
+        })
+        .attr('y', -10)
+        .attr('rx', 10)
+        .attr('ry', 10);
       return g;
     },
 
@@ -651,7 +674,9 @@ YUI.add('juju-topology-relation', function(Y) {
             // XXX Makyo 2014-01-28 This will need to be the relation chosen
             // for removal, once the menu is in place. For now, just remove
             // the first one.
-            view.removeRelation(relation.relations[0], view, confirmButton);
+            view.removeRelation(
+              relation.relations? relation.relations[0] : relation, 
+              view, confirmButton);
           },
           this)));
     },
