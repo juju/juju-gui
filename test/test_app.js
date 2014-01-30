@@ -241,6 +241,44 @@ function injectData(app, data) {
       });
     });
 
+    it.only('should display a zoom message on small browsers', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      //Y.one('body').setStyle('width', '1024');
+      // Set initial browser to 1024px
+      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
+    });
+
+    it('should display a zoom message on small browsers on resize',
+        function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      // Assert message null
+      // Resize browser
+      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
+    });
+
+    it('should not display the zoom message more than once', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      // Set initial browser to 1024px
+      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
+      // Resize
+      // Message count should be 1
+    });
+
+    it('should show the correct message on a mac', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      // Set the OS to mac
+      assert.equal(app.db.notifications.item(0).get('message'),
+                   'This browser window is too small to display the Juju' +
+                  'GUI properly. Try using "command+-" to zoom the window.');
+    });
   });
 })();
 

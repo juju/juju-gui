@@ -528,6 +528,10 @@ YUI.add('juju-gui', function(Y) {
         this._renderHelpDropdownView();
       }, this);
 
+      Y.one(Y.config.win).on('resize', function(e) {
+        this._displayZoomMessage();
+      }, this);
+
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -639,6 +643,34 @@ YUI.add('juju-gui', function(Y) {
       this.helpDropdown.on('navigate', function(e) {
         this.navigate(e.url);
       }, this);
+    },
+
+    /**
+     * Display a message when the browser is too small to work.
+     *
+     * @method _displayZoomMessage
+     */
+    _displayZoomMessage: function() {
+      if (Y.UA.os === 'macintosh') {
+        var metaKey = 'command';
+      } else {
+        var metaKey = 'ctrl';
+      }
+      // Only display the message once otherwise the message will continually
+      // fire while the browser is being resized or zoomed.
+      if (!this.zoomMessageDisplayed &&
+          Y.one('body').get('winWidth') <= 1024) {
+        this.db.notifications.add(
+            new models.Notification({
+              title: 'Browser too small',
+              message: 'This browser window is too small to display the Juju' +
+                  'GUI properly. Try using "' + metaKey +
+                  '+-" to zoom the window.',
+              level: 'error'
+            })
+        );
+        this.zoomMessageDisplayed = true;
+      }
     },
 
     /**
@@ -1103,6 +1135,8 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
+      // Display the zoom message on page load.
+      this._displayZoomMessage();
       next();
     },
 
