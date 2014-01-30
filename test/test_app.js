@@ -241,12 +241,12 @@ function injectData(app, data) {
       });
     });
 
-    it.only('should display a zoom message on small browsers', function() {
+    it.only('should display a zoom message on small browsers on page load',
+        function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      //Y.one('body').setStyle('width', '1024');
-      // Set initial browser to 1024px
+      // ADD: Set initial browser to 1024px (not a resize event)
       assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
     });
 
@@ -255,8 +255,8 @@ function injectData(app, data) {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // Assert message null
-      // Resize browser
+      assert.equal(app.db.notifications.size(), 0);
+      // ADD: Resize browser
       assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
     });
 
@@ -264,17 +264,17 @@ function injectData(app, data) {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // Set initial browser to 1024px
+      // ADD: Set initial browser to 1024px
       assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
-      // Resize
-      // Message count should be 1
+      // ADD: Resize browser
+      assert.equal(app.db.notifications.size(), 1);
     });
 
     it('should show the correct message on a mac', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // Set the OS to mac
+      // ADD: Set the OS to mac
       assert.equal(app.db.notifications.item(0).get('message'),
                    'This browser window is too small to display the Juju' +
                   'GUI properly. Try using "command+-" to zoom the window.');
