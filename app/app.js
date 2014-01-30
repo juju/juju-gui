@@ -529,6 +529,10 @@ YUI.add('juju-gui', function(Y) {
         this._renderHelpDropdownView();
       }, this);
 
+      this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
+        this._handleZoomMessage();
+      }, this);
+
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -643,6 +647,36 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Display a small screen message using browser data.
+     *
+     * @method _handleZoomMessage
+     */
+    _handleZoomMessage: function() {
+      this._displayZoomMessage(Y.one('body').get('winWidth'), Y.UA.os);
+    },
+
+    /**
+     * Display a message when the browser is too small to work.
+     *
+     * @method _displayZoomMessage
+     */
+    _displayZoomMessage: function(viewportWidth, os) {
+      var metaKey = (os === 'macintosh') ? 'command' : 'ctrl';
+      // Only display the message once otherwise the message will continually
+      // fire while the browser is being resized or zoomed.
+      if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
+        this.db.notifications.add({
+          title: 'Browser size adjustment',
+          message: 'This browser needs to be maximised or zoomed out to' +
+              ' display the Juju GUI properly. Try using "' + metaKey +
+              '+-" to zoom the window.',
+          level: 'error'
+        });
+        this.zoomMessageDisplayed = true;
+      }
+    },
+
+    /**
     Export the YAML for this environment.
 
     @method exportYAML
@@ -689,6 +723,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.zoomMessageHandler) {
+        this.zoomMessageHandler.detach();
+      }
       if (this.helpDropdown) {
         this.helpDropdown.destroy();
       }
@@ -1156,6 +1193,8 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
 
+      // Display the zoom message on page load.
+      this._handleZoomMessage();
       next();
     },
 
