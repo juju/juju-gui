@@ -1277,6 +1277,9 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /**
+   * Constructor for creating a relation-collection between two services,
+   * possibly consisting of multiple actual relations.
+   *
    * @method RelationCollection
    * @param {Object} source The source-service.
    * @param {Object} target The target-service.
@@ -1285,21 +1288,35 @@ YUI.add('juju-view-utils', function(Y) {
    * @return {RelationCollection} A relation collection.
    */
   function RelationCollection(source, target, relations) {
-    var r = Object.create(_relationCollection);
-    r.source = source;
-    r.target = target;
-    r.relations = relations;
-    r.id = relations[0].id;
-    r.compositeId = relations[0].id;
-    return r;
+    var collection = Object.create(_relationCollection);
+    collection.source = source;
+    collection.target = target;
+    collection.relations = relations;
+    collection.id = relations[0].id;
+    collection.compositeId = relations[0].id;
+    return collection;
   }
 
   views.RelationCollection = RelationCollection;
 
-  views.toRelationCollections = function(relations) {
+  /**
+   * Given a list of decorated relations, return a list of relation collections
+   * such that multiple relations between the same two services will wind up
+   * in the same collection.
+   *
+   * @method toRelationCollections
+   * @param {Array} relations An array of decorated relations.
+   * @return {Array} An array of relation collections.
+   */
+  utils.toRelationCollections = function(relations) {
     var collections = {};
     relations.forEach(function(relation) {
-      var key = [relation.source.id, relation.target.id].sort().join();
+      // Create a regular key for each pair of services; use sort so that
+      // each relation between the same two services creates the same key
+      // regardless of whether it's considered the source or the target.
+      var key = [relation.source.modelId, relation.target.modelId]
+        .sort()
+        .join();
       if (collections[key]) {
         collections[key].relations.push(relation);
       } else {
@@ -1307,6 +1324,8 @@ YUI.add('juju-view-utils', function(Y) {
             relation.source, relation.target, [relation]);
       }
     });
+    // Dump just the collections; the keys are not needed for the data that
+    // is used in the view, which only expects an array of relationships.
     return Y.Object.values(collections);
   };
 

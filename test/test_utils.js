@@ -961,13 +961,14 @@ describe('utilities', function() {
 
 
 (function() {
-  describe('DecoratedRelation', function() {
+  describe('DecoratedRelation and RelationCollection', function() {
 
-    var views, Y, inputRelation, source, target;
+    var views, utils, Y, inputRelation, source, target;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', function(Y) {
         views = Y.namespace('juju.views');
+        utils = Y.namespace('juju.views.utils');
         done();
       });
     });
@@ -1017,18 +1018,6 @@ describe('utilities', function() {
     });
 
     it('includes endpoint names in its ID, if they exist', function() {
-      var source = {
-        model: { get: function() {} },
-        modelId: function() {
-          return 'source-id';
-        }
-      };
-      var target = {
-        model: { get: function() {} },
-        modelId: function() {
-          return 'target-id';
-        }
-      };
       var firstEndpointName = 'endpoint-1';
       var secondEndpointName = 'endpoint-2';
       inputRelation.endpoints = [
@@ -1074,6 +1063,28 @@ describe('utilities', function() {
       };
       relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
+    });
+
+    it('can store relations in collections', function() {
+      var thirdModel = {
+        model: { get: function() {} },
+        modelId: function() {
+          return 'third-id';
+        }
+      };
+      // Add two relations between the same two models, plus a third.
+      var relations = [
+        views.DecoratedRelation(inputRelation, source, target),
+        views.DecoratedRelation(inputRelation, source, target),
+        views.DecoratedRelation(inputRelation, source, thirdModel)
+      ];
+      var collections = utils.toRelationCollections(relations);
+      assert.equal(collections.length, 2);
+      assert.equal(collections[0].relations.length, 2);
+      assert.equal(collections[0].aggregatedStatus, 'healthy');
+      assert.isFalse(collections[0].isSubordinate);
+      assert.equal(collections[0].id, collections[0].relations[0].id);
+      assert.equal(collections[0].compositeId, collections[0].relations[0].id);
     });
 
   });
