@@ -19,9 +19,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-// XXX #1274249: notifier tests fail with auto cleaning containers.
-describe.skip('notifier widget', function() {
-  var Notifier, notifierBox, Y;
+describe('notifier widget', function() {
+  var makeContainer, Notifier, notifierBox, Y;
+
+  // These tests relying on crazy timing to work properly. We cannot clean up
+  // the containers automatically as this will cause things to blow up when
+  // we return from the timeouts.
+  makeContainer = function() {
+    var container = Y.Node.create('<div>');
+    container.addClass('notifier-container');
+    container.appendTo(document.body);
+    container.setStyle('position', 'absolute');
+    container.setStyle('top', '-10000px');
+    container.setStyle('left', '-10000px');
+    return container;
+  };
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['notifier',
@@ -34,7 +46,7 @@ describe.skip('notifier widget', function() {
 
   // Create the notifier box and attach it as first element of the body.
   beforeEach(function() {
-    notifierBox = Y.namespace('juju-tests.utils').makeContainer(this);
+    notifierBox = makeContainer();
     notifierBox.addClass('notifier-box');
   });
 
