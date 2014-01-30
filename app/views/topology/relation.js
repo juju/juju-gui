@@ -231,7 +231,7 @@ YUI.add('juju-topology-relation', function(Y) {
       if (!window.flags.relationCollections) {
         return decorated;
       }
-      return views.toRelationCollections(decorated);
+      return utils.toRelationCollections(decorated);
     },
 
     updateLinks: function() {
