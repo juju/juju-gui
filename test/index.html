@@ -49,9 +49,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var newAfterEach = function(done) {
         func.apply(this, arguments);
         if (this._cleanups && this._cleanups.length) {
-          this._cleanups.forEach(function(cleanup) {
-            cleanup();
-          });
+          while (this._cleanups.length > 0) {
+            // Run the clean up method after popping it off the stack.
+            this._cleanups.pop()();
+          }
           this._cleanups = [];
         }
         done();
