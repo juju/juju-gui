@@ -529,7 +529,7 @@ YUI.add('juju-gui', function(Y) {
       }, this);
 
       Y.one(Y.config.win).on('resize', function(e) {
-        this._displayZoomMessage();
+        this._handleZoomMessage();
       }, this);
 
       // Halt the default navigation on the juju logo to allow us to show
@@ -646,25 +646,33 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Display a small screen message using browser data.
+     *
+     * @method _handleZoomMessage
+     */
+    _handleZoomMessage: function() {
+      this._displayZoomMessage(Y.one('body').get('winWidth'), Y.UA.os);
+    },
+
+    /**
      * Display a message when the browser is too small to work.
      *
      * @method _displayZoomMessage
      */
-    _displayZoomMessage: function() {
-      if (Y.UA.os === 'macintosh') {
+    _displayZoomMessage: function(viewportWidth, os) {
+      if (os === 'macintosh') {
         var metaKey = 'command';
       } else {
         var metaKey = 'ctrl';
       }
       // Only display the message once otherwise the message will continually
       // fire while the browser is being resized or zoomed.
-      if (!this.zoomMessageDisplayed &&
-          Y.one('body').get('winWidth') <= 1024) {
+      if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
         this.db.notifications.add(
             new models.Notification({
-              title: 'Browser too small',
-              message: 'This browser window is too small to display the Juju' +
-                  'GUI properly. Try using "' + metaKey +
+              title: 'Browser size adjustment',
+              message: 'This browser needs to be maximisied or zoomed out to' +
+                  ' display the Juju GUI properly. Try using "' + metaKey +
                   '+-" to zoom the window.',
               level: 'error'
             })
@@ -1136,7 +1144,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // Display the zoom message on page load.
-      this._displayZoomMessage();
+      this._handleZoomMessage();
       next();
     },
 

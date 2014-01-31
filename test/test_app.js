@@ -241,43 +241,31 @@ function injectData(app, data) {
       });
     });
 
-    it.only('should display a zoom message on small browsers on page load',
-        function() {
+    it('should display a zoom message on small browsers', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // ADD: Set initial browser to 1024px (not a resize event)
-      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
-    });
-
-    it('should display a zoom message on small browsers on resize',
-        function() {
-      constructAppInstance({
-        env: juju.newEnvironment({ conn: new utils.SocketStub() })
-      });
-      assert.equal(app.db.notifications.size(), 0);
-      // ADD: Resize browser
-      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
+      app._displayZoomMessage(1024, 'linux');
+      assert.equal(app.db.notifications.item(0).get('title'), 'Browser size adjustment');
     });
 
     it('should not display the zoom message more than once', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // ADD: Set initial browser to 1024px
-      assert.equal(app.db.notifications.item(0).get('title'), 'Browser too small');
-      // ADD: Resize browser
+      app._displayZoomMessage(1024, 'linux');
+      assert.equal(app.db.notifications.item(0).get('title'), 'Browser size adjustment');
+      app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.size(), 1);
     });
 
-    it('should show the correct message on a mac', function() {
+    it.only('should show the correct message on a mac', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
-      // ADD: Set the OS to mac
-      assert.equal(app.db.notifications.item(0).get('message'),
-                   'This browser window is too small to display the Juju' +
-                  'GUI properly. Try using "command+-" to zoom the window.');
+      app._displayZoomMessage(1024, 'macintosh');
+      assert.isTrue(app.db.notifications.item(0).get(
+          'message').indexOf('command+-') !== -1);
     });
   });
 })();
