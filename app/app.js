@@ -1130,11 +1130,17 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
-          this.addEvent(
-              this.views.environment.instance.on('envTakeoverStarting',
-                  function(ev) {
-                    this.onEnvTakeOverStarting(ev);
-                  }, this));
+          // We only want to register this event handler once, but this method
+          // is called multiple times.
+          if (!this._envTakeoverEndingRegistered) {
+            this.addEvent(
+                this.views.environment.instance.on('envTakeoverStarting',
+                    function(ev) {
+                      ev.halt();
+                      this.onEnvTakeOverStarting(ev);
+                    }, this));
+            this._envTakeoverEndingRegistered = true;
+          }
 
         },
         render: true
