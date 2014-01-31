@@ -246,7 +246,8 @@ function injectData(app, data) {
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       app._displayZoomMessage(1024, 'linux');
-      assert.equal(app.db.notifications.item(0).get('title'), 'Browser size adjustment');
+      assert.equal(app.db.notifications.item(0).get('title'),
+          'Browser size adjustment');
     });
 
     it('should not display the zoom message more than once', function() {
@@ -254,12 +255,13 @@ function injectData(app, data) {
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
       app._displayZoomMessage(1024, 'linux');
-      assert.equal(app.db.notifications.item(0).get('title'), 'Browser size adjustment');
+      assert.equal(app.db.notifications.item(0).get('title'),
+          'Browser size adjustment');
       app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.size(), 1);
     });
 
-    it.only('should show the correct message on a mac', function() {
+    it('should show the correct message on a mac', function() {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });

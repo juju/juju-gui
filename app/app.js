@@ -660,10 +660,11 @@ YUI.add('juju-gui', function(Y) {
      * @method _displayZoomMessage
      */
     _displayZoomMessage: function(viewportWidth, os) {
+      var metaKey;
       if (os === 'macintosh') {
-        var metaKey = 'command';
+        metaKey = 'command';
       } else {
-        var metaKey = 'ctrl';
+        metaKey = 'ctrl';
       }
       // Only display the message once otherwise the message will continually
       // fire while the browser is being resized or zoomed.
