@@ -36,14 +36,13 @@ describe('token drag and drop', function() {
   });
 
   beforeEach(function() {
-    outerContainer = Y.namespace('juju-tests.utils').makeContainer()
+    outerContainer = utils.makeContainer(this)
       .addClass('yui3-token');
-    container = Y.namespace('juju-tests.utils').makeContainer();
+    container = utils.makeContainer(this);
     outerContainer.append(container);
   });
 
   afterEach(function() {
-    outerContainer.remove().destroy(true);
     if (token) {
       token.destroy();
     }

@@ -291,7 +291,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -300,7 +300,6 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();

@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser minimized view', function() {
-      var Y, container, view, views, Minimized;
+      var Y, container, utils, view, views, Minimized;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -43,6 +43,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-tests-utils',
             'subapp-browser-minimized',
             function(Y) {
+              utils = Y.namespace('juju-tests.utils');
               views = Y.namespace('juju.browser.views');
               Minimized = views.MinimizedView;
               done();
@@ -50,7 +51,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       beforeEach(function() {
-        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        container = utils.makeContainer(this, 'container');
         addBrowserContainer(Y, container);
         // Mock out a dummy location for the Store used in view instances.
         window.juju_config = {
@@ -60,9 +61,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       afterEach(function() {
         view.destroy();
-        Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
-        container.remove(true);
       });
 
       it('toggles to sidebar', function(done) {
@@ -98,7 +97,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       beforeEach(function() {
-        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        container = utils.makeContainer(this, 'container');
         addBrowserContainer(Y, container);
         // Mock out a dummy location for the Store used in view instances.
         window.juju_config = {
@@ -108,9 +107,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       afterEach(function() {
         view.destroy();
-        Y.one('#subapp-browser').remove(true);
         delete window.juju_config;
-        container.remove(true);
       });
 
       it('reroutes to minimized when toggled', function(done) {
@@ -219,7 +216,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('picks up the search widget deploy event', function(done) {
-        var container = utils.makeContainer('subapp-browser'),
+        var container = utils.makeContainer(this, 'subapp-browser'),
             fakeStore = new Y.juju.charmworld.APIv3({});
         view = new Sidebar({
           charmID: 'precise/jenkins-13',
@@ -241,7 +238,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   (function() {
     describe('browser app', function() {
-      var Y, app, browser, CharmworldAPI, container, next;
+      var Y, app, browser, CharmworldAPI, container, next, utils;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -253,6 +250,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
               CharmworldAPI = Y.namespace('juju').charmworld.APIv3;
+              utils = Y.namespace('juju-tests.utils');
               next = function() {};
               done();
             });
@@ -263,7 +261,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         window.juju_config = {
           charmworldURL: 'http://localhost'
         };
-        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        container = utils.makeContainer(this, 'container');
         addBrowserContainer(Y, container);
 
       });
@@ -272,7 +270,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         if (app) {
           app.destroy();
         }
-        container.remove(true);
         window.juju_config = undefined;
       });
 
@@ -499,7 +496,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('browser subapp display tree', function() {
       var Y, browser, container, hits, minRender, ns,
-          resetHits, sidebarRender;
+          resetHits, sidebarRender, utils;
 
       before(function(done) {
         Y = YUI(GlobalConfig).use(
@@ -509,6 +506,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-tests-utils',
             'subapp-browser', function(Y) {
               browser = Y.namespace('juju.subapps');
+              utils = Y.namespace('juju-tests.utils');
 
               resetHits = function() {
                 hits = {
@@ -536,7 +534,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       beforeEach(function() {
-        container = Y.namespace('juju-tests.utils').makeContainer('container');
+        container = utils.makeContainer(this, 'container');
         addBrowserContainer(Y, container);
 
         // Track which render functions are hit.
@@ -582,12 +580,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       afterEach(function() {
         browser.destroy();
-        Y.one('#subapp-browser').remove(true);
         // Replace the render methods for the main views we replaced for
         // testing hits.
         Y.juju.browser.views.Sidebar.prototype.render = sidebarRender;
         Y.juju.browser.views.MinimizedView.prototype.render = minRender;
-        container.remove(true);
       });
 
       it('/ dispatches correctly', function() {

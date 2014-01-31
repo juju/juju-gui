@@ -49,7 +49,7 @@ describe('Inspector Conflict UX', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer();
+    container = utils.makeContainer(this);
     db = new models.Database();
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
@@ -62,7 +62,6 @@ describe('Inspector Conflict UX', function() {
     view.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
   });
 
   function setUpInspector(options) {

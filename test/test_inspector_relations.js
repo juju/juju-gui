@@ -53,7 +53,7 @@ describe('Inspector Relations Tab', function() {
     this.relationType = config.relationType || 0;
   }
   ViewletGenerator.prototype = {
-    setup: function() {
+    setup: function(context) {
       this.oldGRDFS = viewUtils.getRelationDataForService;
       var relationType = this.relationType,
           _relationData = this._relationData;
@@ -61,7 +61,7 @@ describe('Inspector Relations Tab', function() {
       viewUtils.getRelationDataForService = function() {
         return _relationData(relationType);
       };
-      this.container = utils.makeContainer();
+      this.container = utils.makeContainer(context);
       this.model = new Y.Model({});
       this.viewletManager = utils.renderViewlet(
           this.viewlet, this.model, this.container);
@@ -73,7 +73,6 @@ describe('Inspector Relations Tab', function() {
     teardown: function() {
       this.viewletManager.destroy();
       this.model.destroy();
-      this.container.remove().destroy(true);
       viewUtils.getRelationDataForService = this.oldGRDFS;
     },
 
@@ -232,7 +231,7 @@ describe('Inspector Relations Tab', function() {
       viewlet: viewlet
     });
 
-    var vm = vg.setup().viewletManager;
+    var vm = vg.setup(this).viewletManager;
 
     assert.equal(
         vm.get('container').one('.view-content').getHTML(),
@@ -247,7 +246,7 @@ describe('Inspector Relations Tab', function() {
       relationType: 1
     });
 
-    var vm = vg.setup().viewletManager,
+    var vm = vg.setup(this).viewletManager,
         vmContainer = vm.get('container');
 
     assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
@@ -268,7 +267,7 @@ describe('Inspector Relations Tab', function() {
       relationType: 2
     });
 
-    var vm = vg.setup().viewletManager,
+    var vm = vg.setup(this).viewletManager,
         vmContainer = vm.get('container');
 
     assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
@@ -297,7 +296,7 @@ describe('Inspector Relations Tab', function() {
       relationType: 'peer'
     });
 
-    var vm = vg.setup().viewletManager,
+    var vm = vg.setup(this).viewletManager,
         vmContainer = vm.get('container');
 
     assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
@@ -318,7 +317,7 @@ describe('Inspector Relations Tab', function() {
       relationType: 'error'
     });
 
-    var vm = vg.setup().viewletManager,
+    var vm = vg.setup(this).viewletManager,
         vmContainer = vm.get('container');
 
     assert.equal(vmContainer.one('h2').getHTML(), 'Relations');
@@ -345,7 +344,7 @@ describe('Inspector Relations Tab', function() {
       relationType: 'error'
     });
 
-    var vm = vg.setup().viewletManager,
+    var vm = vg.setup(this).viewletManager,
         vmContainer = vm.get('container'),
         button = vmContainer.one('button.remove-relation');
 
