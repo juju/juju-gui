@@ -42,7 +42,7 @@ describe('browser search widget', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     search = new Search();
     search.render(container);
     cleanIconHelper = utils.stubCharmIconPath();
@@ -52,7 +52,6 @@ describe('browser search widget', function() {
     if (search) {
       search.destroy();
     }
-    container.remove(true);
     cleanIconHelper();
   });
 
@@ -72,7 +71,7 @@ describe('browser search widget', function() {
     // Skip the default beforeEach Search and create our own.
     search.destroy();
     container.remove(true);
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     search = new Search({
       withHome: true
     });
@@ -219,7 +218,7 @@ describe('search widget autocomplete', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     cleanIconHelper = utils.stubCharmIconPath();
 
     // We need a valid store instance to send back the data.
@@ -255,7 +254,6 @@ describe('search widget autocomplete', function() {
     cleanIconHelper();
     search.destroy();
     fakeStore.destroy();
-    container.remove(true);
   });
 
   after(function() {
@@ -299,7 +297,7 @@ describe('search widget autocomplete', function() {
     // Create our own search instance.
     search.destroy();
     container.remove(true);
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
 
     search.ac.on('results', function(ev) {
       // The results should be displaying now. Check for token nodes.

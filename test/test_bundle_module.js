@@ -42,11 +42,10 @@ describe('topology bundle module', function() {
 
   afterEach(function() {
     if (bundle) { bundle.destroy(); }
-    if (container) { container.remove(true); }
   });
 
-  function promiseBundle(options, visableContainer) {
-    container = utils.makeContainer('canvas', true);
+  function promiseBundle(context, options, visableContainer) {
+    container = utils.makeContainer(context, 'canvas', true);
     fakebackend = factory.makeFakeBackend();
     fakebackend.db.environment.set('defaultSeries', 'precise');
 
@@ -71,7 +70,7 @@ describe('topology bundle module', function() {
   }
 
   it('should create a proper service for each model', function(done) {
-    promiseBundle()
+    promiseBundle(this)
     .then(function(bundle) {
           // The size of the element should reflect the passed in params
           var selection = d3.select(container.getDOMNode());
@@ -102,7 +101,7 @@ describe('topology bundle module', function() {
 
 
   it('should set pan/zoom to fit the whole view', function(done) {
-    promiseBundle({size: [240, 180]})
+    promiseBundle(this, {size: [240, 180]})
     .then(function(bundle) {
           var selection = d3.select(container.getDOMNode());
           var svg = selection.select('svg');
@@ -123,7 +122,7 @@ describe('topology bundle module', function() {
   });
 
   it('show details for selected item', function(done) {
-    promiseBundle({size: [240, 180]})
+    promiseBundle(this, {size: [240, 180]})
     .then(function(bundle) {
           var service = container.one('.service');
           // Click the service.

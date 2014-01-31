@@ -28,7 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('textarea autosize plugin', function() {
 
-  var Y, test_text, container, textarea, target, target2;
+  var Y, test_text, container, textarea, target, target2, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -48,12 +48,13 @@ describe('textarea autosize plugin', function() {
         'tristique nisl eget risus blandit iaculis. Lorem ipsum dolor sit ,',
         'consectetur adipiscing elit.'].join('');
 
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     textarea = Y.Node.create('<textarea class="autosize"></textarea>');
     container.append(textarea);
     target = undefined;
@@ -67,7 +68,6 @@ describe('textarea autosize plugin', function() {
     if (target2) {
       target2.remove().destroy(true);
     }
-    container.remove().destroy(true);
   });
 
 

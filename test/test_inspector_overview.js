@@ -34,8 +34,7 @@ describe('Inspector Overview', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           charmConfig = utils.loadFixture(
-          'data/mediawiki-api-response.json',
-          true);
+              'data/mediawiki-api-response.json', true);
           done();
         });
 
@@ -44,7 +43,7 @@ describe('Inspector Overview', function() {
   beforeEach(function() {
     exposeCalled = false;
     unexposeCalled = false;
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -70,7 +69,6 @@ describe('Inspector Overview', function() {
     }
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
 
     if (client) {
       client.destroy();
@@ -576,7 +574,7 @@ describe('Inspector Overview', function() {
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -664,7 +662,7 @@ describe('Inspector Overview', function() {
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -708,7 +706,7 @@ describe('Inspector Overview', function() {
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -752,7 +750,7 @@ describe('Inspector Overview', function() {
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
         overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -791,7 +789,7 @@ describe('Inspector Overview', function() {
     // Re-create the container; d3 is smart enough to keep the existing
     // ordering of the wrappers in this test.
     newContainer.remove(true);
-    newContainer = utils.makeContainer();
+    newContainer = utils.makeContainer(this);
 
     overview.generateAndBindStatusHeaders(
         newContainer, statuses, db.environment);
@@ -1029,7 +1027,7 @@ describe('Inspector Overview', function() {
 
   describe('viewport takeover handling', function() {
 
-    it('showUnitDetails fires viewportTakeoverStarting', function() {
+    it('showUnitDetails fires inspectorTakeoverStarting', function() {
       inspector = setUpInspector(null, true);
       var fauxEvent = {
         halt: function() {},
@@ -1052,7 +1050,7 @@ describe('Inspector Overview', function() {
       inspector.showUnitDetails(fauxEvent);
     });
 
-    it('onShowCharmDetails fires viewportTakeoverStarting', function() {
+    it('onShowCharmDetails fires inspectorTakeoverStarting', function() {
       inspector = setUpInspector(null, true);
       var fauxEvent = {
         halt: function() {},

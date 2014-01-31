@@ -303,7 +303,7 @@ function injectData(app, data) {
       return app;
     }
 
-    it('minimizes the sidebar on viewportTakeoverStarting', function(done) {
+    it('minimizes the sidebar on envTakeoverStarting', function(done) {
       app = constructAppInstance({
         env: juju.newEnvironment({
           conn: {
@@ -320,10 +320,12 @@ function injectData(app, data) {
         done();
       });
 
-      app.fire('viewportTakeoverStarting');
+      // Setup an environment view instance.
+      app.show_environment({}, {}, function() {return;});
+      app.views.environment.instance.fire('envTakeoverStarting');
     });
 
-    it('restores the sidebar on viewportTakeoverEnding', function(done) {
+    it('restores the sidebar on envTakeoverEnding', function(done) {
       app = constructAppInstance({
         env: juju.newEnvironment({
           conn: {
@@ -333,16 +335,17 @@ function injectData(app, data) {
         })
       });
 
-      app.fire('viewportTakeoverStarting');
+      app.show_environment({}, {}, function() {return;});
+      app.views.environment.instance.fire('envTakeoverStarting');
 
-      // When a viewportTakeoverEnding event is fired the app resotes the
+      // When a viewportTakeoverEnding event is fired the app restoes the
       // sidebar.
       app.get('subApps').charmbrowser.on('viewNavigate', function(ev) {
         assert.equal(ev.change.viewmode, 'sidebar');
         done();
       });
 
-      app.fire('viewportTakeoverEnding');
+      app.views.environment.instance.fire('envTakeoverEnding');
     });
 
   });
@@ -367,7 +370,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -376,7 +379,6 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();

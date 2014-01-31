@@ -24,8 +24,8 @@ describe('Viewlet Manager', function() {
   var fakeController = function() {};
   fakeController.prototype.bind = function() { /* noop */};
 
-  var generateViewletManager = function(options, viewletList) {
-    container = utils.makeContainer();
+  var generateViewletManager = function(context, options, viewletList) {
+    container = utils.makeContainer(context);
     container.setHTML([
       '<div class="yui3-juju-inspector">',
       '<div class="panel juju-inspector"></div>',
@@ -79,32 +79,31 @@ describe('Viewlet Manager', function() {
       done();
     });
     viewletManager.destroy();
-    container.remove().destroy(true);
   });
 
   it('sets up a viewlet instance property', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     assert.equal(typeof viewletManager.viewlets, 'object');
   });
 
   it('allows an user configurable event object', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     assert.equal(typeof viewletManager.events['.tab'].click, 'function');
   });
 
   it('properly nests config properties', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     var cfg = viewletManager.viewletConfig;
     assert.notEqual(cfg.serviceConfig.template.value, undefined);
   });
 
   it('sets up a view template instance property', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     assert.equal(typeof viewletManager.template, 'function');
   });
 
   it('generates viewlet instances based on the config', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     var vl = viewletManager.viewlets,
         vlKeys = ['serviceConfig', 'constraints'];
     vlKeys.forEach(function(key) {
@@ -113,7 +112,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('includes the manager attrs in the viewlet instances', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     var expected = viewletManager.getAttrs();
     // At the time the viewlet options are set, the manager is not yet
     // initialized.
@@ -124,20 +123,20 @@ describe('Viewlet Manager', function() {
 
   it('fails silently when generating invalid viewlet configs', function() {
     // 'foo' does not have a config defined
-    generateViewletManager({}, ['serviceConfig', 'foo']);
+    generateViewletManager(this, {}, ['serviceConfig', 'foo']);
     var vl = viewletManager.viewlets;
     assert.equal(typeof vl.serviceConfig, 'object');
     assert.equal(typeof vl.foo, 'undefined');
   });
 
   it('renders its container into the DOM', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     viewletManager.render();
     assert.notEqual(container.one('.viewlet-wrapper'), null);
   });
 
   it('renders all viewlets into the DOM', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     viewletManager.render();
     assert.notEqual(container.one('.viewlet-wrapper'), null);
     assert.equal(container.all('.viewlet-container').size(), 1);
@@ -145,7 +144,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('allows you to define your own render method', function() {
-    generateViewletManager({ render: function() {
+    generateViewletManager(this, { render: function() {
       return 'foo';
     }});
     var vlKeys = ['serviceConfig', 'constraints'];
@@ -157,7 +156,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('allows you to define your own show method', function(done) {
-    generateViewletManager({ show: function() {
+    generateViewletManager(this, { show: function() {
       // Test passes by hitting done and getting called.
       done();
     }});
@@ -166,7 +165,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('provides a sane default show method', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     viewletManager.render();
     var managerContainer = viewletManager.get('container');
     var wrapper = managerContainer.one('.viewlet-wrapper');
@@ -176,7 +175,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('allows you to define your own hide method', function(done) {
-    generateViewletManager();
+    generateViewletManager(this);
     viewletManager.viewlets.serviceConfig.hide = function() {
       // Test passes by hitting done and getting called.
       done();
@@ -187,7 +186,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('provides a sane default hide method', function() {
-    generateViewletManager();
+    generateViewletManager(this);
 
     viewletManager.render();
     viewletManager.showViewlet('serviceConfig');
@@ -207,12 +206,12 @@ describe('Viewlet Manager', function() {
       assert.deepEqual(viewletManager.getAttrs(), attrs);
       return 'foo';
     };
-    generateViewletManager({render: render});
+    generateViewletManager(this, {render: render});
     viewletManager.render();
   });
 
   it('allows you to define your own update method', function() {
-    generateViewletManager({update: function() {
+    generateViewletManager(this, {update: function() {
       return 'foo';
     }});
     var vlKeys = ['serviceConfig', 'constraints'];
@@ -223,7 +222,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('switches the visible viewlet on request', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     var vlKeys = ['serviceConfig', 'constraints'];
     viewletManager.render();
     vlKeys.forEach(function(key) {
@@ -234,7 +233,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('removes all elements from the DOM on destroy', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     viewletManager.render();
     assert.equal(container.all('.viewlet-container').size(), 1);
     viewletManager.destroy();
@@ -243,7 +242,7 @@ describe('Viewlet Manager', function() {
 
 
   it('only renders elements without a slot by default', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     // Modify one viewlet to have a slot.
     viewletManager.viewlets.constraints.slot = 'left';
     viewletManager.render();
@@ -258,7 +257,7 @@ describe('Viewlet Manager', function() {
   });
 
   it('can fill a slot with a viewlet', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
       left: '.left-breakout'
@@ -277,7 +276,7 @@ describe('Viewlet Manager', function() {
 
   it('can replace a slot, removing old bindings and installing a new model',
      function() {
-       generateViewletManager();
+       generateViewletManager(this);
        //Define a slot mapping on the container for 'left'
        viewletManager.slots = {
          left: '.left-breakout'
@@ -310,7 +309,7 @@ describe('Viewlet Manager', function() {
      });
 
   it('can remove a slot from the dom', function() {
-    generateViewletManager();
+    generateViewletManager(this);
     //Define a slot mapping on the container for 'left'
     viewletManager.slots = {
       'left-hand-panel': '.left-breakout'

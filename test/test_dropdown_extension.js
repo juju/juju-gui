@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('dropdown view extension', function() {
-  var Y, container, view, View;
+  var Y, container, utils, view, View;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['view-dropdown-extension',
@@ -29,6 +29,7 @@ describe('dropdown view extension', function() {
                                'node-event-simulate',
                                'node'], function(Y) {
 
+      utils = Y.namespace('juju-tests.utils');
       View = Y.Base.create('dropdown', Y.View, [
         Y.juju.Dropdown,
         Y.Event.EventTracker
@@ -47,13 +48,12 @@ describe('dropdown view extension', function() {
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer();
+    container = utils.makeContainer(this);
     view = new View({ container: container }).render();
   });
 
   afterEach(function() {
     view.destroy();
-    container.remove().destroy(true);
   });
 
   it('should add the dropdown-menu class to the views container', function() {

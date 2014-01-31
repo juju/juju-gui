@@ -47,7 +47,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = Y.namespace('juju-tests.utils').makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       var testcontent = [
         '<div id=testcontent><div class="bws-view-data">',
         '</div></div>'
@@ -84,7 +84,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         forInspector: true
       });
 
@@ -95,14 +95,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     // Return the charm heading node included in the charm detail view.
-    var makeHeading = function(is_subordinate) {
+    var makeHeading = function(context, is_subordinate) {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       data.charm.is_subordinate = is_subordinate;
+      utils.makeContainer(context);
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(context)
       });
       view.render();
       var heading = view.get('container').one('.header');
@@ -112,13 +113,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('avoids showing the subordinate message for non-subordinate charms',
        function() {
-         var heading = makeHeading(false);
+         var heading = makeHeading(this, false);
          assert.notInclude(heading.getContent(), 'Subordinate charm');
        });
 
     it('shows the subordinate message if the charm is a subordinate',
        function() {
-         var heading = makeHeading(true);
+         var heading = makeHeading(this, true);
          assert.include(heading.getContent(), 'Subordinate charm');
        });
 
@@ -131,7 +132,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       charm.set('scheme', 'local');
       view = new CharmView({
         entity: charm,
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         forInspector: true
       });
 
@@ -167,7 +168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
       view.render();
@@ -226,7 +227,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
       view.render();
       var options = Y.one('#bws-code').all('select option');
@@ -305,7 +306,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
@@ -325,7 +326,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       // Hook up to the callback for the click event.
@@ -357,7 +358,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             configName: 'test'
           }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
       view.set('deployService', function(charm, serviceAttrs) {
@@ -394,7 +395,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
@@ -438,7 +439,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
@@ -461,7 +462,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
       view.render();
 
@@ -515,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not display qa data when there is none.', function() {
       var data = utils.loadFixture('data/qa.json', true);
-      var testContainer = utils.makeContainer();
+      var testContainer = utils.makeContainer(this);
       // munge the data so that scores is null.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
@@ -571,7 +572,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       // Hook up to the callback for the click event.
@@ -590,7 +591,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
@@ -813,7 +814,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
@@ -830,7 +831,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.showIndicator = function() {
@@ -852,7 +853,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view = new CharmView({
         activeTab: '#bws-configuration',
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
@@ -864,7 +865,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('loads related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -898,7 +899,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('only loads the interface data once', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -943,7 +944,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('ignore invalid tab selections', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
