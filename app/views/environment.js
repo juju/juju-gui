@@ -38,7 +38,7 @@ YUI.add('juju-view-environment', function(Y) {
    * @class EnvironmentView
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [
-      views.JujuBaseView, Y.Event.EventTracker
+    views.JujuBaseView, Y.Event.EventTracker
   ], {
     /**
      * @method EnvironmentView.initializer
@@ -171,24 +171,18 @@ YUI.add('juju-view-environment', function(Y) {
       // If the inspector (via viewletManager proxy) wants to take over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-        serviceInspector.viewletManager.on(
-            'inspectorTakeoverStarting', function(ev) {
-                debugger;
-                this.fire('envTakeOverStarting');
-            }, this
-        )
-      );
+          serviceInspector.viewletManager.on(
+              'inspectorTakeoverStarting', function(ev) {
+                this.fire('envTakeoverStarting');
+              }, this));
 
       // If the inspector (via viewletManager proxy) is done taking over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-        serviceInspector.viewletManager.on(
-          'inspectorTakeoverEnding', function(ev) {
-            debugger;
-            this.fire('envTakeOverEnding');
-          }, this
-        )
-      );
+          serviceInspector.viewletManager.on(
+              'inspectorTakeoverEnding', function(ev) {
+                this.fire('envTakeoverEnding');
+              }, this));
 
       this.setInspector(serviceInspector);
       return serviceInspector;

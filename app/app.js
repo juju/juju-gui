@@ -1027,7 +1027,6 @@ YUI.add('juju-gui', function(Y) {
     onEnvTakeOverStarting: function(ev) {
       // When told that someone wants to take over the view, let them
       // have it.
-      debugger;
       var charmbrowser = this.get('subApps').charmbrowser;
       // Capture the original view mode so we can set it back later.
       var originalViewMode = charmbrowser.getViewMode();
@@ -1035,21 +1034,18 @@ YUI.add('juju-gui', function(Y) {
       if (this._takeOverEnding) {
         this._takeOverEnding.detach();
         this._takeOverEnding = null;
-      };
+      }
       this._takeOverEnding = this.views.environment.instance.on(
-          'envTakeOverEnding', function(e) {
-            debugger;
+          'envTakeoverEnding', function(e) {
             charmbrowser.fire('viewNavigate', {
-                change: {
-                  viewmode: originalViewMode
-                }
+              change: {
+                viewmode: originalViewMode
+              }
             });
 
             this._takeOverEnding.detach();
             this._takeOverEnding = null;
-          },
-          this
-      );
+          }, this);
       // Minimize the sidebar because something big wants more space.
       charmbrowser.fire('viewNavigate', {
         change: {
@@ -1135,10 +1131,10 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           this.views.environment.instance.rendered();
           this.addEvent(
-            this.views.environment.instance.on('envTakeOverStarting', function(ev) {
-              this.onEnvTakeOverStarting(ev);
-            }, this)
-          );
+              this.views.environment.instance.on('envTakeoverStarting',
+                  function(ev) {
+                    this.onEnvTakeOverStarting(ev);
+                  }, this));
 
         },
         render: true

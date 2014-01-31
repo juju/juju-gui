@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, service, db, conn,
-        juju, env, testUtils, fakeStore;
+        juju, env, testUtils, fakeStore, charmConfig;
 
     var environment_delta = {
       'result': [
@@ -117,6 +117,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         fakeStore.iconpath = function() {
           return 'charm icon url';
         };
+        charmConfig = testUtils.loadFixture(
+            'data/mediawiki-api-response.json', true);
         done();
       });
     });
@@ -156,6 +158,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
+
+    function setUpInspector() {
+      var charmId = 'precise/mediawiki-14';
+      charmConfig.id = charmId;
+      var charm = new models.Charm(charmConfig);
+      db.charms.add(charm);
+      var serviceAttrs = {
+        id: 'mediawiki',
+        charm: charmId,
+        exposed: false,
+        upgrade_available: true,
+        upgrade_to: 'cs:precise/mediawiki-15'
+      };
+      service = new models.Service(serviceAttrs);
+      view.createTopology();
+      view.inspector = view.createServiceInspector(service,
+          {databinding: {interval: 0}});
+    }
 
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
@@ -1065,19 +1085,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.fire('addRelationEnd');
     });
 
-    it('fires an envTakeover event when it gets an inspector version', function(done) {
-      view.on('envTakeoverStarting', function(ev) {
-        done();
-      });
-      view.inspector.viewletManager.fire('inpsectorTakeoverStarting');
-    });
+    it('fires an envTakeover event when it gets an inspector version',
+        function(done) {
+          setUpInspector();
+          view.on('envTakeoverStarting', function(ev) {
+            done();
+          });
+          view.inspector.viewletManager.fire('inspectorTakeoverStarting');
+        });
 
-    it('fires an envTakeover stop event when it gets an inspector version', function(done) {
-      view.on('envTakeoverEnding', function(ev) {
-        done();
-      });
-      view.inspector.viewletManager.fire('inpsectorTakeoverEnding');
-    });
+    it('fires an envTakeover stop event when it gets an inspector version',
+        function(done) {
+          setUpInspector();
+          view.on('envTakeoverEnding', function(ev) {
+            done();
+          });
+          view.inspector.viewletManager.fire('inspectorTakeoverEnding');
+        });
 
   });
 

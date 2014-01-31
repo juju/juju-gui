@@ -322,7 +322,7 @@ function injectData(app, data) {
 
       // Setup an environment view instance.
       app.show_environment({}, {}, function() {return;});
-      app.views.environment.instance.fire('envTakeOverStarting');
+      app.views.environment.instance.fire('envTakeoverStarting');
     });
 
     it('restores the sidebar on envTakeoverEnding', function(done) {
@@ -336,7 +336,7 @@ function injectData(app, data) {
       });
 
       app.show_environment({}, {}, function() {return;});
-      app.views.environment.instance.fire('envTakeOverStarting');
+      app.views.environment.instance.fire('envTakeoverStarting');
 
       // When a viewportTakeoverEnding event is fired the app restoes the
       // sidebar.
@@ -345,7 +345,7 @@ function injectData(app, data) {
         done();
       });
 
-      app.views.environment.instance.fire('envTakeOverEnding');
+      app.views.environment.instance.fire('envTakeoverEnding');
     });
 
   });
