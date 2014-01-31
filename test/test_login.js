@@ -123,7 +123,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
-      container = utils.makeContainer();
+      container = utils.makeContainer(this);
       mask = Y.Node.create('<div id="full-screen-mask"/>');
       mask.appendTo(document.body);
       loginView = new views.login(
@@ -132,7 +132,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function() {
       env.destroy();
-      container.remove(true);
       sessionStorage.setItem('credentials', null);
     });
 

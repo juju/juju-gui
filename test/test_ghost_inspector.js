@@ -44,7 +44,7 @@ describe('Ghost Inspector', function() {
 
   beforeEach(function() {
     cleanIconHelper = utils.stubCharmIconPath();
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -62,7 +62,6 @@ describe('Ghost Inspector', function() {
     db.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
     window.flags = {};
   });
 

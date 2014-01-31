@@ -37,6 +37,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     mocha.reporter('html');
     mocha.ui('bdd');
     mocha.setup({ignoreLeaks: false, timeout: TIMEOUT});
+
+    var origBeforeEach = Mocha.Suite.prototype.beforeEach;
+    var origAfterEach = Mocha.Suite.prototype.afterEach;
+    Mocha.Suite.prototype.beforeEach = function(title, fn) {
+      this.ctx._cleanups = [];
+      origBeforeEach.call(this, title, fn);
+    };
+
+    Mocha.Suite.prototype.afterEach = function(func) {
+      var newAfterEach = function(done) {
+        func.apply(this, arguments);
+        if (this._cleanups && this._cleanups.length) {
+          while (this._cleanups.length > 0) {
+            // Run the clean up method after popping it off the stack.
+            this._cleanups.pop()();
+          }
+          this._cleanups = [];
+        }
+        done();
+      }
+
+      origAfterEach.call(this, newAfterEach);
+    };
   </script>
 
   <!-- Load up YUI base, app modules, and test utils -->
@@ -162,7 +185,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   // tabview needs to be here since it doesn't auto load it for some reason.
   YUI().use(['node', 'event', 'tabview'], function(Y) {
-
       // Run the tests.
       if (window.mochaPhantomJS) {
           mochaPhantomJS.run();

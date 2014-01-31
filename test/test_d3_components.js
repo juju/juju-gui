@@ -57,7 +57,7 @@ describe('d3-components', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     container.append(Y.Node.create('<button/>')
              .addClass('thing'))
              .append(Y.Node.create('<button/>')
@@ -66,8 +66,6 @@ describe('d3-components', function() {
   });
 
   afterEach(function() {
-    container.remove();
-    container.destroy();
     if (comp) {
       comp.unbind();
     }
@@ -174,7 +172,7 @@ describe('d3-components', function() {
     compA.addModule(TestModule);
     compA.render();
 
-    var containerB = utils.makeContainer('foo');
+    var containerB = utils.makeContainer(this, 'foo');
     var compB = new NS.Component({container: containerB});
     compB.addModule(TestModule);
     compB.render();
@@ -185,7 +183,6 @@ describe('d3-components', function() {
     // Cleanup
     compA.destroy();
     compB.destroy();
-    containerB.remove().destroy(true);
   });
 
   it('should support basic rendering from all modules',

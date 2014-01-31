@@ -37,7 +37,7 @@ describe('application hotkeys', function() {
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer();
+    container = Y.namespace('juju-tests.utils').makeContainer(this);
     app = new Y.juju.App({
       env: env,
       container: container,

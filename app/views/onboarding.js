@@ -147,7 +147,10 @@ YUI.add('juju-view-onboarding', function(Y) {
      * @return {undefined} Mutates only.
      */
     destructor: function() {
-      this.get('container').empty();
+      var container = this.get('container');
+      if (container) {
+        container.empty();
+      }
     },
 
     /**
