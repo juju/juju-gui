@@ -438,28 +438,6 @@ YUI.add('juju-gui', function(Y) {
         this.navigate(e.url);
       }, this);
 
-      // When the viewport tells us that something large wants to take over the
-      // (majority) of the screen we want to hide the sidebar.
-      this.on('*:viewportTakeoverStarting', function(e) {
-        var charmbrowser = this.get('subApps').charmbrowser;
-        // Capture the original view mode so we can set it back later.
-        var originalViewMode = charmbrowser.getViewMode();
-        // Once the takeover has ended, put the original view mode back.
-        this.on('*:viewportTakeoverEnding', function(e) {
-          charmbrowser.fire('viewNavigate', {
-            change: {
-              viewmode: originalViewMode
-            }
-          });
-        }, this);
-        // Minimize the sidebar because something big wants more space.
-        charmbrowser.fire('viewNavigate', {
-          change: {
-            viewmode: 'minimized'
-          }
-        });
-      }, this);
-
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
@@ -719,6 +697,10 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this._simulator) {
         this._simulator.stop();
+      }
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
       }
       Y.each(
           [this.env, this.db, this.notifications,
@@ -1046,7 +1028,12 @@ YUI.add('juju-gui', function(Y) {
       Y.all('.environment-name').set('text', environmentName);
     },
 
-    onEnvTakeOverStarting: function(ev) {
+    /**
+      React to a large display element wanting to take over the display.
+
+      @method onEnvTakeOverStarting
+    */
+    onEnvTakeOverStarting: function() {
       // When told that someone wants to take over the view, let them
       // have it.
       var charmbrowser = this.get('subApps').charmbrowser;
