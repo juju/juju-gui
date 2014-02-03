@@ -91,7 +91,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
       assert.isNull(view.get('container').one('.heading'));
       // There is no 'related charms' tab to display.
-      assert.equal(view.get('container').all('.bws-related-charms').size(), 0);
+      assert.equal(view.get('container').all('.related-charms').size(), 0);
     });
 
     // Return the charm heading node included in the charm detail view.
@@ -138,10 +138,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.render();
       assert.isNull(view.get('container').one('.heading'));
-      assert.isNull(view.get('container').one('#bws-readme'));
-      assert.isNull(view.get('container').one('#bws-configuration'));
-      assert.isNull(view.get('container').one('#bws-code'));
-      assert.isNull(view.get('container').one('#bws-features'));
+      assert.isNull(view.get('container').one('#readme'));
+      assert.isNull(view.get('container').one('#configuration'));
+      assert.isNull(view.get('container').one('#code'));
+      assert.isNull(view.get('container').one('#features'));
     });
 
     it('has sharing links', function() {
@@ -230,7 +230,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(this)
       });
       view.render();
-      var options = Y.one('#bws-code').all('select option');
+      var options = Y.one('#code').all('select option');
       assert.equal(options.size(), 3);
       assert.deepEqual(
           options.get('text'),
@@ -297,7 +297,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'hooks/install',
@@ -312,13 +312,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view.render();
 
-      Y.one('#bws-readme').get('text').should.eql('README content.');
+      Y.one('#readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'hooks/install'
@@ -332,7 +332,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.halt();
-        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -400,14 +400,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
-      Y.one('#bws-code').all('select option').size().should.equal(3);
+      Y.one('#code').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws-code').all('select option').item(2).set(
+      Y.one('#code').all('select option').item(2).set(
           'selected', 'selected');
-      Y.one('#bws-code').one('select').simulate('change');
+      Y.one('#code').one('select').simulate('change');
 
-      var content = Y.one('#bws-code').one('div.filecontent');
+      var content = Y.one('#code').one('div.filecontent');
       // Content is escaped, so we read it out as text, not tags.
       content.get('text').should.eql('<install hook content>');
     });
@@ -431,7 +431,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'readme.md'
@@ -444,7 +444,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view.render();
-      Y.one('#bws-readme').get('innerHTML').should.eql(
+      Y.one('#readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
     });
 
@@ -466,9 +466,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       view.render();
 
-      Y.one('#bws-configuration dd div').get('text').should.eql(
+      Y.one('#configuration dd div').get('text').should.eql(
           'Default: 9160');
-      Y.one('#bws-configuration dd p').get('text').should.eql(
+      Y.one('#configuration dd p').get('text').should.eql(
           'Port for client communcation');
     });
 
@@ -851,7 +851,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
 
       view = new CharmView({
-        activeTab: '#bws-configuration',
+        activeTab: '#configuration',
         entity: new models.Charm(data.charm),
         container: utils.makeContainer(this)
       });
@@ -860,7 +860,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // We've selected the activeTab specified.
       var selected = view.get('container').one('nav .active');
-      assert.equal(selected.getAttribute('href'), '#bws-configuration');
+      assert.equal(selected.getAttribute('href'), '#configuration');
     });
 
     it('loads related charms when interface tab selected', function() {
@@ -884,7 +884,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-related-charms',
+        activeTab: '#related-charms',
         entity: new models.Charm(data),
         renderTo: testContainer,
         store: fakeStore
@@ -892,7 +892,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.all('#bws-related-charms .token').size(),
+          testContainer.all('#related-charms .token').size(),
           9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
@@ -918,7 +918,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-related-charms',
+        activeTab: '#related-charms',
         entity: new models.Charm(data),
         renderTo: testContainer,
         store: fakeStore
@@ -972,7 +972,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.one('nav .active').getAttribute('href'),
-          '#bws-summary');
+          '#summary');
     });
 
   });

@@ -49,7 +49,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      '#bws-code select': {
+      '#code select': {
         change: '_loadHookContent'
       },
       '.bundle .back': {
@@ -208,7 +208,7 @@ YUI.add('subapp-browser-bundleview', function(Y) {
       this._parseData(bundle).then(function() {
         self.environment = new views.BundleTopology(Y.mix({
           db: self.fakebackend.db,
-          container: node.one('#bws-bundle'), // Id because of Y.TabView
+          container: node.one('#bundle'), // Id because of Y.TabView
           store: self.get('store')
         }, options));
         self.environment.render();

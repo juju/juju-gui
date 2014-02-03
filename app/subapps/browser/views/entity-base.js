@@ -99,7 +99,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       var index = ev.currentTarget.get('selectedIndex');
       var filename = ev.currentTarget.get('options').item(
           index).getAttribute('value'),
-          node = this.get('container').one('#bws-code .filecontent');
+          node = this.get('container').one('#code .filecontent');
 
       // Load the file, but make sure we prettify the code.
       if (filename) {
@@ -133,19 +133,19 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       this.addEvent(
           tabview.after('selectionChange', function(e) {
             switch (e.newVal.get('hash')) {
-              case '#bws-features':
+              case '#features':
                 if (!this._qaContentLoaded) {
                   this._loadQAContent();
                 }
                 this._qaContentLoaded = true;
                 break;
-              case '#bws-related-charms':
+              case '#related-charms':
                 if (!this._interfacesContentLoaded) {
                   this._loadInterfacesTabCharms();
                 }
                 this._interfacesContentLoaded = true;
                 break;
-              case '#bws-readme':
+              case '#readme':
                 if (!this._readmeContentLoaded) {
                   this._loadReadmeTab();
                 }
@@ -268,7 +268,7 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      *
      */
     _loadQAContent: function() {
-      var node = Y.one('#bws-features');
+      var node = Y.one('#features');
       this.showIndicator(node);
       // Only load the QA data once.
       this.get('store').qa(
@@ -296,9 +296,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
         var readme = this._locateReadme();
 
         if (readme) {
-          this._loadFile(tplNode.one('#bws-readme'), readme);
+          this._loadFile(tplNode.one('#readme'), readme);
         } else {
-          this._noReadme(tplNode.one('#bws-readme'));
+          this._noReadme(tplNode.one('#readme'));
         }
         this.loadedReadme = true;
       }

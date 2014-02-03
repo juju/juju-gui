@@ -383,7 +383,14 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState.viewmode = params.viewmode;
 
       if (hash) {
+        // If the hash starts with bws- then reset it to provide backwards
+        // compatibility.
+        if (hash.indexOf('#bws-') === 0) {
+          hash = hash.replace('bws-', '');
+        }
+
         this._viewState.hash = hash.replace('/', '');
+        window.location.hash = this._viewState.hash;
       }
 
       // Check for a charm id in the request.
