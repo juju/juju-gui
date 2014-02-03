@@ -118,6 +118,9 @@ describe('Browser bundle detail view', function() {
     view.set('store', fakeStore);
     view.set('entity', new models.Bundle(data));
     view.render();
+    // Bypass any routing that might take place for testing sanity.
+    view.tabview.set('skipAnchorNavigation', true);
+
     container.one('a.readme').simulate('click');
   });
 
@@ -139,6 +142,8 @@ describe('Browser bundle detail view', function() {
     view.set('store', fakeStore);
     view.set('entity', new models.Bundle(data));
     view.render();
+    // Bypass any routing that might take place for testing sanity.
+    view.tabview.set('skipAnchorNavigation', true);
     container.one('a.code').simulate('click');
     var codeNode = container.one('#bws-code');
     codeNode.all('select option').item(2).set('selected', 'selected');

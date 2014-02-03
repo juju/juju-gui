@@ -51,7 +51,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       ].join();
       Y.Node.create(testcontent).appendTo(container);
       tabview = new Y.juju.widgets.browser.TabView({
-        container: container.one('.tabs')
+        container: container.one('.tabs'),
+        skipAnchorNavigation: true
       });
     });
 
