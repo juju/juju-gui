@@ -1032,6 +1032,7 @@ YUI.add('juju-gui', function(Y) {
       React to a large display element wanting to take over the display.
 
       @method onEnvTakeOverStarting
+      @return {undefined} Nothing.
     */
     onEnvTakeOverStarting: function() {
       // When told that someone wants to take over the view, let them
