@@ -461,6 +461,14 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // remove the element from the DOM
         existing.container.remove(true);
         this.get('container').one(this.slots[existing.slot]).hide();
+        /**
+          Fired when the viewlet slot is closing.  May be used by other
+          components in order to expand/contract in reaction to the viewlet
+          slot changing sizes.
+
+          @event endpointMapAdded
+        */
+        this.fire('viewletSlotClosing');
       }
     },
 
