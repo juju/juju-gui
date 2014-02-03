@@ -254,6 +254,7 @@ function injectData(app, data) {
       constructAppInstance({
         env: juju.newEnvironment({ conn: new utils.SocketStub() })
       });
+      assert.equal(app.db.notifications.size(), 0);
       app._displayZoomMessage(1024, 'linux');
       assert.equal(app.db.notifications.item(0).get('title'),
           'Browser size adjustment');
@@ -268,6 +269,15 @@ function injectData(app, data) {
       app._displayZoomMessage(1024, 'macintosh');
       assert.isTrue(app.db.notifications.item(0).get(
           'message').indexOf('command+-') !== -1);
+    });
+
+    it('should show the correct message for non mac', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      app._displayZoomMessage(1024, 'linux');
+      assert.isTrue(app.db.notifications.item(0).get(
+          'message').indexOf('ctrl+-') !== -1);
     });
   });
 })();

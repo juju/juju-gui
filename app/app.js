@@ -660,24 +660,17 @@ YUI.add('juju-gui', function(Y) {
      * @method _displayZoomMessage
      */
     _displayZoomMessage: function(viewportWidth, os) {
-      var metaKey;
-      if (os === 'macintosh') {
-        metaKey = 'command';
-      } else {
-        metaKey = 'ctrl';
-      }
+      var metaKey = (os === 'macintosh') ? 'command' : 'ctrl';
       // Only display the message once otherwise the message will continually
       // fire while the browser is being resized or zoomed.
       if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
-        this.db.notifications.add(
-            new models.Notification({
-              title: 'Browser size adjustment',
-              message: 'This browser needs to be maximisied or zoomed out to' +
-                  ' display the Juju GUI properly. Try using "' + metaKey +
-                  '+-" to zoom the window.',
-              level: 'error'
-            })
-        );
+        this.db.notifications.add({
+          title: 'Browser size adjustment',
+          message: 'This browser needs to be maximisied or zoomed out to' +
+              ' display the Juju GUI properly. Try using "' + metaKey +
+              '+-" to zoom the window.',
+          level: 'error'
+        });
         this.zoomMessageDisplayed = true;
       }
     },
