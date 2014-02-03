@@ -111,8 +111,8 @@ YUI.add('juju-topology-viewport', function(Y) {
      * size, such as the charm panel, to get out of the way before we compute
      * sizes.
      *
-     * @return {undefined} Nothing, this function generates only side effects.
      * @method resized
+     * @return {undefined} Nothing, this function generates only side effects.
      */
     resized: function() {
       var container = this.getContainer();

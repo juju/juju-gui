@@ -56,17 +56,17 @@
         <div class="tabs">
             <nav>
                 <ul>
-                    <li><a href="#bws-summary" class="bws-summary">Summary</a></li>
+                    <li><a href="#summary" class="summary">Summary</a></li>
                     {{#unless isLocal}}
-                        <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
+                        <li><a href="#readme" class="readme">Readme</a></li>
                     {{/unless}}
                     {{#unless forInspector}}
-                    <li><a href="#bws-related-charms" class="bws-related-charms">Related Charms</a></li>
+                    <li><a href="#related-charms" class="related-charms">Related Charms</a></li>
                     {{/unless}}
                     {{#unless isLocal}}
-                        <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
-                        <li><a href="#bws-code" class="bws-code">Code</a></li>
-                        <li><a href="#bws-features" class="bws-features">Features</a></li>
+                        <li><a href="#configuration" class="configuration">Configuration</a></li>
+                        <li><a href="#code" class="code">Code</a></li>
+                        <li><a href="#features" class="features">Features</a></li>
                     {{/unless}}
                 </ul>
                 <div class="selected"></div>
@@ -89,7 +89,7 @@
             {{/unless}}
             <div class="tab-panels">
                 <div class="tab-carousel">
-                    <div id="bws-summary" class="tab-panel">
+                    <div id="summary" class="tab-panel">
                         <div class="summary">
                             {{>providers}}
                             <h2>Summary</h2>
@@ -162,10 +162,10 @@
                         {{/if}}
                     </div>
                     {{#unless isLocal}}
-                        <div id="bws-readme" class="tab-panel"></div>
+                        <div id="readme" class="tab-panel"></div>
                     {{/unless}}
                     {{#unless forInspector}}
-                    <div id="bws-related-charms" class="tab-panel">
+                    <div id="related-charms" class="tab-panel">
                         <p class="intro">
                             Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
                             {{#if interfaceIntro.noRequiresNoProvides}}
@@ -259,7 +259,7 @@
                     {{! Do not show the related charms tab when for inspector}}
                     {{/unless}}
                     {{#unless isLocal}}
-                        <div id="bws-configuration" class="tab-panel">
+                        <div id="configuration" class="tab-panel">
                             <p class="intro">
                                 These are the ways in which you can configure this
                                 charm to best suit your deployment. You can change the
@@ -283,7 +283,7 @@
                               <p>This charm does not expose any configuration options.</p>
                             {{/if}}
                         </div>
-                        <div id="bws-code" class="tab-panel">
+                        <div id="code" class="tab-panel">
                             <p class="intro">
                                 The source code of the charm includes scripts, metadata,
                                 and other supporting files to describe and install a
@@ -305,7 +305,7 @@
                             <div class="filecontent">
                             </div>
                         </div>
-                        <div id="bws-features" class="tab-panel"></div>
+                        <div id="features" class="tab-panel"></div>
                     {{/unless}}
                 </div>
             </div>

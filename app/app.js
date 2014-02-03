@@ -51,7 +51,8 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer], {
+                                                  Y.juju.GhostDeployer,
+                                                  Y.Event.EventTracker], {
 
     /*
       Extension properties
@@ -734,6 +735,10 @@ YUI.add('juju-gui', function(Y) {
       if (this._simulator) {
         this._simulator.stop();
       }
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
+      }
       Y.each(
           [this.env, this.db, this.notifications,
            this.endpointsController],
@@ -1061,6 +1066,42 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      React to a large display element wanting to take over the display.
+
+      @method onEnvTakeOverStarting
+      @return {undefined} Nothing.
+    */
+    onEnvTakeOverStarting: function() {
+      // When told that someone wants to take over the view, let them
+      // have it.
+      var charmbrowser = this.get('subApps').charmbrowser;
+      // Capture the original view mode so we can set it back later.
+      var originalViewMode = charmbrowser.getViewMode();
+      // Once the takeover has ended, put the original view mode back.
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
+      }
+      this._takeOverEnding = this.views.environment.instance.on(
+          'envTakeoverEnding', function(e) {
+            charmbrowser.fire('viewNavigate', {
+              change: {
+                viewmode: originalViewMode
+              }
+            });
+
+            this._takeOverEnding.detach();
+            this._takeOverEnding = null;
+          }, this);
+      // Minimize the sidebar because something big wants more space.
+      charmbrowser.fire('viewNavigate', {
+        change: {
+          viewmode: 'minimized'
+        }
+      });
+    },
+
+    /**
        Determine if the browser or environment should be rendered or not.
 
        When hitting static views the browser needs to disappear
@@ -1136,6 +1177,18 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          // We only want to register this event handler once, but this method
+          // is called multiple times.
+          if (!this._envTakeoverEndingRegistered) {
+            this.addEvent(
+                this.views.environment.instance.on('envTakeoverStarting',
+                    function(ev) {
+                      ev.halt();
+                      this.onEnvTakeOverStarting(ev);
+                    }, this));
+            this._envTakeoverEndingRegistered = true;
+          }
+
         },
         render: true
       });
@@ -1380,6 +1433,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-import-helpers',
+    'event-tracker',
     'node',
     'model',
     'app-cookies-extension',

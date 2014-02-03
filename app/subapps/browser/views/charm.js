@@ -59,7 +59,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
-      '#bws-code select': {
+      '#code select': {
         change: '_loadHookContent'
       },
       '.charm .back': {
