@@ -25,7 +25,10 @@ var juju_config = {
   viewContainer: '#main',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
-
+  // If cachedFonts is false, we get the fonts from the Google CDN (faster).
+  // If it is true, we use the local, cached fonts instead (better for closed
+  // network).
+  cachedFonts: false,
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
