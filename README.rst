@@ -56,6 +56,22 @@ Some configurable parameters may be found in three files:
 If you are using `the charm <https://jujucharms.com/precise/juju-gui>`_, the
 end-user configuration is available from the charm configuration.
 
+Demonstration Mode
+===================
+
+When giving a demonstration with the Gui you often want to help the visual
+presentation by showing icons for charms that are not yet reviewed and
+recommended. Since you have reviewed the charms you intend to use in your
+presentation, you may override the safety features by manually setting
+"demo-mode" into your localStorage for the Gui website.  You can do this using
+the developer tools for the browser you're demonstrating with.
+
+Open a console and enter:
+
+::
+
+  localStorage.setItem('demo-mode', true);
+
 
 .. _HACKING: https://github.com/juju/juju-gui/blob/develop/HACKING.rst
 .. _on Github: https://github.com/juju/juju-gui
