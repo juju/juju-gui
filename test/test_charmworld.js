@@ -217,6 +217,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           hostname + 'api/3/bundle/wiki/3/wiki/file/icon.svg');
     });
 
+    it('allows for a demo mode on icon urls', function() {
+      localStorage.setItem('demo-mode', true);
+      var iconPath = api.iconpath('wiki/3/wiki', true);
+      assert.equal(
+          iconPath,
+          hostname + 'api/3/bundle/wiki/3/wiki/file/icon.svg?demo=true');
+
+      localStorage.removeItem('demo-mode');
+    });
+
     it('can assemble proper urls to fetch files', function(done) {
       api.set('datasource', {
         sendRequest: function(options) {

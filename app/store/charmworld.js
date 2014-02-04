@@ -401,6 +401,8 @@ YUI.add('juju-charm-store', function(Y) {
       @return {String} The URL of the charm's icon.
      */
     iconpath: function(charmID, isBundle) {
+      var demo_mode = '';
+
       // If this is a local charm, then we need use a hard coded path to the
       // default icon since we cannot fetch its category data or its own
       // icon.
@@ -417,6 +419,13 @@ YUI.add('juju-charm-store', function(Y) {
         // colon portion of the quote and leaves behind a charm ID.
         charmID = charmID.replace(/^[^:]+:/, '');
 
+        // If the user has selected to be in Demo mode then add a parameter to
+        // the url to enable indicating to charmworld to override permission
+        // checks for icons sent back.
+        if (localStorage.getItem('demo-mode')) {
+          demo_mode = '?demo=true';
+        }
+
         // Note that we make sure isBundle is Boolean. It's coming from a
         // handlebars template helper which will make the second argument the
         // context object when it's not supplied. We want it optional for
@@ -428,7 +437,8 @@ YUI.add('juju-charm-store', function(Y) {
           Y.Lang.isBoolean(isBundle) && isBundle === true ? 'bundle' : 'charm',
           charmID,
           'file',
-          'icon.svg'].join('/');
+          'icon.svg' + demo_mode
+        ].join('/');
       }
     },
 
