@@ -37,15 +37,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:300,400,500,300italic,400italic,500italic' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
-    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
-    <link rel="stylesheet" href="/juju-ui/assets/sprites.css">
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
     <script src="/juju-ui/assets/config.js"></script>
+    <script type="text/javascript">
+    (function() {
+      var link  = document.createElement('link');
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      if (juju_config.CDNFonts) {
+        link.href = 'https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:300,400,500,300italic,400italic,500italic'
+      } else {
+        link.href = '/juju-ui/assets/fonts/fontface.css';
+      }
+      link.media = 'all';
+      var head  = document.getElementsByTagName('head')[0];
+      head.appendChild(link);
+    })();
+    </script>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
+    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
+    <link rel="stylesheet" href="/juju-ui/assets/sprites.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>

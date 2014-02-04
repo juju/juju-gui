@@ -25,7 +25,7 @@ var juju_config = {
   viewContainer: '#main',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
-
+  CDNFonts: true,
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
