@@ -667,7 +667,7 @@ YUI.add('juju-gui', function(Y) {
       if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
         this.db.notifications.add({
           title: 'Browser size adjustment',
-          message: 'This browser needs to be maximisied or zoomed out to' +
+          message: 'This browser needs to be maximised or zoomed out to' +
               ' display the Juju GUI properly. Try using "' + metaKey +
               '+-" to zoom the window.',
           level: 'error'
