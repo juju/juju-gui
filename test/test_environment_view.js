@@ -98,6 +98,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'op': 'delta'
     };
 
+    // Additional relations between the same two services for collection
+    // testing. Note that this uses the gojuju style relation ideas for
+    // additional compatibility.
+    var additionalRelations = { 'result': [
+      ['relation', 'add', {
+        'interface': 'mysql',
+        'scope': 'global',
+        'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db'}],
+          ['mediawiki', {'role': 'client', 'name': 'db'}]],
+        'id': 'mysql:db mediawiki:db'
+      }],
+      ['relation', 'add', {
+        'interface': 'mysql-slave',
+        'scope': 'global',
+        'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db-slave'}],
+          ['mediawiki', {'role': 'client', 'name': 'db-slave'}]],
+        'id': 'mysql:db-slave mediawiki:db-slave'
+      }]
+    ],
+    'op': 'delta'
+    };
+
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
@@ -154,6 +178,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
+      window.flags = {};
+      if (!view.get('destroyed')) {
+        view.destroy({remove: true});
+      }
       done();
     });
 
@@ -975,6 +1003,112 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          view.destroy();
        });
 
+    it('builds a menu of relations in a collection', function() {
+      window.flags = {
+        'relationCollections': true
+      };
+      db.onDelta({data: additionalRelations});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+
+      // Single relation
+      var relation = container.one(
+          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          ' .rel-label'),
+          menu;
+      relation.simulate('click');
+      menu = container.one('#relation-menu');
+
+      assert.equal(menu.all('.relation-action').size(), 1);
+      assert.equal(menu.one('.relation-action').getData('relationid'),
+          'relation-0000000001');
+
+      // Multiple relations
+      relation = container.one(
+          '#' +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          ' .rel-label');
+      relation.simulate('click');
+      menu = container.one('#relation-menu');
+
+      assert.equal(menu.all('.relation-action').size(), 2);
+      assert.equal(menu.all('.relation-action').item(0).getData('relationid'),
+          additionalRelations.result[0][2].id);
+      assert.equal(menu.all('.relation-action').item(1).getData('relationid'),
+          additionalRelations.result[1][2].id);
+    });
+
+    it('allows deletion of relations within collections', function() {
+      window.flags = {
+        'relationCollections': true
+      };
+      db.onDelta({data: additionalRelations});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+
+      // Single relation.
+      var relation = container.one(
+          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          ' .rel-label'),
+          dialog_btn,
+          panel,
+          menu;
+
+      relation.simulate('click');
+      menu = Y.one('#relation-menu .menu');
+      panel = Y.one('#rmrelation-modal-panel');
+
+      // Click the first relation.
+      menu.one('.relation-action').simulate('click');
+
+      // There should be a 'remove relation' button and a 'cancel' button
+      // on the dialog.
+      panel.all('button').size().should.equal(2);
+
+      dialog_btn = panel.one('.button');
+      dialog_btn.simulate('click');
+      container.all('.to-remove')
+           .size()
+           .should.equal(1);
+      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+
+      // Multiple relations.
+      relation = container.one(
+          '#' +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          ' .rel-label');
+
+      relation.simulate('click');
+      menu = Y.one('#relation-menu .menu');
+      panel = Y.one('#rmrelation-modal-panel');
+
+      // Click the first relation.
+      menu.one('.relation-action').simulate('click');
+
+      // There should be a 'remove relation' button and a 'cancel' button
+      // on the dialog.
+      panel.all('button').size().should.equal(2);
+
+      dialog_btn = panel.one('.button');
+      dialog_btn.simulate('click');
+      // Note that there should now be two .to-remove relations due to the
+      // previous case having added one of those classes. We're simply looking
+      // for the number to have increased.
+      container.all('.to-remove')
+           .size()
+           .should.equal(2);
+      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+      view.destroy();
+    });
+
     it('must not allow removing a subordinate relation between services',
         function() {
          new views.environment({
@@ -1042,24 +1176,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       window.flags = {
         'relationCollections': true
       };
-      db.onDelta({data: { 'result': [
-        ['relation', 'add', {
-          'interface': 'mysql',
-          'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db'}],
-            ['mediawiki', {'role': 'client', 'name': 'db'}]],
-           'id': 'relation-0000000011'
-        }],
-        ['relation', 'add', {
-          'interface': 'mysql-slave',
-          'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db-slave'}],
-            ['mediawiki', {'role': 'client', 'name': 'db-slave'}]],
-           'id': 'relation-0000000012'
-        }]
-      ]}});
+      db.onDelta({data: additionalRelations});
       var view = new views.environment({
         container: container,
         db: db,
