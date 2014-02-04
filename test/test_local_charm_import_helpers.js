@@ -21,17 +21,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('local-charm-import-helpers', function() {
-    var db, env, Y, lch, notificationParams;
+    var dbObj, env, helper, notificationParams, testUtils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('local-charm-import-helpers', function(Y) {
-        lch = Y.juju.localCharmHelpers;
+      var modules = ['juju-charm-models', 'local-charm-import-helpers',
+        'juju-tests-utils'];
+      Y = YUI(GlobalConfig).use(modules, function(Y) {
+        helper = Y.juju.localCharmHelpers;
+        testUtils = Y['juju-tests'].utils;
         done();
       });
     });
 
     beforeEach(function() {
-      db = {
+      dbObj = {
         notifications: {
           add: function(info) {
             notificationParams = info;
@@ -41,80 +44,183 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
-      db = undefined;
+      dbObj = undefined;
     });
 
-    describe('destroyLocalCharm', function() {
-
+    describe('deployLocalCharm', function() {
       it('requests an upload from the environment', function(done) {
         var fileObj = { name: 'foo' },
             defSeries = 'precise',
-            reqAttr = 'defaultSeries';
+            reqAttr = 'defaultSeries',
+            envObj = {
+              uploadLocalCharm: function(file, series, progress, callback) {
+                assert.deepEqual(file, fileObj);
+                assert.equal(series, defSeries);
+                assert.isFunction(progress);
+                assert.isFunction(callback);
+                // Test to make sure that the callback is called with the
+                // correct arguments.
+                callback();
+                // called the proper env method
+                done();
+              },
+              get: function(attr) {
+                assert.equal(attr, reqAttr);
+                return defSeries;
+              }
+            };
 
-        lch.deployLocalCharm(fileObj, {
-          uploadLocalCharm: function(file, series, progress, callback) {
-            assert.deepEqual(file, fileObj);
-            assert.equal(series, defSeries);
-            assert.isFunction(progress);
-            assert.isFunction(callback);
-            // called the proper env method
-            done();
-          },
-          get: function(attr) {
-            assert.equal(attr, reqAttr);
-            return defSeries;
-          }
-        }, db);
+        var stub = testUtils.makeStubMethod(helper, '_uploadLocalCharmLoad');
+        helper.deployLocalCharm(fileObj, envObj, dbObj);
+        var args = stub.lastArguments();
+        assert.deepEqual(args[0], fileObj);
+        assert.deepEqual(args[1], envObj);
+        assert.deepEqual(args[2], dbObj);
+        stub.reset();
+      });
+    });
+
+    describe('loadCharmDetails', function() {
+      it('calls supplied callback after the charm is loaded', function(done) {
+        var envObj = {};
+        var oldMethod = Y.juju.models.Charm.prototype.load;
+        Y.juju.models.Charm.prototype.load = function(env) {
+          assert.deepEqual(env, envObj);
+          this.fire('load');
+        };
+        // provided by mocha monkeypatch see test/index.html
+        this._cleanups.push(function() {
+          Y.juju.models.Charm.prototype.load = oldMethod;
+        });
+        helper.loadCharmDetails('local:precise/ghost-4', envObj,
+            function(charm) {
+              assert.isObject(charm);
+              done();
+            });
+      });
+    });
+
+    describe('_loadCharmDetailsCallback', function() {
+      it('fires the initiateDeploy event', function() {
+        var stub = testUtils.makeStubMethod(Y, 'fire');
+        helper._loadCharmDetailsCallback('foo');
+        var args = stub.lastArguments();
+        assert.equal(args[0], 'initiateDeploy');
+        assert.equal(args[1], 'foo');
+        assert.deepEqual(args[2], {});
+        stub.reset();
+      });
+    });
+
+    describe('_uploadLocalCharmProgress', function() {
+      it('is a function', function() {
+        // Currently this method is a no-op, update when
+        // we add this functionality.
+        assert.isFunction(helper._uploadLocalCharmProgress);
+      });
+    });
+
+    describe('_uploadLocalCharmLoad', function() {
+      function stubParseUploadResponse(test, response) {
+        response = response || { CharmURL: 'foo' };
+        var stub = testUtils.makeStubMethod(
+            helper, '_parseUploadResponse', response);
+        // `test` is the context of each individual test.
+        // Provided by mocha monkey patch in test/index.html
+        test._cleanups.push(function() {
+          stub.reset();
+        });
+        return stub;
+      }
+
+      function stubLoadCharmDetails(test) {
+        var stub = testUtils.makeStubMethod(helper, 'loadCharmDetails');
+        // `test` is the context of each individual test.
+        // Provided by mocha monkey patch in test/index.html
+        test._cleanups.push(function() {
+          stub.reset();
+        });
+        return stub;
+      }
+
+      it('calls _parseUploadResponse() on success or failure', function() {
+        var fileObj = { name: 'foo' },
+            eventObj = { target: { responseText: '' }},
+            envObj = {};
+
+        var loadCharmDetailsStub = stubLoadCharmDetails(this);
+        stubParseUploadResponse(this);
+
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        assert.equal(loadCharmDetailsStub.called(), true);
       });
 
-      it('throws a notification on a successful upload', function(done) {
-        var fileObj = { name: 'foo' },
-            defSeries = 'precise',
-            reqAttr = 'defaultSeries';
+      it('calls loadsCharmDetails() on successful upload', function() {
+        var charmURLString = 'foo',
+            fileObj = { name: 'foo' },
+            eventObj = { target: { responseText: '' }},
+            envObj = {};
 
-        lch.deployLocalCharm(fileObj, {
-          uploadLocalCharm: function(file, series, progress, callback) {
-            assert.isFunction(callback);
-            callback({type: 'load'});
-            assert.deepEqual(notificationParams, {
-              title: 'Imported local charm file',
-              message: 'Import from "foo" successful.',
-              level: 'important'
-            });
+        var loadCharmDetailsStub = stubLoadCharmDetails(this);
+        stubParseUploadResponse(this);
 
-            done();
-          },
-          get: function(attr) {
-            return defSeries;
-          }
-        }, db);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+
+        assert.equal(loadCharmDetailsStub.called(), true);
+        var args = loadCharmDetailsStub.lastArguments();
+        assert.equal(args[0], charmURLString);
+        assert.deepEqual(args[1], envObj);
+        assert.isFunction(args[2]);
+
       });
 
-      it('throws a notification on a failed upload', function(done) {
+      it('shows a notification on a successful upload', function() {
         var fileObj = { name: 'foo' },
-            defSeries = 'precise',
-            reqAttr = 'defaultSeries';
+            eventObj = { target: { responseText: '' }},
+            envObj = {};
 
-        lch.deployLocalCharm(fileObj, {
-          uploadLocalCharm: function(file, series, progress, callback) {
-            assert.isFunction(callback);
-            callback({type: 'error'});
-            assert.deepEqual(notificationParams, {
-              title: 'Import failed',
-              message: 'Import from "foo" failed.',
-              level: 'error'
-            });
+        stubLoadCharmDetails(this);
+        stubParseUploadResponse(this);
 
-            done();
-          },
-          get: function(attr) {
-            return defSeries;
-          }
-        }, db);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        assert.deepEqual(notificationParams, {
+          title: 'Imported local charm file',
+          message: 'Import from "foo" successful.',
+          level: 'important'
+        });
+      });
+
+      it('shows a notification on a failed upload', function() {
+        var fileObj = { name: 'foo' },
+            eventObj = {
+              target: { responseText: '' },
+              type: 'error'
+            },
+            envObj = {};
+
+        stubLoadCharmDetails(this);
+        stubParseUploadResponse(this, {
+          Error: 'oops'
+        });
+
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        assert.deepEqual(notificationParams, {
+          title: 'Import failed',
+          message: 'Import from "foo" failed. oops',
+          level: 'error'
+        });
       });
 
     });
 
+    describe('_parseUploadResponse', function() {
+      it('returns a parsed JSON string', function() {
+        var data = '{"foo": "bar"}';
+        assert.deepEqual(helper._parseUploadResponse(data), {
+          foo: 'bar'
+        });
+      });
+    });
 
   });
 })();
