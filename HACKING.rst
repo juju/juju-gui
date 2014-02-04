@@ -193,7 +193,7 @@ local fork is listed below.
 
 ::
 
-  git push origin {featureBranchName}
+  git push origin :{featureBranchName}
   # And to remove your local branch
   git branch -D {featureBranchName}
 
