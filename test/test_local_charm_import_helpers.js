@@ -174,6 +174,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       });
 
+      it('shows a notification if local charm upload is not supported',
+          function() {
+            var fileObj = { name: 'foo' },
+                eventObj = { target: { status: 500 } },
+                envObj = {};
+
+            stubLoadCharmDetails(this);
+            stubParseUploadResponse(this);
+
+            helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+            assert.deepEqual(notificationParams, {
+              title: 'Import failed',
+              message: 'Import from "foo" failed. Your version of ' +
+                  'Juju does not support local charm uploads. Please use at ' +
+                  'least version 1.18.0.',
+              level: 'error'
+            });
+          });
+
       it('shows a notification on a successful upload', function() {
         var fileObj = { name: 'foo' },
             eventObj = { target: { responseText: '' }},
@@ -219,6 +238,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(helper._parseUploadResponse(data), {
           foo: 'bar'
         });
+      });
+
+      it('returns the raw data if JSON parsing fails', function() {
+        var data = '<div>Error</div>';
+        assert.strictEqual(helper._parseUploadResponse(data), data);
       });
     });
 
