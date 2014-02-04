@@ -317,6 +317,7 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/config.js \
 	build-$(1)/juju-ui/assets/modules.js \
 	build-$(1)/juju-ui/assets/images \
+	build-$(1)/juju-ui/assets/fonts \
 	build-$(1)/juju-ui/assets/svgs \
 	build-$(1)/juju-ui/version.js \
 	build-$(1)/juju-ui/assets/combined-css/all-static.css \
@@ -345,6 +346,7 @@ define link-files
 	ln -sf "$(PWD)/app/index.html" build-$(1)/
 	ln -sf "$(PWD)/app/config-$(1).js" build-$(1)/juju-ui/assets/config.js
 	ln -sf "$(PWD)/app/assets/images" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/app/assets/fonts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/

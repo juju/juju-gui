@@ -37,15 +37,41 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:300,400,500,300italic,400italic,500italic' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
-    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
-    <link rel="stylesheet" href="/juju-ui/assets/sprites.css">
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
     <script src="/juju-ui/assets/config.js"></script>
+    <script type="text/javascript">
+    // Normally we get the fonts from the Google CDN.  If the config sets
+    // "cachedFonts" to true, we use the local, cached fonts instead.  The CDN
+    // is generally faster, but if a user is in a closed network, trying to
+    // reach the CDN will slow the application down [1], and the cachedFonts
+    // are the only thing that will work.
+    // [1] https://bugs.launchpad.net/juju-gui/+bug/1274955
+    (function() {
+      var link  = document.createElement('link');
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      if (juju_config.cachedFonts) {
+        link.href = '/juju-ui/assets/fonts/fontface.css';
+      } else {
+        // If you change this, make sure you make a corresponding update to
+        // the cached fonts (app/assets/fonts/*).  Read more details here:
+        // https://bugs.launchpad.net/juju-gui/+bug/1274955/comments/4
+        link.href = (
+          'https://fonts.googleapis.com/css?family=' +
+          'Ubuntu+Mono:400,700|' +
+          'Ubuntu:300,400,500,300italic,400italic,500italic');
+      }
+      link.media = 'all';
+      var head  = document.getElementsByTagName('head')[0];
+      head.appendChild(link);
+    })();
+    </script>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/juju-ui/assets/combined-css/all-static.css">
+    <link rel="stylesheet" href="/juju-ui/assets/juju-gui.css">
+    <link rel="stylesheet" href="/juju-ui/assets/sprites.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
