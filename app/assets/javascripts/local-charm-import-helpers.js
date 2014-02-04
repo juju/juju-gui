@@ -105,13 +105,20 @@ YUI.add('local-charm-import-helpers', function(Y) {
     */
     _uploadLocalCharmLoad: function(file, env, db, e) {
       var helper = ns.localCharmHelpers,
-          notifications = db.notifications,
-          res = helper._parseUploadResponse(e.target.responseText);
+          notifications = db.notifications;
+
+      var res = helper._parseUploadResponse(e.target.responseText);
 
       if (e.type === 'error' || e.target.status >= 400) {
+        // If the server does not return a properly formatted error response
+        // then it's safe to assume that local charm upload is not supported.
+        var errorMessage = res.Error || 'Your version of ' +
+                'Juju does not support local charm uploads. Please use at ' +
+                'least version 1.18.0.';
+
         notifications.add({
           title: 'Import failed',
-          message: 'Import from "' + file.name + '" failed. ' + res.Error,
+          message: 'Import from "' + file.name + '" failed. ' + errorMessage,
           level: 'error'
         });
         console.log('error', e);
@@ -137,7 +144,12 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {String} data The data returned from the charm upload.
     */
     _parseUploadResponse: function(data) {
-      return JSON.parse(data);
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        return data;
+      }
+
     }
 
   };
