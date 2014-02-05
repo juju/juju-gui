@@ -317,6 +317,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-relations.js'
         },
 
+        'viewlet-request-series': {
+          fullpath: '/juju-ui/views/viewlets/request-series.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'

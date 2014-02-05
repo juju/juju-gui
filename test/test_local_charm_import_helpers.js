@@ -48,35 +48,245 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     describe('deployLocalCharm', function() {
-      it('requests an upload from the environment', function(done) {
+      it('requests the series from the user', function() {
         var fileObj = { name: 'foo' },
-            defSeries = 'precise',
-            reqAttr = 'defaultSeries',
-            envObj = {
-              uploadLocalCharm: function(file, series, progress, callback) {
-                assert.deepEqual(file, fileObj);
-                assert.equal(series, defSeries);
-                assert.isFunction(progress);
-                assert.isFunction(callback);
-                // Test to make sure that the callback is called with the
-                // correct arguments.
-                callback();
-                // called the proper env method
-                done();
-              },
-              get: function(attr) {
-                assert.equal(attr, reqAttr);
-                return defSeries;
-              }
-            };
-
-        var stub = testUtils.makeStubMethod(helper, '_uploadLocalCharmLoad');
+            envObj = {};
+        var stub = testUtils.makeStubMethod(helper, '_requestSeries');
         helper.deployLocalCharm(fileObj, envObj, dbObj);
         var args = stub.lastArguments();
         assert.deepEqual(args[0], fileObj);
         assert.deepEqual(args[1], envObj);
         assert.deepEqual(args[2], dbObj);
         stub.reset();
+      });
+    });
+
+    describe('_requestSeries', function() {
+      var stubs = {}, fileObj, defSeries, reqAttr, envObj;
+
+      beforeEach(function() {
+        // makeContainer will auto cleanup
+        var container = testUtils.makeContainer(this, 'content'),
+            template = testUtils.makeContainer(this, 'template');
+        fileObj = { name: 'foo', size: '100' };
+        defSeries = 'precise';
+        reqAttr = 'defaultSeries';
+        envObj = {
+          get: function(attr) {
+            assert.equal(attr, reqAttr);
+            return defSeries;
+          }
+        };
+
+        stubs = {
+          // The order of these Y.x stubs is important, without this order the
+          // Y.one stub will return the same value as the Y.Node.create stub
+          createStub: testUtils.makeStubMethod(Y.Node, 'create', template),
+          oneStub: testUtils.makeStubMethod(Y, 'one', container),
+          templateStub: testUtils.makeStubMethod(
+              Y.namespace('juju.views.Templates'), 'service-inspector'),
+          // Viewlet manager stubs
+          ViewletManager: testUtils.makeStubMethod(
+              Y.namespace('juju.viewlets'), 'ViewletManager'),
+          // Local charm helper stubs
+          attachEventsStub: testUtils.makeStubMethod(
+              helper, '_attachViewletEvents')
+        };
+
+        stubs.renderStub = testUtils.makeStubMethod(
+            stubs.ViewletManager.prototype, 'render');
+        stubs.showViewletStub = testUtils.makeStubMethod(
+            stubs.ViewletManager.prototype, 'showViewlet');
+      });
+
+      afterEach(function() {
+        Object.keys(stubs).forEach(function(key) {
+          stubs[key].reset();
+        });
+        stubs = {};
+      });
+
+      it('renders the viewletManager', function() {
+        helper._requestSeries(fileObj, envObj, dbObj);
+
+        assert.equal(stubs.templateStub.called(), true);
+        assert.equal(stubs.oneStub.called(), true);
+        assert.equal(stubs.ViewletManager.called(), true);
+        assert.isObject(stubs.ViewletManager.lastArguments()[0]);
+        assert.equal(stubs.renderStub.called(), true);
+        assert.equal(stubs.showViewletStub.called(), true);
+        assert.equal(stubs.showViewletStub.lastArguments()[0], 'requestSeries');
+        assert.equal(stubs.attachEventsStub.called(), true);
+      });
+
+      it('calls _attachViewletEvents()', function() {
+        helper._requestSeries(fileObj, envObj, dbObj);
+
+        assert.equal(stubs.attachEventsStub.called(), true);
+        var args = stubs.attachEventsStub.lastArguments();
+        assert.equal(args[0] instanceof stubs.ViewletManager, true);
+        assert.deepEqual(args[1], fileObj);
+        assert.deepEqual(args[2], envObj);
+        assert.deepEqual(args[3], dbObj);
+      });
+    });
+
+    describe('_attachViewletEvents', function() {
+      it('attaches events to the upload and cancel buttons', function() {
+        var viewletManager = {},
+            fileObj = { name: 'foo', size: '100' },
+            envObj = {};
+        // Because there are a bunch of chained methods we need to create a
+        // nested method structure which we can then inspect.
+        var stubOnFn = testUtils.makeStubFunction();
+        var stubOn = testUtils.makeStubMethod(stubOnFn, 'on');
+        var stubOneFn = testUtils.makeStubFunction();
+        var stubOne = testUtils.makeStubMethod(stubOneFn, 'one', stubOnFn);
+        var stubGet = testUtils.makeStubMethod(
+            viewletManager, 'get', stubOneFn);
+
+        helper._attachViewletEvents(viewletManager, fileObj, envObj, dbObj);
+
+        assert.equal(stubGet.called(), true);
+        assert.equal(stubOne.callCount(), 2, 'stubOne not called twice.');
+        assert.equal(stubOn.callCount(), 2, 'stubOn not called twice');
+        var stubOneArgs = stubOne.allArguments();
+        assert.equal(stubOneArgs[0][0], 'button[cancel]');
+        assert.equal(stubOneArgs[1][0], 'button[upload]');
+        // Because on() gets called twice we get all of the arguments from each
+        // call and then check those against their required values.
+        var stubOnArgs = stubOn.allArguments();
+        // first pass
+        assert.equal(stubOnArgs[0][0], 'click');
+        assert.isFunction(stubOnArgs[0][1]);
+        assert.isNull(stubOnArgs[0][2]);
+        assert.deepEqual(stubOnArgs[0][3], viewletManager);
+        assert.isArray(stubOnArgs[0][4]);
+        // second pass
+        assert.equal(stubOnArgs[1][0], 'click');
+        assert.isFunction(stubOnArgs[1][1]);
+        assert.isNull(stubOnArgs[1][2]);
+        assert.deepEqual(stubOnArgs[1][3], viewletManager);
+        assert.isArray(stubOnArgs[1][4]);
+        assert.deepEqual(stubOnArgs[1][5], fileObj);
+        assert.deepEqual(stubOnArgs[1][6], envObj);
+        assert.deepEqual(stubOnArgs[1][7], dbObj);
+
+      });
+    });
+
+    describe('_cleanUp', function() {
+      it('cleans up the Viewlet Manager and it\'s events', function() {
+        var viewletManagerFn = testUtils.makeStubFunction();
+        var destroyStub = testUtils.makeStubMethod(viewletManagerFn, 'destroy');
+        var handlersFn = testUtils.makeStubFunction();
+        var forEachStub = testUtils.makeStubMethod(handlersFn, 'forEach');
+
+        helper._cleanUp(null, viewletManagerFn, handlersFn);
+
+        // Make sure that it destroys the viewlet manager
+        assert.equal(destroyStub.called(), true);
+        assert.equal(forEachStub.called(), true);
+        var args = forEachStub.lastArguments();
+        assert.isFunction(args[0]);
+        var eventFn = testUtils.makeStubFunction();
+        var detachStub = testUtils.makeStubMethod(eventFn, 'detach');
+        args[0](eventFn);
+        // checks to make sure that it calls the detach method of the event
+        // objects passed in via the handlers.
+        assert.equal(detachStub.called(), true);
+      });
+    });
+
+    describe('_uploadLocalCharm', function() {
+      var stubs = {}, fileObj, defSeries;
+
+      beforeEach(function() {
+        fileObj = { name: 'foo' };
+        defSeries = 'precise';
+
+        stubs = {
+          seriesStub: testUtils.makeStubMethod(
+              helper, '_getSeriesValue', defSeries),
+          cleanUpStub: testUtils.makeStubMethod(helper, '_cleanUp'),
+          localCharmLoadStub: testUtils.makeStubMethod(
+              helper, '_uploadLocalCharmLoad')
+        };
+
+        stubs.envFn = testUtils.makeStubFunction();
+        stubs.uploadLocalCharmStub = testUtils.makeStubMethod(
+            stubs.envFn, 'uploadLocalCharm');
+      });
+
+      afterEach(function() {
+        Object.keys(stubs).forEach(function(key) {
+          var stub = stubs[key];
+          if (stub.reset) {
+            stubs[key].reset();
+          }
+        });
+        stubs = {};
+      });
+
+      it('requests an upload from the environment', function() {
+        helper._uploadLocalCharm(null, null, null, fileObj, stubs.envFn, dbObj);
+        assert.equal(stubs.seriesStub.called(), true);
+        assert.equal(stubs.cleanUpStub.called(), true);
+        assert.equal(stubs.uploadLocalCharmStub.called(), true);
+        var args = stubs.uploadLocalCharmStub.lastArguments();
+        assert.deepEqual(args[0], fileObj);
+        assert.deepEqual(args[1], defSeries);
+        assert.isFunction(args[2]);
+        assert.isFunction(args[3]);
+
+        // Call the load callback to test to make sure it was called with the
+        // attributes that were bound to it.
+        args[3]();
+        assert.equal(stubs.localCharmLoadStub.called(), true);
+        var cbArgs = stubs.localCharmLoadStub.lastArguments();
+        assert.deepEqual(cbArgs[0], fileObj);
+        assert.deepEqual(cbArgs[1], stubs.envFn);
+        assert.deepEqual(cbArgs[2], dbObj);
+      });
+
+      it('calls the _getSeriesValue() method', function() {
+        var vmgr = 'viewlet manager';
+        helper._uploadLocalCharm(null, vmgr, null, fileObj, stubs.envFn, dbObj);
+        assert.equal(stubs.seriesStub.called(), true);
+        assert.equal(stubs.seriesStub.lastArguments()[0], vmgr);
+      });
+
+      it('calls the _cleanUp() method', function() {
+        var vmgr = 'viewlet manager',
+            hndl = 'handlers';
+        helper._uploadLocalCharm(null, vmgr, hndl, fileObj, stubs.envFn, dbObj);
+        assert.equal(stubs.cleanUpStub.called(), true);
+        var args = stubs.cleanUpStub.lastArguments();
+        assert.isNull(args[0]);
+        assert.equal(args[1], vmgr);
+        assert.equal(args[2]. hndl);
+      });
+    });
+
+    describe('_getSeriesValue', function() {
+      it('gets the series value from the viewlets input', function(done) {
+        var viewletManager = {
+          get: function(val) {
+            assert.equal(val, 'container');
+            return {
+              one: function(val) {
+                assert.equal(val, 'input[defaultSeries]');
+                return {
+                  get: function(val) {
+                    assert.equal(val, 'value');
+                    done();
+                  }
+                };
+              }
+            };
+          }
+        };
+        helper._getSeriesValue(viewletManager);
       });
     });
 
