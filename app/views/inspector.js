@@ -1384,6 +1384,9 @@ YUI.add('juju-view-inspector', function(Y) {
             });
           });
 
+      // Enable databinding.
+      options.enableDatabinding = true;
+
       options.events = Y.mix(options.events, options.viewletEvents);
 
       this.viewletManager = new viewletNS.ViewletManager(options);
