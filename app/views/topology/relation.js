@@ -346,7 +346,12 @@ YUI.add('juju-topology-relation', function(Y) {
       if (!window.flags.relationCollections) {
         rect = label.insert('rect', 'text');
       } else {
-        rect = label.append('rect');
+        rect = label.append('image')
+          .attr('xlink:href', function(d) {
+              return (
+                  '/juju-ui/assets/images/non-sprites/relation-icon-' +
+                  d.aggregatedStatus + '.png');
+            });
       }
       rect.attr('width', function(d) {
         if (!window.flags.relationCollections) {
