@@ -63,6 +63,9 @@ YUI.add('juju-topology-relation', function(Y) {
           click: 'relationClick',
           mousemove: 'mousemove'
         },
+        '.relation-action': {
+          click: {callback: 'relationActionClick' }
+        },
         '.dragline': {
           /**
            * The user clicked while the dragline was active.
@@ -652,6 +655,7 @@ YUI.add('juju-topology-relation', function(Y) {
       view.get('rmrelation_dialog').hide();
       view.get('rmrelation_dialog').destroy();
       confirmButton.set('disabled', false);
+      topo.fire('clearState');
     },
 
     /**
@@ -676,11 +680,8 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            // XXX Makyo 2014-01-28 This will need to be the relation chosen
-            // for removal, once the menu is in place. For now, just remove
-            // the first one.
             view.removeRelation(
-                relation.relations ? relation.relations[0] : relation,
+                relation,
                 view, confirmButton);
           },
           this)));
@@ -1028,31 +1029,106 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
+    /**
+     * Event handler for when the relation indicator or label is clicked.
+     *
+     * @method relationClick
+     * @param {Object} relation The relation or relation collection associated
+     *   with that relation line.
+     * @param {Object} self The relation module.
+     */
     relationClick: function(relation, self) {
       if (self.get('disableRelationInteraction')) { return; }
-      if (relation.isSubordinate) {
-        var subRelDialog = views.createModalPanel(
-            'You may not remove a subordinate relation.',
-            '#rmsubrelation-modal-panel');
-        subRelDialog.addButton(
-            { value: 'Cancel',
-              section: Y.WidgetStdMod.FOOTER,
-              /**
-               * @method action Hides the dialog on click.
-               * @param {object} e The click event.
-               * @return {undefined} nothing.
-               */
-              action: function(e) {
-                e.preventDefault();
-                subRelDialog.hide();
-                subRelDialog.destroy();
-              },
-              classNames: ['button']
-            });
-        subRelDialog.get('boundingBox').all('.yui3-button')
-                .removeClass('yui3-button');
+      if (!window.flags.relationCollections) {
+        if (relation.isSubordinate) {
+          self.showSubRelDialog();
+        } else {
+          self.removeRelationConfirm(relation, self);
+        }
       } else {
-        self.removeRelationConfirm(relation, self);
+        self.showRelationMenu(relation);
+      }
+    },
+
+    /**
+     * Show the 'cannot destroy sub rel' dialog.
+     *
+     * @method showSubRelDialog
+     */
+    showSubRelDialog: function() {
+      var subRelDialog = views.createModalPanel(
+          'You may not remove a subordinate relation.',
+          '#rmsubrelation-modal-panel');
+      subRelDialog.addButton(
+          { value: 'Cancel',
+            section: Y.WidgetStdMod.FOOTER,
+            /**
+             * @method action Hides the dialog on click.
+             * @param {object} e The click event.
+             * @return {undefined} nothing.
+             */
+            action: function(e) {
+              e.preventDefault();
+              subRelDialog.hide();
+              subRelDialog.destroy();
+            },
+            classNames: ['button']
+          });
+      subRelDialog.get('boundingBox').all('.yui3-button')
+              .removeClass('yui3-button');
+    },
+
+    /**
+     * Show the menu containing all of the relations for a given relation
+     * collection.
+     *
+     * @method showRelationMenu
+     * @param {object} relation The relation collection associated with the
+     *   relation line.
+     */
+    showRelationMenu: function(relation) {
+      var menu = Y.one('#relation-menu');
+      var menuInternals = menu.one('.menu');
+      if (menuInternals) {
+        menuInternals.remove(true);
+      }
+      menu.append(Templates.relationList({
+        relations: relation.relations
+      }));
+      // XXX Makyo 2014-02-03 - position list (card on board)
+      // Rough positioning for now.
+      var topo = this.get('component');
+      var tr = topo.zoom.translate();
+      var z = topo.zoom.scale();
+      var coords = topUtils.findCenterPoint(relation.source.xy,
+          relation.target.xy);
+      var point = { x: coords[0], y: coords[1], w: 10, h: 10 };
+      var locateAt = topUtils.locateRelativePointOnCanvas(point, tr, z);
+      menu.setStyle('left', locateAt[0]);
+      menu.setStyle('top', locateAt[1]);
+      menu.addClass('active');
+
+      // Firing resized will ensure the menu's positioned properly.
+      topo.fire('resized');
+    },
+
+    /**
+     * Event handler for when a relation in the relation menu is clicked.
+     *
+     * @method relationActionClick
+     * @param {undefined} _ Artifact of the d3-component event binding.
+     * @param {object} self The relation module.
+     */
+    relationActionClick: function(_, self) {
+      var topo = self.get('component');
+      var db = topo.get('db');
+      var relation = db.relations.getById(Y.one(this).getData('relationid'));
+      relation = self.decorateRelations([relation])[0];
+      if (relation.isSubordinate) {
+        topo.fire('clearState');
+        self.showSubRelDialog();
+      } else {
+        self.removeRelationConfirm(relation.relations[0], self);
       }
     }
 
