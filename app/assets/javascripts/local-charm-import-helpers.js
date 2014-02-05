@@ -24,8 +24,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
   ns.localCharmHelpers = {
 
     /**
-      Sends the local charm file contents and callbacks to the uploadLocalCharm
-      method in the environment.
+      Public method entry to deploy local charm.
+
+      Calls the _requestSeries() method to request the series to deploy their
+      local charm to.
 
       @method deployLocalCharm
       @param {Object} file The file object from the browser.
@@ -33,16 +35,116 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} db Reference to the database.
     */
     deployLocalCharm: function(file, env, db) {
-      // XXX (Jeff) We will be adding a dialogue soon
-      // to allow the user to configure the series value.
-      var series = env.get('defaultSeries'),
-          helper = ns.localCharmHelpers;
+      ns.localCharmHelpers._requestSeries(file, env, db);
+    },
 
+    /**
+      Requests the series to deploy their local charm to by rendering an
+      inspector with the requestSeries viewlet
+
+      @method _requestSeries
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+    */
+    _requestSeries: function(file, env, db) {
+      var container = Y.Node.create(
+          Y.juju.views.Templates['service-inspector']());
+
+      container.appendTo(Y.one('#content'));
+
+      var viewletManager = new Y.juju.viewlets.ViewletManager({
+        container: container,
+        viewletContainer: '.viewlet-container',
+        template: '<div class="viewlet-container"></div>',
+        viewlets: {
+          'requestSeries': Y.juju.viewlets.requestSeries
+        },
+        model: {
+          name: file.name,
+          size: file.size,
+          defaultSeries: env.get('defaultSeries')
+        }
+      });
+
+      viewletManager.render();
+      viewletManager.showViewlet('requestSeries');
+
+      ns.localCharmHelpers._attachViewletEvents(viewletManager, file, env, db);
+    },
+
+    /**
+      Attaches the events for the inspector externally until we are able to
+      refactor the viewletManager to handle event bindings.
+
+      @method _attachViewletEvents
+      @param {Object} viewletManager The reference to the viewletManager.
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+    */
+    _attachViewletEvents: function(viewletManager, file, env, db) {
+      var handlers = [],
+          helper = ns.localCharmHelpers,
+          container = viewletManager.get('container');
+
+      handlers.push(
+          container.one('button[cancel]').on(
+              'click', helper._cleanUp, null, viewletManager, handlers));
+      handlers.push(
+          container.one('button[upload]').on(
+              'click',
+              helper._uploadLocalCharm, null,
+              viewletManager, handlers, file, env, db));
+    },
+
+    /**
+      Destroys the viewletManager and detaches the attached events
+
+      @method _cleanUp
+      @param {Object} _ The click event object.
+      @param {Object} viewletManager Reference to the viewletManager.
+      @param {Array} handlers Collection of event handlers to detach.
+    */
+    _cleanUp: function(_, viewletManager, handlers) {
+      viewletManager.destroy();
+      handlers.forEach(function(event) {
+        event.detach();
+      });
+    },
+
+    /**
+      Sends the local charm file contents and callbacks to the uploadLocalCharm
+      method in the environment.
+
+      @param {Object} _ The click event object.
+      @param {Object} viewletManager Reference to the viewletManager.
+      @param {Array} handlers Collection of event handlers to detach.
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+    */
+    _uploadLocalCharm: function(e, viewletManager, handlers, file, env, db) {
+      var helper = ns.localCharmHelpers;
+      var series = helper._getSeriesValue(viewletManager);
+      helper._cleanUp(null, viewletManager, handlers);
       env.uploadLocalCharm(
           file,
           series,
           helper._uploadLocalCharmProgress,
           helper._uploadLocalCharmLoad.bind(null, file, env, db));
+    },
+
+    /**
+      Grabs the series value from the user input field in the inspector
+
+      @method _getSeriesValue
+      @param {Object} viewletManager Reference to the viewletManager.
+      @return {String} The series to deploy the charm to.
+    */
+    _getSeriesValue: function(viewletManager) {
+      return viewletManager.get('container')
+                           .one('input[defaultSeries]').get('value');
     },
 
     /**
@@ -155,5 +257,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
   };
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'viewlet-request-series',
+    'juju-viewlet-manager'
+  ]
 });
