@@ -212,6 +212,59 @@ YUI.add('juju-viewlet-manager', function(Y) {
   };
 
   /**
+    This mixin provides the databinding methods that the Viewlet Manager
+    uses so that it only needs to call local methods to interact with
+    the databinding engine but keep the conditionals out of the main
+    code flow.
+
+    @method databindingMixin
+  */
+  function databindingMixin() {}
+
+  databindingMixin.prototype = {
+
+    /**
+      Calls the bindingEngine bind() method.
+
+      @method databindingBind
+      @param {Object} model Either a Y.Model or POJO to bind the viewlet to.
+      @param {Object} viewlet A reference to the viewlet to bind to the model
+    */
+    databindingBind: function(model, viewlet) {
+      if (this.bindingEngine) {
+        this.bindingEngine.bind(model, viewlet);
+      }
+    },
+
+    /**
+      Calls the databindingEngine getViewlet() method.
+
+      @method databindingGetViewlet
+      @param {String} name The name of the viewlet to fetch
+      @return {Object} The viewlet requested
+    */
+    databindingGetViewlet: function(name) {
+      if (this.bindingEngine) {
+        return this.bindingEngine.getViewlet(name);
+      }
+    },
+
+    /**
+      Calls the databindingEngine unbind() method.
+
+      @method databindinginUnbind
+    */
+    databindingUnbind: function() {
+      if (this.bindingEngine) {
+        this.bindingEngine.unbind();
+      }
+    }
+
+  };
+
+  ns.databindingMixin = databindingMixin;
+
+  /**
     ViewletManager class for rendering a parent view container which manages the
     display of viewlets.
 
@@ -219,7 +272,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
     @class ViewletManager
     @constructor
   */
-  ns.ViewletManager = new Y.Base.create('viewlet-manager', Y.View, [], {
+  var vmName = 'viewlet-manager';
+  ns.ViewletManager = new Y.Base.create(vmName, Y.View, [ns.databindingMixin], {
 
     /**
       DOM bound events for any view container related events
@@ -287,8 +341,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       this._setupEvents();
 
-      this.bindingEngine = new views.BindingEngine(
-          options.databinding || {});
+      // Pass in databinding: true in the config parameters
+      // to enable databinding.
+      if (options.enableDatabinding) {
+        this.bindingEngine = new views.BindingEngine(
+            options.databinding || {});
+      }
     },
 
     /**
@@ -358,7 +416,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         viewlet.container = Y.Node.create(result);
       }
       viewletContainer.append(viewlet.container);
-      this.bindingEngine.bind(model, viewlet);
+      this.databindingBind(model, viewlet);
     },
 
     /**
@@ -416,7 +474,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       var slot = viewlet.slot;
       var existing = this._slots[slot];
       if (existing) {
-        existing = this.bindingEngine.getViewlet(existing.name);
+        existing = this.databindingGetViewlet(existing.name);
         if (existing) {
           // remove only removes the databinding but does not clear the DOM.
           existing.remove();
@@ -439,7 +497,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         }
         target.setHTML(viewlet.container);
         this._slots[slot] = viewlet;
-        this.bindingEngine.bind(model, viewlet);
+        this.databindingBind(model, viewlet);
       } else {
         console.error('View Container Missing slot', slot);
       }
@@ -605,7 +663,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       this._events.forEach(function(event) {
         event.detach();
       });
-      this.bindingEngine.unbind();
+      this.databindingUnbind();
       this.get('container').remove().destroy(true);
     },
 

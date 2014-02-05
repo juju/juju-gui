@@ -163,6 +163,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       manager = new ViewletManager(
           { interval: 0,
+            enableDatabinding: true,
             template: '<div class="viewlet"></div>',
             container: Y.Node.create(
                 '<div><div class="leftSlot"></div>' +

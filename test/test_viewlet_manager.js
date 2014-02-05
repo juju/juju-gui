@@ -24,7 +24,8 @@ describe('Viewlet Manager', function() {
   var fakeController = function() {};
   fakeController.prototype.bind = function() { /* noop */};
 
-  var generateViewletManager = function(context, options, viewletList) {
+  var generateViewletManager = function(
+      context, options, viewletList, managerOptions) {
     container = utils.makeContainer(context);
     container.setHTML([
       '<div class="yui3-juju-inspector">',
@@ -37,10 +38,11 @@ describe('Viewlet Manager', function() {
       template: '<div class="viewlet" data-bind="name">{{name}}</div>'
     }, options || {}, false, undefined, 0, true);
 
-    viewletManager = new Y.juju.viewlets.ViewletManager({
+    managerOptions = Y.mix({
       databinding: {
         interval: 0
       },
+      enableDatabinding: true,
       viewlets: {
         serviceConfig: Y.merge(viewletConfig),
         constraints: Y.merge(viewletConfig)
@@ -55,7 +57,9 @@ describe('Viewlet Manager', function() {
       },
       viewletContainer: '.viewlet-container',
       model: new Y.Model({id: 'test', name: 'foo'})
-    });
+    }, managerOptions || {}, true, undefined, 0, true);
+
+    viewletManager = new Y.juju.viewlets.ViewletManager(managerOptions);
   };
 
   before(function(done) {
@@ -307,6 +311,14 @@ describe('Viewlet Manager', function() {
        assert.equal(
            container.one('.left-breakout .viewlet').get('text'), 'ice cream');
      });
+
+  it('can be instantiated without databinding', function() {
+    generateViewletManager(this, null, null, {
+      enableDatabinding: false
+    });
+
+    assert.strictEqual(viewletManager.bindingEngine, undefined);
+  });
 
   it('can remove a slot from the dom', function() {
     generateViewletManager(this);
