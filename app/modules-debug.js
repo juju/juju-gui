@@ -371,6 +371,14 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/sandbox.js'
         },
 
+        'juju-env-web-handler': {
+          fullpath: '/juju-ui/store/env/web-handler.js'
+        },
+
+        'juju-env-web-sandbox': {
+          fullpath: '/juju-ui/store/env/web-sandbox.js'
+        },
+
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
         },
