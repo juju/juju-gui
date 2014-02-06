@@ -465,78 +465,21 @@ YUI.add('juju-env-go', function(Y) {
         this.fire('login', {data: {result: false}});
         return;
       }
-
       var credentials = this.getCredentials();
-      var authHeader = this._createAuthorizationHeader(
-          credentials.user, credentials.password);
-      var xhr = this._generateXHRRequest();
-      var eventHandler =
-          this._xhrEventHandler.bind(this, callback, progress, xhr);
-
-      xhr.addEventListener('progress', eventHandler, false);
-      xhr.addEventListener('load', eventHandler, false);
-
-      // we store this handler so that we can detach the events later.
-      this.set('xhrEventHandler', eventHandler);
-
-      xhr.open('POST', '/juju-core/charms?series=' + series, true);
-
-      xhr.setRequestHeader('Authorization', authHeader);
-      xhr.setRequestHeader('Content-Type', 'application/zip');
-      xhr.send(file);
-    },
-
-    /**
-      Create and return a value for the HTTP "Authorization" header.
-      The resulting value includes the given credentials.
-
-      @method _createAuthorizationHeader
-      @param {String} username The user name.
-      @param {String} password The password associated to the user name.
-      @return {String} The resulting "Authorization" header value.
-    */
-    _createAuthorizationHeader: function(username, password) {
-      var hash = btoa(username + ':' + password);
-      return 'Basic ' + hash;
-    },
-
-    /**
-      Generates a new XMLHttpRequest instance using
-      the passed in configuration object.
-
-      XMLHttpRequest is read-only so we need a method
-      to stub out while testing.
-
-      @method _generateXHRRequest
-      @param {Object} [config] The configuration object for XMLHttpRequest.
-      @return {Object} A new XMLHttpRequest instance.
-    */
-    _generateXHRRequest: function(config) {
-      config = config || {};
-      return new XMLHttpRequest(config);
-    },
-
-    /**
-      The callback from the xhr progress and load events.
-
-      @method _xhrEventHandler
-      @param {Function} callback The uploadLocalCharm callback.
-      @param {Function} progress The uploadLocalCharm progress event callback.
-      @param {Object} xhr Reference to the XHR intance.
-      @param {Object} e The event object from either of the events.
-    */
-    _xhrEventHandler: function(callback, progress, xhr, e) {
-      if (e.type === 'progress' && typeof progress === 'function') {
-        progress(e);
-        return; // explicit return on progress
-      } else if (e.type === 'load' && typeof callback === 'function') {
-        // if it's not a progress event it's a load event which is fired when
-        // it's finished the transmission for whatever reason.
-        var eventHandler = this.get('eventHandler');
-        xhr.removeEventListener('progress', eventHandler);
-        xhr.removeEventListener('load', eventHandler);
-        callback(e);
-      }
+      var url = '/juju-core/charms?series=' + series;
+      var headers = {'Content-Type': 'application/zip'};
+      // Use a web handler to communicate to the Juju HTTPS API. The web
+      // handler takes care of setting up asynchronous requests with basic
+      // HTTP authentication, and of subscribing/invoking the given callbacks.
+      // The web handler is stored as an environment attribute: it is usually
+      // an instance of app/store/web-handler.js:WebHandler when the GUI is
+      // connected to a real Juju environment. When instead the GUI is run in
+      // sandbox mode, a fake handler is used, in which no HTTP requests are
+      // involved: see app/store/web-sandbox.js:WebSandbox.
+      var webHandler = this.get('webHandler');
+      webHandler.post(
+          url, headers, file, credentials.user, credentials.password,
+          progress, callback);
     },
 
     /*

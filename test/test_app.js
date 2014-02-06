@@ -885,6 +885,20 @@ function injectData(app, data) {
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
     });
+
+    it('passes a fake web handler to the environment', function() {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        sandbox: true,
+        apiBackend: 'go',
+        store: new Y.juju.charmworld.APIv3({})
+      });
+      app.showView(new Y.View());
+      var webHandler = app.env.get('webHandler');
+      assert.strictEqual(webHandler.name, 'sandbox-web-handler');
+    });
+
   });
 
 })();

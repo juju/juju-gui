@@ -1644,6 +1644,37 @@ YUI.add('juju-env-fakebackend', function(Y) {
     deployerNext: function(watcherId, callback) {
       // No op in the fakebackend. Just return and ignore the callback.
       return;
+    },
+
+    /**
+      Create and return an event including an error simulating an error
+      response as returned by the juju-core HTTPS API.
+
+      @method _createErrorEvent
+      @param {String} message The error message.
+    */
+    _createErrorEvent: function(message) {
+      return {
+        type: 'error',
+        target: {responseText: {Error: message}}
+      };
+    },
+
+    /**
+      Simulate uploading a local charm.
+      Read the given zip file, validate it, parse charm's metadata and populate
+      the database with the required info before invoking the given callback.
+
+      @method handleUploadLocalCharm
+      @param {Object} file The zip file object containing the charm.
+      @param {Function} completedCallback The load event callback.
+    */
+    handleUploadLocalCharm: function(file, completedCallback) {
+      var errorEvent = this._createErrorEvent(
+          'local charm upload in sandbox mode not yet implemented');
+      completedCallback(errorEvent);
+      // XXX frankban 2014-02-05: read the zip file, validate it, parse charm's
+      // metadata, populate the db, etc...
     }
 
   });

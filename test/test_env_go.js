@@ -496,7 +496,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     describe('Local charm upload support', function() {
 
-      it('prevents non authorized users from sneding files', function(done) {
+      it('prevents non authorized users from sending files', function(done) {
         env.userIsAuthenticated = false;
         var warn = console.warn,
             called = false;
@@ -516,90 +516,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env.uploadLocalCharm();
       });
 
-      it('generates an XMLHTTPRequest instance', function() {
-        var xhr = env._generateXHRRequest();
-        assert.equal(xhr instanceof XMLHttpRequest, true);
-      });
-
-      it('opens and sends an XHR request with the proper data', function() {
-        var _generateXHRRequestCalled = false,
-            openCalled = false,
-            sendCalled = false,
-            addEventListenerCallCount = 0,
-            addEventListenerEvents = [],
-            addHeaders = [],
-            setHeaderCallCount = 0,
-            SERIES = 'precise',
-            FILEOBJ = { name: 'foo' };
-
+      it('uses the stored webHandler to perform requests', function() {
         env.userIsAuthenticated = true;
-        env._generateXHRRequest = function() {
-          _generateXHRRequestCalled = true;
-          return {
-            addEventListener: function(eventName, handler, dir) {
-              addEventListenerEvents.push(eventName);
-              assert.isFunction(handler);
-              assert.equal(dir, false);
-              addEventListenerCallCount += 1;
-            },
-            open: function(type, url, async, username, password) {
-              assert.equal(type, 'POST');
-              assert.equal(url, '/juju-core/charms?series=' + SERIES);
-              assert.equal(async, true);
-              openCalled = true;
-            },
-            setRequestHeader: function(key, val) {
-              var header = {};
-              header[key] = val;
-              addHeaders.push(header);
-              setHeaderCallCount += 1;
-            },
-            send: function(file) {
-              assert.deepEqual(file, FILEOBJ);
-              sendCalled = true;
-            }
-          };
-        };
-
-        env.uploadLocalCharm(FILEOBJ, SERIES);
-
-        assert.equal(_generateXHRRequestCalled, true);
-        assert.equal(openCalled, true);
-        assert.equal(sendCalled, true);
-        assert.equal(addEventListenerCallCount, 2);
-        assert.deepEqual(addEventListenerEvents, ['progress', 'load']);
-        assert.deepEqual(setHeaderCallCount, 2);
-        assert.deepEqual(addHeaders, [
-          {'Authorization': 'Basic dXNlcjpwYXNzd29yZA=='},
-          {'Content-Type': 'application/zip'}
-        ]);
-        // Test the storing of the event handler so we can detach it later.
-        assert.isFunction(env.get('xhrEventHandler'));
-      });
-
-      it('calls the progress callback on the progress event', function(done) {
-        var e = { type: 'progress'};
-        env._xhrEventHandler(null, function(event) {
-          assert.deepEqual(event, e);
-          done();
-        }, null, e);
-      });
-
-      it('calls the default callback on the load event', function(done) {
-        var e = { type: 'load'},
-            removeEventListenerCount = 0,
-            removeEventListenerEvents = [];
-        env._xhrEventHandler(function(event) {
-          assert.deepEqual(event, e);
-          assert.equal(removeEventListenerCount, 2);
-          assert.deepEqual(removeEventListenerEvents, ['progress', 'load']);
-          done();
-        }, null, {
-          removeEventListener: function(eventName) {
-            removeEventListenerEvents.push(eventName);
-            removeEventListenerCount += 1;
-          }
-        }, e);
+        var mockWebHandler = {post: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.uploadLocalCharm(
+            'a zip file', 'trusty',
+            function() {return 'progress';},
+            function() {return 'completed';});
+        // Ensure the web handler's post method has been called with the
+        // expected arguments.
+        assert.strictEqual(mockWebHandler.post.callCount(), 1);
+        var lastArguments = mockWebHandler.post.lastArguments();
+        assert.strictEqual(lastArguments.length, 7);
+        assert.strictEqual(
+            lastArguments[0], '/juju-core/charms?series=trusty'); // URL.
+        assert.deepEqual(
+            lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
+        assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
+        assert.strictEqual(lastArguments[3], 'user'); // User name.
+        assert.strictEqual(lastArguments[4], 'password'); // Password.
+        assert.strictEqual(
+            lastArguments[5](), 'progress'); // Progress callback.
+        assert.strictEqual(
+            lastArguments[6](), 'completed'); // Completed callback.
       });
 
     });
