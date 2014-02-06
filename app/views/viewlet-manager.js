@@ -146,7 +146,15 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (typeof this.template === 'string') {
         this.template = Y.Handlebars.compile(this.template);
       }
-      this.container.setHTML(this.template(model.getAttrs()));
+
+      var modelAttrs;
+      if (model && model.getAttrs) {
+        modelAttrs = model.getAttrs();
+      } else {
+        modelAttrs = model;
+      }
+
+      this.container.setHTML(this.template(modelAttrs));
     },
 
     /**
