@@ -1,5 +1,15 @@
-<span>Please enter the Ubuntu series you would like this charm deployed to.</span>
-<span>File: {{name}}</span>
-<span>Size: {{size}}b</span>
-<input type="text" defaultSeries value="{{defaultSeries}}" />
-<button upload>Upload</button><button cancel>Cancel</button>
+<div class="view-container">
+<h2>Deploy: {{name}} ({{size}}b)</h2>
+  <div class="view-content">
+    <div class="settings-wrapper">
+      <label for="defaultSeries">
+        Please enter the Ubuntu series you would like this charm deployed to.
+      </label>
+      <input type="text" defaultSeries id="defaultSeries"
+          value="{{defaultSeries}}" />
+  </div>
+</div>
+<div class="controls">
+  <button cancel class="cancel">Cancel</button>
+  <button upload class="confirm">Upload</button>
+</div>
