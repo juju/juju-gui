@@ -683,6 +683,12 @@
             overflow-y: auto;
             margin-top: -1px;
 
+            .line-too-long {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
             .view-content {
                 padding: 20px @inspector-main-padding;
                 border-top: 1px solid @inspector-divider-top;
