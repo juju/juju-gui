@@ -394,7 +394,9 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
+        var webModule = Y.namespace('juju.environments.web');
         if (this.get('sandbox')) {
+          // The GUI is running in sandbox mode.
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
           var state = new State({store: this.get('store')});
@@ -414,8 +416,17 @@ YUI.add('juju-gui', function(Y) {
             this.destroy();
             throw 'unrecognized backend type: ' + apiBackend;
           }
-
+          // Instantiate a fake Web handler, which simulates the
+          // request/response communication between the GUI and the juju-core
+          // HTTPS API.
+          envOptions.webHandler = new webModule.WebSandbox({state: state});
+        } else {
+          // The GUI is connected to a real Juju environment.
+          // Instantiate a Web handler allowing to perform asynchronous HTTPS
+          // requests to the juju-core API.
+          envOptions.webHandler = new webModule.WebHandler();
         }
+
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
 
@@ -1421,6 +1432,8 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-fakebackend',
     'juju-fakebackend-simulator',
     'juju-env-sandbox',
+    'juju-env-web-handler',
+    'juju-env-web-sandbox',
     'juju-charm-models',
     'juju-views',
     'juju-view-environment',
