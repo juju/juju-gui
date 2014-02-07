@@ -963,10 +963,11 @@ describe('utilities', function() {
 (function() {
   describe('DecoratedRelation and RelationCollection', function() {
 
-    var views, utils, Y, inputRelation, source, target;
+    var models, views, unit, utils, Y, inputRelation, source, target;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-models', 'juju-views'], function(Y) {
+        models = Y.namespace('juju.models');
         views = Y.namespace('juju.views');
         utils = Y.namespace('juju.views.utils');
         done();
@@ -975,32 +976,40 @@ describe('utilities', function() {
 
     beforeEach(function() {
       source = {
+        id: 'source-id',
         model: { get: function() {} },
         modelId: function() {
           return 'source-id';
-        }
+        },
+        _units: [],
+        units: { toArray: function() { return source._units; } }
       };
       target = {
+        id: 'target-id',
         model: { get: function() {} },
         modelId: function() {
           return 'target-id';
+        },
+        _units: [],
+        units: { toArray: function() { return target._units; } }
+      };
+      inputRelation = new models.Relation({
+        endpoints: [
+          ['source-id', {name: 'endpoint-1'}],
+          ['target-id', {name: 'endpoint-2'}]
+        ]
+      });
+      unit = {
+        'agent_state': undefined,
+        'agent_state_data': {
+          'hook': undefined
         }
       };
-      inputRelation = {
-        getAttrs: function() {
-          return {};
-        }
-      };
-
     });
 
     it('mirrors the relation\'s properties', function() {
-      var relation = {
-        getAttrs: function() {
-          return {foo: 'bar'};
-        }
-      };
-      relation = views.DecoratedRelation(relation, source, target);
+      inputRelation.set('foo', 'bar');
+      var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.deepProperty(relation, 'foo');
       assert.equal(relation.foo, 'bar');
     });
@@ -1020,21 +1029,13 @@ describe('utilities', function() {
     it('includes endpoint names in its ID, if they exist', function() {
       var firstEndpointName = 'endpoint-1';
       var secondEndpointName = 'endpoint-2';
-      inputRelation.endpoints = [
-        [null, {name: firstEndpointName}],
-        [null, {name: secondEndpointName}]
-      ];
       var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.match(relation.compositeId, new RegExp(firstEndpointName));
       assert.match(relation.compositeId, new RegExp(secondEndpointName));
     });
 
     it('exposes the fact that a relation is a subordinate', function() {
-      var inputRelation = {
-        getAttrs: function() {
-          return {scope: 'container'};
-        }
-      };
+      inputRelation.set('scope', 'container');
       // Return true when checking source.model.get('subordinate')
       source.model.get = function() { return true; };
       var relation = views.DecoratedRelation(inputRelation, source, target);
@@ -1042,11 +1043,7 @@ describe('utilities', function() {
     });
 
     it('exposes the fact that a relation is not a subordinate', function() {
-      var inputRelation = {
-        getAttrs: function() {
-          return {scope: 'not-container'};
-        }
-      };
+      inputRelation.set('scope', 'not-container');
       // Return false when checking source.model.get('subordinate')
       source.model.get = function() { return false; };
       var relation = views.DecoratedRelation(inputRelation, source, target);
@@ -1058,11 +1055,23 @@ describe('utilities', function() {
       // Return false for subordinate on both models but 'container' for scope
       source.model.get = function() { return false; };
       target.model.get = function() { return false; };
-      inputRelation.getAttrs = function() {
-        return { scope: 'container' };
-      };
+      inputRelation.set('scope', 'container');
       relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
+    });
+
+    it('can tell when a relation is in error', function() {
+      source._units = [Y.clone(unit)];
+      target._units = [Y.clone(unit)];
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.isFalse(relation.sourceHasError());
+      assert.isFalse(relation.targetHasError());
+      assert.isFalse(relation.hasRelationError());
+      source._units[0].agent_state = 'error';
+      source._units[0].agent_state_data.hook = 'endpoint-1-relation';
+      assert.isTrue(relation.sourceHasError());
+      assert.isFalse(relation.targetHasError());
+      assert.isTrue(relation.hasRelationError());
     });
 
     it('can store relations in collections', function() {
@@ -1085,6 +1094,36 @@ describe('utilities', function() {
       assert.isFalse(collections[0].isSubordinate);
       assert.equal(collections[0].id, collections[0].relations[0].id);
       assert.equal(collections[0].compositeId, collections[0].relations[0].id);
+    });
+
+    it('can aggregate relation statuses', function() {
+      // Mock a service with one unit in error.
+      var thirdModel = Y.clone(source);
+      thirdModel.modelId = 'third-id';
+      thirdModel._units = [Y.clone(unit)];
+      thirdModel._units[0].agent_state = 'error';
+      thirdModel._units[0].agent_state_data.hook = 'endpoint-1-relation';
+      thirdModel.units = { toArray: function() { return thirdModel._units; } };
+      // Add two relations between the same two models, plus a third.
+      var relations = [
+        views.DecoratedRelation(inputRelation, source, target),
+        views.DecoratedRelation(inputRelation, source, target),
+        views.DecoratedRelation(inputRelation, source, thirdModel)
+      ];
+      var collections = utils.toRelationCollections(relations);
+      // Multiple healthy relations - healthy.
+      assert.equal(collections[0].aggregatedStatus, 'healthy');
+      // Any error relations - error.
+      assert.equal(collections[1].aggregatedStatus, 'error');
+      // n-1 or fewer subordinate relations - healthy.
+      collections[0].relations[0].isSubordinate = true;
+      assert.equal(collections[0].aggregatedStatus, 'healthy');
+      // n subordinate relations - subordinate.
+      collections[0].relations[1].isSubordinate = true;
+      assert.equal(collections[0].aggregatedStatus, 'subordinate');
+      // Any subordinate relations with any errors - error.
+      collections[1].relations[0].isSubordinate = true;
+      assert.equal(collections[1].aggregatedStatus, 'error');
     });
 
   });
