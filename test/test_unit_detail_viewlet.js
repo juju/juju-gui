@@ -169,14 +169,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 '<div><div class="leftSlot"></div>' +
                 '<div class="juju-inspector"></div></div>'),
             model: service,
-            viewlets: {'unitDetails': unitDetails},
+            views: {'unitDetails': unitDetails},
             viewletContainer: '.viewlet',
             db: db
           });
       manager.slots['left-hand-panel'] = '.leftSlot';
       manager.render();
       manager.showViewlet('unitDetails', unit);
-      var node = manager.viewlets.unitDetails.container;
+      var node = manager.views.unitDetails.container;
       assert.strictEqual(
           node.one('[data-bind="displayName"]').get('text'), 'haproxy/42');
       assert.strictEqual(
