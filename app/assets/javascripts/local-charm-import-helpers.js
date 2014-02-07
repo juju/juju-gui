@@ -89,10 +89,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
           container = viewletManager.get('container');
 
       handlers.push(
-          container.one('button[cancel]').on(
+          container.one('button.cancel').on(
               'click', helper._cleanUp, null, viewletManager, handlers));
       handlers.push(
-          container.one('button[upload]').on(
+          container.one('button.confirm').on(
               'click',
               helper._uploadLocalCharm, null,
               viewletManager, handlers, file, env, db));
