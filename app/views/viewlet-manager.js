@@ -328,17 +328,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
 
     initializer: function(options) {
-      // Passed in on instantiation
-      this.viewletConfig = {};
-      // Make a copy of viewlet configuration so that we never mutate the
-      // original configuration.
-      Y.each(options.viewlets, function(cfg, name) {
-        this.viewletConfig[name] = Y.merge(cfg);
-      }, this);
       this.template = options.template;
       this.templateConfig = options.templateConfig || {};
       this.viewletContainer = options.viewletContainer;
-      this.viewlets = this._generateViewlets(); // {String}: {Viewlet}
+
+      this.views = this._generateViews(options.views); // {String}: {View}
+
       this.events = options.events;
       // Map from logical slot name to the CSS selector within ViewletManager's
       // DOM to be used to hold this slot when rendered.
@@ -391,9 +386,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       var viewletContainer = managerContainer.one(this.viewletContainer);
 
-      // render the viewlets into their containers
-      Y.Object.each(this.viewlets, function(viewlet, name) {
-        this.renderViewlet(viewlet, name, model, viewletContainer);
+      // render the view/viewlets into their containers
+      Y.Object.each(this.views, function(view, name) {
+        this.renderViewlet(view, name, model, viewletContainer);
       }, this);
 
       this.recalculateHeight(viewletContainer);
@@ -406,25 +401,35 @@ YUI.add('juju-viewlet-manager', function(Y) {
       Renders a viewlet into the given container with the given model.
 
       @method renderViewlet
-      @param {Object} viewlet The viewlet to render.
+      @param {Object} view The view/viewlet to render.
       @param {String} name A string name for the viewlet.
       @param {Model} model The model or POJSO for the viewlet.
       @param {Y.Node} viewletContainer The container into which the viewlet
         should be rendered.
     */
-    renderViewlet: function(viewlet, name, model, viewletContainer) {
-      if (!viewlet.name) {
-        viewlet.name = name;
+    renderViewlet: function(view, name, model, viewContainer) {
+      if (view instanceof Y.View) {
+        if (!view.model) {
+          view.model = model;
+        }
+        view.render();
+        viewContainer.append(view.get('container'));
+        this.databindingBind(model, view);
+      } else {
+        if (!view.name) {
+          view.name = name;
+        }
+        if (view.slot) {
+          return;
+        }
+        var result = view.render(model, this.getAttrs());
+        if (result && typeof result === 'string') {
+          view.container = Y.Node.create(result);
+        }
+        viewContainer.append(view.container);
+        this.databindingBind(model, view);
       }
-      if (viewlet.slot) {
-        return;
-      }
-      var result = viewlet.render(model, this.getAttrs());
-      if (result && typeof result === 'string') {
-        viewlet.container = Y.Node.create(result);
-      }
-      viewletContainer.append(viewlet.container);
-      this.databindingBind(model, viewlet);
+
     },
 
     /**
@@ -434,36 +439,36 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @param {String} viewletName is a string representing the viewlet name.
       @param {Model} model to associate with the viewlet in its slot.
     */
-    showViewlet: function(viewletName, model) {
+    showViewlet: function(viewName, model) {
       var container = this.get('container');
       // This method can be called directly but it is also an event handler
       // for clicking on the viewlet manager tab handles.
-      if (typeof viewletName !== 'string') {
-        viewletName = viewletName.currentTarget.getData('viewlet');
+      if (typeof viewName !== 'string') {
+        viewName = viewName.currentTarget.getData('viewlet');
       }
 
-      var viewlet = this.viewlets[viewletName];
-      if (!viewlet) {
+      var view = this.views[viewName];
+      if (!view) {
         console.warn(
-            'Attempted to load a viewlet that does not exist', viewletName);
+            'Attempted to load a viewlet that does not exist', viewName);
       }
       if (!model) {
         model = this.get('model');
       }
       // If the viewlet has a slot, use fillSlot to manage the slot. Otherwise,
       // hide existing viewlets in the default slot before showing the new one.
-      if (viewlet.slot) {
-        this.fillSlot(viewlet, model);
+      if (view.slot) {
+        this.fillSlot(view, model);
         // Shows the slot
-        container.one(this.slots[viewlet.slot]).show();
+        container.one(this.slots[view.slot]).show();
       } else {
-        Y.Object.each(this.viewlets, function(viewletToCheck) {
-          if (!viewletToCheck.slot) {
-            viewletToCheck.hide();
+        Y.Object.each(this.views, function(viewToCheck) {
+          if (!viewToCheck.slot) {
+            viewToCheck.hide();
           }
         });
       }
-      viewlet.show();
+      view.show();
       this.recalculateHeight();
     },
 
@@ -477,9 +482,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @param {Viewlet} viewlet to render.
       @param {Model} model to bind to the slot.
     */
-    fillSlot: function(viewlet, model) {
+    fillSlot: function(view, model) {
       var target;
-      var slot = viewlet.slot;
+      var slot = view.slot;
       var existing = this._slots[slot];
       if (existing) {
         existing = this.databindingGetViewlet(existing.name);
@@ -496,16 +501,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
         target = this.get('container').one(this.slots[slot]);
-        var result = viewlet.render(model, this.getAttrs());
+        var result = view.render(model, this.getAttrs());
         if (result) {
           if (typeof result === 'string') {
             result = Y.Node.create(result);
           }
-          viewlet.container = result;
+          view.container = result;
         }
-        target.setHTML(viewlet.container);
-        this._slots[slot] = viewlet;
-        this.databindingBind(model, viewlet);
+        target.setHTML(view.container);
+        this._slots[slot] = view;
+        this.databindingBind(model, view);
       } else {
         console.error('View Container Missing slot', slot);
       }
@@ -592,35 +597,59 @@ YUI.add('juju-viewlet-manager', function(Y) {
     },
 
     /**
-      Generates the viewlet instances based on the passed in configuration
+      Generates a new instance of all of the views passed into the viewlet
+      manager.
 
-      @method _generateViewlets
-      @private
-    */
-    _generateViewlets: function() {
-      var viewlets = {},
-          model = this.get('model');
-
-      // expand out the config to defineProperty syntax
-      this._expandViewletConfig();
-
-      Y.Object.each(this.viewletConfig, function(viewlet, key) {
-        // If no viewlet config is passed in it will generate a viewlet using
-        // only the base config which causes things to fail further down the
-        // line and is difficult to debug.
-        if (viewlet === undefined) {
-          console.warn('no viewlet config defined for viewlet', key);
-          return;
+      @method _generateViews
+      @param {Object} views A collection of views in the following formats
+        ex) {
+          'testView2': new testView({})
         }
-        // create viewlet instances using the base and supplied config
-        viewlets[key] = Object.create(ViewletBase, viewlet);
-        var resultingViewlet = viewlets[key];
-        resultingViewlet.changedValues = {};
-        resultingViewlet._eventHandles = [];
-        resultingViewlet.options = this.getAttrs();
+    */
+    _generateViews: function(views) {
+      var initializedViews = {};
+
+      Object.keys(views).forEach(function(key) {
+        // singleView can be a viewlet or an instance of Y.View
+        var singleView = views[key];
+
+        if (singleView instanceof Y.View) {
+          initializedViews[key] = singleView;
+        } else {
+          // singleView is a viewlet so we need to compile it.
+          // We use Y.merge() to make a copy of viewlet configuration so
+          // that we never mutate the original configuration.
+          initializedViews[key] = this._generateViewlet(
+              Y.merge(singleView), key);
+        }
+
       }, this);
 
-      return viewlets;
+      return initializedViews;
+    },
+
+    /**
+      Creates a new instance from the viewlet config.
+
+      @method _generateViewlet
+      @param {Object} viewlet Viewlet configuration object.
+      @param {String} key Name of the viewlet from the view list object.
+      @return {Object} An instance of the viewlet configuration object.
+    */
+    _generateViewlet: function(viewlet, key) {
+      // If no viewlet config is passed in it will generate a viewlet using
+      // only the base config which causes things to fail further down the
+      // line and is difficult to debug.
+      if (viewlet === undefined) {
+        console.warn('no viewlet config defined for viewlet', key);
+        return;
+      }
+      viewlet = this._expandViewletConfig(viewlet);
+      viewlet = Object.create(ViewletBase, viewlet);
+      viewlet.changedValues = {};
+      viewlet._eventHandles = [];
+      viewlet.options = this.getAttrs();
+      return viewlet;
     },
 
     /**
@@ -630,19 +659,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method _expandViewletConfig
       @private
     */
-    _expandViewletConfig: function() {
-      /*jshint -W089 */
-      // Tells jshint to ignore the lack of hasOwnProperty in forloops
-      for (var viewlet in this.viewletConfig) {
-        for (var cfg in this.viewletConfig[viewlet]) {
-          if (this.viewletConfig[viewlet][cfg].value === undefined) {
-            this.viewletConfig[viewlet][cfg] = {
-              value: this.viewletConfig[viewlet][cfg],
-              writable: true
-            };
-          }
+    _expandViewletConfig: function(viewlet) {
+      Object.keys(viewlet).forEach(function(key) {
+        if (viewlet[key].value === undefined) {
+          viewlet[key] = {
+            value: viewlet[key],
+            writable: true
+          };
         }
-      }
+      });
+      return viewlet;
     },
 
     /**
@@ -663,9 +689,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @return {undefined} nothing.
     */
     destructor: function() {
-      Y.Object.each(this.viewlets, function(viewlet, name) {
-        if (!viewlet.slot) {
-          viewlet.destroy();
+      Y.Object.each(this.view, function(view, name) {
+        if (!view.slot) {
+          view.destroy();
         }
       });
       this._events.forEach(function(event) {
@@ -685,9 +711,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       ev.halt();
       var container = this.get('container'),
           target = ev.currentTarget,
-          viewletName = target.getData('viewlet'),
+          viewName = target.getData('viewlet'),
           active = container.one('.tab.active');
-      this.showViewlet(viewletName);
+      this.showViewlet(viewName);
       if (active) {
         active.removeClass('active');
       }

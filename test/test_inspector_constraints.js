@@ -53,7 +53,7 @@ describe('Inspector Constraints', function() {
 
   // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.viewlets.constraints;
+    return inspector.viewletManager.views.constraints;
   };
 
   // Change the value of the given key in the constraints form.
