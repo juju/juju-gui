@@ -151,8 +151,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(stubOne.callCount(), 2, 'stubOne not called twice.');
         assert.equal(stubOn.callCount(), 2, 'stubOn not called twice');
         var stubOneArgs = stubOne.allArguments();
-        assert.equal(stubOneArgs[0][0], 'button[cancel]');
-        assert.equal(stubOneArgs[1][0], 'button[upload]');
+        assert.equal(stubOneArgs[0][0], 'button.cancel');
+        assert.equal(stubOneArgs[1][0], 'button.confirm');
         // Because on() gets called twice we get all of the arguments from each
         // call and then check those against their required values.
         var stubOnArgs = stubOn.allArguments();
