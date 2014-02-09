@@ -514,3 +514,25 @@ candidates, and do the job one step at a time rather than all at once.
     https://npmjs.org/doc/shrinkwrap.html
 .. _`Building shrinkwrapped packages`:
     https://npmjs.org/doc/shrinkwrap.html#Building-shrinkwrapped-packages
+
+Introducing third-party JavaScript libraries
+============================================
+
+Do the following in order to add external non-YUI JavaScript libraries:
+
+1) copy the file(s) to ``app/assets/javascripts/``;
+2) add them to app/modules-debug.js (look for "jsyaml" for an example of how to
+   do it). Whatever name you choose for the module ('js-yaml' in the given
+   example) is the name you should put in the "requires" section of the code
+   that needs it.
+3) reference the new file(s) in ``bin/merge-files``: this file includes a list
+   of third-party JavaScript libraries (``filesToLoad.js``) in which the new
+   file(s) must be pushed.
+
+Third-party libraries might not conform to our code style. If ``make lint``
+outputs errors for the libraries you added, do the following:
+
+1) exclude those file from the ``JSFILES`` list in the Makefile;
+2) if the new libraries define globals, and you want lint to be aware and
+   ignore the new global names, add those to the ``predef`` list in
+   ``.jshintrc``.

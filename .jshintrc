@@ -34,7 +34,8 @@
         "jsyaml",
         "consoleManager",
         "it",
-        "saveAs"
+        "saveAs",
+        "zip"
     ],
 
 
