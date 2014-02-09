@@ -105,7 +105,11 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/spinner.js',
     'app/assets/javascripts/sub-app.js',
     'app/assets/javascripts/unscaled-pack-layout.js',
-    'app/assets/javascripts/Object.observe.poly.js'
+    'app/assets/javascripts/Object.observe.poly.js',
+    'app/assets/javascripts/zip.js',
+    'app/assets/javascripts/inflate.js',
+    'app/assets/javascripts/deflate.js',
+    'app/assets/javascripts/zip-utils.js'
   ]);
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');

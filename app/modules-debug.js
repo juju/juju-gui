@@ -108,6 +108,14 @@ var GlobalConfig = {
         }
       }
     },
+    zip: {
+      modules: {
+        'zip': {
+          // Zip library from http://gildas-lormeau.github.io/zip.js/
+          fullpath: '/juju-ui/assets/javascripts/zip.js'
+        }
+      }
+    },
     filesaver: {
       modules: {
         'FileSaver': {
@@ -195,6 +203,10 @@ var GlobalConfig = {
 
         'unscaled-pack-layout': {
           fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
+        },
+
+        'zip-utils': {
+          fullpath: '/juju-ui/assets/javascripts/zip-utils.js'
         },
 
         // Views
