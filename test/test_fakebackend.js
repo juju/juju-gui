@@ -1903,7 +1903,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(evt, expectedEvt);
     });
 
-    // XXX frankban 2014-02-06: add the handleUploadLocalCharm tests here.
+    // XXX frankban 2014-02-06: add the handleUploadLocalCharm and
+    // _handleLocalCharmEntries tests here.
 
   });
 

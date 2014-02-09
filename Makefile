@@ -32,6 +32,9 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/prettify.js$$' \
 		-e '^app/assets/javascripts/FileSaver.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
+		-e '^app/assets/javascripts/zip.js$$' \
+		-e '^app/assets/javascripts/inflate.js$$' \
+		-e '^app/assets/javascripts/deflate.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js, app/assets/javascripts/Object.observe.poly.js'
