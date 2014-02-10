@@ -253,7 +253,7 @@ describe('Inspector Overview', function() {
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -314,7 +314,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -375,7 +375,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     // Clear the service upgrade information.
     service.set('upgrade_available', false);
@@ -439,7 +439,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no downgrades)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
@@ -564,7 +564,7 @@ describe('Inspector Overview', function() {
     };
 
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     Y.Object.each(outputInput, function(value, key, obj) {
       assert.equal(overview.categoryName(value), key);
@@ -573,7 +573,7 @@ describe('Inspector Overview', function() {
 
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -661,7 +661,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -705,7 +705,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -749,7 +749,7 @@ describe('Inspector Overview', function() {
 
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -826,7 +826,7 @@ describe('Inspector Overview', function() {
 
   it('attempts to upgrade on click', function(done) {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = inspector.viewletManager.get('container');
 
     // Ensure that get_charm is called to get the new charm.
@@ -849,7 +849,7 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function(done) {
     var inspector = setUpInspector();
-    var newContainer = inspector.viewletManager.viewlets.inspectorHeader
+    var newContainer = inspector.viewletManager.views.inspectorHeader
       .container;
     var unitId = 'mediawiki/1';
 
@@ -875,8 +875,8 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service is dying', function() {
     var inspector = setUpInspector();
-    var viewlets = inspector.viewletManager.viewlets;
-    var newContainer = viewlets.inspectorHeader.container;
+    var views = inspector.viewletManager.views;
+    var newContainer = views.inspectorHeader.container;
     var service = db.services.getById('mediawiki');
     // The service is considered to be alive by default.
     assert.strictEqual(service.get('life'), 'alive');
@@ -1017,7 +1017,7 @@ describe('Inspector Overview', function() {
         'running': {remove: true},
         'landscape': {landscape: true}
       };
-      var overview = inspector.viewletManager.viewlets.overview;
+      var overview = inspector.viewletManager.views.overview;
       Y.Object.each(buttons, function(results, category) {
         var buttonList = overview.generateActionButtonList(category);
         assert.deepEqual(buttonList, results);

@@ -110,7 +110,7 @@ describe('Inspector Settings', function() {
 
   // Retrieve and return the config viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.viewlets.config;
+    return inspector.viewletManager.views.config;
   };
 
   // Change the value of the given key in the constraints form.
@@ -285,7 +285,7 @@ describe('Inspector Settings', function() {
     input.set('value', 'foo');
     // Force the databinding to notice the change in-line.
     inspector.viewletManager.bindingEngine._nodeChanged(
-        input, inspector.viewletManager.viewlets.config);
+        input, inspector.viewletManager.views.config);
     button.simulate('click');
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Options.admins);

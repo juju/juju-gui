@@ -57,7 +57,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
         container: container,
         viewletContainer: '.viewlet-container',
         template: '<div class="viewlet-container"></div>',
-        viewlets: {
+        // views accepts views and viewlets
+        views: {
           'requestSeries': Y.juju.viewlets.requestSeries
         },
         model: {
