@@ -251,6 +251,9 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
       var container = this.get('container');
       if (container) {
         var scrollable = container.one('.tab-panels');
+        // Need to apply the transition class after the page has rendered
+        // to stop the animation firing on page load in Safari.
+        scrollable.addClass('animate-scroll');
         scrollable.on('scroll', function(e) {
           if (this.get('scrollTop') > 50) {
             container.addClass('collapsed');

@@ -94,17 +94,19 @@ YUI.add('browser-tabview', function(Y) {
 
       // Once the animation is complete reduce the height of all tabs except
       // the visible tab so the container only scrolls for the visible tab.
-      var handler = this.tabCarousel.on('transitionend', function() {
-        // Because this event will fire shortly after this method completes we
-        // can detach it here instead of setting up a destructor sequence.
-        handler.detach();
-        var activeTab = container.one(tabId);
-        if (activeTab) {
-          activeTab.setStyle('height', 'auto');
-          otherTabs.setStyle('height', '1px');
-        }
-        this.fire('selectionChangeComplete');
-      }, this);
+      var handler = this.tabCarousel.on(
+          ['transitionend', 'webkitTransitionEnd'], function() {
+            // Because this event will fire shortly after this method completes
+            // we can detach it here instead of setting up a
+            // destructor sequence.
+            handler.detach();
+            var activeTab = container.one(tabId);
+            if (activeTab) {
+              activeTab.setStyle('height', 'auto');
+              otherTabs.setStyle('height', '1px');
+            }
+            this.fire('selectionChangeComplete');
+          }, this);
 
       // Set the selected tab.
       this.set('selection', link);
