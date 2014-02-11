@@ -429,9 +429,10 @@ YUI.add('juju-topology-service', function(Y) {
       * @method _ignore
       */
     _ignore: function(e) {
-      e.halt();
+      // This used to be an e.halt() which also stops event propogation but
+      // that prevented listening to any drag events above the canvas.
+      e.preventDefault();
     },
-
 
     /**
       Attaches the touchstart event handlers for the service elements. This is
