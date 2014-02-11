@@ -91,7 +91,7 @@ YUI.add('browser-tabview', function(Y) {
 
       // Once the animation is complete reduce the height of all tabs except
       // the visible tab so the container only scrolls for the visible tab.
-      var handler = this.tabCarousel.on('transitionend', function() {
+      var handler = this.tabCarousel.on(['transitionend', 'webkitTransitionEnd'], function() {
         // Because this event will fire shortly after this method completes we
         // can detach it here instead of setting up a destructor sequence.
         handler.detach();
