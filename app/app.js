@@ -638,6 +638,114 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deployService(charm, ghostAttributes);
       }, this);
+
+      this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
+      // These are manually detached in the destructor.
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
+      }, this);
+    },
+
+    /**
+      Show the appropriate drag notification type.
+
+      NOOP
+
+      @method showDragNotification
+      @param {String} fileType The type of file to show the notification for.
+    */
+    showDragNotification: function(fileType) {},
+
+    /**
+      Hide the drag notifications.
+
+      NOOP
+
+      @method hideDragNotification
+    */
+    hideDragNotification: function() {},
+
+    /**
+      Event handler for the dragenter, dragover, dragleave events on the
+      document. It calls to determine the file type being dragged and manages
+      the commands to the timerControl method.
+
+      @method _appDragOverHandler
+      @param {Object} e The event object from the various events.
+    */
+    _appDragOverHandler: function(e) {
+      e.preventDefault(); // required to allow items to be dropped
+      var fileType = this._determineFileType(e.dataTransfer);
+      if (!fileType) {
+        return; // Ignore if it's not a supported type
+      }
+      var type = e.type;
+      if (type === 'dragenter') {
+        this.showDragNotification(fileType);
+        return;
+      }
+      if (type === 'dragleave') {
+        this._dragleaveTimerControl('start');
+      }
+      if (type === 'dragover') {
+        this._dragleaveTimerControl('stop');
+      }
+    },
+
+    /**
+      Handles the dragleave timer so that the periodic dragleave events which
+      fire as the user is dragging the file around the browser do not stop
+      the drag notification from showing.
+
+      @method _dragleaveTimerControl
+      @param {String} action The action that should be taken on the timer.
+    */
+    _dragleaveTimerControl: function(action) {
+      if (action === 'start') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+        this._dragLeaveTimer = Y.later(100, this, function() {
+          this.hideDragNotification();
+        });
+      }
+      if (action === 'stop') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+      }
+    },
+
+    /**
+      Takes the information from the dataTransfer object to determine what
+      kind of file the user is dragging over the canvas.
+
+      Unfortunately Chrome, Firefox, And IE in OSX and Windows do not show mime
+      types for files that it is not familiar with. This isn't an issue once the
+      user has dropped the file because we can parse the file name but while
+      it's still hovering the browser only tells us the mime type if it knows
+      it, else it's an empty string. This means that we cannot determine between
+      a yaml file or a folder during hover.
+      Bug: https://code.google.com/p/chromium/issues/detail?id=342554
+      Real mime type for yaml files should be: application/x-yaml
+
+      @method _determineFileType
+      @param {Object} dataTransfer dataTransfer object from the dragover event.
+      @return {String} The file type extension.
+    */
+    _determineFileType: function(dataTransfer) {
+      if (dataTransfer.types[0] !== 'Files') {
+        // If the dataTransfer type isn't `Files` then something is being
+        // dragged from inside the browser.
+        return false;
+      }
+      // See method doc for bug information.
+      var file = dataTransfer.items[0];
+      if (file.type === 'application/zip' ||
+          file.type === 'application/x-zip-compressed') {
+        return 'zip';
+      }
+      return 'yaml';
     },
 
     /**
@@ -760,6 +868,10 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.removeEventListener(
+            eventName, this._boundAppDragOverHandler);
+      }, this);
     },
 
     /**
