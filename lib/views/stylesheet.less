@@ -486,6 +486,21 @@ th {
         display: inline;
     }
 }
+#relation-menu {
+    .relation-action {
+        padding-left: 27px;
+        background-repeat: no-repeat;
+        background-position: 5px 12px;
+        background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
+        &.error {
+            background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
+        }
+        .endpoint.error {
+            color: red;
+        }
+    }
+}
+
 .relation {
     stroke: rgb(167, 167, 167);
     stroke-width: 3px;

@@ -1221,15 +1221,79 @@ YUI.add('juju-view-utils', function(Y) {
    *                  and other convenience data.
    */
   views.DecoratedRelation = function(relation, source, target) {
-    var hasRelations = Y.Lang.isValue(relation.endpoints);
+    // In some instances, notably in tests, a relation is a POJO already;
+    // handle this case gracefully.
+    var endpoints = relation.endpoints || relation.get('endpoints');
+    var hasRelations = Y.Lang.isValue(endpoints);
     var decorated = {
       source: source,
       target: target,
-      compositeId: (
-          source.modelId +
-          (hasRelations ? ':' + relation.endpoints[0][1].name : '') +
-          '-' + target.modelId +
-          (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
+      sourceId: (hasRelations ? (endpoints[0][0] + ':' +
+          endpoints[0][1].name) : ''),
+      targetId: (hasRelations ? (endpoints[1][0] + ':' +
+          endpoints[1][1].name) : ''),
+      compositeId:
+          (source.modelId +
+          (hasRelations ? ':' + endpoints[0][1].name : '') + '-' +
+          target.modelId +
+          (hasRelations ? ':' + endpoints[1][1].name : ''))
+    };
+    /**
+     * Test whether or not any of the units within the service have any errors
+     * relevant to the relation.
+     *
+     * @method _endpointHasError
+     * @param {Object} service A BoxModel-wrapped service.
+     * @return {Boolean} Whether or not the service has pertinent errors.
+     */
+    decorated._endpointHasError = function(service) {
+      // Find the endpoints pertinent to each end of the service.
+      var endpoint = this.endpoints[0][0] === service.id ?
+          this.endpoints[0] : this.endpoints[1];
+      // Search the units belonging to the source service for pertinent units
+      // in error.
+      // Repeat the search for the target service's units.  This relies
+      // heavily on short-circuit logic: 'some' will short-circuit at the first
+      // match, '&&' will short-circuit out on any unit not in error, and the
+      // '||' will short-circuit if the source units are in error.
+      return Y.Array.some(service.units.toArray(), function(unit) {
+        // Figure out whether or not the unit is in error.
+        return unit.agent_state === 'error' &&
+            // Then figure out if the error is pertinent to the relation at
+            // hand.
+            unit.agent_state_data.hook.indexOf(endpoint[1].name + '-' +
+            'relation') === 0;
+      });
+    };
+    /**
+     * Simple wrapper for template use to check whether the source has units
+     * in error pertinent to the relation.
+     *
+     * @method sourceHasError
+     * @return {Boolean} Whether or not the source has pertinent errors.
+     */
+    decorated.sourceHasError = function() {
+      return this._endpointHasError(this.source);
+    };
+    /**
+     * Simple wrapper for template use to check whether the target has units
+     * in error pertinent to the relation.
+     *
+     * @method targetHasError
+     * @return {Boolean} Whether or not the target has pertinent errors.
+     */
+    decorated.targetHasError = function() {
+      return this._endpointHasError(this.target);
+    };
+    /**
+     * Simple wrapper for template use to check whether the relation has units
+     * in error pertinent to the relation.
+     *
+     * @method hasRelationError
+     * @return {Boolean} Whether or not the relation has pertinent errors.
+     */
+    decorated.hasRelationError = function() {
+      return this.sourceHasError() || this.targetHasError();
     };
     Y.mix(decorated, relation.getAttrs());
     decorated.isSubordinate = utils.isSubordinateRelation(decorated);
@@ -1264,8 +1328,23 @@ YUI.add('juju-view-utils', function(Y) {
    */
   Object.defineProperties(_relationCollection, {
     aggregatedStatus: {
-      // XXX Makyo 2014-01-24: return 'healthy' for now (card on board)
-      value: 'healthy'
+      get: function() {
+        // Return unhealthy regardless of subordinate status if any of the
+        // relations are in error.
+        var unhealthy = Y.Array.some(this.relations, function(relation) {
+          return relation.hasRelationError();
+        });
+        if (unhealthy) {
+          return 'error';
+        }
+        // Return subordinate if the collection is marked as such, otherwise
+        // return healthy.
+        if (this.isSubordinate) {
+          return 'subordinate';
+        } else {
+          return 'healthy';
+        }
+      }
     },
     isSubordinate: {
       get: function() {
