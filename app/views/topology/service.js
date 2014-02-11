@@ -652,6 +652,7 @@ YUI.add('juju-topology-service', function(Y) {
           if ((file.type === 'application/zip' ||
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
+            topo.fire('destroyServiceInspector');
             localCharmHelpers.deployLocalCharm(file, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
