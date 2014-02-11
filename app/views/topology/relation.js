@@ -29,6 +29,7 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
+      topUtils = Y.namespace('juju.topology.utils'),
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
@@ -61,6 +62,9 @@ YUI.add('juju-topology-relation', function(Y) {
         '.rel-label': {
           click: 'relationClick',
           mousemove: 'mousemove'
+        },
+        '.relation-action': {
+          click: {callback: 'relationActionClick' }
         },
         '.dragline': {
           /**
@@ -227,7 +231,10 @@ YUI.add('juju-topology-relation', function(Y) {
           decorated.push(decoratedRelation);
         }
       });
-      return decorated;
+      if (!window.flags.relationCollections) {
+        return decorated;
+      }
+      return utils.toRelationCollections(decorated);
     },
 
     updateLinks: function() {
@@ -257,29 +264,33 @@ YUI.add('juju-topology-relation', function(Y) {
         return;
       }
 
-      Y.each(Y.Array.filter(self.relations, function(relation) {
-        return relation.source.id === service.id ||
-            relation.target.id === service.id;
-      }), function(relation) {
-        var rel_group = d3.select('#' + utils.generateSafeDOMId(relation.id));
-        var connectors = relation.source
-                  .getConnectorPair(relation.target);
-        var s = connectors[0];
-        var t = connectors[1];
-        rel_group.select('line')
-              .attr('x1', s[0])
-              .attr('y1', s[1])
-              .attr('x2', t[0])
-              .attr('y2', t[1]);
-        rel_group.select('.rel-label')
-              .attr('transform', function(d) {
-              return 'translate(' +
-                  [Math.max(s[0], t[0]) -
-                       Math.abs((s[0] - t[0]) / 2),
-                       Math.max(s[1], t[1]) -
-                       Math.abs((s[1] - t[1]) / 2)] + ')';
+      Y.each(
+          Y.Array.filter(
+              self.relations,
+              function(relation) {
+                return relation.source.id === service.id ||
+                   relation.target.id === service.id;
+              }
+          ), function(relation) {
+            var rel_group = d3.select(
+                '#' + utils.generateSafeDOMId(relation.id));
+            var connectors = relation.source
+                      .getConnectorPair(relation.target);
+            var s = connectors[0];
+            var t = connectors[1];
+            rel_group.select('line')
+                  .attr('x1', s[0])
+                  .attr('y1', s[1])
+                  .attr('x2', t[0])
+                  .attr('y2', t[1]);
+            // Find the label for this relation line and adjust it to the mid
+            // point.
+            var label = rel_group.select('.rel-label');
+            label.attr('transform', function(d) {
+              var points = topUtils.findCenterPoint(s, t);
+              return 'translate(' + points + ')';
             });
-      });
+          });
     },
 
     drawRelationGroup: function() {
@@ -311,9 +322,13 @@ YUI.add('juju-topology-relation', function(Y) {
                     'relation';
               });
 
+      // XXX Makyo 2014-01-28 rel-label will need to change with addition of
+      // the menu.  This will be part of the styling card.
       g.selectAll('.rel-label').remove();
-      g.selectAll('text').remove();
       g.selectAll('rect').remove();
+      if (!window.flags.relationCollections) {
+        g.selectAll('text').remove();
+      }
       var label = g.append('g')
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
@@ -328,20 +343,35 @@ YUI.add('juju-topology-relation', function(Y) {
                      Math.abs((s[1] - t[1]) / 2)] + ')';
               });
       label.append('text')
-              .append('tspan')
-              .text(function(d) {return d.display_name; });
-      label.insert('rect', 'text')
-              .attr('width', function(d) {
-            return d.display_name.length * 10 + 10;
+        .append('tspan')
+        .text(function(d) {return d.display_name; });
+      var rect;
+      if (!window.flags.relationCollections) {
+        rect = label.insert('rect', 'text');
+      } else {
+        rect = label.append('image')
+          .attr('xlink:href', function(d) {
+              return (
+                  '/juju-ui/assets/svgs/relation-icon-' +
+                  d.aggregatedStatus + '.svg');
+            });
+      }
+      rect.attr('width', function(d) {
+        if (!window.flags.relationCollections) {
+          return d.display_name.length * 10 + 10;
+        }
+        return 20;
+      })
+        .attr('height', 20)
+        .attr('x', function() {
+            if (!window.flags.relationCollections) {
+              return -parseInt(d3.select(this).attr('width'), 10) / 2;
+            }
+            return -10;
           })
-              .attr('height', 20)
-              .attr('x', function() {
-                return -parseInt(d3.select(this).attr('width'), 10) / 2;
-              })
-              .attr('y', -10)
-              .attr('rx', 10)
-              .attr('ry', 10);
-
+        .attr('y', -10)
+        .attr('rx', 10)
+        .attr('ry', 10);
       return g;
     },
 
@@ -625,6 +655,7 @@ YUI.add('juju-topology-relation', function(Y) {
       view.get('rmrelation_dialog').hide();
       view.get('rmrelation_dialog').destroy();
       confirmButton.set('disabled', false);
+      topo.fire('clearState');
     },
 
     /**
@@ -649,7 +680,9 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(relation, view, confirmButton);
+            view.removeRelation(
+                relation,
+                view, confirmButton);
           },
           this)));
     },
@@ -760,6 +793,10 @@ YUI.add('juju-topology-relation', function(Y) {
     /*
      * Test if the pending relation is ambiguous.  Display a menu if so,
      * create the relation if not.
+     *
+     * @param {Object} m The endpoint for the drop point on the service.
+     * @param {Object} view The current view context.
+     * @param {Object} context The target rectangle.
      */
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
@@ -795,8 +832,9 @@ YUI.add('juju-topology-relation', function(Y) {
         menu.one('.menu').remove(true);
       }
 
-      menu.append(Templates
-              .ambiguousRelationList({endpoints: endpoints}));
+      menu.append(Templates.ambiguousRelationList({
+        endpoints: endpoints
+      }));
 
       // For each endpoint choice, delegate a click event to add the specified
       // relation. Use event delegation in order to avoid weird behaviors
@@ -825,8 +863,9 @@ YUI.add('juju-topology-relation', function(Y) {
       // Display the menu at the service endpoint.
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
-      menu.setStyle('top', m.y * z + tr[1]);
-      menu.setStyle('left', m.x * z + m.w * z + tr[0]);
+      var locateAt = topUtils.locateRelativePointOnCanvas(m, tr, z);
+      menu.setStyle('left', locateAt[0]);
+      menu.setStyle('top', locateAt[1]);
       menu.addClass('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
@@ -990,31 +1029,106 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
+    /**
+     * Event handler for when the relation indicator or label is clicked.
+     *
+     * @method relationClick
+     * @param {Object} relation The relation or relation collection associated
+     *   with that relation line.
+     * @param {Object} self The relation module.
+     */
     relationClick: function(relation, self) {
       if (self.get('disableRelationInteraction')) { return; }
-      if (relation.isSubordinate) {
-        var subRelDialog = views.createModalPanel(
-            'You may not remove a subordinate relation.',
-            '#rmsubrelation-modal-panel');
-        subRelDialog.addButton(
-            { value: 'Cancel',
-              section: Y.WidgetStdMod.FOOTER,
-              /**
-               * @method action Hides the dialog on click.
-               * @param {object} e The click event.
-               * @return {undefined} nothing.
-               */
-              action: function(e) {
-                e.preventDefault();
-                subRelDialog.hide();
-                subRelDialog.destroy();
-              },
-              classNames: ['button']
-            });
-        subRelDialog.get('boundingBox').all('.yui3-button')
-                .removeClass('yui3-button');
+      if (!window.flags.relationCollections) {
+        if (relation.isSubordinate) {
+          self.showSubRelDialog();
+        } else {
+          self.removeRelationConfirm(relation, self);
+        }
       } else {
-        self.removeRelationConfirm(relation, self);
+        self.showRelationMenu(relation);
+      }
+    },
+
+    /**
+     * Show the 'cannot destroy sub rel' dialog.
+     *
+     * @method showSubRelDialog
+     */
+    showSubRelDialog: function() {
+      var subRelDialog = views.createModalPanel(
+          'You may not remove a subordinate relation.',
+          '#rmsubrelation-modal-panel');
+      subRelDialog.addButton(
+          { value: 'Cancel',
+            section: Y.WidgetStdMod.FOOTER,
+            /**
+             * @method action Hides the dialog on click.
+             * @param {object} e The click event.
+             * @return {undefined} nothing.
+             */
+            action: function(e) {
+              e.preventDefault();
+              subRelDialog.hide();
+              subRelDialog.destroy();
+            },
+            classNames: ['button']
+          });
+      subRelDialog.get('boundingBox').all('.yui3-button')
+              .removeClass('yui3-button');
+    },
+
+    /**
+     * Show the menu containing all of the relations for a given relation
+     * collection.
+     *
+     * @method showRelationMenu
+     * @param {object} relation The relation collection associated with the
+     *   relation line.
+     */
+    showRelationMenu: function(relation) {
+      var menu = Y.one('#relation-menu');
+      var menuInternals = menu.one('.menu');
+      if (menuInternals) {
+        menuInternals.remove(true);
+      }
+      menu.append(Templates.relationList({
+        relations: relation.relations
+      }));
+      // XXX Makyo 2014-02-03 - position list (card on board)
+      // Rough positioning for now.
+      var topo = this.get('component');
+      var tr = topo.zoom.translate();
+      var z = topo.zoom.scale();
+      var coords = topUtils.findCenterPoint(relation.source.xy,
+          relation.target.xy);
+      var point = { x: coords[0], y: coords[1], w: 10, h: 10 };
+      var locateAt = topUtils.locateRelativePointOnCanvas(point, tr, z);
+      menu.setStyle('left', locateAt[0]);
+      menu.setStyle('top', locateAt[1]);
+      menu.addClass('active');
+
+      // Firing resized will ensure the menu's positioned properly.
+      topo.fire('resized');
+    },
+
+    /**
+     * Event handler for when a relation in the relation menu is clicked.
+     *
+     * @method relationActionClick
+     * @param {undefined} _ Artifact of the d3-component event binding.
+     * @param {object} self The relation module.
+     */
+    relationActionClick: function(_, self) {
+      var topo = self.get('component');
+      var db = topo.get('db');
+      var relation = db.relations.getById(Y.one(this).getData('relationid'));
+      relation = self.decorateRelations([relation])[0];
+      if (relation.isSubordinate) {
+        topo.fire('clearState');
+        self.showSubRelDialog();
+      } else {
+        self.removeRelationConfirm(relation.relations[0], self);
       }
     }
 
@@ -1049,6 +1163,7 @@ YUI.add('juju-topology-relation', function(Y) {
     'node',
     'event',
     'juju-models',
-    'juju-env'
+    'juju-env',
+    'juju-topology-utils'
   ]
 });

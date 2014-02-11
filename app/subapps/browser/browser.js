@@ -52,6 +52,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     _cleanOldViews: function(newViewMode) {
+      // XXX newViewMode is unused.
       if (this._hasStateChanged('viewmode') && this._oldState.viewmode) {
         var viewAttr = '_' + this._oldState.viewmode;
         if (this[viewAttr]) {
@@ -144,7 +145,7 @@ YUI.add('subapp-browser', function(Y) {
 
       if (this._viewState.viewmode !== 'sidebar' ||
           this._viewState.search) {
-        //There's no need to add the default view if we
+        // There's no need to add the default view if we
         // don't need it. However it's currently required for search views to
         // match our current routes.
         urlParts.push(this._viewState.viewmode);
@@ -383,7 +384,14 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState.viewmode = params.viewmode;
 
       if (hash) {
+        // If the hash starts with bws- then reset it to provide backwards
+        // compatibility.
+        if (hash.indexOf('#bws-') === 0) {
+          hash = hash.replace('bws-', '');
+        }
+
         this._viewState.hash = hash.replace('/', '');
+        window.location.hash = this._viewState.hash;
       }
 
       // Check for a charm id in the request.
@@ -1000,6 +1008,17 @@ YUI.add('subapp-browser', function(Y) {
           browser.show();
         }
       }
+    },
+
+    /**
+      Return the current viewmode.
+
+      @method getViewMode
+      @return {undefined} Nothing.
+    */
+    getViewMode: function() {
+      // If no view mode is set, "sidebar" is the default.
+      return this._viewState.viewmode || 'sidebar';
     }
   }, {
     ATTRS: {

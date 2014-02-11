@@ -25,7 +25,10 @@ var juju_config = {
   viewContainer: '#main',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
-
+  // If cachedFonts is false, we get the fonts from the Google CDN (faster).
+  // If it is true, we use the local, cached fonts instead (better for closed
+  // network).
+  cachedFonts: false,
   // These are the main application config items used and passed down into all
   // SubApps.
   consoleEnabled: false,
@@ -50,10 +53,19 @@ var juju_config = {
   // using cookies.
   GA_key: 'UA-41463568-2',
   login_help: (
-      'The password is the admin-secret from the Juju environment.  This can ' +
-      'often be found by looking in ~/.juju/environments.yaml.'),
+      'The password for newer Juju clients can be found by locating the ' +
+      'Juju environment file placed in ~/.juju/environments/ with the same ' +
+      'name as the current environment.  For example, if you have an ' +
+      'environment named "production", then the file is named ' +
+      '~/.juju/environments/production.jenv.  Look for the "password" field ' +
+      'in the file, or if that is empty, for the "admin-secret".  Remove ' +
+      'the quotes from the value, and use this to log in.  The password for ' +
+      'older Juju clients (< 1.16) is in ~/.juju/environments.yaml, and ' +
+      'listed as the admin-secret for the environment you are using.  Note ' +
+      'that using juju-quickstart (https://launchpad.net/juju-quickstart) ' +
+      'can automate logging in, as well as other parts of installing and ' +
+      'starting Juju.'),
   isJujucharms: false,
-  defaultViewmode: 'sidebar',
   // Switches the logout button to a 'Get Juju' button
   showGetJujuButton: false
 };

@@ -47,7 +47,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = Y.namespace('juju-tests.utils').makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       var testcontent = [
         '<div id=testcontent><div class="bws-view-data">',
         '</div></div>'
@@ -84,25 +84,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         forInspector: true
       });
 
       view.render();
       assert.isNull(view.get('container').one('.heading'));
       // There is no 'related charms' tab to display.
-      assert.equal(view.get('container').all('.bws-related-charms').size(), 0);
+      assert.equal(view.get('container').all('.related-charms').size(), 0);
     });
 
     // Return the charm heading node included in the charm detail view.
-    var makeHeading = function(is_subordinate) {
+    var makeHeading = function(context, is_subordinate) {
       var data = utils.loadFixture('data/browsercharm.json', true);
       // We don't want any files so we don't have to mock/load them.
       data.charm.files = [];
       data.charm.is_subordinate = is_subordinate;
+      utils.makeContainer(context);
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(context)
       });
       view.render();
       var heading = view.get('container').one('.header');
@@ -112,13 +113,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('avoids showing the subordinate message for non-subordinate charms',
        function() {
-         var heading = makeHeading(false);
+         var heading = makeHeading(this, false);
          assert.notInclude(heading.getContent(), 'Subordinate charm');
        });
 
     it('shows the subordinate message if the charm is a subordinate',
        function() {
-         var heading = makeHeading(true);
+         var heading = makeHeading(this, true);
          assert.include(heading.getContent(), 'Subordinate charm');
        });
 
@@ -131,16 +132,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       charm.set('scheme', 'local');
       view = new CharmView({
         entity: charm,
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         forInspector: true
       });
 
       view.render();
       assert.isNull(view.get('container').one('.heading'));
-      assert.isNull(view.get('container').one('#bws-readme'));
-      assert.isNull(view.get('container').one('#bws-configuration'));
-      assert.isNull(view.get('container').one('#bws-code'));
-      assert.isNull(view.get('container').one('#bws-features'));
+      assert.isNull(view.get('container').one('#readme'));
+      assert.isNull(view.get('container').one('#configuration'));
+      assert.isNull(view.get('container').one('#code'));
+      assert.isNull(view.get('container').one('#features'));
     });
 
     it('has sharing links', function() {
@@ -167,7 +168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
       view.render();
@@ -226,10 +227,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
       view.render();
-      var options = Y.one('#bws-code').all('select option');
+      var options = Y.one('#code').all('select option');
       assert.equal(options.size(), 3);
       assert.deepEqual(
           options.get('text'),
@@ -296,7 +297,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'hooks/install',
@@ -305,19 +306,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo'}
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
       view.render();
 
-      Y.one('#bws-readme').get('text').should.eql('README content.');
+      Y.one('#readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'hooks/install'
@@ -325,13 +326,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.halt();
-        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -357,7 +358,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             configName: 'test'
           }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
       view.set('deployService', function(charm, serviceAttrs) {
@@ -394,19 +395,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
       view.render();
-      Y.one('#bws-code').all('select option').size().should.equal(3);
+      Y.one('#code').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws-code').all('select option').item(2).set(
+      Y.one('#code').all('select option').item(2).set(
           'selected', 'selected');
-      Y.one('#bws-code').one('select').simulate('change');
+      Y.one('#code').one('select').simulate('change');
 
-      var content = Y.one('#bws-code').one('div.filecontent');
+      var content = Y.one('#code').one('div.filecontent');
       // Content is escaped, so we read it out as text, not tags.
       content.get('text').should.eql('<install hook content>');
     });
@@ -430,7 +431,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-readme',
+        activeTab: '#readme',
         entity: new models.Charm({
           files: [
             'readme.md'
@@ -438,12 +439,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: 'precise/ceph-9',
           code_source: { location: 'lp:~foo' }
         }),
-        container: utils.makeContainer(),
+        container: utils.makeContainer(this),
         store: fakeStore
       });
 
       view.render();
-      Y.one('#bws-readme').get('innerHTML').should.eql(
+      Y.one('#readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
     });
 
@@ -461,13 +462,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }
         }),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
       view.render();
 
-      Y.one('#bws-configuration dd div').get('text').should.eql(
+      Y.one('#configuration dd div').get('text').should.eql(
           'Default: 9160');
-      Y.one('#bws-configuration dd p').get('text').should.eql(
+      Y.one('#configuration dd p').get('text').should.eql(
           'Port for client communcation');
     });
 
@@ -515,7 +516,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('does not display qa data when there is none.', function() {
       var data = utils.loadFixture('data/qa.json', true);
-      var testContainer = utils.makeContainer();
+      var testContainer = utils.makeContainer(this);
       // munge the data so that scores is null.
       data.scores = null;
       var fakedata = Y.JSON.stringify(data);
@@ -571,7 +572,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       // Hook up to the callback for the click event.
@@ -590,7 +591,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
@@ -813,7 +814,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
@@ -830,7 +831,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
       view = new CharmView({
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.showIndicator = function() {
@@ -850,21 +851,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       data.charm.files = [];
 
       view = new CharmView({
-        activeTab: '#bws-configuration',
+        activeTab: '#configuration',
         entity: new models.Charm(data.charm),
-        container: utils.makeContainer()
+        container: utils.makeContainer(this)
       });
 
       view.render();
 
       // We've selected the activeTab specified.
       var selected = view.get('container').one('nav .active');
-      assert.equal(selected.getAttribute('href'), '#bws-configuration');
+      assert.equal(selected.getAttribute('href'), '#configuration');
     });
 
     it('loads related charms when interface tab selected', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -883,7 +884,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-related-charms',
+        activeTab: '#related-charms',
         entity: new models.Charm(data),
         renderTo: testContainer,
         store: fakeStore
@@ -891,14 +892,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
 
       assert.equal(
-          testContainer.all('#bws-related-charms .token').size(),
+          testContainer.all('#related-charms .token').size(),
           9);
       assert.isTrue(view.loadedRelatedInterfaceCharms);
     });
 
     it('only loads the interface data once', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -917,7 +918,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       view = new CharmView({
-        activeTab: '#bws-related-charms',
+        activeTab: '#related-charms',
         entity: new models.Charm(data),
         renderTo: testContainer,
         store: fakeStore
@@ -943,7 +944,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('ignore invalid tab selections', function() {
       var data = utils.loadFixture('data/browsercharm.json', true).charm;
-      testContainer = utils.makeContainer();
+      testContainer = utils.makeContainer(this);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
 
@@ -971,7 +972,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(
           testContainer.one('nav .active').getAttribute('href'),
-          '#bws-summary');
+          '#summary');
     });
 
   });

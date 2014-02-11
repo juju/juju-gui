@@ -19,19 +19,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('filter widget', function() {
-  var container, handle, instance, Y;
+  var container, handle, instance, utils, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-filter-widget',
           'juju-tests-utils',
           'node-event-simulate'], function(Y) {
+          utils = Y.namespace('juju-tests.utils');
           done();
         });
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     instance = new Y.juju.widgets.browser.Filter({
       filters: {
         text: 'foo',
@@ -42,7 +43,6 @@ describe('filter widget', function() {
   });
 
   afterEach(function() {
-    container.remove(true);
     if (handle) {
       handle.detach();
     }

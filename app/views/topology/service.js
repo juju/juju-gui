@@ -429,9 +429,10 @@ YUI.add('juju-topology-service', function(Y) {
       * @method _ignore
       */
     _ignore: function(e) {
-      e.halt();
+      // This used to be an e.halt() which also stops event propogation but
+      // that prevented listening to any drag events above the canvas.
+      e.preventDefault();
     },
-
 
     /**
       Attaches the touchstart event handlers for the service elements. This is
@@ -648,7 +649,9 @@ YUI.add('juju-topology-service', function(Y) {
           // of mixed types we handle each file individually.
           var ext = file.name.split('.').slice(-1).toString();
 
-          if (file.type === 'application/zip' && ext === 'zip') {
+          if ((file.type === 'application/zip' ||
+               file.type === 'application/x-zip-compressed') &&
+              ext === 'zip') {
             localCharmHelpers.deployLocalCharm(file, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
@@ -1326,6 +1329,7 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-models',
     'juju-env',
     'unscaled-pack-layout',
-    'bundle-import-helpers'
+    'bundle-import-helpers',
+    'local-charm-import-helpers'
   ]
 });

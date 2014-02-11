@@ -53,7 +53,7 @@ describe('Inspector Constraints', function() {
 
   // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.viewlets.constraints;
+    return inspector.viewletManager.views.constraints;
   };
 
   // Change the value of the given key in the constraints form.
@@ -82,7 +82,7 @@ describe('Inspector Constraints', function() {
   });
 
   beforeEach(function(done) {
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     var conn = new utils.SocketStub();
     var db = new models.Database();
     var service = makeService(db);
@@ -109,7 +109,6 @@ describe('Inspector Constraints', function() {
     view.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
   });
 
   it('renders the constraints form correctly', function() {

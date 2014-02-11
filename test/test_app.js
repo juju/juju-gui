@@ -241,8 +241,366 @@ function injectData(app, data) {
       });
     });
 
+    it('should display a zoom message on small browsers', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      app._displayZoomMessage(1024, 'linux');
+      assert.equal(app.db.notifications.item(0).get('title'),
+          'Browser size adjustment');
+    });
+
+    it('should not display the zoom message more than once', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      assert.equal(app.db.notifications.size(), 0);
+      app._displayZoomMessage(1024, 'linux');
+      assert.equal(app.db.notifications.item(0).get('title'),
+          'Browser size adjustment');
+      app._displayZoomMessage(1024, 'linux');
+      assert.equal(app.db.notifications.size(), 1);
+    });
+
+    it('should show the correct message on a mac', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      app._displayZoomMessage(1024, 'macintosh');
+      assert.isTrue(app.db.notifications.item(0).get(
+          'message').indexOf('command+-') !== -1);
+    });
+
+    it('should show the correct message for non mac', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      app._displayZoomMessage(1024, 'linux');
+      assert.isTrue(app.db.notifications.item(0).get(
+          'message').indexOf('ctrl+-') !== -1);
+    });
   });
 })();
+
+
+(function() {
+
+  // Sometimes a large display element needs lots of space in the viewport.  To
+  // accommodate that eventuality, a set of events can be fired to manage
+  // making room for said large elements.
+
+  describe('Viewport takeover handling', function() {
+    var Y, app, container, utils, juju, env, conn;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+          function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      container = Y.one('#main')
+        .appendChild(Y.Node.create('<div/>'))
+          .set('id', 'test-container')
+          .addClass('container')
+          .append(Y.Node.create('<span/>')
+            .set('id', 'environment-name'))
+          .append(Y.Node.create('<span/>')
+            .addClass('provider-type'))
+          .hide();
+
+    });
+
+    afterEach(function(done) {
+      app.after('destroy', function() {
+        container.remove(true);
+        sessionStorage.setItem('credentials', null);
+        done();
+      });
+
+      app.destroy();
+    });
+
+    function constructAppInstance(config) {
+      config = config || {};
+      if (config.env && config.env.connect) {
+        config.env.connect();
+      }
+      config.container = container;
+      config.viewContainer = container;
+
+      app = new Y.juju.App(config);
+      app.navigate = function() {};
+      app.showView(new Y.View());
+      injectData(app);
+      return app;
+    }
+
+    it('minimizes the sidebar on envTakeoverStarting', function(done) {
+      app = constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+
+      // When a viewportTakeoverStarting event is fired the app minimizes the
+      // sidebar.
+      app.get('subApps').charmbrowser.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.viewmode, 'minimized');
+        done();
+      });
+
+      // Setup an environment view instance.
+      app.show_environment({}, {}, function() {return;});
+      app.views.environment.instance.fire('envTakeoverStarting');
+    });
+
+    it('restores the sidebar on envTakeoverEnding', function(done) {
+      app = constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+
+      app.show_environment({}, {}, function() {return;});
+      app.views.environment.instance.fire('envTakeoverStarting');
+
+      // When a viewportTakeoverEnding event is fired the app restoes the
+      // sidebar.
+      app.get('subApps').charmbrowser.on('viewNavigate', function(ev) {
+        assert.equal(ev.change.viewmode, 'sidebar');
+        done();
+      });
+
+      app.views.environment.instance.fire('envTakeoverEnding');
+    });
+
+  });
+})();
+
+describe('File drag over notification system', function() {
+  var Y, app, container, testUtils, juju, env, conn;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
+        function(Y) {
+          testUtils = Y.namespace('juju-tests.utils');
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  beforeEach(function() {
+    container = Y.one('#main')
+      .appendChild(Y.Node.create('<div/>'))
+        .set('id', 'test-container')
+        .addClass('container')
+        .append(Y.Node.create('<span/>')
+          .set('id', 'environment-name'))
+        .append(Y.Node.create('<span/>')
+          .addClass('provider-type'))
+        .hide();
+  });
+
+  afterEach(function(done) {
+    app.after('destroy', function() {
+      container.remove(true);
+      sessionStorage.setItem('credentials', null);
+      done();
+    });
+
+    app.destroy();
+  });
+
+  function constructAppInstance(config) {
+    config = config || {};
+    if (!config.env) {
+      config.env = juju.newEnvironment({
+        conn: {
+          send: function() {},
+          close: function() {}
+        }
+      });
+    }
+    if (config.env && config.env.connect) {
+      config.env.connect();
+    }
+    config.container = container;
+    config.viewContainer = container;
+
+    app = new Y.juju.App(config);
+    return app;
+  }
+
+  it('binds the drag handlers', function() {
+    var stub = testUtils.makeStubMethod(Y.config.doc, 'addEventListener');
+    constructAppInstance();
+    // This function doesn't exist until the appDragOverHandler
+    // function is bound to the app.
+    assert.isFunction(app._boundAppDragOverHandler);
+    assert.equal(stub.callCount(), 3);
+    var args = stub.allArguments();
+    assert.equal(args[0][0], 'dragenter');
+    assert.isFunction(args[0][1]);
+    assert.equal(args[1][0], 'dragover');
+    assert.isFunction(args[1][1]);
+    assert.equal(args[2][0], 'dragleave');
+    assert.isFunction(args[2][1]);
+    stub.reset();
+  });
+
+  it('removes the drag handlers', function(done) {
+    var stub = testUtils.makeStubMethod(Y.config.doc, 'removeEventListener');
+    constructAppInstance();
+
+    app.after('destroy', function() {
+      assert.equal(stub.callCount(), 3);
+      var args = stub.allArguments();
+      assert.equal(args[0][0], 'dragenter');
+      assert.isFunction(args[0][1]);
+      assert.equal(args[1][0], 'dragover');
+      assert.isFunction(args[1][1]);
+      assert.equal(args[2][0], 'dragleave');
+      assert.isFunction(args[2][1]);
+      stub.reset();
+      done();
+    });
+    app.destroy();
+  });
+
+  it('dispatches drag events properly: _appDragOverHanlder', function() {
+    var determineFileTypeStub, showNotificationStub, dragTimerControlStub;
+
+    constructAppInstance();
+
+    determineFileTypeStub = testUtils.makeStubMethod(
+        app, '_determineFileType', 'zip');
+    showNotificationStub = testUtils.makeStubMethod(
+        app, 'showDragNotification');
+    dragTimerControlStub = testUtils.makeStubMethod(
+        app, '_dragleaveTimerControl');
+
+    var noop = function() {};
+    var ev1 = { dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
+    var ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
+    var ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+
+    app._appDragOverHandler(ev1);
+    app._appDragOverHandler(ev2);
+    app._appDragOverHandler(ev3);
+
+    assert.equal(determineFileTypeStub.callCount(), 3);
+    assert.equal(showNotificationStub.calledOnce(), true);
+    assert.equal(showNotificationStub.lastArguments()[0], 'zip');
+    assert.equal(dragTimerControlStub.callCount(), 2);
+    var args = dragTimerControlStub.allArguments();
+    assert.equal(args[0][0], 'start');
+    assert.equal(args[1][0], 'stop');
+
+    determineFileTypeStub.reset();
+    showNotificationStub.reset();
+    dragTimerControlStub.reset();
+  });
+
+  it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
+    var laterStub, hideDragNotificationStub, dragCancelStub;
+    constructAppInstance();
+
+    var dragTimer = {};
+    dragCancelStub = testUtils.makeStubMethod(dragTimer, 'cancel');
+
+    laterStub = testUtils.makeStubMethod(Y, 'later', dragTimer);
+    hideDragNotificationStub = testUtils.makeStubMethod(
+        app, 'hideDragNotification');
+
+    app._dragleaveTimerControl('start');
+    assert.equal(laterStub.calledOnce(), true);
+    var args = laterStub.lastArguments();
+    assert.equal(args[0], 100);
+    assert.equal(args[1] instanceof Y.juju.App, true);
+    assert.isFunction(args[2]);
+    args[2].call(app); // Call the callback passed to later;
+    // The callback should call this method
+    assert.equal(hideDragNotificationStub.calledOnce(), true);
+    // Calling with start again should cancel the timer and create a new one
+    app._dragleaveTimerControl('start');
+    assert.equal(dragCancelStub.calledOnce(), true);
+    assert.equal(laterStub.callCount(), 2);
+    // Calling with stop should cancel the timer
+    app._dragleaveTimerControl('stop');
+    assert.equal(dragCancelStub.callCount(), 2);
+
+    laterStub.reset();
+    hideDragNotificationStub.reset();
+  });
+
+  describe('_determineFileType', function() {
+    before(function() {
+      // This gets cleaned up by the parent after function.
+      constructAppInstance();
+    });
+
+    it('returns false if it\'s not a file being dragged', function() {
+      var result = app._determineFileType({
+        types: ['foo']
+      });
+      // It should have returned false if it's not a file because then it is
+      // something being dragged inside the browser.
+      assert.equal(result, false);
+    });
+
+    it('returns "zip" for zip files', function() {
+      var result = app._determineFileType({
+        types: ['Files'],
+        items: [{ type: 'application/zip' }]
+      });
+      assert.equal(result, 'zip');
+    });
+
+    it('returns "zip" for zip files in IE', function() {
+      // IE uses a different mime type than other browsers.
+      var result = app._determineFileType({
+        types: ['Files'],
+        items: [{ type: 'application/x-zip-compressed' }]
+      });
+      assert.equal(result, 'zip');
+    });
+
+    it('returns "yaml" for the yaml mime type', function() {
+      // At the moment we cannot determine between folders and yaml files
+      // across browser so we respond with yaml for now.
+      var result = app._determineFileType({
+        types: ['Files'],
+        items: [{ type: 'application/x-yaml' }]
+      });
+      assert.equal(result, 'yaml');
+    });
+  });
+
+  it('has a showDragNotification method', function() {
+    constructAppInstance();
+    // This method is currently a noop
+    assert.isFunction(app.showDragNotification);
+  });
+
+  it('has a hideDragNotification method', function() {
+    constructAppInstance();
+    // This method is currently a noop
+    assert.isFunction(app.hideDragNotification);
+  });
+
+});
 
 
 (function() {
@@ -263,7 +621,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
-      container = utils.makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -272,7 +630,6 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();
@@ -742,6 +1099,20 @@ function injectData(app, data) {
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
     });
+
+    it('passes a fake web handler to the environment', function() {
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        sandbox: true,
+        apiBackend: 'go',
+        store: new Y.juju.charmworld.APIv3({})
+      });
+      app.showView(new Y.View());
+      var webHandler = app.env.get('webHandler');
+      assert.strictEqual(webHandler.name, 'sandbox-web-handler');
+    });
+
   });
 
 })();

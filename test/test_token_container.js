@@ -37,14 +37,13 @@ describe('charm container widget', function() {
   });
 
   beforeEach(function() {
-    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container = utils.makeContainer(this, 'container');
   });
 
   afterEach(function() {
     if (charm_container) {
       charm_container.destroy();
     }
-    container.remove().destroy(true);
   });
 
   after(function() {

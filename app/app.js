@@ -51,7 +51,8 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.SubAppRegistration,
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
-                                                  Y.juju.GhostDeployer], {
+                                                  Y.juju.GhostDeployer,
+                                                  Y.Event.EventTracker], {
 
     /*
       Extension properties
@@ -393,7 +394,9 @@ YUI.add('juju-gui', function(Y) {
           conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
+        var webModule = Y.namespace('juju.environments.web');
         if (this.get('sandbox')) {
+          // The GUI is running in sandbox mode.
           var sandboxModule = Y.namespace('juju.environments.sandbox');
           var State = Y.namespace('juju.environments').FakeBackend;
           var state = new State({store: this.get('store')});
@@ -413,8 +416,17 @@ YUI.add('juju-gui', function(Y) {
             this.destroy();
             throw 'unrecognized backend type: ' + apiBackend;
           }
-
+          // Instantiate a fake Web handler, which simulates the
+          // request/response communication between the GUI and the juju-core
+          // HTTPS API.
+          envOptions.webHandler = new webModule.WebSandbox({state: state});
+        } else {
+          // The GUI is connected to a real Juju environment.
+          // Instantiate a Web handler allowing to perform asynchronous HTTPS
+          // requests to the juju-core API.
+          envOptions.webHandler = new webModule.WebHandler();
         }
+
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
 
@@ -528,6 +540,10 @@ YUI.add('juju-gui', function(Y) {
         this._renderHelpDropdownView();
       }, this);
 
+      this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
+        this._handleZoomMessage();
+      }, this);
+
       // Halt the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       var navNode = Y.one('#nav-brand-env');
@@ -622,6 +638,114 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deployService(charm, ghostAttributes);
       }, this);
+
+      this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
+      // These are manually detached in the destructor.
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
+      }, this);
+    },
+
+    /**
+      Show the appropriate drag notification type.
+
+      NOOP
+
+      @method showDragNotification
+      @param {String} fileType The type of file to show the notification for.
+    */
+    showDragNotification: function(fileType) {},
+
+    /**
+      Hide the drag notifications.
+
+      NOOP
+
+      @method hideDragNotification
+    */
+    hideDragNotification: function() {},
+
+    /**
+      Event handler for the dragenter, dragover, dragleave events on the
+      document. It calls to determine the file type being dragged and manages
+      the commands to the timerControl method.
+
+      @method _appDragOverHandler
+      @param {Object} e The event object from the various events.
+    */
+    _appDragOverHandler: function(e) {
+      e.preventDefault(); // required to allow items to be dropped
+      var fileType = this._determineFileType(e.dataTransfer);
+      if (!fileType) {
+        return; // Ignore if it's not a supported type
+      }
+      var type = e.type;
+      if (type === 'dragenter') {
+        this.showDragNotification(fileType);
+        return;
+      }
+      if (type === 'dragleave') {
+        this._dragleaveTimerControl('start');
+      }
+      if (type === 'dragover') {
+        this._dragleaveTimerControl('stop');
+      }
+    },
+
+    /**
+      Handles the dragleave timer so that the periodic dragleave events which
+      fire as the user is dragging the file around the browser do not stop
+      the drag notification from showing.
+
+      @method _dragleaveTimerControl
+      @param {String} action The action that should be taken on the timer.
+    */
+    _dragleaveTimerControl: function(action) {
+      if (action === 'start') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+        this._dragLeaveTimer = Y.later(100, this, function() {
+          this.hideDragNotification();
+        });
+      }
+      if (action === 'stop') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+      }
+    },
+
+    /**
+      Takes the information from the dataTransfer object to determine what
+      kind of file the user is dragging over the canvas.
+
+      Unfortunately Chrome, Firefox, And IE in OSX and Windows do not show mime
+      types for files that it is not familiar with. This isn't an issue once the
+      user has dropped the file because we can parse the file name but while
+      it's still hovering the browser only tells us the mime type if it knows
+      it, else it's an empty string. This means that we cannot determine between
+      a yaml file or a folder during hover.
+      Bug: https://code.google.com/p/chromium/issues/detail?id=342554
+      Real mime type for yaml files should be: application/x-yaml
+
+      @method _determineFileType
+      @param {Object} dataTransfer dataTransfer object from the dragover event.
+      @return {String} The file type extension.
+    */
+    _determineFileType: function(dataTransfer) {
+      if (dataTransfer.types[0] !== 'Files') {
+        // If the dataTransfer type isn't `Files` then something is being
+        // dragged from inside the browser.
+        return false;
+      }
+      // See method doc for bug information.
+      var file = dataTransfer.items[0];
+      if (file.type === 'application/zip' ||
+          file.type === 'application/x-zip-compressed') {
+        return 'zip';
+      }
+      return 'yaml';
     },
 
     /**
@@ -639,6 +763,36 @@ YUI.add('juju-gui', function(Y) {
       this.helpDropdown.on('navigate', function(e) {
         this.navigate(e.url);
       }, this);
+    },
+
+    /**
+     * Display a small screen message using browser data.
+     *
+     * @method _handleZoomMessage
+     */
+    _handleZoomMessage: function() {
+      this._displayZoomMessage(Y.one('body').get('winWidth'), Y.UA.os);
+    },
+
+    /**
+     * Display a message when the browser is too small to work.
+     *
+     * @method _displayZoomMessage
+     */
+    _displayZoomMessage: function(viewportWidth, os) {
+      var metaKey = (os === 'macintosh') ? 'command' : 'ctrl';
+      // Only display the message once otherwise the message will continually
+      // fire while the browser is being resized or zoomed.
+      if (!this.zoomMessageDisplayed && viewportWidth <= 1024) {
+        this.db.notifications.add({
+          title: 'Browser size adjustment',
+          message: 'This browser needs to be maximised or zoomed out to' +
+              ' display the Juju GUI properly. Try using "' + metaKey +
+              '+-" to zoom the window.',
+          level: 'error'
+        });
+        this.zoomMessageDisplayed = true;
+      }
     },
 
     /**
@@ -688,6 +842,9 @@ YUI.add('juju-gui', function(Y) {
     @method destructor
     */
     destructor: function() {
+      if (this.zoomMessageHandler) {
+        this.zoomMessageHandler.detach();
+      }
       if (this.helpDropdown) {
         this.helpDropdown.destroy();
       }
@@ -696,6 +853,10 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this._simulator) {
         this._simulator.stop();
+      }
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
       }
       Y.each(
           [this.env, this.db, this.notifications,
@@ -707,6 +868,10 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.removeEventListener(
+            eventName, this._boundAppDragOverHandler);
+      }, this);
     },
 
     /**
@@ -1024,6 +1189,42 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      React to a large display element wanting to take over the display.
+
+      @method onEnvTakeOverStarting
+      @return {undefined} Nothing.
+    */
+    onEnvTakeOverStarting: function() {
+      // When told that someone wants to take over the view, let them
+      // have it.
+      var charmbrowser = this.get('subApps').charmbrowser;
+      // Capture the original view mode so we can set it back later.
+      var originalViewMode = charmbrowser.getViewMode();
+      // Once the takeover has ended, put the original view mode back.
+      if (this._takeOverEnding) {
+        this._takeOverEnding.detach();
+        this._takeOverEnding = null;
+      }
+      this._takeOverEnding = this.views.environment.instance.on(
+          'envTakeoverEnding', function(e) {
+            charmbrowser.fire('viewNavigate', {
+              change: {
+                viewmode: originalViewMode
+              }
+            });
+
+            this._takeOverEnding.detach();
+            this._takeOverEnding = null;
+          }, this);
+      // Minimize the sidebar because something big wants more space.
+      charmbrowser.fire('viewNavigate', {
+        change: {
+          viewmode: 'minimized'
+        }
+      });
+    },
+
+    /**
        Determine if the browser or environment should be rendered or not.
 
        When hitting static views the browser needs to disappear
@@ -1099,10 +1300,24 @@ YUI.add('juju-gui', function(Y) {
          */
         callback: function() {
           this.views.environment.instance.rendered();
+          // We only want to register this event handler once, but this method
+          // is called multiple times.
+          if (!this._envTakeoverEndingRegistered) {
+            this.addEvent(
+                this.views.environment.instance.on('envTakeoverStarting',
+                    function(ev) {
+                      ev.halt();
+                      this.onEnvTakeOverStarting(ev);
+                    }, this));
+            this._envTakeoverEndingRegistered = true;
+          }
+
         },
         render: true
       });
 
+      // Display the zoom message on page load.
+      this._handleZoomMessage();
       next();
     },
 
@@ -1329,6 +1544,8 @@ YUI.add('juju-gui', function(Y) {
     'juju-env-fakebackend',
     'juju-fakebackend-simulator',
     'juju-env-sandbox',
+    'juju-env-web-handler',
+    'juju-env-web-sandbox',
     'juju-charm-models',
     'juju-views',
     'juju-view-environment',
@@ -1341,6 +1558,7 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'bundle-import-helpers',
+    'event-tracker',
     'node',
     'model',
     'app-cookies-extension',

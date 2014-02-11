@@ -596,7 +596,7 @@
                 }
 
             }
-            .charm-changed {
+            .inspector-header-message {
                 background-color: @charm-panel-background-color;
                 border-bottom: 1px solid @inspector-divider-bottom;
                 border-top: 1px solid @inspector-divider-top;
@@ -682,6 +682,12 @@
             overflow-x: hidden;
             overflow-y: auto;
             margin-top: -1px;
+
+            .line-too-long {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
 
             .view-content {
                 padding: 20px @inspector-main-padding;

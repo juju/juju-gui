@@ -108,6 +108,14 @@ var GlobalConfig = {
         }
       }
     },
+    zip: {
+      modules: {
+        'zip': {
+          // Zip library from http://gildas-lormeau.github.io/zip.js/
+          fullpath: '/juju-ui/assets/javascripts/zip.js'
+        }
+      }
+    },
     filesaver: {
       modules: {
         'FileSaver': {
@@ -195,6 +203,10 @@ var GlobalConfig = {
 
         'unscaled-pack-layout': {
           fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
+        },
+
+        'zip-utils': {
+          fullpath: '/juju-ui/assets/javascripts/zip-utils.js'
         },
 
         // Views
@@ -317,6 +329,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-relations.js'
         },
 
+        'viewlet-request-series': {
+          fullpath: '/juju-ui/views/viewlets/request-series.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
@@ -369,6 +385,14 @@ var GlobalConfig = {
 
         'juju-env-sandbox': {
           fullpath: '/juju-ui/store/env/sandbox.js'
+        },
+
+        'juju-env-web-handler': {
+          fullpath: '/juju-ui/store/env/web-handler.js'
+        },
+
+        'juju-env-web-sandbox': {
+          fullpath: '/juju-ui/store/env/web-sandbox.js'
         },
 
         'juju-notification-controller': {

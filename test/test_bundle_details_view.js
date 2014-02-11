@@ -55,7 +55,7 @@ describe('Browser bundle detail view', function() {
   });
 
   beforeEach(function() {
-    view = generateBundleView();
+    view = generateBundleView(this);
     view._setupLocalFakebackend = function() {
       this.fakebackend = factory.makeFakeBackend();
     };
@@ -63,7 +63,6 @@ describe('Browser bundle detail view', function() {
   });
 
   afterEach(function() {
-    container.remove().destroy(true);
     view.destroy();
     cleanUp();
   });
@@ -72,8 +71,8 @@ describe('Browser bundle detail view', function() {
     browser.destroy();
   });
 
-  function generateBundleView(options) {
-    container = utils.makeContainer();
+  function generateBundleView(context, options) {
+    container = utils.makeContainer(context);
     container.append('<div class="bws-view-data"></div>');
     var defaults = {
       store: factory.makeFakeStore(),
@@ -119,6 +118,9 @@ describe('Browser bundle detail view', function() {
     view.set('store', fakeStore);
     view.set('entity', new models.Bundle(data));
     view.render();
+    // Bypass any routing that might take place for testing sanity.
+    view.tabview.set('skipAnchorNavigation', true);
+
     container.one('a.readme').simulate('click');
   });
 
@@ -140,8 +142,10 @@ describe('Browser bundle detail view', function() {
     view.set('store', fakeStore);
     view.set('entity', new models.Bundle(data));
     view.render();
+    // Bypass any routing that might take place for testing sanity.
+    view.tabview.set('skipAnchorNavigation', true);
     container.one('a.code').simulate('click');
-    var codeNode = container.one('#bws-code');
+    var codeNode = container.one('#code');
     codeNode.all('select option').item(2).set('selected', 'selected');
     codeNode.one('select').simulate('change');
   });
@@ -191,7 +195,7 @@ describe('Browser bundle detail view', function() {
        view.on('topologyRendered', function(e) {
          assert.isNotNull(container.one('.topology-canvas'));
          // Check that the bundle topology tab is the landing tab.
-         assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
+         assert.equal(view.tabview.get('selection').get('hash'), '#bundle');
          var vis = d3.select(container.one('svg').getDOMNode());
 
          // Check that an error is shown.
@@ -255,7 +259,7 @@ describe('Browser bundle detail view', function() {
     view.on('topologyRendered', function(e) {
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
-      assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
+      assert.equal(view.tabview.get('selection').get('hash'), '#bundle');
       done();
     });
     view.set('entity', new models.Bundle(entity));
@@ -276,7 +280,7 @@ describe('Browser bundle detail view', function() {
       relLabel.simulate('click');
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
-      assert.equal(view.tabview.get('selection').get('hash'), '#bws-bundle');
+      assert.equal(view.tabview.get('selection').get('hash'), '#bundle');
       done();
     });
 
@@ -338,7 +342,7 @@ describe('Browser bundle detail view', function() {
     };
     view.set('entity', new models.Bundle(entity));
     view.render();
-    var tab = container.one('#bws-services');
+    var tab = container.one('#services');
     assert.equal(tab.all('.token').size(), 2);
     var charmConfigNodes = tab.all('.charm-config');
     assert.equal(
@@ -348,14 +352,14 @@ describe('Browser bundle detail view', function() {
   });
 
   it('selects the proper tab when given one', function() {
-    view.set('activeTab', '#bws-services');
+    view.set('activeTab', '#services');
     view._parseData = function() {
       return new Y.Promise(function(resolve) { resolve(); });
     };
     view.set('entity', new models.Bundle(data));
     view.render();
     var selected = view.get('container').one('nav .active');
-    assert.equal(selected.getAttribute('href'), '#bws-services');
+    assert.equal(selected.getAttribute('href'), '#services');
   });
 
 

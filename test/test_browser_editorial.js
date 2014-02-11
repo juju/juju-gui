@@ -40,7 +40,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = Y.namespace('juju-tests.utils').makeContainer('container');
+      container = utils.makeContainer(this, 'container');
       var testcontent = [
         '<div id=testcontent><div class="bws-view-data">',
         '</div><div class="bws-content"></div></div>'
@@ -64,7 +64,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       if (fakeStore) {
         fakeStore.destroy();
       }
-      container.remove(true);
     });
 
     after(function() {

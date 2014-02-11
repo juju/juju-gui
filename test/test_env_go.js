@@ -494,6 +494,56 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('Local charm upload support', function() {
+
+      it('prevents non authorized users from sending files', function(done) {
+        env.userIsAuthenticated = false;
+        var warn = console.warn,
+            called = false;
+
+        console.warn = function(msg) {
+          assert.equal(
+              msg, 'Attempted upload files without providing credentials.');
+          called = true;
+        };
+        var handler = env.on('login', function(e) {
+          assert.deepEqual(e.data, {result: false});
+          assert.equal(called, true, 'Console warning not called');
+          handler.detach();
+          console.warn = warn;
+          done();
+        });
+        env.uploadLocalCharm();
+      });
+
+      it('uses the stored webHandler to perform requests', function() {
+        env.userIsAuthenticated = true;
+        var mockWebHandler = {post: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.uploadLocalCharm(
+            'a zip file', 'trusty',
+            function() {return 'progress';},
+            function() {return 'completed';});
+        // Ensure the web handler's post method has been called with the
+        // expected arguments.
+        assert.strictEqual(mockWebHandler.post.callCount(), 1);
+        var lastArguments = mockWebHandler.post.lastArguments();
+        assert.strictEqual(lastArguments.length, 7);
+        assert.strictEqual(
+            lastArguments[0], '/juju-core/charms?series=trusty'); // URL.
+        assert.deepEqual(
+            lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
+        assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
+        assert.strictEqual(lastArguments[3], 'user'); // User name.
+        assert.strictEqual(lastArguments[4], 'password'); // Password.
+        assert.strictEqual(
+            lastArguments[5](), 'progress'); // Progress callback.
+        assert.strictEqual(
+            lastArguments[6](), 'completed'); // Completed callback.
+      });
+
+    });
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();

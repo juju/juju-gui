@@ -20,8 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('data binding library', function() {
   var Y, BindingEngine, utils, viewlet, engine, container;
 
-  var generateEngine = function(input) {
-    container = utils.makeContainer();
+  var generateEngine = function(context, input) {
+    container = utils.makeContainer(context);
     container.setHTML(input);
     viewlet = Object.create({
       name: 'testViewlet',
@@ -67,7 +67,7 @@ describe('data binding library', function() {
       });
 
       it('maintains proper binding references', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a"></div>');
 
         var viewlet = {
@@ -87,7 +87,7 @@ describe('data binding library', function() {
             // wait. This is because the change interval can mask certain types
             // of errors and we want the space to see that this acutally works.
             engine = new BindingEngine({interval: 50});
-            container = utils.makeContainer();
+            container = utils.makeContainer(this);
             container.append('<input data-bind="a"/>');
             container.append('<input data-bind="a"/>');
             var viewlet = {
@@ -108,7 +108,7 @@ describe('data binding library', function() {
           });
 
       it('can reset viewlets back to model values', function() {
-        generateEngine('<input data-bind="a"/>');
+        generateEngine(this, '<input data-bind="a"/>');
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
         // It renders with the model value
@@ -136,7 +136,7 @@ describe('data binding library', function() {
         // Very similar  to the previous test, this checks
         // that the binding filtering by viewlet runs and produces
         // the expected outcome.
-        generateEngine('<input data-bind="a"/>');
+        generateEngine(this, '<input data-bind="a"/>');
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
         // It renders with the model value
@@ -158,7 +158,7 @@ describe('data binding library', function() {
       });
 
       it('can reset viewlets with conflicts back to model values', function() {
-        generateEngine('<input data-bind="a"/>');
+        generateEngine(this, '<input data-bind="a"/>');
         var model = new Y.Model({a: 'b'});
         engine.bind(model, viewlet);
         // It renders with the model value.
@@ -189,7 +189,7 @@ describe('data binding library', function() {
       });
 
       it('supports nested model bindings', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a.b.c.d"></div>');
 
         var viewlet = {
@@ -208,7 +208,7 @@ describe('data binding library', function() {
 
       it('inherits functions from object attributes to its properties',
          function() {
-           container = utils.makeContainer();
+           container = utils.makeContainer(this);
            container.append('<div data-bind="a.b"></div>');
 
            var viewlet = {
@@ -230,7 +230,7 @@ describe('data binding library', function() {
 
       it('does not override child property methods',
          function() {
-           container = utils.makeContainer();
+           container = utils.makeContainer(this);
            container.append('<div data-bind="a.b"></div>');
 
            var viewlet = {
@@ -254,7 +254,7 @@ describe('data binding library', function() {
          });
 
       it('supports formatters', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a"></div>');
 
         var viewlet = {
@@ -275,7 +275,7 @@ describe('data binding library', function() {
       });
 
       it('supports callbacks on binding updates', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a"></div>');
 
         var viewlet = {
@@ -297,7 +297,7 @@ describe('data binding library', function() {
       });
 
       it('supports before/after callbacks on binding updates', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a"></div>');
 
         var viewlet = {
@@ -325,7 +325,7 @@ describe('data binding library', function() {
       });
 
       it('update callback uses formatted value', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="a"></div>');
 
         var viewlet = {
@@ -349,7 +349,7 @@ describe('data binding library', function() {
 
       describe('wildcard support', function() {
         it('supports * styled wildcard bindings', function() {
-          container = utils.makeContainer();
+          container = utils.makeContainer(this);
           container.append('<div data-bind="a"></div>');
 
           var result;
@@ -381,7 +381,7 @@ describe('data binding library', function() {
         });
 
         it('supports + styled wildcard bindings', function() {
-          container = utils.makeContainer();
+          container = utils.makeContainer(this);
           container.append('<div data-bind="a"/>' +
                            '<div data-bind="b"/>');
 
@@ -416,7 +416,7 @@ describe('data binding library', function() {
 
       it('should be able to observe pojos', function(done) {
         var pojo = {id: 'a', name: 'test'};
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         container.append('<div data-bind="name"></div>');
         var called = false;
 
@@ -449,7 +449,7 @@ describe('data binding library', function() {
       });
 
       it('unbind method unbinds models and pojos (unit test)', function() {
-        container = utils.makeContainer();
+        container = utils.makeContainer(this);
         engine = new BindingEngine({interval: 0});
         var model = {id: 'test', name: 'this'};
         viewlet = {
@@ -473,20 +473,19 @@ describe('data binding library', function() {
     describe('field types', function() {
 
       afterEach(function() {
-        container.remove().destroy(true);
         viewlet = null;
         engine = null;
       });
 
       it('binds strings to inputs', function() {
-        generateEngine('<input type="text" data-bind="a"></input>');
+        generateEngine(this, '<input type="text" data-bind="a"></input>');
         engine.bind(new Y.Model({a: 'b'}), viewlet);
         assert.equal(container.one('[data-bind=a]').get('value'), 'b');
       });
 
       it('supports eq for string inputs', function() {
         var model = new Y.Model({a: undefined});
-        generateEngine('<input type="text" data-bind="a"></input>');
+        generateEngine(this, '<input type="text" data-bind="a"></input>');
         var input = container.one('[data-bind=a]');
         engine.bind(model, viewlet);
         var handler = engine.getNodeHandler(input.getDOMNode());
@@ -506,14 +505,14 @@ describe('data binding library', function() {
       });
 
       it('binds strings to textareas', function() {
-        generateEngine('<textarea data-bind="g"/></textarea>');
+        generateEngine(this, '<textarea data-bind="g"/></textarea>');
         engine.bind(new Y.Model({g: 'g'}), viewlet);
         assert.equal(container.one('[data-bind=g]').get('value'), 'g');
       });
 
       it('supports eq for textarea inputs', function() {
         var model = new Y.Model({a: undefined});
-        generateEngine('<textarea data-bind="a"></textarea>');
+        generateEngine(this, '<textarea data-bind="a"></textarea>');
         var input = container.one('[data-bind=a]');
         engine.bind(model, viewlet);
         var handler = engine.getNodeHandler(input.getDOMNode());
@@ -533,13 +532,13 @@ describe('data binding library', function() {
       });
 
       it('binds numbers to inputs', function() {
-        generateEngine('<input type="number" data-bind="e"/>');
+        generateEngine(this, '<input type="number" data-bind="e"/>');
         engine.bind(new Y.Model({e: 7}), viewlet);
         assert.equal(container.one('[data-bind=e]').get('value'), '7');
       });
 
       it('binds boolean to checkboxes', function() {
-        generateEngine('<input type="checkbox" data-bind="e"/>');
+        generateEngine(this, '<input type="checkbox" data-bind="e"/>');
         var model = new Y.Model({e: false});
         engine.bind(model, viewlet);
         var input = container.one('[data-bind=e]');
@@ -550,7 +549,7 @@ describe('data binding library', function() {
 
       it('supports eq for checkboxes', function() {
         var model = new Y.Model({a: undefined});
-        generateEngine('<input type="checkbox" data-bind="a"></input>');
+        generateEngine(this, '<input type="checkbox" data-bind="a"></input>');
         var input = container.one('[data-bind=a]');
         engine.bind(model, viewlet);
         var handler = engine.getNodeHandler(input.getDOMNode());
@@ -569,7 +568,7 @@ describe('data binding library', function() {
 
       it('supports eq for text', function() {
         var model = new Y.Model({a: undefined});
-        generateEngine('<div data-bind="a"></div>');
+        generateEngine(this, '<div data-bind="a"></div>');
         var input = container.one('[data-bind=a]');
         engine.bind(model, viewlet);
         var handler = engine.getNodeHandler(input.getDOMNode());
@@ -595,13 +594,12 @@ describe('data binding library', function() {
 
       beforeEach(function() {
         model = new Y.Model({a: undefined});
-        generateEngine('<textarea data-bind="a"></textarea>');
+        generateEngine(this, '<textarea data-bind="a"></textarea>');
         input = container.one('[data-bind=a]');
         engine.bind(model, viewlet);
       });
 
       afterEach(function() {
-        container.remove().destroy(true);
         model.destroy(true);
         input.destroy(true);
       });
@@ -662,7 +660,7 @@ describe('data binding library', function() {
         }
       });
 
-      container = utils.makeContainer();
+      container = utils.makeContainer(this);
       viewlet = {
         container: container,
         bindings: {
@@ -705,6 +703,7 @@ describe('data binding library', function() {
       // representations based only peripherally on a given attribute.
       var model = new Y.Model({a: {something: 'wicked'}, b: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>');
       viewlet.bindings = {
         a: {
@@ -753,7 +752,7 @@ describe('data binding library', function() {
           '{{/modellist}}'
           );
       list.add({test: 'alpha', id: 'a'});
-      container = utils.makeContainer();
+      container = utils.makeContainer(this);
       engine.bind(list, {
         name: 'testViewlet',
         container: container,
@@ -782,6 +781,7 @@ describe('data binding library', function() {
     beforeEach(function() {
       model = new Y.Model({a: undefined, b: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>' +
           '<input type="text" data-bind="a"></input>' +
           '<textarea data-bind="b"></textarea>');
@@ -789,7 +789,6 @@ describe('data binding library', function() {
     });
 
     afterEach(function() {
-      container.remove().destroy(true);
       model.destroy(true);
     });
 
@@ -819,13 +818,13 @@ describe('data binding library', function() {
     var model, node;
 
     afterEach(function() {
-      container.remove().destroy(true);
       model.destroy(true);
     });
 
     it('reports conflicts', function() {
       model = new Y.Model({a: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>');
       engine.bind(model, viewlet);
       node = container.one('[data-bind="a"]');
@@ -852,6 +851,7 @@ describe('data binding library', function() {
     it('does not report conflicts triggered by parent change', function() {
       model = new Y.Model({a: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a.child"></textarea>');
       engine.bind(model, viewlet);
       node = container.one('[data-bind="a.child"]');
@@ -868,6 +868,7 @@ describe('data binding library', function() {
     it('does not auto-resolve conflict when model matches', function() {
       model = new Y.Model({a: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>');
       engine.bind(model, viewlet);
       node = container.one('[data-bind="a"]');
@@ -897,6 +898,7 @@ describe('data binding library', function() {
     it('supports formatted values when working with conflicts', function() {
       model = new Y.Model({a: 'CARROT'});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>');
       // Our formatter lower cases all values.
       viewlet.bindings = {
@@ -930,6 +932,7 @@ describe('data binding library', function() {
     beforeEach(function() {
       model = new Y.Model({a: undefined});
       generateEngine(
+          this,
           '<textarea data-bind="a"></textarea>');
       engine.bind(model, viewlet);
       node = container.one('[data-bind="a"]');
@@ -942,7 +945,6 @@ describe('data binding library', function() {
     });
 
     afterEach(function() {
-      container.remove().destroy(true);
       model.destroy(true);
     });
 

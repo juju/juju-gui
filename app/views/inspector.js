@@ -91,7 +91,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @param {Number} requestedUnitCount the number of units to create.
     */
     _confirmUnitConstraints: function(requestedUnitCount) {
-      var container = this.viewletManager.viewlets.overview.container,
+      var container = this.viewletManager.views.overview.container,
           genericConstraints = this.options.env.genericConstraints,
           confirm = container.one('.unit-constraints-confirm'),
           srvConstraints = this.model.get('constraints') || {};
@@ -109,7 +109,7 @@ YUI.add('juju-view-inspector', function(Y) {
       @method _closeUnitConfirm
     */
     _closeUnitConfirm: function(e) {
-      var container = this.viewletManager.viewlets.overview.container,
+      var container = this.viewletManager.views.overview.container,
           confirm = container.one('.unit-constraints-confirm');
 
       // If this was from the user clicking cancel
@@ -132,7 +132,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _confirmUnitChange: function(e) {
       e.halt();
-      var container = this.viewletManager.viewlets.overview.container,
+      var container = this.viewletManager.views.overview.container,
           unitCount = container.one('input.num-units-control').get('value'),
           service = this.model;
 
@@ -156,7 +156,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     _showEditUnitConstraints: function(e) {
       e.halt();
-      var container = this.viewletManager.viewlets.overview.container;
+      var container = this.viewletManager.views.overview.container;
       container.all('.hide-on-edit').hide();
       container.one('.editable-constraints').show();
       container.one('.unit-constraints-confirm').addClass('editing');
@@ -699,7 +699,7 @@ YUI.add('juju-view-inspector', function(Y) {
           charmUrl = service.get('charm'),
           charm = db.charms.getById(charmUrl),
           schema = charm.get('options'),
-          container = this.viewletManager.viewlets.config.container,
+          container = this.viewletManager.views.config.container,
           button = container.one('button.confirm');
 
       button.set('disabled', 'disabled');
@@ -785,7 +785,7 @@ YUI.add('juju-view-inspector', function(Y) {
     */
     saveConstraints: function(ev) {
       var inspector = this.viewletManager;
-      var container = inspector.viewlets.constraints.container;
+      var container = inspector.views.constraints.container;
       var env = inspector.get('env');
       var service = inspector.get('model');
       // Retrieve constraint values.
@@ -859,6 +859,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
       this.viewletManager.showViewlet('unitDetails', unit);
+      this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
     /**
@@ -984,9 +985,10 @@ YUI.add('juju-view-inspector', function(Y) {
     onShowCharmDetails: function(ev) {
       ev.halt();
       var db = this.viewletManager.get('db');
-      var charmId = ev.currentTarget.getAttribute('data-charmid');
+      var charmId = ev.currentTarget.getData('charmid');
       var charm = db.charms.getById(charmId);
       this.viewletManager.showViewlet('charmDetails', charm);
+      this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
     /**
@@ -1341,7 +1343,7 @@ YUI.add('juju-view-inspector', function(Y) {
       this.model = model;
       this.options = options;
       options = options || {};
-      options.viewlets = {};
+      options.views = {};
       options.templateConfig = options.templateConfig || {};
 
       var container = Y.Node.create(Templates['service-inspector']());
@@ -1351,13 +1353,14 @@ YUI.add('juju-view-inspector', function(Y) {
       options.container = container;
       options.viewletContainer = '.viewlet-container';
 
-      // Build a collection of viewlets from the list of required viewlets.
-      var viewlets = {};
+      // Build a collection of view/viewlets from
+      // the list of required view/viewlets.
+      var views = {};
       options.viewletList.forEach(function(viewlet) {
-        viewlets[viewlet] = viewletNS[viewlet]; });
+        views[viewlet] = viewletNS[viewlet]; });
       // Mix in any custom viewlet configuration options provided by the config.
-      options.viewlets = Y.mix(
-          viewlets, options.viewlets, true, undefined, 0, true);
+      options.views = Y.mix(
+          views, options.views, true, undefined, 0, true);
 
       options.model = model;
 
@@ -1382,6 +1385,9 @@ YUI.add('juju-view-inspector', function(Y) {
             });
           });
 
+      // Enable databinding.
+      options.enableDatabinding = true;
+
       options.events = Y.mix(options.events, options.viewletEvents);
 
       this.viewletManager = new viewletNS.ViewletManager(options);
@@ -1392,6 +1398,9 @@ YUI.add('juju-view-inspector', function(Y) {
       this.viewletManager.render();
       this.viewletManager.showViewlet('inspectorHeader', model);
       this.viewletManager.showViewlet(options.viewletList[0]);
+      this.viewletManager.on('viewletSlotClosing', function() {
+        this.viewletManager.fire('inspectorTakeoverEnding');
+      }, this);
     }
 
     ServiceInspector.prototype = controllerPrototype;

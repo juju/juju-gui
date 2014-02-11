@@ -40,7 +40,7 @@ describe('service module annotations', function() {
   });
 
   beforeEach(function() {
-    viewContainer = utils.makeContainer();
+    viewContainer = utils.makeContainer(this);
     db = new models.Database();
     called = false;
     location =
@@ -63,9 +63,11 @@ describe('service module annotations', function() {
   });
 
   afterEach(function() {
-    if (viewContainer) {
-      viewContainer.remove(true);
-    }
+    serviceModule.destroy();
+  });
+
+  afterEach(function() {
+    serviceModule.destroy();
   });
 
   // Test the drag end handler.
@@ -120,12 +122,12 @@ describe('service module events', function() {
     });
   });
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function() {
       return 'charm icon url';
     };
-    viewContainer = utils.makeContainer('content');
+    viewContainer = utils.makeContainer(this, 'content');
     var charmData = utils.loadFixture('data/haproxy-api-response.json', true);
     charm = new models.Charm(charmData.charm);
     db = new models.Database();
@@ -147,13 +149,10 @@ describe('service module events', function() {
     view.rendered();
     topo = view.topo;
     serviceModule = topo.modules.ServiceModule;
+    done();
   });
 
   afterEach(function() {
-    if (viewContainer) {
-      viewContainer.remove(true);
-    }
-
     fakeStore.destroy();
     charm.destroy();
     db.destroy();
@@ -164,6 +163,7 @@ describe('service module events', function() {
   it('should show the service menu', function() {
     var box = topo.service_boxes.haproxy;
     var menu = viewContainer.one('#service-menu');
+
     assert.isFalse(menu.hasClass('active'));
     serviceModule.showServiceMenu(box);
     assert(menu.hasClass('active'));
@@ -374,6 +374,72 @@ describe('service module events', function() {
       assert.deepEqual(files, file);
       // Restore the deployBundleFiles call for future tests.
       juju.BundleHelpers.deployBundleFiles = _deployBundleFiles;
+      done();
+    };
+
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
+
+  it('deploys a local charm on .zip file drop events', function(done) {
+    var file = {
+      // Using a complex name to make sure the extension filtering works
+      name: 'foo-bar.baz.zip',
+      // This MIME type is used in Chrome and Firefox, see the
+      // following test for uploading a charm zip using IE11.
+      type: 'application/zip'
+    };
+    var fakeEventObject = {
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [file]
+        }
+      }
+    };
+
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
+    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+      assert.deepEqual(files, file);
+      assert.isObject(env);
+      assert.isObject(db);
+      // Restore the deployBundleFiles call for future tests.
+      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
+      done();
+    };
+
+    serviceModule.set('component', view.topo);
+    serviceModule.canvasDropHandler(fakeEventObject);
+  });
+
+  it('deploys a local charm on .zip file drop events (IE)', function(done) {
+    var file = {
+      // Using a complex name to make sure the extension filtering works
+      name: 'foo-bar.baz.zip',
+      // This MIME type is used only in IE11 see the above test
+      // for the MIME type used in Firefox and Chrome.
+      type: 'application/x-zip-compressed'
+    };
+    var fakeEventObject = {
+      halt: function() {},
+      _event: {
+        dataTransfer: {
+          // All we need to fake things out is to have a file.
+          files: [file]
+        }
+      }
+    };
+
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
+    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+      assert.deepEqual(files, file);
+      assert.isObject(env);
+      assert.isObject(db);
+      // Restore the deployBundleFiles call for future tests.
+      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
       done();
     };
 

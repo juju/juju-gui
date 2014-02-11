@@ -28,6 +28,7 @@ An in-memory fake Juju backend and supporting elements.
 YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
+  var ziputils = Y.namespace('juju.ziputils');
   var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
   var VALUE_ERROR = {error: 'Unparsable environment data.'};
 
@@ -1644,6 +1645,88 @@ YUI.add('juju-env-fakebackend', function(Y) {
     deployerNext: function(watcherId, callback) {
       // No op in the fakebackend. Just return and ignore the callback.
       return;
+    },
+
+    /**
+      Create and return an event including an error simulating an error
+      response as returned by the juju-core HTTPS API.
+
+      @method _createErrorEvent
+      @param {String} message The error message.
+    */
+    _createErrorEvent: function(message) {
+      return {
+        type: 'error',
+        target: {responseText: {Error: message}}
+      };
+    },
+
+    /**
+      Populate the local database with charm data reading the information
+      contained in entries. This way it is possible to store at least a
+      subset of the charm data provided by juju-core or the charm store.
+
+      @method _handleLocalCharmEntries
+      @param {Object} entries A dictionary mapping file names to entry objects
+        (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+        This usually includes at least the metadata.yaml and the config.yaml
+        entries.
+      @param {Function} callback A function to be called to return the charm
+        information back to the original caller (see _uploadLocalCharm in
+        app/assets/javascripts/local-charm-import-helpers).
+      @param {Function} errback A function to be called to notify an error
+        occurred during the process. The errback callable receives an error
+        message.
+    */
+    _handleLocalCharmEntries: function(entries, callback, errback) {
+      // Check if all the required entries are present in the zip.
+      var configEntry = entries['config.yaml'];
+      if (!configEntry) {
+        return errback('unable to find the charm configuration file');
+      }
+      var metadataEntry = entries['metadata.yaml'];
+      if (!metadataEntry) {
+        return errback('unable to find the charm metadata file');
+      }
+      // We can still continue the process even if the readme is missing.
+      var readmeEntry = entries['readme.md'];
+      // XXX frankban 2014-02-07: read the entries and populate the database
+      // as required. Call the callback in order to return the required data
+      // to the original caller. Remove the lines below.
+      console.log('config:', configEntry.filename);
+      console.log('metadata:', metadataEntry.filename);
+      if (readmeEntry) {
+        console.log('readme:', readmeEntry.filename);
+      }
+      errback('charm upload in sandbox mode is not yet implemented');
+    },
+
+    /**
+      Simulate uploading a local charm.
+      Read the given zip file, validate it, parse charm's metadata and populate
+      the database with the required info before invoking the given callback.
+
+      @method handleUploadLocalCharm
+      @param {Object} file The zip file object containing the charm.
+      @param {Function} completedCallback The load event callback.
+    */
+    handleUploadLocalCharm: function(file, completedCallback) {
+      var self = this;
+      // Define a function to be called when something goes wrong. Since this
+      // function is passed to ziputils.readEntries, it is used to handle
+      // errors globally during the whole zip parsing process.
+      var errback = function(error) {
+        completedCallback(self._createErrorEvent(error));
+      };
+      // Define a function to be called when zip entries are available and
+      // ready to be parsed. Here we just filter the entries we are interested
+      // in, the real parsing is done in _handleLocalCharmEntries (see above).
+      var callback = function(allEntries) {
+        var filenames = ['config.yaml', 'metadata.yaml', 'readme.md'];
+        var entries = ziputils.getEntriesByNames(allEntries, filenames);
+        self._handleLocalCharmEntries(entries, completedCallback, errback);
+      };
+      ziputils.readEntries(file, callback, errback);
     }
 
   });
@@ -1655,6 +1738,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     'base',
     'js-yaml',
     'juju-models',
-    'promise'
+    'promise',
+    'zip-utils'
   ]
 });

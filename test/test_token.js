@@ -34,11 +34,10 @@ describe('charm/bundle token', function() {
   });
 
   beforeEach(function() {
-    token_container = utils.makeContainer('token-container');
+    token_container = utils.makeContainer(this, 'token-container');
   });
 
   afterEach(function() {
-    token_container.remove(true);
     if (token) {
       token.destory();
     }

@@ -33,11 +33,7 @@ describe('D3 StatusBar', function() {
   });
 
   beforeEach(function() {
-    container = utils.makeContainer();
-  });
-
-  afterEach(function() {
-    container.remove(true);
+    container = utils.makeContainer(this);
   });
 
   it('should properly parse data', function() {

@@ -82,7 +82,8 @@ YUI.add('bundle-import-helpers', function(Y) {
       utility.
 
       @method deployBundleFiles
-      @param {Array} fileSources The list of files from the import control.
+      @param {Array | Object} fileSources A list of files or file from the
+        bundle import control.
       @param {Environment} env Environment with access to the bundle back end.
       calls.
       @param {Database} db The app Database with access to the NotificationList.
@@ -101,7 +102,11 @@ YUI.add('bundle-import-helpers', function(Y) {
         return;
       }
 
-      // Handle dropping Deployer files on the canvas.
+      // Handle dropping Deployer files on the canvas. The current
+      // implementation of the canvasDropHandler loops through the files
+      // and sends individual requests but this method can support being
+      // send the fileSources object for multiple bundle files so we test
+      // for that here.
       if (!Y.Lang.isArray(fileSources)) {
         fileSources = [fileSources];
       }

@@ -34,8 +34,7 @@ describe('Inspector Overview', function() {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
           charmConfig = utils.loadFixture(
-          'data/mediawiki-api-response.json',
-          true);
+              'data/mediawiki-api-response.json', true);
           done();
         });
 
@@ -44,7 +43,7 @@ describe('Inspector Overview', function() {
   beforeEach(function() {
     exposeCalled = false;
     unexposeCalled = false;
-    container = utils.makeContainer('container');
+    container = utils.makeContainer(this, 'container');
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -70,7 +69,6 @@ describe('Inspector Overview', function() {
     }
     env.after('destroy', function() { done(); });
     env.destroy();
-    container.remove(true);
 
     if (client) {
       client.destroy();
@@ -255,7 +253,7 @@ describe('Inspector Overview', function() {
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -316,7 +314,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -377,7 +375,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     // Clear the service upgrade information.
     service.set('upgrade_available', false);
@@ -441,7 +439,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no downgrades)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
@@ -566,7 +564,7 @@ describe('Inspector Overview', function() {
     };
 
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview;
+        overview = inspector.viewletManager.views.overview;
 
     Y.Object.each(outputInput, function(value, key, obj) {
       assert.equal(overview.categoryName(value), key);
@@ -575,8 +573,8 @@ describe('Inspector Overview', function() {
 
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        overview = inspector.viewletManager.views.overview,
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -663,8 +661,8 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        overview = inspector.viewletManager.views.overview,
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -707,8 +705,8 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        overview = inspector.viewletManager.views.overview,
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -751,8 +749,8 @@ describe('Inspector Overview', function() {
 
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
-        newContainer = utils.makeContainer();
+        overview = inspector.viewletManager.views.overview,
+        newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
 
@@ -791,7 +789,7 @@ describe('Inspector Overview', function() {
     // Re-create the container; d3 is smart enough to keep the existing
     // ordering of the wrappers in this test.
     newContainer.remove(true);
-    newContainer = utils.makeContainer();
+    newContainer = utils.makeContainer(this);
 
     overview.generateAndBindStatusHeaders(
         newContainer, statuses, db.environment);
@@ -828,7 +826,7 @@ describe('Inspector Overview', function() {
 
   it('attempts to upgrade on click', function(done) {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.viewlets.overview,
+        overview = inspector.viewletManager.views.overview,
         newContainer = inspector.viewletManager.get('container');
 
     // Ensure that get_charm is called to get the new charm.
@@ -851,26 +849,43 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function(done) {
     var inspector = setUpInspector();
-    var newContainer = inspector.viewletManager.viewlets.inspectorHeader
+    var newContainer = inspector.viewletManager.views.inspectorHeader
       .container;
     var unitId = 'mediawiki/1';
 
     var service = db.services.getById('mediawiki');
     assert.isFalse(service.get('charmChanged'));
-    assert.isTrue(newContainer.one('.charm-changed').hasClass('hidden'));
+    assert.isTrue(
+        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
 
     db.onDelta({data: {result: [
       ['unit', 'change', {id: unitId, charmUrl: 'cs:precise/mediawiki-15'}]
     ]}});
 
     assert.isTrue(service.get('charmChanged'));
-    assert.isFalse(newContainer.one('.charm-changed').hasClass('hidden'));
+    assert.isFalse(
+        newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
     inspector.viewletManager.get('environment')
       .createServiceInspector = function(model, attrs) {
           assert.isFalse(model.get('charmChanged'));
           done();
         };
     newContainer.one('.rerender-config').simulate('click');
+  });
+
+  it('reflects that a service is dying', function() {
+    var inspector = setUpInspector();
+    var views = inspector.viewletManager.views;
+    var newContainer = views.inspectorHeader.container;
+    var service = db.services.getById('mediawiki');
+    // The service is considered to be alive by default.
+    assert.strictEqual(service.get('life'), 'alive');
+    assert.strictEqual(
+        newContainer.one('[data-bind=life]').hasClass('hidden'), true);
+    // The inspector message is shown when the service's life is set to dying.
+    service.set('life', 'dying');
+    assert.strictEqual(
+        newContainer.one('[data-bind=life]').hasClass('hidden'), false);
   });
 
   it('toggles exposure', function() {
@@ -1002,12 +1017,59 @@ describe('Inspector Overview', function() {
         'running': {remove: true},
         'landscape': {landscape: true}
       };
-      var overview = inspector.viewletManager.viewlets.overview;
+      var overview = inspector.viewletManager.views.overview;
       Y.Object.each(buttons, function(results, category) {
         var buttonList = overview.generateActionButtonList(category);
         assert.deepEqual(buttonList, results);
       });
     });
+  });
+
+  describe('viewport takeover handling', function() {
+
+    it('showUnitDetails fires inspectorTakeoverStarting', function() {
+      inspector = setUpInspector(null, true);
+      var fauxEvent = {
+        halt: function() {},
+        currentTarget: {
+          getData: function(name) {
+            assert.equal(name, 'unit');
+            return 'mediawiki/1';
+          }
+        }
+      };
+      inspector.viewletManager.set('db', {
+        services: {
+          getById: function() {return db.services.getById('mediawiki');}
+        },
+        relations: {
+          get_relations_for_service: function() {return [];}
+        }
+      });
+
+      inspector.showUnitDetails(fauxEvent);
+    });
+
+    it('onShowCharmDetails fires inspectorTakeoverStarting', function() {
+      inspector = setUpInspector(null, true);
+      var fauxEvent = {
+        halt: function() {},
+        currentTarget: {
+          getData: function(name) {
+            assert.equal(name, 'charmid');
+            return 'precise/mediawiki-14';
+          }
+        }
+      };
+      inspector.viewletManager.set('db', {
+        charms: {
+          getById: function(id) {return db.charms.getById(id);}
+        }
+      });
+
+      inspector.onShowCharmDetails(fauxEvent);
+    });
+
   });
 
 });

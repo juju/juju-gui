@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, service, db, conn,
-        juju, env, testUtils, fakeStore;
+        juju, env, testUtils, fakeStore, charmConfig;
 
     var environment_delta = {
       'result': [
@@ -98,6 +98,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       'op': 'delta'
     };
 
+    // Additional relations between the same two services for collection
+    // testing. Note that this uses the gojuju style relation ideas for
+    // additional compatibility.
+    var additionalRelations = { 'result': [
+      ['relation', 'add', {
+        'interface': 'mysql',
+        'scope': 'global',
+        'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db'}],
+          ['mediawiki', {'role': 'client', 'name': 'db'}]],
+        'id': 'mysql:db mediawiki:db'
+      }],
+      ['relation', 'add', {
+        'interface': 'mysql-slave',
+        'scope': 'global',
+        'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db-slave'}],
+          ['mediawiki', {'role': 'client', 'name': 'db-slave'}]],
+        'id': 'mysql:db-slave mediawiki:db-slave'
+      }]
+    ],
+    'op': 'delta'
+    };
+
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
@@ -117,6 +141,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         fakeStore.iconpath = function() {
           return 'charm icon url';
         };
+        charmConfig = testUtils.loadFixture(
+            'data/mediawiki-api-response.json', true);
         done();
       });
     });
@@ -127,7 +153,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
-      container = testUtils.makeContainer('content');
+      container = testUtils.makeContainer(this, 'content');
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -149,13 +175,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function(done) {
-      container.remove(true);
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
+      window.flags = {};
+      if (!view.get('destroyed')) {
+        view.destroy({remove: true});
+      }
       done();
     });
 
+
+    function setUpInspector() {
+      var charmId = 'precise/mediawiki-14';
+      charmConfig.id = charmId;
+      var charm = new models.Charm(charmConfig);
+      db.charms.add(charm);
+      var serviceAttrs = {
+        id: 'mediawiki',
+        charm: charmId,
+        exposed: false,
+        upgrade_available: true,
+        upgrade_to: 'cs:precise/mediawiki-15'
+      };
+      service = new models.Service(serviceAttrs);
+      view.createTopology();
+      view.inspector = view.createServiceInspector(service,
+          {databinding: {interval: 0}});
+    }
 
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
@@ -956,6 +1003,112 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          view.destroy();
        });
 
+    it('builds a menu of relations in a collection', function() {
+      window.flags = {
+        'relationCollections': true
+      };
+      db.onDelta({data: additionalRelations});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+
+      // Single relation
+      var relation = container.one(
+          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          ' .rel-label'),
+          menu;
+      relation.simulate('click');
+      menu = container.one('#relation-menu');
+
+      assert.equal(menu.all('.relation-action').size(), 1);
+      assert.equal(menu.one('.relation-action').getData('relationid'),
+          'relation-0000000001');
+
+      // Multiple relations
+      relation = container.one(
+          '#' +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          ' .rel-label');
+      relation.simulate('click');
+      menu = container.one('#relation-menu');
+
+      assert.equal(menu.all('.relation-action').size(), 2);
+      assert.equal(menu.all('.relation-action').item(0).getData('relationid'),
+          additionalRelations.result[0][2].id);
+      assert.equal(menu.all('.relation-action').item(1).getData('relationid'),
+          additionalRelations.result[1][2].id);
+    });
+
+    it('allows deletion of relations within collections', function() {
+      window.flags = {
+        'relationCollections': true
+      };
+      db.onDelta({data: additionalRelations});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+
+      // Single relation.
+      var relation = container.one(
+          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          ' .rel-label'),
+          dialog_btn,
+          panel,
+          menu;
+
+      relation.simulate('click');
+      menu = Y.one('#relation-menu .menu');
+      panel = Y.one('#rmrelation-modal-panel');
+
+      // Click the first relation.
+      menu.one('.relation-action').simulate('click');
+
+      // There should be a 'remove relation' button and a 'cancel' button
+      // on the dialog.
+      panel.all('button').size().should.equal(2);
+
+      dialog_btn = panel.one('.button');
+      dialog_btn.simulate('click');
+      container.all('.to-remove')
+           .size()
+           .should.equal(1);
+      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+
+      // Multiple relations.
+      relation = container.one(
+          '#' +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          ' .rel-label');
+
+      relation.simulate('click');
+      menu = Y.one('#relation-menu .menu');
+      panel = Y.one('#rmrelation-modal-panel');
+
+      // Click the first relation.
+      menu.one('.relation-action').simulate('click');
+
+      // There should be a 'remove relation' button and a 'cancel' button
+      // on the dialog.
+      panel.all('button').size().should.equal(2);
+
+      dialog_btn = panel.one('.button');
+      dialog_btn.simulate('click');
+      // Note that there should now be two .to-remove relations due to the
+      // previous case having added one of those classes. We're simply looking
+      // for the number to have increased.
+      container.all('.to-remove')
+           .size()
+           .should.equal(2);
+      view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+      view.destroy();
+    });
+
     it('must not allow removing a subordinate relation between services',
         function() {
          new views.environment({
@@ -1019,6 +1172,33 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           fauxController.destroy();
         });
 
+    it('stores relations in collections', function() {
+      window.flags = {
+        'relationCollections': true
+      };
+      db.onDelta({data: additionalRelations});
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+      var module = view.topo.modules.RelationModule;
+      // RelationCollections have an aggregatedStatus.
+      assert.equal(module.relations[0].aggregatedStatus, 'healthy');
+      // RelationCollections can store more than one relation.
+      assert.equal(module.relations[2].relations.length, 2);
+      // Only one line is drawn (that is, there are four container relations,
+      // but only three lines on the canvas).
+      assert.equal(view.topo.vis.selectAll('line').size(),
+          module.relations.length);
+      assert.equal(module.relations.length, 3);
+      assert.equal(db.relations.filter(function(relation) {
+        return relation.get('scope') !== 'container';
+      }).length, 4);
+      window.flags = {};
+    });
+
     it('propagates the getModelURL function to the topology', function() {
       var getModelURL = function() {
         return 'placeholder value';
@@ -1064,6 +1244,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.topo.fire('addRelationStart');
       view.topo.fire('addRelationEnd');
     });
+
+    it('fires an envTakeover event when it gets an inspector version',
+        function(done) {
+          setUpInspector();
+          view.on('envTakeoverStarting', function(ev) {
+            done();
+          });
+          view.inspector.viewletManager.fire('inspectorTakeoverStarting');
+        });
+
+    it('fires an envTakeover stop event when it gets an inspector version',
+        function(done) {
+          setUpInspector();
+          view.on('envTakeoverEnding', function(ev) {
+            done();
+          });
+          view.inspector.viewletManager.fire('inspectorTakeoverEnding');
+        });
 
   });
 

@@ -51,20 +51,20 @@
         <div class="tabs">
             <nav>
                 <ul>
-                    <li><a href="#bws-bundle" class="bundle">Bundle</a></li>
-                    <li><a href="#bws-readme" class="readme">Readme</a></li>
-                    <li><a href="#bws-deploy" class="deploy">Deploy</a></li>
-                    <li><a href="#bws-summary" class="summary">Summary</a></li>
-                    <li><a href="#bws-services" class="services">Services</a></li>
-                    <li><a href="#bws-code" class="code">Code</a></li>
+                    <li><a href="#bundle" class="bundle">Bundle</a></li>
+                    <li><a href="#readme" class="readme">Readme</a></li>
+                    <li><a href="#deploy" class="deploy">Deploy</a></li>
+                    <li><a href="#summary" class="summary">Summary</a></li>
+                    <li><a href="#services" class="services">Services</a></li>
+                    <li><a href="#code" class="code">Code</a></li>
                 </ul>
                 <div class="selected"></div>
             </nav>
             <div class="tab-panels">
                 <div class="tab-carousel">
-                    <div id="bws-bundle" class="tab-panel"></div>
-                    <div id="bws-readme" class="tab-panel"></div>
-                    <div id="bws-deploy" class="tab-panel">
+                    <div id="bundle" class="tab-panel"></div>
+                    <div id="readme" class="tab-panel"></div>
+                    <div id="deploy" class="tab-panel">
                         <p>Deploying a bundle will ask your cloud provider to immediately provision all associated machines.</p>
                         <h3>Deploy via the GUI</h3>
                         <p>Click the 'Deploy this bundle' button above, or drag the bundle listing from the search results onto the canvas.</p>
@@ -89,7 +89,7 @@
                             <pre>juju deployer -e &lt;JUJU_ENV&gt; -c \</pre>
                             <pre>    {{deployer_file_url}}</pre></p>
                     </div>
-                    <div id="bws-summary" class="tab-panel">
+                    <div id="summary" class="tab-panel">
                         <div class="summary">
                             {{>providers}}
                             <h2>Description</h2>
@@ -152,7 +152,7 @@
                             {{/if}}
                         </div>
                     </div>
-                    <div id="bws-services" class="tab-panel">
+                    <div id="services" class="tab-panel">
                         <p>
                             These are the services that the bundle will deploy.
                             Non-default configuration values are listed.
@@ -193,7 +193,7 @@
                             {{/each}}
                         </ul>
                     </div>
-                    <div id="bws-code" class="tab-panel">
+                    <div id="code" class="tab-panel">
                         <p class="intro">
                             The source code of the bundle includes scripts, metadata,
                             and other supporting files to describe and install a

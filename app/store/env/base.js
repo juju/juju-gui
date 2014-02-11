@@ -163,6 +163,17 @@ YUI.add('juju-env-base', function(Y) {
     'environmentName': {},
 
     /**
+      The object handling Web requests to external APIs.
+      This is usually an instance of app/store/web-handler.js:WebHandler when
+      the GUI is connected to a real Juju environment, or
+      app/store/web-sandbox.js:WebSandbox if the GUI is in sandbox mode.
+
+      @attribute webHandler
+      @type {Object}
+    */
+    'webHandler': {},
+
+    /**
       Operations that are prohibited in read-only mode, but which should fail
       silently because the failure message is not important to the user.
 
@@ -174,6 +185,7 @@ YUI.add('juju-env-base', function(Y) {
         'update_annotations'
       ]
     }
+
   };
 
   Y.extend(BaseEnvironment, Y.Base, {

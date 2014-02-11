@@ -1874,4 +1874,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('FakeBackend.handleUploadLocalCharm', function() {
+    var environmentsModule, fakebackend, Y;
+    var requirements = ['node', 'juju-env-fakebackend'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('has the ability to create an error event', function() {
+      var evt = fakebackend._createErrorEvent('bad wolf');
+      var expectedEvt = {
+        type: 'error',
+        target: {responseText: {Error: 'bad wolf'}}
+      };
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+    // XXX frankban 2014-02-06: add the handleUploadLocalCharm and
+    // _handleLocalCharmEntries tests here.
+
+  });
+
 })();

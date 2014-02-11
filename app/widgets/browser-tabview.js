@@ -53,6 +53,9 @@ YUI.add('browser-tabview', function(Y) {
      */
     clickTab: function(e) {
       this.setTab(e.currentTarget);
+      if (this.get('skipAnchorNavigation')) {
+        e.halt();
+      }
     },
 
     /**
@@ -143,6 +146,26 @@ YUI.add('browser-tabview', function(Y) {
       */
       selection: {
         value: ''
+      },
+
+      /**
+       * The links for the tabview are #anchor tags. These will navigate by
+       * default. Setting this to true will kill the click event and prevent
+       * it from navigating while still processing the change and selection
+       * events.
+       *
+       * This is primarily used in testing but could be used to create tabview
+       * widget that did not effect the current url. If you had 3 tabviews on
+       * the screen you might only want one of them to set a hash setting and
+       * be sharable state information.
+       *
+       * @attribute skipAnchorNavigation
+       * @default false
+       * @type {Boolean}
+       *
+       */
+      skipAnchorNavigation: {
+        value: false
       }
     }
   });

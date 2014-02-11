@@ -448,6 +448,40 @@ YUI.add('juju-env-go', function(Y) {
       }, this.handleEnvironmentInfo);
     },
 
+    /**
+      Handles uploading a local charm to Juju
+
+      @method uploadLocalCharm
+      @param {Object} file The file object from the fileSources event object.
+      @param {String} series The series to deploy this local charm into.
+      @param {Function} progress The callback to handle xhr progress events.
+      @param {Function} callback The callback to call after the upload returns
+        success or failure.
+    */
+    uploadLocalCharm: function(file, series, progress, callback) {
+      // Ensure that they are logged in and authenticated before uploading.
+      if (!this.userIsAuthenticated) {
+        console.warn('Attempted upload files without providing credentials.');
+        this.fire('login', {data: {result: false}});
+        return;
+      }
+      var credentials = this.getCredentials();
+      var url = '/juju-core/charms?series=' + series;
+      var headers = {'Content-Type': 'application/zip'};
+      // Use a web handler to communicate to the Juju HTTPS API. The web
+      // handler takes care of setting up asynchronous requests with basic
+      // HTTP authentication, and of subscribing/invoking the given callbacks.
+      // The web handler is stored as an environment attribute: it is usually
+      // an instance of app/store/web-handler.js:WebHandler when the GUI is
+      // connected to a real Juju environment. When instead the GUI is run in
+      // sandbox mode, a fake handler is used, in which no HTTP requests are
+      // involved: see app/store/web-sandbox.js:WebSandbox.
+      var webHandler = this.get('webHandler');
+      webHandler.post(
+          url, headers, file, credentials.user, credentials.password,
+          progress, callback);
+    },
+
     /*
     Deployer support
 
