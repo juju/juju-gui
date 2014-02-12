@@ -420,7 +420,12 @@ th {
         right: -16px;
         border-width: 10px 0 10px 17.3px;
         border-color: transparent transparent transparent #fff;
-
+    }
+    &.top .triangle {
+        top: auto;
+        bottom: -16px;
+        border-width: 17.3px 10px 0px 10px;
+        border-color: #fff transparent transparent transparent;
     }
     .menu-title {
         margin: 10px;
@@ -503,10 +508,16 @@ th {
 
 .relation {
     stroke: rgb(167, 167, 167);
-    stroke-width: 3px;
+    stroke-width: 2px;
 
     &.error {
         stroke: #cc3333;
+    }
+    &.subordinate {
+        stroke: rgb(167, 167, 167);
+    }
+    &.healthy {
+        stroke: #33cc33;
     }
     &.pending-relation {
         stroke: #faaf40;
