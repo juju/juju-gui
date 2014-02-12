@@ -143,6 +143,10 @@ def get_capabilities(browser_name):
             # Internet Explorer version must be >= 10.
             {'platform': 'Windows 7', 'version': '10'},
         ),
+        'safari': (
+            desired.SAFARI,
+            {'platform': 'OS X 10.9', 'version': '7'},
+        ),
     }
     if browser_name in choices:
         base, updates = choices[browser_name]
