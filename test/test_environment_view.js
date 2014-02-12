@@ -1433,10 +1433,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                     {id: 'memcache'},
                     {id: 'wordpress'}]);
       var existing = {
-        'mysql': 1,
-        'haproxy': 2, // This entry is stale and will be removed.
-        'memcache': 3,
-        'wordpress': 4};
+        'mysql': {},
+        'haproxy': {}, // This entry is stale and will be removed.
+        'memcache': {},
+        'wordpress': {}};
 
       var boxes = views.toBoundingBoxes(module, services, existing);
       // The haproxy is removed from the results since it is no longer in
