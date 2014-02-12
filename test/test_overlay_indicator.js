@@ -127,8 +127,16 @@ describe('overlay indicator', function() {
     assert.notEqual(expected_xy[1], actual_xy[1]);
     indicator.setBusy();
     var final_xy = indicator.get('boundingBox').getXY();
-    assert.equal(expected_xy[0], final_xy[0]);
-    assert.equal(expected_xy[1], final_xy[1]);
+
+    // (IE 10 on Win 8) The position of this indicator is positioned slightly
+    // different each time this test is run so as long as it falls within
+    // this range it is fine.
+    assert.equal(
+        (final_xy[0] > expected_xy[0] - 5) &&
+        (final_xy[0] < expected_xy[0] + 5), true);
+    assert.equal(
+        (final_xy[1] > expected_xy[1] - 5) &&
+        (final_xy[1] < expected_xy[1] + 5), true);
   });
 
   it('hides on success', function() {
