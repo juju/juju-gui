@@ -1108,8 +1108,6 @@ YUI.add('juju-topology-relation', function(Y) {
         relations: relation.relations
       }));
       menu.addClass('active');
-      // XXX Makyo 2014-02-03 - position list (card on board)
-      // Rough positioning for now.
       var topo = this.get('component');
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
