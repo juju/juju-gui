@@ -244,6 +244,9 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Update (+ enter selection).
       link.each(this.drawRelation);
+      if (this.get('relationMenuActive')) {
+        this.showRelationMenu(this.get('relationMenuRelation'));
+      }
 
       // Exit
       g.exit().remove();
@@ -709,6 +712,8 @@ YUI.add('juju-topology-relation', function(Y) {
     clearState: function() {
       this.cancelRelationBuild();
       this.hideSubordinateRelations();
+      this.set('relationMenuActive', false);
+      this.set('relationMenuRelation', undefined);
     },
 
     cancelRelationBuild: function() {
@@ -1108,6 +1113,8 @@ YUI.add('juju-topology-relation', function(Y) {
         relations: relation.relations
       }));
       menu.addClass('active');
+      this.set('relationMenuActive', true);
+      this.set('relationMenuRelation', relation);
       var topo = this.get('component');
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
@@ -1168,7 +1175,25 @@ YUI.add('juju-topology-relation', function(Y) {
         @default undefined
         @type {Boolean}
       */
-      disableRelationInteraction: {}
+      disableRelationInteraction: {},
+      /**
+        Whether or not the relation menu is visible.
+
+        @attribute relationMenuActive
+        @default false
+        @type {Boolean}
+      */
+      relationMenuActive: {
+        value: false
+      },
+      /**
+        The relation for which the menu is currently showing.
+
+        @attribute relationMenuRElation
+        @default undefined
+        @type {Object}
+      */
+      relationMenuRelation: {}
     }
 
   });
