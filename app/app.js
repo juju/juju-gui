@@ -345,6 +345,12 @@ YUI.add('juju-gui', function(Y) {
       // flag to indicate that the callback has been used.
       this._routeSeen = {};
 
+      // When a user drags a file over the browser we show notifications which
+      // are drop targets to illustrate what they can do with their selected
+      // file. This array keeps track of those masks and their respective
+      // handlers with a { mask: mask, handlers: handlers } format.
+      this.dragNotifications = [];
+
       // Create a client side database to store state.
       this.db = new models.Database();
 
@@ -649,21 +655,104 @@ YUI.add('juju-gui', function(Y) {
     /**
       Show the appropriate drag notification type.
 
-      NOOP
-
       @method showDragNotification
       @param {String} fileType The type of file to show the notification for.
     */
-    showDragNotification: function(fileType) {},
+    showDragNotification: function(fileType) {
+      if (fileType === 'zip') {
+        var inspectors = this.views.environment.instance._inspectors;
+        var keys = Object.keys(inspectors);
+        if (keys.length > 0) {
+          // There can only be a single inspector now but the
+          // old code supports multiple.
+          this.showInspectorDropNotification(inspectors[keys[0]]);
+        }
+      }
+    },
+
+    /**
+      Shows the drop notification on top of the inspector
+
+      @method showInspectorDropNotification
+      @param {Object} inspector The currently open inspector.
+    */
+    showInspectorDropNotification: function(inspector) {
+      var container = inspector.viewletManager.get('container');
+      var mask = this._createInspectorDropMask(container);
+      var series = inspector.model.get('charm').match(/[^:]*(?=\/)/)[0];
+      var handler = this._attachInspectorDropMaskEvents(mask, series);
+
+      this.dragNotifications.push({mask: mask, handlers: [handler] });
+
+      Y.one('body').append(mask);
+    },
+
+    /**
+      Create the mask which is positioned over the inspector as a drop
+      target and notification layer.
+
+      @method _createInspectorDropMask
+      @param {Object} container A Y.Node instance of the inspectors container.
+      @param {Object} The Y.Node instance of the mask the same dimensions of
+                      the inspector.
+    */
+    _createInspectorDropMask: function(container) {
+      var mask = Y.Node.create('<div class="dropmask"></div>');
+      mask.setXY(container.getXY());
+      // XXX Jeff 02-12-2014 This might need to resize with the inspector.
+
+      mask.setStyles({
+        height: container.getComputedStyle('height'),
+        width: container.getComputedStyle('width'),
+        zIndex: 9999999,
+        position: 'absolute'
+      });
+      return mask;
+    },
+
+    /**
+      Attaches the drop event to the inspector drop mask.
+
+      @method _attachInspectorDropMaskEvents
+      @param {Object} mask A Y.Node instance of the mask covering the inspector.
+      @param {String} series The Ubuntu series to deploy the charm to.
+      @return {Object} A reference to the drop event handle.
+    */
+    _attachInspectorDropMaskEvents: function(mask, series) {
+      var handler = mask.on('drop', function(e) {
+        e.preventDefault();
+        mask.remove(true);
+        // We return the handler so it can be detached if the user drags
+        // away from the browser again, but we also want to detach it if
+        // they drop on the inspector.
+        handler.detach();
+
+        // XXX Jeff 02-12-2014 Upload local charm to env passing in
+        // e._event.dataTransfer.files, series, this.env, this.db
+        // uploadLocalCharm needs refactoring to be able to be called
+        // directly and have the callbacks passed in.
+
+      }, this);
+
+      return handler;
+    },
 
     /**
       Hide the drag notifications.
 
-      NOOP
-
-      @method hideDragNotification
+      @method hideDragNotifications
     */
-    hideDragNotification: function() {},
+    hideDragNotifications: function() {
+      // Check to see if there are any active drop notifications
+      if (this.dragNotifications.length > 0) {
+        this.dragNotifications.forEach(function(notification) {
+          notification.mask.remove(true);
+          notification.handlers.forEach(function(handler) {
+            handler.detach();
+          });
+        });
+      }
+    },
 
     /**
       Event handler for the dragenter, dragover, dragleave events on the
@@ -706,7 +795,7 @@ YUI.add('juju-gui', function(Y) {
           this._dragLeaveTimer.cancel();
         }
         this._dragLeaveTimer = Y.later(100, this, function() {
-          this.hideDragNotification();
+          this.hideDragNotifications();
         });
       }
       if (action === 'stop') {
@@ -1574,6 +1663,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'help-dropdown'
+    'help-dropdown',
+    'local-charm-import-helpers'
   ]
 });

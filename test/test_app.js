@@ -443,28 +443,13 @@ describe('File drag over notification system', function() {
     return app;
   }
 
-  it('binds the drag handlers', function() {
-    var stub = testUtils.makeStubMethod(Y.config.doc, 'addEventListener');
-    constructAppInstance();
-    // This function doesn't exist until the appDragOverHandler
-    // function is bound to the app.
-    assert.isFunction(app._boundAppDragOverHandler);
-    assert.equal(stub.callCount(), 3);
-    var args = stub.allArguments();
-    assert.equal(args[0][0], 'dragenter');
-    assert.isFunction(args[0][1]);
-    assert.equal(args[1][0], 'dragover');
-    assert.isFunction(args[1][1]);
-    assert.equal(args[2][0], 'dragleave');
-    assert.isFunction(args[2][1]);
-    stub.reset();
-  });
-
-  it('removes the drag handlers', function(done) {
-    var stub = testUtils.makeStubMethod(Y.config.doc, 'removeEventListener');
-    constructAppInstance();
-
-    app.after('destroy', function() {
+  describe('drag event attach and detach', function() {
+    it('binds the drag handlers', function() {
+      var stub = testUtils.makeStubMethod(Y.config.doc, 'addEventListener');
+      constructAppInstance();
+      // This function doesn't exist until the appDragOverHandler
+      // function is bound to the app.
+      assert.isFunction(app._boundAppDragOverHandler);
       assert.equal(stub.callCount(), 3);
       var args = stub.allArguments();
       assert.equal(args[0][0], 'dragenter');
@@ -474,75 +459,26 @@ describe('File drag over notification system', function() {
       assert.equal(args[2][0], 'dragleave');
       assert.isFunction(args[2][1]);
       stub.reset();
-      done();
     });
-    app.destroy();
-  });
 
-  it('dispatches drag events properly: _appDragOverHanlder', function() {
-    var determineFileTypeStub, showNotificationStub, dragTimerControlStub;
+    it('removes the drag handlers', function(done) {
+      var stub = testUtils.makeStubMethod(Y.config.doc, 'removeEventListener');
+      constructAppInstance();
 
-    constructAppInstance();
-
-    determineFileTypeStub = testUtils.makeStubMethod(
-        app, '_determineFileType', 'zip');
-    showNotificationStub = testUtils.makeStubMethod(
-        app, 'showDragNotification');
-    dragTimerControlStub = testUtils.makeStubMethod(
-        app, '_dragleaveTimerControl');
-
-    var noop = function() {};
-    var ev1 = { dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
-    var ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
-    var ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
-
-    app._appDragOverHandler(ev1);
-    app._appDragOverHandler(ev2);
-    app._appDragOverHandler(ev3);
-
-    assert.equal(determineFileTypeStub.callCount(), 3);
-    assert.equal(showNotificationStub.calledOnce(), true);
-    assert.equal(showNotificationStub.lastArguments()[0], 'zip');
-    assert.equal(dragTimerControlStub.callCount(), 2);
-    var args = dragTimerControlStub.allArguments();
-    assert.equal(args[0][0], 'start');
-    assert.equal(args[1][0], 'stop');
-
-    determineFileTypeStub.reset();
-    showNotificationStub.reset();
-    dragTimerControlStub.reset();
-  });
-
-  it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
-    var laterStub, hideDragNotificationStub, dragCancelStub;
-    constructAppInstance();
-
-    var dragTimer = {};
-    dragCancelStub = testUtils.makeStubMethod(dragTimer, 'cancel');
-
-    laterStub = testUtils.makeStubMethod(Y, 'later', dragTimer);
-    hideDragNotificationStub = testUtils.makeStubMethod(
-        app, 'hideDragNotification');
-
-    app._dragleaveTimerControl('start');
-    assert.equal(laterStub.calledOnce(), true);
-    var args = laterStub.lastArguments();
-    assert.equal(args[0], 100);
-    assert.equal(args[1] instanceof Y.juju.App, true);
-    assert.isFunction(args[2]);
-    args[2].call(app); // Call the callback passed to later;
-    // The callback should call this method
-    assert.equal(hideDragNotificationStub.calledOnce(), true);
-    // Calling with start again should cancel the timer and create a new one
-    app._dragleaveTimerControl('start');
-    assert.equal(dragCancelStub.calledOnce(), true);
-    assert.equal(laterStub.callCount(), 2);
-    // Calling with stop should cancel the timer
-    app._dragleaveTimerControl('stop');
-    assert.equal(dragCancelStub.callCount(), 2);
-
-    laterStub.reset();
-    hideDragNotificationStub.reset();
+      app.after('destroy', function() {
+        assert.equal(stub.callCount(), 3);
+        var args = stub.allArguments();
+        assert.equal(args[0][0], 'dragenter');
+        assert.isFunction(args[0][1]);
+        assert.equal(args[1][0], 'dragover');
+        assert.isFunction(args[1][1]);
+        assert.equal(args[2][0], 'dragleave');
+        assert.isFunction(args[2][1]);
+        stub.reset();
+        done();
+      });
+      app.destroy();
+    });
   });
 
   describe('_determineFileType', function() {
@@ -588,16 +524,188 @@ describe('File drag over notification system', function() {
     });
   });
 
-  it('has a showDragNotification method', function() {
-    constructAppInstance();
-    // This method is currently a noop
-    assert.isFunction(app.showDragNotification);
+  describe('UI notifications', function() {
+    beforeEach(function() {
+      constructAppInstance();
+    });
+
+    it('showDragNotification: dispatches \'zip\' notifications', function() {
+      // Mock up the rendered inspectors in the environment
+      app.views.environment.instance = {
+        _inspectors: { foo: 'bar' }
+      };
+      var stub = testUtils.makeStubMethod(app, 'showInspectorDropNotification');
+      this._cleanups.push(stub.reset);
+      app.showDragNotification('zip');
+      assert.equal(stub.calledOnce(), true);
+      assert.equal(stub.lastArguments()[0], 'bar');
+    });
+
+    it('showInspectorDropNotification: adds the mask to the body', function() {
+      var containerString = 'returned container';
+      var charmUrl = 'cs:precise/ghost-charm-4';
+      var containerGetStub = testUtils.makeStubFunction(containerString);
+      var charmGetStub = testUtils.makeStubFunction(charmUrl);
+      var inspector = {
+        viewletManager: { get: containerGetStub },
+        model: { get: charmGetStub }
+      };
+      var maskString = 'returned mask';
+      var createInspectorMaskStub = testUtils.makeStubMethod(
+          app, '_createInspectorDropMask', maskString);
+      this._cleanups.push(createInspectorMaskStub.reset);
+      var handlerString = 'returned handlers';
+      var attachEventsStub = testUtils.makeStubMethod(
+          app, '_attachInspectorDropMaskEvents', handlerString);
+      this._cleanups.push(attachEventsStub.reset);
+      var appendStub = testUtils.makeStubFunction();
+      var oneStub = testUtils.makeStubMethod(Y, 'one', {
+        append: appendStub
+      });
+      this._cleanups.push(oneStub.reset);
+
+      app.showInspectorDropNotification(inspector);
+
+      assert.equal(containerGetStub.calledOnce(), true);
+      assert.equal(containerGetStub.lastArguments()[0], 'container');
+      assert.equal(createInspectorMaskStub.calledOnce(), true);
+      assert.equal(createInspectorMaskStub.lastArguments()[0], containerString);
+      assert.equal(attachEventsStub.calledOnce(), true);
+      var attachEventsArgs = attachEventsStub.lastArguments();
+      assert.equal(attachEventsArgs[0], maskString);
+      assert.equal(attachEventsArgs[1], 'precise');
+      assert.deepEqual(app.dragNotifications, [{
+        mask: maskString,
+        handlers: [handlerString]
+      }]);
+      assert.equal(appendStub.calledOnce(), true);
+      assert.equal(appendStub.lastArguments()[0], maskString);
+    });
+
+    it('_createInspectorDropMask: creates the proper mask', function() {
+      var getXYStub = testUtils.makeStubFunction([1, 2]);
+      var getComputedStub = testUtils.makeStubFunction(3, 4);
+      var container = {
+        getXY: getXYStub,
+        getComputedStyle: getComputedStub
+      };
+      var mask = app._createInspectorDropMask(container);
+      assert.equal(getXYStub.calledOnce(), true);
+      assert.equal(getComputedStub.callCount(), 2);
+      var computedArgs = getComputedStub.allArguments();
+      assert.equal(computedArgs[0], 'height');
+      assert.equal(computedArgs[1], 'width');
+      assert.equal(mask.getX(), 1);
+      assert.equal(mask.getY(), 2);
+      assert.equal(mask.getStyle('height'), '3px');
+      assert.equal(mask.getStyle('width'), '4px');
+    });
+
+    it('_attachInspectorDropMaskEvents: attaches a proper event', function() {
+      var detachStub = testUtils.makeStubFunction();
+      var handlerObject = { detach: detachStub };
+      var onStub = testUtils.makeStubFunction(handlerObject, handlerObject);
+      var removeStub = testUtils.makeStubFunction();
+      var preventStub = testUtils.makeStubFunction();
+      var mask = {
+        on: onStub,
+        remove: removeStub
+      };
+      var series = 'precise';
+      var result = app._attachInspectorDropMaskEvents(mask, series);
+      assert.deepEqual(result, handlerObject);
+      var onStubArgs = onStub.lastArguments();
+      assert.equal(onStubArgs[0], 'drop');
+      assert.isFunction(onStubArgs[1]);
+      assert.deepEqual(onStubArgs[2], app);
+      // Test the event callback
+      onStubArgs[1]({ preventDefault: preventStub });
+      assert.equal(preventStub.calledOnce(), true);
+      assert.equal(removeStub.calledOnce(), true);
+      assert.equal(removeStub.lastArguments()[0], true);
+      assert.equal(detachStub.calledOnce(), true);
+    });
+
+    it('hideDragNotification: removes masks and detaches events', function() {
+      var removeStub = testUtils.makeStubFunction();
+      var detachStub = testUtils.makeStubFunction();
+      app.dragNotifications = [{
+        mask: {
+          remove: removeStub
+        },
+        handlers: [{ detach: detachStub }]
+      }];
+      app.hideDragNotifications();
+      assert.equal(removeStub.calledOnce(), true, 'removeStub not called once');
+      assert.equal(removeStub.lastArguments()[0], true);
+      assert.equal(detachStub.calledOnce(), true);
+    });
   });
 
-  it('has a hideDragNotification method', function() {
+  it('dispatches drag events properly: _appDragOverHanlder', function() {
+    var determineFileTypeStub, showNotificationStub, dragTimerControlStub;
+
     constructAppInstance();
-    // This method is currently a noop
-    assert.isFunction(app.hideDragNotification);
+
+    determineFileTypeStub = testUtils.makeStubMethod(
+        app, '_determineFileType', 'zip');
+    showNotificationStub = testUtils.makeStubMethod(
+        app, 'showDragNotification');
+    dragTimerControlStub = testUtils.makeStubMethod(
+        app, '_dragleaveTimerControl');
+
+    var noop = function() {};
+    var ev1 = { dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
+    var ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
+    var ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+
+    app._appDragOverHandler(ev1);
+    app._appDragOverHandler(ev2);
+    app._appDragOverHandler(ev3);
+
+    assert.equal(determineFileTypeStub.callCount(), 3);
+    assert.equal(showNotificationStub.calledOnce(), true);
+    assert.equal(showNotificationStub.lastArguments()[0], 'zip');
+    assert.equal(dragTimerControlStub.callCount(), 2);
+    var args = dragTimerControlStub.allArguments();
+    assert.equal(args[0][0], 'start');
+    assert.equal(args[1][0], 'stop');
+
+    determineFileTypeStub.reset();
+    showNotificationStub.reset();
+    dragTimerControlStub.reset();
+  });
+
+  it('can start and stop the drag timer: _dragLeaveTimerControl', function() {
+    var laterStub, hideDragNotificationStub, dragCancelStub;
+    constructAppInstance();
+
+    var dragTimer = {};
+    dragCancelStub = testUtils.makeStubMethod(dragTimer, 'cancel');
+
+    laterStub = testUtils.makeStubMethod(Y, 'later', dragTimer);
+    hideDragNotificationStub = testUtils.makeStubMethod(
+        app, 'hideDragNotifications');
+
+    app._dragleaveTimerControl('start');
+    assert.equal(laterStub.calledOnce(), true);
+    var args = laterStub.lastArguments();
+    assert.equal(args[0], 100);
+    assert.equal(args[1] instanceof Y.juju.App, true);
+    assert.isFunction(args[2]);
+    args[2].call(app); // Call the callback passed to later;
+    // The callback should call this method
+    assert.equal(hideDragNotificationStub.calledOnce(), true);
+    // Calling with start again should cancel the timer and create a new one
+    app._dragleaveTimerControl('start');
+    assert.equal(dragCancelStub.calledOnce(), true);
+    assert.equal(laterStub.callCount(), 2);
+    // Calling with stop should cancel the timer
+    app._dragleaveTimerControl('stop');
+    assert.equal(dragCancelStub.callCount(), 2);
+
+    laterStub.reset();
+    hideDragNotificationStub.reset();
   });
 
 });
