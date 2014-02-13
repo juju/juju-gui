@@ -1014,6 +1014,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env: env,
         store: fakeStore
       }).render();
+      var module = view.topo.modules.RelationModule;
 
       // Single relation
       var relation = container.one(
@@ -1025,6 +1026,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(menu.all('.relation-action').size(), 1);
       assert.equal(menu.one('.relation-action').getData('relationid'),
+          'relation-0000000001');
+
+      // Assert that relation module is storing the menu state for rerendering.
+      assert.equal(module.get('relationMenuActive'), true);
+      assert.equal(module.get('relationMenuRelation').id,
           'relation-0000000001');
 
       // Multiple relations
