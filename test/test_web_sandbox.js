@@ -54,10 +54,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Ensure the state has been called with the expected arguments.
       assert.strictEqual(mockState.handleUploadLocalCharm.callCount(), 1);
       var lastArguments = mockState.handleUploadLocalCharm.lastArguments();
-      assert.strictEqual(lastArguments.length, 2);
+      assert.strictEqual(lastArguments.length, 3);
       var zipFile = lastArguments[0];
-      var completedCallback = lastArguments[1];
+      var series = lastArguments[1];
+      var completedCallback = lastArguments[2];
       assert.strictEqual(zipFile, data);
+      assert.strictEqual(series, 'trusty');
       assert.strictEqual(completedCallback(), 'completed');
     });
 

@@ -33,17 +33,17 @@ YUI.add('zip-utils', function(Y) {
   var module = Y.namespace('juju.ziputils');
 
   /**
-    Read the entries included in the given zip file object.
+    Get the list of entries included in the given zip file object.
     Call the given callback passing an array of entry objects
     (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
     If an error occurs, call the given errback function passing the error.
 
-    @method readEntries
+    @method getEntries
     @param {Object} file The zip file object to be opened and red.
     @param {Function} callback A function called with the array of zip entries.
     @param {Function} errback A function called if any errors occur.
   */
-  var readEntries = function(file, callback, errback) {
+  var getEntries = function(file, callback, errback) {
     zip.createReader(
         new zip.BlobReader(file),
         function(reader) {
@@ -55,7 +55,7 @@ YUI.add('zip-utils', function(Y) {
         errback
     );
   };
-  module.readEntries = readEntries;
+  module.getEntries = getEntries;
 
   /**
     Return the lower-cased base name corresponding to the given path.
@@ -118,6 +118,33 @@ YUI.add('zip-utils', function(Y) {
     return filteredEntries.reduce(addByName, Object.create(null));
   };
   module.getEntriesByNames = getEntriesByNames;
+
+  /**
+    Read the contents of each entry in entries. When done, call the given
+    callback passing an object mapping file names to file contents.
+
+    @method readCharmEntries
+    @param {Object} entries An object mapping file names to zip entries
+      (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+    @param {Function} callback A function to be called when the contents are
+      ready.
+  */
+  var readCharmEntries = function(entries, callback) {
+    var contents = Object.create(null);
+    var entriesNum = Y.Object.size(entries);
+    Y.Object.each(entries, function(entry, name) {
+      // Read the entry's contents.
+      entry.getData(new zip.TextWriter(), function(text) {
+        contents[name] = text;
+        // If all the files have been processed, call the callback passing the
+        // aggregated results.
+        if (Y.Object.size(contents) === entriesNum) {
+          callback(contents);
+        }
+      });
+    });
+  };
+  module.readCharmEntries = readCharmEntries;
 
 }, '0.1.0', {
   requires: [
