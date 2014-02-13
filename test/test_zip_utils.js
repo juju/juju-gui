@@ -33,7 +33,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('readEntries', function() {
+    describe('getEntries', function() {
       var callback, errback;
       var createReaderMock;
       var file = 'a file object';
@@ -62,7 +62,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       it('creates a zip reader as a blob', function() {
-        ziputils.readEntries(file, callback, errback);
+        ziputils.getEntries(file, callback, errback);
         // The zip reader factory has been properly called, passing a blob
         // reader for the given file, and two function callbacks.
         var args = getCreateReaderArgs();
@@ -72,7 +72,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('creates a zip reader passing a well formed callback', function() {
-        ziputils.readEntries(file, callback, errback);
+        ziputils.getEntries(file, callback, errback);
         var args = getCreateReaderArgs();
         // Set up a reader mock.
         var reader = {
@@ -90,7 +90,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var entries = ['first-entry', 'second-entry'];
         var getEntriesCallback = getEntriesArgs[0];
         getEntriesCallback(entries);
-        // At this point the original callback passed to readEntries has been
+        // At this point the original callback passed to getEntries has been
         // called, and the reader itself closed.
         assert.strictEqual(callback.callCount(), 1);
         assert.strictEqual(callback.lastArguments()[0], entries);
@@ -98,7 +98,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('creates a zip reader passing a well formed errback', function() {
-        ziputils.readEntries(file, callback, errback);
+        ziputils.getEntries(file, callback, errback);
         var args = getCreateReaderArgs();
         // Call the errback passed zip.createReader.
         args.errback('bad wolf');
@@ -213,6 +213,67 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'file2.yaml': allEntries[3]
         };
         assert.deepEqual(entries, expectedEntries);
+      });
+
+    });
+
+    describe('readCharmEntries', function() {
+      var callback, entries, textWriterMock;
+
+      // Create and return a mock entry object.
+      var makeEntry = function() {
+        return {getData: testUtils.makeStubFunction()};
+      };
+
+      // Retrieve the callback passed to the getData method of the given mock
+      // entry object. Then call the callback with the given text.
+      var callGetDataCallback = function(entry, text) {
+        var callback = entry.getData.lastArguments()[1];
+        callback(text);
+      };
+
+      beforeEach(function() {
+        // Set up the callback and entries mocks.
+        callback = testUtils.makeStubFunction();
+        entries = {file1: makeEntry(), file2: makeEntry()};
+      });
+
+      it('reads data from each entry', function() {
+        ziputils.readCharmEntries(entries, callback);
+        Y.Object.each(entries, function(entry, name) {
+          // The getData has been called on the entry.
+          assert.strictEqual(entry.getData.callCount(), 1);
+          // The TextWriter and a callback function has been passed to getData.
+          var getDataArgs = entry.getData.lastArguments();
+          assert.strictEqual(getDataArgs.length, 2, name);
+          assert.strictEqual(getDataArgs[0].constructor, zip.TextWriter, name);
+          assert.strictEqual(typeof getDataArgs[1], 'function', name);
+        });
+      });
+
+      it('waits for all the contents to be ready', function() {
+        ziputils.readCharmEntries(entries, callback);
+        // Call the getData callback passing the text contents.
+        callGetDataCallback(entries.file1, 'space, the final frontier');
+        // Ensure the global callback has not been called.
+        assert.strictEqual(callback.callCount(), 0);
+      });
+
+      it('calls the given callback when the contents are ready', function() {
+        ziputils.readCharmEntries(entries, callback);
+        // Call all the getData callbacks passing the text contents.
+        callGetDataCallback(entries.file1, 'space, the final frontier');
+        callGetDataCallback(entries.file2, 'these are the voyages');
+        // Ensure the global callback has been called with the correct data.
+        assert.strictEqual(callback.callCount(), 1);
+        var callbackArgs = callback.lastArguments();
+        assert.strictEqual(callbackArgs.length, 1);
+        var contents = callbackArgs[0];
+        var expectedContents = {
+          file1: 'space, the final frontier',
+          file2: 'these are the voyages'
+        };
+        assert.deepEqual(contents, expectedContents);
       });
 
     });

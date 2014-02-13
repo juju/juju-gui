@@ -29,6 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('juju-env-web-sandbox', function(Y) {
 
   var module = Y.namespace('juju.environments.web');
+  var localCharmExpression = /\/juju-core\/charms\?series=(\w+)/;
 
   /**
    * Sandbox Web requests handler.
@@ -74,10 +75,11 @@ YUI.add('juju-env-web-sandbox', function(Y) {
     */
     post: function(url, headers, data, username, password,
                    progressCallback, completedCallback) {
-      if (url.indexOf('/juju-core/charms?series=') === 0) {
+      var match = localCharmExpression.exec(url);
+      if (match) {
         // This is a request to upload a local charm to juju-core.
         var state = this.get('state');
-        return state.handleUploadLocalCharm(data, completedCallback);
+        return state.handleUploadLocalCharm(data, match[1], completedCallback);
       }
       // This is in theory unreachable.
       console.error('unexpected POST request to ' + url);

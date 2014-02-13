@@ -1663,14 +1663,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Populate the local database with charm data reading the information
-      contained in entries. This way it is possible to store at least a
+      contained in contents. This way it is possible to store at least a
       subset of the charm data provided by juju-core or the charm store.
 
       @method _handleLocalCharmEntries
-      @param {Object} entries A dictionary mapping file names to entry objects
-        (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
-        This usually includes at least the metadata.yaml and the config.yaml
-        entries.
+      @param {Object} contents Maps file names to contents. This usually
+        includes at least the metadata.yaml and the config.yaml files.
+      @param {String} series The Ubuntu series for this charm.
       @param {Function} callback A function to be called to return the charm
         information back to the original caller (see _uploadLocalCharm in
         app/assets/javascripts/local-charm-import-helpers).
@@ -1678,26 +1677,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
         occurred during the process. The errback callable receives an error
         message.
     */
-    _handleLocalCharmEntries: function(entries, callback, errback) {
-      // Check if all the required entries are present in the zip.
-      var configEntry = entries['config.yaml'];
-      if (!configEntry) {
-        return errback('unable to find the charm configuration file');
-      }
-      var metadataEntry = entries['metadata.yaml'];
-      if (!metadataEntry) {
-        return errback('unable to find the charm metadata file');
-      }
-      // We can still continue the process even if the readme is missing.
-      var readmeEntry = entries['readme.md'];
-      // XXX frankban 2014-02-07: read the entries and populate the database
-      // as required. Call the callback in order to return the required data
-      // to the original caller. Remove the lines below.
-      console.log('config:', configEntry.filename);
-      console.log('metadata:', metadataEntry.filename);
-      if (readmeEntry) {
-        console.log('readme:', readmeEntry.filename);
-      }
+    _handleLocalCharmEntries: function(contents, series, callback, errback) {
+      // XXX frankban 2014-02-12: populate the database with the given
+      // contents. Call the callback in order to return the required data to
+      // the original caller. Remove the lines below.
+      console.log('config:', contents['config.yaml']);
+      console.log('metadata:', contents['metadata.yaml']);
+      console.log('readme:', contents['readme.md']);
+      console.log('series:', series);
       errback('charm upload in sandbox mode is not yet implemented');
     },
 
@@ -1708,25 +1695,49 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method handleUploadLocalCharm
       @param {Object} file The zip file object containing the charm.
+      @param {String} series The Ubuntu series for this charm.
       @param {Function} completedCallback The load event callback.
     */
-    handleUploadLocalCharm: function(file, completedCallback) {
+    handleUploadLocalCharm: function(file, series, completedCallback) {
       var self = this;
       // Define a function to be called when something goes wrong. Since this
-      // function is passed to ziputils.readEntries, it is used to handle
+      // function is passed to ziputils.getEntries, it is used to handle
       // errors globally during the whole zip parsing process.
       var errback = function(error) {
         completedCallback(self._createErrorEvent(error));
       };
       // Define a function to be called when zip entries are available and
-      // ready to be parsed. Here we just filter the entries we are interested
-      // in, the real parsing is done in _handleLocalCharmEntries (see above).
+      // ready to be parsed. Here we filter the entries we are interested in,
+      // and we fetch their contents. The real parsing is done in
+      // _handleLocalCharmEntries (see above).
       var callback = function(allEntries) {
-        var filenames = ['config.yaml', 'metadata.yaml', 'readme.md'];
+        // The nameRequiredMap dict maps file names to a boolean value
+        // representing whether the file is required to be in the charm.
+        var nameRequiredMap = {
+          'config.yaml': true,
+          'metadata.yaml': true,
+          'readme.md': false
+        };
+        var filenames = Object.keys(nameRequiredMap);
+        // Retrieve the zip entries we are interested in.
         var entries = ziputils.getEntriesByNames(allEntries, filenames);
-        self._handleLocalCharmEntries(entries, completedCallback, errback);
+        // Check all the required entries exist.
+        var missing = filenames.filter(function(name) {
+          return nameRequiredMap[name] && !entries[name];
+        });
+        if (missing.length) {
+          errback('Invalid charm archive: missing ' + missing.join(', '));
+          return;
+        }
+        // Aggregate the entries' contents and then call the
+        // _handleLocalCharmEntries method.
+        ziputils.readCharmEntries(
+            entries,
+            Y.rbind(self._handleLocalCharmEntries, self, series,
+                    completedCallback, errback)
+        );
       };
-      ziputils.readEntries(file, callback, errback);
+      ziputils.getEntries(file, callback, errback);
     }
 
   });
