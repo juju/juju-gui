@@ -21,6 +21,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('local-charm-import-helpers', function() {
+    // Each method in local-charm-import-helpers.js has a describe() covering
+    // every method and every path within that method. Because everything in
+    // these tests is mocked out it's difficult to be sure that they will
+    // interact together properly. TO be sure that the two entry points reach
+    // their proper exit points integration tests have been created and they are
+    // at the very bottom of this file.
     var dbObj, env, helper, notificationParams, testUtils, Y;
 
     before(function(done) {
@@ -171,7 +177,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(stubOnArgs[1][5], fileObj);
         assert.deepEqual(stubOnArgs[1][6], envObj);
         assert.deepEqual(stubOnArgs[1][7], dbObj);
-
       });
     });
 
@@ -198,21 +203,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('_uploadLocalCharm', function() {
+    describe('uploadLocalCharm', function() {
       var stubs = {}, fileObj, defSeries;
 
       beforeEach(function() {
         fileObj = { name: 'foo' };
         defSeries = 'precise';
 
-        stubs = {
-          seriesStub: testUtils.makeStubMethod(
-              helper, '_getSeriesValue', defSeries),
-          cleanUpStub: testUtils.makeStubMethod(helper, '_cleanUp'),
-          localCharmLoadStub: testUtils.makeStubMethod(
-              helper, '_uploadLocalCharmLoad')
-        };
-
+        stubs = {};
+        stubs.localCharmLoadStub = testUtils.makeStubMethod(
+            helper, '_uploadLocalCharmLoad');
         stubs.envFn = testUtils.makeStubFunction();
         stubs.uploadLocalCharmStub = testUtils.makeStubMethod(
             stubs.envFn, 'uploadLocalCharm');
@@ -229,9 +229,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('requests an upload from the environment', function() {
-        helper._uploadLocalCharm(null, null, null, fileObj, stubs.envFn, dbObj);
-        assert.equal(stubs.seriesStub.called(), true);
-        assert.equal(stubs.cleanUpStub.called(), true);
+        helper.uploadLocalCharm(defSeries, fileObj, stubs.envFn, dbObj);
         assert.equal(stubs.uploadLocalCharmStub.called(), true);
         var args = stubs.uploadLocalCharmStub.lastArguments();
         assert.deepEqual(args[0], fileObj);
@@ -249,22 +247,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(cbArgs[2], dbObj);
       });
 
+      it('uses the default series if none is provided', function() {
+        // Add an extra stub to the stub collection
+        // will be cleaned up in the afterEach.
+        stubs.getDefaultSeriesStub = testUtils.makeStubMethod(
+            stubs.envFn, 'get', defSeries);
+        helper.uploadLocalCharm(null, fileObj, stubs.envFn, dbObj);
+        assert.equal(stubs.getDefaultSeriesStub.calledOnce(), true);
+        assert.equal(
+            stubs.getDefaultSeriesStub.lastArguments()[0], 'defaultSeries');
+        assert.equal(stubs.uploadLocalCharmStub.lastArguments()[1], defSeries);
+      });
+    });
+
+    describe('_chooseSeriesHandler', function() {
+      var seriesStub, cleanUpStub, envStub, uploadLocalStub;
+      var defSeries = 'precise';
+      var fileObj = { name: 'foo' };
+
+      beforeEach(function() {
+        seriesStub = testUtils.makeStubMethod(
+            helper, '_getSeriesValue', defSeries);
+        this._cleanups.push(seriesStub.reset);
+        cleanUpStub = testUtils.makeStubMethod(helper, '_cleanUp');
+        this._cleanups.push(cleanUpStub.reset);
+        envStub = testUtils.makeStubFunction();
+        uploadLocalStub = testUtils.makeStubMethod(helper, 'uploadLocalCharm');
+        this._cleanups.push(uploadLocalStub.reset);
+      });
+
       it('calls the _getSeriesValue() method', function() {
         var vmgr = 'viewlet manager';
-        helper._uploadLocalCharm(null, vmgr, null, fileObj, stubs.envFn, dbObj);
-        assert.equal(stubs.seriesStub.called(), true);
-        assert.equal(stubs.seriesStub.lastArguments()[0], vmgr);
+        helper._chooseSeriesHandler(null, vmgr, null, fileObj, envStub, dbObj);
+        assert.equal(seriesStub.called(), true);
+        assert.equal(seriesStub.lastArguments()[0], vmgr);
       });
 
       it('calls the _cleanUp() method', function() {
         var vmgr = 'viewlet manager',
             hndl = 'handlers';
-        helper._uploadLocalCharm(null, vmgr, hndl, fileObj, stubs.envFn, dbObj);
-        assert.equal(stubs.cleanUpStub.called(), true);
-        var args = stubs.cleanUpStub.lastArguments();
+        helper._chooseSeriesHandler(null, vmgr, hndl, fileObj, envStub, dbObj);
+        assert.equal(cleanUpStub.called(), true);
+        var args = cleanUpStub.lastArguments();
         assert.isNull(args[0]);
         assert.equal(args[1], vmgr);
         assert.equal(args[2]. hndl);
+      });
+
+      it('calls the uploadLocalCharm() method', function() {
+        helper._chooseSeriesHandler(null, null, null, fileObj, envStub, dbObj);
+        assert.equal(uploadLocalStub.called(), true);
+        var args = uploadLocalStub.lastArguments();
+        assert.equal(args[0], defSeries);
+        assert.deepEqual(args[1], fileObj);
+        assert.deepEqual(args[2], envStub);
+        assert.deepEqual(args[3]. dbObj);
       });
     });
 
@@ -453,6 +490,93 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('returns the raw data if JSON parsing fails', function() {
         var data = '<div>Error</div>';
         assert.strictEqual(helper._parseUploadResponse(data), data);
+      });
+    });
+
+    describe('integration tests', function() {
+      var destroyStub, envStub, envUploadLocalStub, fileObj, viewletManager,
+          stubOn;
+
+      function stubitout(context) {
+        fileObj = { name: 'foo', size: '111' };
+        envStub = testUtils.makeStubFunction();
+
+        var container = testUtils.makeContainer(context);
+
+        testUtils.makeStubMethod(envStub, 'get', 'precise');
+        envUploadLocalStub = testUtils.makeStubMethod(
+            envStub, 'uploadLocalCharm');
+
+        var createStub = testUtils.makeStubMethod(
+            Y.Node, 'create', testUtils.makeContainer(context));
+        context._cleanups.push(createStub.reset);
+
+        var oneStub = testUtils.makeStubMethod(Y, 'one', container);
+        context._cleanups.push(oneStub.reset);
+
+        var templateStub = testUtils.makeStubMethod(
+            Y.namespace('juju.views.Templates'), 'service-inspector');
+        context._cleanups.push(templateStub.reset);
+
+        viewletManager = testUtils.makeStubMethod(
+            Y.namespace('juju.viewlets'), 'ViewletManager');
+        context._cleanups.push(viewletManager.reset);
+
+        testUtils.makeStubMethod(viewletManager.prototype, 'get');
+        testUtils.makeStubMethod(viewletManager.prototype, 'render');
+        testUtils.makeStubMethod(viewletManager.prototype, 'showViewlet');
+
+        destroyStub = testUtils.makeStubMethod(
+            viewletManager.prototype, 'destroy');
+        // the above mocks are externally called methods which will allow
+        // the script to execute to _attachViewletEvents.
+        var stubOnFn = testUtils.makeStubFunction();
+        stubOn = testUtils.makeStubMethod(stubOnFn, 'on');
+        var stubOneFn = testUtils.makeStubFunction();
+        testUtils.makeStubMethod(stubOneFn, 'one', stubOnFn);
+        testUtils.makeStubMethod(viewletManager.prototype, 'get', stubOneFn);
+        // The above methods get us through the _attachViewletEvents method.
+      }
+
+      it('displayLocalCharm: can cancel out at series select', function() {
+        stubitout(this);
+        helper.deployLocalCharm(fileObj, envStub, dbObj);
+        var stubOnArgs = stubOn.allArguments();
+        var cancelCallback = stubOnArgs[0][1];
+        assert.isFunction(cancelCallback);
+        // Call the 'cancel' button callback to continue
+        cancelCallback(null, stubOnArgs[0][3], stubOnArgs[0][4]);
+        assert.equal(destroyStub.calledOnce(), true);
+      });
+
+      it('displayLocalCharm: calls env.uploadLocalCharm', function() {
+        stubitout(this);
+        helper.deployLocalCharm(fileObj, envStub, dbObj);
+        var stubOnArgs = stubOn.allArguments();
+        var confirmCallback = stubOnArgs[1][1];
+        assert.isFunction(confirmCallback);
+        // This method is too hard to stub out...too much chaining.
+        // So we are just returning the proper value here and it's unit tests
+        // above can be confirmation that it's working properly
+        var getSeriesValueStub = testUtils.makeStubMethod(
+            helper, '_getSeriesValue', 'precise');
+        this._cleanups.push(getSeriesValueStub.reset);
+        // Call the 'confirm' button callback to continue
+        confirmCallback(null, stubOnArgs[1][3], stubOnArgs[1][4],
+            stubOnArgs[1][5], stubOnArgs[1][6], stubOnArgs[1][7]);
+
+        assert.equal(envUploadLocalStub.calledOnce(), true);
+        var envUploadArgs = envUploadLocalStub.lastArguments();
+        assert.equal(envUploadArgs[0], fileObj);
+        assert.equal(envUploadArgs[1], 'precise');
+        assert.isFunction(envUploadArgs[2]);
+        assert.isFunction(envUploadArgs[3]);
+      });
+
+      it('uploadLocalCharm: calls env.uploadLocalCharm', function() {
+        // This method is the public entry point and exit point
+        // See uploadLocalCharm tests above for it's tests.
+        // If this is ever refactored place integration test here.
       });
     });
 

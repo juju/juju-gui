@@ -39,6 +39,26 @@ YUI.add('local-charm-import-helpers', function(Y) {
     },
 
     /**
+      Sends the local charm file contents and callbacks to the uploadLocalCharm
+      method in the environment.
+
+      @method uploadLocalCharm
+      @param {String} series The Ubuntu series to deploy to.
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+    */
+    uploadLocalCharm: function(series, file, env, db) {
+      var helper = ns.localCharmHelpers;
+      series = series || env.get('defaultSeries');
+      env.uploadLocalCharm(
+          file,
+          series,
+          helper._uploadLocalCharmProgress,
+          helper._uploadLocalCharmLoad.bind(null, file, env, db));
+    },
+
+    /**
       Requests the series to deploy their local charm to by rendering an
       inspector with the requestSeries viewlet
 
@@ -95,7 +115,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
       handlers.push(
           container.one('button.confirm').on(
               'click',
-              helper._uploadLocalCharm, null,
+              helper._chooseSeriesHandler, null,
               viewletManager, handlers, file, env, db));
     },
 
@@ -110,14 +130,17 @@ YUI.add('local-charm-import-helpers', function(Y) {
     _cleanUp: function(_, viewletManager, handlers) {
       viewletManager.destroy();
       handlers.forEach(function(event) {
-        event.detach();
+        if (event && event.detach && typeof event.detach === 'function') {
+          event.detach();
+        }
       });
     },
 
     /**
-      Sends the local charm file contents and callbacks to the uploadLocalCharm
-      method in the environment.
+      Series select confirm button click event handler. Handles getting the
+      series, cleaning up, and calling the upload method.
 
+      @method _chooseSeriesHandler
       @param {Object} _ The click event object.
       @param {Object} viewletManager Reference to the viewletManager.
       @param {Array} handlers Collection of event handlers to detach.
@@ -125,15 +148,11 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
     */
-    _uploadLocalCharm: function(e, viewletManager, handlers, file, env, db) {
+    _chooseSeriesHandler: function(e, viewletManager, handlers, file, env, db) {
       var helper = ns.localCharmHelpers;
       var series = helper._getSeriesValue(viewletManager);
       helper._cleanUp(null, viewletManager, handlers);
-      env.uploadLocalCharm(
-          file,
-          series,
-          helper._uploadLocalCharmProgress,
-          helper._uploadLocalCharmLoad.bind(null, file, env, db));
+      helper.uploadLocalCharm(series, file, env, db);
     },
 
     /**
