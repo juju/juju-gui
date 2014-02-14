@@ -381,7 +381,7 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
-  it('deploys a local charm on .zip file drop events', function(done) {
+  it('deploys a local charm on .zip file drop events', function() {
     var file = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
@@ -399,17 +399,30 @@ describe('service module events', function() {
       }
     };
 
-    // Turn _deployLocalCharm into an assert-only nop.
-    serviceModule._deployLocalCharm = function(files, env, db) {
-      assert.deepEqual(files, file);
-      assert.isObject(env);
-      assert.isObject(db);
-      done();
-    };
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharmStub, topoFireStub;
+    deployLocalCharmStub = utils.makeStubMethod(
+        juju.localCharmHelpers, 'deployLocalCharm');
+    topoFireStub = utils.makeStubMethod(view.topo, 'fire');
+
+    serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
+
+    var args = deployLocalCharmStub.lastArguments();
+    assert.deepEqual(args[0], file);
+    assert.isObject(args[1]);
+    assert.isObject(args[2]);
+
+    // Check to make sure the event to destroy any previously
+    // open inspector is fired
+    assert.equal(topoFireStub.calledOnce(), true);
+    assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
+
+    deployLocalCharmStub.reset();
+    topoFireStub.reset();
   });
 
-  it('deploys a local charm on .zip file drop events (IE)', function(done) {
+  it('deploys a local charm on .zip file drop events (IE)', function() {
     var file = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
@@ -427,15 +440,26 @@ describe('service module events', function() {
       }
     };
 
-    // Turn _deployLocalCharm into an assert-only nop.
-    serviceModule._deployLocalCharm = function(files, env, db) {
-      assert.deepEqual(files, file);
-      assert.isObject(env);
-      assert.isObject(db);
-      done();
-    };
+    // mock out the Y.BundleHelpers call.
+    var deployLocalCharmStub, topoFireStub;
+    deployLocalCharmStub = utils.makeStubMethod(
+        juju.localCharmHelpers, 'deployLocalCharm');
+    topoFireStub = utils.makeStubMethod(view.topo, 'fire');
 
     serviceModule.canvasDropHandler(fakeEventObject);
+
+    var args = deployLocalCharmStub.lastArguments();
+    assert.deepEqual(args[0], file);
+    assert.isObject(args[1]);
+    assert.isObject(args[2]);
+
+    // Check to make sure the event to destroy any previously
+    // open inspector is fired
+    assert.equal(topoFireStub.calledOnce(), true);
+    assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
+
+    deployLocalCharmStub.reset();
+    topoFireStub.reset();
   });
 
 });

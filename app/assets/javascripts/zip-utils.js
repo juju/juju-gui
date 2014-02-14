@@ -33,17 +33,17 @@ YUI.add('zip-utils', function(Y) {
   var module = Y.namespace('juju.ziputils');
 
   /**
-    Read the entries included in the given zip file object.
+    Get the list of entries included in the given zip file object.
     Call the given callback passing an array of entry objects
     (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
     If an error occurs, call the given errback function passing the error.
 
-    @method readEntries
+    @method getEntries
     @param {Object} file The zip file object to be opened and red.
     @param {Function} callback A function called with the array of zip entries.
     @param {Function} errback A function called if any errors occur.
   */
-  var readEntries = function(file, callback, errback) {
+  var getEntries = function(file, callback, errback) {
     zip.createReader(
         new zip.BlobReader(file),
         function(reader) {
@@ -55,69 +55,104 @@ YUI.add('zip-utils', function(Y) {
         errback
     );
   };
-  module.readEntries = readEntries;
+  module.getEntries = getEntries;
 
   /**
-    Return the lower-cased base name corresponding to the given path.
+    Split the given path extracting the directory and base names.
 
-    @method lowerBasename
-    @param {String} path A file path.
-    @return {String} The resulting base name, lower-cased.
+    @method splitPath
+    @param {String} path The file path.
+    @return {Object} A map containing the "basename" and "dirname" keys.
   */
-  var lowerBasename = function(path) {
-    return path.split('/').pop().toLowerCase();
+  var splitPath = function(path) {
+    var parts = path.split('/');
+    var basename = parts.pop();
+    return {basename: basename, dirname: parts.join('/')};
   };
-  module.lowerBasename = lowerBasename;
+  module.splitPath = splitPath;
 
   /**
-    Return a function accepting a zip entry and returning true if the entry
-    lower-cased base name is in the given names, false otherwise.
+    Filter the entries and return an object including only the entries that
+    are useful for charm introspection.
 
-    @method entryNameIn
-    @param {Array} names The name choices as an array of strings.
-    @return {Function} The resulting validation function.
+    This function reflects the parsing logic implemented in juju-core:
+    see juju-core/state/apiserver/charms.go:findArchiveRootDir.
+
+    @method findCharmEntries
+    @param {Array} allEntries The list of all the zip entries
+      (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+    @return {Object} An object mapping entry names to entry objects.
+      The resulting map can include the following attributes:
+        - metadata: the metadata.yaml entry, containing charm's meta info;
+        - config: the config.yaml entry, containing charm options definition;
+        - revision: the revision entry, likely including the revision number;
+        - readme: the readme[.*] entry, containing the charm's documentation.
+      If any entries are missing, the resulting attributes will be undefined.
   */
-  var entryNameIn = function(names) {
-    return function(entry) {
-      var name = lowerBasename(entry.filename);
-      // We are not interested in directories, we are only looking for files.
-      return !entry.directory && names.indexOf(name) !== -1;
+  var findCharmEntries = function(allEntries) {
+    var root = null;
+    var entries = Object.create(null);
+    // The nameAttrMap object maps file names to attributes in entries.
+    var nameAttrMap = {
+      'config.yaml': 'config',
+      'metadata.yaml': 'metadata',
+      'revision': 'revision'
     };
+    allEntries.forEach(function(entry) {
+      if (entry.directory) {
+        // We are not interested in directories.
+        return;
+      }
+      var pathInfo = splitPath(entry.filename);
+      if (root !== null && root !== pathInfo.dirname) {
+        // If we already know the charm root directory and this entry is not
+        // in the root, then we can proceed without any further processing.
+        return;
+      }
+      var attr = nameAttrMap[pathInfo.basename];
+      if (attr) {
+        // An interesting file has been found. This must be the charm's root
+        // directory. Include the entry in the entries object.
+        root = pathInfo.dirname;
+        entries[attr] = entry;
+        return;
+      }
+      // Check if this looks like a readme file. If so, include it in the
+      // entries object.
+      if (pathInfo.basename.toLowerCase().slice(0, 6) === 'readme') {
+        entries.readme = entry;
+      }
+    });
+    return entries;
   };
-  module.entryNameIn = entryNameIn;
+  module.findCharmEntries = findCharmEntries;
 
   /**
-    Add to the given current object a key/value pair where:
-      - key is the lower-cased base name of the given entry;
-      - value is the entry object itself.
-    This is useful when reducing entries (see getEntriesByNames below).
+    Read the contents of each entry in entries. When done, call the given
+    callback passing an object mapping file names to file contents.
 
-    @method addByName
-    @param {Object} current The object to populate with key/value pairs.
-    @param {Object} entry A zip entry object.
-    @return {Object} The modified current object.
+    @method readCharmEntries
+    @param {Object} entries An object mapping file names to zip entries
+      (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
+    @param {Function} callback A function to be called when the contents are
+      ready.
   */
-  var addByName = function(current, entry) {
-    var newCurrent = Y.merge(current);
-    newCurrent[lowerBasename(entry.filename)] = entry;
-    return newCurrent;
+  var readCharmEntries = function(entries, callback) {
+    var contents = Object.create(null);
+    var entriesNum = Y.Object.size(entries);
+    Y.Object.each(entries, function(entry, name) {
+      // Read the entry's contents.
+      entry.getData(new zip.TextWriter(), function(text) {
+        contents[name] = text;
+        // If all the files have been processed, call the callback passing the
+        // aggregated results.
+        if (Y.Object.size(contents) === entriesNum) {
+          callback(contents);
+        }
+      });
+    });
   };
-  module.addByName = addByName;
-
-  /**
-    Given a list of zip entries and a list of base names, filter the entries
-    and return an object mapping base names to entries.
-
-    @method getEntriesByNames
-    @param {Array} entries The list of all the zip entries.
-    @param {Array} names The name choices as an array of strings.
-    @return {Object} The resulting key/value pairs.
-  */
-  var getEntriesByNames = function(entries, names) {
-    var filteredEntries = entries.filter(entryNameIn(names));
-    return filteredEntries.reduce(addByName, Object.create(null));
-  };
-  module.getEntriesByNames = getEntriesByNames;
+  module.readCharmEntries = readCharmEntries;
 
 }, '0.1.0', {
   requires: [

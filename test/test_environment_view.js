@@ -1014,6 +1014,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         env: env,
         store: fakeStore
       }).render();
+      var module = view.topo.modules.RelationModule;
 
       // Single relation
       var relation = container.one(
@@ -1025,6 +1026,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       assert.equal(menu.all('.relation-action').size(), 1);
       assert.equal(menu.one('.relation-action').getData('relationid'),
+          'relation-0000000001');
+
+      // Assert that relation module is storing the menu state for rerendering.
+      assert.equal(module.get('relationMenuActive'), true);
+      assert.equal(module.get('relationMenuRelation').id,
           'relation-0000000001');
 
       // Multiple relations
@@ -1040,6 +1046,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           additionalRelations.result[0][2].id);
       assert.equal(menu.all('.relation-action').item(1).getData('relationid'),
           additionalRelations.result[1][2].id);
+
+      // Errors are shown.
+      var unit = db.services.getById('mysql').get('units').item(0);
+      unit.agent_state = 'error';
+      unit.agent_state_data = {
+        hook: 'db-relation'
+      };
+      relation.simulate('click');
+      menu = container.one('#relation-menu');
+      assert.equal(menu.all('.endpoint.error').size(), 1);
+      assert.equal(menu.all('.relation-action.error').size(), 1);
+      assert.equal(menu.all('.relation-action.running').size(), 1);
     });
 
     it('allows deletion of relations within collections', function() {
@@ -1185,7 +1203,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }).render();
       var module = view.topo.modules.RelationModule;
       // RelationCollections have an aggregatedStatus.
-      assert.equal(module.relations[0].aggregatedStatus, 'healthy');
+      assert.equal(module.relations[0].aggregatedStatus, 'subordinate');
       // RelationCollections can store more than one relation.
       assert.equal(module.relations[2].relations.length, 2);
       // Only one line is drawn (that is, there are four container relations,

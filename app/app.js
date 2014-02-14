@@ -345,6 +345,12 @@ YUI.add('juju-gui', function(Y) {
       // flag to indicate that the callback has been used.
       this._routeSeen = {};
 
+      // When a user drags a file over the browser we show notifications which
+      // are drop targets to illustrate what they can do with their selected
+      // file. This array keeps track of those masks and their respective
+      // handlers with a { mask: mask, handlers: handlers } format.
+      this.dragNotifications = [];
+
       // Create a client side database to store state.
       this.db = new models.Database();
 
@@ -638,6 +644,197 @@ YUI.add('juju-gui', function(Y) {
       Y.on('initiateDeploy', function(charm, ghostAttributes) {
         cfg.deployService(charm, ghostAttributes);
       }, this);
+
+      this._boundAppDragOverHandler = this._appDragOverHandler.bind(this);
+      // These are manually detached in the destructor.
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
+      }, this);
+    },
+
+    /**
+      Show the appropriate drag notification type.
+
+      @method showDragNotification
+      @param {String} fileType The type of file to show the notification for.
+    */
+    showDragNotification: function(fileType) {
+      if (fileType === 'zip') {
+        var inspectors = this.views.environment.instance._inspectors;
+        var keys = Object.keys(inspectors);
+        if (keys.length > 0) {
+          // There can only be a single inspector now but the
+          // old code supports multiple.
+          this.showInspectorDropNotification(inspectors[keys[0]]);
+        }
+      }
+    },
+
+    /**
+      Shows the drop notification on top of the inspector
+
+      @method showInspectorDropNotification
+      @param {Object} inspector The currently open inspector.
+    */
+    showInspectorDropNotification: function(inspector) {
+      var container = inspector.viewletManager.get('container');
+      var mask = this._createInspectorDropMask(container);
+      var series = inspector.model.get('charm').match(/[^:]*(?=\/)/)[0];
+      var handler = this._attachInspectorDropMaskEvents(mask, series);
+
+      this.dragNotifications.push({mask: mask, handlers: [handler] });
+
+      Y.one('body').append(mask);
+    },
+
+    /**
+      Create the mask which is positioned over the inspector as a drop
+      target and notification layer.
+
+      @method _createInspectorDropMask
+      @param {Object} container A Y.Node instance of the inspectors container.
+      @param {Object} The Y.Node instance of the mask the same dimensions of
+                      the inspector.
+    */
+    _createInspectorDropMask: function(container) {
+      var mask = Y.Node.create('<div class="dropmask"></div>');
+      mask.setXY(container.getXY());
+      // XXX Jeff 02-12-2014 This might need to resize with the inspector.
+
+      mask.setStyles({
+        height: container.getComputedStyle('height'),
+        width: container.getComputedStyle('width'),
+        zIndex: 9999999,
+        position: 'absolute'
+      });
+      return mask;
+    },
+
+    /**
+      Attaches the drop event to the inspector drop mask.
+
+      @method _attachInspectorDropMaskEvents
+      @param {Object} mask A Y.Node instance of the mask covering the inspector.
+      @param {String} series The Ubuntu series to deploy the charm to.
+      @return {Object} A reference to the drop event handle.
+    */
+    _attachInspectorDropMaskEvents: function(mask, series) {
+      var handler = mask.on('drop', function(e) {
+        e.preventDefault();
+        mask.remove(true);
+        // We return the handler so it can be detached if the user drags
+        // away from the browser again, but we also want to detach it if
+        // they drop on the inspector.
+        handler.detach();
+
+        // XXX Jeff 02-12-2014 Upload local charm to env passing in
+        // e._event.dataTransfer.files, series, this.env, this.db
+        // uploadLocalCharm needs refactoring to be able to be called
+        // directly and have the callbacks passed in.
+
+      }, this);
+
+      return handler;
+    },
+
+    /**
+      Hide the drag notifications.
+
+      @method hideDragNotifications
+    */
+    hideDragNotifications: function() {
+      // Check to see if there are any active drop notifications
+      if (this.dragNotifications.length > 0) {
+        this.dragNotifications.forEach(function(notification) {
+          notification.mask.remove(true);
+          notification.handlers.forEach(function(handler) {
+            handler.detach();
+          });
+        });
+      }
+    },
+
+    /**
+      Event handler for the dragenter, dragover, dragleave events on the
+      document. It calls to determine the file type being dragged and manages
+      the commands to the timerControl method.
+
+      @method _appDragOverHandler
+      @param {Object} e The event object from the various events.
+    */
+    _appDragOverHandler: function(e) {
+      e.preventDefault(); // required to allow items to be dropped
+      var fileType = this._determineFileType(e.dataTransfer);
+      if (!fileType) {
+        return; // Ignore if it's not a supported type
+      }
+      var type = e.type;
+      if (type === 'dragenter') {
+        this.showDragNotification(fileType);
+        return;
+      }
+      if (type === 'dragleave') {
+        this._dragleaveTimerControl('start');
+      }
+      if (type === 'dragover') {
+        this._dragleaveTimerControl('stop');
+      }
+    },
+
+    /**
+      Handles the dragleave timer so that the periodic dragleave events which
+      fire as the user is dragging the file around the browser do not stop
+      the drag notification from showing.
+
+      @method _dragleaveTimerControl
+      @param {String} action The action that should be taken on the timer.
+    */
+    _dragleaveTimerControl: function(action) {
+      if (action === 'start') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+        this._dragLeaveTimer = Y.later(100, this, function() {
+          this.hideDragNotifications();
+        });
+      }
+      if (action === 'stop') {
+        if (this._dragLeaveTimer) {
+          this._dragLeaveTimer.cancel();
+        }
+      }
+    },
+
+    /**
+      Takes the information from the dataTransfer object to determine what
+      kind of file the user is dragging over the canvas.
+
+      Unfortunately Chrome, Firefox, And IE in OSX and Windows do not show mime
+      types for files that it is not familiar with. This isn't an issue once the
+      user has dropped the file because we can parse the file name but while
+      it's still hovering the browser only tells us the mime type if it knows
+      it, else it's an empty string. This means that we cannot determine between
+      a yaml file or a folder during hover.
+      Bug: https://code.google.com/p/chromium/issues/detail?id=342554
+      Real mime type for yaml files should be: application/x-yaml
+
+      @method _determineFileType
+      @param {Object} dataTransfer dataTransfer object from the dragover event.
+      @return {String} The file type extension.
+    */
+    _determineFileType: function(dataTransfer) {
+      if (dataTransfer.types[0] !== 'Files') {
+        // If the dataTransfer type isn't `Files` then something is being
+        // dragged from inside the browser.
+        return false;
+      }
+      // See method doc for bug information.
+      var file = dataTransfer.items[0];
+      if (file.type === 'application/zip' ||
+          file.type === 'application/x-zip-compressed') {
+        return 'zip';
+      }
+      return 'yaml';
     },
 
     /**
@@ -760,6 +957,10 @@ YUI.add('juju-gui', function(Y) {
             }
           }
       );
+      ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
+        Y.config.doc.removeEventListener(
+            eventName, this._boundAppDragOverHandler);
+      }, this);
     },
 
     /**
@@ -1462,6 +1663,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-inspector-widget',
     'juju-ghost-inspector',
     'juju-view-bundle',
-    'help-dropdown'
+    'help-dropdown',
+    'local-charm-import-helpers'
   ]
 });

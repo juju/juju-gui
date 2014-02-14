@@ -278,7 +278,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       container.append('<div class="juju-inspector"></div>');
       var viewletManager = new Y.juju.viewlets.ViewletManager({
         enableDatabinding: true,
-        viewlets: [viewlet],
+        views: [viewlet],
         container: container,
         viewletContainer: '.viewlet-manager',
         model: model,

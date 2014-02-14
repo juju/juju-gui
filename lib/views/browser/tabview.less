@@ -34,7 +34,6 @@
         }
     }
     .tab-panels {
-        .transition(top 0.2s ease-out);
         position: absolute;
         top: 237px;
         bottom: 0;
@@ -46,6 +45,11 @@
         overflow-x: hidden;
         overflow-y: auto;
 
+        &.animate-scroll {
+            // The transitions need to be in a separate class to be applied
+            // post render to stop Safari firing the animation on page load.
+            .transition(top 0.2s ease-out);
+        }
         .tab-carousel {
             .transition(left 0.3s ease-out);
             position: absolute;

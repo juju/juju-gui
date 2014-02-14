@@ -1662,15 +1662,27 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Create and return a successful event including the given responseText
+      and a 200 status code. This can be used to simulate a response as
+      returned by the juju-core HTTPS API.
+
+      @method _createSuccessEvent
+      @param {String} responseText The text contents included in the response.
+    */
+    _createSuccessEvent: function(responseText) {
+      return {target: {responseText: responseText, status: 200}};
+    },
+
+    /**
       Populate the local database with charm data reading the information
-      contained in entries. This way it is possible to store at least a
+      contained in contents. This way it is possible to store at least a
       subset of the charm data provided by juju-core or the charm store.
 
       @method _handleLocalCharmEntries
-      @param {Object} entries A dictionary mapping file names to entry objects
-        (see http://gildas-lormeau.github.io/zip.js/core-api.html#zip-entry).
-        This usually includes at least the metadata.yaml and the config.yaml
-        entries.
+      @param {Object} contents Maps names to contents. This usually
+        includes at least the "metadata" key, and one or more of the following
+        keys: "config", "revision" and "readme".
+      @param {String} series The Ubuntu series for this charm.
       @param {Function} callback A function to be called to return the charm
         information back to the original caller (see _uploadLocalCharm in
         app/assets/javascripts/local-charm-import-helpers).
@@ -1678,27 +1690,52 @@ YUI.add('juju-env-fakebackend', function(Y) {
         occurred during the process. The errback callable receives an error
         message.
     */
-    _handleLocalCharmEntries: function(entries, callback, errback) {
-      // Check if all the required entries are present in the zip.
-      var configEntry = entries['config.yaml'];
-      if (!configEntry) {
-        return errback('unable to find the charm configuration file');
+    _handleLocalCharmEntries: function(contents, series, callback, errback) {
+      var metadata, config, options;
+      // Parse the charm's metadata.
+      try {
+        metadata = jsyaml.safeLoad(contents.metadata);
+      } catch (err) {
+        if (err instanceof jsyaml.YAMLException) {
+          errback('Invalid charm archive: invalid metadata: ' + err);
+          return;
+        }
       }
-      var metadataEntry = entries['metadata.yaml'];
-      if (!metadataEntry) {
-        return errback('unable to find the charm metadata file');
+      // Validate the metadata: it must contain at least the name, summary and
+      // description fields.
+      var errors = models.validateCharmMetadata(metadata);
+      if (errors.length) {
+        errback(
+            'Invalid charm archive: invalid metadata: ' + errors.join(', '));
+        return;
       }
-      // We can still continue the process even if the readme is missing.
-      var readmeEntry = entries['readme.md'];
-      // XXX frankban 2014-02-07: read the entries and populate the database
-      // as required. Call the callback in order to return the required data
-      // to the original caller. Remove the lines below.
-      console.log('config:', configEntry.filename);
-      console.log('metadata:', metadataEntry.filename);
-      if (readmeEntry) {
-        console.log('readme:', readmeEntry.filename);
+      // Parse charm's options.
+      if (contents.config) {
+        try {
+          config = jsyaml.safeLoad(contents.config);
+        } catch (err) {
+          if (err instanceof jsyaml.YAMLException) {
+            errback('Invalid charm archive: invalid options: ' + err);
+            return;
+          }
+        }
+        options = config.options;
       }
-      errback('charm upload in sandbox mode is not yet implemented');
+      // Parse charm's revision.
+      // XXX frankban 2014-02-13: improve revision handling. Check if a related
+      // charm already exists in the db and increment the revision accordingly.
+      var revision = parseInt(contents.revision, 10) || 0;
+      // We are uploading a local charm.
+      var scheme = 'local';
+      // XXX frankban 2014-02-13: handle contents.readme. It can contain the
+      // documentation about the charm, and we should display it in the charm
+      // panel in some way.
+      var charm = this.db.charms.addFromCharmData(
+          metadata, series, revision, scheme, options);
+      // Create the load response expected by the caller.
+      var evt = this._createSuccessEvent(
+          JSON.stringify({CharmURL: charm.get('url')}));
+      callback(evt);
     },
 
     /**
@@ -1708,25 +1745,38 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method handleUploadLocalCharm
       @param {Object} file The zip file object containing the charm.
+      @param {String} series The Ubuntu series for this charm.
       @param {Function} completedCallback The load event callback.
     */
-    handleUploadLocalCharm: function(file, completedCallback) {
+    handleUploadLocalCharm: function(file, series, completedCallback) {
       var self = this;
       // Define a function to be called when something goes wrong. Since this
-      // function is passed to ziputils.readEntries, it is used to handle
+      // function is passed to ziputils.getEntries, it is used to handle
       // errors globally during the whole zip parsing process.
       var errback = function(error) {
         completedCallback(self._createErrorEvent(error));
       };
       // Define a function to be called when zip entries are available and
-      // ready to be parsed. Here we just filter the entries we are interested
-      // in, the real parsing is done in _handleLocalCharmEntries (see above).
+      // ready to be parsed. Here we filter the entries we are interested in,
+      // and we fetch their contents. The real parsing is done in
+      // _handleLocalCharmEntries (see above).
       var callback = function(allEntries) {
-        var filenames = ['config.yaml', 'metadata.yaml', 'readme.md'];
-        var entries = ziputils.getEntriesByNames(allEntries, filenames);
-        self._handleLocalCharmEntries(entries, completedCallback, errback);
+        var entries = ziputils.findCharmEntries(allEntries);
+        // We strictly need only the charm's metadata: see
+        // juju-core/state/apiserver/charms.go:findArchiveRootDir.
+        if (!entries.metadata) {
+          errback('Invalid charm archive: missing metadata.yaml');
+          return;
+        }
+        // Aggregate the entries' contents and then call the
+        // _handleLocalCharmEntries method.
+        ziputils.readCharmEntries(
+            entries,
+            Y.rbind(self._handleLocalCharmEntries, self, series,
+                    completedCallback, errback)
+        );
       };
-      ziputils.readEntries(file, callback, errback);
+      ziputils.getEntries(file, callback, errback);
     }
 
   });

@@ -1874,9 +1874,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
-  describe('FakeBackend.handleUploadLocalCharm', function() {
+  describe('FakeBackend: events handling', function() {
     var environmentsModule, fakebackend, Y;
-    var requirements = ['node', 'juju-env-fakebackend'];
+    var requirements = ['juju-env-fakebackend'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -1903,8 +1903,267 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(evt, expectedEvt);
     });
 
-    // XXX frankban 2014-02-06: add the handleUploadLocalCharm and
-    // _handleLocalCharmEntries tests here.
+    it('has the ability to create a successful event', function() {
+      var evt = fakebackend._createSuccessEvent('yay');
+      var expectedEvt = {target: {responseText: 'yay', status: 200}};
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+  });
+
+  describe('FakeBackend.handleUploadLocalCharm', function() {
+    var completedCallback, environmentsModule, fakebackend, mockGetEntries,
+        testUtils, Y, ziputils;
+    var requirements = [
+      'node', 'juju-env-fakebackend', 'juju-tests-utils', 'zip-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        testUtils = Y.namespace('juju-tests.utils');
+        ziputils = Y.namespace('juju.ziputils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+      // Set up the ziputils.getEntries and the completedCallback mocks.
+      mockGetEntries = testUtils.makeStubMethod(ziputils, 'getEntries');
+      this._cleanups.push(mockGetEntries.reset);
+      completedCallback = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    // Return an dict mapping arg names to arguments used to call the
+    // ziputils.getEntries mock object.
+    var retrieveGetEntriesArgs = function() {
+      assert.strictEqual(mockGetEntries.callCount(), 1);
+      var args = mockGetEntries.lastArguments();
+      assert.strictEqual(args.length, 3);
+      return {file: args[0], callback: args[1], errback: args[2]};
+    };
+
+    // Create and return a mock entry file object.
+    var makeEntry = function(name) {
+      return {directory: false, filename: name};
+    };
+
+    it('calls ziputils.getEntries passing the proper args', function() {
+      fakebackend.handleUploadLocalCharm(
+          'a file object', 'trusty', completedCallback);
+      // Ensure ziputils.getEntries has been called passing the file object,
+      // a callback function and an errback function.
+      var args = retrieveGetEntriesArgs();
+      assert.strictEqual(args.file, 'a file object');
+      assert.strictEqual(typeof args.callback, 'function');
+      assert.strictEqual(typeof args.errback, 'function');
+    });
+
+    it('uses the zip helpers to read the zip entries', function() {
+      fakebackend.handleUploadLocalCharm(
+          'a file object', 'trusty', completedCallback);
+      var configEntry = makeEntry('config.yaml');
+      var metadataEntry = makeEntry('metadata.yaml');
+      var expectedEntries = {
+        config: configEntry,
+        metadata: metadataEntry
+      };
+      // Patch the ziputils.readCharmEntries function.
+      var mockReadCharmEntries = testUtils.makeStubMethod(
+          ziputils, 'readCharmEntries');
+      this._cleanups.push(mockReadCharmEntries.reset);
+      // Call the callback passed to ziputils.getEntries.
+      var callback = retrieveGetEntriesArgs().callback;
+      callback([configEntry, metadataEntry]);
+      // Ensure readCharmEntries has been called passing the entries and a
+      // callback.
+      assert.strictEqual(mockReadCharmEntries.callCount(), 1);
+      var readCharmEntriesArgs = mockReadCharmEntries.lastArguments();
+      assert.strictEqual(readCharmEntriesArgs.length, 2);
+      assert.deepEqual(readCharmEntriesArgs[0], expectedEntries);
+      assert.strictEqual(typeof readCharmEntriesArgs[1], 'function');
+    });
+
+    it('filters the entries', function() {
+      fakebackend.handleUploadLocalCharm(
+          'a file object', 'trusty', completedCallback);
+      var configEntry = makeEntry('config.yaml');
+      var metadataEntry = makeEntry('metadata.yaml');
+      var allEntries = [
+        makeEntry('another-file.yaml'),
+        configEntry,
+        makeEntry('extraneous.yaml'),
+        metadataEntry
+      ];
+      var expectedEntries = {
+        config: configEntry,
+        metadata: metadataEntry
+      };
+      // Patch the ziputils.readCharmEntries function.
+      var mockReadCharmEntries = testUtils.makeStubMethod(
+          ziputils, 'readCharmEntries');
+      this._cleanups.push(mockReadCharmEntries.reset);
+      // Call the callback passed to ziputils.getEntries.
+      var callback = retrieveGetEntriesArgs().callback;
+      callback(allEntries);
+      // Ensure readCharmEntries has been called passing only the required
+      // entries.
+      var entries = mockReadCharmEntries.lastArguments()[0];
+      assert.deepEqual(entries, expectedEntries);
+    });
+
+    it('returns an error if the required entries are not found', function() {
+      fakebackend.handleUploadLocalCharm(
+          'a file object', 'trusty', completedCallback);
+      // Patch the ziputils.readCharmEntries function.
+      var mockReadCharmEntries = testUtils.makeStubMethod(
+          ziputils, 'readCharmEntries');
+      this._cleanups.push(mockReadCharmEntries.reset);
+      // Call the callback passed to ziputils.getEntries.
+      var callback = retrieveGetEntriesArgs().callback;
+      callback([makeEntry('config.yaml')]);
+      // Ensure readCharmEntries has not been called.
+      assert.strictEqual(mockReadCharmEntries.callCount(), 0);
+      // The completedCallback has been called passing an error.
+      assert.strictEqual(completedCallback.callCount(), 1);
+      var completedCallbackArgs = completedCallback.lastArguments();
+      assert.strictEqual(completedCallbackArgs.length, 1);
+      var evt = completedCallbackArgs[0];
+      assert.strictEqual(evt.type, 'error');
+      assert.strictEqual(
+          evt.target.responseText.Error,
+          'Invalid charm archive: missing metadata.yaml');
+    });
+
+    it('passes a suitable errback to ziputils.getEntries', function() {
+      fakebackend.handleUploadLocalCharm(
+          'a file object', 'trusty', completedCallback);
+      // Patch the ziputils.readCharmEntries function.
+      var mockReadCharmEntries = testUtils.makeStubMethod(
+          ziputils, 'readCharmEntries');
+      this._cleanups.push(mockReadCharmEntries.reset);
+      // Call the errback passed to ziputils.getEntries.
+      var errback = retrieveGetEntriesArgs().errback;
+      errback('bad wolf');
+      // The completedCallback has been called passing an error.
+      assert.strictEqual(completedCallback.callCount(), 1);
+      var completedCallbackArgs = completedCallback.lastArguments();
+      assert.strictEqual(completedCallbackArgs.length, 1);
+      var evt = completedCallbackArgs[0];
+      assert.strictEqual(evt.type, 'error');
+      assert.strictEqual(evt.target.responseText.Error, 'bad wolf');
+    });
+
+  });
+
+  describe('FakeBackend._handleLocalCharmEntries', function() {
+    var callback, environmentsModule, errback, fakebackend, testUtils, Y;
+    var requirements = ['js-yaml', 'juju-env-fakebackend', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+      // Set up the callback and errback mocks.
+      callback = testUtils.makeStubFunction();
+      errback = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    // Create and return a charm's metadata object.
+    var makeMetadata = function(name) {
+      var metadata = {
+        name: name || 'mycharm',
+        summary: 'charm summary',
+        description: 'charm description'
+      };
+      return jsyaml.dump(metadata);
+    };
+
+    it('returns an error if the metadata is not a valid YAML', function() {
+      var contents = {metadata: '{'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      var expectedErr = 'Invalid charm archive: invalid metadata: JS-YAML:';
+      assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('returns an error if the metadata is not valid', function() {
+      var contents = {metadata: '{}'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      assert.strictEqual(
+          errbackArgs[0],
+          'Invalid charm archive: invalid metadata: ' +
+          'missing name, missing summary, missing description');
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('returns an error if the config is not a valid YAML', function() {
+      var contents = {metadata: makeMetadata(), config: '{'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      var expectedErr = 'Invalid charm archive: invalid options: JS-YAML:';
+      assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('adds a new charm in the db', function() {
+      var contents = {metadata: makeMetadata()};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(fakebackend.db.charms.size(), 1);
+      // The errback has not been called.
+      assert.strictEqual(errback.callCount(), 0);
+    });
+
+    it('calls the callback passing the newly created charm URL', function() {
+      var contents = {metadata: makeMetadata()};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(callback.callCount(), 1);
+      var callbackArgs = callback.lastArguments();
+      assert.strictEqual(callbackArgs.length, 1);
+      var expectedEvt = fakebackend._createSuccessEvent(
+          '{"CharmURL":"local:trusty/mycharm-0"}');
+      assert.deepEqual(callbackArgs[0], expectedEvt);
+      // The errback has not been called.
+      assert.strictEqual(errback.callCount(), 0);
+    });
 
   });
 

@@ -429,9 +429,10 @@ YUI.add('juju-topology-service', function(Y) {
       * @method _ignore
       */
     _ignore: function(e) {
-      e.halt();
+      // This used to be an e.halt() which also stops event propogation but
+      // that prevented listening to any drag events above the canvas.
+      e.preventDefault();
     },
-
 
     /**
       Attaches the touchstart event handlers for the service elements. This is
@@ -655,7 +656,7 @@ YUI.add('juju-topology-service', function(Y) {
           if ((file.type === 'application/zip' ||
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
-            self._deployLocalCharm(file, env, db);
+            self._deployLocalCharm(file, topo, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
             bundleImportHelpers.deployBundleFiles(file, env, db);
@@ -669,7 +670,8 @@ YUI.add('juju-topology-service', function(Y) {
       return 'event ignored';
     },
 
-    _deployLocalCharm: function(file, env, db) {
+    _deployLocalCharm: function(file, topo, env, db) {
+      topo.fire('destroyServiceInspector');
       bundleImportHelpers.deployBundleFiles(file, env, db);
     },
 

@@ -1,7 +1,11 @@
 <div class="menu">
+    <div class="triangle">&nbsp;</div>
     <ul>
         {{#each relations}}
-        <li class="relation-action" data-relationid="{{id}}">{{id}}</li>
+        <li class="relation-action {{#if hasRelationError}}error{{else}}running{{/if}}" data-relationid="{{id}}">
+        <span class="endpoint{{#if sourceHasError}} error{{/if}}">{{sourceId}}</span>
+        <span class="endpoint{{#if targetHasError}} error{{/if}}">{{targetId}}</span>
+        </li>
         {{/each}}
     </ul>
 </div>

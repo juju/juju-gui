@@ -244,6 +244,9 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Update (+ enter selection).
       link.each(this.drawRelation);
+      if (this.get('relationMenuActive')) {
+        this.showRelationMenu(this.get('relationMenuRelation'));
+      }
 
       // Exit
       g.exit().remove();
@@ -317,9 +320,12 @@ YUI.add('juju-topology-relation', function(Y) {
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
                 // Style relation lines differently depending on status.
-                return (d.pending ? 'pending-relation ' : '') +
-                    (d.isSubordinate ? 'subordinate-relation ' : '') +
-                    'relation';
+                if (!window.flags.relationCollections) {
+                  return (d.pending ? 'pending-relation ' : '') +
+                      (d.isSubordinate ? 'subordinate-relation ' : '') +
+                      'relation';
+                }
+                return 'relation ' + d.aggregatedStatus;
               });
 
       // XXX Makyo 2014-01-28 rel-label will need to change with addition of
@@ -386,7 +392,16 @@ YUI.add('juju-topology-relation', function(Y) {
                 .attr('x1', s[0])
                 .attr('y1', s[1])
                 .attr('x2', t[0])
-                .attr('y2', t[1]);
+                .attr('y2', t[1])
+                .attr('class', function(d) {
+            // Style relation lines differently depending on status.
+            if (!window.flags.relationCollections) {
+              return (d.pending ? 'pending-relation ' : '') +
+                  (d.isSubordinate ? 'subordinate-relation ' : '') +
+                  'relation';
+            }
+            return 'relation ' + d.aggregatedStatus;
+          });
       return link;
     },
 
@@ -697,6 +712,8 @@ YUI.add('juju-topology-relation', function(Y) {
     clearState: function() {
       this.cancelRelationBuild();
       this.hideSubordinateRelations();
+      this.set('relationMenuActive', false);
+      this.set('relationMenuRelation', undefined);
     },
 
     cancelRelationBuild: function() {
@@ -1095,18 +1112,25 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.append(Templates.relationList({
         relations: relation.relations
       }));
-      // XXX Makyo 2014-02-03 - position list (card on board)
-      // Rough positioning for now.
+      menu.addClass('active');
+      this.set('relationMenuActive', true);
+      this.set('relationMenuRelation', relation);
       var topo = this.get('component');
       var tr = topo.zoom.translate();
       var z = topo.zoom.scale();
-      var coords = topUtils.findCenterPoint(relation.source.xy,
-          relation.target.xy);
-      var point = { x: coords[0], y: coords[1], w: 10, h: 10 };
+      var line = relation.source.getConnectorPair(relation.target);
+      var coords = topUtils.findCenterPoint(line[0], line[1]);
+      var point = { x: coords[0], y: coords[1], w: 0, h: 0 };
       var locateAt = topUtils.locateRelativePointOnCanvas(point, tr, z);
+      // Shift the menu to the left by half its width, and up by its height
+      // plus the height of the arrow (16px).
+      locateAt[0] -= menu.get('clientWidth') / 2;
+      locateAt[1] -= menu.get('clientHeight') + 16;
       menu.setStyle('left', locateAt[0]);
       menu.setStyle('top', locateAt[1]);
-      menu.addClass('active');
+      // Shift the arrow to the left by half the menu's width minus half the
+      // width of the arrow itself (10px).
+      menu.one('.triangle').setStyle('left', menu.get('clientWidth') / 2 - 10);
 
       // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
@@ -1151,7 +1175,25 @@ YUI.add('juju-topology-relation', function(Y) {
         @default undefined
         @type {Boolean}
       */
-      disableRelationInteraction: {}
+      disableRelationInteraction: {},
+      /**
+        Whether or not the relation menu is visible.
+
+        @attribute relationMenuActive
+        @default false
+        @type {Boolean}
+      */
+      relationMenuActive: {
+        value: false
+      },
+      /**
+        The relation for which the menu is currently showing.
+
+        @attribute relationMenuRElation
+        @default undefined
+        @type {Object}
+      */
+      relationMenuRelation: {}
     }
 
   });
