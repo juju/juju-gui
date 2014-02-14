@@ -1874,6 +1874,43 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('FakeBackend: events handling', function() {
+    var environmentsModule, fakebackend, Y;
+    var requirements = ['juju-env-fakebackend'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('has the ability to create an error event', function() {
+      var evt = fakebackend._createErrorEvent('bad wolf');
+      var expectedEvt = {
+        type: 'error',
+        target: {responseText: {Error: 'bad wolf'}}
+      };
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+    it('has the ability to create a successful event', function() {
+      var evt = fakebackend._createSuccessEvent('yay');
+      var expectedEvt = {target: {responseText: 'yay', status: 200}};
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+  });
+
   describe('FakeBackend.handleUploadLocalCharm', function() {
     var completedCallback, environmentsModule, fakebackend, mockGetEntries,
         testUtils, Y, ziputils;
@@ -1916,15 +1953,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       return {directory: false, filename: name};
     };
 
-    it('has the ability to create an error event', function() {
-      var evt = fakebackend._createErrorEvent('bad wolf');
-      var expectedEvt = {
-        type: 'error',
-        target: {responseText: {Error: 'bad wolf'}}
-      };
-      assert.deepEqual(evt, expectedEvt);
-    });
-
     it('calls ziputils.getEntries passing the proper args', function() {
       fakebackend.handleUploadLocalCharm(
           'a file object', 'trusty', completedCallback);
@@ -1942,8 +1970,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var configEntry = makeEntry('config.yaml');
       var metadataEntry = makeEntry('metadata.yaml');
       var expectedEntries = {
-        'config.yaml': configEntry,
-        'metadata.yaml': metadataEntry
+        config: configEntry,
+        metadata: metadataEntry
       };
       // Patch the ziputils.readCharmEntries function.
       var mockReadCharmEntries = testUtils.makeStubMethod(
@@ -1973,8 +2001,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         metadataEntry
       ];
       var expectedEntries = {
-        'config.yaml': configEntry,
-        'metadata.yaml': metadataEntry
+        config: configEntry,
+        metadata: metadataEntry
       };
       // Patch the ziputils.readCharmEntries function.
       var mockReadCharmEntries = testUtils.makeStubMethod(
@@ -2029,6 +2057,112 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var evt = completedCallbackArgs[0];
       assert.strictEqual(evt.type, 'error');
       assert.strictEqual(evt.target.responseText.Error, 'bad wolf');
+    });
+
+  });
+
+  describe('FakeBackend._handleLocalCharmEntries', function() {
+    var callback, environmentsModule, errback, fakebackend, testUtils, Y;
+    var requirements = ['js-yaml', 'juju-env-fakebackend', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+      // Set up the callback and errback mocks.
+      callback = testUtils.makeStubFunction();
+      errback = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    // Create and return a charm's metadata object.
+    var makeMetadata = function(name) {
+      var metadata = {
+        name: name || 'mycharm',
+        summary: 'charm summary',
+        description: 'charm description'
+      };
+      return jsyaml.dump(metadata);
+    };
+
+    it('returns an error if the metadata is not a valid YAML', function() {
+      var contents = {metadata: '{'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      var expectedErr = 'Invalid charm archive: invalid metadata: JS-YAML:';
+      assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('returns an error if the metadata is not valid', function() {
+      var contents = {metadata: '{}'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      assert.strictEqual(
+          errbackArgs[0],
+          'Invalid charm archive: invalid metadata: ' +
+          'missing name, missing summary, missing description');
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('returns an error if the config is not a valid YAML', function() {
+      var contents = {metadata: makeMetadata(), config: '{'};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(errback.callCount(), 1);
+      var errbackArgs = errback.lastArguments();
+      assert.strictEqual(errbackArgs.length, 1);
+      var expectedErr = 'Invalid charm archive: invalid options: JS-YAML:';
+      assert.strictEqual(errbackArgs[0].indexOf(expectedErr), 0);
+      // The callback has not been called.
+      assert.strictEqual(callback.callCount(), 0);
+      // No new charm has been added to the db.
+      assert.strictEqual(fakebackend.db.charms.size(), 0);
+    });
+
+    it('adds a new charm in the db', function() {
+      var contents = {metadata: makeMetadata()};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(fakebackend.db.charms.size(), 1);
+      // The errback has not been called.
+      assert.strictEqual(errback.callCount(), 0);
+    });
+
+    it('calls the callback passing the newly created charm URL', function() {
+      var contents = {metadata: makeMetadata()};
+      fakebackend._handleLocalCharmEntries(
+          contents, 'trusty', callback, errback);
+      assert.strictEqual(callback.callCount(), 1);
+      var callbackArgs = callback.lastArguments();
+      assert.strictEqual(callbackArgs.length, 1);
+      var expectedEvt = fakebackend._createSuccessEvent(
+          '{"CharmURL":"local:trusty/mycharm-0"}');
+      assert.deepEqual(callbackArgs[0], expectedEvt);
+      // The errback has not been called.
+      assert.strictEqual(errback.callCount(), 0);
     });
 
   });

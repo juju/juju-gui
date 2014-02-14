@@ -1055,4 +1055,114 @@ describe('test_model.js', function() {
       assert.deepEqual(filtered.toArray(), [rails, django, wordpress]);
     });
   });
+
+  describe('db.charms.addFromCharmData', function() {
+    var db, models, Y;
+    var requirements = ['juju-models'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        models = Y.namespace('juju.models');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      db = new models.Database();
+    });
+
+    afterEach(function() {
+      db.destroy();
+    });
+
+    it('creates and returns a new charm model instance', function() {
+      var metadata = {
+        name: 'mycharm',
+        summary: 'charm summary',
+        description: 'charm description',
+        categories: ['tricks', 'treats'],
+        subordinate: true,
+        provides: 'provides',
+        requires: 'requires',
+        peers: 'peers'
+      };
+      var options = {'my-option': {}};
+      var charm = db.charms.addFromCharmData(
+          metadata, 'trusty', 42, 'local', options);
+      // A new charm model instance has been created.
+      assert.strictEqual(db.charms.size(), 1);
+      // The newly created charm has been returned.
+      assert.deepEqual(db.charms.item(0), charm);
+      // The newly created charm is well formed.
+      var attrs = charm.getAttrs();
+      var relations = attrs.relations;
+      assert.strictEqual(attrs.categories, metadata.categories);
+      assert.strictEqual(attrs.description, metadata.description);
+      assert.strictEqual(attrs.distro_series, 'trusty');
+      assert.strictEqual(attrs.id, 'local:trusty/mycharm-42');
+      assert.strictEqual(attrs.is_subordinate, metadata.subordinate);
+      assert.strictEqual(attrs.name, metadata.name);
+      assert.strictEqual(attrs.options, options);
+      assert.strictEqual(attrs.revision, 42);
+      assert.strictEqual(attrs.scheme, 'local');
+      assert.strictEqual(attrs.summary, metadata.summary);
+      assert.strictEqual(attrs.url, 'local:trusty/mycharm-42');
+      assert.strictEqual(relations.provides, metadata.provides);
+      assert.strictEqual(relations.requires, metadata.requires);
+      assert.strictEqual(relations.peers, metadata.peers);
+    });
+
+  });
+
+  describe('validateCharmMetadata', function() {
+    var models, Y;
+    var requirements = ['juju-charm-models'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        models = Y.namespace('juju.models');
+        done();
+      });
+    });
+
+    it('returns an empty list if no errors are found', function() {
+      var metadata = {
+        name: 'mycharm',
+        summary: 'charm summary',
+        description: 'charm description'
+      };
+      var errors = models.validateCharmMetadata(metadata);
+      assert.deepEqual(errors, []);
+    });
+
+    it('returns errors if fields are undefined', function() {
+      var metadata = {
+        description: 'charm description'
+      };
+      var errors = models.validateCharmMetadata(metadata);
+      assert.deepEqual(errors, ['missing name', 'missing summary']);
+    });
+
+    it('returns errors if fields are null', function() {
+      var metadata = {
+        name: null,
+        summary: 'charm summary',
+        description: 'charm description'
+      };
+      var errors = models.validateCharmMetadata(metadata);
+      assert.deepEqual(errors, ['missing name']);
+    });
+
+    it('returns errors if fields are empty strings', function() {
+      var metadata = {
+        name: '',
+        summary: 'charm summary',
+        description: '     '
+      };
+      var errors = models.validateCharmMetadata(metadata);
+      assert.deepEqual(errors, ['missing name', 'missing description']);
+    });
+
+  });
+
 });
