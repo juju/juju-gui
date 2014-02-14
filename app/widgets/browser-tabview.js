@@ -73,7 +73,7 @@ YUI.add('browser-tabview', function(Y) {
           linkWidth = link.getComputedStyle('width'),
           linkPosition = link.getX() - container.getX();
 
-      // Move the tab countainer to the requested tab.
+      // Move the tab container to the requested tab.
       this.tabCarousel.setStyle('left', position + 'px');
 
       // Set the active link.
@@ -94,7 +94,6 @@ YUI.add('browser-tabview', function(Y) {
 
       // Once the animation is complete reduce the height of all tabs except
       // the visible tab so the container only scrolls for the visible tab.
-
       var transitions = ['transitionend', 'webkitTransitionEnd'];
       var handler = this.tabCarousel.on(transitions, function() {
         // Because this event will fire shortly after this method completes we

@@ -51,10 +51,10 @@
             .transition(top 0.2s ease-out);
         }
         .tab-carousel {
-            .transition(left 0.3s ease-out);
+            // XXX: Rick kill animation as it breaks positioning in FF and IE.
+            // .transition(left 0.1s ease-out);
             position: absolute;
             top: 0;
-            left: 0;
             width: 10000px;
             overflow: hidden;
 
