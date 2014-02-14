@@ -47,15 +47,17 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} file The file object from the browser.
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
+      @param {Object} options Optional A collection of options to send to the
+                      uploadLocalCharm load callback.
     */
-    uploadLocalCharm: function(series, file, env, db) {
+    uploadLocalCharm: function(series, file, env, db, options) {
       var helper = ns.localCharmHelpers;
       series = series || env.get('defaultSeries');
       env.uploadLocalCharm(
           file,
           series,
           helper._uploadLocalCharmProgress,
-          helper._uploadLocalCharmLoad.bind(null, file, env, db));
+          helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
     },
 
     /**
@@ -180,7 +182,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
     loadCharmDetails: function(charmUrl, env, callback) {
       var charm = new Y.juju.models.Charm({ id: charmUrl });
       charm.after('load', function(e) {
-        callback(charm);
+        callback(charm, env);
       });
       charm.load(env);
     },
@@ -200,6 +202,24 @@ YUI.add('local-charm-import-helpers', function(Y) {
       Y.fire('initiateDeploy', charm, {});
     },
 
+    _localCharmUpgradeCallback: function(db, options, charm, env) {
+      env.setCharm(options.serviceId, charm.get('id'), false, function(e) {
+        if (e.err) {
+          db.notifications.add({
+            title: 'Charm upgrade failed',
+            message: 'Upgrade for "' + e.service_name + '" failed. ' + e.err,
+            level: 'error'
+          });
+        } else {
+          db.notifications.add({
+            title: 'Charm upgrade accepted',
+            message: 'Upgrade for "' + e.service_name + '" from "' +
+                e.charm_url + '" accepted.',
+            level: 'important'
+          });
+        }
+      });
+    },
 
     /**
       Callback for the progress events returned from uploading the charm.
@@ -224,8 +244,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
       @param {Object} e The load event.
+      @param {Object} options Optional A collection of options to send to the
+                      uploadLocalCharm load callback.
     */
-    _uploadLocalCharmLoad: function(file, env, db, e) {
+    _uploadLocalCharmLoad: function(file, env, db, options, e) {
       var helper = ns.localCharmHelpers,
           notifications = db.notifications;
 
@@ -245,17 +267,21 @@ YUI.add('local-charm-import-helpers', function(Y) {
         });
         console.log('error', e);
       } else {
-
         notifications.add({
           title: 'Imported local charm file',
           message: 'Import from "' + file.name + '" successful.',
           level: 'important'
         });
 
-        helper.loadCharmDetails(
-            res.CharmURL,
-            env,
-            helper._loadCharmDetailsCallback);
+        var callback;
+
+        if (options && options.upgrade) {
+          callback = helper._localCharmUpgradeCallback.bind(null, db, options);
+        } else {
+          callback = helper._loadCharmDetailsCallback;
+        }
+
+        helper.loadCharmDetails(res.CharmURL, env, callback);
       }
     },
 

@@ -679,8 +679,9 @@ YUI.add('juju-gui', function(Y) {
     showInspectorDropNotification: function(inspector) {
       var container = inspector.viewletManager.get('container');
       var mask = this._createInspectorDropMask(container);
-      var series = inspector.model.get('charm').match(/[^:]*(?=\/)/)[0];
-      var handler = this._attachInspectorDropMaskEvents(mask, series);
+      var model = inspector.model;
+      var series = model.get('charm').match(/[^:]*(?=\/)/)[0];
+      var handler = this._attachInspectorDropMaskEvents(mask, series, model);
 
       this.dragNotifications.push({mask: mask, handlers: [handler] });
 
@@ -699,7 +700,6 @@ YUI.add('juju-gui', function(Y) {
     _createInspectorDropMask: function(container) {
       var mask = Y.Node.create('<div class="dropmask"></div>');
       mask.setXY(container.getXY());
-      // XXX Jeff 02-12-2014 This might need to resize with the inspector.
 
       mask.setStyles({
         height: container.getComputedStyle('height'),
@@ -716,9 +716,10 @@ YUI.add('juju-gui', function(Y) {
       @method _attachInspectorDropMaskEvents
       @param {Object} mask A Y.Node instance of the mask covering the inspector.
       @param {String} series The Ubuntu series to deploy the charm to.
+      @param {Object} model The service model.
       @return {Object} A reference to the drop event handle.
     */
-    _attachInspectorDropMaskEvents: function(mask, series) {
+    _attachInspectorDropMaskEvents: function(mask, series, model) {
       var handler = mask.on('drop', function(e) {
         e.preventDefault();
         mask.remove(true);
@@ -726,12 +727,12 @@ YUI.add('juju-gui', function(Y) {
         // away from the browser again, but we also want to detach it if
         // they drop on the inspector.
         handler.detach();
-
-        // XXX Jeff 02-12-2014 Upload local charm to env passing in
-        // e._event.dataTransfer.files, series, this.env, this.db
-        // uploadLocalCharm needs refactoring to be able to be called
-        // directly and have the callbacks passed in.
-
+        var files = e._event.dataTransfer.files[0];
+        juju.localCharmHelpers.uploadLocalCharm(
+            series, files, this.env, this.db, {
+              upgrade: true,
+              serviceId: model.get('id')
+            });
       }, this);
 
       return handler;
