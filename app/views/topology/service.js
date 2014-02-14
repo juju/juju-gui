@@ -633,17 +633,21 @@ YUI.add('juju-topology-service', function(Y) {
      * @static
      * @return {undefined} Nothing.
      */
-    canvasDropHandler: function(e) {
+    canvasDropHandler: function(evt) {
       // Prevent Ubuntu FF 22.0 from refreshing the page.
-      e.halt();
+      evt.halt();
+      var files = evt._event.dataTransfer.files;
       var topo = this.get('component');
-      var evt = e._event;
-      var fileSources = evt.dataTransfer.files;
       var env = topo.get('env');
       var db = topo.get('db');
-      if (fileSources && fileSources.length) {
+      return this._canvasDropHandler(files, topo, env, db, evt._event);
+    },
+
+    _canvasDropHandler: function(files, topo, env, db, evt) {
+      var self = this;
+      if (files && files.length) {
         // If it is a file from the users file system being dropped.
-        Array.prototype.forEach.call(fileSources, function(file) {
+        Array.prototype.forEach.call(files, function(file) {
           // In order to support the user dragging and dropping multiple files
           // of mixed types we handle each file individually.
           var ext = file.name.split('.').slice(-1).toString();
@@ -651,7 +655,7 @@ YUI.add('juju-topology-service', function(Y) {
           if ((file.type === 'application/zip' ||
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
-            localCharmHelpers.deployLocalCharm(file, env, db);
+            self._deployLocalCharm(file, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
             bundleImportHelpers.deployBundleFiles(file, env, db);
@@ -660,7 +664,13 @@ YUI.add('juju-topology-service', function(Y) {
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         this._deployFromCharmbrowser(evt, topo);
+        return;
       }
+      return 'event ignored';
+    },
+
+    _deployLocalCharm: function(file, env, db) {
+      bundleImportHelpers.deployBundleFiles(file, env, db);
     },
 
     /**

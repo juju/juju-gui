@@ -399,18 +399,13 @@ describe('service module events', function() {
       }
     };
 
-    // mock out the Y.BundleHelpers call.
-    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
-    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+    // Turn _deployLocalCharm into an assert-only nop.
+    serviceModule._deployLocalCharm = function(files, env, db) {
       assert.deepEqual(files, file);
       assert.isObject(env);
       assert.isObject(db);
-      // Restore the deployBundleFiles call for future tests.
-      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
       done();
     };
-
-    serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
@@ -432,19 +427,141 @@ describe('service module events', function() {
       }
     };
 
-    // mock out the Y.BundleHelpers call.
-    var deployLocalCharm = juju.localCharmHelpers.deployLocalCharm;
-    juju.localCharmHelpers.deployLocalCharm = function(files, env, db) {
+    // Turn _deployLocalCharm into an assert-only nop.
+    serviceModule._deployLocalCharm = function(files, env, db) {
       assert.deepEqual(files, file);
       assert.isObject(env);
       assert.isObject(db);
-      // Restore the deployBundleFiles call for future tests.
-      juju.localCharmHelpers.deployLocalCharm = deployLocalCharm;
       done();
     };
 
-    serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
 });
+
+describe('canvasDropHandler', function() {
+  var Y, views, utils, models, serviceModule;
+
+  // Requiring this much setup (before() and beforeEach() to call a single
+  // method on a single object is obscene.
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('defers its implementatino to _canvasDropHandler', function() {
+    var files = {length: 2};
+    var evt = {
+      _event: {dataTransfer: {files: files}},
+      halt: function() {}
+    };
+    // Calling both functions with arguments that result in an early-out is the
+    // easiest way to show that the one is just a shim around the other.
+    assert.equal(
+      serviceModule.canvasDropHandler(evt),
+      serviceModule._canvasDropHandler(files));
+  });
+
+  it('halts the event so FF does not try to reload the page', function(done) {
+    var evt = {
+      _event: {dataTransfer: {files: {length: 2}}},
+      halt: function() {done();}
+    };
+    serviceModule.canvasDropHandler(evt);
+  });
+
+});
+
+describe('_canvasDropHandler', function() {
+  var Y, views, utils, models, serviceModule;
+
+  // Requiring this much setup (before() and beforeEach() to call a single
+  // method on a single object is obscene.
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('ignores drop events that contain more than one file', function() {
+    var files = {length: 2};
+    assert.equal(serviceModule._canvasDropHandler(files), 'event ignored');
+  });
+
+  it('deploys charms dropped from the sidebar', function(done) {
+    var files = {};
+    var self = {
+      _deployFromCharmbrowser: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)(files);
+  });
+
+  it('deploys a zipped charm directory when dropped', function(done) {
+    var file = {name: 'charm.zip', type: 'application/zip'};
+    var self = {
+      _deployLocalCharm: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)([file]);
+  });
+
+  it('recognizes zip files of type x-zip-compressed', function(done) {
+    var file = {name: 'charm.zip', type: 'application/x-zip-compressed'};
+    var files = {length: 1, 0: file};
+    var self = {
+      _deployLocalCharm: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)(files);
+  });
+
+});
+
