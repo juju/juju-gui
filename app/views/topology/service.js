@@ -672,7 +672,7 @@ YUI.add('juju-topology-service', function(Y) {
 
     _deployLocalCharm: function(file, topo, env, db) {
       topo.fire('destroyServiceInspector');
-      bundleImportHelpers.deployBundleFiles(file, env, db);
+      localCharmHelpers.deployLocalCharm(file, env, db);
     },
 
     /**

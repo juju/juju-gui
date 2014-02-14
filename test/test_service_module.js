@@ -382,7 +382,7 @@ describe('service module events', function() {
   });
 
   it('deploys a local charm on .zip file drop events', function() {
-    var file = {
+    var fakeFile = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
       // This MIME type is used in Chrome and Firefox, see the
@@ -394,7 +394,7 @@ describe('service module events', function() {
       _event: {
         dataTransfer: {
           // All we need to fake things out is to have a file.
-          files: [file]
+          files: [fakeFile]
         }
       }
     };
@@ -405,20 +405,24 @@ describe('service module events', function() {
         juju.localCharmHelpers, 'deployLocalCharm');
     topoFireStub = utils.makeStubMethod(view.topo, 'fire');
 
+    var _deployLocalCharmCalled = false;
     serviceModule.set('component', view.topo);
+    serviceModule._deployLocalCharm = function(file) {
+      assert.deepEqual(file, fakeFile);
+      _deployLocalCharmCalled = true;
+    };
     serviceModule.canvasDropHandler(fakeEventObject);
+    assert.isTrue(_deployLocalCharmCalled);
 
-    var args = deployLocalCharmStub.lastArguments();
-    assert.deepEqual(args[0], file);
-    assert.isObject(args[1]);
-    assert.isObject(args[2]);
+  });
 
-    // Check to make sure the event to destroy any previously
-    // open inspector is fired
+  it('fires the event to destroy pre-existing inspectors', function() {
+    // Check to make sure the event to destroy any previously open inspector is
+    // fired.
+    var topoFireStub = utils.makeStubMethod(view.topo, 'fire');
+    serviceModule._deployLocalCharm(null, view.topo);
     assert.equal(topoFireStub.calledOnce(), true);
     assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
-
-    deployLocalCharmStub.reset();
     topoFireStub.reset();
   });
 
