@@ -625,14 +625,12 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * Handle deploying services by dropping a charm from the charm browser,
-     * a bundle yaml deployer file, or zip containing a local charm
-     * onto the canvas.
+     * This is a shim around _canvasDropHandler which does the real work.
      *
      * @method canvasDropHandler
-     * @param {Y.EventFacade} e the drop event object.
-     * @static
-     * @return {undefined} Nothing.
+     * @param {Y.EventFacade} evt The drop event object.
+     * @return {Object} Either undefined or the string "event ignored" (for
+     *   testing purposes).
      */
     canvasDropHandler: function(evt) {
       // Prevent Ubuntu FF 22.0 from refreshing the page.
@@ -644,6 +642,20 @@ YUI.add('juju-topology-service', function(Y) {
       return this._canvasDropHandler(files, topo, env, db, evt._event);
     },
 
+    /**
+     * Handle deploying services by dropping a charm from the charm browser,
+     * a bundle yaml deployer file, or zip containing a local charm
+     * onto the canvas.
+     *
+     * @method _canvasDropHandler
+     * @param {Array} files The files dropped on the browser (if any).
+     * @param {Object} topo The topology.
+     * @param {Object} env The environment.
+     * @param {Object} db The database.
+     * @param {Object} evt The browser-generated (non-YUI) drop event.
+     * @return {Object} Either undefined or the string "event ignored" (for
+     *   testing purposes).
+     */
     _canvasDropHandler: function(files, topo, env, db, evt) {
       var self = this;
       if (files && files.length) {
@@ -670,6 +682,15 @@ YUI.add('juju-topology-service', function(Y) {
       return 'event ignored';
     },
 
+    /**
+     * Deploy a local charm.
+     *
+     * @method _deployLocalCharm
+     * @param {Object} topo The topology.
+     * @param {Object} env The environment.
+     * @param {Object} db The database.
+     * @return {undefined} Nothing.
+     */
     _deployLocalCharm: function(file, topo, env, db) {
       topo.fire('destroyServiceInspector');
       localCharmHelpers.deployLocalCharm(file, env, db);

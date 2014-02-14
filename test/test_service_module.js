@@ -400,11 +400,6 @@ describe('service module events', function() {
     };
 
     // mock out the Y.BundleHelpers call.
-    var deployLocalCharmStub, topoFireStub;
-    deployLocalCharmStub = utils.makeStubMethod(
-        juju.localCharmHelpers, 'deployLocalCharm');
-    topoFireStub = utils.makeStubMethod(view.topo, 'fire');
-
     var _deployLocalCharmCalled = false;
     serviceModule.set('component', view.topo);
     serviceModule._deployLocalCharm = function(file) {
@@ -512,8 +507,8 @@ describe('canvasDropHandler', function() {
     // Calling both functions with arguments that result in an early-out is the
     // easiest way to show that the one is just a shim around the other.
     assert.equal(
-      serviceModule.canvasDropHandler(evt),
-      serviceModule._canvasDropHandler(files));
+        serviceModule.canvasDropHandler(evt),
+        serviceModule._canvasDropHandler(files));
   });
 
   it('halts the event so FF does not try to reload the page', function(done) {
