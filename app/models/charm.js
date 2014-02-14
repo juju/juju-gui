@@ -802,10 +802,69 @@ YUI.add('juju-charm-models', function(Y) {
         return result[0];
       }
       return null;
+    },
+
+    /**
+      Add a charm to this model list building the model instance from the
+      provided charm data.
+
+      @method addFromCharmData
+      @param {Object} metadata The charm's metadata as a YAML decoded object.
+      @param {String} series The Ubuntu series for this charm.
+      @param {Int} revision The charm revision number.
+      @param {String} scheme The charm scheme (e.g. "cs" or "local").
+      @param {Object} options Optional YAML decoded charm's config options.
+      @return {Object} The resulting charm model instance.
+    */
+    addFromCharmData: function(metadata, series, revision, scheme, options) {
+      var id = series + '/' + metadata.name + '-' + revision;
+      var data = {
+        categories: metadata.categories,
+        description: metadata.description,
+        distro_series: series,
+        id: id,
+        is_subordinate: metadata.subordinate,
+        name: metadata.name,
+        options: options,
+        relations: {
+          provides: metadata.provides,
+          requires: metadata.requires,
+          peers: metadata.peers
+        },
+        revision: revision,
+        summary: metadata.summary,
+        url: scheme + ':' + id
+      };
+      return this.add(data);
     }
+
   }, {
     ATTRS: {}
   });
+
+  /**
+    Validate the given charm metadata.
+    Ensure the metadata at least includes the charm name, summary and
+    description.
+
+    @method validateCharmMetadata
+    @param {Object} metadata The charm's metadata as a YAML decoded object.
+    @return {Array} A list of errors in the metadata. An empty list if the
+      metadata is valid.
+  */
+  models.validateCharmMetadata = function(metadata) {
+    var errors = [];
+    // According to https://juju.ubuntu.com/docs/authors-charm-metadata.html,
+    // name, summary and description are the only required fields.
+    ['name', 'summary', 'description'].forEach(function(name) {
+      var value = metadata[name] || '';
+      var stringValue = value + '';
+      if (!stringValue.trim()) {
+        errors.push('missing ' + name);
+      }
+    });
+    return errors;
+  };
 
 }, '0.1.0', {
   requires: [

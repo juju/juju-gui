@@ -109,109 +109,134 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
-    describe('lowerBasename', function() {
+    describe('splitPath', function() {
 
-      it('returns the lower-cased base name of the given path', function() {
-        var name = ziputils.lowerBasename('/my/path/to/File.EXT');
-        assert.strictEqual(name, 'file.ext');
+      it('correctly splits a full path', function() {
+        var pathInfo = ziputils.splitPath('/my/path/filename.ext');
+        assert.strictEqual(pathInfo.dirname, '/my/path');
+        assert.strictEqual(pathInfo.basename, 'filename.ext');
       });
 
-      it('works when a base name is given instead of a full path', function() {
-        var name = ziputils.lowerBasename('file.tar.gz');
-        assert.strictEqual(name, 'file.tar.gz');
+      it('correctly splits a relative path', function() {
+        var pathInfo = ziputils.splitPath('relative/filename.ext');
+        assert.strictEqual(pathInfo.dirname, 'relative');
+        assert.strictEqual(pathInfo.basename, 'filename.ext');
       });
 
-      it('returns an empty string when a directory is passed', function() {
-        var name = ziputils.lowerBasename('/my/path/');
-        assert.strictEqual(name, '');
+      it('correctly splits a directory path', function() {
+        var pathInfo = ziputils.splitPath('/my/path/');
+        assert.strictEqual(pathInfo.dirname, '/my/path');
+        assert.strictEqual(pathInfo.basename, '');
       });
 
-      it('returns an empty string when an empty string is passed', function() {
-        var name = ziputils.lowerBasename('');
-        assert.strictEqual(name, '');
-      });
-
-    });
-
-    describe('entryNameIn', function() {
-      var names = ['these', 'are', 'the', 'voyages'];
-      var func;
-
-      beforeEach(function() {
-        // Retrieve the resulting function.
-        func = ziputils.entryNameIn(names);
-      });
-
-      it('returns a function', function() {
-        assert.strictEqual(typeof func, 'function');
-      });
-
-      it('handles entries contained in the given choices', function() {
-        var entry = {directory: false, filename: 'voyages'};
-        assert.strictEqual(func(entry), true);
-      });
-
-      it('checks entries by their lower cased base name', function() {
-        var entry = {directory: false, filename: '/path/to/Voyages'};
-        assert.strictEqual(func(entry), true);
-      });
-
-      it('handles entries excluded from the given choices', function() {
-        var entry = {directory: false, filename: 'bad-choice'};
-        assert.strictEqual(func(entry), false);
-      });
-
-      it('does not include directory entries', function() {
-        var entry = {directory: true, filename: 'voyages'};
-        assert.strictEqual(func(entry), false);
+      it('correctly splits a file path', function() {
+        var pathInfo = ziputils.splitPath('filename.ext');
+        assert.strictEqual(pathInfo.dirname, '');
+        assert.strictEqual(pathInfo.basename, 'filename.ext');
       });
 
     });
 
-    describe('addByName', function() {
-      var current;
+    describe('findCharmEntries', function() {
 
-      beforeEach(function() {
-        // Set up the current object.
-        current = Object.create(null);
-      });
-
-      it('correctly adds the entry to the current object', function() {
-        var entry = {filename: 'myfile.zip'};
-        var newCurrent = ziputils.addByName(current, entry);
-        assert.deepEqual(newCurrent, {'myfile.zip': entry});
-      });
-
-      it('adds the entry storing its lower cased base name', function() {
-        var entry = {filename: '/path/to/MyFile.ZIP'};
-        var newCurrent = ziputils.addByName(current, entry);
-        assert.deepEqual(newCurrent, {'myfile.zip': entry});
-      });
-
-      it('does not modify the current object in place', function() {
-        var entry = {filename: 'myfile.zip'};
-        ziputils.addByName(current, entry);
-        assert.deepEqual(current, {});
-      });
-
-    });
-
-    describe('getEntriesByNames', function() {
-      var names = ['file1.txt', 'file2.yaml'];
-      var allEntries = [
-        {directory: false, filename: 'bad-file1'},
-        {directory: true, filename: 'file1.txt'},  // This is a dir.
-        // The last two entries should be included in the returned object.
-        {directory: false, filename: '/path/to/File1.TXT'},
-        {directory: false, filename: 'file2.yaml'}
-      ];
-
-      it('filters and returns the requested entries', function() {
-        var entries = ziputils.getEntriesByNames(allEntries, names);
+      it('finds all the charm interesting files', function() {
+        var configEntry = {directory: false, filename: '/foo/config.yaml'};
+        var metadataEntry = {directory: false, filename: '/foo/metadata.yaml'};
+        var readmeEntry = {directory: false, filename: '/foo/README.rst'};
+        var revisionEntry = {directory: false, filename: '/foo/revision'};
+        var allEntries = [
+          {directory: false, filename: 'file1.py'},
+          {directory: true, filename: 'foo'},
+          configEntry,
+          {directory: false, filename: '/foo/file2.yaml'},
+          metadataEntry,
+          revisionEntry,
+          {directory: false, filename: '/foo/file2.yaml'},
+          readmeEntry
+        ];
         var expectedEntries = {
-          'file1.txt': allEntries[2],
-          'file2.yaml': allEntries[3]
+          config: configEntry,
+          metadata: metadataEntry,
+          readme: readmeEntry,
+          revision: revisionEntry
         };
+        var entries = ziputils.findCharmEntries(allEntries);
+        assert.deepEqual(entries, expectedEntries);
+      });
+
+      it('returns the entries found, even if some are missing', function() {
+        var metadataEntry = {directory: false, filename: 'metadata.yaml'};
+        var revisionEntry = {directory: false, filename: 'revision'};
+        var allEntries = [
+          metadataEntry,
+          {directory: false, filename: 'HACKING.rst'},
+          revisionEntry,
+          {directory: false, filename: 'tests/setup.py'}
+        ];
+        var expectedEntries = {
+          metadata: metadataEntry,
+          revision: revisionEntry
+        };
+        var entries = ziputils.findCharmEntries(allEntries);
+        assert.deepEqual(entries, expectedEntries);
+      });
+
+      it('returns an empty object if no entries are found', function() {
+        var allEntries = [
+          {directory: true, filename: 'mycharm'},
+          {directory: true, filename: 'mycharm/hooks'},
+          {directory: false, filename: 'mycharm/hooks/start'}
+        ];
+        var entries = ziputils.findCharmEntries(allEntries);
+        assert.deepEqual(entries, {});
+      });
+
+      it('ignores pseudo entries in non-charm-root directories', function() {
+        var metadataEntry = {
+          directory: false,
+          filename: '/mycharm/metadata.yaml'
+        };
+        var readmeEntry = {directory: false, filename: '/mycharm/README'};
+        var allEntries = [
+          {directory: true, filename: 'mycharm'},
+          metadataEntry,
+          {directory: true, filename: 'mycharm/hooks'},
+          // Since we already know the charm root is "mycharm/", the config
+          // found in the "mycharm/hooks/"" directory is ignored.
+          {directory: false, filename: 'mycharm/hooks/config.yaml'},
+          readmeEntry,
+          // Since we already know the charm root is "mycharm/", the revision
+          // found in the zip root directory is ignored.
+          {directory: false, filename: 'revision'}
+        ];
+        var expectedEntries = {
+          metadata: metadataEntry,
+          readme: readmeEntry
+        };
+        var entries = ziputils.findCharmEntries(allEntries);
+        assert.deepEqual(entries, expectedEntries);
+      });
+
+      it('finds exotic documentation files', function() {
+        var entries, readmeEntry;
+        var readmeNames = ['README.txt', 'ReadMeCarefully.md', 'readme'];
+        readmeNames.forEach(function(name) {
+          readmeEntry = {directory: false, filename: name};
+          entries = ziputils.findCharmEntries([readmeEntry]);
+          assert.deepEqual(entries, {readme: readmeEntry}, name);
+        });
+      });
+
+      it('excludes directories', function() {
+        var configEntry = {directory: false, filename: '/mycharm/config.yaml'};
+        var allEntries = [
+          configEntry,
+          // The following directories are excluded even if their names match.
+          {directory: true, filename: '/mycharm/metadata.yaml'},
+          {directory: true, filename: '/mycharm/revision'}
+        ];
+        var expectedEntries = {config: configEntry};
+        var entries = ziputils.findCharmEntries(allEntries);
         assert.deepEqual(entries, expectedEntries);
       });
 
