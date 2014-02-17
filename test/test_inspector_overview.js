@@ -198,22 +198,47 @@ describe('Inspector Overview', function() {
        assert.equal(4, message.Params.NumUnits);
      });
 
-  it('should disable and enable the unit control appropriately', function() {
+  it('disables unit control while adding units, then reenables', function() {
     setUpInspector();
     var control = container.one('.num-units-control');
     control.set('value', 7);
     control.simulate('keydown', { keyCode: ENTER });
-    // confirm the 'please confirm constraints' dialogue
+    // Confirm the 'please confirm constraints' dialogue.
     container.one('.confirm-num-units').simulate('click');
+    // During scaling the control is disabled.
     assert.isTrue(control.get('disabled'));
+    // Generate a message that indicates the service is done scaling.
     var message = conn.last_message();
     conn.msg({
       RequestId: message.RequestId,
       Error: undefined,
       Response: {Units: message.Params.NumUnits}
     });
+    // Now that scaling is complete, the control is reenabled.
     assert.isFalse(control.get('disabled'));
   });
+
+  it('disables unit control while removing units, then reenables', function() {
+    setUpInspector();
+    var control = container.one('.num-units-control');
+    // There are already more than one units deployed for the service.
+    assert.isTrue(control.get('value') > 1, 'value starts greater than one');
+    // Scale the number of units down and show that the control is reenabled.
+    control.set('value', 1);
+    control.simulate('keydown', { keyCode: ENTER });
+    // During scaling the control is disabled.
+    assert.isTrue(control.get('disabled'), 'disabled while scaling down');
+    // Generate a message that indicates the service is done scaling.
+    var message = conn.last_message();
+    conn.msg({
+      RequestId: message.RequestId,
+      Error: undefined,
+      Response: {Units: message.Params.NumUnits}
+    });
+    // Now that scaling is complete, the control is reenabled.
+    assert.isFalse(control.get('disabled'), 'enabled after scaling down');
+  });
+
 
   it('should set the constraints before deploying any more units',
      function() {
