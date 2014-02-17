@@ -74,6 +74,8 @@ YUI.add('juju-view-inspector', function(Y) {
       if (/^\d+$/.test(numUnits)) {
         numUnits = parseInt(numUnits, 10);
         if (numUnits > currentUnits) {
+          // We only confirm unit count increases because they may (directly)
+          // cost the user money.
           this._confirmUnitConstraints(numUnits);
         } else {
           this._modifyUnits(numUnits);
@@ -225,7 +227,6 @@ YUI.add('juju-view-inspector', function(Y) {
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);
       }
-      db.fire('update');
       field.set('disabled', false);
     },
 
@@ -265,8 +266,9 @@ YUI.add('juju-view-inspector', function(Y) {
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);
       }
-      db.fire('update');
-      // View is redrawn so we do not need to enable field.
+      this.viewletManager.get('container')
+        .one('.num-units-control')
+        .set('disabled', false);
     }
   };
 
