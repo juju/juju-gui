@@ -625,26 +625,42 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+     * This is a shim around _canvasDropHandler which does the real work.
+     *
+     * @method canvasDropHandler
+     * @param {Y.EventFacade} evt The drop event object.
+     * @return {Object} Either undefined or the string "event ignored" (for
+     *   testing purposes).
+     */
+    canvasDropHandler: function(evt) {
+      // Prevent Ubuntu FF 22.0 from refreshing the page.
+      evt.halt();
+      var files = evt._event.dataTransfer.files;
+      var topo = this.get('component');
+      var env = topo.get('env');
+      var db = topo.get('db');
+      return this._canvasDropHandler(files, topo, env, db, evt._event);
+    },
+
+    /**
      * Handle deploying services by dropping a charm from the charm browser,
      * a bundle yaml deployer file, or zip containing a local charm
      * onto the canvas.
      *
-     * @method canvasDropHandler
-     * @param {Y.EventFacade} e the drop event object.
-     * @static
-     * @return {undefined} Nothing.
+     * @method _canvasDropHandler
+     * @param {Array} files The files dropped on the browser (if any).
+     * @param {Object} topo The topology.
+     * @param {Object} env The environment.
+     * @param {Object} db The database.
+     * @param {Object} evt The browser-generated (non-YUI) drop event.
+     * @return {Object} Either undefined or the string "event ignored" (for
+     *   testing purposes).
      */
-    canvasDropHandler: function(e) {
-      // Prevent Ubuntu FF 22.0 from refreshing the page.
-      e.halt();
-      var topo = this.get('component');
-      var evt = e._event;
-      var fileSources = evt.dataTransfer.files;
-      var env = topo.get('env');
-      var db = topo.get('db');
-      if (fileSources && fileSources.length) {
+    _canvasDropHandler: function(files, topo, env, db, evt) {
+      var self = this;
+      if (files && files.length) {
         // If it is a file from the users file system being dropped.
-        Array.prototype.forEach.call(fileSources, function(file) {
+        Array.prototype.forEach.call(files, function(file) {
           // In order to support the user dragging and dropping multiple files
           // of mixed types we handle each file individually.
           var ext = file.name.split('.').slice(-1).toString();
@@ -652,8 +668,7 @@ YUI.add('juju-topology-service', function(Y) {
           if ((file.type === 'application/zip' ||
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
-            topo.fire('destroyServiceInspector');
-            localCharmHelpers.deployLocalCharm(file, env, db);
+            self._deployLocalCharm(file, topo, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
             bundleImportHelpers.deployBundleFiles(file, env, db);
@@ -662,7 +677,23 @@ YUI.add('juju-topology-service', function(Y) {
       } else {
         // Handle dropping charm/bundle tokens from the left side bar.
         this._deployFromCharmbrowser(evt, topo);
+        return;
       }
+      return 'event ignored';
+    },
+
+    /**
+     * Deploy a local charm.
+     *
+     * @method _deployLocalCharm
+     * @param {Object} topo The topology.
+     * @param {Object} env The environment.
+     * @param {Object} db The database.
+     * @return {undefined} Nothing.
+     */
+    _deployLocalCharm: function(file, topo, env, db) {
+      topo.fire('destroyServiceInspector');
+      localCharmHelpers.deployLocalCharm(file, env, db);
     },
 
     /**

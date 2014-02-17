@@ -382,7 +382,7 @@ describe('service module events', function() {
   });
 
   it('deploys a local charm on .zip file drop events', function() {
-    var file = {
+    var fakeFile = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
       // This MIME type is used in Chrome and Firefox, see the
@@ -394,32 +394,34 @@ describe('service module events', function() {
       _event: {
         dataTransfer: {
           // All we need to fake things out is to have a file.
-          files: [file]
+          files: [fakeFile]
         }
       }
     };
 
     // mock out the Y.BundleHelpers call.
-    var deployLocalCharmStub, topoFireStub;
-    deployLocalCharmStub = utils.makeStubMethod(
-        juju.localCharmHelpers, 'deployLocalCharm');
-    topoFireStub = utils.makeStubMethod(view.topo, 'fire');
-
+    var _deployLocalCharmCalled = false;
     serviceModule.set('component', view.topo);
+    serviceModule._deployLocalCharm = function(file) {
+      assert.deepEqual(file, fakeFile);
+      _deployLocalCharmCalled = true;
+    };
     serviceModule.canvasDropHandler(fakeEventObject);
+    assert.isTrue(_deployLocalCharmCalled);
 
-    var args = deployLocalCharmStub.lastArguments();
-    assert.deepEqual(args[0], file);
-    assert.isObject(args[1]);
-    assert.isObject(args[2]);
+  });
 
-    // Check to make sure the event to destroy any previously
-    // open inspector is fired
+  it('fires the event to destroy pre-existing inspectors', function() {
+    // Check to make sure the event to destroy any previously open inspector is
+    // fired.
+    var topoFireStub = utils.makeStubMethod(view.topo, 'fire');
+    var deployLocalCharmStub = utils.makeStubMethod(
+        juju.localCharmHelpers, 'deployLocalCharm');
+    serviceModule._deployLocalCharm(null, view.topo);
     assert.equal(topoFireStub.calledOnce(), true);
     assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
-
-    deployLocalCharmStub.reset();
     topoFireStub.reset();
+    deployLocalCharmStub.reset();
   });
 
   it('deploys a local charm on .zip file drop events (IE)', function() {
@@ -446,7 +448,6 @@ describe('service module events', function() {
         juju.localCharmHelpers, 'deployLocalCharm');
     topoFireStub = utils.makeStubMethod(view.topo, 'fire');
 
-    serviceModule.set('component', view.topo);
     serviceModule.canvasDropHandler(fakeEventObject);
 
     var args = deployLocalCharmStub.lastArguments();
@@ -464,3 +465,129 @@ describe('service module events', function() {
   });
 
 });
+
+describe('canvasDropHandler', function() {
+  var Y, views, utils, models, serviceModule;
+
+  // Requiring this much setup (before() and beforeEach() to call a single
+  // method on a single object is obscene.
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('defers its implementatino to _canvasDropHandler', function() {
+    var files = {length: 2};
+    var evt = {
+      _event: {dataTransfer: {files: files}},
+      halt: function() {}
+    };
+    // Calling both functions with arguments that result in an early-out is the
+    // easiest way to show that the one is just a shim around the other.
+    assert.equal(
+        serviceModule.canvasDropHandler(evt),
+        serviceModule._canvasDropHandler(files));
+  });
+
+  it('halts the event so FF does not try to reload the page', function(done) {
+    var evt = {
+      _event: {dataTransfer: {files: {length: 2}}},
+      halt: function() {done();}
+    };
+    serviceModule.canvasDropHandler(evt);
+  });
+
+});
+
+describe('_canvasDropHandler', function() {
+  var Y, views, utils, models, serviceModule;
+
+  // Requiring this much setup (before() and beforeEach() to call a single
+  // method on a single object is obscene.
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'juju-models',
+      'juju-tests-utils',
+      'juju-views'],
+    function(Y) {
+      models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    var viewContainer = utils.makeContainer(this);
+    var db = new models.Database();
+    var env = {
+      update_annotations: function(name, type, data) {},
+      get: function() {}};
+    var view = new views.environment({
+      container: viewContainer,
+      db: db,
+      env: env
+    });
+    view.render();
+    view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
+  });
+
+  it('ignores drop events that contain more than one file', function() {
+    var files = {length: 2};
+    assert.equal(serviceModule._canvasDropHandler(files), 'event ignored');
+  });
+
+  it('deploys charms dropped from the sidebar', function(done) {
+    var files = {};
+    var self = {
+      _deployFromCharmbrowser: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)(files);
+  });
+
+  it('deploys a zipped charm directory when dropped', function(done) {
+    var file = {name: 'charm.zip', type: 'application/zip'};
+    var self = {
+      _deployLocalCharm: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)([file]);
+  });
+
+  it('recognizes zip files of type x-zip-compressed', function(done) {
+    var file = {name: 'charm.zip', type: 'application/x-zip-compressed'};
+    var files = {length: 1, 0: file};
+    var self = {
+      _deployLocalCharm: function() {done();}
+    };
+    Y.bind(serviceModule._canvasDropHandler, self)(files);
+  });
+
+});
+
