@@ -227,7 +227,6 @@ YUI.add('juju-view-inspector', function(Y) {
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);
       }
-      db.fire('update');
       field.set('disabled', false);
     },
 
@@ -267,7 +266,6 @@ YUI.add('juju-view-inspector', function(Y) {
         service.set(
             'unit_count', service.get('unit_count') - unit_names.length);
       }
-      db.fire('update');
       this.viewletManager.get('container')
         .one('.num-units-control')
         .set('disabled', false);
