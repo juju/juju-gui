@@ -415,10 +415,13 @@ describe('service module events', function() {
     // Check to make sure the event to destroy any previously open inspector is
     // fired.
     var topoFireStub = utils.makeStubMethod(view.topo, 'fire');
+    var deployLocalCharmStub = utils.makeStubMethod(
+        juju.localCharmHelpers, 'deployLocalCharm');
     serviceModule._deployLocalCharm(null, view.topo);
     assert.equal(topoFireStub.calledOnce(), true);
     assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
     topoFireStub.reset();
+    deployLocalCharmStub.reset();
   });
 
   it('deploys a local charm on .zip file drop events (IE)', function() {
