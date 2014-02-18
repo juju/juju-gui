@@ -178,7 +178,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
-      window.flags = {};
       if (!view.get('destroyed')) {
         view.destroy({remove: true});
       }
@@ -260,7 +259,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               .should.equal(2);
 
           // Count all the subordinate relations.
-          container.all('.subordinate-rel-group').size()
+          container.all('.rel-group .subordinate').size()
               .should.equal(1);
 
           // Verify that the paths render 'properly' where this
@@ -983,11 +982,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          var relation = container.one(
               '#' + views.utils.generateSafeDOMId('relation-0000000001') +
-              ' .rel-label'),
+              ' .rel-indicator'),
          dialog_btn,
+         menu,
          panel;
 
          relation.simulate('click');
+         menu = container.one('#relation-menu');
+         menu.one('.relation-action').simulate('click');
          panel = Y.one('#rmrelation-modal-panel');
 
          // There should be a 'remove relation' button and a 'cancel' button
@@ -1004,9 +1006,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
        });
 
     it('builds a menu of relations in a collection', function() {
-      window.flags = {
-        'relationCollections': true
-      };
       db.onDelta({data: additionalRelations});
       view = new views.environment({
         container: container,
@@ -1019,7 +1018,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Single relation
       var relation = container.one(
           '#' + views.utils.generateSafeDOMId('relation-0000000001') +
-          ' .rel-label'),
+          ' .rel-indicator'),
           menu;
       relation.simulate('click');
       menu = container.one('#relation-menu');
@@ -1037,7 +1036,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       relation = container.one(
           '#' +
           views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
-          ' .rel-label');
+          ' .rel-indicator');
       relation.simulate('click');
       menu = container.one('#relation-menu');
 
@@ -1061,9 +1060,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('allows deletion of relations within collections', function() {
-      window.flags = {
-        'relationCollections': true
-      };
       db.onDelta({data: additionalRelations});
       view = new views.environment({
         container: container,
@@ -1075,7 +1071,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Single relation.
       var relation = container.one(
           '#' + views.utils.generateSafeDOMId('relation-0000000001') +
-          ' .rel-label'),
+          ' .rel-indicator'),
           dialog_btn,
           panel,
           menu;
@@ -1102,7 +1098,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       relation = container.one(
           '#' +
           views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
-          ' .rel-label');
+          ' .rel-indicator');
 
       relation.simulate('click');
       menu = Y.one('#relation-menu .menu');
@@ -1139,11 +1135,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          // Get a subordinate relation.
          var relation = container.one(
               '#' + views.utils.generateSafeDOMId('relation-0000000007') +
-              ' .rel-label'),
+              ' .rel-indicator'),
+         menu,
          dialog_btn,
          panel;
 
          relation.simulate('click');
+         menu = container.one('#relation-menu');
+         menu.one('.relation-action').simulate('click');
          panel = Y.one('#rmsubrelation-modal-panel');
 
          // There should only be a cancel button on the warning dialog.
@@ -1191,9 +1190,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
 
     it('stores relations in collections', function() {
-      window.flags = {
-        'relationCollections': true
-      };
       db.onDelta({data: additionalRelations});
       var view = new views.environment({
         container: container,
@@ -1214,7 +1210,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(db.relations.filter(function(relation) {
         return relation.get('scope') !== 'container';
       }).length, 4);
-      window.flags = {};
     });
 
     it('propagates the getModelURL function to the topology', function() {

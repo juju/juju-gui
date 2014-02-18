@@ -275,9 +275,9 @@ describe('Browser bundle detail view', function() {
     };
 
     view.on('topologyRendered', function(e) {
-      var relLabel = container.one('.rel-label');
-      assert.isNotNull(relLabel);
-      relLabel.simulate('click');
+      var relIndicator = container.one('.rel-indicator');
+      assert.isNotNull(relIndicator);
+      relIndicator.simulate('click');
       assert.isNotNull(container.one('.topology-canvas'));
       // Check that the bundle topology tab is the landing tab.
       assert.equal(view.tabview.get('selection').get('hash'), '#bundle');

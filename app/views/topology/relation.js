@@ -54,12 +54,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
     events: {
       scene: {
-        '.sub-rel-block': {
-          mouseenter: 'subRelBlockMouseEnter',
-          mouseleave: 'subRelBlockMouseLeave',
-          click: 'subRelBlockClick'
-        },
-        '.rel-label': {
+        '.rel-indicator': {
           click: 'relationClick',
           mousemove: 'mousemove'
         },
@@ -231,9 +226,6 @@ YUI.add('juju-topology-relation', function(Y) {
           decorated.push(decoratedRelation);
         }
       });
-      if (!window.flags.relationCollections) {
-        return decorated;
-      }
       return utils.toRelationCollections(decorated);
     },
 
@@ -281,14 +273,19 @@ YUI.add('juju-topology-relation', function(Y) {
                       .getConnectorPair(relation.target);
             var s = connectors[0];
             var t = connectors[1];
+            // Retrieve the actual distance between the connectors to create
+            // a stroke-array, leaving a gap for the indicator (the background
+            // of which is transparent and will show the relation line).
+            var length = relation.source._distance(s, t);
             rel_group.select('line')
                   .attr('x1', s[0])
                   .attr('y1', s[1])
                   .attr('x2', t[0])
-                  .attr('y2', t[1]);
+                  .attr('y2', t[1])
+                  .attr('stroke-dasharray', [length / 2 - 9, 18]);
             // Find the label for this relation line and adjust it to the mid
             // point.
-            var label = rel_group.select('.rel-label');
+            var label = rel_group.select('.rel-indicator');
             label.attr('transform', function(d) {
               var points = topUtils.findCenterPoint(s, t);
               return 'translate(' + points + ')';
@@ -312,31 +309,16 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('id', function(d) {
             return utils.generateSafeDOMId(d.id);
           })
-              .attr('class', function(d) {
-                // Mark the rel-group as a subordinate relation if need be.
-                return (d.isSubordinate ? 'subordinate-rel-group ' : '') +
-                    'rel-group';
-              })
+              .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
                 // Style relation lines differently depending on status.
-                if (!window.flags.relationCollections) {
-                  return (d.pending ? 'pending-relation ' : '') +
-                      (d.isSubordinate ? 'subordinate-relation ' : '') +
-                      'relation';
-                }
                 return 'relation ' + d.aggregatedStatus;
               });
 
-      // XXX Makyo 2014-01-28 rel-label will need to change with addition of
-      // the menu.  This will be part of the styling card.
-      g.selectAll('.rel-label').remove();
-      g.selectAll('rect').remove();
-      if (!window.flags.relationCollections) {
-        g.selectAll('text').remove();
-      }
+      g.selectAll('.rel-indicator').remove();
       var label = g.append('g')
-              .attr('class', 'rel-label')
+              .attr('class', 'rel-indicator')
               .attr('transform', function(d) {
                 // XXX: This has to happen on update, not enter
                 var connectors = d.source.getConnectorPair(d.target);
@@ -351,33 +333,19 @@ YUI.add('juju-topology-relation', function(Y) {
       label.append('text')
         .append('tspan')
         .text(function(d) {return d.display_name; });
-      var rect;
-      if (!window.flags.relationCollections) {
-        rect = label.insert('rect', 'text');
-      } else {
-        rect = label.append('image')
-          .attr('xlink:href', function(d) {
-              return (
-                  '/juju-ui/assets/svgs/relation-icon-' +
-                  d.aggregatedStatus + '.svg');
-            });
-      }
-      rect.attr('width', function(d) {
-        if (!window.flags.relationCollections) {
-          return d.display_name.length * 10 + 10;
-        }
-        return 20;
-      })
-        .attr('height', 20)
-        .attr('x', function() {
-            if (!window.flags.relationCollections) {
-              return -parseInt(d3.select(this).attr('width'), 10) / 2;
-            }
-            return -10;
-          })
-        .attr('y', -10)
-        .attr('rx', 10)
-        .attr('ry', 10);
+      var rect = label.append('image')
+        .attr('xlink:href', function(d) {
+            return (
+                '/juju-ui/assets/svgs/relation-icon-' +
+                d.aggregatedStatus + '.svg');
+          });
+      var imageSize = 20;
+      rect.attr('width', imageSize)
+        .attr('height', imageSize)
+        .attr('x', imageSize / -2)
+        .attr('y', imageSize / -2)
+        .attr('rx', imageSize / 2)
+        .attr('ry', imageSize / 2);
       return g;
     },
 
@@ -386,20 +354,19 @@ YUI.add('juju-topology-relation', function(Y) {
                 .getConnectorPair(relation.target);
       var s = connectors[0];
       var t = connectors[1];
+      var length = relation.source._distance(s, t);
       var link = d3.select(this);
+      var imageSize = 20;
 
       link
                 .attr('x1', s[0])
                 .attr('y1', s[1])
                 .attr('x2', t[0])
                 .attr('y2', t[1])
+                .attr('stroke-dasharray',
+          [length / 2 - (imageSize / 2), imageSize])
                 .attr('class', function(d) {
             // Style relation lines differently depending on status.
-            if (!window.flags.relationCollections) {
-              return (d.pending ? 'pending-relation ' : '') +
-                  (d.isSubordinate ? 'subordinate-relation ' : '') +
-                  'relation';
-            }
             return 'relation ' + d.aggregatedStatus;
           });
       return link;
@@ -704,14 +671,13 @@ YUI.add('juju-topology-relation', function(Y) {
 
     /**
      * Clear any states such as building a relation or showing
-     * subordinate relations.
+     * relation menu.
      *
      * @method clearState
      * @return {undefined} side effects only.
      */
     clearState: function() {
       this.cancelRelationBuild();
-      this.hideSubordinateRelations();
       this.set('relationMenuActive', false);
       this.set('relationMenuRelation', undefined);
     },
@@ -988,64 +954,6 @@ YUI.add('juju-topology-relation', function(Y) {
       });
     },
 
-    subRelBlockMouseEnter: function(d, self) {
-      // Add an 'active' class to all of the subordinate relations
-      // belonging to this service.
-      self.subordinateRelationsForService(d)
-    .forEach(function(p) {
-            utils.addSVGClass('#' + utils.generateSafeDOMId(p.id), 'active');
-          });
-    },
-
-    subRelBlockMouseLeave: function(d, self) {
-      // Remove 'active' class from all subordinate relations.
-      if (!self.keepSubRelationsVisible) {
-        utils.removeSVGClass('.subordinate-rel-group', 'active');
-      }
-    },
-
-    /**
-     * Toggle the visibility of subordinate relations for visibility
-     * or removal.
-     * @param {object} d The data-bound object (the subordinate).
-     * @param {object} self The view.
-     * @method subRelBlockClick
-     */
-    subRelBlockClick: function(d, self) {
-      if (self.keepSubRelationsVisible) {
-        self.hideSubordinateRelations();
-      } else {
-        self.showSubordinateRelations(this);
-      }
-    },
-
-    /**
-     * Show subordinate relations for a service.
-     *
-     * @method showSubordinateRelations
-     * @param {Object} subordinate The sub-rel-block g element in the form
-     * of a DOM node.
-     * @return {undefined} nothing.
-     */
-    showSubordinateRelations: function(subordinate) {
-      this.keepSubRelationsVisible = true;
-      utils.addSVGClass(Y.one(subordinate).one('.sub-rel-count'), 'active');
-    },
-
-    /**
-     * Hide subordinate relations.
-     *
-     * @method hideSubordinateRelations
-     * @return {undefined} nothing.
-     */
-    hideSubordinateRelations: function() {
-      var container = this.get('container');
-      utils.removeSVGClass('.subordinate-rel-group', 'active');
-      this.keepSubRelationsVisible = false;
-      utils.removeSVGClass(container.one('.sub-rel-count.active'),
-          'active');
-    },
-
     /**
      * Event handler for when the relation indicator or label is clicked.
      *
@@ -1056,15 +964,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     relationClick: function(relation, self) {
       if (self.get('disableRelationInteraction')) { return; }
-      if (!window.flags.relationCollections) {
-        if (relation.isSubordinate) {
-          self.showSubRelDialog();
-        } else {
-          self.removeRelationConfirm(relation, self);
-        }
-      } else {
-        self.showRelationMenu(relation);
-      }
+      self.showRelationMenu(relation);
     },
 
     /**
