@@ -339,12 +339,13 @@ YUI.add('juju-topology-relation', function(Y) {
                 '/juju-ui/assets/svgs/relation-icon-' +
                 d.aggregatedStatus + '.svg');
           });
-      rect.attr('width', 20)
-        .attr('height', 20)
-        .attr('x', -10)
-        .attr('y', -10)
-        .attr('rx', 10)
-        .attr('ry', 10);
+      var imageSize = 20;
+      rect.attr('width', imageSize)
+        .attr('height', imageSize)
+        .attr('x', imageSize / -2)
+        .attr('y', imageSize / -2)
+        .attr('rx', imageSize / 2)
+        .attr('ry', imageSize / 2);
       return g;
     },
 
@@ -355,13 +356,15 @@ YUI.add('juju-topology-relation', function(Y) {
       var t = connectors[1];
       var length = relation.source._distance(s, t);
       var link = d3.select(this);
+      var imageSize = 20;
 
       link
                 .attr('x1', s[0])
                 .attr('y1', s[1])
                 .attr('x2', t[0])
                 .attr('y2', t[1])
-                .attr('stroke-dasharray', [length / 2 - 10, 20])
+                .attr('stroke-dasharray',
+          [length / 2 - (imageSize / 2), imageSize])
                 .attr('class', function(d) {
             // Style relation lines differently depending on status.
             return 'relation ' + d.aggregatedStatus;
