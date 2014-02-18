@@ -254,6 +254,7 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinkEndpoints: function(evt) {
       var self = this;
       var service = evt.service;
+      var topo = self.get('component');
 
       if (!service.relations || service.relations.size() === 0) {
         return;
@@ -267,7 +268,8 @@ YUI.add('juju-topology-relation', function(Y) {
                    relation.target.id === service.id;
               }
           ), function(relation) {
-            var rel_group = d3.select(
+            // Select only the pertinent relation groups.
+            var rel_group = topo.vis.select(
                 '#' + utils.generateSafeDOMId(relation.id));
             var connectors = relation.source
                       .getConnectorPair(relation.target);
