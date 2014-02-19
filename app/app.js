@@ -650,6 +650,10 @@ YUI.add('juju-gui', function(Y) {
       ['dragenter', 'dragover', 'dragleave'].forEach(function(eventName) {
         Y.config.doc.addEventListener(eventName, this._boundAppDragOverHandler);
       }, this);
+
+      // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
+      // the inspector shortly this can be removed.
+      this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
     },
 
     /**
