@@ -546,9 +546,10 @@ describe('File drag over notification system', function() {
       var charmUrl = 'cs:precise/ghost-charm-4';
       var containerGetStub = testUtils.makeStubFunction(containerString);
       var charmGetStub = testUtils.makeStubFunction(charmUrl);
+      var modelMock = { get: charmGetStub };
       var inspector = {
         viewletManager: { get: containerGetStub },
-        model: { get: charmGetStub }
+        model: modelMock
       };
       var maskString = 'returned mask';
       var createInspectorMaskStub = testUtils.makeStubMethod(
@@ -574,6 +575,7 @@ describe('File drag over notification system', function() {
       var attachEventsArgs = attachEventsStub.lastArguments();
       assert.equal(attachEventsArgs[0], maskString);
       assert.equal(attachEventsArgs[1], 'precise');
+      assert.equal(attachEventsArgs[2], modelMock);
       assert.deepEqual(app.dragNotifications, [{
         mask: maskString,
         handlers: [handlerString]
@@ -607,23 +609,48 @@ describe('File drag over notification system', function() {
       var onStub = testUtils.makeStubFunction(handlerObject, handlerObject);
       var removeStub = testUtils.makeStubFunction();
       var preventStub = testUtils.makeStubFunction();
+
+      Y.namespace('juju.localCharmHelpers');
+      var uploadLocalStub = testUtils.makeStubMethod(
+          Y.juju.localCharmHelpers, 'uploadLocalCharm');
+      this._cleanups.push(uploadLocalStub.reset);
+
+      var getStub = testUtils.makeStubFunction('serviceId');
+      var modelObj = { get: getStub };
+
       var mask = {
         on: onStub,
         remove: removeStub
       };
       var series = 'precise';
-      var result = app._attachInspectorDropMaskEvents(mask, series);
+      var result = app._attachInspectorDropMaskEvents(mask, series, modelObj);
       assert.deepEqual(result, handlerObject);
       var onStubArgs = onStub.lastArguments();
       assert.equal(onStubArgs[0], 'drop');
       assert.isFunction(onStubArgs[1]);
       assert.deepEqual(onStubArgs[2], app);
       // Test the event callback
-      onStubArgs[1]({ preventDefault: preventStub });
+      onStubArgs[1]({
+        preventDefault: preventStub,
+        _event: { dataTransfer: { files: ['foo'] }}
+      });
       assert.equal(preventStub.calledOnce(), true);
       assert.equal(removeStub.calledOnce(), true);
       assert.equal(removeStub.lastArguments()[0], true);
       assert.equal(detachStub.calledOnce(), true);
+
+      assert.equal(uploadLocalStub.calledOnce(), true);
+      var uploadStubArgs = uploadLocalStub.lastArguments();
+      assert.equal(uploadStubArgs[0], series);
+      assert.equal(uploadStubArgs[1], 'foo');
+      // uploadStubArgs[2] //this.env
+      // uploadStubArgs[3] //this.db
+      assert.deepEqual(uploadStubArgs[4], {
+        upgrade: true,
+        serviceId: 'serviceId'
+      });
+
+      assert.equal(getStub.calledOnce(), true);
     });
 
     it('hideDragNotification: removes masks and detaches events', function() {

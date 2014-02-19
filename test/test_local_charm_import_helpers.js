@@ -340,8 +340,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Y.juju.models.Charm.prototype.load = oldMethod;
         });
         helper.loadCharmDetails('local:precise/ghost-4', envObj,
-            function(charm) {
+            function(charm, env) {
               assert.isObject(charm);
+              assert.deepEqual(env, envObj);
               done();
             });
       });
@@ -356,6 +357,64 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(args[1], 'foo');
         assert.deepEqual(args[2], {});
         stub.reset();
+      });
+    });
+
+    describe('_localCharmUpgradeCallback', function() {
+      var charmObj, envObj, getStub, optionsObj, setCharmStub;
+
+      beforeEach(function() {
+        setCharmStub = testUtils.makeStubFunction();
+        getStub = testUtils.makeStubFunction('charmId');
+        optionsObj = { serviceId: 'foo' };
+        charmObj = { get: getStub };
+        envObj = { setCharm: setCharmStub };
+      });
+
+      afterEach(function() {
+        setCharmStub = null;
+        getStub = null;
+        optionsObj = null;
+        charmObj = null;
+        envObj = null;
+      });
+
+      it('calls setCharm', function() {
+        helper._localCharmUpgradeCallback(dbObj, optionsObj, charmObj, envObj);
+        assert.equal(setCharmStub.calledOnce(), true);
+        var setCharmArgs = setCharmStub.lastArguments();
+        assert.deepEqual(setCharmArgs[0], optionsObj.serviceId);
+        assert.deepEqual(setCharmArgs[1], 'charmId');
+        assert.equal(setCharmArgs[2], false);
+        assert.isFunction(setCharmArgs[3]);
+      });
+
+      it('shows a notification on a failed charm upgrade', function() {
+        helper._localCharmUpgradeCallback(dbObj, optionsObj, charmObj, envObj);
+        var callback = setCharmStub.lastArguments()[3];
+        // Call the setCharm callback
+        callback({
+          err: 'it broke!',
+          service_name: 'hippopotamus'
+        });
+        assert.equal(notificationParams.title, 'Charm upgrade failed');
+        assert.equal(notificationParams.message,
+            'Upgrade for "hippopotamus" failed. it broke!');
+        assert.equal(notificationParams.level, 'error');
+      });
+
+      it('shows a notification on a successful charm upgrade', function() {
+        helper._localCharmUpgradeCallback(dbObj, optionsObj, charmObj, envObj);
+        var callback = setCharmStub.lastArguments()[3];
+        // Call the setCharm callback
+        callback({
+          service_name: 'hippopotamus',
+          charm_url: 'Mars'
+        });
+        assert.equal(notificationParams.title, 'Charm upgrade accepted');
+        assert.equal(notificationParams.message,
+            'Upgrade for "hippopotamus" from "Mars" accepted.');
+        assert.equal(notificationParams.level, 'important');
       });
     });
 
@@ -398,7 +457,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var loadCharmDetailsStub = stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.equal(loadCharmDetailsStub.called(), true);
       });
 
@@ -411,14 +470,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var loadCharmDetailsStub = stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
 
         assert.equal(loadCharmDetailsStub.called(), true);
         var args = loadCharmDetailsStub.lastArguments();
         assert.equal(args[0], charmURLString);
         assert.deepEqual(args[1], envObj);
         assert.isFunction(args[2]);
+      });
 
+      it('supports local charm upgrades', function() {
+        // This test is similar to the one above with the difference that
+        // the options configuration param is passed in and is not null.
+        var charmURLString = 'foo',
+            fileObj = { name: 'foo' },
+            eventObj = { target: { responseText: '' }},
+            envObj = {},
+            optionsObj = { upgrade: true };
+
+        var loadCharmDetailsStub = stubLoadCharmDetails(this);
+        var localUpgradeStub = testUtils.makeStubMethod(
+            helper, '_localCharmUpgradeCallback');
+        this._cleanups.push(localUpgradeStub.reset);
+        stubParseUploadResponse(this);
+
+        helper._uploadLocalCharmLoad(
+            fileObj, envObj, dbObj, optionsObj, eventObj);
+
+        assert.equal(loadCharmDetailsStub.called(), true);
+        var args = loadCharmDetailsStub.lastArguments();
+        assert.equal(args[0], charmURLString);
+        assert.deepEqual(args[1], envObj);
+        assert.isFunction(args[2]);
+        // Call the callback to make sure it's passed the proper params
+        args[2]();
+        assert.equal(localUpgradeStub.calledOnce(), true);
+        var upgradeStubArgs = localUpgradeStub.lastArguments();
+        assert.deepEqual(upgradeStubArgs[0], dbObj);
+        assert.deepEqual(upgradeStubArgs[1], optionsObj);
       });
 
       it('shows a notification if local charm upload is not supported',
@@ -430,7 +519,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubLoadCharmDetails(this);
             stubParseUploadResponse(this);
 
-            helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+            helper._uploadLocalCharmLoad(
+                fileObj, envObj, dbObj, null, eventObj);
             assert.deepEqual(notificationParams, {
               title: 'Import failed',
               message: 'Import from "foo" failed. Your version of ' +
@@ -448,7 +538,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.deepEqual(notificationParams, {
           title: 'Imported local charm file',
           message: 'Import from "foo" successful.',
@@ -469,14 +559,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Error: 'oops'
         });
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.deepEqual(notificationParams, {
           title: 'Import failed',
           message: 'Import from "foo" failed. oops',
           level: 'error'
         });
       });
-
     });
 
     describe('_parseUploadResponse', function() {
