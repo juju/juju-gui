@@ -255,6 +255,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var service = evt.service;
       var topo = self.get('component');
+      var parentId = topo._yuid;
 
       if (!service.relations || service.relations.size() === 0) {
         return;
@@ -270,7 +271,7 @@ YUI.add('juju-topology-relation', function(Y) {
           ), function(relation) {
             // Select only the pertinent relation groups.
             var rel_group = topo.vis.select(
-                '#' + utils.generateSafeDOMId(relation.id));
+                '#' + utils.generateSafeDOMId(relation.id, parentId));
             var connectors = relation.source
                       .getConnectorPair(relation.target);
             var s = connectors[0];
@@ -298,7 +299,9 @@ YUI.add('juju-topology-relation', function(Y) {
     drawRelationGroup: function() {
       // Add a labelgroup.
       var self = this;
-      var vis = this.get('component').vis;
+      var topo = this.get('component');
+      var vis = topo.vis;
+      var parentId = topo._yuid;
       var g = vis.selectAll('g.rel-group')
         .data(self.relations,
           function(r) {
@@ -309,7 +312,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       enter.insert('g', 'g.service')
               .attr('id', function(d) {
-            return utils.generateSafeDOMId(d.id);
+            return utils.generateSafeDOMId(d.id, parentId);
           })
               .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
@@ -595,7 +598,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
       var relationElement = view.get('container')
-        .one('#' + utils.generateSafeDOMId(relation.relation_id));
+        .one('#' + utils.generateSafeDOMId(relation.relation_id, topo._yuid));
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       // Because we keep a copy of the relation models on each service we
       // also need to remove the relation from those models.
@@ -916,7 +919,8 @@ YUI.add('juju-topology-relation', function(Y) {
       // Remove our pending relation from the DB, error or no.
       db.relations.remove(
           db.relations.getById(relation_id));
-      vis.select('#' + utils.generateSafeDOMId(relation_id)).remove();
+      vis.select('#' + utils.generateSafeDOMId(relation_id, topo._yuid))
+        .remove();
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
