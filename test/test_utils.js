@@ -55,6 +55,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           views.utils.generateHash(relationId));
     });
 
+    it('can generate safe relation ids with a parent id', function() {
+      var relationId;
+      relationId = 'foo:Bar relation-00000006!@#';
+      assert.notEqual(
+          views.utils.generateSafeDOMId(relationId, 'topo1'),
+          views.utils.generateSafeDOMId(relationId, 'topo2'));
+      assert.strictEqual(
+          views.utils.generateSafeDOMId(relationId, 'topo1'),
+          'e-foo_Bar_relation_00000006___-' +
+          views.utils.generateHash(relationId + 'topo1'));
+    });
+
     it('should create a confirmation panel',
        function() {
           var confirmed = false;

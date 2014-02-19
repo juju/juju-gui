@@ -169,11 +169,15 @@ YUI.add('juju-view-utils', function(Y) {
 
     @method generateSafeDOMId
     @param {String} value The string to hash.
+    @param {String} parentId An optional id for the parent module or node
+      for instances in which a 'value' may have duplicates in other areas.
     @return {String} The calculated DOM id.
    */
-  var generateSafeDOMId = function(value) {
+  var generateSafeDOMId = function(value, parentId) {
+    parentId = parentId || '';
     return (
-        'e-' + value.replace(/\W/g, '_') + '-' + generateHash(value));
+        'e-' + value.replace(/\W/g, '_') + '-' +
+        generateHash(value + parentId));
   };
   utils.generateSafeDOMId = generateSafeDOMId;
 
