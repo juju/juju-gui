@@ -184,6 +184,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
+    function getParentId(view) {
+      return view.topo ? view.topo._yuid : '';
+    }
 
     function setUpInspector() {
       var charmId = 'precise/mediawiki-14';
@@ -274,8 +277,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.
-          var node = container.one(
-              '#' + views.utils.generateSafeDOMId('relation-0000000007'));
+          var node = container.one('#' +
+              views.utils.generateSafeDOMId('relation-0000000007',
+         getParentId(view)));
           assert.isNotNull(node);
           assert.isDefined(node);
         });
@@ -981,7 +985,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
          }).render();
 
          var relation = container.one(
-              '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+              '#' + views.utils.generateSafeDOMId('relation-0000000001',
+         getParentId(view)) +
               ' .rel-indicator'),
          dialog_btn,
          menu,
@@ -1017,7 +1022,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          getParentId(view)) +
           ' .rel-indicator'),
           menu;
       relation.simulate('click');
@@ -1035,7 +1041,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Multiple relations
       relation = container.one(
           '#' +
-          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
+          getParentId(view)) +
           ' .rel-indicator');
       relation.simulate('click');
       menu = container.one('#relation-menu');
@@ -1070,7 +1077,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Single relation.
       var relation = container.one(
-          '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          getParentId(view)) +
           ' .rel-indicator'),
           dialog_btn,
           panel,
@@ -1097,7 +1105,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Multiple relations.
       relation = container.one(
           '#' +
-          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id) +
+          views.utils.generateSafeDOMId(additionalRelations.result[0][2].id,
+          getParentId(view)) +
           ' .rel-indicator');
 
       relation.simulate('click');
@@ -1125,7 +1134,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must not allow removing a subordinate relation between services',
         function() {
-         new views.environment({
+         view = new views.environment({
            container: container,
            db: db,
            env: env,
@@ -1134,7 +1143,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
          // Get a subordinate relation.
          var relation = container.one(
-              '#' + views.utils.generateSafeDOMId('relation-0000000007') +
+              '#' + views.utils.generateSafeDOMId('relation-0000000007',
+         getParentId(view)) +
               ' .rel-indicator'),
          menu,
          dialog_btn,
