@@ -550,7 +550,7 @@ describe('File drag over notification system', function() {
         viewletManager: { get: containerGetStub },
         model: { get: charmGetStub }
       };
-      var maskString = 'returned mask';
+      var maskString = '<div class="mask-tester"></div>';
       var createInspectorMaskStub = testUtils.makeStubMethod(
           app, '_createInspectorDropMask', maskString);
       this._cleanups.push(createInspectorMaskStub.reset);
@@ -558,11 +558,6 @@ describe('File drag over notification system', function() {
       var attachEventsStub = testUtils.makeStubMethod(
           app, '_attachInspectorDropMaskEvents', handlerString);
       this._cleanups.push(attachEventsStub.reset);
-      var appendStub = testUtils.makeStubFunction();
-      var oneStub = testUtils.makeStubMethod(Y, 'one', {
-        append: appendStub
-      });
-      this._cleanups.push(oneStub.reset);
 
       app.showInspectorDropNotification(inspector);
 
@@ -578,8 +573,12 @@ describe('File drag over notification system', function() {
         mask: maskString,
         handlers: [handlerString]
       }]);
-      assert.equal(appendStub.calledOnce(), true);
-      assert.equal(appendStub.lastArguments()[0], maskString);
+      // Make sure that the element was added to the body
+      var maskElement = Y.one('.mask-tester');
+      assert.isObject(maskElement);
+      // Remove the mask test element and make sure it was removed
+      maskElement.remove(true);
+      assert.isNull(Y.one('.mask-tester'));
     });
 
     it('_createInspectorDropMask: creates the proper mask', function() {
