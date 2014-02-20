@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     // Each method in local-charm-import-helpers.js has a describe() covering
     // every method and every path within that method. Because everything in
     // these tests is mocked out it's difficult to be sure that they will
-    // interact together properly. TO be sure that the two entry points reach
+    // interact together properly. To be sure that the two entry points reach
     // their proper exit points integration tests have been created and they are
     // at the very bottom of this file.
     var dbObj, env, helper, notificationParams, testUtils, Y;
@@ -330,6 +330,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('loadCharmDetails', function() {
       it('calls supplied callback after the charm is loaded', function(done) {
         var envObj = {};
+
         var oldMethod = Y.juju.models.Charm.prototype.load;
         Y.juju.models.Charm.prototype.load = function(env) {
           assert.deepEqual(env, envObj);
@@ -339,12 +340,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         this._cleanups.push(function() {
           Y.juju.models.Charm.prototype.load = oldMethod;
         });
-        helper.loadCharmDetails('local:precise/ghost-4', envObj,
-            function(charm, env) {
-              assert.isObject(charm);
-              assert.deepEqual(env, envObj);
-              done();
-            });
+
+        var charmUrl = 'local:precise/ghost-4';
+
+        helper.loadCharmDetails(charmUrl, envObj, function(charm, env) {
+          assert.isObject(charm);
+          assert.deepEqual(env, envObj);
+          done();
+        });
       });
     });
 
@@ -582,11 +585,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('integration tests', function() {
+    describe('import helpers integration tests', function() {
       var destroyStub, envStub, envUploadLocalStub, fileObj, viewletManager,
           stubOn;
 
       function stubitout(context) {
+        // the below mocks are externally called methods which will allow
+        // the script to execute to _attachViewletEvents.
         fileObj = { name: 'foo', size: '111' };
         envStub = testUtils.makeStubFunction();
 
@@ -619,6 +624,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             viewletManager.prototype, 'destroy');
         // the above mocks are externally called methods which will allow
         // the script to execute to _attachViewletEvents.
+
+        // The below methods get us through the _attachViewletEvents method.
         var stubOnFn = testUtils.makeStubFunction();
         stubOn = testUtils.makeStubMethod(stubOnFn, 'on');
         var stubOneFn = testUtils.makeStubFunction();

@@ -181,7 +181,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
     */
     loadCharmDetails: function(charmUrl, env, callback) {
       var charm = new Y.juju.models.Charm({ id: charmUrl });
-      charm.after('load', function(e) {
+      var handler = charm.after('load', function(e) {
+        handler.detach();
         callback(charm, env);
       });
       charm.load(env);
@@ -202,6 +203,16 @@ YUI.add('local-charm-import-helpers', function(Y) {
       Y.fire('initiateDeploy', charm, {});
     },
 
+    /**
+      Shows notifications for the status of the local charm upgrade. Callback
+      after a successful upload of the charm to upgrade.
+
+      @method _localCharmUpgradeCallback
+      @param {Object} db A reference to the db.
+      @param {Object} options The options from the file drop.
+      @param {Object} charm The charm model to upgrade to.
+      @param {Object} env A reference to the environment.
+    */
     _localCharmUpgradeCallback: function(db, options, charm, env) {
       env.setCharm(options.serviceId, charm.get('id'), false, function(e) {
         if (e.err) {

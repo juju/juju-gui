@@ -522,6 +522,16 @@ describe('File drag over notification system', function() {
       });
       assert.equal(result, 'yaml');
     });
+
+    it('returns "" if the browser does not support "items"', function() {
+      // IE10 and 11 do not have the dataTransfer.items property during hover
+      // so we cannot tell what type of file is being hovered over the canvas.
+      // So we will just return the default which is "yaml".
+      var result = app._determineFileType({
+        types: ['Files']
+      });
+      assert.equal(result, '');
+    });
   });
 
   describe('UI notifications', function() {
@@ -544,8 +554,9 @@ describe('File drag over notification system', function() {
     it('showInspectorDropNotification: adds the mask to the body', function() {
       var containerString = 'returned container';
       var charmUrl = 'cs:precise/ghost-charm-4';
+      var serviceId = 'serviceId';
       var containerGetStub = testUtils.makeStubFunction(containerString);
-      var charmGetStub = testUtils.makeStubFunction(charmUrl);
+      var charmGetStub = testUtils.makeStubFunction(charmUrl, serviceId);
       var modelMock = { get: charmGetStub };
       var inspector = {
         viewletManager: { get: containerGetStub },
@@ -575,7 +586,7 @@ describe('File drag over notification system', function() {
       var attachEventsArgs = attachEventsStub.lastArguments();
       assert.equal(attachEventsArgs[0], maskString);
       assert.equal(attachEventsArgs[1], 'precise');
-      assert.equal(attachEventsArgs[2], modelMock);
+      assert.equal(attachEventsArgs[2], serviceId);
       assert.deepEqual(app.dragNotifications, [{
         mask: maskString,
         handlers: [handlerString]
@@ -603,54 +614,123 @@ describe('File drag over notification system', function() {
       assert.equal(mask.getStyle('width'), '4px');
     });
 
-    it('_attachInspectorDropMaskEvents: attaches a proper event', function() {
-      var detachStub = testUtils.makeStubFunction();
-      var handlerObject = { detach: detachStub };
-      var onStub = testUtils.makeStubFunction(handlerObject, handlerObject);
-      var removeStub = testUtils.makeStubFunction();
-      var preventStub = testUtils.makeStubFunction();
+    describe('_attachInspectorDropMaskEvents', function() {
+      var detachStub, handlerObject, maskObj, onStub, preventStub, removeStub,
+          series, uploadLocalStub;
 
-      Y.namespace('juju.localCharmHelpers');
-      var uploadLocalStub = testUtils.makeStubMethod(
-          Y.juju.localCharmHelpers, 'uploadLocalCharm');
-      this._cleanups.push(uploadLocalStub.reset);
+      beforeEach(function() {
+        detachStub = testUtils.makeStubFunction();
+        handlerObject = { detach: detachStub };
+        onStub = testUtils.makeStubFunction(handlerObject, handlerObject);
+        removeStub = testUtils.makeStubFunction();
+        preventStub = testUtils.makeStubFunction();
 
-      var getStub = testUtils.makeStubFunction('serviceId');
-      var modelObj = { get: getStub };
+        Y.namespace('juju.localCharmHelpers');
+        uploadLocalStub = testUtils.makeStubMethod(
+            Y.juju.localCharmHelpers, 'uploadLocalCharm');
 
-      var mask = {
-        on: onStub,
-        remove: removeStub
-      };
-      var series = 'precise';
-      var result = app._attachInspectorDropMaskEvents(mask, series, modelObj);
-      assert.deepEqual(result, handlerObject);
-      var onStubArgs = onStub.lastArguments();
-      assert.equal(onStubArgs[0], 'drop');
-      assert.isFunction(onStubArgs[1]);
-      assert.deepEqual(onStubArgs[2], app);
-      // Test the event callback
-      onStubArgs[1]({
-        preventDefault: preventStub,
-        _event: { dataTransfer: { files: ['foo'] }}
-      });
-      assert.equal(preventStub.calledOnce(), true);
-      assert.equal(removeStub.calledOnce(), true);
-      assert.equal(removeStub.lastArguments()[0], true);
-      assert.equal(detachStub.calledOnce(), true);
-
-      assert.equal(uploadLocalStub.calledOnce(), true);
-      var uploadStubArgs = uploadLocalStub.lastArguments();
-      assert.equal(uploadStubArgs[0], series);
-      assert.equal(uploadStubArgs[1], 'foo');
-      // uploadStubArgs[2] //this.env
-      // uploadStubArgs[3] //this.db
-      assert.deepEqual(uploadStubArgs[4], {
-        upgrade: true,
-        serviceId: 'serviceId'
+        maskObj = {
+          on: onStub,
+          remove: removeStub
+        };
+        series = 'precise';
       });
 
-      assert.equal(getStub.calledOnce(), true);
+      afterEach(function() {
+        uploadLocalStub.reset();
+      });
+
+      it('attaches a proper "drop" event', function() {
+        var result = app._attachInspectorDropMaskEvents(
+            maskObj, series, 'srvId');
+        assert.deepEqual(result, handlerObject);
+        var onStubArgs = onStub.lastArguments();
+        assert.equal(onStubArgs[0], 'drop');
+        assert.isFunction(onStubArgs[1]);
+        assert.deepEqual(onStubArgs[2], app);
+      });
+
+      it('calls uploadLocalCharm with a file of the correct type', function() {
+        var mimeType = { type: 'application/zip' };
+        var result = app._attachInspectorDropMaskEvents(
+            maskObj, series, 'srvId');
+        assert.deepEqual(result, handlerObject);
+        var onStubArgs = onStub.lastArguments();
+        assert.equal(onStubArgs[0], 'drop');
+        assert.isFunction(onStubArgs[1]);
+        assert.deepEqual(onStubArgs[2], app);
+        // Test the event callback
+        onStubArgs[1]({
+          preventDefault: preventStub,
+          _event: { dataTransfer: { files: [mimeType] }}
+        });
+        assert.equal(preventStub.calledOnce(), true);
+        assert.equal(removeStub.calledOnce(), true);
+        assert.equal(removeStub.lastArguments()[0], true);
+        assert.equal(detachStub.calledOnce(), true);
+
+        assert.equal(uploadLocalStub.calledOnce(), true);
+        var uploadStubArgs = uploadLocalStub.lastArguments();
+        assert.equal(uploadStubArgs[0], series);
+        assert.deepEqual(uploadStubArgs[1], mimeType);
+        assert.deepEqual(uploadStubArgs[4], {
+          upgrade: true,
+          serviceId: 'srvId'
+        });
+      });
+
+      it('calls uploadLocalCharm with a file of the correct type', function() {
+        // For an IE zip mime type
+        var mimeType = { type: 'application/x-zip-compressed' };
+        var result = app._attachInspectorDropMaskEvents(
+            maskObj, series, 'srvId');
+        assert.deepEqual(result, handlerObject);
+        var onStubArgs = onStub.lastArguments();
+        assert.equal(onStubArgs[0], 'drop');
+        assert.isFunction(onStubArgs[1]);
+        assert.deepEqual(onStubArgs[2], app);
+        // Test the event callback
+        onStubArgs[1]({
+          preventDefault: preventStub,
+          _event: { dataTransfer: { files: [mimeType] }}
+        });
+        assert.equal(preventStub.calledOnce(), true);
+        assert.equal(removeStub.calledOnce(), true);
+        assert.equal(removeStub.lastArguments()[0], true);
+        assert.equal(detachStub.calledOnce(), true);
+
+        assert.equal(uploadLocalStub.calledOnce(), true);
+        var uploadStubArgs = uploadLocalStub.lastArguments();
+        assert.equal(uploadStubArgs[0], series);
+        assert.deepEqual(uploadStubArgs[1], mimeType);
+        assert.deepEqual(uploadStubArgs[4], {
+          upgrade: true,
+          serviceId: 'srvId'
+        });
+      });
+
+      it('shows a notification with a file of an incorrect type', function() {
+        var notifications = testUtils.makeStubMethod(
+            app.db.notifications, 'add');
+        this._cleanups.push(notifications.reset);
+        app._attachInspectorDropMaskEvents(
+            maskObj, series, 'srvId');
+        var onStubArgs = onStub.lastArguments();
+        assert.equal(onStubArgs[0], 'drop');
+        assert.isFunction(onStubArgs[1]);
+        assert.deepEqual(onStubArgs[2], app);
+        // Test the event callback
+        onStubArgs[1]({
+          preventDefault: preventStub,
+          _event: { dataTransfer: { files: ['foo'] }}
+        });
+        assert.equal(notifications.calledOnce(), true);
+        assert.deepEqual(notifications.lastArguments()[0], {
+          title: 'Invalid charm file',
+          message: 'Local charm upgrades must be in a zip archive.',
+          level: 'error'
+        });
+      });
     });
 
     it('hideDragNotification: removes masks and detaches events', function() {
