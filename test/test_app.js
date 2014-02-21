@@ -522,6 +522,16 @@ describe('File drag over notification system', function() {
       });
       assert.equal(result, 'yaml');
     });
+
+    it('returns "" if the browser does not support "items"', function() {
+      // IE10 and 11 do not have the dataTransfer.items property during hover
+      // so we cannot tell what type of file is being hovered over the canvas.
+      // So we will just return the default which is "yaml".
+      var result = app._determineFileType({
+        types: ['Files']
+      });
+      assert.equal(result, '');
+    });
   });
 
   describe('UI notifications', function() {
@@ -529,100 +539,8 @@ describe('File drag over notification system', function() {
       constructAppInstance();
     });
 
-    it('showDragNotification: dispatches \'zip\' notifications', function() {
-      // Mock up the rendered inspectors in the environment
-      app.views.environment.instance = {
-        _inspectors: { foo: 'bar' }
-      };
-      var stub = testUtils.makeStubMethod(app, 'showInspectorDropNotification');
-      this._cleanups.push(stub.reset);
-      app.showDragNotification('zip');
-      assert.equal(stub.calledOnce(), true);
-      assert.equal(stub.lastArguments()[0], 'bar');
-    });
-
-    it('showInspectorDropNotification: adds the mask to the body', function() {
-      var containerString = 'returned container';
-      var charmUrl = 'cs:precise/ghost-charm-4';
-      var containerGetStub = testUtils.makeStubFunction(containerString);
-      var charmGetStub = testUtils.makeStubFunction(charmUrl);
-      var inspector = {
-        viewletManager: { get: containerGetStub },
-        model: { get: charmGetStub }
-      };
-      var maskString = '<div class="mask-tester"></div>';
-      var createInspectorMaskStub = testUtils.makeStubMethod(
-          app, '_createInspectorDropMask', maskString);
-      this._cleanups.push(createInspectorMaskStub.reset);
-      var handlerString = 'returned handlers';
-      var attachEventsStub = testUtils.makeStubMethod(
-          app, '_attachInspectorDropMaskEvents', handlerString);
-      this._cleanups.push(attachEventsStub.reset);
-
-      app.showInspectorDropNotification(inspector);
-
-      assert.equal(containerGetStub.calledOnce(), true);
-      assert.equal(containerGetStub.lastArguments()[0], 'container');
-      assert.equal(createInspectorMaskStub.calledOnce(), true);
-      assert.equal(createInspectorMaskStub.lastArguments()[0], containerString);
-      assert.equal(attachEventsStub.calledOnce(), true);
-      var attachEventsArgs = attachEventsStub.lastArguments();
-      assert.equal(attachEventsArgs[0], maskString);
-      assert.equal(attachEventsArgs[1], 'precise');
-      assert.deepEqual(app.dragNotifications, [{
-        mask: maskString,
-        handlers: [handlerString]
-      }]);
-      // Make sure that the element was added to the body
-      var maskElement = Y.one('.mask-tester');
-      assert.isObject(maskElement);
-      // Remove the mask test element and make sure it was removed
-      maskElement.remove(true);
-      assert.isNull(Y.one('.mask-tester'));
-    });
-
-    it('_createInspectorDropMask: creates the proper mask', function() {
-      var getXYStub = testUtils.makeStubFunction([1, 2]);
-      var getComputedStub = testUtils.makeStubFunction(3, 4);
-      var container = {
-        getXY: getXYStub,
-        getComputedStyle: getComputedStub
-      };
-      var mask = app._createInspectorDropMask(container);
-      assert.equal(getXYStub.calledOnce(), true);
-      assert.equal(getComputedStub.callCount(), 2);
-      var computedArgs = getComputedStub.allArguments();
-      assert.equal(computedArgs[0], 'height');
-      assert.equal(computedArgs[1], 'width');
-      assert.equal(mask.getX(), 1);
-      assert.equal(mask.getY(), 2);
-      assert.equal(mask.getStyle('height'), '3px');
-      assert.equal(mask.getStyle('width'), '4px');
-    });
-
-    it('_attachInspectorDropMaskEvents: attaches a proper event', function() {
-      var detachStub = testUtils.makeStubFunction();
-      var handlerObject = { detach: detachStub };
-      var onStub = testUtils.makeStubFunction(handlerObject, handlerObject);
-      var removeStub = testUtils.makeStubFunction();
-      var preventStub = testUtils.makeStubFunction();
-      var mask = {
-        on: onStub,
-        remove: removeStub
-      };
-      var series = 'precise';
-      var result = app._attachInspectorDropMaskEvents(mask, series);
-      assert.deepEqual(result, handlerObject);
-      var onStubArgs = onStub.lastArguments();
-      assert.equal(onStubArgs[0], 'drop');
-      assert.isFunction(onStubArgs[1]);
-      assert.deepEqual(onStubArgs[2], app);
-      // Test the event callback
-      onStubArgs[1]({ preventDefault: preventStub });
-      assert.equal(preventStub.calledOnce(), true);
-      assert.equal(removeStub.calledOnce(), true);
-      assert.equal(removeStub.lastArguments()[0], true);
-      assert.equal(detachStub.calledOnce(), true);
+    it('showDragNotification: is a function', function() {
+      assert.isFunction(app.showDragNotification);
     });
 
     it('hideDragNotification: removes masks and detaches events', function() {
