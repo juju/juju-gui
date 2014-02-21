@@ -663,7 +663,10 @@ YUI.add('juju-gui', function(Y) {
       @param {String} fileType The type of file to show the notification for.
     */
     showDragNotification: function(fileType) {
-      if (fileType === 'zip') {
+      // Because Chrome is the only browser that reliably supports parsing for
+      // a file type, if we don't know what the file type is we assume that
+      // the user just knows what they are doing and render all the drop targets
+      if (fileType === 'zip' || fileType === '') {
         var inspectors = this.views.environment.instance._inspectors;
         var keys = Object.keys(inspectors);
         if (keys.length > 0) {
@@ -683,8 +686,10 @@ YUI.add('juju-gui', function(Y) {
     showInspectorDropNotification: function(inspector) {
       var container = inspector.viewletManager.get('container');
       var mask = this._createInspectorDropMask(container);
-      var series = inspector.model.get('charm').match(/[^:]*(?=\/)/)[0];
-      var handler = this._attachInspectorDropMaskEvents(mask, series);
+      var model = inspector.model;
+      var series = model.get('charm').match(/[^:]*(?=\/)/)[0];
+      var handler = this._attachInspectorDropMaskEvents(
+          mask, series, model.get('id'));
 
       this.dragNotifications.push({mask: mask, handlers: [handler] });
 
@@ -703,7 +708,6 @@ YUI.add('juju-gui', function(Y) {
     _createInspectorDropMask: function(container) {
       var mask = Y.Node.create('<div class="dropmask"></div>');
       mask.setXY(container.getXY());
-      // XXX Jeff 02-12-2014 This might need to resize with the inspector.
 
       mask.setStyles({
         height: container.getComputedStyle('height'),
@@ -720,9 +724,11 @@ YUI.add('juju-gui', function(Y) {
       @method _attachInspectorDropMaskEvents
       @param {Object} mask A Y.Node instance of the mask covering the inspector.
       @param {String} series The Ubuntu series to deploy the charm to.
+      @param {Object} serviceId The id of the service to upgrade.
       @return {Object} A reference to the drop event handle.
     */
-    _attachInspectorDropMaskEvents: function(mask, series) {
+    _attachInspectorDropMaskEvents: function(mask, series, serviceId) {
+      var db = this.db;
       var handler = mask.on('drop', function(e) {
         e.preventDefault();
         mask.remove(true);
@@ -730,11 +736,24 @@ YUI.add('juju-gui', function(Y) {
         // away from the browser again, but we also want to detach it if
         // they drop on the inspector.
         handler.detach();
+        var file = e._event.dataTransfer.files[0];
 
-        // XXX Jeff 02-12-2014 Upload local charm to env passing in
-        // e._event.dataTransfer.files, series, this.env, this.db
-        // uploadLocalCharm needs refactoring to be able to be called
-        // directly and have the callbacks passed in.
+        // Because browsers other than Chrome cannot determine if the file is a
+        // zip while hovering we need to check again on dropping.
+        if (file.type === 'application/zip' ||
+            file.type === 'application/x-zip-compressed') {
+          juju.localCharmHelpers.uploadLocalCharm(
+              series, file, this.env, db, {
+                upgrade: true,
+                serviceId: serviceId
+              });
+        } else {
+          db.notifications.add({
+            title: 'Invalid charm file',
+            message: 'Local charm upgrades must be in a zip archive.',
+            level: 'error'
+          });
+        }
 
       }, this);
 
@@ -769,7 +788,7 @@ YUI.add('juju-gui', function(Y) {
     _appDragOverHandler: function(e) {
       e.preventDefault(); // required to allow items to be dropped
       var fileType = this._determineFileType(e.dataTransfer);
-      if (!fileType) {
+      if (fileType === false) {
         return; // Ignore if it's not a supported type
       }
       var type = e.type;
@@ -827,18 +846,32 @@ YUI.add('juju-gui', function(Y) {
       @return {String} The file type extension.
     */
     _determineFileType: function(dataTransfer) {
-      if (dataTransfer.types[0] !== 'Files') {
+      var types = dataTransfer.types;
+      var fileFound = Object.keys(types).some(function(key) {
+        // When dragging a single file in Firefox dataTransfer.types is an array
+        // with two elements ["application/x-moz-file", "Files"]
+        if (types[key] === 'Files') { return true; }
+      });
+
+      if (!fileFound) {
         // If the dataTransfer type isn't `Files` then something is being
         // dragged from inside the browser.
         return false;
       }
-      // See method doc for bug information.
-      var file = dataTransfer.items[0];
-      if (file.type === 'application/zip' ||
-          file.type === 'application/x-zip-compressed') {
-        return 'zip';
+
+      // IE10, 11 and Firefox do not have this property during hover so we
+      // cannot tell what type of file is being hovered over the canvas.
+      if (dataTransfer.items) {
+        // See method doc for bug information.
+        var file = dataTransfer.items[0];
+
+        if (file.type === 'application/zip' ||
+            file.type === 'application/x-zip-compressed') {
+          return 'zip';
+        }
+        return 'yaml';
       }
-      return 'yaml';
+      return '';
     },
 
     /**

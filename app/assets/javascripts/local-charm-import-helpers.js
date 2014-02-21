@@ -39,6 +39,28 @@ YUI.add('local-charm-import-helpers', function(Y) {
     },
 
     /**
+      Sends the local charm file contents and callbacks to the uploadLocalCharm
+      method in the environment.
+
+      @method uploadLocalCharm
+      @param {String} series The Ubuntu series to deploy to.
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+      @param {Object} options Optional A collection of options to send to the
+                      uploadLocalCharm load callback.
+    */
+    uploadLocalCharm: function(series, file, env, db, options) {
+      var helper = ns.localCharmHelpers;
+      series = series || env.get('defaultSeries');
+      env.uploadLocalCharm(
+          file,
+          series,
+          helper._uploadLocalCharmProgress,
+          helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
+    },
+
+    /**
       Requests the series to deploy their local charm to by rendering an
       inspector with the requestSeries viewlet
 
@@ -95,7 +117,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
       handlers.push(
           container.one('button.confirm').on(
               'click',
-              helper._uploadLocalCharm, null,
+              helper._chooseSeriesHandler, null,
               viewletManager, handlers, file, env, db));
     },
 
@@ -110,14 +132,17 @@ YUI.add('local-charm-import-helpers', function(Y) {
     _cleanUp: function(_, viewletManager, handlers) {
       viewletManager.destroy();
       handlers.forEach(function(event) {
-        event.detach();
+        if (event && event.detach && typeof event.detach === 'function') {
+          event.detach();
+        }
       });
     },
 
     /**
-      Sends the local charm file contents and callbacks to the uploadLocalCharm
-      method in the environment.
+      Series select confirm button click event handler. Handles getting the
+      series, cleaning up, and calling the upload method.
 
+      @method _chooseSeriesHandler
       @param {Object} _ The click event object.
       @param {Object} viewletManager Reference to the viewletManager.
       @param {Array} handlers Collection of event handlers to detach.
@@ -125,15 +150,11 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
     */
-    _uploadLocalCharm: function(e, viewletManager, handlers, file, env, db) {
+    _chooseSeriesHandler: function(e, viewletManager, handlers, file, env, db) {
       var helper = ns.localCharmHelpers;
       var series = helper._getSeriesValue(viewletManager);
       helper._cleanUp(null, viewletManager, handlers);
-      env.uploadLocalCharm(
-          file,
-          series,
-          helper._uploadLocalCharmProgress,
-          helper._uploadLocalCharmLoad.bind(null, file, env, db));
+      helper.uploadLocalCharm(series, file, env, db);
     },
 
     /**
@@ -160,8 +181,9 @@ YUI.add('local-charm-import-helpers', function(Y) {
     */
     loadCharmDetails: function(charmUrl, env, callback) {
       var charm = new Y.juju.models.Charm({ id: charmUrl });
-      charm.after('load', function(e) {
-        callback(charm);
+      var handler = charm.after('load', function(e) {
+        handler.detach();
+        callback(charm, env);
       });
       charm.load(env);
     },
@@ -181,6 +203,34 @@ YUI.add('local-charm-import-helpers', function(Y) {
       Y.fire('initiateDeploy', charm, {});
     },
 
+    /**
+      Shows notifications for the status of the local charm upgrade. Callback
+      after a successful upload of the charm to upgrade.
+
+      @method _localCharmUpgradeCallback
+      @param {Object} db A reference to the db.
+      @param {Object} options The options from the file drop.
+      @param {Object} charm The charm model to upgrade to.
+      @param {Object} env A reference to the environment.
+    */
+    _localCharmUpgradeCallback: function(db, options, charm, env) {
+      env.setCharm(options.serviceId, charm.get('id'), false, function(e) {
+        if (e.err) {
+          db.notifications.add({
+            title: 'Charm upgrade failed',
+            message: 'Upgrade for "' + e.service_name + '" failed. ' + e.err,
+            level: 'error'
+          });
+        } else {
+          db.notifications.add({
+            title: 'Charm upgrade accepted',
+            message: 'Upgrade for "' + e.service_name + '" from "' +
+                e.charm_url + '" accepted.',
+            level: 'important'
+          });
+        }
+      });
+    },
 
     /**
       Callback for the progress events returned from uploading the charm.
@@ -205,8 +255,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
       @param {Object} e The load event.
+      @param {Object} options Optional A collection of options to send to the
+                      uploadLocalCharm load callback.
     */
-    _uploadLocalCharmLoad: function(file, env, db, e) {
+    _uploadLocalCharmLoad: function(file, env, db, options, e) {
       var helper = ns.localCharmHelpers,
           notifications = db.notifications;
 
@@ -226,17 +278,21 @@ YUI.add('local-charm-import-helpers', function(Y) {
         });
         console.log('error', e);
       } else {
-
         notifications.add({
           title: 'Imported local charm file',
           message: 'Import from "' + file.name + '" successful.',
           level: 'important'
         });
 
-        helper.loadCharmDetails(
-            res.CharmURL,
-            env,
-            helper._loadCharmDetailsCallback);
+        var callback;
+
+        if (options && options.upgrade) {
+          callback = helper._localCharmUpgradeCallback.bind(null, db, options);
+        } else {
+          callback = helper._loadCharmDetailsCallback;
+        }
+
+        helper.loadCharmDetails(res.CharmURL, env, callback);
       }
     },
 
