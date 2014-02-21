@@ -20,7 +20,25 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.0:
+    - >
+      Local charm deploys are now supported. Drag-n-drop a zip file of your
+      charm onto the canvas to deploy it.
+    - >
+      New relation line visualization. Multiple relations are now grouped into
+      a single line. The line color helps indicate relation health and a popup
+      is available to interact with the relations.
+    - >
+      Remove the bws prefixes from the tabs in the details view. Note this
+      changes urls to specific tabs. The old urls are respected but are
+      deprecated. Please update your bookmarks.
+    - Notifier users when the window size is too small to work with effectively.
+    - Auto open and close the browser when interacting with the inspector.
+    - >
+      Safari has been added to CI and the test suite. Local charm support is
+      still be be completed in the next release. At that point it will become
+      an officially supported browser.
+    - (FIX) allow use of local web fonts to enable better offline support.
 - 0.15.1:
     - Replace TabView with a new animating sliding tabs component.
     - (FIX) #1251426 unit counts in the bundle view are incorrect.
@@ -43,7 +61,7 @@
       buttons always show in scroll.
 - 0.14.0:
     - >
-      Added support in the GUI to parse different agent states from Juju 
+      Added support in the GUI to parse different agent states from Juju
       Core, providing more information on service status.  This includes both
       "pending" and "dying" states. Similarly, units are now divided up by
       error or status type. This is also now included in the simulator.
