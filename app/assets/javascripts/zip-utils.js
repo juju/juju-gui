@@ -142,14 +142,22 @@ YUI.add('zip-utils', function(Y) {
     var entriesNum = Y.Object.size(entries);
     Y.Object.each(entries, function(entry, name) {
       // Read the entry's contents.
-      entry.getData(new zip.TextWriter(), function(text) {
-        contents[name] = text;
-        // If all the files have been processed, call the callback passing the
-        // aggregated results.
-        if (Y.Object.size(contents) === entriesNum) {
-          callback(contents);
-        }
-      });
+      // The zip.TextWriter handler fails silently in Firefox if the text
+      // encoding argument is not explicitly passed.
+      // See https://github.com/gildas-lormeau/zip.js/issues/58.
+      try {
+        entry.getData(new zip.TextWriter('utf-8'), function(text) {
+          contents[name] = text;
+          // If all the files have been processed, call the callback passing the
+          // aggregated results.
+          if (Y.Object.size(contents) === entriesNum) {
+            callback(contents);
+          }
+        });
+      } catch (err) {
+        console.error(
+            'zip.TextWriter error reading ' + entry.filename + ': ' + err);
+      }
     });
   };
   module.readCharmEntries = readCharmEntries;
