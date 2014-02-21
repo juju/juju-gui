@@ -20,7 +20,8 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- 1.0:
+- unreleased:
+- 1.0.0:
     - >
       Local charm deploys are now supported. Drag-n-drop a zip file of your
       charm onto the canvas to deploy it.

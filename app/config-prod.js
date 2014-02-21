@@ -67,5 +67,5 @@ var juju_config = {
       'starting Juju.'),
   isJujucharms: false,
   // Switches the logout button to a 'Get Juju' button
-  showGetJujuButton: false
+  showGetJujuButton: true
 };
