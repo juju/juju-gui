@@ -429,6 +429,23 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+      Fetches the services which were deployed with a charm matching
+      a supplied charm name.
+
+      @method getServicesFromCharmName
+      @param {String} charmName The charmname you would like to match.
+      @return {Array} A list of matching services.
+    */
+    getServicesFromCharmName: function(charmName) {
+      return this.filter(function(service) {
+        var charm = service.get('charm');
+        if (charm) { // In tests charm can be undefined
+          return charm.indexOf(charmName) > 0;
+        }
+      }, this);
+    },
+
+    /**
      Add a ghost (pending) service to the
      database. The canvas should pick this up
      independently.

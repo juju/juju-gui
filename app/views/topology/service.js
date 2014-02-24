@@ -774,12 +774,7 @@ YUI.add('juju-topology-service', function(Y) {
     */
     _checkForExistingServices: function(file, topo, env, db, contents) {
       var charmName = jsyaml.safeLoad(contents.metadata).name;
-      var services = [];
-      db.services.each(function(service) {
-        if (service.get('charm').indexOf(charmName) > 0) {
-          services.push(service);
-        }
-      });
+      var services = db.services.getServicesFromCharmName(charmName);
 
       topo.fire('destroyServiceInspector');
 
