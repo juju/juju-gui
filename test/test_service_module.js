@@ -579,8 +579,63 @@ describe('service module events', function() {
   });
 
   describe('_checkForExistingService', function() {
-    it('calls to show the upgrade or new inspector');
-    it('calls to deploy the local charm');
+    var dbObj, deployCharm, contentsObj, envObj, fileObj, getServicesStub,
+        jsYamlMock, showInspector, topoFireStub, topoObj, notificationParams;
+
+    beforeEach(function() {
+      fileObj = { name: 'foo' };
+      topoFireStub = utils.makeStubFunction();
+      topoObj = { fire: topoFireStub };
+      envObj = { env: 'foo' };
+      contentsObj = { metadata: 'foo' };
+    });
+
+    function setup(context) {
+      jsYamlMock = utils.makeStubMethod(jsyaml, 'safeLoad', { name: 'ghost' });
+      context._cleanups.push(jsYamlMock.reset);
+      showInspector = utils.makeStubMethod(
+          serviceModule, '_showUpgradeOrNewInspector');
+      context._cleanups.push(showInspector.reset);
+      deployCharm = utils.makeStubMethod(serviceModule, '_deployLocalCharm');
+      context._cleanups.push(deployCharm.reset);
+    }
+
+    function sharedAssert() {
+      assert.equal(jsYamlMock.calledOnce(), true);
+      assert.equal(getServicesStub.calledOnce(), true);
+      assert.equal(topoFireStub.calledOnce(), true);
+      assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
+    }
+
+    it('calls to show the upgrade or new inspector', function() {
+      setup(this);
+
+      getServicesStub = utils.makeStubFunction(['service']);
+      dbObj = { services: { getServicesFromCharmName: getServicesStub }};
+
+      serviceModule._checkForExistingServices(
+          fileObj, topoObj, envObj, dbObj, contentsObj);
+
+      sharedAssert();
+
+      assert.equal(showInspector.calledOnce(), true);
+      assert.equal(deployCharm.calledOnce(), false);
+    });
+
+    it('calls to deploy the local charm', function() {
+      setup(this);
+
+      getServicesStub = utils.makeStubFunction(['service']);
+      dbObj = { services: { getServicesFromCharmName: getServicesStub }};
+
+      serviceModule._checkForExistingServices(
+          fileObj, topoObj, envObj, dbObj, contentsObj);
+
+      sharedAssert();
+
+      assert.equal(showInspector.calledOnce(), true);
+      assert.equal(deployCharm.calledOnce(), false);
+    });
   });
 
   it('shows a notification if there is a zip error', function() {
@@ -604,7 +659,7 @@ describe('service module events', function() {
     });
   });
 
-  it('shows the new or upgrade inspector', function() {
+  it('_showUpgradeOrNewInspector: shows the inspector', function() {
     // _showUpgradeOrNewInspector is currently a noop
     assert.isFunction(serviceModule._showUpgradeOrNewInspector);
   });
