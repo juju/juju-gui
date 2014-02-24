@@ -381,7 +381,7 @@ describe('service module events', function() {
     serviceModule.canvasDropHandler(fakeEventObject);
   });
 
-  it('deploys a local charm on .zip file drop events', function() {
+  it('calls to extract local charm on .zip file drop events', function() {
     var fakeFile = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
@@ -399,33 +399,23 @@ describe('service module events', function() {
       }
     };
 
-    // mock out the Y.BundleHelpers call.
-    var _deployLocalCharmCalled = false;
     serviceModule.set('component', view.topo);
-    serviceModule._deployLocalCharm = function(file) {
-      assert.deepEqual(file, fakeFile);
-      _deployLocalCharmCalled = true;
-    };
+    var extractCharmMetadata = utils.makeStubMethod(
+        serviceModule, '_extractCharmMetadata');
+    this._cleanups.push(extractCharmMetadata.reset);
+
     serviceModule.canvasDropHandler(fakeEventObject);
-    assert.isTrue(_deployLocalCharmCalled);
 
+    assert.equal(extractCharmMetadata.calledOnce(), true);
+    var args = extractCharmMetadata.lastArguments();
+    assert.deepEqual(args[0], fakeFile);
+    assert.deepEqual(args[1], topo);
+    assert.deepEqual(args[2], topo.get('env'));
+    assert.deepEqual(args[3], topo.get('db'));
   });
 
-  it('fires the event to destroy pre-existing inspectors', function() {
-    // Check to make sure the event to destroy any previously open inspector is
-    // fired.
-    var topoFireStub = utils.makeStubMethod(view.topo, 'fire');
-    var deployLocalCharmStub = utils.makeStubMethod(
-        juju.localCharmHelpers, 'deployLocalCharm');
-    serviceModule._deployLocalCharm(null, view.topo);
-    assert.equal(topoFireStub.calledOnce(), true);
-    assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
-    topoFireStub.reset();
-    deployLocalCharmStub.reset();
-  });
-
-  it('deploys a local charm on .zip file drop events (IE)', function() {
-    var file = {
+  it('calls to extract local charm on .zip file drop events (IE)', function() {
+    var fakeFile = {
       // Using a complex name to make sure the extension filtering works
       name: 'foo-bar.baz.zip',
       // This MIME type is used only in IE11 see the above test
@@ -437,33 +427,187 @@ describe('service module events', function() {
       _event: {
         dataTransfer: {
           // All we need to fake things out is to have a file.
-          files: [file]
+          files: [fakeFile]
         }
       }
     };
 
-    // mock out the Y.BundleHelpers call.
-    var deployLocalCharmStub, topoFireStub;
-    deployLocalCharmStub = utils.makeStubMethod(
-        juju.localCharmHelpers, 'deployLocalCharm');
-    topoFireStub = utils.makeStubMethod(view.topo, 'fire');
+    serviceModule.set('component', view.topo);
+    var extractCharmMetadata = utils.makeStubMethod(
+        serviceModule, '_extractCharmMetadata');
+    this._cleanups.push(extractCharmMetadata.reset);
 
     serviceModule.canvasDropHandler(fakeEventObject);
 
-    var args = deployLocalCharmStub.lastArguments();
-    assert.deepEqual(args[0], file);
-    assert.isObject(args[1]);
-    assert.isObject(args[2]);
-
-    // Check to make sure the event to destroy any previously
-    // open inspector is fired
-    assert.equal(topoFireStub.calledOnce(), true);
-    assert.equal(topoFireStub.lastArguments()[0], 'destroyServiceInspector');
-
-    deployLocalCharmStub.reset();
-    topoFireStub.reset();
+    assert.equal(extractCharmMetadata.calledOnce(), true);
+    var args = extractCharmMetadata.lastArguments();
+    assert.deepEqual(args[0], fakeFile);
+    assert.deepEqual(args[1], topo);
+    assert.deepEqual(args[2], topo.get('env'));
+    assert.deepEqual(args[3], topo.get('db'));
   });
 
+  it('_extractCharmMetadata: calls ziputils.getEntries()', function() {
+    var fileObj = { file: '' },
+        topoObj = { topo: '' },
+        envObj = { env: '' },
+        dbObj = { db: '' };
+    var getEntries = utils.makeStubMethod(Y.juju.ziputils, 'getEntries');
+    this._cleanups.push(getEntries.reset);
+    var findCharmEntries = utils.makeStubMethod(
+        serviceModule, '_findCharmEntries');
+    this._cleanups.push(findCharmEntries.reset);
+    var zipExtractionError = utils.makeStubMethod(
+        serviceModule, '_zipExtractionError');
+    this._cleanups.push(zipExtractionError);
+
+    serviceModule._extractCharmMetadata(fileObj, topoObj, envObj, dbObj);
+
+    assert.equal(getEntries.calledOnce(), true);
+    var getEntriesArgs = getEntries.lastArguments();
+    assert.equal(getEntriesArgs[0], fileObj);
+    assert.isFunction(getEntriesArgs[1]);
+    assert.isFunction(getEntriesArgs[2]);
+    // Check that the callbacks have the proper data bound to them
+    // Call the success callback
+    getEntriesArgs[1]();
+    var findCharmArgs = findCharmEntries.lastArguments();
+    assert.deepEqual(findCharmArgs[0], fileObj);
+    assert.deepEqual(findCharmArgs[1], topoObj);
+    assert.deepEqual(findCharmArgs[2], envObj);
+    assert.deepEqual(findCharmArgs[3], dbObj);
+    //Call the fail callback
+    getEntriesArgs[2]();
+    var zipErrorArgs = zipExtractionError.lastArguments();
+    assert.deepEqual(zipErrorArgs[0], dbObj);
+  });
+
+  describe('_findCharmEntries', function() {
+    var dbObj, envObj, fileObj, topoObj, notificationParams;
+
+    beforeEach(function() {
+      fileObj = { name: 'foo' };
+      topoObj = { topo: '' };
+      envObj = { env: '' };
+      dbObj = {
+        notifications: {
+          add: function(info) {
+            notificationParams = info;
+          }
+        }
+      };
+    });
+
+    it('finds the files in the zip', function() {
+      var entries = { metadata: 'foo' };
+      var findEntries = utils.makeStubMethod(
+          Y.juju.ziputils, 'findCharmEntries', entries);
+      this._cleanups.push(findEntries.reset);
+      var readEntries = utils.makeStubMethod(
+          serviceModule, '_readCharmEntries');
+      this._cleanups.push(readEntries.reset);
+
+      serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
+
+      assert.equal(findEntries.calledOnce(), true);
+      assert.deepEqual(findEntries.lastArguments()[0], {});
+      assert.equal(readEntries.calledOnce(), true);
+      var readEntriesArgs = readEntries.lastArguments();
+      assert.deepEqual(readEntriesArgs[0], fileObj);
+      assert.deepEqual(readEntriesArgs[1], topoObj);
+      assert.deepEqual(readEntriesArgs[2], envObj);
+      assert.deepEqual(readEntriesArgs[3], dbObj);
+      assert.deepEqual(readEntriesArgs[4], entries);
+    });
+
+    it('shows an error notification if there is no metadata.yaml', function() {
+      var entries = { foo: 'bar' };
+      var findEntries = utils.makeStubMethod(
+          Y.juju.ziputils, 'findCharmEntries', entries);
+      this._cleanups.push(findEntries.reset);
+      var readEntries = utils.makeStubMethod(
+          serviceModule, '_readCharmEntries');
+      this._cleanups.push(readEntries.reset);
+
+      serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
+
+      assert.equal(findEntries.calledOnce(), true);
+      assert.deepEqual(findEntries.lastArguments()[0], {});
+      assert.deepEqual(notificationParams, {
+        title: 'Import failed',
+        message: 'Import from "' + fileObj.name + '" failed. Invalid charm ' +
+            'file, missing metadata.yaml',
+        level: 'error'
+      });
+      assert.equal(readEntries.calledOnce(), false);
+    });
+  });
+
+  it('_readCharmEntries: calls ziputils.readCharmEntries', function() {
+    var fileObj = { file: '' },
+        topoObj = { topo: '' },
+        envObj = { env: '' },
+        dbObj = { db: '' };
+    var readEntries = utils.makeStubMethod(Y.juju.ziputils, 'readCharmEntries');
+    this._cleanups.push(readEntries.reset);
+    var existingServices = utils.makeStubMethod(
+        serviceModule, '_checkForExistingServices');
+    this._cleanups.push(existingServices);
+    var extractionError = utils.makeStubMethod(
+        serviceModule, '_zipExtractionError');
+
+    serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
+
+    assert.equal(readEntries.calledOnce(), true);
+    var readEntriesArgs = readEntries.lastArguments();
+    assert.deepEqual(readEntriesArgs[0], {});
+    assert.isFunction(readEntriesArgs[1]);
+    assert.isFunction(readEntriesArgs[2]);
+    // Check that the callbacks have the proper data bound to them
+    // Call the success callback
+    readEntriesArgs[1]();
+    var existingServicesArgs = existingServices.lastArguments();
+    assert.deepEqual(existingServicesArgs[0], fileObj);
+    assert.deepEqual(existingServicesArgs[1], topoObj);
+    assert.deepEqual(existingServicesArgs[2], envObj);
+    assert.deepEqual(existingServicesArgs[3], dbObj);
+    //Call the fail callback
+    readEntriesArgs[2]();
+    var zipErrorArgs = extractionError.lastArguments();
+    assert.deepEqual(zipErrorArgs[0], dbObj);
+    assert.deepEqual(zipErrorArgs[1], fileObj);
+  });
+
+  describe('_checkForExistingService', function() {
+    it('calls to show the upgrade or new inspector');
+    it('calls to deploy the local charm');
+  });
+
+  it('shows a notification if there is a zip error', function() {
+    var notificationParams;
+    var dbObj = {
+      notifications: {
+        add: function(info) {
+          notificationParams = info;
+        }
+      }
+    };
+    var fileObj = { name: 'foo' };
+
+    serviceModule._zipExtractionError(dbObj, fileObj);
+
+    assert.deepEqual(notificationParams, {
+      title: 'Import failed',
+      message: 'Import from "' + fileObj.name + '" failed. See console for' +
+          'error object',
+      level: 'error'
+    });
+  });
+
+  it('shows the new or upgrade inspector', function() {
+    // _showUpgradeOrNewInspector is currently a noop
+    assert.isFunction(serviceModule._showUpgradeOrNewInspector);
+  });
 });
 
 describe('canvasDropHandler', function() {
@@ -572,10 +716,10 @@ describe('_canvasDropHandler', function() {
     Y.bind(serviceModule._canvasDropHandler, self)(files);
   });
 
-  it('deploys a zipped charm directory when dropped', function(done) {
+  it('extracts a zipped charm directory when dropped', function(done) {
     var file = {name: 'charm.zip', type: 'application/zip'};
     var self = {
-      _deployLocalCharm: function() {done();}
+      _extractCharmMetadata: function() {done();}
     };
     Y.bind(serviceModule._canvasDropHandler, self)([file]);
   });
@@ -584,7 +728,7 @@ describe('_canvasDropHandler', function() {
     var file = {name: 'charm.zip', type: 'application/x-zip-compressed'};
     var files = {length: 1, 0: file};
     var self = {
-      _deployLocalCharm: function() {done();}
+      _extractCharmMetadata: function() {done();}
     };
     Y.bind(serviceModule._canvasDropHandler, self)(files);
   });
