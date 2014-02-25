@@ -255,6 +255,8 @@ Checklist for Making a Stable Release
   - Commit to the branch with this checkin message:
     ``git commit -a -m 'Set version back to unreleased.'``
   - Push the branch directly to the parent (``git push origin develop`` should work).
+  - Force a new CI run to make sure there were no unexpected side effects by
+    going to CI and manually building with the parameters: `${commit sha}`
 
 - Make a new release of the juju-gui charm by doing the following.
 
