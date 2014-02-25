@@ -64,11 +64,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
             env: env,
             db: db
           })
-        },
-        model: {
-          name: file.name,
-          size: file.size,
-          defaultSeries: env.get('defaultSeries')
         }
       });
 
@@ -218,7 +213,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'viewlet-request-series',
+    'request-series-view',
     'juju-viewlet-manager'
   ]
 });

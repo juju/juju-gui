@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-request-series', function(Y) {
+YUI.add('request-series-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       templates = Y.namespace('juju.views').Templates;
 
@@ -46,9 +46,15 @@ YUI.add('viewlet-request-series', function(Y) {
       @method render
     */
     render: function() {
-      this.get('container').append(this.template(this.model));
+      var file = this.get('file');
+      this.get('container').append(this.template({
+        name: file.name,
+        size: file.size,
+        defaultSeries: this.get('env').get('defaultSeries')
+      }));
       // So that we can call render multiple times.
       if (!this._eventsBound) {
+        this._eventsBound = true;
         this._bindUI();
       }
     },

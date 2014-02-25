@@ -87,7 +87,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               Y.namespace('juju.views.Templates'), 'service-inspector'),
           // Viewlet manager stubs
           ViewletManager: testUtils.makeStubMethod(
-              Y.namespace('juju.viewlets'), 'ViewletManager'),
+              Y.namespace('juju.viewlets'), 'ViewletManager')
         };
 
         stubs.renderStub = testUtils.makeStubMethod(
