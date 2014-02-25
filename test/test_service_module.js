@@ -660,8 +660,29 @@ describe('service module events', function() {
   });
 
   it('_showUpgradeOrNewInspector: shows the inspector', function() {
-    // _showUpgradeOrNewInspector is currently a noop
-    assert.isFunction(serviceModule._showUpgradeOrNewInspector);
+    var ViewletManager, renderStub, showViewletStub;
+    var dbObj = { db: 'db' };
+    var fileObj = { name: 'foo' };
+    var envObj = { env: 'env' };
+    var services = { services: 'services' };
+
+    ViewletManager = utils.makeStubMethod(
+        Y.namespace('juju.viewlets'), 'ViewletManager');
+    this._cleanups.push(ViewletManager.reset);
+    renderStub = utils.makeStubMethod(ViewletManager.prototype, 'render');
+    showViewletStub = utils.makeStubMethod(
+        ViewletManager.prototype, 'showViewlet');
+
+    serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
+
+    assert.equal(ViewletManager.calledOnce(), true);
+    var vmArgs = ViewletManager.lastArguments();
+    assert.equal(
+        vmArgs[0].views.localNewUpgradeView instanceof
+        Y.juju.viewlets.LocalNewUpgradeView, true);
+    assert.equal(renderStub.calledOnce(), true);
+    assert.equal(showViewletStub.calledOnce(), true);
+    assert.equal(showViewletStub.lastArguments()[0], 'localNewUpgradeView');
   });
 });
 

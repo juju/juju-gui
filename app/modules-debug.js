@@ -333,6 +333,16 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/request-series.js'
         },
 
+        // Viewlet views
+
+        'viewlet-view-base': {
+          fullpath: '/juju-ui/views/viewlets/viewlet-view-base.js'
+        },
+
+        'local-new-upgrade-view': {
+          fullpath: '/juju-ui/views/viewlets/local-new-upgrade-view.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'

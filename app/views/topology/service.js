@@ -805,9 +805,8 @@ YUI.add('juju-topology-service', function(Y) {
 
     /**
       Shows an inspector allowing the user to decide if they want to upgrade
-      an existing service with a local charm or deploy a new service.
-
-      NOOP
+      an existing service with a local charm or deploy a new service. Or calls
+      _deployLocalCharm if there are no existing services.
 
       @method _showUpgradeOrNewInspector
       @param {Array} services An array of services which use a charm with the
@@ -816,7 +815,29 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} env A reference to the app env.
       @param {Object} db A reference to the apps db.
     */
-    _showUpgradeOrNewInspector: function(services, file, env, db) { },
+    _showUpgradeOrNewInspector: function(services, file, env, db) {
+      var container = Y.Node.create(
+          Y.juju.views.Templates['service-inspector']());
+
+      container.appendTo(Y.one('#content'));
+
+      var viewletManager = new Y.juju.viewlets.ViewletManager({
+        container: container,
+        viewletContainer: '.viewlet-container',
+        template: '<div class="viewlet-container"></div>',
+        // views accepts views and viewlets
+        views: {
+          localNewUpgradeView: new Y.juju.viewlets.LocalNewUpgradeView()
+        },
+        model: {
+          services: services,
+          file: file
+        }
+      });
+
+      viewletManager.render();
+      viewletManager.showViewlet('localNewUpgradeView');
+    },
 
     /**
       Called from canvasDropHandler.
@@ -1485,6 +1506,8 @@ YUI.add('juju-topology-service', function(Y) {
     'unscaled-pack-layout',
     'bundle-import-helpers',
     'local-charm-import-helpers',
+    'juju-viewlet-manager',
+    'local-new-upgrade-view',
     'zip-utils'
   ]
 });
