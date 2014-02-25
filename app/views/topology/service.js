@@ -32,7 +32,8 @@ YUI.add('juju-topology-service', function(Y) {
       models = Y.namespace('juju.models'),
       topoUtils = Y.namespace('juju.topology.utils'),
       utils = Y.namespace('juju.views.utils'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      ziputils = Y.namespace('juju.ziputils');
 
   var ServiceModuleCommon = function() {};
   /**
@@ -668,7 +669,7 @@ YUI.add('juju-topology-service', function(Y) {
           if ((file.type === 'application/zip' ||
                file.type === 'application/x-zip-compressed') &&
               ext === 'zip') {
-            self._deployLocalCharm(file, topo, env, db);
+            self._extractCharmMetadata.call(self, file, topo, env, db);
           } else {
             // We are going to assume it's a bundle if it's not a zip
             bundleImportHelpers.deployBundleFiles(file, env, db);
@@ -686,15 +687,136 @@ YUI.add('juju-topology-service', function(Y) {
      * Deploy a local charm.
      *
      * @method _deployLocalCharm
-     * @param {Object} topo The topology.
      * @param {Object} env The environment.
      * @param {Object} db The database.
      * @return {undefined} Nothing.
      */
-    _deployLocalCharm: function(file, topo, env, db) {
-      topo.fire('destroyServiceInspector');
+    _deployLocalCharm: function(file, env, db) {
       localCharmHelpers.deployLocalCharm(file, env, db);
     },
+
+    /**
+      Extracts the needed charm data from the zip file in the browser.
+
+      @method _extractCharmMetadata
+      @param {Object} file The dropped charm zip.
+      @param {Object} topo The topology.
+      @param {Object} env The environment.
+      @param {Object} db reference to the app db.
+      @return {Object} The charm metadata.
+    */
+    _extractCharmMetadata: function(file, topo, env, db) {
+      ziputils.getEntries(
+          file,
+          this._findCharmEntries.bind(this, file, topo, env, db),
+          this._zipExtractionError.bind(this, db));
+    },
+
+    /**
+      Finds the file entries in the charm zip.
+
+      @method _findCharmEntries
+
+      @param {Object} file The dropped charm zip.
+      @param {Object} topo The topology.
+      @param {Object} env The environment.
+      @param {Obhect} db reference to the app db.
+      @param {Object} allEntries all of the file contents.
+    */
+    _findCharmEntries: function(file, topo, env, db, allEntries) {
+      var entries = ziputils.findCharmEntries(allEntries);
+      // We strictly need only the charm's metadata: see
+      // juju-core/state/apiserver/charms.go:findArchiveRootDir.
+      if (!entries.metadata) {
+        db.notifications.add({
+          title: 'Import failed',
+          message: 'Import from "' + file.name + '" failed. Invalid charm ' +
+              'file, missing metadata.yaml',
+          level: 'error'
+        });
+        return;
+      }
+      this._readCharmEntries(file, topo, env, db, entries);
+    },
+
+    /**
+      Calls the ziputils.readCharmEntries method to get the contents of the
+      necessary charm files.
+
+      @method _readCharmEntries
+      @param {Object} file The dropped charm zip.
+      @param {Object} topo The topology.
+      @param {Object} env The environment.
+      @param {Obhect} db reference to the app db.
+      @param {Object} entries parsed file entries from the zip.
+    */
+    _readCharmEntries: function(file, topo, env, db, entries) {
+      ziputils.readCharmEntries(
+          entries,
+          this._checkForExistingServices.bind(this, file, topo, env, db),
+          this._zipExtractionError.bind(this, db, file));
+    },
+
+    /**
+      Checks to see if there are any deployed services which were deployed
+      from the same charm that is being dropped.
+
+      Callback from the ziputils.getEntries() call
+
+      @method _checkForExistingServices
+      @param {Object} file The dropped charm zip.
+      @param {Object} topo The topology.
+      @param {Object} env The environment.
+      @param {Obhect} db Reference to the app db.
+      @param {Object} contents Maps names to contents. This usually
+        includes at least the "metadata" key, and one or more of the following
+        keys: "config", "revision" and "readme".
+    */
+    _checkForExistingServices: function(file, topo, env, db, contents) {
+      var charmName = jsyaml.safeLoad(contents.metadata).name;
+      var services = db.services.getServicesFromCharmName(charmName);
+
+      topo.fire('destroyServiceInspector');
+
+      if (services.length > 0) {
+        this._showUpgradeOrNewInspector(services, file, env, db);
+      } else {
+        this._deployLocalCharm(file, env, db);
+      }
+    },
+
+    /**
+      Creates a notification for the error from the zip extraction failure.
+
+      @method _zipExtractError
+      @param {Object} db Reference to the app db.
+      @param {Object} file The dropped file.
+      @param {Object} error The error returned from the zip lib.
+    */
+    _zipExtractionError: function(db, file, error) {
+      db.notifications.add({
+        title: 'Import failed',
+        message: 'Import from "' + file.name + '" failed. See console for' +
+            'error object',
+        level: 'error'
+      });
+      console.error(error);
+    },
+
+    /**
+      Shows an inspector allowing the user to decide if they want to upgrade
+      an existing service with a local charm or deploy a new service.
+
+      NOOP
+
+      @method _showUpgradeOrNewInspector
+      @param {Array} services An array of services which use a charm with the
+        same name.
+      @param {Object} file The file that was dropped on the canvas.
+      @param {Object} env A reference to the app env.
+      @param {Object} db A reference to the apps db.
+    */
+    _showUpgradeOrNewInspector: function(services, file, env, db) { },
 
     /**
       Called from canvasDropHandler.
@@ -1362,6 +1484,7 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-env',
     'unscaled-pack-layout',
     'bundle-import-helpers',
-    'local-charm-import-helpers'
+    'local-charm-import-helpers',
+    'zip-utils'
   ]
 });

@@ -1011,6 +1011,7 @@ describe('test_model.js', function() {
       window._gaq = [];
       django = new models.Service({id: 'django'});
       rails = new models.Service({
+        charm: 'cs:/precise/rails-2',
         id: 'rails',
         life: 'dying',
         aggregated_status: {}
@@ -1053,6 +1054,12 @@ describe('test_model.js', function() {
       var filtered = list.visible();
       assert.strictEqual(filtered.size(), 3);
       assert.deepEqual(filtered.toArray(), [rails, django, wordpress]);
+    });
+
+    it('can return a list of services deployed from charm name', function() {
+      var services = list.getServicesFromCharmName('rails');
+      assert.equal(services.length, 1);
+      assert.deepEqual(services, [rails]);
     });
   });
 
