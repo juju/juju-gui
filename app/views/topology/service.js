@@ -827,7 +827,7 @@ YUI.add('juju-topology-service', function(Y) {
         template: '<div class="viewlet-container"></div>',
         // views accepts views and viewlets
         views: {
-          'localNewUpgradeView': new Y.juju.viewlets.LocalNewUpgradeView()
+          localNewUpgradeView: new Y.juju.viewlets.LocalNewUpgradeView()
         },
         model: {
           services: services,

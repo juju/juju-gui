@@ -35,6 +35,6 @@ YUI.add('local-new-upgrade-view', function(Y) {
 
 }, '', {
   requires: [
-    'viewlet-view-base',
-    ]
+    'viewlet-view-base'
+  ]
 });
