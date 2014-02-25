@@ -108,7 +108,7 @@ YUI.add('viewlet-request-series', function(Y) {
 }, '0.0.1', {
   requires: [
     'juju-templates',
-    'juju-view',
+    'event-tracker',
     'viewlet-view-base',
     'local-charm-import-helpers'
   ]
