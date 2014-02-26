@@ -59,76 +59,30 @@ YUI.add('local-charm-import-helpers', function(Y) {
         template: '<div class="viewlet-container"></div>',
         // views accepts views and viewlets
         views: {
-          'requestSeries': Y.juju.viewlets.requestSeries
-        },
-        model: {
-          name: file.name,
-          size: file.size,
-          defaultSeries: env.get('defaultSeries')
+          requestSeries: new Y.juju.viewlets.RequestSeries({
+            file: file,
+            env: env,
+            db: db
+          })
         }
       });
 
       viewletManager.render();
       viewletManager.showViewlet('requestSeries');
-
-      ns.localCharmHelpers._attachViewletEvents(viewletManager, file, env, db);
-    },
-
-    /**
-      Attaches the events for the inspector externally until we are able to
-      refactor the viewletManager to handle event bindings.
-
-      @method _attachViewletEvents
-      @param {Object} viewletManager The reference to the viewletManager.
-      @param {Object} file The file object from the browser.
-      @param {Object} env Reference to the environment.
-      @param {Object} db Reference to the database.
-    */
-    _attachViewletEvents: function(viewletManager, file, env, db) {
-      var handlers = [],
-          helper = ns.localCharmHelpers,
-          container = viewletManager.get('container');
-
-      handlers.push(
-          container.one('button.cancel').on(
-              'click', helper._cleanUp, null, viewletManager, handlers));
-      handlers.push(
-          container.one('button.confirm').on(
-              'click',
-              helper._uploadLocalCharm, null,
-              viewletManager, handlers, file, env, db));
-    },
-
-    /**
-      Destroys the viewletManager and detaches the attached events
-
-      @method _cleanUp
-      @param {Object} _ The click event object.
-      @param {Object} viewletManager Reference to the viewletManager.
-      @param {Array} handlers Collection of event handlers to detach.
-    */
-    _cleanUp: function(_, viewletManager, handlers) {
-      viewletManager.destroy();
-      handlers.forEach(function(event) {
-        event.detach();
-      });
     },
 
     /**
       Sends the local charm file contents and callbacks to the uploadLocalCharm
       method in the environment.
 
-      @param {Object} _ The click event object.
       @param {Object} viewletManager Reference to the viewletManager.
-      @param {Array} handlers Collection of event handlers to detach.
       @param {Object} file The file object from the browser.
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
     */
-    _uploadLocalCharm: function(e, viewletManager, handlers, file, env, db) {
+    _uploadLocalCharm: function(viewletManager, file, env, db) {
       var helper = ns.localCharmHelpers;
       var series = helper._getSeriesValue(viewletManager);
-      helper._cleanUp(null, viewletManager, handlers);
       env.uploadLocalCharm(
           file,
           series,
@@ -259,7 +213,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'viewlet-request-series',
+    'request-series-view',
     'juju-viewlet-manager'
   ]
 });

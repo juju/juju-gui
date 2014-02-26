@@ -329,7 +329,7 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-relations.js'
         },
 
-        'viewlet-request-series': {
+        'request-series-view': {
           fullpath: '/juju-ui/views/viewlets/request-series.js'
         },
 

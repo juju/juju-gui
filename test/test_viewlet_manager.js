@@ -371,7 +371,9 @@ describe('Viewlet Manager', function() {
           testView: new TestView()
         }
       });
-      assert.equal(viewletManager.views.testView instanceof Y.View, true);
+      var testViewInstance = viewletManager.views.testView;
+      assert.equal(testViewInstance instanceof Y.View, true);
+      assert.deepEqual(testViewInstance.viewletManager, viewletManager);
     });
 
     it('renders Y.View\'s', function() {
@@ -386,22 +388,6 @@ describe('Viewlet Manager', function() {
       viewletManager.showViewlet('testView');
 
       assert.isNotNull(viewletManager.get('container').one('.rendered'));
-    });
-
-    it('can instantiate Y.View\'s and viewlets simultaneously', function() {
-      var TestView = generateTestView();
-      generateViewletManager(this, null, {
-        enableDatabinding: false,
-        views: {
-          testView: new TestView()
-        }
-      }, true);
-
-      assert.equal(viewletManager.views.testView instanceof Y.View, true);
-      // When a viewlet is instantiated this property is added. This property
-      // cannot exist if the viewlet is not instantiated.
-      assert.equal(
-          typeof viewletManager.views.serviceConfig._eventHandles, 'object');
     });
 
     it('can instantiate Y.View\'s and viewlets simultaneously', function() {
