@@ -438,8 +438,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method showViewlet
       @param {String} viewletName is a string representing the viewlet name.
       @param {Model} model to associate with the viewlet in its slot.
+      @param {Object} options a collection of options to modify the rendering
+        of the viewlets.
     */
-    showViewlet: function(viewName, model) {
+    showViewlet: function(viewName, model, options) {
       var container = this.get('container');
       // This method can be called directly but it is also an event handler
       // for clicking on the viewlet manager tab handles.
@@ -462,9 +464,11 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // Shows the slot
         container.one(this.slots[view.slot]).show();
       } else {
-        Y.Object.each(this.views, function(viewToCheck) {
-          if (!viewToCheck.slot) {
-            viewToCheck.hide();
+        Y.Object.each(this.views, function(viewToCheck, name) {
+          if (viewName !== name && options && options.visible !== true) {
+            if (!viewToCheck.slot) {
+              viewToCheck.hide();
+            }
           }
         });
       }

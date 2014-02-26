@@ -819,6 +819,11 @@ YUI.add('juju-topology-service', function(Y) {
       var container = Y.Node.create(
           Y.juju.views.Templates['service-inspector']());
 
+      services.forEach(function(service, index, source) {
+        // source is the services array
+        source[index] = service.getAttrs();
+      });
+
       container.appendTo(Y.one('#content'));
 
       var viewletManager = new Y.juju.viewlets.ViewletManager({
@@ -827,16 +832,27 @@ YUI.add('juju-topology-service', function(Y) {
         template: '<div class="viewlet-container"></div>',
         // views accepts views and viewlets
         views: {
-          localNewUpgradeView: new Y.juju.viewlets.LocalNewUpgradeView()
-        },
-        model: {
-          services: services,
-          file: file
+          requestSeries: new Y.juju.viewlets.RequestSeries({
+            file: file,
+            env: env,
+            db: db
+          }),
+          localNewUpgradeView: new Y.juju.viewlets.LocalNewUpgradeView({
+            services: services,
+            file: file,
+            env: env,
+            db: db
+          })
         }
       });
 
       viewletManager.render();
-      viewletManager.showViewlet('localNewUpgradeView');
+      viewletManager.showViewlet('requestSeries', null, {
+        visible: true
+      });
+      viewletManager.showViewlet('localNewUpgradeView', null, {
+        visible: true
+      });
     },
 
     /**
@@ -1508,6 +1524,7 @@ YUI.add('juju-topology-service', function(Y) {
     'local-charm-import-helpers',
     'juju-viewlet-manager',
     'local-new-upgrade-view',
+    'request-series-view',
     'zip-utils'
   ]
 });

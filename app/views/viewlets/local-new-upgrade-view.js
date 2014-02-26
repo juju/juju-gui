@@ -27,14 +27,81 @@ YUI.add('local-new-upgrade-view', function(Y) {
 
   ns.LocalNewUpgradeView = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
 
-    events: {},
+    events: {
+      'button.confirm': { click: '_upgradeSelectedServices' },
+      'button.cancel': { click: 'closeInspector' }
+    },
 
-    template: templates['local-new-upgrade']
+    template: templates['local-new-upgrade'],
 
+    /**
+      Renders the template into the container.
+
+      @method render
+    */
+    render: function() {
+      this.get('container').setHTML(this.template({
+        services: this.get('services')
+      }));
+    },
+
+    /**
+      Calls the viewlet managers destroy method to close the inspector.
+
+      @method closeInspector
+    */
+    closeInspector: function() {
+      this.viewletManager.destroy();
+    },
+
+    /**
+      Calls the helper methods to upgrade the selected services.
+
+      @method _upgradeSelectedServices
+      @param {Object} e the event object from the click
+    */
+    _upgradeSelectedServices: function(e) {
+      var services = this._getSelectedServices();
+      if (services.length > 0) {
+        Y.juju.localCharmHelpers.upgradeFromLocalCharm(
+            this.get('file'), this.get('env'), this.get('db'));
+      }
+      this.closeInspector();
+    },
+
+    /**
+      Gets the selected services form the inspector dom.
+
+      @method _getSelectedServices
+      @return {Array} An array of service names to upgrade
+    */
+    _getSelectedServices: function() {
+      var services = this.get('container').all('input[type=checkbox]');
+      var selectedServices = [];
+      services.each(function(service) {
+        if (service.get('checked')) {
+          selectedServices.push(service);
+        }
+      });
+      return selectedServices;
+    }
+
+  }, {
+    ATTRS: {
+      /**
+        A collection of services raw attribute objects
+
+        @attribute services
+        @type {Array}
+      */
+      services: {}
+    }
   });
 
 }, '', {
   requires: [
-    'viewlet-view-base'
+    'juju-templates',
+    'viewlet-view-base',
+    'local-charm-import-helpers'
   ]
 });

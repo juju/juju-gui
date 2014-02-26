@@ -47,7 +47,7 @@ YUI.add('request-series-view', function(Y) {
     */
     render: function() {
       var file = this.get('file');
-      this.get('container').append(this.template({
+      this.get('container').setHTML(this.template({
         name: file.name,
         size: file.size,
         defaultSeries: this.get('env').get('defaultSeries')
@@ -109,6 +109,30 @@ YUI.add('request-series-view', function(Y) {
       viewletManager.destroy();
     }
 
+  }, {
+    ATTRS: {
+      /**
+        The file object that was dropped on the canvas.
+
+        @attribute file
+        @type {Object}
+      */
+      file: {},
+      /**
+        Reference to the applications env object.
+
+        @attribute env
+        @type {Object}
+      */
+      env: {},
+      /**
+        Reference to the applications db object
+
+        @attribute db
+        @type {Object}
+      */
+      db: {}
+    }
   });
 
 }, '0.0.1', {
