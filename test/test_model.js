@@ -91,13 +91,6 @@ describe('test_model.js', function() {
       }
     });
 
-    it('must convert timestamps into time objects on Charm', function() {
-      var time = 1349797266.032,
-          date = new Date(time),
-          charm = new models.Charm(
-          { id: 'cs:precise/foo-9', last_change: {created: time / 1000} });
-      charm.get('last_change').created.should.eql(date);
-    });
   });
 
   describe('juju models', function() {
