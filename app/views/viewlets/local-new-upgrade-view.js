@@ -61,10 +61,11 @@ YUI.add('local-new-upgrade-view', function(Y) {
       @param {Object} e the event object from the click
     */
     _upgradeSelectedServices: function(e) {
-      var services = this._getSelectedServices();
+      var db = this.get('db');
+      var services = this._getSelectedServices(db);
       if (services.length > 0) {
-        Y.juju.localCharmHelpers.upgradeFromLocalCharm(
-            this.get('file'), this.get('env'), this.get('db'));
+        Y.juju.localCharmHelpers.upgradeServiceUsingLocalCharm(
+            services, this.get('file'), this.get('env'), db);
       }
       this.closeInspector();
     },
@@ -80,9 +81,10 @@ YUI.add('local-new-upgrade-view', function(Y) {
       var selectedServices = [];
       services.each(function(service) {
         if (service.get('checked')) {
-          selectedServices.push(service);
+          var srv = this.get('db').services.getById(service.get('name'));
+          selectedServices.push(srv);
         }
-      });
+      }, this);
       return selectedServices;
     }
 

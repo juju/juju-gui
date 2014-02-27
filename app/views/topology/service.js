@@ -820,7 +820,7 @@ YUI.add('juju-topology-service', function(Y) {
           Y.juju.views.Templates['service-inspector']());
 
       services.forEach(function(service, index, source) {
-        // source is the services array
+        // `source` param is the services array.
         source[index] = service.getAttrs();
       });
 

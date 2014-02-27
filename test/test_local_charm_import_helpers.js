@@ -116,23 +116,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    describe('_uploadLocalCharm', function() {
+    describe('uploadLocalCharm', function() {
       var stubs = {}, fileObj, defSeries;
 
       beforeEach(function() {
         fileObj = { name: 'foo' };
         defSeries = 'precise';
 
-        stubs = {
-          seriesStub: testUtils.makeStubMethod(
-              helper, '_getSeriesValue', defSeries),
-          localCharmLoadStub: testUtils.makeStubMethod(
-              helper, '_uploadLocalCharmLoad')
-        };
-
+        stubs.localCharmLoadStub = testUtils.makeStubMethod(
+            helper, '_uploadLocalCharmLoad');
         stubs.envFn = testUtils.makeStubFunction();
         stubs.uploadLocalCharmStub = testUtils.makeStubMethod(
             stubs.envFn, 'uploadLocalCharm');
+        stubs.getDefault = testUtils.makeStubMethod(
+            stubs.envFn, 'get', defSeries);
       });
 
       afterEach(function() {
@@ -146,8 +143,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('requests an upload from the environment', function() {
-        helper._uploadLocalCharm(null, fileObj, stubs.envFn, dbObj);
-        assert.equal(stubs.seriesStub.called(), true);
+        var option = { option: 'option' };
+        helper.uploadLocalCharm(defSeries, fileObj, stubs.envFn, dbObj, option);
         assert.equal(stubs.uploadLocalCharmStub.called(), true);
         var args = stubs.uploadLocalCharmStub.lastArguments();
         assert.deepEqual(args[0], fileObj);
@@ -163,35 +160,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(cbArgs[0], fileObj);
         assert.deepEqual(cbArgs[1], stubs.envFn);
         assert.deepEqual(cbArgs[2], dbObj);
+        assert.deepEqual(cbArgs[3], option);
       });
 
-      it('calls the _getSeriesValue() method', function() {
-        var vmgr = 'viewlet manager';
-        helper._uploadLocalCharm(vmgr, fileObj, stubs.envFn, dbObj);
-        assert.equal(stubs.seriesStub.called(), true);
-        assert.equal(stubs.seriesStub.lastArguments()[0], vmgr);
-      });
-    });
-
-    describe('_getSeriesValue', function() {
-      it('gets the series value from the viewlets input', function(done) {
-        var viewletManager = {
-          get: function(val) {
-            assert.equal(val, 'container');
-            return {
-              one: function(val) {
-                assert.equal(val, 'input[defaultSeries]');
-                return {
-                  get: function(val) {
-                    assert.equal(val, 'value');
-                    done();
-                  }
-                };
-              }
-            };
-          }
-        };
-        helper._getSeriesValue(viewletManager);
+      it('pulls series from the defaultSeries if none is supplied', function() {
+        helper.uploadLocalCharm(null, fileObj, stubs.envFn);
+        assert.equal(stubs.uploadLocalCharmStub.called(), true);
+        assert.equal(stubs.getDefault.calledOnce(), true);
+        var args = stubs.uploadLocalCharmStub.lastArguments();
+        assert.deepEqual(args[1], defSeries);
       });
     });
 
@@ -266,7 +243,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var loadCharmDetailsStub = stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.equal(loadCharmDetailsStub.called(), true);
       });
 
@@ -279,7 +256,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         var loadCharmDetailsStub = stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
 
         assert.equal(loadCharmDetailsStub.called(), true);
         var args = loadCharmDetailsStub.lastArguments();
@@ -298,7 +275,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             stubLoadCharmDetails(this);
             stubParseUploadResponse(this);
 
-            helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+            helper._uploadLocalCharmLoad(
+                fileObj, envObj, dbObj, null, eventObj);
             assert.deepEqual(notificationParams, {
               title: 'Import failed',
               message: 'Import from "foo" failed. Your version of ' +
@@ -316,7 +294,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         stubLoadCharmDetails(this);
         stubParseUploadResponse(this);
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.deepEqual(notificationParams, {
           title: 'Imported local charm file',
           message: 'Import from "foo" successful.',
@@ -337,7 +315,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Error: 'oops'
         });
 
-        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, eventObj);
+        helper._uploadLocalCharmLoad(fileObj, envObj, dbObj, null, eventObj);
         assert.deepEqual(notificationParams, {
           title: 'Import failed',
           message: 'Import from "foo" failed. oops',

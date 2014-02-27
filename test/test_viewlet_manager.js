@@ -183,7 +183,7 @@ describe('Viewlet Manager', function() {
   it('allows you to define your own hide method', function() {
     generateViewletManager(this);
     var hideStub = utils.makeStubMethod(
-      viewletManager.views.serviceConfig, 'hide');
+        viewletManager.views.serviceConfig, 'hide');
     this._cleanups.push(hideStub.reset);
 
     viewletManager.render();

@@ -664,7 +664,7 @@ describe('service module events', function() {
     var dbObj = { db: 'db' };
     var fileObj = { name: 'foo' };
     var envObj = { env: 'env' };
-    var services = { services: 'services' };
+    var services = [{ getAttrs: function() {} }];
 
     ViewletManager = utils.makeStubMethod(
         Y.namespace('juju.viewlets'), 'ViewletManager');
@@ -681,8 +681,10 @@ describe('service module events', function() {
         vmArgs[0].views.localNewUpgradeView instanceof
         Y.juju.viewlets.LocalNewUpgradeView, true);
     assert.equal(renderStub.calledOnce(), true);
-    assert.equal(showViewletStub.calledOnce(), true);
-    assert.equal(showViewletStub.lastArguments()[0], 'localNewUpgradeView');
+    assert.equal(showViewletStub.callCount(), 2);
+    var showArgs = showViewletStub.allArguments();
+    assert.equal(showArgs[0][0], 'requestSeries');
+    assert.equal(showArgs[1][0], 'localNewUpgradeView');
   });
 });
 

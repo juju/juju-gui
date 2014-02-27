@@ -105,8 +105,21 @@ YUI.add('request-series-view', function(Y) {
       @param {Object} db The applications db.
     */
     _uploadLocalCharm: function(_, viewletManager, file, env, db) {
-      Y.juju.localCharmHelpers._uploadLocalCharm(viewletManager, file, env, db);
+      var series = this.getSeriesValue(viewletManager);
+      Y.juju.localCharmHelpers.uploadLocalCharm(series, file, env, db);
       viewletManager.destroy();
+    },
+
+    /**
+      Grabs the series value from the user input field in the inspector
+
+      @method getSeriesValue
+      @param {Object} viewletManager Reference to the viewletManager.
+      @return {String} The series to deploy the charm to.
+    */
+    getSeriesValue: function(viewletManager) {
+      return viewletManager.get('container')
+                           .one('input[defaultSeries]').get('value');
     }
 
   }, {

@@ -465,7 +465,11 @@ YUI.add('juju-viewlet-manager', function(Y) {
         container.one(this.slots[view.slot]).show();
       } else {
         Y.Object.each(this.views, function(viewToCheck, name) {
-          if (viewName !== name && options && options.visible !== true) {
+          if (!options || (options && options.visible !== true)) {
+            // In order to maintain backwards compatibility with the "only a
+            // single viewlet can be rendered at once" an additional `options`
+            // parameter needed to be added so that multiple views could
+            // be rendered into a single container
             if (!viewToCheck.slot) {
               viewToCheck.hide();
             }
