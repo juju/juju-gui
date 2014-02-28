@@ -1057,7 +1057,7 @@ describe('test_model.js', function() {
   });
 
   describe('db.charms.addFromCharmData', function() {
-    var db, models, Y;
+    var db, metadata, models, options, Y;
     var requirements = ['juju-models'];
 
     before(function(done) {
@@ -1069,14 +1069,7 @@ describe('test_model.js', function() {
 
     beforeEach(function() {
       db = new models.Database();
-    });
-
-    afterEach(function() {
-      db.destroy();
-    });
-
-    it('creates and returns a new charm model instance', function() {
-      var metadata = {
+      metadata = {
         name: 'mycharm',
         summary: 'charm summary',
         description: 'charm description',
@@ -1086,7 +1079,34 @@ describe('test_model.js', function() {
         requires: 'requires',
         peers: 'peers'
       };
-      var options = {'my-option': {}};
+      options = {'my-option': {}};
+    });
+
+    afterEach(function() {
+      db.destroy();
+    });
+
+    // Ensure the given charm is well formed.
+    var assertCharm = function(charm, expectedSeries, expectedRevision) {
+      var attrs = charm.getAttrs();
+      var relations = attrs.relations;
+      var url = 'local:' + expectedSeries + '/mycharm-' + expectedRevision;
+      assert.strictEqual(attrs.categories, metadata.categories);
+      assert.strictEqual(attrs.description, metadata.description);
+      assert.strictEqual(attrs.distro_series, expectedSeries);
+      assert.strictEqual(attrs.is_subordinate, metadata.subordinate);
+      assert.strictEqual(attrs.name, metadata.name);
+      assert.strictEqual(attrs.options, options);
+      assert.strictEqual(attrs.revision, expectedRevision);
+      assert.strictEqual(attrs.scheme, 'local');
+      assert.strictEqual(attrs.summary, metadata.summary);
+      assert.strictEqual(attrs.url, url);
+      assert.strictEqual(relations.provides, metadata.provides);
+      assert.strictEqual(relations.requires, metadata.requires);
+      assert.strictEqual(relations.peers, metadata.peers);
+    };
+
+    it('creates and returns a new charm model instance', function() {
       var charm = db.charms.addFromCharmData(
           metadata, 'trusty', 42, 'local', options);
       // A new charm model instance has been created.
@@ -1094,22 +1114,51 @@ describe('test_model.js', function() {
       // The newly created charm has been returned.
       assert.deepEqual(db.charms.item(0), charm);
       // The newly created charm is well formed.
-      var attrs = charm.getAttrs();
-      var relations = attrs.relations;
-      assert.strictEqual(attrs.categories, metadata.categories);
-      assert.strictEqual(attrs.description, metadata.description);
-      assert.strictEqual(attrs.distro_series, 'trusty');
-      assert.strictEqual(attrs.id, 'local:trusty/mycharm-42');
-      assert.strictEqual(attrs.is_subordinate, metadata.subordinate);
-      assert.strictEqual(attrs.name, metadata.name);
-      assert.strictEqual(attrs.options, options);
-      assert.strictEqual(attrs.revision, 42);
-      assert.strictEqual(attrs.scheme, 'local');
-      assert.strictEqual(attrs.summary, metadata.summary);
-      assert.strictEqual(attrs.url, 'local:trusty/mycharm-42');
-      assert.strictEqual(relations.provides, metadata.provides);
-      assert.strictEqual(relations.requires, metadata.requires);
-      assert.strictEqual(relations.peers, metadata.peers);
+      assertCharm(charm, 'trusty', 42);
+    });
+
+    it('creates different series and revisions of the same charm', function() {
+      var charm1 = db.charms.addFromCharmData(
+          metadata, 'saucy', 42, 'local', options);
+      var charm2 = db.charms.addFromCharmData(
+          metadata, 'trusty', 47, 'local', options);
+      // Two new charm model instance have been created.
+      assert.strictEqual(db.charms.size(), 2);
+      // The newly created charms have been returned.
+      assert.deepEqual(db.charms.item(0), charm1);
+      assert.deepEqual(db.charms.item(1), charm2);
+      // The newly created charms are well formed.
+      assertCharm(charm1, 'saucy', 42);
+      assertCharm(charm2, 'trusty', 47);
+    });
+
+    it('just retrieves the charm if it already exists', function() {
+      var charm1 = db.charms.addFromCharmData(
+          metadata, 'trusty', 42, 'local', options);
+      var charm2 = db.charms.addFromCharmData(
+          metadata, 'trusty', 42, 'local', options);
+      // Only one charm model instance has been actually created.
+      assert.strictEqual(db.charms.size(), 1);
+      // The original charm has been returned by the second call.
+      assert.deepEqual(charm1, charm2);
+      // The returned charm is well formed.
+      assertCharm(charm2, 'trusty', 42);
+    });
+
+    it('updates an existing charm', function() {
+      db.charms.addFromCharmData(metadata, 'trusty', 42, 'local', options);
+      metadata.categories = ['picard', 'janeway', 'sisko'];
+      metadata.provides = 'new-provides';
+      metadata.requires = 'new-requires';
+      options = {'another-option': {}};
+      var charm = db.charms.addFromCharmData(
+          metadata, 'trusty', 42, 'local', options);
+      // Only one charm model instance has been actually created.
+      assert.strictEqual(db.charms.size(), 1);
+      // The updated charm has been returned.
+      assert.deepEqual(db.charms.item(0), charm);
+      // The returned charm is well formed.
+      assertCharm(charm, 'trusty', 42);
     });
 
   });
