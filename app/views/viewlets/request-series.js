@@ -47,7 +47,7 @@ YUI.add('request-series-view', function(Y) {
     */
     render: function() {
       var file = this.get('file');
-      this.get('container').append(this.template({
+      this.get('container').setHTML(this.template({
         name: file.name,
         size: file.size,
         defaultSeries: this.get('env').get('defaultSeries')
@@ -105,10 +105,47 @@ YUI.add('request-series-view', function(Y) {
       @param {Object} db The applications db.
     */
     _uploadLocalCharm: function(_, viewletManager, file, env, db) {
-      Y.juju.localCharmHelpers._uploadLocalCharm(viewletManager, file, env, db);
+      var series = this.getSeriesValue(viewletManager);
+      Y.juju.localCharmHelpers.uploadLocalCharm(series, file, env, db);
       viewletManager.destroy();
+    },
+
+    /**
+      Grabs the series value from the user input field in the inspector
+
+      @method getSeriesValue
+      @param {Object} viewletManager Reference to the viewletManager.
+      @return {String} The series to deploy the charm to.
+    */
+    getSeriesValue: function(viewletManager) {
+      return viewletManager.get('container')
+                           .one('input[defaultSeries]').get('value');
     }
 
+  }, {
+    ATTRS: {
+      /**
+        The file object that was dropped on the canvas.
+
+        @attribute file
+        @type {Object}
+      */
+      file: {},
+      /**
+        Reference to the applications env object.
+
+        @attribute env
+        @type {Object}
+      */
+      env: {},
+      /**
+        Reference to the applications db object
+
+        @attribute db
+        @type {Object}
+      */
+      db: {}
+    }
   });
 
 }, '0.0.1', {

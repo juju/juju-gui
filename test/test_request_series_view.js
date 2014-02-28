@@ -108,19 +108,44 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(vmObj.destroy.calledOnce(), true);
     });
 
-    it('_uploadLocalCharm: calls _uploadLocalCharm', function() {
+    it('_uploadLocalCharm: calls uploadLocalCharm', function() {
       yui.namespace('juju.localCharmHelpers');
+      var defSeries = 'precise';
       var helperUpload = testUtils.makeStubMethod(
-          juju.localCharmHelpers, '_uploadLocalCharm');
+          juju.localCharmHelpers, 'uploadLocalCharm');
       this._cleanups.push(helperUpload.reset);
+      var getSeries = testUtils.makeStubMethod(
+          view, 'getSeriesValue', defSeries);
+      this._cleanups.push(getSeries.reset);
       view._uploadLocalCharm(null, vmObj, fileObj, envObj, dbObj);
       assert.equal(helperUpload.calledOnce(), true);
+      assert.equal(getSeries.calledOnce(), true);
       var helperArgs = helperUpload.lastArguments();
-      assert.equal(helperArgs[0], vmObj);
+      assert.equal(helperArgs[0], defSeries);
       assert.equal(helperArgs[1], fileObj);
       assert.equal(helperArgs[2], envObj);
       assert.equal(helperArgs[3], dbObj);
       assert.equal(vmObj.destroy.calledOnce(), true);
+    });
+
+    it('gets the series value from the viewlets input', function(done) {
+      var viewletManager = {
+        get: function(val) {
+          assert.equal(val, 'container');
+          return {
+            one: function(val) {
+              assert.equal(val, 'input[defaultSeries]');
+              return {
+                get: function(val) {
+                  assert.equal(val, 'value');
+                  done();
+                }
+              };
+            }
+          };
+        }
+      };
+      view.getSeriesValue(viewletManager);
     });
 
   });

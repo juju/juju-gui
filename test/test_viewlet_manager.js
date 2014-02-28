@@ -180,15 +180,15 @@ describe('Viewlet Manager', function() {
     assert.equal(wrapper.getComputedStyle('display'), 'block');
   });
 
-  it('allows you to define your own hide method', function(done) {
+  it('allows you to define your own hide method', function() {
     generateViewletManager(this);
-    viewletManager.views.serviceConfig.hide = function() {
-      // Test passes by hitting done and getting called.
-      done();
-    };
+    var hideStub = utils.makeStubMethod(
+        viewletManager.views.serviceConfig, 'hide');
+    this._cleanups.push(hideStub.reset);
 
     viewletManager.render();
     viewletManager.showViewlet('serviceConfig');
+    assert.equal(hideStub.calledOnce(), true);
   });
 
   it('provides a sane default hide method', function() {

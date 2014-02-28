@@ -39,6 +39,44 @@ YUI.add('local-charm-import-helpers', function(Y) {
     },
 
     /**
+      Public method to upgrade a collection of services from a local charm.
+
+      @method upgradeServiceUsingLocalCharm
+      @param {Array} services an array of services to upgrade.
+      @param {Object} file the file object from the browser.
+      @param {Object} env reference to the environment.
+      @param {Object} db reference to the database.
+    */
+    upgradeServiceUsingLocalCharm: function(services, file, env, db) {
+      var series = services[0].get('charm').match(/[^:]*(?=\/)/)[0];
+      ns.localCharmHelpers.uploadLocalCharm(series, file, env, db, {
+        services: services
+      });
+    },
+
+    /**
+      Sends the local charm file contents and callbacks to the uploadLocalCharm
+      method in the environment.
+
+      @method uploadLocalCharm
+      @param {String} series the series to deploy the charm to.
+      @param {Object} file The file object from the browser.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+      @param {Object} options a collection of options to pass to the
+        uploadLocalCharm callbacks.
+    */
+    uploadLocalCharm: function(series, file, env, db, options) {
+      var helper = ns.localCharmHelpers;
+      series = series || env.get('defaultSeries');
+      env.uploadLocalCharm(
+          file,
+          series,
+          helper._uploadLocalCharmProgress,
+          helper._uploadLocalCharmLoad.bind(null, file, env, db, options));
+    },
+
+    /**
       Requests the series to deploy their local charm to by rendering an
       inspector with the requestSeries viewlet
 
@@ -69,37 +107,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
 
       viewletManager.render();
       viewletManager.showViewlet('requestSeries');
-    },
-
-    /**
-      Sends the local charm file contents and callbacks to the uploadLocalCharm
-      method in the environment.
-
-      @param {Object} viewletManager Reference to the viewletManager.
-      @param {Object} file The file object from the browser.
-      @param {Object} env Reference to the environment.
-      @param {Object} db Reference to the database.
-    */
-    _uploadLocalCharm: function(viewletManager, file, env, db) {
-      var helper = ns.localCharmHelpers;
-      var series = helper._getSeriesValue(viewletManager);
-      env.uploadLocalCharm(
-          file,
-          series,
-          helper._uploadLocalCharmProgress,
-          helper._uploadLocalCharmLoad.bind(null, file, env, db));
-    },
-
-    /**
-      Grabs the series value from the user input field in the inspector
-
-      @method _getSeriesValue
-      @param {Object} viewletManager Reference to the viewletManager.
-      @return {String} The series to deploy the charm to.
-    */
-    _getSeriesValue: function(viewletManager) {
-      return viewletManager.get('container')
-                           .one('input[defaultSeries]').get('value');
     },
 
     /**
@@ -158,9 +165,10 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} file The file object from the browser.
       @param {Object} env Reference to the environment.
       @param {Object} db Reference to the database.
+      @param {Object} options a collection of options from the charm upload.
       @param {Object} e The load event.
     */
-    _uploadLocalCharmLoad: function(file, env, db, e) {
+    _uploadLocalCharmLoad: function(file, env, db, options, e) {
       var helper = ns.localCharmHelpers,
           notifications = db.notifications;
 
@@ -187,11 +195,24 @@ YUI.add('local-charm-import-helpers', function(Y) {
           level: 'important'
         });
 
-        helper.loadCharmDetails(
-            res.CharmURL,
-            env,
-            helper._loadCharmDetailsCallback);
+        var callback;
+        if (options && options.services) {
+          callback = helper._upgradeServices;
+        } else {
+          callback = helper._loadCharmDetailsCallback;
+        }
+
+        helper.loadCharmDetails(res.CharmURL, env, callback);
       }
+    },
+
+    /**
+      Upgrades a collection of services to the specified charm.
+
+      @method _upgradeServices
+    */
+    _upgradeServices: function() {
+
     },
 
     /**
