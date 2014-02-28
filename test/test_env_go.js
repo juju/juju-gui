@@ -731,6 +731,199 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(err, 'service "mysql" not found');
     });
 
+    it('adds a machine', function() {
+      env.addMachines([{}]);
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {
+          MachineParams: [{Jobs: [env.machineJobs.HOST_UNITS]}]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    });
+
+    it('adds a machine with the given series and constraints', function() {
+      var constraints = {'cpu-cores': 4, 'mem': 4000};
+      env.addMachines([{series: 'trusty', constraints: constraints}]);
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {
+          MachineParams: [{
+            Jobs: [env.machineJobs.HOST_UNITS],
+            Series: 'trusty',
+            Constraints: constraints
+          }]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    });
+
+    it('adds a container', function() {
+      env.addMachines([{containerType: 'lxc'}]);
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {
+          MachineParams: [{
+            Jobs: [env.machineJobs.HOST_UNITS],
+            ContainerType: 'lxc'
+          }]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    });
+
+    it('adds a saucy container to a specific machine', function() {
+      env.addMachines(
+          [{containerType: 'lxc', parentId: '42', series: 'saucy'}]);
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {
+          MachineParams: [{
+            Jobs: [env.machineJobs.HOST_UNITS],
+            ContainerType: 'lxc',
+            ParentId: '42',
+            Series: 'saucy'
+          }]
+        }
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    });
+
+    it('adds multiple machines/containers', function() {
+      env.addMachines([
+        {},
+        {jobs: [env.machineJobs.MANAGE_ENVIRON], series: 'precise'},
+        {containerType: 'kvm'},
+        {containerType: 'lxc', parentId: '1'}
+      ]);
+      var expectedMachineParams = [
+        {Jobs: [env.machineJobs.HOST_UNITS]},
+        {Jobs: [env.machineJobs.MANAGE_ENVIRON], Series: 'precise'},
+        {Jobs: [env.machineJobs.HOST_UNITS], ContainerType: 'kvm'},
+        {
+          Jobs: [env.machineJobs.HOST_UNITS],
+          ContainerType: 'lxc',
+          ParentId: '1'
+        }
+      ];
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {MachineParams: expectedMachineParams}
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    });
+
+    it('avoids sending calls if no machines are added', function() {
+      env.addMachines([]);
+      assert.equal(conn.messages.length, 0);
+    });
+
+    it('handles successful addMachines server responses', function() {
+      var response;
+      env.addMachines([{}, {containerType: 'lxc'}], function(data) {
+        response = data;
+      });
+      // Mimic the server AddMachines response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Machines: [{Machine: '42'}, {Machine: '2/lxc/1'}]}
+      });
+      assert.isUndefined(response.err);
+      var expectedMachines = [
+        {name: '42', err: undefined},
+        {name: '2/lxc/1', err: undefined}
+      ];
+      assert.deepEqual(response.machines, expectedMachines);
+    });
+
+    it('handles addMachines server failures', function() {
+      var response;
+      env.addMachines([{}], function(data) {
+        response = data;
+      });
+      // Mimic the server AddMachines response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'an error occurred in machine 42',
+        Response: {Machines: [{Machine: '42', Error: 'bad wolf'}]}
+      });
+      assert.strictEqual(response.err, 'an error occurred in machine 42');
+      assert.deepEqual(response.machines, [{name: '42', err: 'bad wolf'}]);
+    });
+
+    // Ensure a destroyMachines request has been sent.
+    var assertDestroyMachinesRequestSent = function(names, force) {
+      var expectedMsg = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'DestroyMachines',
+        Params: {MachineNames: names, Force: force}
+      };
+      assert.deepEqual(conn.last_message(), expectedMsg);
+    };
+
+    it('removes a machine', function() {
+      env.destroyMachines(['1']);
+      assertDestroyMachinesRequestSent(['1'], false);
+    });
+
+    it('forces a machine removal', function() {
+      env.destroyMachines(['42'], true);
+      assertDestroyMachinesRequestSent(['42'], true);
+    });
+
+    it('removes a container', function() {
+      env.destroyMachines(['2/lxc/0']);
+      assertDestroyMachinesRequestSent(['2/lxc/0'], false);
+    });
+
+    it('forces a container removal', function() {
+      env.destroyMachines(['1/kvm/42'], true);
+      assertDestroyMachinesRequestSent(['1/kvm/42'], true);
+    });
+
+    it('removes multiple machines/containers', function() {
+      env.destroyMachines(['1', '47', '42/lxc/0']);
+      assertDestroyMachinesRequestSent(['1', '47', '42/lxc/0'], false);
+    });
+
+    it('avoids sending calls if no machines are removed', function() {
+      env.destroyMachines([]);
+      assert.equal(conn.messages.length, 0);
+    });
+
+    it('handles successful destroyMachines server responses', function() {
+      var response;
+      env.destroyMachines(['42', '1/lxc/2'], false, function(data) {
+        response = data;
+      });
+      // Mimic the server DestroyMachines response.
+      conn.msg({RequestId: 1, Response: {}});
+      assert.isUndefined(response.err);
+      assert.deepEqual(response.names, ['42', '1/lxc/2']);
+    });
+
+    it('handles destroyMachines server failures', function() {
+      var response;
+      env.destroyMachines(['1'], false, function(data) {
+        response = data;
+      });
+      // Mimic the server DestroyMachines response.
+      conn.msg({RequestId: 1, Error: 'bad wolf', Response: {}});
+      assert.strictEqual(response.err, 'bad wolf');
+      assert.deepEqual(response.names, ['1']);
+    });
+
     it('sends the correct get_annotations message', function() {
       env.get_annotations('apache', 'service');
       var last_message = conn.last_message();

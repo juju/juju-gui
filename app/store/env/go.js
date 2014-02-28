@@ -752,6 +752,204 @@ YUI.add('juju-env-go', function(Y) {
       userCallback(transformedData);
     },
 
+    /*
+    Add/destroy machines support.
+
+    The machines API introduces the following calls:
+      - Client:AddMachines adds new machines/containers. The call takes a list
+        of AddMachineParams, each one including the following optional fields:
+        Series, Constraints, Jobs, ParentId, ContainerType. Other parameters
+        (including InstanceId, HardwareCharacteristics and Addrs) are not used
+        for now by the Juju GUI client API call implementation.
+      - Client:DestroyMachines removes a given set of machines/containers. The
+        call takes a list of MachineNames to be removed and a Force flag, which
+        forces the machine removal even if it contains units or containers.
+    See the API call implementations below for a better description of the
+    parameters and return values.
+
+    The API is completed by the ToMachineSpec parameter that can be passed to
+    the ServiceDeploy and AddServiceUnits API calls: in both cases, if a
+    machine/container name is specified, then the unit(s) will be deployed in
+    the specified machine/container.
+    */
+
+    // The jobs that can be associated to a new machine.
+    // See state/api/params/constants.go.
+    machineJobs: {
+      HOST_UNITS: 'JobHostUnits',
+      MANAGE_ENVIRON: 'JobManageEnviron'
+    },
+
+    /**
+      Add new machines and/or containers.
+
+      @method addMachines
+      @param {Array} params A list of parameters for each machine/container
+        to be added. Each item in the list must be an object containing the
+        following keys (all optional):
+          - constraints {Object}: the machine constraints;
+          - jobs {Array}: to juju-core jobs to associate with the new machine
+            (defaults to env.machineJobs.HOST_UNITS, which enables unit hosting
+            capabilities to new machines);
+          - series {String}: the machine series (the juju-core default series
+            is used if none is specified);
+          - parentId {String}: when adding a new container, this parameter can
+            be used to place it into a specific machine, in which case the
+            containerType must also be specified (see below). If parentId is
+            not set when adding a container, a new top level machine will be
+            created to hold the container with given series, constraints, jobs;
+          - containerType {String}: the container type of the new machine
+            (e.g. "lxc").
+        Usage example:
+          var params = [
+            // Add a new machine with the default series/constraints.
+            {},
+            // Add a new saucy machine with four cores.
+            {series: 'saucy', constraints: {'cpu-cores': 4}},
+            // Add a new LXC in machine 2.
+            {containerType: 'lxc', parentId: '2'},
+            // Add a new LXC in a new machine.
+            {containerType: 'lxc'}
+          ];
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback is called passing an object like
+        the following:
+          {
+            err: 'only defined if a global error occurred'
+            machines: [
+              {name: '1', err: 'a machine error occurred'},
+              {name: '2/lxc/1', err: null}
+              // One entry for each machine/container added.
+            ]
+          }
+    */
+    addMachines: function(params, callback) {
+      var self = this;
+      // Avoid calling the server if the API call parameters are not valid.
+      if (!params.length) {
+        console.log('addMachines called without machines to add');
+        return;
+      }
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(self._handleAddMachines, self, callback);
+      }
+      var machineParams = params.map(function(param) {
+        var machineParam = {
+          // By default the new machines we add are suitable for storing units.
+          Jobs: param.jobs || [self.machineJobs.HOST_UNITS],
+          Series: param.series,
+          ParentId: param.parentId,
+          ContainerType: param.containerType
+        };
+        if (param.constraints) {
+          machineParam.Constraints = self.filterConstraints(param.constraints);
+        }
+        return machineParam;
+      });
+      var request = {
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {MachineParams: machineParams}
+      };
+      self._send_rpc(request, intermediateCallback);
+    },
+
+    /**
+      Transform the data returned from juju-core 'addMachines' into that
+      suitable for the user callback.
+
+      @method _handleAddMachines
+      @param {Function} userCallback The callback originally submitted by the
+        call site. See addMachines above for a description of what is passed
+        to the original callback.
+      @param {Object} data The response returned by the server, e.g.:
+        {
+          RequestId: 1,
+          Error: 'only defined if a global error occurred',
+          Response: {
+            Machines: [
+              {Machine: '2', Error: 'a machine error occurred'},
+              {Machine: '2/lxc/1', Error: null}
+            ]
+          }
+        }
+     */
+    _handleAddMachines: function(userCallback, data) {
+      var machines = data.Response.Machines || [];
+      var transformedData = {
+        err: data.Error,
+        machines: machines.map(function(machine) {
+          return {
+            err: machine.Error,
+            name: machine.Machine
+          };
+        })
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
+    /**
+      Remove machines and/or containers.
+
+      @method destroyMachines
+      @param {Array} names The names of the machines/containers to be removed.
+        Each name is a string: machine names are numbers, e.g. "1" or "42";
+        containers have the [machine name]/[container type]/[container number]
+        form, e.g. "2/lxc/0" or "1/kvm/42".
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback is called passing an object like
+        the following:
+          {
+            err: 'only defined if an error occurred'
+            names: [] // The list of machine/container names passed to this
+                      // call (propagated to provide some context).
+          }
+    */
+    destroyMachines: function(names, force, callback) {
+      // Avoid calling the server if the API call parameters are not valid.
+      if (!names.length) {
+        console.log('destroyMachines called without machines to remove');
+        return;
+      }
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(
+            this._handleDestroyMachines, this, callback, names);
+      }
+      var request = {
+        Type: 'Client',
+        Request: 'DestroyMachines',
+        Params: {MachineNames: names, Force: !!force}
+      };
+      this._send_rpc(request, intermediateCallback);
+    },
+
+    /**
+      Transform the data returned from juju-core 'destroyMachines' into that
+      suitable for the user callback.
+
+      @method _handleDestroyMachines
+      @param {Function} userCallback The callback originally submitted by the
+        call site. See destroyMachines above for a description of what is
+        passed to the original callback.
+      @param {Array} names The names of the removed machines/containers.
+        Each name is a string: machine names are numbers, e.g. "1" or "42";
+        containers have the [machine name]/[container type]/[container number]
+        form, e.g. "2/lxc/0" or "1/kvm/42".
+      @param {Object} data The response returned by the server, e.g.:
+        {RequestId: 1, Error: 'an error occurred', Response: {}}
+     */
+    _handleDestroyMachines: function(userCallback, names, data) {
+      var transformedData = {
+        err: data.Error,
+        names: names
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
     /**
        Set a service's charm.
 
