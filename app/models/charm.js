@@ -817,12 +817,14 @@ YUI.add('juju-charm-models', function(Y) {
       @return {Object} The resulting charm model instance.
     */
     addFromCharmData: function(metadata, series, revision, scheme, options) {
+      // The id is the store identifier for the charm.
       var id = series + '/' + metadata.name + '-' + revision;
+      // The URL is used as primary id for charms in the model list.
+      var url = scheme + ':' + id;
       var data = {
         categories: metadata.categories,
         description: metadata.description,
         distro_series: series,
-        id: id,
         is_subordinate: metadata.subordinate,
         name: metadata.name,
         options: options,
@@ -832,9 +834,17 @@ YUI.add('juju-charm-models', function(Y) {
           peers: metadata.peers
         },
         revision: revision,
-        summary: metadata.summary,
-        url: scheme + ':' + id
+        summary: metadata.summary
       };
+      var charm = this.getById(url);
+      if (charm) {
+        // The charm already exists, update the model instance.
+        charm.setAttrs(data);
+        return charm;
+      }
+      // Create and return the model instance.
+      data.id = id;
+      data.url = url;
       return this.add(data);
     }
 
