@@ -197,7 +197,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
 
         var callback;
         if (options && options.services) {
-          callback = helper._upgradeServices;
+          callback = helper._upgradeServices.bind(
+              null, options.services, env, db);
         } else {
           callback = helper._loadCharmDetailsCallback;
         }
@@ -210,9 +211,45 @@ YUI.add('local-charm-import-helpers', function(Y) {
       Upgrades a collection of services to the specified charm.
 
       @method _upgradeServices
+      @param {Object} services the services to upgrade.
+      @param {Object} env Reference to the environment.
+      @param {Object} db Reference to the database.
+      @param {Object} charm the upgraded charm.
     */
-    _upgradeServices: function() {
+    _upgradeServices: function(services, env, db, charm) {
+      var charmUrl = charm.get('id');
+      var helper = ns.localCharmHelpers;
+      services.forEach(function(service) {
+        env.setCharm(
+            service.get('id'),
+            charmUrl,
+            false,
+            helper._showServiceUpgradedNotification.bind(null, db));
+      });
+    },
 
+    /**
+      Shows a notification for the service upgrade.
+
+      @method _showServiceUpgradedNotification
+      @param {Object} db Reference to the database.
+      @param {Object} result the result of the service upgrade.
+    */
+    _showServiceUpgradedNotification: function(db, result) {
+      if (result.err) {
+        db.notifications.create({
+          title: 'Error setting charm.',
+          message: result.err,
+          level: 'error'
+        });
+        return;
+      }
+      db.notifications.add({
+        title: 'Charm upgrade accepted',
+        message: 'Upgrade for "' + result.service_name + '" from "' +
+            result.charm_url + '" accepted.',
+        level: 'important'
+      });
     },
 
     /**
