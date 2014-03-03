@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       var modules = ['juju-charm-models', 'local-charm-import-helpers',
-        'juju-tests-utils'];
+        'juju-tests-utils', 'node-event-simulate'];
       Y = YUI(GlobalConfig).use(modules, function(Y) {
         helper = Y.juju.localCharmHelpers;
         testUtils = Y['juju-tests'].utils;
@@ -410,6 +410,87 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           title: 'Charm upgrade accepted',
           message: 'Upgrade for "' + service_name + '" from "' +
               charm_url + '" accepted.',
+          level: 'important'
+        });
+      });
+    });
+
+    describe('integration tests', function() {
+      var envObj, fileObj, setCharmStub, uploadLocalCharmStub;
+
+      beforeEach(function() {
+        uploadLocalCharmStub = testUtils.makeStubFunction();
+        setCharmStub = testUtils.makeStubFunction();
+        envObj = {
+          get: testUtils.makeStubFunction('precise'),
+          uploadLocalCharm: uploadLocalCharmStub,
+          setCharm: setCharmStub
+        };
+        fileObj = { name: 'foo', size: '100' };
+      });
+
+      it('deployLocalCharm: can be stopped when asking for series', function() {
+        testUtils.makeContainer(this, 'content');
+        var destroyVM = testUtils.makeStubMethod(
+            Y.juju.viewlets.RequestSeries.prototype, 'destroyViewletManager');
+        this._cleanups.push(destroyVM.reset);
+        helper.deployLocalCharm(fileObj, envObj, dbObj);
+        Y.one('.controls .cancel').simulate('click');
+        // We are only testing that it gets to the destroy method. The request
+        // series tests themselves test the methods internals.
+        assert.equal(destroyVM.calledOnce(), true);
+      });
+
+      it('deployLocalCharm: can deploy a local charm', function() {
+        testUtils.makeContainer(this, 'content');
+        helper.deployLocalCharm(fileObj, envObj, dbObj);
+        Y.one('.controls .confirm').simulate('click');
+        assert.equal(uploadLocalCharmStub.calledOnce(), true);
+        // loadCharmDetails calls the Charm model code, it's functionality is
+        // tested in the unit tests.
+        var loadCharmDetailsStub = testUtils.makeStubMethod(
+            helper, 'loadCharmDetails');
+        this._cleanups.push(loadCharmDetailsStub.reset);
+        // Call the success callback for the env uploadLocalCharm call
+        uploadLocalCharmStub.lastArguments()[3]({
+          target: { responseText: '{"CharmURL":"local:precise/ghost-4"}' }
+        });
+        // Stub out the event firing to deploy the charm
+        var fireStub = testUtils.makeStubMethod(Y, 'fire');
+        this._cleanups.push(fireStub.reset);
+        // Call the loadCharmDetails callback
+        loadCharmDetailsStub.lastArguments()[2]();
+        assert.equal(fireStub.calledOnce(), true);
+      });
+
+      it('upgradeServiceUsingLocalCharm: upgrade from local charm', function() {
+        var localUrl = 'local:precise/ghost-4';
+        var services = [{ get: testUtils.makeStubFunction(localUrl) }];
+        helper.upgradeServiceUsingLocalCharm(services, fileObj, envObj, dbObj);
+        assert.equal(uploadLocalCharmStub.calledOnce(), true);
+        // loadCharmDetails calls the Charm model code, it's functionality is
+        // tested in the unit tests.
+        var loadCharmDetailsStub = testUtils.makeStubMethod(
+            helper, 'loadCharmDetails');
+        this._cleanups.push(loadCharmDetailsStub.reset);
+        // Call the success callback for the env uploadLocalCharm call
+        uploadLocalCharmStub.lastArguments()[3]({
+          target: { responseText: '{"CharmURL":"local:precise/ghost-4"}' }
+        });
+        // Call the loadCharmDetails callback for the upgradeServices path.
+        loadCharmDetailsStub.lastArguments()[2]({
+          get: testUtils.makeStubFunction(localUrl)
+        });
+        assert.equal(setCharmStub.calledOnce(), true);
+        // Call the setCharm callback
+        setCharmStub.lastArguments()[3]({
+          service_name: 'ghost',
+          charm_url: localUrl
+        });
+        assert.deepEqual(notificationParams, {
+          title: 'Charm upgrade accepted',
+          message: 'Upgrade for "ghost" from "' +
+              localUrl + '" accepted.',
           level: 'important'
         });
       });
