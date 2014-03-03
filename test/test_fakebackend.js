@@ -604,13 +604,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('should support YAML imports', function(done) {
-      utils.promiseImport(
-          'data/wp-deployer.yaml',
-          undefined,
-          factory.makeFakeBackend()
-      ).then(function(resolve) {
-        var result = resolve.result;
-        fakebackend = resolve.backend;
+      var fakebackend = factory.makeFakeBackend();
+      var db = fakebackend.db;
+      db.environment.set('defaultSeries', 'precise');
+      var YAMLData = utils.loadFixture('data/wp-deployer.yaml');
+
+      fakebackend.importDeployer(YAMLData, undefined, function(result) {
         assert.equal(result.Error, undefined);
         assert.equal(result.DeploymentId, 1,
                      'deployment id incorrect');
@@ -643,8 +642,48 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
         assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
         done();
-      }).then(undefined, done);
+      });
     });
+
+    it('should support old-style comma-separated constraints',
+        function(done) {
+
+          var fakebackend = factory.makeFakeBackend();
+          var db = fakebackend.db;
+          db.environment.set('defaultSeries', 'precise');
+          var YAMLData = utils.loadFixture('data/wp-deployer-commas.yaml');
+
+          fakebackend.importDeployer(YAMLData, undefined, function(result) {
+            assert.equal(result.Error, undefined);
+            var mysql = fakebackend.db.services.getById('mysql');
+            // Constraints
+            var constraints = mysql.get('constraints');
+            assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
+            assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
+            done();
+          });
+        }
+    );
+
+    it('should support mixed comma and space constraints',
+        function(done) {
+          var fakebackend = factory.makeFakeBackend();
+          var db = fakebackend.db;
+          db.environment.set('defaultSeries', 'precise');
+          var YAMLData = utils.loadFixture('data/mysql-deployer-mixed.yaml');
+
+          fakebackend.importDeployer(YAMLData, undefined, function(result) {
+            assert.equal(result.Error, undefined);
+            var mysql = fakebackend.db.services.getById('mysql');
+            // Constraints
+            var constraints = mysql.get('constraints');
+            assert.equal(constraints['cpu-power'], '2', 'wrong cpu power');
+            assert.equal(constraints['cpu-cores'], '4', 'wrong cpu cores');
+            assert.equal(constraints.mem, '10', 'wrong mem');
+            done();
+          });
+        }
+    );
 
     it('should stop importing if service names conflict', function(done) {
       var fakebackend = factory.makeFakeBackend();

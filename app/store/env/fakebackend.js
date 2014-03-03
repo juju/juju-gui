@@ -438,12 +438,21 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // here so that the GUI displays it properly.
       var constraintsMap = {}, vals;
       if (typeof constraints === 'string') {
-        constraints = constraints.split(',');
+        // Determine the number of key-value pairs and try the old-style comma
+        // separator if not the same as the constraints length.
+        var numPairs = constraints.match(/=/g).length;
+        // Although comma-separation is deprecated, check it first as it
+        // allows easier parsing if a mix of commas and spaces is used.
+        var pairs = constraints.split(',');
+        if (numPairs !== pairs.length) {
+          pairs = constraints.split(' ');
+        }
+        constraints = pairs;
       }
       if (Y.Lang.isArray(constraints)) {
         constraints.forEach(function(cons) {
           vals = cons.split('=');
-          constraintsMap[vals[0]] = vals[1];
+          constraintsMap[vals[0].trim()] = vals[1].trim();
         });
       } else {
         constraintsMap = constraints;
