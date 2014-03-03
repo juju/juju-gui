@@ -388,6 +388,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           null,
           1,
           {},
+          null,
           callback);
     });
 
@@ -413,6 +414,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           null,
           1,
           constraints,
+          null,
           callback);
     });
 
@@ -425,7 +427,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.deploy('cs:precise/wordpress-15', undefined, undefined, undefined,
-                 1, null, callback);
+                 1, null, null, callback);
     });
 
     it('can destroy a service', function(done) {
@@ -817,7 +819,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
     function generateIntegrationServices(callback) {
       var localCb = function(result) {
-        env.add_unit('kumquat', 2, function(data) {
+        env.add_unit('kumquat', 2, null, function(data) {
           // After finished generating integrated services.
           callback(data);
         });
@@ -829,6 +831,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {llama: 'pajama'},
           null,
           1,
+          null,
           null,
           localCb);
     }
@@ -882,6 +885,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           {llama: 'pajama'},
           null,
           1,
+          null,
           null,
           localCb);
     }
@@ -1128,9 +1132,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add a relation (integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', null, null, null, 1, null, function() {
+          'cs:precise/wordpress-15', null, null, null, 1, null, null,
+          function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, function() {
+                'cs:precise/mysql-26', null, null, null, 1, null, null,
+                function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
                   env.add_relation(endpointA, endpointB, function(recData) {
@@ -1250,9 +1256,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a relation(integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-15', null, null, null, 1, null, function() {
+          'cs:precise/wordpress-15', null, null, null, 1, null, null,
+          function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, function() {
+                'cs:precise/mysql-26', null, null, null, 1, null, null,
+                function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
                   env.add_relation(endpointA, endpointB, function() {

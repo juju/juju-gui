@@ -180,9 +180,11 @@ YUI.add('juju-view-inspector', function(Y) {
 
       var delta = requested_unit_count - unit_count;
       if (delta > 0) {
-        // Add units!
+        // Add units! The third argument (null) below represents the machine
+        // where to deploy new units. For now a new machine is created for each
+        // unit.
         env.add_unit(
-            service.get('id'), delta,
+            service.get('id'), delta, null,
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);

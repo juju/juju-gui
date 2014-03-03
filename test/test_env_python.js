@@ -430,12 +430,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.include(warning[0], 'Permission denied');
       assert.equal(operationName, warning[1].op);
       // The callback received an error.
-      assert.isTrue(errorRaised);
+      assert.deepEqual(errorRaised, true);
       // A *permissionDenied* was fired by the environment, or it was silenced.
       var silent = Y.Array.some(env.get('_silentFailureOps'), function(v) {
         return v === warning[1].op;
       });
-      assert.isTrue(permissionDeniedFired || silent);
+      assert.deepEqual(permissionDeniedFired || silent, true);
       // Restore the original *console.warn*.
       console.warn = original;
     };
@@ -447,7 +447,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('denies adding a unit if the GUI is read-only', function() {
-      assertOperationDenied('add_unit', ['haproxy', 3]);
+      assertOperationDenied('add_unit', ['haproxy', 3, null]);
     });
 
     it('denies destroying a service if the GUI is read-only', function() {
@@ -456,7 +456,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('denies deploying a charm if the GUI is read-only', function() {
       assertOperationDenied(
-          'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3, null]);
+          'deploy',
+          ['cs:precise/haproxy', 'haproxy', {}, null, 3, null, null]
+      );
     });
 
     it('denies exposing a service if the GUI is read-only', function() {

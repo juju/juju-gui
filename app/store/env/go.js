@@ -675,28 +675,35 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Deploy a charm.
+      Deploy a charm.
 
-       @method deploy
-       @param {String} charm_url The URL of the charm.
-       @param {String} service_name The name of the service to be deployed.
-       @param {Object} config The charm configuration options.
-       @param {String} config_raw The YAML representation of the charm
-         configuration options. Only one of `config` and `config_raw` should be
-         provided, though `config_raw` takes precedence if it is given.
-       @param {Integer} num_units The number of units to be deployed.
-       @param {Object} constraints The machine constraints to use in the
-         object format key: value.
-       @param {Function} callback A callable that must be called once the
-         operation is performed.
-       @return {undefined} Sends a message to the server only.
-     */
-    deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     constraints, callback) {
+      @method deploy
+      @param {String} charmUrl The URL of the charm.
+      @param {String} serviceName The name of the service to be deployed.
+      @param {Object} config The charm configuration options.
+      @param {String} configRaw The YAML representation of the charm
+        configuration options. Only one of `config` and `configRaw` should be
+        provided, though `configRaw` takes precedence if it is given.
+      @param {Integer} numUnits The number of units to be deployed.
+      @param {Object} constraints The machine constraints to use in the
+        object format key: value.
+      @param {String} toMachine The machine/container name where to deploy the
+        service unit (e.g. top level machine "42" or container "2/lxc/0").
+        If the value is null or undefined, the default juju-core unit placement
+        policy is used. This currently means that clean and empty machines are
+        used if available, otherwise new top level machines are created.
+        If the value is set, numUnits must be 1: i.e. it is not possible to add
+        multiple units to a single machine/container.
+      @param {Function} callback A callable that must be called once the
+        operation is performed.
+      @return {undefined} Sends a message to the server only.
+    */
+    deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
+                     constraints, toMachine, callback) {
       var intermediateCallback = null;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeploy, this,
-            callback, service_name, charm_url);
+        intermediateCallback = Y.bind(
+            this._handleDeploy, this, callback, serviceName, charmUrl);
       }
 
       if (constraints) {
@@ -706,7 +713,6 @@ YUI.add('juju-env-go', function(Y) {
           console.error('Constraints need to be an object not a function');
           console.warn(constraints);
         }
-
         constraints = this.filterConstraints(constraints);
       } else {
         constraints = {};
@@ -716,12 +722,13 @@ YUI.add('juju-env-go', function(Y) {
           { Type: 'Client',
             Request: 'ServiceDeploy',
             Params: {
-              ServiceName: service_name,
+              ServiceName: serviceName,
               Config: stringifyObjectValues(config),
-              ConfigYAML: config_raw,
+              ConfigYAML: configRaw,
               Constraints: constraints,
-              CharmUrl: charm_url,
-              NumUnits: num_units
+              CharmUrl: charmUrl,
+              NumUnits: numUnits,
+              ToMachineSpec: toMachine
             }
           },
           intermediateCallback
@@ -729,24 +736,24 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Transform the data returned from juju-core 'deploy' into that suitable
-       for the user callback.
+      Transform the data returned from juju-core 'deploy' into that suitable
+      for the user callback.
 
-       @method handleDeploy
-       @param {Function} userCallback The callback originally submitted by the
-       call site.
-       @param {String} service_name The name of the service.  Passed in since
-         it is not part of the response.
-       @param {String} charm_url The URL of the charm.  Passed in since
-         it is not part of the response.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
+      @method _handleDeploy
+      @param {Function} userCallback The callback originally submitted by the
+      call site.
+      @param {String} serviceName The name of the service.  Passed in since
+        it is not part of the response.
+      @param {String} charmUrl The URL of the charm.  Passed in since
+        it is not part of the response.
+      @param {Object} data The response returned by the server.
+      @return {undefined} Nothing.
      */
-    handleDeploy: function(userCallback, service_name, charm_url, data) {
+    _handleDeploy: function(userCallback, serviceName, charmUrl, data) {
       var transformedData = {
         err: data.Error,
-        service_name: service_name,
-        charm_url: charm_url
+        service_name: serviceName,
+        charm_url: charmUrl
       };
       // Call the original user callback.
       userCallback(transformedData);
@@ -1005,49 +1012,59 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Add units to the provided service.
-     *
-     * @method add_unit
-     * @param {String} service The service to be scaled up.
-     * @param {Integer} numUnits The number of units to be added.
-     * @param {Function} callback A callable that must be called once the
-     *  operation is performed. It will receive an object with an "err"
-     *  attribute containing a string describing the problem (if an error
-     *  occurred), or with the following attributes if everything went well:
-     *    - service_name: the name of the service;
-     *    - num_units: the number of units added;
-     *    - result: a list containing the names of the added units.
-     * @return {undefined} Sends a message to the server only.
-     */
-    add_unit: function(service, numUnits, callback) {
+      Add units to the provided service.
+
+      @method add_unit
+      @param {String} service The service to be scaled up.
+      @param {Integer} numUnits The number of units to be added.
+      @param {String} toMachine The machine/container name where to deploy the
+        service unit (e.g. top level machine "42" or container "2/lxc/0").
+        If the value is null or undefined, the default juju-core unit placement
+        policy is used. This currently means that clean and empty machines are
+        used if available, otherwise new top level machines are created.
+        If the value is set, numUnits must be 1: i.e. it is not possible to add
+        multiple units to a single machine/container.
+      @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), or with the following attributes if everything went well:
+        - service_name: the name of the service;
+        - num_units: the number of units added;
+        - result: a list containing the names of the added units.
+      @return {undefined} Sends a message to the server only.
+    */
+    add_unit: function(service, numUnits, toMachine, callback) {
       var intermediateCallback;
       if (callback) {
         // Capture the callback, service and numUnits.  No context is passed.
-        intermediateCallback = Y.bind(this.handleAddUnit, null,
-            callback, service, numUnits);
+        intermediateCallback = Y.bind(
+            this._handleAddUnit, null, callback, service, numUnits);
       }
       this._send_rpc({
         Type: 'Client',
         Request: 'AddServiceUnits',
-        Params: {ServiceName: service, NumUnits: numUnits}
+        Params: {
+          ServiceName: service,
+          NumUnits: numUnits,
+          ToMachineSpec: toMachine
+        }
       }, intermediateCallback);
     },
 
     /**
-     * Transform the data returned from the juju-core add_unit call into that
-     * suitable for the user callback.
-     *
-     * @method handleAddUnit
-     * @static
-     * @param {Function} userCallback The callback originally submitted by the
-     * call site.
-     * @param {String} service The name of the service.  Passed in since it
-     * is not part of the response.
-     * @param {Integer} numUnits The number of added units.
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleAddUnit: function(userCallback, service, numUnits, data) {
+      Transform the data returned from the juju-core add_unit call into that
+      suitable for the user callback.
+
+      @method _handleAddUnit
+      @static
+      @param {Function} userCallback The callback originally submitted by the
+        call site.
+      @param {String} service The name of the service.  Passed in since it
+        is not part of the response.
+      @param {Integer} numUnits The number of added units.
+      @param {Object} data The response returned by the server.
+    */
+    _handleAddUnit: function(userCallback, service, numUnits, data) {
       var transformedData = {
         err: data.Error,
         service_name: service

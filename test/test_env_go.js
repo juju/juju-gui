@@ -369,8 +369,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(expected, last_message);
     });
 
+    it('adds new service units to a specific machine', function() {
+      env.add_unit('django', 3, '42');
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'AddServiceUnits',
+        RequestId: 1,
+        Params: {ServiceName: 'django', NumUnits: 3, ToMachineSpec: '42'}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
     it('successfully adds units to a service', function(done) {
-      env.add_unit('django', 2, function(data) {
+      env.add_unit('django', 2, null, function(data) {
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(2, data.num_units);
         assert.deepEqual(['django/2', 'django/3'], data.result);
@@ -385,7 +396,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('handles failures adding units to a service', function(done) {
-      env.add_unit('django', 0, function(data) {
+      env.add_unit('django', 0, null, function(data) {
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(0, data.num_units);
         assert.strictEqual('must add at least one unit', data.err);
@@ -695,12 +706,30 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(msg.Params.Constraints, constraints);
     });
 
+    it('successfully deploys a service to a specific machine', function() {
+      var expectedMessage = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          Config: {},
+          Constraints: {},
+          CharmUrl: 'precise/mediawiki',
+          NumUnits: 1,
+          ToMachineSpec: '42'
+        },
+        RequestId: 1
+      };
+      env.deploy('precise/mediawiki', null, null, null, 1, null, '42');
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
     it('successfully deploys a service storing charm data', function() {
       var charm_url;
       var err;
       var service_name;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, function(data) {
+          'precise/mysql', 'mysql', null, null, null, null, null,
+          function(data) {
             charm_url = data.charm_url;
             err = data.err;
             service_name = data.service_name;
@@ -719,7 +748,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles failed service deploy', function() {
       var err;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, function(data) {
+          'precise/mysql', 'mysql', null, null, null, null, null,
+          function(data) {
             err = data.err;
           }
       );
