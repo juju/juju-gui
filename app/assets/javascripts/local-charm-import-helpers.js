@@ -229,7 +229,7 @@ YUI.add('local-charm-import-helpers', function(Y) {
     },
 
     /**
-      Shows a notification for the service upgrade.
+      Shows a notification after the service upgrade.
 
       @method _showServiceUpgradedNotification
       @param {Object} db Reference to the database.
@@ -237,8 +237,8 @@ YUI.add('local-charm-import-helpers', function(Y) {
     */
     _showServiceUpgradedNotification: function(db, result) {
       if (result.err) {
-        db.notifications.create({
-          title: 'Error setting charm.',
+        db.notifications.add({
+          title: 'Error upgrading charm.',
           message: result.err,
           level: 'error'
         });

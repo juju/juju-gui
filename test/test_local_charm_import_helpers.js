@@ -339,5 +339,81 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
+    describe('_upgradeServices', function() {
+      var charmGet, charm, charmUrl, envObj, setCharmStub, service,
+          serviceGet, showServiceStub;
+
+      beforeEach(function() {
+        charmUrl = 'local:precise/ghost-4';
+        charmGet = testUtils.makeStubFunction(charmUrl, charmUrl);
+        charm = { get: charmGet };
+        setCharmStub = testUtils.makeStubFunction();
+        serviceGet = testUtils.makeStubFunction('srv1', 'srv2');
+        showServiceStub = testUtils.makeStubMethod(
+            helper, '_showServiceUpgradedNotification');
+        envObj = { setCharm: setCharmStub };
+      });
+
+      afterEach(function() {
+        showServiceStub.reset();
+      });
+
+      it('upgrades a single service', function() {
+        service = { get: serviceGet };
+        helper._upgradeServices([service], envObj, dbObj, charm);
+        assert.equal(setCharmStub.calledOnce(), true);
+        var setCharmArgs = setCharmStub.lastArguments();
+        assert.equal(setCharmArgs[0], 'srv1');
+        assert.equal(setCharmArgs[1], charmUrl);
+        assert.equal(setCharmArgs[2], false);
+        assert.isFunction(setCharmArgs[3]);
+        // Check to make sure the callback is called with the proper args
+        setCharmArgs[3]();
+        assert.equal(showServiceStub.calledOnce(), true);
+        assert.deepEqual(showServiceStub.lastArguments()[0], dbObj);
+      });
+
+      it('upgrades multiple services', function() {
+        service = { get: serviceGet };
+        helper._upgradeServices([service, service], envObj, dbObj, charm);
+        assert.equal(setCharmStub.callCount(), 2);
+        var setCharmArgs = setCharmStub.allArguments();
+        assert.equal(setCharmArgs[0][0], 'srv1');
+        assert.equal(setCharmArgs[0][1], charmUrl);
+        assert.equal(setCharmArgs[0][2], false);
+        assert.isFunction(setCharmArgs[0][3]);
+        assert.equal(setCharmArgs[1][0], 'srv2');
+        assert.equal(setCharmArgs[1][1], charmUrl);
+        assert.equal(setCharmArgs[1][2], false);
+        assert.isFunction(setCharmArgs[1][3]);
+      });
+    });
+
+    describe('_showServiceUpgradedNotification', function() {
+      it('shows a notification on a failed upgrade', function() {
+        helper._showServiceUpgradedNotification(dbObj, { err: 'oops' });
+        assert.deepEqual(notificationParams, {
+          title: 'Error upgrading charm.',
+          message: 'oops',
+          level: 'error'
+        });
+      });
+
+      it('shows a notification on a successful upgrade', function() {
+        var service_name = 'ghost';
+        var charm_url = 'local:precise/ghost-4';
+        helper._showServiceUpgradedNotification(dbObj, {
+          service_name: service_name,
+          charm_url: charm_url
+        });
+        assert.deepEqual(notificationParams, {
+          title: 'Charm upgrade accepted',
+          message: 'Upgrade for "' + service_name + '" from "' +
+              charm_url + '" accepted.',
+          level: 'important'
+        });
+      });
+    });
+
   });
 })();
