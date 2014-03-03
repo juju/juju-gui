@@ -130,6 +130,7 @@ YUI.add('juju-ghost-inspector', function(Y) {
           this.viewletManager.configFileContent,
           numUnits,
           constraints,
+          null, // Always deploy units to new machines for now.
           Y.bind(this._deployCallbackHandler,
                  this,
                  serviceName,

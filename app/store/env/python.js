@@ -160,11 +160,15 @@ YUI.add('juju-env-python', function(Y) {
      * @method add_unit
      * @param {String} service The service to be scaled up.
      * @param {Integer} num_units The number of units to be added.
+     * @param {String} toMachine The machine/container name where to deploy the
+         service unit. Since pyJuju does not support units' co-location, this
+         argument is ignored, and only present for signature compatibility
+         with the GoEnvironment implementation.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    add_unit: function(service, num_units, callback) {
+    add_unit: function(service, num_units, toMachine, callback) {
       this._send_rpc({
         'op': 'add_unit',
         'service_name': service,
@@ -252,12 +256,16 @@ YUI.add('juju-env-python', function(Y) {
          provided, though `config_raw` takes precedence if it is given.
      * @param {Integer} num_units The number of units to be deployed.
      * @param {Object} constraintMap The constraints object.
+     * @param {String} toMachine The machine/container name where to deploy the
+         service unit. Since pyJuju does not support units' co-location, this
+         argument is ignored, and only present for signature compatibility
+         with the GoEnvironment implementation.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
-                     constraintMap, callback) {
+                     constraintMap, toMachine, callback) {
 
       if (!constraintMap) { constraintMap = {}; }
       // Format the constraints properly for the pyjuju backend
