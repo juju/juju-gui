@@ -1,0 +1,7 @@
+envExport:
+  series: precise
+  services:
+    mysql:
+      charm: "cs:precise/mysql-27"
+      num_units: 1
+      constraints: 'cpu-power=2,cpu-cores=4'

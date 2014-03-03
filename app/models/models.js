@@ -285,7 +285,7 @@ YUI.add('juju-models', function(Y) {
         'setter': function(value) {
           if (typeof value === 'string') {
             var output = {};
-            value.split(',').map(function(pair) {
+            value.split(' ').map(function(pair) {
               var kv = pair.split('=');
               output[kv[0]] = kv[1];
             });
@@ -303,7 +303,7 @@ YUI.add('juju-models', function(Y) {
             }
           });
           if (result.length) {
-            return result.join(',');
+            return result.join(' ');
           }
           return undefined;
         }

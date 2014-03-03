@@ -1,10 +1,10 @@
-envExport: 
+envExport:
   series: precise
-  services: 
-    mysql: 
+  services:
+    mysql:
       charm: "cs:precise/mysql-27"
       num_units: 1
-      options: 
+      options:
         "binlog-format": MIXED
         "block-size": "5"
         "dataset-size": "80%"
@@ -20,21 +20,21 @@ envExport:
         vip: ""
         vip_cidr: "24"
         vip_iface: eth0
-      annotations: 
+      annotations:
         "gui-x": 115
         "gui-y": 89
-      constraints: 'cpu-power=2,cpu-cores=4'
-    wordpress: 
+      constraints: 'cpu-power=2 cpu-cores=4'
+    wordpress:
       charm: "cs:precise/wordpress-19"
       num_units: 2
-      options: 
+      options:
         debug: "no"
         engine: apache
         "wp-content": ""
-      annotations: 
+      annotations:
         "gui-x": 510
         "gui-y": 184
       expose: true
-  relations: 
+  relations:
     - - "wordpress:db"
       - "mysql:db"

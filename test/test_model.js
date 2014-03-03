@@ -816,7 +816,7 @@ describe('test_model.js', function() {
         id: 'wordpress',
         charm: 'precise/wordpress-1',
         config: {debug: 'no', username: 'admin'},
-        constraints: 'cpu-power=2,cpu-cores=4',
+        constraints: 'cpu-power=2 cpu-cores=4',
         annotations: {'gui-x': 100, 'gui-y': 200}
       });
       db.relations.add({
@@ -862,7 +862,7 @@ describe('test_model.js', function() {
 
       // Constraints
       var constraints = result.services.wordpress.constraints;
-      assert.equal(constraints, 'cpu-power=2,cpu-cores=4');
+      assert.equal(constraints, 'cpu-power=2 cpu-cores=4');
 
       // Export position annotations.
       assert.equal(result.services.wordpress.annotations['gui-x'], 100);
