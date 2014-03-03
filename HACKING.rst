@@ -204,10 +204,40 @@ by pulling from the original Juju repository.
 
   # Using the alias from the Helpful aliases section, update your fork with
   # the latest code in the juju develop branch.
-  git juju-sync
+  git sync-juju
 
   # And start your second feature branch.
   git checkout -b {featureBranch2}
+
+
+Syncing your feature branch with develop (trunk)
+-------------------------------------------------
+
+Time to time you have a feature branch you've been working on for several days
+while other branches have landed in trunk. To make sure you resolve any
+conflicts before submitting your branch, it's often wise to sync your feature
+branch with the latest from develop. You can do this by rebasing your branch
+with develop.
+
+The recommended pattern would be to
+
+::
+
+  # Update your local copy of develop with the latest from the juju branch.
+  git sync-juju
+
+  # Then check back out your feature branch and sync it with your new local
+  # develop.
+  git checkout {featureBranch}
+  git sync-trunk
+
+You should see messages for each landed branch getting rebased into your work.
+
+::
+
+    First, rewinding head to replay your work on top of it...
+    Applying: Created local charm new or upgrade inspector.
+    Applying: Refactored local charm upload helpers to support multiple service upgrades
 
 
 Helpful Git tools and aliases
@@ -243,7 +273,7 @@ documentation to make working with the Juju Gui easier.
   # Bring down the pull request number from the remote specified.
   # Note, the remote that the pull request is merging into may not be your
   # origin (your github fork).
-  fetch-pr = "!f() { git fetch $1 refs/pull/$2/head:refs/remotes/pr/$2; }; f"
+  fetch-pr = "!f() { git fetch $1 +refs/pull/$2/head:refs/remotes/pr/$2; }; f"
 
   # Make a branch that merges a pull request into the most recent version of the
   # trunk (the "juju" remote's develop branch). To do this, it also updates your
@@ -257,8 +287,10 @@ documentation to make working with the Juju Gui easier.
   # Update your local develop branch with the latest from the juju remote.
   # Then make sure to push that back up to your fork on github to keep
   # everything in sync.
-  juju-sync = "!f() { git checkout develop && git pull juju develop && git push origin develop; }; f"
+  sync-juju = "!f() { git checkout develop && git pull juju develop && git push origin develop; }; f"
 
+  # Rebase develop (trunk) into the current feature branch.
+  sync-trunk = rebase develop
 
 Working with a Real Juju
 ========================
