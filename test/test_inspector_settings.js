@@ -49,7 +49,7 @@ describe('Inspector Settings', function() {
   afterEach(function(done) {
     if (view) {
       if (inspector) {
-        view.setInspector(inspector, true);
+        delete view.inspector;
       }
       view.destroy();
     }

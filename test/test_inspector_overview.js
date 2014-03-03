@@ -63,7 +63,7 @@ describe('Inspector Overview', function() {
   afterEach(function(done) {
     if (view) {
       if (inspector) {
-        view.setInspector(inspector, true);
+        delete view.inspector;
       }
       view.destroy();
     }
@@ -81,7 +81,7 @@ describe('Inspector Overview', function() {
     }
   });
 
-  var setUpInspector = function(serviceAttrs, skipPrepopulate) {
+  var setUpInspector = function(serviceAttrs, skipPrepopulate, allowIcon) {
     var charmId = 'precise/mediawiki-14';
     charmConfig.id = charmId;
     var charm = new models.Charm(charmConfig);
@@ -117,7 +117,10 @@ describe('Inspector Overview', function() {
     }
     var fakeStore = new Y.juju.charmworld.APIv3({});
     fakeStore.iconpath = function(id) {
-      return '/icon/' + id;
+      if (allowIcon) {
+        return '/icon/' + id;
+      }
+      return '';
     };
     view = new jujuViews.environment({
       container: container,
@@ -145,7 +148,7 @@ describe('Inspector Overview', function() {
   });
 
   it('should show the proper icon based off the charm model', function() {
-    inspector = setUpInspector();
+    inspector = setUpInspector(null, null, true);
     var icon = container.one('.icon img');
 
     // The icon url comes from the fake store and the service charm attribute.

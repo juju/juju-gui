@@ -105,7 +105,7 @@ describe('Inspector Constraints', function() {
   });
 
   afterEach(function(done) {
-    view.setInspector(inspector, true);
+    delete view.inspector;
     view.destroy();
     env.after('destroy', function() { done(); });
     env.destroy();
