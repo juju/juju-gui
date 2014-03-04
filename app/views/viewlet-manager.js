@@ -444,7 +444,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (typeof viewName !== 'string') {
         viewName = viewName.currentTarget.getData('viewlet');
       }
-
       var view = this.views[viewName];
       if (!view) {
         console.warn(
@@ -457,7 +456,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       // hide existing viewlets in the default slot before showing the new one.
       if (view.slot) {
         this.fillSlot(view, model);
-        // Shows the slot
+        // Makes sure the view is visible
+        view.show();
+        // Makes sure the slow the view is to be rendered into is visible.
         container.one(this.slots[view.slot]).show();
       } else {
         Y.Object.each(this.views, function(viewToCheck, name) {
@@ -495,8 +496,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
         if (existing) {
           // remove only removes the databinding but does not clear the DOM.
           existing.remove();
-          // remove the element from the DOM
-          existing.container.remove(true);
+          // Destroy the view rendered into the slot.
+          existing.destroy();
         }
       }
       if (model === undefined) {
@@ -505,14 +506,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (this.slots[slot]) {
         // Look up the target selector for the slot.
         target = this.get('container').one(this.slots[slot]);
-        var result = view.render(model, this.getAttrs());
-        if (result) {
-          if (typeof result === 'string') {
-            result = Y.Node.create(result);
-          }
-          view.container = result;
-        }
-        target.setHTML(view.container);
+        view.render(model, this.getAttrs());
+        target.setHTML(view.get('container'));
         this._slots[slot] = view;
         this.databindingBind(model, view);
       } else {
@@ -533,8 +528,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (existing) {
         // unbind the databinding
         existing.remove();
-        // remove the element from the DOM
-        existing.container.remove(true);
+        // Destroy the view rendered into the slot.
+        existing.destroy();
         this.get('container').one(this.slots[existing.slot]).hide();
         /**
           Fired when the viewlet slot is closing.  May be used by other

@@ -33,6 +33,25 @@ YUI.add('viewlet-view-base', function(Y) {
 
   ViewletBaseView.prototype = {
     /**
+     Model change events handles associated with this viewlet.
+
+     @property _eventHandles
+     @type {Array}
+     @default empty array
+     @private
+    */
+    _eventHandles: [],
+    /**
+      Used for conflict resolution. When the user changes a value on a bound
+      viewlet we store a reference of the element key here so that we know to
+      offer a conflict resolution.
+
+      @property changedValues
+      @type {Object}
+      @default empty object
+    */
+    changedValues: {},
+    /**
       Shows the container of the view
 
       @method show

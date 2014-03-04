@@ -1412,7 +1412,7 @@ YUI.add('juju-view-inspector', function(Y) {
         'left-hand-panel': '.left-breakout'
       };
       this.viewletManager.render();
-      this.viewletManager.showViewlet('inspectorHeader', model);
+      this.viewletManager.showViewlet('InspectorHeader', model);
       this.viewletManager.showViewlet(options.viewletList[0]);
       this.viewletManager.on('viewletSlotClosing', function() {
         this.viewletManager.fire('inspectorTakeoverEnding');
@@ -1443,7 +1443,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'view',
     // Imported viewlets
     'charm-details-view',
-    'viewlet-inspector-header',
+    'inspector-header-view',
     'viewlet-inspector-overview',
     'viewlet-service-config',
     'viewlet-service-constraints',

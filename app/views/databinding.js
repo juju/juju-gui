@@ -498,7 +498,8 @@ YUI.add('juju-databinding', function(Y) {
       }
 
       // Bind and listen for model changes.
-      viewlet.container.all('[data-bind]').each(function(node) {
+      var viewletContainer = viewlet.container || viewlet.get('container');
+      viewletContainer.all('[data-bind]').each(function(node) {
         // Add the binding for each element
         this.addBinding({
           name: node.getData('bind'),
