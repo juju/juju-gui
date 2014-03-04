@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Charm', function() {
   var charmID, container, content, fakeCharm, fakeStore, testContainer,
-      utils, viewlets, views, Y;
+      utils, viewlets, view, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -43,15 +43,18 @@ describe('Inspector Charm', function() {
     });
   });
 
-  afterEach(function() {
+  afterEach(function(done) {
     if (fakeStore) {
       fakeStore.destroy();
     }
-
+    view.after('destroy', function() {
+      done();
+    });
+    view.destroy();
   });
 
   it('can be instantiated', function() {
-    var view = new viewlets.charmDetails();
+    view = new viewlets.charmDetails();
     assert.equal(view instanceof viewlets.charmDetails, true);
   });
 
@@ -81,10 +84,13 @@ describe('Inspector Charm', function() {
 
     var tabviewRender = utils.makeStubFunction();
     var browserCharmView = utils.makeStubMethod(
-        views, 'BrowserCharmView', { render: tabviewRender });
+        views, 'BrowserCharmView', {
+          render: tabviewRender,
+          destroy: function() {}
+        });
     this._cleanups.push(browserCharmView.reset);
 
-    var view = new viewlets.charmDetails();
+    view = new viewlets.charmDetails();
     view.container = testContainer;
     view.render(fakeCharm, viewletAttrs);
 
@@ -114,9 +120,8 @@ describe('Inspector Charm', function() {
       assert.equal(cfg.entity.get('id'), charmID);
       assert.isTrue(cfg.entity.get('cached'));
       return {
-        render: function() {
-          done();
-        }
+        render: function() { done(); },
+        destroy: function() {}
       };
     };
     var viewletAttrs = {
@@ -126,7 +131,7 @@ describe('Inspector Charm', function() {
       store: fakeStore
     };
 
-    var view = new viewlets.charmDetails();
+    view = new viewlets.charmDetails();
     view.container = testContainer;
     view.render(fakeCharm, viewletAttrs);
   });

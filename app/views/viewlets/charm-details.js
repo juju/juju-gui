@@ -71,8 +71,11 @@ YUI.add('charm-details-view', function(Y) {
       @method destructor
     */
     destructor: function() {
-      Y.one('.left-breakout').removeClass('with-charm');
-      this.charmView.destroy();
+      var breakout = Y.one('.left-breakout');
+      // Tests don't have this element.
+      if (breakout) { breakout.removeClass('with-charm'); }
+      // If the view is never rendered then charmView will not exist.
+      if (this.charmView) { this.charmView.destroy(); }
     }
   });
 

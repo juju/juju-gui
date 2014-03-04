@@ -1363,8 +1363,10 @@ YUI.add('juju-view-inspector', function(Y) {
       options.viewletList.forEach(function(viewletName) {
         var viewlet = viewletNS[viewletName];
         if (typeof viewlet === 'object') {
+          // This branch is for viewlets.
           views[viewletName] = viewlet;
         } else if (typeof viewlet === 'function') {
+          // This branch is for Y.View's.
           /* jshint -W055 */
           // A constructor name should start with an uppercase letter.
           views[viewletName] = new viewlet();
