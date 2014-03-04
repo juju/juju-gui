@@ -50,11 +50,12 @@ describe('Inspector Charm', function() {
 
   });
 
-  it('should ensure the viewlet exists', function() {
-    assert.equal(typeof viewlets.charmDetails, 'object');
+  it('can be instantiated', function() {
+    var view = new viewlets.charmDetails();
+    assert.equal(view instanceof viewlets.charmDetails, true);
   });
 
-  it('renders the viewlet with a charm', function(done) {
+  it('renders the view with a charm', function() {
     var data = utils.loadFixture('data/browsercharm.json', false);
     testContainer = utils.makeContainer(this);
     testContainer.setHTML('<div class="left-breakout"></div>');
@@ -73,24 +74,27 @@ describe('Inspector Charm', function() {
       }
     });
 
-    views.BrowserCharmView = function(cfg) {
-      assert.isTrue(cfg.forInspector);
-      assert.equal(typeof cfg.store, 'object');
-      assert.equal(cfg.entity.get('id'), charmID);
-      return {
-        render: function() {
-          done();
-        }
-      };
-    };
     var viewletAttrs = {
       db: new Y.juju.models.Database(),
       store: fakeStore
     };
 
-    viewlets.charmDetails.container = testContainer;
-    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.one('.left-breakout').setHTML(content);
+    var tabviewRender = utils.makeStubFunction();
+    var browserCharmView = utils.makeStubMethod(
+        views, 'BrowserCharmView', { render: tabviewRender });
+    this._cleanups.push(browserCharmView.reset);
+
+    var view = new viewlets.charmDetails();
+    view.container = testContainer;
+    view.render(fakeCharm, viewletAttrs);
+
+    assert.equal(browserCharmView.calledOnce(), true);
+    var bcvArgs = browserCharmView.lastArguments();
+    assert.equal(bcvArgs[0].forInspector, true);
+    assert.equal(typeof bcvArgs[0].store, 'object');
+    assert.equal(bcvArgs[0].entity.get('id'), charmID);
+
+    assert.equal(tabviewRender.calledOnce(), true);
   });
 
   it('renders the viewlet with a cached charm', function(done) {
@@ -122,8 +126,8 @@ describe('Inspector Charm', function() {
       store: fakeStore
     };
 
-    viewlets.charmDetails.container = testContainer;
-    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.one('.left-breakout').setHTML(content);
+    var view = new viewlets.charmDetails();
+    view.container = testContainer;
+    view.render(fakeCharm, viewletAttrs);
   });
 });
