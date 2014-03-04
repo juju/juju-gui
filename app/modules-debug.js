@@ -297,10 +297,6 @@ var GlobalConfig = {
         },
 
         // Viewlets
-        'viewlet-charm-details': {
-          fullpath: '/juju-ui/views/viewlets/charm-details.js'
-        },
-
         'viewlet-unit-details': {
           fullpath: '/juju-ui/views/viewlets/unit-details.js'
         },
@@ -341,6 +337,10 @@ var GlobalConfig = {
 
         'local-new-upgrade-view': {
           fullpath: '/juju-ui/views/viewlets/local-new-upgrade-view.js'
+        },
+
+        'charm-details-view': {
+          fullpath: '/juju-ui/views/viewlets/charm-details.js'
         },
 
         // Models

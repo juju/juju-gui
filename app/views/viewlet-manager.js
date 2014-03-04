@@ -408,20 +408,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
         should be rendered.
     */
     renderViewlet: function(view, name, model, viewContainer) {
+      if (!view.name) { view.name = name; }
+      if (view.slot) { return; }
       if (view instanceof Y.View) {
         if (!view.model) {
           view.model = model;
         }
-        view.render();
+        view.render(this.getAttrs());
         viewContainer.append(view.get('container'));
         this.databindingBind(model, view);
       } else {
-        if (!view.name) {
-          view.name = name;
-        }
-        if (view.slot) {
-          return;
-        }
         var result = view.render(model, this.getAttrs());
         if (result && typeof result === 'string') {
           view.container = Y.Node.create(result);

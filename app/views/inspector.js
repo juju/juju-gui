@@ -1360,8 +1360,20 @@ YUI.add('juju-view-inspector', function(Y) {
       // Build a collection of view/viewlets from
       // the list of required view/viewlets.
       var views = {};
-      options.viewletList.forEach(function(viewlet) {
-        views[viewlet] = viewletNS[viewlet]; });
+      options.viewletList.forEach(function(viewletName) {
+        var viewlet = viewletNS[viewletName];
+        if (typeof viewlet === 'object') {
+          // This branch is for viewlets.
+          views[viewletName] = viewlet;
+        } else if (typeof viewlet === 'function') {
+          // This branch is for Y.View's.
+          /* jshint -W055 */
+          // A constructor name should start with an uppercase letter.
+          views[viewletName] = new viewlet();
+          /* jshint +W055 */
+        }
+
+      });
       // Mix in any custom viewlet configuration options provided by the config.
       options.views = Y.mix(
           views, options.views, true, undefined, 0, true);
@@ -1430,7 +1442,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'transition',
     'view',
     // Imported viewlets
-    'viewlet-charm-details',
+    'charm-details-view',
     'viewlet-inspector-header',
     'viewlet-inspector-overview',
     'viewlet-service-config',

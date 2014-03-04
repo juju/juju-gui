@@ -20,11 +20,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Charm', function() {
   var charmID, container, content, fakeCharm, fakeStore, testContainer,
-      utils, viewlets, views, Y;
+      utils, viewlets, view, views, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'viewlet-charm-details',
+      'charm-details-view',
       'juju-charm-store',
       'juju-tests-utils',
       'subapp-browser-views'
@@ -43,18 +43,22 @@ describe('Inspector Charm', function() {
     });
   });
 
-  afterEach(function() {
+  afterEach(function(done) {
     if (fakeStore) {
       fakeStore.destroy();
     }
-
+    view.after('destroy', function() {
+      done();
+    });
+    view.destroy();
   });
 
-  it('should ensure the viewlet exists', function() {
-    assert.equal(typeof viewlets.charmDetails, 'object');
+  it('can be instantiated', function() {
+    view = new viewlets.charmDetails();
+    assert.equal(view instanceof viewlets.charmDetails, true);
   });
 
-  it('renders the viewlet with a charm', function(done) {
+  it('renders the view with a charm', function() {
     var data = utils.loadFixture('data/browsercharm.json', false);
     testContainer = utils.makeContainer(this);
     testContainer.setHTML('<div class="left-breakout"></div>');
@@ -73,24 +77,30 @@ describe('Inspector Charm', function() {
       }
     });
 
-    views.BrowserCharmView = function(cfg) {
-      assert.isTrue(cfg.forInspector);
-      assert.equal(typeof cfg.store, 'object');
-      assert.equal(cfg.entity.get('id'), charmID);
-      return {
-        render: function() {
-          done();
-        }
-      };
-    };
     var viewletAttrs = {
       db: new Y.juju.models.Database(),
       store: fakeStore
     };
 
-    viewlets.charmDetails.container = testContainer;
-    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.one('.left-breakout').setHTML(content);
+    var tabviewRender = utils.makeStubFunction();
+    var browserCharmView = utils.makeStubMethod(
+        views, 'BrowserCharmView', {
+          render: tabviewRender,
+          destroy: function() {}
+        });
+    this._cleanups.push(browserCharmView.reset);
+
+    view = new viewlets.charmDetails();
+    view.container = testContainer;
+    view.render(fakeCharm, viewletAttrs);
+
+    assert.equal(browserCharmView.calledOnce(), true);
+    var bcvArgs = browserCharmView.lastArguments();
+    assert.equal(bcvArgs[0].forInspector, true);
+    assert.equal(typeof bcvArgs[0].store, 'object');
+    assert.equal(bcvArgs[0].entity.get('id'), charmID);
+
+    assert.equal(tabviewRender.calledOnce(), true);
   });
 
   it('renders the viewlet with a cached charm', function(done) {
@@ -110,9 +120,8 @@ describe('Inspector Charm', function() {
       assert.equal(cfg.entity.get('id'), charmID);
       assert.isTrue(cfg.entity.get('cached'));
       return {
-        render: function() {
-          done();
-        }
+        render: function() { done(); },
+        destroy: function() {}
       };
     };
     var viewletAttrs = {
@@ -122,8 +131,8 @@ describe('Inspector Charm', function() {
       store: fakeStore
     };
 
-    viewlets.charmDetails.container = testContainer;
-    content = viewlets.charmDetails.render(fakeCharm, viewletAttrs);
-    testContainer.one('.left-breakout').setHTML(content);
+    view = new viewlets.charmDetails();
+    view.container = testContainer;
+    view.render(fakeCharm, viewletAttrs);
   });
 });

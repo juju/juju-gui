@@ -723,11 +723,13 @@ YUI.add('juju-databinding', function(Y) {
      */
     BindingEngine.prototype.resetViewletDOMEvents = function(viewlet) {
       var events = viewlet._eventHandles;
-      events.forEach(function(handle) {
-        handle.detach();
-      });
-      events.splice(0, events.length);
-
+      // views don't necessarily have the _eventHandles property.
+      if (events) {
+        events.forEach(function(handle) {
+          handle.detach();
+        });
+        events.splice(0, events.length);
+      }
       // TODO: Filter bindings removing any where viewlet === binding.viewlet.
       return events;
     };
