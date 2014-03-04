@@ -431,11 +431,138 @@ describe('test_model.js', function() {
       assert.equal('mysql/0', units.createDisplayName('mysql/0'));
     });
 
-    it('returns a display name for a machine', function() {
-      var machines = new models.MachineList();
-      assert.equal('0', machines.createDisplayName('machine-0'));
-      assert.equal('0', machines.createDisplayName('0'));
+    describe('machines model list', function() {
+      var machines;
+
+      beforeEach(function() {
+        machines = new models.MachineList();
+      });
+
+      afterEach(function() {
+        machines.destroy();
+      });
+
+      it('returns a display name for a machine', function() {
+        assert.deepEqual(machines.createDisplayName('machine-0'), '0');
+        assert.deepEqual(machines.createDisplayName('42'), '42');
+      });
+
+      it('returns a display name for a container', function() {
+        assert.deepEqual(machines.createDisplayName('0/lxc/0'), '0/lxc/0');
+        assert.deepEqual(
+            machines.createDisplayName('1/kvm/0/lxc/42'), '1/kvm/0/lxc/42');
+      });
+
+      it('returns the parent id for a machine', function() {
+        assert.isNull(machines.createParentId('0'));
+        assert.isNull(machines.createParentId('42'));
+      });
+
+      it('returns the parent id for a container', function() {
+        assert.deepEqual(machines.createParentId('0/lxc/0'), '0');
+        assert.deepEqual(machines.createParentId('1/kvm/0/lxc/42'), '1/kvm/0');
+      });
+
+      it('stores the machines parent id', function() {
+        ['42', '0/lxc/0', '1/kvm/0/lxc/42'].forEach(function(id) {
+          var machine = machines.add({id: id});
+          assert.deepEqual(machine.parentId, machines.createParentId(id), id);
+        });
+      });
+
+      it('adds machines with the provided id', function() {
+        // XXX frankban 2014-03-04: PYJUJU DEPRECATION.
+        // This test can be safely removed once machines._modelToObject is
+        // removed.
+        [0, '42', '0/lxc/0', '1/kvm/0/lxc/42'].forEach(function(id) {
+          var machine = machines.add({id: id});
+          assert.deepEqual(machine.id, id);
+        });
+      });
+
+      describe('containerization', function() {
+
+        beforeEach(function() {
+          machines.add([
+            {id: '0'},
+            {id: '1'},
+            {id: '1/lxc/0'},
+            {id: '2'},
+            {id: '2/lxc/42'},
+            {id: '2/kvm/0'},
+            {id: '2/kvm/0/lxc/0'},
+            {id: '2/kvm/0/lxc/1'}
+          ]);
+        });
+
+        afterEach(function() {
+          machines.reset();
+        });
+
+        // Ensure the machine instances in machinesArray correspond to the
+        // given expectedNames.
+        var assertMachinesNames = function(machinesArray, expectedNames) {
+          var names = machinesArray.map(function(machine) {
+            return machine.id;
+          });
+          assert.deepEqual(names, expectedNames);
+        };
+
+        it('returns the children of a machine', function() {
+          assertMachinesNames(machines.filterByParent('1'), ['1/lxc/0']);
+          assertMachinesNames(
+              machines.filterByParent('2'), ['2/lxc/42', '2/kvm/0']);
+        });
+
+        it('returns the children of a container', function() {
+          assertMachinesNames(
+              machines.filterByParent('2/kvm/0'),
+              ['2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+        });
+
+        it('returns an empty list if a machine has no children', function() {
+          assertMachinesNames(machines.filterByParent('0'), []);
+          assertMachinesNames(machines.filterByParent('1/lxc/0'), []);
+        });
+
+        it('returns an empty list if the parent does not exist', function() {
+          assertMachinesNames(machines.filterByParent('42'), []);
+        });
+
+        it('allows for retrieving top level machines', function() {
+          assertMachinesNames(machines.filterByParent(null), ['0', '1', '2']);
+        });
+
+        it('filters machines by machine ancestor', function() {
+          assertMachinesNames(machines.filterByAncestor('1'), ['1/lxc/0']);
+          assertMachinesNames(
+              machines.filterByAncestor('2'),
+              ['2/lxc/42', '2/kvm/0', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+        });
+
+        it('filters machines by container ancestor', function() {
+          assertMachinesNames(
+              machines.filterByAncestor('2/kvm/0'),
+              ['2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+        });
+
+        it('returns an empty list if no descendants are found', function() {
+          assertMachinesNames(machines.filterByAncestor('0'), []);
+          assertMachinesNames(machines.filterByAncestor('1/lxc/0'), []);
+        });
+
+        it('returns an empty list if the ancestor does not exist', function() {
+          assertMachinesNames(machines.filterByAncestor('42'), []);
+        });
+
+        it('returns all the machines if ancestor is null', function() {
+          assert.deepEqual(machines.filterByAncestor(null), machines._items);
+        });
+
+      });
+
     });
+
   });
 
   describe('Charm load', function() {

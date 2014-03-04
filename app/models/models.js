@@ -673,6 +673,7 @@ YUI.add('juju-models', function(Y) {
   }, {
     ATTRS: {
       displayName: {},
+      parentId: {},
       machine_id: {},
       public_address: {},
       instance_id: {},
@@ -698,36 +699,127 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-    Overrides the LazyModelList method to force an id attribute on.
-    LazyModelList wants an "id" to index on.  It's not configurable.
+      Given a machine name, return the name of its parent.
+      E.g. the parent of the "2/lxc/0" container is machine "2".
+      If the given name refers to a top level machine, null is returned.
 
-    @method _modelToObject
-    @param {Model|Object} model Model instance to convert.
-    @return {Object} Plain object.
-    @protected
+      @method createParentId
+      @param {String} name The machine/container name.
+      @return {String|Null} The machine parent's name.
+    */
+    createParentId: function(name) {
+      // XXX frankban 2014-03-04: PYJUJU DEPRECATION. The single line below
+      // can be safely removed once we remove pyJuju code. The machine names
+      // are always strings in juju-core.
+      name = name + '';
+      var parts = name.split('/');
+      if (parts.length < 3) {
+        return null;
+      }
+      return parts.slice(0, parts.length - 2).join('/');
+    },
+
+    /**
+      Overrides the LazyModelList method to force an id attribute on.
+      LazyModelList wants an "id" to index on.  It's not configurable.
+
+      @method _modelToObject
+      @param {Model|Object|Model[]|Object[]} model Instance(s) to convert.
+      @return {Object|Object[]} Resulting plain object(s).
+      @protected
     */
     _modelToObject: function(model) {
       var result = MachineList.superclass._modelToObject.call(this, model);
-      if (!result.id) {
+      // XXX frankban 2014-03-04: PYJUJU DEPRECATION.
+      // I suspect machine_id is something pyJuju used to provide. If this is
+      // the case, we should remove this function when dropping pyJuju support.
+      // Using Y.Lang.isValue so that machine 0 is considered a good value.
+      if (!Y.Lang.isValue(result.id)) {
         // machine_id shouldn't change, so this should be safe.
         result.id = result.machine_id;
       }
       return result;
     },
 
+    /**
+      Set default attributes on a new instance.
+
+      @method _setDefaultsAndCalculatedValues
+      @param {Object} obj The newly added model instance.
+      @return {undefined} The given object is modified in place.
+      @protected
+    */
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.displayName = this.createDisplayName(obj.id);
+      obj.parentId = this.createParentId(obj.id);
       obj.name = 'machine';
     },
 
+    /**
+      Adds the specified model or array of models to this list.
+      This is overridden to allow customized attributes to be set up at
+      creation time.
+
+      @method add
+      @param {Object|Object[]} models See YUI LazyModelList.
+      @return {Object|Object[]} The newly created model instance(s).
+    */
     add: function() {
       var result = MachineList.superclass.add.apply(this, arguments);
       if (Y.Lang.isArray(result)) {
-        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
+        result.forEach(this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(result);
       }
       return result;
+    },
+
+    /**
+      Return a list of all the machines having the given parent id.
+
+      Assuming the db includes machines "1", "2", "2/kvm/0", "2/lxc/42" and
+      "2/kvm/0/lxc/1" the `machines.filterByParent('2')` call would return
+      machines "2/kvm/0" and "2/lxc/42". Note that "2/kvm/0/lxc/1" is excluded
+      because its parent is "2/kvm/0". See filterByAncestor below if you need
+      to include all the descendants.
+
+      This function can also be used to retrieve all the top level machines:
+      in the example above `machines.filterByParent(null)` would return
+      machines "1" and "2".
+
+      @method filterByParent
+      @param {String} parentId The machine parent's name.
+      @return {Array} The matching machines as a list of objects.
+    */
+    filterByParent: function(parentId) {
+      return this.filter(function(item) {
+        return item.parentId === parentId;
+      });
+    },
+
+    /**
+      Return a list of all the machines contained in the given ancestor.
+
+      Assuming the db includes machines "1", "2", "2/kvm/0", "2/lxc/42" and
+      "2/kvm/0/lxc/1" the `machines.filterByAncestor('2')` call would return
+      machines "2/kvm/0", "2/lxc/42" and "2/kvm/0/lxc/1".
+
+      Note that, for consistency with filterByParent, calling
+      `machines.filterByAncestor(null)` returns an array of all the machines
+      in the database.
+
+      @method filterByAncestor
+      @param {String} ancestorId The machine ancestor's name.
+      @return {Array} The matching machines as a list of objects.
+    */
+    filterByAncestor: function(ancestorId) {
+      if (ancestorId === null) {
+        return this._items;
+      }
+      var prefix = ancestorId + '/';
+      return this.filter(function(item) {
+        return item.id.indexOf(prefix) === 0;
+      });
     },
 
     process_delta: function(action, data) {
