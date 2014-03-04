@@ -264,7 +264,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
         configGhost: {
           // controller will show the first one in this array by default
-          viewletList: ['ghostConfig', 'inspectorHeader', 'charmDetails'],
+          viewletList: ['ghostConfig', 'inspectorHeader'],
           // the viewlet manager template
           template: Y.juju.views.Templates['ghost-config-wrapper'],
           // these events are for the viewlet manager

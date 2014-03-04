@@ -19,33 +19,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-charm-details', function(Y) {
+YUI.add('charm-details-view', function(Y) {
   var browserViews = Y.namespace('juju.browser.views'),
       ns = Y.namespace('juju.viewlets'),
       templates = Y.namespace('juju.views').Templates,
       models = Y.namespace('juju.models');
 
-  ns.charmDetails = {
-    name: 'charmDetails',
+  var name = 'charm-details';
+
+  ns.charmDetails = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     slot: 'left-hand-panel',
     templateWrapper: templates['left-breakout-panel'],
-    /**
-      When destroying the viewlet make sure we clean up our css.
 
-      @method destroy
-      @return {undefined} nothing.
-     */
-    destroy: function() {
-      Y.one('.left-breakout').removeClass('with-charm');
-      this.charmView.destroy();
-    },
     /**
-      Render the viewlet.
+      Renders the BrowserCharmView to the panel
 
       @method render
-      @param {Charm} charm An old charm model.
-      @param {Object} viewletManagerAttrs This comes from the viewlet-manager
-        object.
+      @param {Object} charm the charm model to display the details of.
+      @param {Object} viewletManagerAttrs the attributes passed to the
+        viewlet manager.
     */
     render: function(charm, viewletManagerAttrs) {
       var store = viewletManagerAttrs.store;
@@ -70,14 +62,27 @@ YUI.add('viewlet-charm-details', function(Y) {
         }
       }, this, viewletManagerAttrs.db.charms);
       return this.templateWrapper({ initial: 'Loading...'});
+    },
+
+    /**
+      Removes the class from the left breakout panel saying there is a charm.
+      Destroys the charmView tabview instance.
+
+      @method destructor
+    */
+    destructor: function() {
+      Y.one('.left-breakout').removeClass('with-charm');
+      this.charmView.destroy();
     }
-  };
+  });
+
 }, '0.0.1', {
   requires: [
     'node',
     'subapp-browser-charmview',
     'subapp-browser-bundleview',
     'juju-charm-models',
-    'juju-view'
+    'juju-view',
+    'viewlet-view-base'
   ]
 });

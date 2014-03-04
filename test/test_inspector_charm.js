@@ -24,7 +24,7 @@ describe('Inspector Charm', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-      'viewlet-charm-details',
+      'charm-details-view',
       'juju-charm-store',
       'juju-tests-utils',
       'subapp-browser-views'
