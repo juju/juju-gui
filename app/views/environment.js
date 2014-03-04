@@ -48,7 +48,7 @@ YUI.add('juju-view-environment', function(Y) {
         broadcast: true,
         preventable: false});
 
-      this._inspectors = {};
+      this.inspector = null;
     },
 
     /**
@@ -63,36 +63,6 @@ YUI.add('juju-view-environment', function(Y) {
      */
     update: function() {
       this.topo.update();
-      return this;
-    },
-
-    /**
-      @method getInspector
-      @return {Object} inspector.
-    */
-    getInspector: function(name) {
-      return this._inspectors[name];
-    },
-
-    /**
-      @method setInspector
-      @param {ViewletManager} inspector instance.
-      @param {Boolean} remove flag to remove the instance.
-      @chainable
-    */
-    setInspector: function(inspector, remove) {
-      var name = inspector.getName();
-      if (this._inspectors[name] !== undefined && !remove) {
-        // Close the old inspector and remove it.
-        var existing = this._inspectors[name];
-        existing.bindingEngine.unbind();
-        existing.container.remove(true);
-      }
-      if (remove) {
-        delete this._inspectors[name];
-      } else {
-        this._inspectors[name] = inspector;
-      }
       return this;
     },
 
@@ -120,9 +90,9 @@ YUI.add('juju-view-environment', function(Y) {
       }
 
       // If the user is trying to open the same inspector twice
-      var serviceInspector = this.getInspector(model.get('id'));
-      if (serviceInspector) {
-        return serviceInspector;
+      if (this.inspector &&
+          (this.inspector.model.get('clientId') === model.get('clientId'))) {
+        return this.inspector;
       }
 
       var combinedConfig = {};
@@ -138,12 +108,12 @@ YUI.add('juju-view-environment', function(Y) {
 
       Y.mix(combinedConfig, config, true, undefined, 0, true);
 
-      serviceInspector = new views.ServiceInspector(model, combinedConfig);
+      var serviceInspector = new views.ServiceInspector(model, combinedConfig);
 
       // Because the inspector can trigger it's own destruction we need to
       // listen for the event and remove it from the list of open inspectors
       serviceInspector.viewletManager.after('destroy', function(e) {
-        this.setInspector(e.currentTarget, true);
+        delete this.inspector;
         // We want the service menu to hide when the inspector does.
         // For now, at least, with only one inspector, we can simply close
         // all service menus.  We expect the service menus to go away
@@ -155,18 +125,10 @@ YUI.add('juju-view-environment', function(Y) {
       // If the service is destroyed from the console then we need to
       // destroy the inspector and hide the service menu.
       model.on('destroy', function(e) {
-        var service = e.currentTarget;
-        var inspector = this.getInspector(service.get('id'));
+        var inspector = this.inspector;
         if (inspector) { inspector.viewletManager.destroy(); }
         this.topo.fire('hideServiceMenu');
       }, this);
-
-      // Restrict to a single inspector instance
-      if (Y.Object.size(this._inspectors) >= 1) {
-        Y.Object.each(this._inspectors, function(inspector) {
-          inspector.viewletManager.destroy();
-        });
-      }
 
       // If the inspector (via viewletManager proxy) wants to take over the
       // screen, trigger the request up the food chain.
@@ -184,7 +146,11 @@ YUI.add('juju-view-environment', function(Y) {
                 this.fire('envTakeoverEnding');
               }, this));
 
-      this.setInspector(serviceInspector);
+      if (this.inspector) {
+        this.inspector.viewletManager.destroy();
+      }
+
+      this.inspector = serviceInspector;
       return serviceInspector;
     },
 
@@ -345,8 +311,6 @@ YUI.add('juju-view-environment', function(Y) {
           env: this.get('env'),
           db: this.get('db'),
           store: this.get('store'),
-          getInspector: Y.bind(this.getInspector, this),
-          setInspector: Y.bind(this.setInspector, this),
           createServiceInspector: Y.bind(this.createServiceInspector, this),
           getModelURL: this.get('getModelURL'),
           container: container,
@@ -399,9 +363,7 @@ YUI.add('juju-view-environment', function(Y) {
       @method destroyInspector
     */
     destroyInspector: function() {
-      Y.Object.each(this._inspectors, function(inspector) {
-        inspector.viewletManager.destroy();
-      });
+      this.inspector.viewletManager.destroy();
     },
 
     /**
@@ -410,11 +372,9 @@ YUI.add('juju-view-environment', function(Y) {
       @method shrinkInspector
     */
     shrinkInspector: function() {
-      Y.Object.each(this._inspectors, function(inspector) {
-        inspector.viewletManager.get('container')
-            .one('.viewlet-manager-wrapper')
-            .setStyle('max-height', '100px');
-      });
+      this.inspector.viewletManager.get('container')
+          .one('.viewlet-manager-wrapper')
+          .setStyle('max-height', '100px');
     },
 
     /**
@@ -423,9 +383,9 @@ YUI.add('juju-view-environment', function(Y) {
       @method expandInspector
     */
     expandInspector: function() {
-      Y.Object.each(this._inspectors, function(inspector) {
-        inspector.viewletManager.recalculateHeight();
-      });
+      if (this.inspector) {
+        this.inspector.viewletManager.recalculateHeight();
+      }
     },
 
     /**

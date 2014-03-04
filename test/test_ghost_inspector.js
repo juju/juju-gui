@@ -55,7 +55,7 @@ describe('Ghost Inspector', function() {
     cleanIconHelper();
     if (view) {
       if (inspector) {
-        view.setInspector(inspector, true);
+        delete view.inspector;
       }
       view.destroy();
     }
