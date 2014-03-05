@@ -220,8 +220,8 @@ YUI.add('juju-view-environment', function(Y) {
             'charmDetails',
             'config',
             'constraints',
-            'unitDetails',
-            'inspectorHeader',
+            'UnitDetails',
+            'InspectorHeader',
             'relations'
           ],
           template: Y.juju.views.Templates['service-config-wrapper'],
@@ -230,7 +230,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
         configGhost: {
           // controller will show the first one in this array by default
-          viewletList: ['ghostConfig', 'inspectorHeader'],
+          viewletList: ['ghostConfig', 'InspectorHeader'],
           // the viewlet manager template
           template: Y.juju.views.Templates['ghost-config-wrapper'],
           // these events are for the viewlet manager
@@ -363,7 +363,9 @@ YUI.add('juju-view-environment', function(Y) {
       @method destroyInspector
     */
     destroyInspector: function() {
-      this.inspector.viewletManager.destroy();
+      if (this.inspector) {
+        this.inspector.viewletManager.destroy();
+      }
     },
 
     /**

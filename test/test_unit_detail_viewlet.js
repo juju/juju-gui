@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var db, service, unit, unitDetails, Y, updateAddress, ViewletManager,
         manager;
     var requirements = [
-      'juju-models', 'viewlet-unit-details', 'juju-viewlet-manager'];
+      'juju-models', 'unit-details-view', 'juju-viewlet-manager'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -44,7 +44,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           private_address: 'private-address',
           open_ports: [80, 443]
         });
-        unitDetails = viewlets.unitDetails;
+        unitDetails = new viewlets.UnitDetails();
         done();
       });
     });
@@ -176,7 +176,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       manager.slots['left-hand-panel'] = '.leftSlot';
       manager.render();
       manager.showViewlet('unitDetails', unit);
-      var node = manager.views.unitDetails.container;
+      var node = manager.views.unitDetails.get('container');
       assert.strictEqual(
           node.one('[data-bind="displayName"]').get('text'), 'haproxy/42');
       assert.strictEqual(

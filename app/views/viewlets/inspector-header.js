@@ -19,16 +19,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-inspector-header', function(Y) {
+YUI.add('inspector-header-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       templates = Y.namespace('juju.views').Templates,
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
-  ns.inspectorHeader = {
-    name: 'inspectorHeader',
-    template: templates['inspector-header'],
+  var name = 'inspector-header';
+
+  ns.InspectorHeader = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     slot: 'header',
+    template: templates['inspector-header'],
+
     bindings: {
       charmChanged: {
         'update': function(node, value) {
@@ -56,8 +58,16 @@ YUI.add('viewlet-inspector-header', function(Y) {
         }
       }
     },
-    'render': function(model, viewContainerAttrs) {
-      this.container = Y.Node.create(this.templateWrapper);
+
+    /**
+      Renders the view into it's container.
+
+      @method render
+      @param {Object} charm the charm model to display the details of.
+      @param {Object} viewletManagerAttrs the attributes passed to the
+        viewlet manager.
+    */
+    render: function(model, viewContainerAttrs) {
       var pojoModel = model.getAttrs();
       pojoModel.charmUrl = pojoModel.charm;
       // Manually add the icon url for the charm since we don't have access to
@@ -76,16 +86,17 @@ YUI.add('viewlet-inspector-header', function(Y) {
           pojoModel.invalidName = 'valid';
         }
       }
-
-      this.container.setHTML(this.template(pojoModel));
+      this.get('container').setHTML(this.template(pojoModel));
     }
-  };
+
+  });
 
 }, '0.0.1', {
   requires: [
     'node',
     'juju-charm-models',
     'juju-templates',
+    'viewlet-view-base',
     'juju-view'
   ]
 });

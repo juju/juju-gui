@@ -41,12 +41,13 @@ YUI.add('charm-details-view', function(Y) {
     */
     render: function(charm, viewletManagerAttrs) {
       var store = viewletManagerAttrs.store;
+      var container = this.get('container');
       store.charm(charm.get('storeId'), {
         'success': function(data, storeCharm) {
           this.charmView = new browserViews.BrowserCharmView({
             entity: storeCharm,
             forInspector: true,
-            renderTo: this.container.one('.content'),
+            renderTo: container.one('.content'),
             store: store
           });
           this.charmView.render();
@@ -55,13 +56,14 @@ YUI.add('charm-details-view', function(Y) {
           this.charmView = new browserViews.BrowserCharmView({
             entity: charm,
             forInspector: true,
-            renderTo: this.container.one('.content'),
+            renderTo: container.one('.content'),
             store: store
           });
           this.charmView.render();
         }
       }, this, viewletManagerAttrs.db.charms);
-      return this.templateWrapper({ initial: 'Loading...'});
+
+      container.setHTML(this.templateWrapper({ initial: 'Loading...'}));
     },
 
     /**

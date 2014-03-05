@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-unit-details', function(Y) {
+YUI.add('unit-details-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = views.Templates,
@@ -34,7 +34,7 @@ YUI.add('viewlet-unit-details', function(Y) {
     @param {String} ipAddress The IP address.
     @param {Array} openPorts An array of the ports exposed.
     @return {undefined} Mutates the node.
-    */
+  */
   var updateAddress = function(node, ipAddress, openPorts) {
     node.empty();
     if (!ipAddress) {
@@ -78,10 +78,12 @@ YUI.add('viewlet-unit-details', function(Y) {
       });
     }
   };
-  ns.updateUnitAddress = updateAddress; // Expose for testing.
+  ns.updateUnitAddress = updateAddress;
 
-  ns.unitDetails = {
-    name: 'unitDetails',
+  var name = 'unit-details';
+
+  ns.UnitDetails = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
+
     templateWrapper: templates['left-breakout-panel'],
     template: templates.unitOverview,
     slot: 'left-hand-panel',
@@ -136,9 +138,11 @@ YUI.add('viewlet-unit-details', function(Y) {
         }
       }
     },
-
-    // Return the template context for the unit detail view.
-    'getContext': function(db, service, unit) {
+    /**
+      Return the template context for the unit detail view.
+      @method getContext
+    */
+    getContext: function(db, service, unit) {
       // This should be handled with bindings, once per-unit relation
       // information is actually sanely available from Juju Core.
       // Of course, that might be tricky unless we also keep track of
@@ -157,17 +161,24 @@ YUI.add('viewlet-unit-details', function(Y) {
       };
     },
 
-    'render': function(unit, viewletManagerAttrs) {
+    /**
+      Renders the details view into it's container
+      @method render
+    */
+    render: function(unit, viewletManagerAttrs) {
       var db = viewletManagerAttrs.db;
       var service = db.services.getById(unit.service);
       var context = this.getContext(db, service, unit);
-      this.container = Y.Node.create(this.templateWrapper({}));
-      this.container.one('.content').setHTML(this.template(context));
+      var template = Y.Node.create(this.templateWrapper({}));
+      template.one('.content').setHTML(this.template(context));
+      this.get('container').setHTML(template);
     }
-  };
+  });
+
 }, '0.0.1', {
   requires: [
     'node',
+    'viewlet-view-base',
     'juju-charm-models',
     'juju-templates',
     'juju-view'
