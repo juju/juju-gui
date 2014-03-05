@@ -168,14 +168,25 @@ YUI.add('subapp-browser-searchview', function(Y) {
                 if (!series) {
                   series = DEFAULT_SEARCH_SERIES;
                 }
-                results.map(function(charm) {
-                  if (charm.get('is_approved') &&
-                      charm.get('series') === series) {
-                    recommended.push(charm);
+                results.map(function(entity) {
+                  // If this is a charm, make sure it's approved and is of the
+                  // correct series to be recommended.
+                  if (entity.entityType === 'bundle') {
+                    if (entity.get('is_approved')) {
+                      recommended.push(entity);
+                    } else {
+                      more.push(entity);
+                    }
                   } else {
-                    more.push(charm);
+                    if (entity.get('is_approved') &&
+                        entity.get('series') === series) {
+                      recommended.push(entity);
+                    } else {
+                      more.push(entity);
+                    }
                   }
                 }, this);
+
                 this._renderSearchResults({
                   recommended: recommended,
                   more: more

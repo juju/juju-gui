@@ -125,6 +125,25 @@ YUI.add('juju-bundle-models', function(Y) {
       id: {},
       name: {},
       description: {},
+      /**
+        For charms the api returns is_approved and we want to share that
+        across our templates. This maps to the promulgated api data from the
+        bundle results.
+
+        @attribute is_approved
+        @default false
+        @type {Boolean}
+       */
+      is_approved: {
+        /**
+          Reach into the promulgated attr
+
+          @method getter
+         */
+        getter: function() {
+          return this.get('promulgated');
+        }
+      },
       owner: {},
       permanent_url: {},
       promulgated: false,
