@@ -877,8 +877,8 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function(done) {
     var inspector = setUpInspector();
-    var newContainer = inspector.viewletManager.views.inspectorHeader
-      .container;
+    var newContainer = inspector.viewletManager.views.InspectorHeader
+      .get('container');
     var unitId = 'mediawiki/1';
 
     var service = db.services.getById('mediawiki');
@@ -904,7 +904,7 @@ describe('Inspector Overview', function() {
   it('reflects that a service is dying', function() {
     var inspector = setUpInspector();
     var views = inspector.viewletManager.views;
-    var newContainer = views.inspectorHeader.container;
+    var newContainer = views.InspectorHeader.get('container');
     var service = db.services.getById('mediawiki');
     // The service is considered to be alive by default.
     assert.strictEqual(service.get('life'), 'alive');

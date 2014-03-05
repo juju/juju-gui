@@ -67,6 +67,7 @@ describe('Viewlet Manager', function() {
       'juju-templates',
       'juju-tests-utils',
       'juju-viewlet-manager',
+      'viewlet-view-base',
       'node-event-simulate',
       'view',
       'base-build'
@@ -274,7 +275,7 @@ describe('Viewlet Manager', function() {
     viewletManager.showViewlet('serviceConfig');
 
     // Now render the constraints viewlet.
-    viewletManager.showViewlet('constraints');
+    viewletManager.showViewlet('unitDetails');
     assert.equal(container.one('.left-breakout .viewlet').get('text'), 'foo');
   });
 
