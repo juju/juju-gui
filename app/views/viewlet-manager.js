@@ -458,7 +458,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
         this.fillSlot(view, model);
         // Makes sure the view is visible
         view.show();
-        // Makes sure the slow the view is to be rendered into is visible.
+        // Makes sure the slot the view is to be rendered into is visible.
         container.one(this.slots[view.slot]).show();
       } else {
         Y.Object.each(this.views, function(viewToCheck, name) {

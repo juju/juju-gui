@@ -343,6 +343,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/unit-details.js'
         },
 
+        // Viewlet mixins
+
+        'conflict-mixin': {
+          fullpath: '/juju-ui/views/viewlets/conflict-mixin.js'
+        },
+
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'
