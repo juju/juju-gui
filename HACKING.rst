@@ -45,6 +45,7 @@ importantly, to support testing from the command line, ``phantomjs`` and
 
 ::
 
+  mkdir -p ~/.npm ~/tmp
   sudo npm install -g jshint@2.1.3 mocha-phantomjs@3.2.0 phantomjs@1.9.1-0
 
 Note: Make sure to get the latest phantomjs from npm and not rely on an older
@@ -68,6 +69,9 @@ pull your clone down to work on.
 
   git clone git@github.com:{yourusername}/juju-gui.git
 
+
+Installing with Vagrant
+-----------------------
 
 If you are working on an operating system other than Ubuntu or simply do not
 want global installs for your development environment, a vagrant image is
@@ -101,6 +105,10 @@ From the vagrant, you can run all of the make targets in ``/vagrant`` and
 access the GUI or test servers from the host using the IP address
 ``192.168.33.10``. Once you are done, you can either ``vagrant suspend``,
 ``vagrant halt``, or ``vagrant destroy`` the machine from your host.
+
+
+Running the GUI
+---------------
 
 Once you've pulled down the code you can start running it with
 
