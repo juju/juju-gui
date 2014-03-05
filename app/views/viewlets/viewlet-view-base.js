@@ -72,8 +72,9 @@ YUI.add('viewlet-view-base', function(Y) {
 
       @method render
     */
-    render: function() {
-      this.get('container').append(this.template(this.get('model')));
+    render: function(model) {
+      model = model || this.model;
+      this.get('container').append(this.template(model));
     }
   };
 
