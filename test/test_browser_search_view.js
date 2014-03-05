@@ -179,8 +179,9 @@ describe('search view', function() {
 
   it('organizes results by approval status', function(done) {
     view._renderSearchResults = function(results) {
-      assert.equal(results.recommended.length, 1);
+      assert.equal(results.recommended.length, 2);
       assert.equal(results.recommended[0].get('id'), 'precise/bar-2');
+      assert.equal(results.recommended[1].get('id'), '~charmers/bar/2/bar');
       assert.equal(results.more.length, 1);
       done();
     };
@@ -200,6 +201,17 @@ describe('search view', function() {
           description: 'some charm named bar',
           files: [],
           is_approved: false
+        }
+      }, {
+        bundle: {
+          id: '~charmers/bar/2/bar',
+          name: 'bar bundle',
+          description: '',
+          files: [],
+          promulgated: true,
+          data: {
+            series: 'precise'
+          }
         }
       }]
     };

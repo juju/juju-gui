@@ -98,6 +98,11 @@ describe('The bundle model', function() {
     assert.equal(expected, instance.get('promulgated'));
   });
 
+  it('must support is_approved as a proxy to promulgated', function() {
+    instance = new models.Bundle({promulgated: true});
+    assert.equal(instance.get('is_approved'), true);
+  });
+
   it('must store the title', function() {
     expected = 'My Bountiful Bundle';
     data.title = expected;
