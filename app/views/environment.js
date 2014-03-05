@@ -220,7 +220,7 @@ YUI.add('juju-view-environment', function(Y) {
             'charmDetails',
             'config',
             'constraints',
-            'unitDetails',
+            'UnitDetails',
             'InspectorHeader',
             'relations'
           ],

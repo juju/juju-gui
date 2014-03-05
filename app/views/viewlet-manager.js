@@ -614,6 +614,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
         if (singleView instanceof Y.View) {
           singleView.viewletManager = this;
+          singleView.options = this.getAttrs();
           initializedViews[key] = singleView;
         } else {
           // singleView is a viewlet so we need to compile it.

@@ -862,7 +862,7 @@ YUI.add('juju-view-inspector', function(Y) {
       var unitName = ev.currentTarget.getData('unit');
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
-      this.viewletManager.showViewlet('unitDetails', unit);
+      this.viewletManager.showViewlet('UnitDetails', unit);
       this.viewletManager.fire('inspectorTakeoverStarting');
     },
 
@@ -1448,7 +1448,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'viewlet-service-config',
     'viewlet-service-constraints',
     'viewlet-service-ghost',
-    'viewlet-unit-details',
+    'unit-details-view',
     'viewlet-service-relations'
   ]
 });
