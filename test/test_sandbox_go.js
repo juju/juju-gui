@@ -430,6 +430,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                  1, null, null, callback);
     });
 
+    it('can destroy machines', function(done) {
+      state.db.machines.add([{id: '1'}, {id: '2/lxc/0'}]);
+      var request = {
+        Type: 'Client',
+        Request: 'DestroyMachines',
+        Params: {MachineNames: ['1', '2/lxc/0'], Force: false},
+        RequestId: 42
+      };
+      client.onmessage = function(response) {
+        var data = Y.JSON.parse(response.data);
+        assert.isUndefined(data.Error);
+        assert.strictEqual(data.RequestId, 42);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(request));
+    });
+
+    it('can destroy machines (environment integration)', function(done) {
+      state.db.machines.add([{id: '0'}, {id: '1/kvm/2'}]);
+      var callback = function(response) {
+        assert.isUndefined(response.err);
+        assert.deepEqual(response.names, ['0', '1/kvm/2']);
+        done();
+      };
+      env.connect();
+      env.destroyMachines(['0', '1/kvm/2'], false, callback);
+    });
+
+    it('can report errors occurred while destroying machines', function(done) {
+      var callback = function(response) {
+        assert.strictEqual(
+            response.err,
+            'no machines were destroyed: machine 42 does not exist');
+        assert.deepEqual(response.names, ['42']);
+        done();
+      };
+      env.connect();
+      env.destroyMachines(['42'], false, callback);
+    });
+
     it('can destroy a service', function(done) {
       state.deploy('cs:precise/wordpress-15', function() {
         var data = {

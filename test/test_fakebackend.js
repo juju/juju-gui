@@ -389,6 +389,216 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend.destroyMachines', function() {
+    var factory, fakebackend, machines, Y;
+    var requirements = ['juju-tests-factory'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = factory.makeFakeBackend();
+      // Create initial machines.
+      machines = fakebackend.db.machines;
+      machines.add([
+        {id: '0'},
+        {id: '1'},
+        {id: '2'},
+        {id: '2/lxc/0'},
+        {id: '3'},
+        {id: '3/kvm/0'},
+        {id: '3/kvm/0/lxc/0'},
+        {id: '3/kvm/0/lxc/1'},
+        {id: '42'}
+      ]);
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    // Add a unit to the given machine. Return the units model list.
+    var addUnit = function(machineName) {
+      var service = fakebackend.db.services.add({id: 'django'});
+      var units = service.get('units');
+      units.add({id: 'django/0', machine: machineName});
+      return units;
+    };
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var response = fakebackend.destroyMachines(['42']);
+      assert.strictEqual(response.error, 'Please log in.');
+      // Ensure the machine has not been removed.
+      assert.isNotNull(machines.getById('42'));
+    });
+
+    it('removes a machine', function() {
+      var response = fakebackend.destroyMachines(['1']);
+      assert.isUndefined(response.error);
+      // Ensure the machine has been removed.
+      assert.isNull(machines.getById('1'));
+    });
+
+    it('removes a container', function() {
+      var response = fakebackend.destroyMachines(['2/lxc/0']);
+      assert.isUndefined(response.error);
+      // Ensure the container has been removed.
+      assert.isNull(machines.getById('2/lxc/0'));
+    });
+
+    it('removes multiple machines/containers', function() {
+      var response = fakebackend.destroyMachines(['1', '42', '3/kvm/0/lxc/0']);
+      assert.isUndefined(response.error);
+      // Ensure the machines/containers have been removed.
+      assert.isNull(machines.getById('1'));
+      assert.isNull(machines.getById('42'));
+      assert.isNull(machines.getById('3/kvm/0/lxc/0'));
+    });
+
+    it('returns an error if a single machine does not exist', function() {
+      var response = fakebackend.destroyMachines(['99']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 99 does not exist');
+    });
+
+    it('returns an error if a single container does not exist', function() {
+      var response = fakebackend.destroyMachines(['2/lxc/99']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 2/lxc/99 does not exist');
+    });
+
+    it('returns an error if no machines/containers exist', function() {
+      var response = fakebackend.destroyMachines(['47', '2/lxc/99', '99']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 47 does not exist; ' +
+          'machine 2/lxc/99 does not exist; machine 99 does not exist');
+    });
+
+    it('returns an error if some machines do not exist', function() {
+      var response = fakebackend.destroyMachines(
+          ['1', '99', '2/lxc/0', '42/lxc/1']);
+      assert.strictEqual(
+          response.error,
+          'some machines were not destroyed: machine 99 does not exist; ' +
+          'machine 42/lxc/1 does not exist');
+      // Ensure the existing machines/containers have been removed.
+      assert.isNull(machines.getById('1'));
+      assert.isNull(machines.getById('2/lxc/0'));
+    });
+
+    it('returns an error if the machine hosts units', function() {
+      // Add an initial service and unit.
+      var units = addUnit('1');
+      var response = fakebackend.destroyMachines(['1']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 1 has unit(s) django/0 ' +
+          'assigned');
+      // Ensure the machine and the unit are still in the database.
+      assert.isNotNull(machines.getById('1'));
+      assert.isNotNull(units.getById('django/0'));
+    });
+
+    it('returns an error if the container hosts units', function() {
+      // Add an initial service and unit.
+      var units = addUnit('2/lxc/0');
+      var response = fakebackend.destroyMachines(['2/lxc/0']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 2/lxc/0 has unit(s) django/0 ' +
+          'assigned');
+      // Ensure the machine and the unit are still in the database.
+      assert.isNotNull(machines.getById('2/lxc/0'));
+      assert.isNotNull(units.getById('django/0'));
+    });
+
+    it('forces removal of machines hosting units', function() {
+      // Add an initial service and unit.
+      var units = addUnit('1');
+      var response = fakebackend.destroyMachines(['1'], true);
+      assert.isUndefined(response.error);
+      // Ensure the machine and the unit have been removed.
+      assert.isNull(machines.getById('1'));
+      assert.isNull(units.getById('django/0'));
+    });
+
+    it('forces removal of containers hosting units', function() {
+      // Add an initial service and unit.
+      var units = addUnit('3/kvm/0/lxc/0');
+      var response = fakebackend.destroyMachines(['3/kvm/0/lxc/0'], true);
+      assert.isUndefined(response.error);
+      // Ensure the container and the unit have been removed.
+      assert.isNull(machines.getById('3/kvm/0/lxc/0'));
+      assert.isNull(units.getById('django/0'));
+    });
+
+    it('returns an error if the machine hosts containers', function() {
+      var response = fakebackend.destroyMachines(['3']);
+      assert.strictEqual(
+          response.error,
+          'no machines were destroyed: machine 3 is hosting containers ' +
+          '3/kvm/0, 3/kvm/0/lxc/0, 3/kvm/0/lxc/1');
+      // Ensure the machine and its containers are still in the database.
+      assert.isNotNull(machines.getById('3'));
+      assert.isNotNull(machines.getById('3/kvm/0'));
+      assert.isNotNull(machines.getById('3/kvm/0/lxc/0'));
+      assert.isNotNull(machines.getById('3/kvm/0/lxc/1'));
+    });
+
+    it('returns an error if some machines host containers', function() {
+      var response = fakebackend.destroyMachines(['1', '2', '3/kvm/0']);
+      assert.strictEqual(
+          response.error,
+          'some machines were not destroyed: ' +
+          'machine 2 is hosting containers 2/lxc/0; machine ' +
+          '3/kvm/0 is hosting containers 3/kvm/0/lxc/0, 3/kvm/0/lxc/1');
+      // Ensure the machines with containers are still in the database.
+      assert.isNotNull(machines.getById('2'));
+      assert.isNotNull(machines.getById('3/kvm/0'));
+      assert.isNotNull(machines.getById('3/kvm/0/lxc/0'));
+      assert.isNotNull(machines.getById('3/kvm/0/lxc/1'));
+      // Ensure the empty machines have been removed.
+      assert.isNull(machines.getById('1'));
+    });
+
+    it('forces removal of machines hosting containers', function() {
+      var response = fakebackend.destroyMachines(['2'], true);
+      assert.isUndefined(response.error);
+      // Ensure the machine and its container have been removed.
+      assert.isNull(machines.getById('2'));
+      assert.isNull(machines.getById('2/lxc/0'));
+    });
+
+    it('forces removal of containers hosting other containers', function() {
+      var response = fakebackend.destroyMachines(['3/kvm/0'], true);
+      assert.isUndefined(response.error);
+      // Ensure the container and its sub-containers have beem removed.
+      assert.isNull(machines.getById('3/kvm/0'));
+      assert.isNull(machines.getById('3/kvm/0/lxc/0'));
+      assert.isNull(machines.getById('3/kvm/0/lxc/1'));
+    });
+
+    it('returns multiple errors', function() {
+      addUnit('1');
+      var response = fakebackend.destroyMachines(['1', '2', '42']);
+      assert.strictEqual(
+          response.error,
+          'some machines were not destroyed: ' +
+          'machine 1 has unit(s) django/0 assigned; ' +
+          'machine 2 is hosting containers 2/lxc/0');
+    });
+
+  });
+
   describe('FakeBackend.setCharm', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-tests-factory', 'juju-models',
