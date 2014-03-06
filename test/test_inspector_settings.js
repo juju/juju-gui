@@ -300,7 +300,8 @@ describe('Inspector Settings', function() {
     inspector = setUpInspector();
     env.connect();
     var viewlet = getViewlet(inspector);
-    var node = viewlet.get('container').one('textarea[data-bind="config.admins"]');
+    var node = viewlet.get('container')
+                      .one('textarea[data-bind="config.admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     inspector.model.set('config', {admins: 'g:s'});
     changeForm(viewlet, 'admins', 'k:t');
