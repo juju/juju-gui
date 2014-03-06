@@ -32,6 +32,16 @@ YUI.add('viewlet-view-base', function(Y) {
   function ViewletBaseView() {}
 
   ViewletBaseView.prototype = {
+
+    /**
+      Initializer for all of the viewlet views.
+
+      @method initializer
+    */
+    initializer: function() {
+      this._eventHandles = [];
+      this.changedValues = {};
+    },
     /**
      Model change events handles associated with this viewlet.
 
@@ -40,7 +50,6 @@ YUI.add('viewlet-view-base', function(Y) {
      @default empty array
      @private
     */
-    _eventHandles: [],
     /**
       Used for conflict resolution. When the user changes a value on a bound
       viewlet we store a reference of the element key here so that we know to
@@ -50,7 +59,6 @@ YUI.add('viewlet-view-base', function(Y) {
       @type {Object}
       @default empty object
     */
-    changedValues: {},
     /**
       Shows the container of the view
 

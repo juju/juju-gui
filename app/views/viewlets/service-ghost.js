@@ -38,10 +38,7 @@ YUI.add('service-ghost-view', function(Y) {
     events: {
       '.config-file .fakebutton': { click: 'handleFileClick'},
       '.config-file input[type=file]': { change: 'handleFileChange'},
-      'input#use-default-toggle': {change: 'setDefaultSettings'},
-      // Used by the config viewlet for keeping the checkbox values
-      // in sync across the slider/checkbox/text representation.
-      '.hidden-checkbox': {change: 'onCheckboxUpdate'}
+      'input#use-default-toggle': {change: 'setDefaultSettings'}
     },
     bindings: {
       config: {

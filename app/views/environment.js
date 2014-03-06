@@ -238,7 +238,10 @@ YUI.add('juju-view-environment', function(Y) {
             // The following are located in inspector.js
             '.initiate-destroy': {click: '_onInitiateDestroy'},
             '.cancel-destroy': {click: '_onCancelDestroy'},
-            '.destroy-service-trigger span': {click: '_onDestroyClick'}
+            '.destroy-service-trigger span': {click: '_onDestroyClick'},
+            // Used by the config viewlet for keeping the checkbox values
+            // in sync across the slider/checkbox/text representation.
+            '.hidden-checkbox': {change: 'onCheckboxUpdate'}
           },
           // the configuration for the view manager template
           templateConfig: {

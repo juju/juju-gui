@@ -122,7 +122,7 @@ describe('Ghost Inspector', function() {
       var serviceNameInput = Y.one('input[name=service-name]');
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
-      inspector.updateGhostName(
+      inspector.viewletManager.views.InspectorHeader.updateGhostName(
           {newVal: 'mediawiki42', currentTarget: serviceNameInput});
       assert.isTrue(serviceNameInput.hasClass('invalid'));
       assert.isFalse(serviceNameInput.hasClass('valid'));
@@ -134,7 +134,7 @@ describe('Ghost Inspector', function() {
       var serviceNameInput = Y.one('input[name=service-name]');
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
-      inspector.updateGhostName(
+      inspector.viewletManager.views.InspectorHeader.updateGhostName(
           {newVal: 'mediawiki42', currentTarget: serviceNameInput});
       assert.isFalse(serviceNameInput.hasClass('invalid'));
       assert.isTrue(serviceNameInput.hasClass('valid'));
@@ -148,7 +148,7 @@ describe('Ghost Inspector', function() {
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
       serviceNameInput.set('value', newName);
-      inspector.updateGhostName(
+      inspector.viewletManager.views.InspectorHeader.updateGhostName(
           {newVal: newName, currentTarget: serviceNameInput});
       assert.isTrue(serviceNameInput.hasClass('invalid'));
       assert.isFalse(serviceNameInput.hasClass('valid'));
@@ -452,7 +452,8 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
 
-    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
+    inspector.viewletManager.views.GhostConfig
+             .onFileLoaded('a.yaml', {target: {result: fileContents}});
     inspector.viewletManager.configFileContent.should.equal(fileContents);
     var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
@@ -464,14 +465,16 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
 
-    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
+    inspector.viewletManager.views.GhostConfig
+             .onFileLoaded('a.yaml', {target: {result: fileContents}});
     inspector.viewletManager.configFileContent.should.equal(fileContents);
     var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
       node.getStyle('display').should.equal('none');
     });
     // Load the file.
-    inspector.onFileLoaded('a.yaml', {target: {result: fileContents}});
+    inspector.viewletManager.views.GhostConfig
+             .onFileLoaded('a.yaml', {target: {result: fileContents}});
 
     // And then click to remove it.
     container.one('.config-file .fakebutton').simulate('click');
@@ -502,7 +505,8 @@ describe('Ghost Inspector', function() {
     };
 
     var config_raw = 'admins: \n user:pass';
-    inspector.onFileLoaded('a.yaml', {target: {result: config_raw}});
+    inspector.viewletManager.views.GhostConfig
+             .onFileLoaded('a.yaml', {target: {result: config_raw}});
 
     container.one('.confirm').simulate('click');
     // The config from the charm model should be emptied out.

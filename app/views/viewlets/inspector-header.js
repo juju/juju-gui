@@ -31,7 +31,7 @@ YUI.add('inspector-header-view', function(Y) {
     slot: 'header',
     template: templates['inspector-header'],
     events: {
-      'input[name=service-name]': { valuechange: 'updateGhostName' },
+      'input[name=service-name]': { valuechange: 'updateGhostName' }
     },
     bindings: {
       charmChanged: {
