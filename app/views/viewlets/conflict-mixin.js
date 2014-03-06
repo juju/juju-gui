@@ -234,6 +234,34 @@ YUI.add('conflict-mixin', function(Y) {
       }
     },
 
+    /**
+      Highlight modified fields to show they have been saved.
+      Note that the "modified" class is removed in the syncedFields method.
+
+      @method _highlightSaved
+      @param {Y.Node} container The affected viewlet container.
+      @return {undefined} Nothing.
+    */
+    _highlightSaved: function(container) {
+      var modified = container.all('.modified');
+      modified.addClass('change-saved');
+      // If you don't remove the class later, the animation runs every time
+      // you switch back to the tab with these fields. Unfortunately,
+      // animationend handlers don't work reliably, once you hook them up with
+      // the associated custom browser names (e.g. webkitAnimationEnd) on the
+      // raw DOM node, so we don't even bother with them.  We just make a
+      // timer to remove the class.
+      var parentContainer = this.viewletManager.get('container');
+      Y.later(1000, modified, function() {
+        // Use the modified collection that we originally found, but double
+        // check that our expected context is still around.
+        if (parentContainer.inDoc() &&
+            !container.all('.change-saved').isEmpty()) {
+          this.removeClass('change-saved');
+        }
+      });
+    },
+
     'unsyncedFields': function() {
       var node = this.get('container').one('.controls .confirm');
       if (!node.getData('originalText')) {

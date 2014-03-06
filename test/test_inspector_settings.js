@@ -110,14 +110,14 @@ describe('Inspector Settings', function() {
 
   // Retrieve and return the config viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.views.config;
+    return inspector.viewletManager.views.Config;
   };
 
   // Change the value of the given key in the constraints form.
   // Return the corresponding node.
   var changeForm = function(viewlet, key, value) {
     var selector = 'textarea[name=' + key + '].config-field';
-    var node = viewlet.container.one(selector);
+    var node = viewlet.get('container').one(selector);
     node.set('value', value);
     // Trigger bindingEngine to notice change.
     var bindingEngine = inspector.viewletManager.bindingEngine;
@@ -285,7 +285,7 @@ describe('Inspector Settings', function() {
     input.set('value', 'foo');
     // Force the databinding to notice the change in-line.
     inspector.viewletManager.bindingEngine._nodeChanged(
-        input, inspector.viewletManager.views.config);
+        input, inspector.viewletManager.views.Config);
     button.simulate('click');
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Options.admins);
@@ -300,7 +300,7 @@ describe('Inspector Settings', function() {
     inspector = setUpInspector();
     env.connect();
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('textarea[data-bind="config.admins"]');
+    var node = viewlet.get('container').one('textarea[data-bind="config.admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     inspector.model.set('config', {admins: 'g:s'});
     changeForm(viewlet, 'admins', 'k:t');
@@ -309,7 +309,7 @@ describe('Inspector Settings', function() {
         1,
         'did not find a modified node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'g:s');
     // No modified markers are shown.
@@ -325,7 +325,7 @@ describe('Inspector Settings', function() {
     inspector = setUpInspector();
     env.connect();
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('textarea[name="admins"]');
+    var node = viewlet.get('container').one('textarea[name="admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'admins', 'k:t');
     inspector.model.set('config', {admins: 'g:s'});
@@ -334,7 +334,7 @@ describe('Inspector Settings', function() {
         1,
         'did not find a conflict-pending node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'g:s');
     // No conflict or modified markers are shown.
@@ -353,7 +353,7 @@ describe('Inspector Settings', function() {
     inspector = setUpInspector();
     env.connect();
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('textarea[name="admins"]');
+    var node = viewlet.get('container').one('textarea[name="admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'admins', 'k:t');
     inspector.model.set('config', {admins: 'g:s'});
@@ -363,7 +363,7 @@ describe('Inspector Settings', function() {
         1,
         'did not find the conflict node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'g:s');
     // No conflict or modified markers are shown.
