@@ -1164,6 +1164,20 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle DestroyMachines messages.
+
+      @method handleClientDestroyMachines
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleClientDestroyMachines: function(data, client, state) {
+      var params = data.Params;
+      var response = state.destroyMachines(params.MachineNames, params.Force);
+      this._basicReceive(data, client, response);
+    },
+
+    /**
     Handle ServiceDestroy messages
 
     @method handleClientServiceDestroy

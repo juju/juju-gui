@@ -495,6 +495,121 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Remove existing machines/containers.
+
+      @method destroyMachines
+      @param {Array} names The names of the machines/containers to be removed.
+        Each name is a string: machine names are numbers, e.g. "1" or "42";
+        containers have the [machine name]/[container type]/[container number]
+        form, e.g. "2/lxc/0" or "1/kvm/42".
+      @param {Boolean} force Whether to force machines removal even if they
+        host units or containers.
+      @return {Object} A response including an "error" attribute if any
+        problems occurred.
+    */
+    destroyMachines: function(names, force) {
+      var self = this;
+      // Only proceed if the user is authenticated.
+      if (!self.get('authenticated')) {
+        return UNAUTHENTICATED_ERROR;
+      }
+      var machines = self.db.machines;
+      var services = self.db.services;
+      // Define an object mapping machine names to units they contain.
+      // This is done once here in order to avoid looping through the units
+      // model lists multiple times.
+      var machineUnitsMap = services.filterUnits(function(unit) {
+        return names.indexOf(unit.machine) !== -1;
+      }).reduce(function(result, unit) {
+        var machine = unit.machine;
+        if (result[machine]) {
+          result[machine].push(unit);
+        } else {
+          result[machine] = [unit];
+        }
+        return result;
+      }, Object.create(null));
+      var errors = [];
+      var destroyed = false;
+      names.forEach(function(name) {
+        var error = self._destroyMachine(
+            name, force, machines, services, machineUnitsMap);
+        if (error === null) {
+          destroyed = true;
+        } else {
+          errors.push(error);
+        }
+      });
+      var response = {};
+      if (errors.length) {
+        var msg;
+        if (destroyed) {
+          msg = 'some machines were not destroyed: ';
+        } else {
+          msg = 'no machines were destroyed: ';
+        }
+        response.error = msg + errors.join('; ');
+      }
+      return response;
+    },
+
+    /**
+      Remove a machine given its name.
+
+      Used internally by destroyMachines.
+
+      @method _destroyMachine
+      @param {Array} name The name of the machines/containers to be removed.
+      @param {Boolean} force Whether to force machine removal.
+      @param {Object} machines The machines model list.
+      @param {Object} services The services model list.
+      @param {Object} machineUnitsMap Key/value pairs mapping machine names to
+        assigned unit objects.
+      @return {String|Null} An error if the machine cannot be removed, or null
+        if the removal succeeded.
+    */
+    _destroyMachine: function(
+        name, force, machines, services, machineUnitsMap) {
+      var machine = machines.getById(name);
+      // Ensure the machine to be destroyed exists in the database.
+      if (!machine) {
+        return 'machine ' + name + ' does not exist';
+      }
+      // Check if the machine hosts containers.
+      var descendants = machines.filterByAncestor(name);
+      if (descendants.length) {
+        if (!force) {
+          var descendantNames = descendants.map(function(descendant) {
+            return descendant.id;
+          });
+          return ('machine ' + name + ' is hosting containers ' +
+                  descendantNames.join(', '));
+        }
+        // Remove all descendants from the database.
+        machines.remove(descendants);
+      }
+      // Check if the machine has assigned units.
+      var units = machineUnitsMap[name];
+      if (units) {
+        if (!force) {
+          var unitNames = units.map(function(unit) {
+            return unit.id;
+          });
+          return ('machine ' + name + ' has unit(s) ' + unitNames.join(', ') +
+                  ' assigned');
+        }
+        // Remove all units assigned to this machine.
+        units.forEach(function(unit) {
+          var service = services.getById(unit.service);
+          service.get('units').remove(unit);
+        });
+      }
+      // Everything went well for this machine, remove it from the database.
+      machines.remove(machine);
+      return null;
+    },
+
+    /**
      Destroy the named service.
 
      @method destroyService

@@ -417,7 +417,7 @@ YUI.add('juju-models', function(Y) {
 
     /**
       Return a list of visible model instances. A model instance is visible
-      when it is alive or dying.
+      when it is alive or dying, or when it includes units in an error state.
 
       @method visible
       @return {Y.ModelList} The resulting visible model instances.
@@ -426,6 +426,23 @@ YUI.add('juju-models', function(Y) {
       return this.filter({asList: true}, function(model) {
         return model.isAlive() || model.hasErrors();
       });
+    },
+
+    /**
+      Filter units based on a predicate.
+
+      @method filterUnits
+      @param {Function} predicate The function used to filter units.
+      @return {Array} A list of matching units.
+    */
+    filterUnits: function(predicate) {
+      var units = [];
+      this.each(function(service) {
+        service.get('units').filter(predicate).forEach(function(unit) {
+          units.push(unit);
+        });
+      });
+      return units;
     },
 
     /**

@@ -431,6 +431,66 @@ describe('test_model.js', function() {
       assert.equal('mysql/0', units.createDisplayName('mysql/0'));
     });
 
+    describe('services.filterUnits', function() {
+      var services;
+
+      beforeEach(function() {
+        // Set up services and units used for tests.
+        services = new models.ServiceList();
+        var flask = services.add({id: 'flask'});
+        var rails = services.add({id: 'rails'});
+        var react = services.add({id: 'react'});
+        flask.get('units').add([
+          {id: 'flask/0', machine: '1', agent_state: 'started'},
+          {id: 'flask/1', machine: '2', agent_state: 'pending'}
+        ]);
+        rails.get('units').add([
+          {id: 'rails/0', machine: '1', agent_state: 'pending'},
+          {id: 'rails/1', machine: '2/lxc/0', agent_state: 'error'}
+        ]);
+        react.get('units').add([
+          {id: 'react/42', machine: '0', agent_state: 'error'},
+          {id: 'react/47', machine: '1', agent_state: 'started'}
+        ]);
+      });
+
+      afterEach(function() {
+        services.destroy();
+      });
+
+      // Ensure the given units have the given expectedNames.
+      var assertUnits = function(units, expectedNames) {
+        var names = units.map(function(unit) {
+          return unit.id;
+        });
+        names.sort();
+        expectedNames.sort();
+        assert.deepEqual(names, expectedNames);
+      };
+
+      it('filters the units based on a predicate (e.g. machine)', function() {
+        var units = services.filterUnits(function(unit) {
+          return unit.machine === '1';
+        });
+        assertUnits(units, ['flask/0', 'rails/0', 'react/47']);
+      });
+
+      it('filters the units based on a predicate (e.g. state)', function() {
+        var units = services.filterUnits(function(unit) {
+          return unit.agent_state === 'error';
+        });
+        assertUnits(units, ['rails/1', 'react/42']);
+      });
+
+      it('returns an empty array if no units match', function() {
+        var units = services.filterUnits(function(unit) {
+          return unit.machine === '1' && unit.agent_state === 'error';
+        });
+        assert.strictEqual(units.length, 0);
+      });
+
+    });
+
     describe('machines model list', function() {
       var machines;
 

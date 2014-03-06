@@ -905,6 +905,8 @@ YUI.add('juju-env-go', function(Y) {
         Each name is a string: machine names are numbers, e.g. "1" or "42";
         containers have the [machine name]/[container type]/[container number]
         form, e.g. "2/lxc/0" or "1/kvm/42".
+      @param {Boolean} force Whether to force machines removal even if they
+        host units or containers.
       @param {Function} callback A callable that must be called once the
         operation is performed. The callback is called passing an object like
         the following:
