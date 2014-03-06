@@ -191,10 +191,6 @@ YUI.add('juju-view-environment', function(Y) {
             '.cancel-num-units': { click: '_closeUnitConfirm'},
             '.confirm-num-units': { click: '_confirmUnitChange'},
             'a.edit-constraints': { click: '_showEditUnitConstraints'},
-            // Constraints viewlet.
-            '.save-constraints': {click: 'saveConstraints'},
-            '.settings-constraints button.cancel': {
-              click: 'cancelConstraints'},
             // Overview units viewlet.
             '.status-unit-header': {click: 'toggleUnitHeader'},
             '.unit-details': { click: 'showUnit'},
@@ -212,7 +208,7 @@ YUI.add('juju-view-environment', function(Y) {
             'overview', // Default viewlet first.
             'charmDetails',
             'Config',
-            'constraints',
+            'Constraints',
             'UnitDetails',
             'InspectorHeader',
             'relations'

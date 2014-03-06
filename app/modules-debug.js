@@ -305,10 +305,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-ghost.js'
         },
 
-        'viewlet-service-constraints': {
-          fullpath: '/juju-ui/views/viewlets/service-constraints.js'
-        },
-
         'viewlet-service-relations': {
           fullpath: '/juju-ui/views/viewlets/service-relations.js'
         },
@@ -321,6 +317,10 @@ var GlobalConfig = {
 
         'viewlet-view-base': {
           fullpath: '/juju-ui/views/viewlets/viewlet-view-base.js'
+        },
+
+        'service-constraints-view': {
+          fullpath: '/juju-ui/views/viewlets/service-constraints.js'
         },
 
         'service-config-view': {

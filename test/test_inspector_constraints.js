@@ -53,14 +53,14 @@ describe('Inspector Constraints', function() {
 
   // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.views.constraints;
+    return inspector.viewletManager.views.Constraints;
   };
 
   // Change the value of the given key in the constraints form.
   // Return the corresponding node.
   var changeForm = function(viewlet, key, value) {
     var selector = 'input[name=' + key + '].constraint-field';
-    var node = viewlet.container.one(selector);
+    var node = viewlet.get('container').one(selector);
     node.set('value', value);
     // Trigger bindingEngine to notice change.
     var bindingEngine = inspector.viewletManager.bindingEngine;
@@ -249,7 +249,8 @@ describe('Inspector Constraints', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
     inspector.model.set('constraints', {arch: 'lcars'});
-    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var node = viewlet.get('container')
+                      .one('input[data-bind="constraints.arch"]');
     node.simulate('click');
     var wrapper = node.ancestor('.settings-wrapper');
     var option = wrapper.one('.resolver .config-field');
@@ -262,7 +263,8 @@ describe('Inspector Constraints', function() {
     inspector.model.set('constraints', {arch: 'lcars'});
     // This is the successive change.
     inspector.model.set('constraints', {arch: 'arm64'});
-    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var node = viewlet.get('container')
+                      .one('input[data-bind="constraints.arch"]');
     node.simulate('click');
     var wrapper = node.ancestor('.settings-wrapper');
     var option = wrapper.one('.resolver .config-field');
@@ -272,7 +274,8 @@ describe('Inspector Constraints', function() {
   it('can cancel changes', function() {
     // Set up.
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var node = viewlet.get('container')
+                      .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
     inspector.model.set('constraints', {arch: 'lcars'});
     changeForm(viewlet, 'arch', 'i386');
@@ -281,7 +284,7 @@ describe('Inspector Constraints', function() {
         1,
         'did not find a modified node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'lcars');
     // No modified markers are shown.
@@ -295,7 +298,8 @@ describe('Inspector Constraints', function() {
   it('can cancel pending conflicts', function() {
     // Set up.
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var node = viewlet.get('container')
+                      .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'arch', 'i386');
     inspector.model.set('constraints', {arch: 'lcars'});
@@ -304,7 +308,7 @@ describe('Inspector Constraints', function() {
         1,
         'did not find a conflict-pending node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'lcars');
     // No conflict or modified markers are shown.
@@ -321,7 +325,8 @@ describe('Inspector Constraints', function() {
   it('can cancel conflicts that are being resolved', function() {
     // Set up.
     var viewlet = getViewlet(inspector);
-    var node = viewlet.container.one('input[data-bind="constraints.arch"]');
+    var node = viewlet.get('container')
+                      .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'arch', 'i386');
     inspector.model.set('constraints', {arch: 'lcars'});
@@ -331,7 +336,7 @@ describe('Inspector Constraints', function() {
         1,
         'did not find the conflict node');
     // Act.
-    viewlet.container.one('button.cancel').simulate('click');
+    viewlet.get('container').one('button.cancel').simulate('click');
     // Validate.
     assert.equal(node.get('value'), 'lcars');
     // No conflict or modified markers are shown.
