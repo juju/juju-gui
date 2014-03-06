@@ -546,239 +546,6 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Handles the click on the file input and dispatches to the proper function
-      depending if a file has been previously loaded or not.
-
-      @method handleFileClick
-      @param {Y.EventFacade} e An event object.
-    */
-    handleFileClick: function(e) {
-      if (e.currentTarget.getHTML().indexOf('Remove') === -1) {
-        // Because we can't style file input buttons properly we style a normal
-        // element and then simulate a click on the real hidden input when our
-        // fake button is clicked.
-        e.container.one('input[type=file]').getDOMNode().click();
-      } else {
-        this.onRemoveFile(e);
-      }
-    },
-
-    /**
-      Handle the file upload click event. Creates a FileReader instance to
-      parse the file data.
-
-
-      @method onFileChange
-      @param {Y.EventFacade} e An event object.
-    */
-    handleFileChange: function(e) {
-      var file = e.currentTarget.get('files').shift(),
-          reader = new FileReader();
-      reader.onerror = Y.bind(this.onFileError, this);
-      reader.onload = Y.bind(this.onFileLoaded, this, file.name);
-      reader.readAsText(file);
-    },
-
-    /**
-      Callback called when an error occurs during file upload.
-      Hide the charm configuration section.
-
-      @method onFileError
-      @param {Object} e An event object (with a "target.error" attr).
-    */
-    onFileError: function(e) {
-      var error = e.target.error, msg;
-      switch (error.code) {
-        case error.NOT_FOUND_ERR:
-          msg = 'File not found';
-          break;
-        case error.NOT_READABLE_ERR:
-          msg = 'File is not readable';
-          break;
-        case error.ABORT_ERR:
-          break; // noop
-        default:
-          msg = 'An error occurred reading this file.';
-      }
-      if (msg) {
-        var db = this.viewletManager.get('db');
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error reading configuration file',
-              message: msg,
-              level: 'error'
-            }));
-      }
-    },
-
-    /**
-      Callback called when a file is correctly uploaded.
-      Hide the charm configuration section.
-
-      @method onFileLoaded
-      @param {Object} e An event object.
-    */
-    onFileLoaded: function(filename, e) {
-      // Add a link for the user to remove this file now that it's loaded.
-      var button = this.viewletManager.get('container').one('.fakebutton');
-      button.setHTML(filename + ' - Remove file');
-      //set the configFileContent on the viewlet-manager so we can have access
-      //to it when the user submit their config.
-      this.viewletManager.configFileContent = e.target.result;
-      if (!this.viewletManager.configFileContent) {
-        // Some file read errors do not go through the error handler as
-        // expected but instead return an empty string.  Warn the user if
-        // this happens.
-        var db = this.viewletManager.get('db');
-        db.notifications.add(
-            new models.Notification({
-              title: 'Configuration file error',
-              message: 'The configuration file loaded is empty.  ' +
-                  'Do you have read access?',
-              level: 'error'
-            }));
-      }
-      var container = this.viewletManager.get('container');
-      container.all('.charm-settings, .settings-wrapper.toggle').hide();
-    },
-
-    /**
-      Handle the file remove click event by clearing out the input
-      and resetting the UI.
-
-      @method onRemoveFile
-      @param {Y.EventFacade} e an event object from click.
-    */
-    onRemoveFile: function(e) {
-      var container = this.viewletManager.get('container');
-      this.viewletManager.configFileContent = null;
-      container.one('.fakebutton').setHTML('Import config file...');
-      container.all('.charm-settings, .settings-wrapper.toggle').show();
-      // Replace the file input node.  There does not appear to be any way
-      // to reset the element, so the only option is this rather crude
-      // replacement.  It actually works well in practice.
-      container.one('input[type=file]')
-               .replace(Y.Node.create('<input type="file"/>'));
-    },
-
-    /**
-      Highlight modified fields to show they have been saved.
-      Note that the "modified" class is removed in the syncedFields method.
-
-      @method _highlightSaved
-      @param {Y.Node} container The affected viewlet container.
-      @return {undefined} Nothing.
-    */
-    _highlightSaved: function(container) {
-      var modified = container.all('.modified');
-      modified.addClass('change-saved');
-      // If you don't remove the class later, the animation runs every time
-      // you switch back to the tab with these fields. Unfortunately,
-      // animationend handlers don't work reliably, once you hook them up with
-      // the associated custom browser names (e.g. webkitAnimationEnd) on the
-      // raw DOM node, so we don't even bother with them.  We just make a
-      // timer to remove the class.
-      var parentContainer = this.viewletManager.get('container');
-      Y.later(1000, modified, function() {
-        // Use the modified collection that we originally found, but double
-        // check that our expected context is still around.
-        if (parentContainer.inDoc() &&
-            !container.all('.change-saved').isEmpty()) {
-          this.removeClass('change-saved');
-        }
-      });
-    },
-
-    /**
-      Pulls the content from each configuration field and sends the values
-      to the environment
-
-      @method saveConfig
-    */
-    saveConfig: function() {
-      var inspector = this.viewletManager,
-          env = inspector.get('env'),
-          db = inspector.get('db'),
-          service = inspector.get('model'),
-          charmUrl = service.get('charm'),
-          charm = db.charms.getById(charmUrl),
-          schema = charm.get('options'),
-          container = this.viewletManager.views.config.container,
-          button = container.one('button.confirm');
-
-      button.set('disabled', 'disabled');
-
-      var config = utils.getElementsValuesMapping(container, '.config-field');
-      var errors = utils.validate(config, schema);
-
-      if (Y.Object.isEmpty(errors)) {
-        env.set_config(
-            service.get('id'),
-            config,
-            null,
-            service.get('config'),
-            Y.bind(this._setConfigCallback, this, container)
-        );
-      } else {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error saving service config',
-              message: 'Error saving service config',
-              level: 'error'
-            })
-        );
-        // We don't have a story for passing the full error messages
-        // through so will log to the console for now.
-        console.log('Error setting config', errors);
-      }
-    },
-
-    /**
-      Handles the success or failure of setting the new config values
-
-      @method _setConfigCallback
-      @param {Y.Node} container of the viewlet-manager.
-      @param {Y.EventFacade} evt YUI event object with the following attrs:
-        - err: whether or not an error occurred;
-        - service_name: the name of the service;
-        - newValues: an object including the modified config options.
-    */
-    _setConfigCallback: function(container, evt) {
-      // If the user has conflicted fields and still chooses to
-      // save, then we will be overwriting the values in Juju.
-      if (evt.err) {
-        var db = this.viewletManager.get('db');
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error setting service configuration',
-              message: 'Service name: ' + evt.service_name,
-              level: 'error'
-            })
-        );
-      } else {
-        this._highlightSaved(container);
-        var service = this.viewletManager.get('model');
-        // Mix the current config (stored in the db) with the modified options.
-        var config = Y.mix(service.get('config'), evt.newValues, true);
-        service.set('config', config);
-        var bindingEngine = this.viewletManager.bindingEngine;
-        bindingEngine.resetDOMToModel('config');
-      }
-      container.one('.controls .confirm').removeAttribute('disabled');
-    },
-
-    /**
-      Cancel any configuration changes.
-
-      @method cancelConfig
-      @param {Y.EventFacade} e An event object.
-      @return {undefined} Nothing.
-    */
-    cancelConfig: function(e) {
-      this.viewletManager.bindingEngine.resetDOMToModel('config');
-    },
-
-    /**
       Handle saving the service constraints.
       Make the corresponding environment call, passing _saveConstraintsCallback
       as callback (see below).
@@ -1096,10 +863,272 @@ YUI.add('juju-view-inspector', function(Y) {
       var relationModule = this.options.environment.topo.modules.RelationModule;
 
       relationModule.removeRelationConfirm(relation, relationModule);
+    },
+
+    /*
+      All of these methods have been moved into external extensions for the new
+      viewlet views. They are left here to allow the remaining viewlets to
+      continue to function.
+
+      DO NOT MODIFY THE FOLLOWING METHODS.
+
+      MAKE ANY CHANGES TO THEIR NEW EXTENSIONS
+    */
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Handles the click on the file input and dispatches to the proper function
+      depending if a file has been previously loaded or not.
+
+      @method handleFileClick
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileClick: function(e) {
+      if (e.currentTarget.getHTML().indexOf('Remove') === -1) {
+        // Because we can't style file input buttons properly we style a normal
+        // element and then simulate a click on the real hidden input when our
+        // fake button is clicked.
+        e.container.one('input[type=file]').getDOMNode().click();
+      } else {
+        this.onRemoveFile(e);
+      }
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Handle the file upload click event. Creates a FileReader instance to
+      parse the file data.
+
+
+      @method onFileChange
+      @param {Y.EventFacade} e An event object.
+    */
+    handleFileChange: function(e) {
+      var file = e.currentTarget.get('files').shift(),
+          reader = new FileReader();
+      reader.onerror = Y.bind(this.onFileError, this);
+      reader.onload = Y.bind(this.onFileLoaded, this, file.name);
+      reader.readAsText(file);
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Callback called when an error occurs during file upload.
+      Hide the charm configuration section.
+
+      @method onFileError
+      @param {Object} e An event object (with a "target.error" attr).
+    */
+    onFileError: function(e) {
+      var error = e.target.error, msg;
+      switch (error.code) {
+        case error.NOT_FOUND_ERR:
+          msg = 'File not found';
+          break;
+        case error.NOT_READABLE_ERR:
+          msg = 'File is not readable';
+          break;
+        case error.ABORT_ERR:
+          break; // noop
+        default:
+          msg = 'An error occurred reading this file.';
+      }
+      if (msg) {
+        var db = this.viewletManager.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error reading configuration file',
+              message: msg,
+              level: 'error'
+            }));
+      }
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Callback called when a file is correctly uploaded.
+      Hide the charm configuration section.
+
+      @method onFileLoaded
+      @param {Object} e An event object.
+    */
+    onFileLoaded: function(filename, e) {
+      // Add a link for the user to remove this file now that it's loaded.
+      var button = this.viewletManager.get('container').one('.fakebutton');
+      button.setHTML(filename + ' - Remove file');
+      //set the configFileContent on the viewlet-manager so we can have access
+      //to it when the user submit their config.
+      this.viewletManager.configFileContent = e.target.result;
+      if (!this.viewletManager.configFileContent) {
+        // Some file read errors do not go through the error handler as
+        // expected but instead return an empty string.  Warn the user if
+        // this happens.
+        var db = this.viewletManager.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Configuration file error',
+              message: 'The configuration file loaded is empty.  ' +
+                  'Do you have read access?',
+              level: 'error'
+            }));
+      }
+      var container = this.viewletManager.get('container');
+      container.all('.charm-settings, .settings-wrapper.toggle').hide();
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Handle the file remove click event by clearing out the input
+      and resetting the UI.
+
+      @method onRemoveFile
+      @param {Y.EventFacade} e an event object from click.
+    */
+    onRemoveFile: function(e) {
+      var container = this.viewletManager.get('container');
+      this.viewletManager.configFileContent = null;
+      container.one('.fakebutton').setHTML('Import config file...');
+      container.all('.charm-settings, .settings-wrapper.toggle').show();
+      // Replace the file input node.  There does not appear to be any way
+      // to reset the element, so the only option is this rather crude
+      // replacement.  It actually works well in practice.
+      container.one('input[type=file]')
+               .replace(Y.Node.create('<input type="file"/>'));
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Highlight modified fields to show they have been saved.
+      Note that the "modified" class is removed in the syncedFields method.
+
+      @method _highlightSaved
+      @param {Y.Node} container The affected viewlet container.
+      @return {undefined} Nothing.
+    */
+    _highlightSaved: function(container) {
+      var modified = container.all('.modified');
+      modified.addClass('change-saved');
+      // If you don't remove the class later, the animation runs every time
+      // you switch back to the tab with these fields. Unfortunately,
+      // animationend handlers don't work reliably, once you hook them up with
+      // the associated custom browser names (e.g. webkitAnimationEnd) on the
+      // raw DOM node, so we don't even bother with them.  We just make a
+      // timer to remove the class.
+      var parentContainer = this.viewletManager.get('container');
+      Y.later(1000, modified, function() {
+        // Use the modified collection that we originally found, but double
+        // check that our expected context is still around.
+        if (parentContainer.inDoc() &&
+            !container.all('.change-saved').isEmpty()) {
+          this.removeClass('change-saved');
+        }
+      });
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Pulls the content from each configuration field and sends the values
+      to the environment
+
+      @method saveConfig
+    */
+    saveConfig: function() {
+      var inspector = this.viewletManager,
+          env = inspector.get('env'),
+          db = inspector.get('db'),
+          service = inspector.get('model'),
+          charmUrl = service.get('charm'),
+          charm = db.charms.getById(charmUrl),
+          schema = charm.get('options'),
+          container = this.viewletManager.views.config.container,
+          button = container.one('button.confirm');
+
+      button.set('disabled', 'disabled');
+
+      var config = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(config, schema);
+
+      if (Y.Object.isEmpty(errors)) {
+        env.set_config(
+            service.get('id'),
+            config,
+            null,
+            service.get('config'),
+            Y.bind(this._setConfigCallback, this, container)
+        );
+      } else {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error saving service config',
+              message: 'Error saving service config',
+              level: 'error'
+            })
+        );
+        // We don't have a story for passing the full error messages
+        // through so will log to the console for now.
+        console.log('Error setting config', errors);
+      }
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Handles the success or failure of setting the new config values
+
+      @method _setConfigCallback
+      @param {Y.Node} container of the viewlet-manager.
+      @param {Y.EventFacade} evt YUI event object with the following attrs:
+        - err: whether or not an error occurred;
+        - service_name: the name of the service;
+        - newValues: an object including the modified config options.
+    */
+    _setConfigCallback: function(container, evt) {
+      // If the user has conflicted fields and still chooses to
+      // save, then we will be overwriting the values in Juju.
+      if (evt.err) {
+        var db = this.viewletManager.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service configuration',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error'
+            })
+        );
+      } else {
+        this._highlightSaved(container);
+        var service = this.viewletManager.get('model');
+        // Mix the current config (stored in the db) with the modified options.
+        var config = Y.mix(service.get('config'), evt.newValues, true);
+        service.set('config', config);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.resetDOMToModel('config');
+      }
+      container.one('.controls .confirm').removeAttribute('disabled');
+    },
+
+    /**
+      DO NOT MODIFY...SEE LINE 868
+
+      Cancel any configuration changes.
+
+      @method cancelConfig
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConfig: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('config');
     }
   };
 
-  var ConflictMixin = {
+
+  var CONFLICT_REMOVE_ME = {
     /**
      * Reset the given node to not be marked as 'modified' in the UX.
      *
@@ -1322,9 +1351,9 @@ YUI.add('juju-view-inspector', function(Y) {
     }
   };
 
+
   // Mixin Conflict Handling.
-  viewletNS.config = Y.merge(viewletNS.config, ConflictMixin);
-  viewletNS.constraints = Y.merge(viewletNS.constraints, ConflictMixin);
+  viewletNS.constraints = Y.merge(viewletNS.constraints, CONFLICT_REMOVE_ME);
 
 
   /**
@@ -1445,7 +1474,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'charm-details-view',
     'inspector-header-view',
     'viewlet-inspector-overview',
-    'viewlet-service-config',
+    'service-config-view',
     'viewlet-service-constraints',
     'viewlet-service-ghost',
     'unit-details-view',

@@ -301,10 +301,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
         },
 
-        'viewlet-service-config': {
-          fullpath: '/juju-ui/views/viewlets/service-config.js'
-        },
-
         'viewlet-service-ghost': {
           fullpath: '/juju-ui/views/viewlets/service-ghost.js'
         },
@@ -327,6 +323,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/viewlet-view-base.js'
         },
 
+        'service-config-view': {
+          fullpath: '/juju-ui/views/viewlets/service-config.js'
+        },
+
         'local-new-upgrade-view': {
           fullpath: '/juju-ui/views/viewlets/local-new-upgrade-view.js'
         },
@@ -341,6 +341,16 @@ var GlobalConfig = {
 
         'unit-details-view': {
           fullpath: '/juju-ui/views/viewlets/unit-details.js'
+        },
+
+        // Viewlet mixins
+
+        'conflict-view-extension': {
+          fullpath: '/juju-ui/views/viewlets/conflict-view-extension.js'
+        },
+
+        'configfile-view-extension': {
+          fullpath: '/juju-ui/views/viewlets/configfile-view-extension.js'
         },
 
         // Models

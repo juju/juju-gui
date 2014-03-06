@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-service-config', function(Y) {
+YUI.add('service-config-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = Y.namespace('juju.views').Templates,
@@ -27,10 +27,21 @@ YUI.add('viewlet-service-config', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  var name = 'config';
+  var extensions = [
+    ns.ViewletBaseView,
+    ns.ConflictViewExtension,
+    ns.ConfigFileViewExtension
+  ];
 
-  ns.config = {
-    name: 'config',
+  ns.Config = Y.Base.create(name, Y.View, extensions, {
     template: templates['service-configuration'],
+    events: {
+      '.settings-config button.confirm': { click: 'saveConfig'},
+      '.settings-config button.cancel': { click: 'cancelConfig'},
+      '.config-file .fakebutton': { click: 'handleFileClick'},
+      '.config-file input[type=file]': { change: 'handleFileChange'}
+    },
     bindings: {
       config: {
         'update': function(node, val) {
@@ -68,33 +79,30 @@ YUI.add('viewlet-service-config', function(Y) {
         }
       }
     },
-
     /**
-     * Viewlet standard render call.
-     *
-     * @method render
-     * @param {Service} service the model of the service in the inspector.
-     * @param {Object} viewContainerAttrs an object of helper data from the
-     * viewlet manager.
-     *
-     */
-    render: function(service, viewContainerAttrs) {
+      View standard render call.
+
+      @method render
+      @param {Service} service the model of the service in the inspector.
+      @param {Object} viewContainerAttrs an object of helper data from the
+        viewlet manager.
+    */
+    render: function(viewContainerAttrs) {
+      var service = viewContainerAttrs.model;
       var settings = [];
       var db = viewContainerAttrs.db;
       var charm = db.charms.getById(service.get('charm'));
       var templatedSettings = utils.extractServiceSettings(
           charm.get('options'), service.get('config'));
 
-      if (!this.container) {
-        this.container = Y.Node.create(this.templateWrapper);
-      }
+      var container = this.get('container');
 
-      this.container.setHTML(
+      container.setHTML(
           this.template({
             service: service,
             settings: templatedSettings,
             exposed: service.get('exposed')}));
-      this.container.all('textarea.config-field').plug(
+      container.all('textarea.config-field').plug(
           plugins.ResizingTextarea, {
             max_height: 200,
             min_height: 18,
@@ -103,41 +111,130 @@ YUI.add('viewlet-service-config', function(Y) {
       );
       this.attachExpandingTextarea();
     },
-
     /**
       Ensures that all resizing textareas are attached.
 
       @method attachExpandingTextarea
     */
     attachExpandingTextarea: function() {
-      this.container.all('textarea.config-field').each(function(n) {
+      this.get('container').all('textarea.config-field').each(function(n) {
         if (n.resizingTextarea) {
           n.resizingTextarea.resize();
         }
       });
     },
+    /**
+      Force resize the config textareas.
+      ResizingTextarea needs the nodes to be visible to resize properly. We
+      hook into the show() so that we can force the resize once the node is
+      made visible via its viewlet container. Note that there are dupe hidden
+      textarea nodes so we need to check if the node found has the plugin on
+      it before running resize.
+
+      @method show
+    */
+    show: function() {
+      this.get('container').show();
+      this.attachExpandingTextarea();
+    },
 
     /**
-     * Force resize the config textareas.
-     * ResizingTextarea needs the nodes to be visible to resize properly. We
-     * hook into the show() so that we can force the resize once the node is
-     * made visible via its viewlet container. Note that there are dupe hidden
-     * textarea nodes so we need to check if the node found has the plugin on
-     * it before running resize.
-     *
-     * @method show
-     *
-     */
-    show: function() {
-      this.container.show();
-      this.attachExpandingTextarea();
-    }
+      Pulls the content from each configuration field and sends the values
+      to the environment
 
-  };
+      @method saveConfig
+    */
+    saveConfig: function() {
+      var inspector = this.viewletManager,
+          env = inspector.get('env'),
+          db = inspector.get('db'),
+          service = inspector.get('model'),
+          charmUrl = service.get('charm'),
+          charm = db.charms.getById(charmUrl),
+          schema = charm.get('options'),
+          container = this.get('container'),
+          button = container.one('button.confirm');
+
+      button.set('disabled', 'disabled');
+
+      var config = utils.getElementsValuesMapping(container, '.config-field');
+      var errors = utils.validate(config, schema);
+
+      if (Y.Object.isEmpty(errors)) {
+        env.set_config(
+            service.get('id'),
+            config,
+            null,
+            service.get('config'),
+            Y.bind(this._setConfigCallback, this, container)
+        );
+      } else {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error saving service config',
+              message: 'Error saving service config',
+              level: 'error'
+            })
+        );
+        // We don't have a story for passing the full error messages
+        // through so will log to the console for now.
+        console.log('Error setting config', errors);
+      }
+    },
+
+    /**
+      Handles the success or failure of setting the new config values
+
+      @method _setConfigCallback
+      @param {Y.Node} container of the viewlet-manager.
+      @param {Y.EventFacade} evt YUI event object with the following attrs:
+        - err: whether or not an error occurred;
+        - service_name: the name of the service;
+        - newValues: an object including the modified config options.
+    */
+    _setConfigCallback: function(container, evt) {
+      // If the user has conflicted fields and still chooses to
+      // save, then we will be overwriting the values in Juju.
+      if (evt.err) {
+        var db = this.viewletManager.get('db');
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error setting service configuration',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error'
+            })
+        );
+      } else {
+        this._highlightSaved(container);
+        var service = this.viewletManager.get('model');
+        // Mix the current config (stored in the db) with the modified options.
+        var config = Y.mix(service.get('config'), evt.newValues, true);
+        service.set('config', config);
+        var bindingEngine = this.viewletManager.bindingEngine;
+        bindingEngine.resetDOMToModel('config');
+      }
+      container.one('.controls .confirm').removeAttribute('disabled');
+    },
+
+    /**
+      Cancel any configuration changes.
+
+      @method cancelConfig
+      @param {Y.EventFacade} e An event object.
+      @return {undefined} Nothing.
+    */
+    cancelConfig: function(e) {
+      this.viewletManager.bindingEngine.resetDOMToModel('config');
+    }
+  });
+
 }, '0.0.1', {
   requires: [
     'event-simulate',
     'juju-charm-models',
+    'viewlet-base-view',
+    'conflict-view-extension',
+    'configfile-view-extension',
     'juju-view',
     'node',
     'resizing-textarea'
