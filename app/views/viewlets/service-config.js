@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-service-config', function(Y) {
+YUI.add('service-config-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = Y.namespace('juju.views').Templates,
@@ -28,9 +28,13 @@ YUI.add('viewlet-service-config', function(Y) {
       utils = Y.namespace('juju.views.utils');
 
   var name = 'config';
-  var mixins = [ns.ViewletBaseView, ns.ConflictMixin, ns.ConfigFileMixin];
+  var extensions = [
+    ns.ViewletBaseView,
+    ns.ConflictViewExtension,
+    ns.ConfigFileViewExtension
+  ];
 
-  ns.Config = Y.Base.create(name, Y.View, mixins, {
+  ns.Config = Y.Base.create(name, Y.View, extensions, {
     template: templates['service-configuration'],
     events: {
       '.settings-config button.confirm': { click: 'saveConfig'},
@@ -76,7 +80,7 @@ YUI.add('viewlet-service-config', function(Y) {
       }
     },
     /**
-      Viewlet standard render call.
+      View standard render call.
 
       @method render
       @param {Service} service the model of the service in the inspector.
@@ -229,8 +233,8 @@ YUI.add('viewlet-service-config', function(Y) {
     'event-simulate',
     'juju-charm-models',
     'viewlet-base-view',
-    'conflict-mixin',
-    'config-file-mixin',
+    'conflict-view-extension',
+    'configfile-view-extension',
     'juju-view',
     'node',
     'resizing-textarea'

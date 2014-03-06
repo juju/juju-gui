@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('config-file-mixin', function(Y) {
+YUI.add('configfile-view-extension', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       models = Y.namespace('juju.models');
 
@@ -29,9 +29,9 @@ YUI.add('config-file-mixin', function(Y) {
 
     @class ConfigFileMixin
   */
-  function ConfigFileMixin() {}
+  function ConfigFileViewExtension() {}
 
-  ConfigFileMixin.prototype = {
+  ConfigFileViewExtension.prototype = {
     /**
       Handles the click on the file input and dispatches to the proper function
       depending if a file has been previously loaded or not.
@@ -150,7 +150,7 @@ YUI.add('config-file-mixin', function(Y) {
     }
   };
 
-  ns.ConfigFileMixin = ConfigFileMixin;
+  ns.ConfigFileViewExtension = ConfigFileViewExtension;
 }, '', {
   requires: [
     'juju-charm-models'

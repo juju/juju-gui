@@ -1474,7 +1474,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'charm-details-view',
     'inspector-header-view',
     'viewlet-inspector-overview',
-    'viewlet-service-config',
+    'service-config-view',
     'viewlet-service-constraints',
     'viewlet-service-ghost',
     'unit-details-view',

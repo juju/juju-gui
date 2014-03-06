@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('conflict-mixin', function(Y) {
+YUI.add('conflict-view-extension', function(Y) {
   var ns = Y.namespace('juju.viewlets');
 
   /**
@@ -28,9 +28,9 @@ YUI.add('conflict-mixin', function(Y) {
 
     @class ConflictMixin
   */
-  function ConflictMixin() {}
+  function ConflictViewExtension() {}
 
-  ConflictMixin.prototype = {
+  ConflictViewExtension.prototype = {
     /**
      * Reset the given node to not be marked as 'modified' in the UX.
      *
@@ -281,5 +281,5 @@ YUI.add('conflict-mixin', function(Y) {
     }
   };
 
-  ns.ConflictMixin = ConflictMixin;
+  ns.ConflictViewExtension = ConflictViewExtension;
 });
