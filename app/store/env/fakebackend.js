@@ -495,6 +495,133 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Add machines/containers to the environment.
+
+      @method addMachines
+      @param {Array} params A list of parameters for each machine/container
+        to be added. Each item in the list must be an object containing the
+        following keys (all optional):
+          - constraints {Object}: the machine constraints;
+          - jobs {Array}: to juju-core jobs to associate with the new machine
+            (defaults to env.machineJobs.HOST_UNITS, which enables unit hosting
+            capabilities to new machines);
+          - series {String}: the machine series (the juju-core default series
+            is used if none is specified);
+          - parentId {String}: when adding a new container, this parameter can
+            be used to place it into a specific machine, in which case the
+            containerType must also be specified (see below). If parentId is
+            not set when adding a container, a new top level machine will be
+            created to hold the container with given series, constraints, jobs;
+          - containerType {String}: the container type of the new machine
+            (e.g. "lxc").
+      @return {Object} Returns an object either with an "error" attribute
+        containing a string describing the problem, or with a "machines"
+        attribute containing a list of the added machines. Each added machine
+        is an object including the machine "name" and an optional "error".
+    */
+    addMachines: function(params) {
+      // Only proceed if the user is authenticated.
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATED_ERROR;
+      }
+      // XXX frankban 2014-03-06: a global error is only returned if an
+      // internal juju-core problem occurs. The fake backend actually never
+      // set the value. Moreover, constraints, jobs and series are ignored
+      // for now: in the future, when we extend the machine models, we might
+      // want to include those values too.
+      return {
+        machines: params.map(function(param) {
+          return this._addMachine(param.parentId, param.containerType);
+        }, this)
+      };
+    },
+
+    /**
+      Add a machine.
+
+      Used internally by addMachines.
+
+      @method _addMachine
+      @param {String} parentId The name of the parent machine (optional).
+      @param {String} containerType the container type of the new machine
+        (e.g. "lxc", optional).
+      @return {Object} Returns an object either with an "error" attribute
+        containing a string describing the problem, or with a "name"
+        attribute representing the newly created machine name.
+    */
+    _addMachine: function(parentId, containerType) {
+      var machines = this.db.machines;
+      var parent;
+      if (parentId) {
+        // The container type must be specified when adding containers.
+        if (!containerType) {
+          return {error: 'parent machine specified without container type'};
+        }
+        // Ensure the parent machine exists.
+        parent = machines.getById(parentId);
+        if (!parent) {
+          return {error: 'cannot add a new machine: machine ' + parentId +
+                ' not found'};
+        }
+      }
+      if (containerType) {
+        // Ensure the parent machine supports the requested container type.
+        // For the fake backend purposes, just checking it's either "lxc" or
+        // "kvm" is sufficient.
+        if (containerType !== 'lxc' && containerType !== 'kvm') {
+          return {error: 'cannot add a new machine: machine ' + parentId +
+                ' cannot host ' + containerType + ' containers'};
+        }
+        // If the parent id is not explicitly passed, create a new machine to
+        // host the requested container.
+        if (!parent) {
+          parentId = this._getNextMachineName();
+          machines.add({id: parentId, agent_state: 'started'});
+        }
+      }
+      // Create the new machine/container.
+      var name = this._getNextMachineName(parentId, containerType);
+      machines.add({id: name, agent_state: 'started'});
+      return {name: name};
+    },
+
+    /**
+      Return the next available machine/container name.
+
+      @method _getNextMachineName
+      @param {String} parentId The name of the parent machine (optional).
+      @param {String} containerType the container type of the new machine
+        (e.g. "lxc", optional).
+      @return {String} The name of the machine/container.
+    */
+    _getNextMachineName: function(parentId, containerType) {
+      var parts = [];
+      if (parentId) {
+        parts.push(parentId);
+      } else {
+        parentId = null;
+      }
+      if (containerType) {
+        parts.push(containerType);
+      } else {
+        containerType = null;
+      }
+      var numbers = this.db.machines.filter(function(machine) {
+        return (machine.parentId === parentId &&
+                machine.containerType === containerType);
+      }).map(function(machine) {
+        return machine.number;
+      });
+      // If no machines are already present, add machine/container number 0.
+      var nextNumber = 0;
+      if (numbers.length) {
+        nextNumber = Math.max.apply(Math, numbers) + 1;
+      }
+      parts.push(nextNumber);
+      return parts.join('/');
+    },
+
+    /**
       Remove existing machines/containers.
 
       @method destroyMachines
@@ -513,12 +640,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!self.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      var machines = self.db.machines;
-      var services = self.db.services;
       // Define an object mapping machine names to units they contain.
       // This is done once here in order to avoid looping through the units
       // model lists multiple times.
-      var machineUnitsMap = services.filterUnits(function(unit) {
+      var machineUnitsMap = self.db.services.filterUnits(function(unit) {
         return names.indexOf(unit.machine) !== -1;
       }).reduce(function(result, unit) {
         var machine = unit.machine;
@@ -532,8 +657,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var errors = [];
       var destroyed = false;
       names.forEach(function(name) {
-        var error = self._destroyMachine(
-            name, force, machines, services, machineUnitsMap);
+        var error = self._destroyMachine(name, force, machineUnitsMap);
         if (error === null) {
           destroyed = true;
         } else {
@@ -561,15 +685,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @method _destroyMachine
       @param {Array} name The name of the machines/containers to be removed.
       @param {Boolean} force Whether to force machine removal.
-      @param {Object} machines The machines model list.
-      @param {Object} services The services model list.
       @param {Object} machineUnitsMap Key/value pairs mapping machine names to
         assigned unit objects.
       @return {String|Null} An error if the machine cannot be removed, or null
         if the removal succeeded.
     */
-    _destroyMachine: function(
-        name, force, machines, services, machineUnitsMap) {
+    _destroyMachine: function(name, force, machineUnitsMap) {
+      var machines = this.db.machines;
+      var services = this.db.services;
       var machine = machines.getById(name);
       // Ensure the machine to be destroyed exists in the database.
       if (!machine) {

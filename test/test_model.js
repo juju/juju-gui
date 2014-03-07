@@ -513,20 +513,41 @@ describe('test_model.js', function() {
             machines.createDisplayName('1/kvm/0/lxc/42'), '1/kvm/0/lxc/42');
       });
 
-      it('returns the parent id for a machine', function() {
-        assert.isNull(machines.createParentId('0'));
-        assert.isNull(machines.createParentId('42'));
+      it('retrieves machine info parsing the bootstrap node name', function() {
+        var info = machines.parseMachineName('0');
+        assert.isNull(info.parentId);
+        assert.isNull(info.containerType);
+        assert.strictEqual(info.number, 0);
       });
 
-      it('returns the parent id for a container', function() {
-        assert.deepEqual(machines.createParentId('0/lxc/0'), '0');
-        assert.deepEqual(machines.createParentId('1/kvm/0/lxc/42'), '1/kvm/0');
+      it('retrieves machine info parsing a machine name', function() {
+        var info = machines.parseMachineName('42');
+        assert.isNull(info.parentId);
+        assert.isNull(info.containerType);
+        assert.strictEqual(info.number, 42);
       });
 
-      it('stores the machines parent id', function() {
+      it('retrieves machine info parsing a container name', function() {
+        var info = machines.parseMachineName('0/lxc/0');
+        assert.strictEqual(info.parentId, '0');
+        assert.strictEqual(info.containerType, 'lxc');
+        assert.strictEqual(info.number, 0);
+      });
+
+      it('retrieves machine info parsing a sub-container name', function() {
+        var info = machines.parseMachineName('1/lxc/0/kvm/42');
+        assert.strictEqual(info.parentId, '1/lxc/0');
+        assert.strictEqual(info.containerType, 'kvm');
+        assert.strictEqual(info.number, 42);
+      });
+
+      it('stores machines data parsing machine names', function() {
         ['42', '0/lxc/0', '1/kvm/0/lxc/42'].forEach(function(id) {
           var machine = machines.add({id: id});
-          assert.deepEqual(machine.parentId, machines.createParentId(id), id);
+          var info = machines.parseMachineName(id);
+          assert.strictEqual(machine.parentId, info.parentId, id);
+          assert.strictEqual(machine.containerType, info.containerType, id);
+          assert.strictEqual(machine.number, info.number, id);
         });
       });
 
