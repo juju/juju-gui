@@ -200,9 +200,7 @@ YUI.add('juju-view-environment', function(Y) {
             '.upgrade-link': { click: 'upgradeService' },
             // Used by the config viewlet for keeping the checkbox values
             // in sync across the slider/checkbox/text representation.
-            '.hidden-checkbox': {change: 'onCheckboxUpdate'},
-            // Relations viewlet.
-            '.remove-relation': { click: '_removeRelation' }
+            '.hidden-checkbox': {change: 'onCheckboxUpdate'}
           },
           viewletList: [
             'overview', // Default viewlet first.

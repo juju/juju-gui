@@ -173,7 +173,9 @@ YUI.add('service-relations-view', function(Y) {
 
   ns.Relations = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     template: templates['service-relations-viewlet'],
-
+    events: {
+      '.remove-relation': { click: '_removeRelation' }
+    },
     bindings: {
       relationChangeTrigger: {
         'update': function(node, value) {
@@ -196,7 +198,21 @@ YUI.add('service-relations-view', function(Y) {
         }
       }
     },
+    /**
+      This handles removing the relation between two services when the user
+      clicks the remove relation button in the relation tab in the inspector.
 
+      @method _removeRelation
+      @param {Object} e The event facade from clicking on the remove relation
+        button.
+    */
+    _removeRelation: function(e) {
+      var relation = this.options.db.relations.getById(
+          e.currentTarget.getData('relation')).getAttrs();
+      var relationModule = this.options.environment.topo.modules.RelationModule;
+
+      relationModule.removeRelationConfirm(relation, relationModule);
+    },
     // To allow for unit testing the functions
     export: {
       _addRelationsErrorState: _addRelationsErrorState
