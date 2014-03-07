@@ -187,13 +187,6 @@ YUI.add('juju-view-environment', function(Y) {
             '.rerender-config': {click: 'reloadInspector'},
             // Overview viewlet.
             'input.expose-toggle': { click: 'toggleExpose' },
-            // Overview units viewlet.
-            '.status-unit-header': {click: 'toggleUnitHeader'},
-            '.unit-details': { click: 'showUnit'},
-            '.toggle-select-all': {click: 'toggleSelectAllUnits'},
-            'a[data-unit]': { click: 'showUnitDetails'},
-            'button.unit-action-button': { click: '_unitActionButtonClick'},
-            '.upgrade-link': { click: 'upgradeService' },
             // Used by the config viewlet for keeping the checkbox values
             // in sync across the slider/checkbox/text representation.
             '.hidden-checkbox': {change: 'onCheckboxUpdate'}
