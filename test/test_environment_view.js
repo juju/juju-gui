@@ -671,6 +671,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       match[1].should.eql('374.1');
       match[2].should.eql('211.2');
 
+      // Position attributes should match annotations.
+      var service = view.topo.service_boxes.wordpress;
+      assert.equal(service.x, service.model.get('annotations')['gui-x']);
+      assert.equal(service.y, service.model.get('annotations')['gui-y']);
+
       // A positioned service will never be auto-positioned. It will also
       // center the canvas on itself.
       view.topo.on('panToPoint', function() {
