@@ -186,11 +186,7 @@ YUI.add('juju-view-environment', function(Y) {
             '.cancel-destroy': {click: '_onCancelDestroy'},
             '.rerender-config': {click: 'reloadInspector'},
             // Overview viewlet.
-            '.num-units-control': { keydown: 'modifyUnits' },
             'input.expose-toggle': { click: 'toggleExpose' },
-            '.cancel-num-units': { click: '_closeUnitConfirm'},
-            '.confirm-num-units': { click: '_confirmUnitChange'},
-            'a.edit-constraints': { click: '_showEditUnitConstraints'},
             // Overview units viewlet.
             '.status-unit-header': {click: 'toggleUnitHeader'},
             '.unit-details': { click: 'showUnit'},
@@ -203,7 +199,7 @@ YUI.add('juju-view-environment', function(Y) {
             '.hidden-checkbox': {change: 'onCheckboxUpdate'}
           },
           viewletList: [
-            'overview', // Default viewlet first.
+            'Overview', // Default viewlet first.
             'charmDetails',
             'Config',
             'Constraints',

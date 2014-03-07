@@ -19,12 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-inspector-overview', function(Y) {
+YUI.add('inspector-overview-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = Y.namespace('juju.views').Templates,
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
+
+  var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+  var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
   var SHOWCOUNT = 5;
 
@@ -537,10 +540,16 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     categoryWrapperNodes.order();
   }
 
+  var name = 'overview';
 
-  ns.overview = {
-    name: 'overview',
+  ns.Overview = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     template: templates.serviceOverview,
+    events: {
+      '.num-units-control': { keydown: 'modifyUnits' },
+      '.cancel-num-units': { click: '_closeUnitConfirm'},
+      '.confirm-num-units': { click: '_confirmUnitChange'},
+      'a.edit-constraints': { click: '_showEditUnitConstraints'}
+    },
     bindings: {
       aggregated_status: {
         'update': function(node, value) {
@@ -579,6 +588,239 @@ YUI.add('viewlet-inspector-overview', function(Y) {
         }
       }
     },
+
+    resetUnits: function() {
+      var container, model;
+      container = this.viewletManager.get('container');
+      model = this.viewletManager.get('model');
+      var field = container.one('.num-units-control');
+      field.set('value', model.get('unit_count'));
+      field.set('disabled', false);
+    },
+
+    modifyUnits: function(ev) {
+      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
+        return;
+      }
+      var container, currentUnits;
+      container = this.viewletManager.get('container');
+      currentUnits = this.viewletManager.get('model').get('unit_count');
+      var field = container.one('.num-units-control');
+
+      if (ev.keyCode === ESC) {
+        this.resetUnits();
+      }
+      if (ev.keyCode !== ENTER) { // If not Enter keyup...
+        return;
+      }
+      ev.halt(true);
+
+      var numUnits = field.get('value');
+
+      if (/^\d+$/.test(numUnits)) {
+        numUnits = parseInt(numUnits, 10);
+        if (numUnits > currentUnits) {
+          // We only confirm unit count increases because they may (directly)
+          // cost the user money.
+          this._confirmUnitConstraints(numUnits);
+        } else {
+          this._modifyUnits(numUnits);
+        }
+      } else {
+        this.resetUnits();
+      }
+    },
+
+    /**
+      Shows the UX below the unit input box for the user to confirm the
+      constraints for the new units.
+
+      @method _confirmUnitConstraints
+      @param {Number} requestedUnitCount the number of units to create.
+    */
+    _confirmUnitConstraints: function(requestedUnitCount) {
+      var container = this.get('container'),
+          genericConstraints = this.options.env.genericConstraints,
+          confirm = container.one('.unit-constraints-confirm'),
+          srvConstraints = this.model.get('constraints') || {};
+
+      confirm.setHTML(templates['service-overview-constraints']({
+        srvConstraints: srvConstraints,
+        constraints: utils.getConstraints(srvConstraints, genericConstraints)
+      }));
+      confirm.removeClass('closed');
+    },
+
+    _modifyUnits: function(requested_unit_count) {
+      var container = this.viewletManager.get('container');
+      var env = this.viewletManager.get('env');
+
+      var service = this.model || this.get('model');
+      var unit_count = service.get('unit_count');
+      var field = container.one('.num-units-control');
+
+      if (requested_unit_count < 1) {
+        field.set('value', unit_count);
+        return;
+      }
+
+      var delta = requested_unit_count - unit_count;
+      if (delta > 0) {
+        // Add units! The third argument (null) below represents the machine
+        // where to deploy new units. For now a new machine is created for each
+        // unit.
+        env.add_unit(
+            service.get('id'), delta, null,
+            Y.bind(this._addUnitCallback, this));
+      } else if (delta < 0) {
+        delta = Math.abs(delta);
+        var units = service.get('units'),
+            unit_ids_to_remove = [];
+
+        for (var i = units.size() - 1;
+            unit_ids_to_remove.length < delta;
+            i -= 1) {
+          unit_ids_to_remove.push(units.item(i).id);
+        }
+        env.remove_units(
+            unit_ids_to_remove,
+            Y.bind(this._removeUnitCallback, this)
+        );
+      }
+      field.set('disabled', true);
+    },
+
+    /**
+      Closes the unit confirm constraints dialogue.
+
+      @method _closeUnitConfirm
+    */
+    _closeUnitConfirm: function(e) {
+      var container = this.get('container'),
+          confirm = container.one('.unit-constraints-confirm');
+
+      // If this was from the user clicking cancel
+      if (e && e.halt) {
+        e.halt();
+        this.resetUnits();
+      }
+
+      // editing class added if the user clicked 'edit'
+      confirm.removeClass('editing');
+      confirm.addClass('closed');
+      this.overviewConstraintsEdit = false;
+    },
+
+    /**
+      Calls the _modifyUnits method with the unit count when the user
+      accepts the constraints
+
+      @method _confirmUnitChange
+    */
+    _confirmUnitChange: function(e) {
+      e.halt();
+      var container = this.get('container'),
+          unitCount = container.one('input.num-units-control').get('value'),
+          service = this.model;
+
+      // If the user chose to edit the constraints
+      if (this.overviewConstraintsEdit) {
+        var constraints = utils.getElementsValuesMapping(
+                          container, '.constraint-field');
+        var cb = Y.bind(this._modifyUnits, this, unitCount);
+        this.options.env.set_constraints(service.get('id'), constraints, cb);
+      } else {
+        this._modifyUnits(unitCount);
+      }
+      this._closeUnitConfirm();
+    },
+
+    /**
+      Shows the unit constraints when the user wants to edit them
+      while increasing the total number of units
+
+      @method _showEditUnitConstraints
+    */
+    _showEditUnitConstraints: function(e) {
+      e.halt();
+      var container = this.get('container');
+      container.all('.hide-on-edit').hide();
+      container.one('.editable-constraints').show();
+      container.one('.unit-constraints-confirm').addClass('editing');
+      this.overviewConstraintsEdit = true;
+    },
+
+    _addUnitCallback: function(ev) {
+      var container = this.viewletManager.get('container');
+      var field = container.one('.num-units-control');
+      var service, db;
+      service = this.viewletManager.get('model');
+      db = this.viewletManager.get('db');
+      var unit_names = ev.result || [];
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding unit',
+              message: ev.num_units + ' units',
+              level: 'error',
+              modelId: service
+            })
+        );
+      } else {
+        service.get('units').add(
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
+        service.set(
+            'unit_count', service.get('unit_count') + unit_names.length);
+      }
+      field.set('disabled', false);
+    },
+
+    _removeUnitCallback: function(ev) {
+      var service = this.viewletManager.get('model');
+      var db = this.viewletManager.get('db');
+      var unit_names = ev.unit_names;
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: (function() {
+                if (!ev.unit_names || ev.unit_names.length < 2) {
+                  return 'Error removing unit';
+                }
+                return 'Error removing units';
+              })(),
+              message: (function() {
+                if (!ev.unit_names || ev.unit_names.length === 0) {
+                  return '';
+                }
+                if (ev.unit_names.length > 1) {
+                  return 'Unit names: ' + ev.unit_names.join(', ');
+                }
+                return 'Unit name: ' + ev.unit_names[0];
+              })(),
+              level: 'error',
+              modelId: service
+            })
+        );
+      } else {
+        Y.Array.each(unit_names, function(unit_name) {
+          var service = db.services.getById(unit_name.split('/')[0]);
+          var units = service.get('units');
+          units.remove(units.getById(unit_name));
+        });
+        service.set(
+            'unit_count', service.get('unit_count') - unit_names.length);
+      }
+      this.viewletManager.get('container')
+        .one('.num-units-control')
+        .set('disabled', false);
+    },
+
+
+
     // These methods are exposed here to allow us access for testing.
     categoryName: categoryName,
     generateAndBindStatusHeaders: generateAndBindStatusHeaders,
@@ -586,7 +828,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     updateStatusList: updateStatusList,
     addCharmUpgrade: addCharmUpgrade,
     sortStatuses: sortStatuses
-  };
+  });
 
 }, '0.0.1', {
   requires: [
@@ -594,6 +836,7 @@ YUI.add('viewlet-inspector-overview', function(Y) {
     'd3',
     'd3-statusbar',
     'juju-charm-models',
+    'viewlet-view-base',
     'juju-view'
   ]
 });
