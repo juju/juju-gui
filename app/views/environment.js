@@ -211,7 +211,7 @@ YUI.add('juju-view-environment', function(Y) {
             'Constraints',
             'UnitDetails',
             'InspectorHeader',
-            'relations'
+            'Relations'
           ],
           template: Y.juju.views.Templates['service-config-wrapper'],
           // Define the context for the view manager template.

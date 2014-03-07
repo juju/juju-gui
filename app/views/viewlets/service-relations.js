@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-service-relations', function(Y) {
+YUI.add('service-relations-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = views.Templates,
@@ -169,8 +169,9 @@ YUI.add('viewlet-service-relations', function(Y) {
     relationWrappers.exit().remove();
   }
 
-  ns.relations = {
-    name: 'relations',
+  var name = 'relations';
+
+  ns.Relations = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     template: templates['service-relations-viewlet'],
 
     bindings: {
@@ -200,13 +201,14 @@ YUI.add('viewlet-service-relations', function(Y) {
     export: {
       _addRelationsErrorState: _addRelationsErrorState
     }
-  };
+  });
 
 }, '0.0.1', {
   requires: [
     'node',
     'juju-view',
     'd3',
-    'juju-view-utils'
+    'juju-view-utils',
+    'viewlet-view-base'
   ]
 });

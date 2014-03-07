@@ -921,7 +921,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'service-constraints-view',
     'service-ghost-view',
     'unit-details-view',
-    'viewlet-service-relations'
+    'service-relations-view'
   ]
 });
 
