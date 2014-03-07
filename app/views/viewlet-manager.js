@@ -328,11 +328,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
 
     initializer: function(options) {
-      this.template = options.template;
-      this.templateConfig = options.templateConfig || {};
-      this.viewletContainer = options.viewletContainer;
+      options = options || {};
+      if (!this.template) {
+        this.template = options.template; }
+      if (!this.viewletContainer) {
+        this.viewletContainer = options.viewletContainer; }
 
-      this.views = this._generateViews(options.views); // {String}: {View}
+      this.templateConfig = options.templateConfig || {};
+
+      if (options.views) {
+        this.views = this._generateViews(options.views); } // {String}: {View}
 
       this.events = options.events;
       // Map from logical slot name to the CSS selector within ViewletManager's

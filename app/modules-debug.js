@@ -296,6 +296,10 @@ var GlobalConfig = {
           ]
         },
 
+        'inspector-base': {
+          fullpath: '/juju-ui/views/inspector-base.js'
+        },
+
         // Viewlet views
         'inspector-overview-view': {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
