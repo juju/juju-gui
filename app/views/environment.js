@@ -186,24 +186,13 @@ YUI.add('juju-view-environment', function(Y) {
             '.cancel-destroy': {click: '_onCancelDestroy'},
             '.rerender-config': {click: 'reloadInspector'},
             // Overview viewlet.
-            '.num-units-control': { keydown: 'modifyUnits' },
             'input.expose-toggle': { click: 'toggleExpose' },
-            '.cancel-num-units': { click: '_closeUnitConfirm'},
-            '.confirm-num-units': { click: '_confirmUnitChange'},
-            'a.edit-constraints': { click: '_showEditUnitConstraints'},
-            // Overview units viewlet.
-            '.status-unit-header': {click: 'toggleUnitHeader'},
-            '.unit-details': { click: 'showUnit'},
-            '.toggle-select-all': {click: 'toggleSelectAllUnits'},
-            'a[data-unit]': { click: 'showUnitDetails'},
-            'button.unit-action-button': { click: '_unitActionButtonClick'},
-            '.upgrade-link': { click: 'upgradeService' },
             // Used by the config viewlet for keeping the checkbox values
             // in sync across the slider/checkbox/text representation.
             '.hidden-checkbox': {change: 'onCheckboxUpdate'}
           },
           viewletList: [
-            'overview', // Default viewlet first.
+            'Overview', // Default viewlet first.
             'charmDetails',
             'Config',
             'Constraints',

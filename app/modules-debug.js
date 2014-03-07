@@ -296,12 +296,10 @@ var GlobalConfig = {
           ]
         },
 
-        // Viewlets
-        'viewlet-inspector-overview': {
+        // Viewlet views
+        'inspector-overview-view': {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
         },
-
-        // Viewlet views
 
         'viewlet-view-base': {
           fullpath: '/juju-ui/views/viewlets/viewlet-view-base.js'
