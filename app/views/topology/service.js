@@ -1138,20 +1138,19 @@ YUI.add('juju-topology-service', function(Y) {
       // and drop, or those who don't have position attributes/annotations.
       var vertices = [];
       Y.each(topo.service_boxes, function(boundingBox) {
-        if (!boundingBox.model.get('pending')) {
-          var annotations = boundingBox.annotations,
-              addToVertices = 0;
-          if (annotations['gui-x'] && boundingBox.x === undefined) {
-            boundingBox.x = annotations['gui-x'];
-            addToVertices += 1;
-          }
-          if (annotations['gui-y'] && boundingBox.y === undefined) {
-            boundingBox.y = annotations['gui-y'];
-            addToVertices += 1;
-          }
-          if (addToVertices === 2) {
-            vertices.push([boundingBox.x, boundingBox.y]);
-          }
+        // Ensure each box has position attributes set.
+        var annotations = boundingBox.annotations,
+            addToVertices = 0;
+        if (annotations['gui-x'] && boundingBox.x === undefined) {
+          boundingBox.x = annotations['gui-x'];
+          addToVertices += 1;
+        }
+        if (annotations['gui-y'] && boundingBox.y === undefined) {
+          boundingBox.y = annotations['gui-y'];
+          addToVertices += 1;
+        }
+        if (addToVertices === 2 && !boundingBox.model.get('pending')) {
+          vertices.push([boundingBox.x, boundingBox.y]);
         }
       });
 
