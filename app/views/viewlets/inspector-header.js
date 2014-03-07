@@ -30,7 +30,9 @@ YUI.add('inspector-header-view', function(Y) {
   ns.InspectorHeader = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
     slot: 'header',
     template: templates['inspector-header'],
-
+    events: {
+      'input[name=service-name]': { valuechange: 'updateGhostName' }
+    },
     bindings: {
       charmChanged: {
         'update': function(node, value) {
@@ -87,8 +89,45 @@ YUI.add('inspector-header-view', function(Y) {
         }
       }
       this.get('container').setHTML(this.template(pojoModel));
-    }
+    },
 
+    /**
+      Updates the ghost service name when the user changes it in the inspector.
+
+      @method updateGhostName
+      @param {Y.EventFacade} e event object from valuechange.
+    */
+    updateGhostName: function(e) {
+      // The render method expects these parentheses around the model
+      // displayName.  If you change this format, or this code, make sure you
+      // look at that method too.  Hopefully the associated tests will catch it
+      // as well. Also see(grep for) the resetCanvas method too.
+      var name = e.newVal,
+          db = this.options.db,
+          serviceName = '(' + name + ')';
+
+      var isValid = utils.validateServiceName(name, db);
+
+      this.model.set('displayName', serviceName);
+      this.serviceNameInputStatus(isValid, e.currentTarget);
+    },
+
+    /**
+      Updates the status of the service name input.
+
+      @method serviceNameInputStatus
+      @param {Boolean} valid status of the service name check.
+      @param {Y.Node} input a reference to the input node instance.
+    */
+    serviceNameInputStatus: function(valid, input) {
+      if (valid) {
+        input.removeClass('invalid');
+        input.addClass('valid'); // add checkmark
+      } else {
+        input.removeClass('valid');
+        input.addClass('invalid'); // add x
+      }
+    }
   });
 
 }, '0.0.1', {

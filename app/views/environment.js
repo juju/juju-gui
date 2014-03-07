@@ -219,7 +219,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
         configGhost: {
           // controller will show the first one in this array by default
-          viewletList: ['ghostConfig', 'InspectorHeader'],
+          viewletList: ['GhostConfig', 'InspectorHeader'],
           // the viewlet manager template
           template: Y.juju.views.Templates['ghost-config-wrapper'],
           // these events are for the viewlet manager
@@ -228,17 +228,17 @@ YUI.add('juju-view-environment', function(Y) {
           // bound to the controllers prototype and are then mixed with the
           // manager's events for final binding
           viewletEvents: {
-            '.close': { 'click': 'resetCanvas' },
-            '.cancel': { 'click': 'resetCanvas' },
-            '.charm-url': {click: 'onShowCharmDetails'},
+            // These events are for the ghost inspector but are rendered in
+            // the viewlet managers footer so the events and their methods need
+            // to be outside of the service-ghost.js class.
+            // The following are located in ghost-inspector.js
+            '.close': { click: 'resetCanvas' },
+            '.cancel': { click: 'resetCanvas' },
             '.confirm': { click: 'deployCharm' },
-            '.config-file .fakebutton': { click: 'handleFileClick'},
-            '.config-file input[type=file]': { change: 'handleFileChange'},
-            'input[name=service-name]': { valuechange: 'updateGhostName' },
+            // The following are located in inspector.js
             '.initiate-destroy': {click: '_onInitiateDestroy'},
             '.cancel-destroy': {click: '_onCancelDestroy'},
             '.destroy-service-trigger span': {click: '_onDestroyClick'},
-            'input#use-default-toggle': {change: 'setDefaultSettings'},
             // Used by the config viewlet for keeping the checkbox values
             // in sync across the slider/checkbox/text representation.
             '.hidden-checkbox': {change: 'onCheckboxUpdate'}

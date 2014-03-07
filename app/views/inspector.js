@@ -401,135 +401,6 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-      Display the "do you really want to destroy this service?" prompt.
-
-      @method showDestroyPrompt
-      @param {Y.Node} container The container of the prompt.
-    */
-    showDestroyPrompt: function(container) {
-      container.one('.destroy-service-prompt').removeClass('closed');
-    },
-
-    /**
-      Hide the "do you really want to destroy this service?" prompt.
-
-      @method hideDestroyPrompt
-      @param {Y.Node} container The container of the prompt.
-    */
-    hideDestroyPrompt: function(container) {
-      container.one('.destroy-service-prompt').addClass('closed');
-    },
-
-    /**
-      Start the process of destroying the service represented by this
-      inspector.
-
-      @method initiateServiceDestroy
-      @return {undefined} Nothing.
-    */
-    initiateServiceDestroy: function() {
-      var dataSource = this.viewletManager;
-      var model = dataSource.get('model');
-      var db = this.viewletManager.get('db');
-      if (model.name === 'service' && !model.get('pending')) {
-        var env = dataSource.get('env');
-        env.destroy_service(model.get('id'),
-            Y.bind(this._destroyServiceCallback, this, model, db));
-      } else if (model.get('pending')) {
-        db.services.remove(model);
-        model.destroy();
-      } else {
-        throw new Error('Unexpected model type: ' + model.name);
-      }
-    },
-
-    /**
-      React to a service being destroyed (or not).
-
-      @method _destroyServiceCallback
-      @param {Object} service The service we attempted to destroy.
-      @param {Object} db The database responsible for storing the service.
-      @param {Object} evt The event describing the destruction (or lack
-        thereof).
-    */
-    _destroyServiceCallback: function(service, db, evt) {
-      if (evt.err) {
-        // If something bad happend we need to alert the user.
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + evt.service_name,
-              level: 'error',
-              link: undefined, // XXX See note below about getModelURL.
-              modelId: service
-            })
-        );
-      } else {
-        db.notifications.add({
-          title: 'Destroying service',
-          message: 'Service: ' + evt.service_name + ' is being destroyed.',
-          level: 'important'
-        });
-      }
-    },
-
-    /* Event handlers for service/ghost destroy UI */
-
-    /**
-      React to the user clicking on or otherwise activating the "destroy this
-      service" icon.
-
-      @method _onDestroyClick
-      @param {Object} evt The event data.
-      @return {undefined} Nothing.
-    */
-    _onDestroyClick: function(evt) {
-      evt.halt();
-      this.showDestroyPrompt(evt.container);
-    },
-
-    /**
-      React to the user clicking on or otherwise activating the cancel button
-      on the "destroy this service" prompt.
-
-      @method _onCancelDestroy
-      @param {Object} evt The event data.
-      @return {undefined} Nothing.
-    */
-    _onCancelDestroy: function(evt) {
-      evt.halt();
-      this.hideDestroyPrompt(evt.container);
-    },
-
-    /**
-      React to the user clicking on or otherwise activating the "do it now"
-      button on the "destroy this service" prompt.
-
-      @method _onInitiateDestroy
-      @param {Object} evt The event data.
-      @return {undefined} Nothing.
-    */
-    _onInitiateDestroy: function(evt) {
-      evt.halt();
-      this.initiateServiceDestroy();
-      this._onCancelDestroy(evt);
-      this.options.environment.topo.fire('clearState');
-    },
-
-    /**
-      Keep checkboxes in sync with their textual representation.
-
-      @method onCheckboxUpdate
-      @param {Y.Event} ev the event from the change triggered.
-
-     */
-    onCheckboxUpdate: function(ev) {
-      var checked = ev.currentTarget.get('checked');
-      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
-                                                                 checked);
-    },
-
-    /**
       Handles exposing the service.
 
       @method toggleExpose
@@ -679,22 +550,6 @@ YUI.add('juju-view-inspector', function(Y) {
     },
 
     /**
-     Loads the charm details view for the inspector.
-
-     @method onShowCharmDetails
-     @param {Event} ev the click event from the overview viewlet.
-
-     */
-    onShowCharmDetails: function(ev) {
-      ev.halt();
-      var db = this.viewletManager.get('db');
-      var charmId = ev.currentTarget.getData('charmid');
-      var charm = db.charms.getById(charmId);
-      this.viewletManager.showViewlet('charmDetails', charm);
-      this.viewletManager.fire('inspectorTakeoverStarting');
-    },
-
-    /**
       Directs the unit action button click event to
       the appropriate handler.
 
@@ -797,265 +652,150 @@ YUI.add('juju-view-inspector', function(Y) {
       relationModule.removeRelationConfirm(relation, relationModule);
     },
 
-    /*
-      All of these methods have been moved into external extensions for the new
-      viewlet views. They are left here to allow the remaining viewlets to
-      continue to function.
+    /**
+     Loads the charm details view for the inspector.
 
-      DO NOT MODIFY THE FOLLOWING METHODS.
+     @method onShowCharmDetails
+     @param {Event} ev the click event from the overview viewlet.
 
-      MAKE ANY CHANGES TO THEIR NEW EXTENSIONS
-    */
+     */
+    onShowCharmDetails: function(ev) {
+      ev.halt();
+      var db = this.viewletManager.get('db');
+      var charmId = ev.currentTarget.getData('charmid');
+      var charm = db.charms.getById(charmId);
+      this.viewletManager.showViewlet('charmDetails', charm);
+      this.viewletManager.fire('inspectorTakeoverStarting');
+    },
 
     /**
-      DO NOT MODIFY...SEE LINE 868
+      Display the "do you really want to destroy this service?" prompt.
 
-      Handles the click on the file input and dispatches to the proper function
-      depending if a file has been previously loaded or not.
-
-      @method handleFileClick
-      @param {Y.EventFacade} e An event object.
+      @method showDestroyPrompt
+      @param {Y.Node} container The container of the prompt.
     */
-    handleFileClick: function(e) {
-      if (e.currentTarget.getHTML().indexOf('Remove') === -1) {
-        // Because we can't style file input buttons properly we style a normal
-        // element and then simulate a click on the real hidden input when our
-        // fake button is clicked.
-        e.container.one('input[type=file]').getDOMNode().click();
-      } else {
-        this.onRemoveFile(e);
+    showDestroyPrompt: function(container) {
+      container.one('.destroy-service-prompt').removeClass('closed');
+    },
+
+    /**
+      Hide the "do you really want to destroy this service?" prompt.
+
+      @method hideDestroyPrompt
+      @param {Y.Node} container The container of the prompt.
+    */
+    hideDestroyPrompt: function(container) {
+      var prompt = container.one('.destroy-service-prompt');
+      if (prompt) {
+        prompt.addClass('closed');
       }
     },
 
     /**
-      DO NOT MODIFY...SEE LINE 868
+      React to the user clicking on or otherwise activating the "destroy this
+      service" icon.
 
-      Handle the file upload click event. Creates a FileReader instance to
-      parse the file data.
-
-
-      @method onFileChange
-      @param {Y.EventFacade} e An event object.
-    */
-    handleFileChange: function(e) {
-      var file = e.currentTarget.get('files').shift(),
-          reader = new FileReader();
-      reader.onerror = Y.bind(this.onFileError, this);
-      reader.onload = Y.bind(this.onFileLoaded, this, file.name);
-      reader.readAsText(file);
-    },
-
-    /**
-      DO NOT MODIFY...SEE LINE 868
-
-      Callback called when an error occurs during file upload.
-      Hide the charm configuration section.
-
-      @method onFileError
-      @param {Object} e An event object (with a "target.error" attr).
-    */
-    onFileError: function(e) {
-      var error = e.target.error, msg;
-      switch (error.code) {
-        case error.NOT_FOUND_ERR:
-          msg = 'File not found';
-          break;
-        case error.NOT_READABLE_ERR:
-          msg = 'File is not readable';
-          break;
-        case error.ABORT_ERR:
-          break; // noop
-        default:
-          msg = 'An error occurred reading this file.';
-      }
-      if (msg) {
-        var db = this.viewletManager.get('db');
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error reading configuration file',
-              message: msg,
-              level: 'error'
-            }));
-      }
-    },
-
-    /**
-      DO NOT MODIFY...SEE LINE 868
-
-      Callback called when a file is correctly uploaded.
-      Hide the charm configuration section.
-
-      @method onFileLoaded
-      @param {Object} e An event object.
-    */
-    onFileLoaded: function(filename, e) {
-      // Add a link for the user to remove this file now that it's loaded.
-      var button = this.viewletManager.get('container').one('.fakebutton');
-      button.setHTML(filename + ' - Remove file');
-      //set the configFileContent on the viewlet-manager so we can have access
-      //to it when the user submit their config.
-      this.viewletManager.configFileContent = e.target.result;
-      if (!this.viewletManager.configFileContent) {
-        // Some file read errors do not go through the error handler as
-        // expected but instead return an empty string.  Warn the user if
-        // this happens.
-        var db = this.viewletManager.get('db');
-        db.notifications.add(
-            new models.Notification({
-              title: 'Configuration file error',
-              message: 'The configuration file loaded is empty.  ' +
-                  'Do you have read access?',
-              level: 'error'
-            }));
-      }
-      var container = this.viewletManager.get('container');
-      container.all('.charm-settings, .settings-wrapper.toggle').hide();
-    },
-
-    /**
-      DO NOT MODIFY...SEE LINE 868
-
-      Handle the file remove click event by clearing out the input
-      and resetting the UI.
-
-      @method onRemoveFile
-      @param {Y.EventFacade} e an event object from click.
-    */
-    onRemoveFile: function(e) {
-      var container = this.viewletManager.get('container');
-      this.viewletManager.configFileContent = null;
-      container.one('.fakebutton').setHTML('Import config file...');
-      container.all('.charm-settings, .settings-wrapper.toggle').show();
-      // Replace the file input node.  There does not appear to be any way
-      // to reset the element, so the only option is this rather crude
-      // replacement.  It actually works well in practice.
-      container.one('input[type=file]')
-               .replace(Y.Node.create('<input type="file"/>'));
-    },
-
-    /**
-      DO NOT MODIFY...SEE LINE 868
-
-      Highlight modified fields to show they have been saved.
-      Note that the "modified" class is removed in the syncedFields method.
-
-      @method _highlightSaved
-      @param {Y.Node} container The affected viewlet container.
+      @method _onDestroyClick
+      @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    _highlightSaved: function(container) {
-      var modified = container.all('.modified');
-      modified.addClass('change-saved');
-      // If you don't remove the class later, the animation runs every time
-      // you switch back to the tab with these fields. Unfortunately,
-      // animationend handlers don't work reliably, once you hook them up with
-      // the associated custom browser names (e.g. webkitAnimationEnd) on the
-      // raw DOM node, so we don't even bother with them.  We just make a
-      // timer to remove the class.
-      var parentContainer = this.viewletManager.get('container');
-      Y.later(1000, modified, function() {
-        // Use the modified collection that we originally found, but double
-        // check that our expected context is still around.
-        if (parentContainer.inDoc() &&
-            !container.all('.change-saved').isEmpty()) {
-          this.removeClass('change-saved');
-        }
-      });
+    _onDestroyClick: function(evt) {
+      evt.halt();
+      this.showDestroyPrompt(evt.container);
     },
 
     /**
-      DO NOT MODIFY...SEE LINE 868
+      React to the user clicking on or otherwise activating the cancel button
+      on the "destroy this service" prompt.
 
-      Pulls the content from each configuration field and sends the values
-      to the environment
-
-      @method saveConfig
+      @method _onCancelDestroy
+      @param {Object} evt The event data.
+      @return {undefined} Nothing.
     */
-    saveConfig: function() {
-      var inspector = this.viewletManager,
-          env = inspector.get('env'),
-          db = inspector.get('db'),
-          service = inspector.get('model'),
-          charmUrl = service.get('charm'),
-          charm = db.charms.getById(charmUrl),
-          schema = charm.get('options'),
-          container = this.viewletManager.views.config.container,
-          button = container.one('button.confirm');
+    _onCancelDestroy: function(evt) {
+      evt.halt();
+      this.hideDestroyPrompt(evt.container);
+    },
 
-      button.set('disabled', 'disabled');
+    /**
+      Start the process of destroying the service represented by this
+      inspector.
 
-      var config = utils.getElementsValuesMapping(container, '.config-field');
-      var errors = utils.validate(config, schema);
-
-      if (Y.Object.isEmpty(errors)) {
-        env.set_config(
-            service.get('id'),
-            config,
-            null,
-            service.get('config'),
-            Y.bind(this._setConfigCallback, this, container)
-        );
+      @method initiateServiceDestroy
+      @return {undefined} Nothing.
+    */
+    initiateServiceDestroy: function() {
+      var dataSource = this.viewletManager;
+      var model = dataSource.get('model');
+      var db = this.viewletManager.get('db');
+      if (model.name === 'service' && !model.get('pending')) {
+        var env = dataSource.get('env');
+        env.destroy_service(model.get('id'),
+            Y.bind(this._destroyServiceCallback, this, model, db));
+      } else if (model.get('pending')) {
+        db.services.remove(model);
+        model.destroy();
       } else {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error saving service config',
-              message: 'Error saving service config',
-              level: 'error'
-            })
-        );
-        // We don't have a story for passing the full error messages
-        // through so will log to the console for now.
-        console.log('Error setting config', errors);
+        throw new Error('Unexpected model type: ' + model.name);
       }
     },
 
+
     /**
-      DO NOT MODIFY...SEE LINE 868
+      React to a service being destroyed (or not).
 
-      Handles the success or failure of setting the new config values
-
-      @method _setConfigCallback
-      @param {Y.Node} container of the viewlet-manager.
-      @param {Y.EventFacade} evt YUI event object with the following attrs:
-        - err: whether or not an error occurred;
-        - service_name: the name of the service;
-        - newValues: an object including the modified config options.
+      @method _destroyServiceCallback
+      @param {Object} service The service we attempted to destroy.
+      @param {Object} db The database responsible for storing the service.
+      @param {Object} evt The event describing the destruction (or lack
+        thereof).
     */
-    _setConfigCallback: function(container, evt) {
-      // If the user has conflicted fields and still chooses to
-      // save, then we will be overwriting the values in Juju.
+    _destroyServiceCallback: function(service, db, evt) {
       if (evt.err) {
-        var db = this.viewletManager.get('db');
+        // If something bad happend we need to alert the user.
         db.notifications.add(
             new models.Notification({
-              title: 'Error setting service configuration',
+              title: 'Error destroying service',
               message: 'Service name: ' + evt.service_name,
-              level: 'error'
+              level: 'error',
+              link: undefined, // XXX See note below about getModelURL.
+              modelId: service
             })
         );
       } else {
-        this._highlightSaved(container);
-        var service = this.viewletManager.get('model');
-        // Mix the current config (stored in the db) with the modified options.
-        var config = Y.mix(service.get('config'), evt.newValues, true);
-        service.set('config', config);
-        var bindingEngine = this.viewletManager.bindingEngine;
-        bindingEngine.resetDOMToModel('config');
+        db.notifications.add({
+          title: 'Destroying service',
+          message: 'Service: ' + evt.service_name + ' is being destroyed.',
+          level: 'important'
+        });
       }
-      container.one('.controls .confirm').removeAttribute('disabled');
     },
 
     /**
-      DO NOT MODIFY...SEE LINE 868
+      React to the user clicking on or otherwise activating the "do it now"
+      button on the "destroy this service" prompt.
 
-      Cancel any configuration changes.
-
-      @method cancelConfig
-      @param {Y.EventFacade} e An event object.
+      @method _onInitiateDestroy
+      @param {Object} evt The event data.
       @return {undefined} Nothing.
     */
-    cancelConfig: function(e) {
-      this.viewletManager.bindingEngine.resetDOMToModel('config');
+    _onInitiateDestroy: function(evt) {
+      evt.halt();
+      this.initiateServiceDestroy();
+      this._onCancelDestroy(evt);
+      this.options.environment.topo.fire('clearState');
+    },
+    /**
+      Keep checkboxes in sync with their textual representation.
+
+      @method onCheckboxUpdate
+      @param {Y.Event} ev the event from the change triggered.
+
+     */
+    onCheckboxUpdate: function(ev) {
+      var checked = ev.currentTarget.get('checked');
+      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
+                                                                 checked);
     }
   };
 
@@ -1179,7 +919,7 @@ YUI.add('juju-view-inspector', function(Y) {
     'viewlet-inspector-overview',
     'service-config-view',
     'service-constraints-view',
-    'viewlet-service-ghost',
+    'service-ghost-view',
     'unit-details-view',
     'viewlet-service-relations'
   ]

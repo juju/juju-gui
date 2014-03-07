@@ -137,55 +137,6 @@ YUI.add('juju-ghost-inspector', function(Y) {
                  config,
                  constraints));
     },
-
-    /**
-      Destroys the inspector.
-
-      @method closeInspector
-    */
-    closeInspector: function() {
-      this.viewletManager.destroy();
-    },
-
-    /**
-      Updates the status of the service name input.
-
-      @method serviceNameInputStatus
-      @param {Boolean} valid status of the service name check.
-      @param {Y.Node} input a reference to the input node instance.
-    */
-    serviceNameInputStatus: function(valid, input) {
-      if (valid) {
-        input.removeClass('invalid');
-        input.addClass('valid'); // add checkmark
-      } else {
-        input.removeClass('valid');
-        input.addClass('invalid'); // add x
-      }
-    },
-
-    /**
-      Updates the ghost service name when the user changes it in the inspector.
-
-      @method updateGhostName
-      @param {Y.EventFacade} e event object from valuechange.
-    */
-    updateGhostName: function(e) {
-      // This code has a fragile dependency: the inspector-header.js render
-      // method expects these parentheses around the model displayName.  If you
-      // change this format, or this code, make sure you look at that method
-      // too.  Hopefully the associated tests will catch it as well.
-      // Also see resetCanvas, below.
-      var name = e.newVal,
-          db = this.options.db,
-          serviceName = '(' + name + ')';
-
-      var isValid = utils.validateServiceName(name, db);
-
-      this.model.set('displayName', serviceName);
-      this.serviceNameInputStatus(isValid, e.currentTarget);
-    },
-
     /**
       Resets the changes that the inspector made in the canvas before
       destroying the viewlet Manager on Cancel
@@ -197,60 +148,11 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // method expects these parentheses around the model displayName.  If you
       // change this format, or this code, make sure you look at that method
       // too.  Hopefully the associated tests will catch it as well.
-      // Also see updateGhostName, above.
+      // Also see(grep for) the updateGhostName method too.
       this.model.set('displayName', '(' + this.model.get('packageName') + ')');
       this.viewletManager.destroy();
     },
 
-    /**
-      Toggles the settings configuration in the ghost inspector to
-      the default values.
-
-      @method setDefaultSettings
-      @param {Y.EventFacade} e change event from the checkbox.
-    */
-    setDefaultSettings: function(e) {
-      var useDefaults = true;
-      // This allows us to call this method to set to default as
-      // well as use it as a callback.
-      if (e.type) {
-        useDefaults = e.currentTarget.get('checked');
-      }
-
-      var container = this.viewletManager.get('container'),
-          ghostConfigNode = container.one(
-              '.service-configuration .charm-settings');
-
-      var textareas = ghostConfigNode.all('textarea'),
-          inputs = ghostConfigNode.all('input');
-
-      if (useDefaults) {
-        ghostConfigNode.addClass('use-defaults');
-        textareas.setAttribute('disabled');
-        inputs.setAttribute('disabled');
-
-        var charmModel = this.viewletManager.get('charmModel');
-        // Loop through the fields to set the values back to their defaults
-        // We can't use the data binding because setting it to it's default
-        // value doesn't trigger the databinding change events.
-        Y.Object.each(charmModel.get('options'), function(opt, key) {
-          var newVal = (opt['default'] === undefined) ? '' : opt['default'];
-          var input = container.one('#input-' + key);
-
-          if (input) {
-            if (input.get('type') !== 'checkbox') {
-              input.set('value', newVal);
-            } else {
-              input.set('checked', newVal);
-            }
-          }
-        });
-      } else {
-        ghostConfigNode.removeClass('use-defaults');
-        textareas.removeAttribute('disabled');
-        inputs.removeAttribute('disabled');
-      }
-    },
 
     /**
       The callback handler from the env.deploy() of the charm.
@@ -313,8 +215,16 @@ YUI.add('juju-ghost-inspector', function(Y) {
       environmentView.createServiceInspector(ghostService);
       topo.showMenu(serviceName);
       topo.annotateBoxPosition(boxModel);
-    }
+    },
 
+    /**
+      Destroys the inspector.
+
+      @method closeInspector
+    */
+    closeInspector: function() {
+      this.viewletManager.destroy();
+    }
   };
 
 }, '0.1.0', {
