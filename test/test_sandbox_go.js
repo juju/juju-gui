@@ -430,6 +430,66 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                  1, null, null, callback);
     });
 
+    it('can add machines', function(done) {
+      state.db.machines.add({id: '0'});
+      var request = {
+        Type: 'Client',
+        Request: 'AddMachines',
+        Params: {
+          MachineParams: [
+            {}, {ParentId: '0', ContainerType: 'lxc'}, {ContainerType: 'kvm'}
+          ]
+        },
+        RequestId: 42
+      };
+      client.onmessage = function(response) {
+        var data = Y.JSON.parse(response.data);
+        assert.isUndefined(data.Error);
+        assert.strictEqual(data.RequestId, 42);
+        var expectedMachines = [
+          {Machine: '1', Error: null},
+          {Machine: '0/lxc/0', Error: null},
+          {Machine: '2/kvm/0', Error: null}
+        ];
+        assert.deepEqual(data.Response.Machines, expectedMachines);
+        done();
+      };
+      client.open();
+      client.send(Y.JSON.stringify(request));
+    });
+
+    it('can add machines (environment integration)', function(done) {
+      state.db.machines.add([{id: '1'}, {id: '1/kvm/2'}]);
+      var callback = function(response) {
+        assert.isUndefined(response.err);
+        var expectedMachines = [
+          {name: '2', err: null},
+          {name: '1/kvm/2/lxc/0', err: null}
+        ];
+        assert.deepEqual(response.machines, expectedMachines);
+        done();
+      };
+      env.connect();
+      env.addMachines(
+          [{}, {parentId: '1/kvm/2', containerType: 'lxc'}], callback);
+    });
+
+    it('can report errors occurred while adding machines', function(done) {
+      var callback = function(response) {
+        assert.isUndefined(response.err);
+        var expectedMachines = [
+          {name: '', err: 'parent machine specified without container type'},
+          {name: '', err: 'cannot add a new machine: machine 42 not found'}
+        ];
+        assert.deepEqual(response.machines, expectedMachines);
+        done();
+      };
+      env.connect();
+      env.addMachines(
+          [{parentId: '47'}, {parentId: '42', containerType: 'lxc'}],
+          callback);
+    });
+
     it('can destroy machines', function(done) {
       state.db.machines.add([{id: '1'}, {id: '2/lxc/0'}]);
       var request = {

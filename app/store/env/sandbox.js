@@ -1164,6 +1164,42 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Handle AddMachines messages.
+
+      @method handleClientAddMachines
+      @param {Object} data The contents of the API arguments.
+      @param {Object} client The active ClientConnection.
+      @param {Object} state An instance of FakeBackend.
+    */
+    handleClientAddMachines: function(data, client, state) {
+      var params = data.Params.MachineParams.map(function(machineParam) {
+        return {
+          jobs: machineParam.Jobs,
+          series: machineParam.Series,
+          parentId: machineParam.ParentId,
+          containerType: machineParam.ContainerType,
+          constrains: machineParam.Constraints
+        };
+      });
+      var response = state.addMachines(params);
+      var machines = response.machines.map(function(data) {
+        var error = null;
+        if (data.error) {
+          // There is no need for the sandbox to simulate the juju-core error
+          // code machinery. Most of the times this is an empty string in real
+          // environments. The message can always be found in Error.Message.
+          error = {Code: '', Message: data.error};
+        }
+        return {Machine: data.name || '', Error: error};
+      });
+      client.receive({
+        RequestId: data.RequestId,
+        Error: response.error,
+        Response: {Machines: machines}
+      });
+    },
+
+    /**
       Handle DestroyMachines messages.
 
       @method handleClientDestroyMachines

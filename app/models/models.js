@@ -689,8 +689,13 @@ YUI.add('juju-models', function(Y) {
     idAttribute: 'machine_id'
   }, {
     ATTRS: {
+      // The following attributes are automatically generated when a machine is
+      // added to the model list.
       displayName: {},
       parentId: {},
+      containerType: {},
+      number: {},
+      // The following attributes are included in the mega-watcher info.
       machine_id: {},
       public_address: {},
       instance_id: {},
@@ -716,24 +721,44 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Given a machine name, return the name of its parent.
-      E.g. the parent of the "2/lxc/0" container is machine "2".
-      If the given name refers to a top level machine, null is returned.
+      Given a machine name, return the name of its parent, its container type
+      and its number.
 
-      @method createParentId
+      @method parseMachineName
       @param {String} name The machine/container name.
-      @return {String|Null} The machine parent's name.
+      @return {Object} An object containing the following keys:
+        - parentId {String|Null}: the container parent id or null if the given
+          name refers to a top level machine.
+          E.g. the parent of "2/lxc/0" is "2", the parent of "42" is null.
+        - containerType {String|Null}: the container type or null if the given
+          name refers to a top level machine.
+          E.g. the container type of "2/lxc/0" is "lxc", the container type of
+          "42" is null.
+        - number {Int}: the machine or container number.
+          E.g. the number of container "2/lxc/0" is 0, the number of machine
+          "42" is 42.
     */
-    createParentId: function(name) {
+    parseMachineName: function(name) {
       // XXX frankban 2014-03-04: PYJUJU DEPRECATION. The single line below
       // can be safely removed once we remove pyJuju code. The machine names
       // are always strings in juju-core.
       name = name + '';
       var parts = name.split('/');
-      if (parts.length < 3) {
-        return null;
+      var partsLength = parts.length;
+      if (partsLength < 3) {
+        // This is a top level machine.
+        return {
+          parentId: null,
+          containerType: null,
+          number: parseInt(name, 10)
+        };
       }
-      return parts.slice(0, parts.length - 2).join('/');
+      // This is a container.
+      return {
+        parentId: parts.slice(0, partsLength - 2).join('/'),
+        containerType: parts[partsLength - 2],
+        number: parseInt(parts[partsLength - 1], 10)
+      };
     },
 
     /**
@@ -767,9 +792,12 @@ YUI.add('juju-models', function(Y) {
       @protected
     */
     _setDefaultsAndCalculatedValues: function(obj) {
-      obj.displayName = this.createDisplayName(obj.id);
-      obj.parentId = this.createParentId(obj.id);
       obj.name = 'machine';
+      obj.displayName = this.createDisplayName(obj.id);
+      var info = this.parseMachineName(obj.id);
+      obj.parentId = info.parentId;
+      obj.containerType = info.containerType;
+      obj.number = info.number;
     },
 
     /**

@@ -389,6 +389,237 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend._getNextMachineName', function() {
+    var factory, fakebackend, machines, Y;
+    var requirements = ['juju-tests-factory'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = factory.makeFakeBackend();
+      machines = fakebackend.db.machines;
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('returns machine 0 if the machines db is empty', function() {
+      assert.strictEqual(fakebackend._getNextMachineName(), '0');
+    });
+
+    it('returns the next top level machine', function() {
+      machines.add([{id: '42'}, {id: '43'}, {id: '43/lxc/1'}]);
+      assert.strictEqual(fakebackend._getNextMachineName(), '44');
+    });
+
+    it('returns container 0 if no containers are found', function() {
+      machines.add([{id: '42'}, {id: '42/lxc/6'}, {id: '43'}]);
+      assert.strictEqual(
+          fakebackend._getNextMachineName('43', 'lxc'), '43/lxc/0');
+    });
+
+    it('returns the next container', function() {
+      machines.add(
+          [{id: '42'}, {id: '42/lxc/6'}, {id: '43'}, {id: '43/lxc/1'}]);
+      assert.strictEqual(
+          fakebackend._getNextMachineName('42', 'lxc'), '42/lxc/7');
+    });
+
+    it('returns the next container for the given container type', function() {
+      machines.add(
+          [{id: '0'}, {id: '0/lxc/42'}, {id: '0/kvm/47'}]);
+      assert.strictEqual(
+          fakebackend._getNextMachineName('0', 'kvm'), '0/kvm/48');
+    });
+
+    it('returns sub-container 0 if no containers are found', function() {
+      machines.add(
+          [{id: '0'}, {id: '0/kvm/1'}, {id: '1'}, {id: '1/kvm/2'}]);
+      assert.strictEqual(
+          fakebackend._getNextMachineName('0/kvm/1', 'lxc'), '0/kvm/1/lxc/0');
+    });
+
+    it('returns the next sub-container', function() {
+      machines.add(
+          [{id: '0'}, {id: '1'}, {id: '1/kvm/2'}, {id: '1/kvm/2/lxc/42'}]);
+      assert.strictEqual(
+          fakebackend._getNextMachineName('1/kvm/2', 'lxc'), '1/kvm/2/lxc/43');
+    });
+
+  });
+
+  describe('FakeBackend.addMachines', function() {
+    var factory, fakebackend, machines, machinesCount, Y;
+    var requirements = ['juju-tests-factory'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = factory.makeFakeBackend();
+      // Create initial machines.
+      machines = fakebackend.db.machines;
+      machines.add([
+        {id: '0'},
+        {id: '1'},
+        {id: '1/lxc/0'}
+      ]);
+      // Store the initial number of machines/containers.
+      machinesCount = machines.size();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var response = fakebackend.addMachines([{}]);
+      assert.strictEqual(response.error, 'Please log in.');
+      // No machines have been added.
+      assert.strictEqual(machines.size(), machinesCount);
+    });
+
+    it('prevents containers creation if containerType is not set', function() {
+      var response = fakebackend.addMachines([{parentId: '1'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(
+          response.machines,
+          [{error: 'parent machine specified without container type'}]);
+      // No machines have been added.
+      assert.strictEqual(machines.size(), machinesCount);
+    });
+
+    it('prevents containers creation if the parent is not found', function() {
+      var response = fakebackend.addMachines(
+          [{parentId: '42', containerType: 'lxc'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(
+          response.machines,
+          [{error: 'cannot add a new machine: machine 42 not found'}]);
+      // No machines have been added.
+      assert.strictEqual(machines.size(), machinesCount);
+    });
+
+    it('prevents containers creation if type is not supported', function() {
+      var response = fakebackend.addMachines(
+          [{parentId: '1', containerType: 'no-such'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(
+          response.machines,
+          [{error: 'cannot add a new machine: machine 1 cannot host no-such ' +
+             'containers'}]);
+      // No machines have been added.
+      assert.strictEqual(machines.size(), machinesCount);
+    });
+
+    it('adds a machine', function() {
+      var response = fakebackend.addMachines([{}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(response.machines, [{name: '2'}]);
+      // The machine has been added.
+      assert.strictEqual(machines.size(), machinesCount + 1);
+      assert.isNotNull(machines.getById('2'));
+    });
+
+    it('adds a container to a new machine', function() {
+      var response = fakebackend.addMachines([{containerType: 'kvm'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(response.machines, [{name: '2/kvm/0'}]);
+      // The new container has been created inside a new machine.
+      assert.strictEqual(machines.size(), machinesCount + 2);
+      assert.isNotNull(machines.getById('2'));
+      assert.isNotNull(machines.getById('2/kvm/0'));
+    });
+
+    it('adds a container to an existing machine', function() {
+      var response = fakebackend.addMachines(
+          [{parentId: '1', containerType: 'lxc'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(response.machines, [{name: '1/lxc/1'}]);
+      // The container has been added.
+      assert.strictEqual(machines.size(), machinesCount + 1);
+      assert.isNotNull(machines.getById('1/lxc/1'));
+    });
+
+    it('adds multiple machines/containers', function() {
+      var response = fakebackend.addMachines(
+          [{}, {containerType: 'lxc'}, {parentId: '1', containerType: 'kvm'}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(
+          response.machines,
+          [{name: '2'}, {name: '3/lxc/0'}, {name: '1/kvm/0'}]);
+      // The new machines and containers have been added.
+      assert.strictEqual(machines.size(), machinesCount + 4);
+      assert.isNotNull(machines.getById('2'));
+      assert.isNotNull(machines.getById('3'));
+      assert.isNotNull(machines.getById('3/lxc/0'));
+      assert.isNotNull(machines.getById('1/kvm/0'));
+    });
+
+    it('adds some machines/containers', function() {
+      var response = fakebackend.addMachines([
+        {parentId: '0'}, // Container type not specified.
+        {},
+        {parentId: '5', containerType: 'kvm'}, // Invalid parent id.
+        {parentId: '0', containerType: 'lxc'}
+      ]);
+      assert.isUndefined(response.error);
+      var expectedMachines = [
+        {error: 'parent machine specified without container type'},
+        {name: '2'},
+        {error: 'cannot add a new machine: machine 5 not found'},
+        {name: '0/lxc/0'}
+      ];
+      assert.deepEqual(response.machines, expectedMachines);
+      // Only valid machines/containers have been added.
+      assert.strictEqual(machines.size(), machinesCount + 2);
+      assert.isNotNull(machines.getById('2'));
+      assert.isNotNull(machines.getById('0/lxc/0'));
+    });
+
+    it('calculates the next machine numbers', function() {
+      machines.add({id: '42'});
+      machinesCount = machines.size();
+      var response = fakebackend.addMachines([{}, {}]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(response.machines, [{name: '43'}, {name: '44'}]);
+      // The machines have been added.
+      assert.strictEqual(machines.size(), machinesCount + 2);
+      assert.isNotNull(machines.getById('43'));
+      assert.isNotNull(machines.getById('44'));
+    });
+
+    it('calculates the next container numbers', function() {
+      machines.add([{id: '42'}, {id: '42/lxc/47'}]);
+      machinesCount = machines.size();
+      var response = fakebackend.addMachines([
+        {parentId: '42', containerType: 'lxc'},
+        {parentId: '42', containerType: 'lxc'}
+      ]);
+      assert.isUndefined(response.error);
+      assert.deepEqual(
+          response.machines, [{name: '42/lxc/48'}, {name: '42/lxc/49'}]);
+      // The containers have been added.
+      assert.strictEqual(machines.size(), machinesCount + 2);
+      assert.isNotNull(machines.getById('42/lxc/48'));
+      assert.isNotNull(machines.getById('42/lxc/49'));
+    });
+
+  });
+
   describe('FakeBackend.destroyMachines', function() {
     var factory, fakebackend, machines, Y;
     var requirements = ['juju-tests-factory'];

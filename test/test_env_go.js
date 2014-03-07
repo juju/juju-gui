@@ -870,8 +870,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
       assert.isUndefined(response.err);
       var expectedMachines = [
-        {name: '42', err: undefined},
-        {name: '2/lxc/1', err: undefined}
+        {name: '42', err: null},
+        {name: '2/lxc/1', err: null}
       ];
       assert.deepEqual(response.machines, expectedMachines);
     });
@@ -884,11 +884,34 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Mimic the server AddMachines response.
       conn.msg({
         RequestId: 1,
-        Error: 'an error occurred in machine 42',
-        Response: {Machines: [{Machine: '42', Error: 'bad wolf'}]}
+        Error: 'bad wolf',
+        Response: {Machines: []}
       });
-      assert.strictEqual(response.err, 'an error occurred in machine 42');
-      assert.deepEqual(response.machines, [{name: '42', err: 'bad wolf'}]);
+      assert.strictEqual(response.err, 'bad wolf');
+      assert.strictEqual(response.machines.length, 0);
+    });
+
+    it('handles addMachines errors adding a specific machine', function() {
+      var response;
+      env.addMachines([{}, {}, {parentId: '42'}], function(data) {
+        response = data;
+      });
+      // Mimic the server AddMachines response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Machines: [
+            {Machine: '', Error: {Code: '', Message: 'bad wolf'}},
+            {Machine: '', Error: {Code: '47', Message: 'machine 42 not found'}}
+          ]
+        }
+      });
+      assert.isUndefined(response.err);
+      var expectedMachines = [
+        {name: '', err: 'bad wolf'},
+        {name: '', err: 'machine 42 not found (code 47)'}
+      ];
+      assert.deepEqual(response.machines, expectedMachines);
     });
 
     // Ensure a destroyMachines request has been sent.

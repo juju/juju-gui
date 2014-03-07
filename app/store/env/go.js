@@ -876,7 +876,7 @@ YUI.add('juju-env-go', function(Y) {
           Error: 'only defined if a global error occurred',
           Response: {
             Machines: [
-              {Machine: '2', Error: 'a machine error occurred'},
+              {Machine: '2', Error: {Code: "code", Message: "error message"}},
               {Machine: '2/lxc/1', Error: null}
             ]
           }
@@ -887,8 +887,16 @@ YUI.add('juju-env-go', function(Y) {
       var transformedData = {
         err: data.Error,
         machines: machines.map(function(machine) {
+          var error = null;
+          var machineError = machine.Error;
+          if (machineError) {
+            error = machineError.Message;
+            if (machineError.Code) {
+              error += ' (code ' + machineError.Code + ')';
+            }
+          }
           return {
-            err: machine.Error,
+            err: error,
             name: machine.Machine
           };
         })
