@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('viewlet-service-relations', function(Y) {
+YUI.add('service-relations-view', function(Y) {
   var ns = Y.namespace('juju.viewlets'),
       views = Y.namespace('juju.views'),
       templates = views.Templates,
@@ -169,10 +169,13 @@ YUI.add('viewlet-service-relations', function(Y) {
     relationWrappers.exit().remove();
   }
 
-  ns.relations = {
-    name: 'relations',
-    template: templates['service-relations-viewlet'],
+  var name = 'relations';
 
+  ns.Relations = Y.Base.create(name, Y.View, [ns.ViewletBaseView], {
+    template: templates['service-relations-viewlet'],
+    events: {
+      '.remove-relation': { click: '_removeRelation' }
+    },
     bindings: {
       relationChangeTrigger: {
         'update': function(node, value) {
@@ -195,18 +198,33 @@ YUI.add('viewlet-service-relations', function(Y) {
         }
       }
     },
+    /**
+      This handles removing the relation between two services when the user
+      clicks the remove relation button in the relation tab in the inspector.
 
+      @method _removeRelation
+      @param {Object} e The event facade from clicking on the remove relation
+        button.
+    */
+    _removeRelation: function(e) {
+      var relation = this.options.db.relations.getById(
+          e.currentTarget.getData('relation')).getAttrs();
+      var relationModule = this.options.environment.topo.modules.RelationModule;
+
+      relationModule.removeRelationConfirm(relation, relationModule);
+    },
     // To allow for unit testing the functions
     export: {
       _addRelationsErrorState: _addRelationsErrorState
     }
-  };
+  });
 
 }, '0.0.1', {
   requires: [
     'node',
     'juju-view',
     'd3',
-    'juju-view-utils'
+    'juju-view-utils',
+    'viewlet-view-base'
   ]
 });

@@ -270,15 +270,15 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       Requires the 'juju-viewlet-manager' module.
 
       @method renderViewlet
-      @param {Object} viewlet A reference to the viewlet to render.
+      @param {Object} View A reference to the view to render.
       @param {Object} model The object to use as the model.
       @param {Object} container The container to render the viewlet into.
     */
-    renderViewlet: function(viewlet, model, container) {
+    renderViewlet: function(View, model, container) {
       container.append('<div class="juju-inspector"></div>');
       var viewletManager = new Y.juju.viewlets.ViewletManager({
         enableDatabinding: true,
-        views: [viewlet],
+        views: [new View()],
         container: container,
         viewletContainer: '.viewlet-manager',
         model: model,

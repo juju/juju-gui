@@ -301,14 +301,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
         },
 
-        'viewlet-service-relations': {
-          fullpath: '/juju-ui/views/viewlets/service-relations.js'
-        },
-
-        'request-series-view': {
-          fullpath: '/juju-ui/views/viewlets/request-series.js'
-        },
-
         // Viewlet views
 
         'viewlet-view-base': {
@@ -317,6 +309,14 @@ var GlobalConfig = {
 
         'service-constraints-view': {
           fullpath: '/juju-ui/views/viewlets/service-constraints.js'
+        },
+
+        'service-relations-view': {
+          fullpath: '/juju-ui/views/viewlets/service-relations.js'
+        },
+
+        'request-series-view': {
+          fullpath: '/juju-ui/views/viewlets/request-series.js'
         },
 
         'service-config-view': {

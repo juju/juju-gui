@@ -19,11 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Inspector Relations Tab', function() {
 
-  var Y, utils, models, views, viewlet, viewUtils, _addRelationsErrorState;
+  var Y, utils, models, views, View, viewUtils, _addRelationsErrorState;
 
   var modules = [
     'juju-templates',
-    'viewlet-service-relations',
+    'service-relations-view',
     'juju-tests-utils',
     'juju-view-utils',
     'juju-viewlet-manager', // Required for utils.renderViewlet
@@ -36,8 +36,8 @@ describe('Inspector Relations Tab', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
       viewUtils = views.utils;
-      viewlet = Y.juju.viewlets.relations;
-      _addRelationsErrorState = viewlet.export._addRelationsErrorState;
+      View = Y.juju.viewlets.Relations;
+      _addRelationsErrorState = View.prototype.export._addRelationsErrorState;
       done();
     });
   });
@@ -228,7 +228,7 @@ describe('Inspector Relations Tab', function() {
   // Requires DOM
   it('shows a "No Relations" message when there are no relations', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet
+      viewlet: View
     });
 
     var vm = vg.setup(this).viewletManager;
@@ -242,7 +242,7 @@ describe('Inspector Relations Tab', function() {
 
   it('shows single relation details', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet,
+      viewlet: View,
       relationType: 1
     });
 
@@ -263,7 +263,7 @@ describe('Inspector Relations Tab', function() {
 
   it('shows multiple relations details', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet,
+      viewlet: View,
       relationType: 2
     });
 
@@ -292,7 +292,7 @@ describe('Inspector Relations Tab', function() {
 
   it('shows peer relation details', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet,
+      viewlet: View,
       relationType: 'peer'
     });
 
@@ -313,7 +313,7 @@ describe('Inspector Relations Tab', function() {
 
   it('shows the units which have relation hooks in error', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet,
+      viewlet: View,
       relationType: 'error'
     });
 
@@ -340,7 +340,7 @@ describe('Inspector Relations Tab', function() {
 
   it('shows a remove relations button when units are in error', function() {
     var vg = new ViewletGenerator({
-      viewlet: viewlet,
+      viewlet: View,
       relationType: 'error'
     });
 
