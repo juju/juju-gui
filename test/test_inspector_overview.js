@@ -281,7 +281,7 @@ describe('Inspector Overview', function() {
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview;
+        overview = inspector.viewletManager.views.Overview;
 
     var units = new Y.LazyModelList();
 
@@ -342,7 +342,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview;
+        overview = inspector.viewletManager.views.Overview;
 
     var units = new Y.LazyModelList();
 
@@ -403,7 +403,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview;
+        overview = inspector.viewletManager.views.Overview;
 
     // Clear the service upgrade information.
     service.set('upgrade_available', false);
@@ -467,7 +467,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no downgrades)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview;
+        overview = inspector.viewletManager.views.Overview;
 
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
@@ -592,7 +592,7 @@ describe('Inspector Overview', function() {
     };
 
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview;
+        overview = inspector.viewletManager.views.Overview;
 
     Y.Object.each(outputInput, function(value, key, obj) {
       assert.equal(overview.categoryName(value), key);
@@ -601,7 +601,7 @@ describe('Inspector Overview', function() {
 
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview,
+        overview = inspector.viewletManager.views.Overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -689,7 +689,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview,
+        overview = inspector.viewletManager.views.Overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -733,7 +733,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview,
+        overview = inspector.viewletManager.views.Overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -777,7 +777,7 @@ describe('Inspector Overview', function() {
 
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview,
+        overview = inspector.viewletManager.views.Overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -854,7 +854,7 @@ describe('Inspector Overview', function() {
 
   it('attempts to upgrade on click', function(done) {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.overview,
+        overview = inspector.viewletManager.views.Overview,
         newContainer = inspector.viewletManager.get('container');
 
     // Ensure that get_charm is called to get the new charm.
@@ -1045,7 +1045,7 @@ describe('Inspector Overview', function() {
         'running': {remove: true},
         'landscape': {landscape: true}
       };
-      var overview = inspector.viewletManager.views.overview;
+      var overview = inspector.viewletManager.views.Overview;
       Y.Object.each(buttons, function(results, category) {
         var buttonList = overview.generateActionButtonList(category);
         assert.deepEqual(buttonList, results);
@@ -1075,7 +1075,7 @@ describe('Inspector Overview', function() {
         }
       });
 
-      inspector.showUnitDetails(fauxEvent);
+      inspector.viewletManager.views.Overview.showUnitDetails(fauxEvent);
     });
 
     it('onShowCharmDetails fires inspectorTakeoverStarting', function() {

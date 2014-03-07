@@ -594,6 +594,15 @@ YUI.add('inspector-overview-view', function(Y) {
         }
       }
     },
+    /**
+      View render method
+
+      @method render
+      @param {Object} attributes the viewlet manager attributes.
+    */
+    render: function(attributes) {
+      this.get('container').append(this.template(attributes.model.getAttrs()));
+    },
 
     /**
       Resets the unit amount if the user cancels the scale up.
