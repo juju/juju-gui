@@ -300,6 +300,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/inspector-base.js'
         },
 
+        'inspectors-views': {
+          fullpath: '/juju-ui/views/inspectors.js'
+        },
+
         // Viewlet views
         'inspector-overview-view': {
           fullpath: '/juju-ui/views/viewlets/service-overview.js'
