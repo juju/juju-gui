@@ -145,14 +145,21 @@ Sauce Labs test failures
 
 The Selenium tests are run via Sauacelabs by starting up a web server instance
 visible to the internet. You can view the GUI yourself by going to the url
-that Selenium is accessing. Typically it'll be `http://ci.jujugui.org:8888`.
-It runs in all three browsers and the console will log helpful debug
-information to let you know what browser it's starting to test against. The
-console output also provides links directly to the Sauce Labs test run. It is
-very useful to see if the page loaded, if the url was the correct one, or if
-there was an actual failure introduced. You must debug this from the Sauce
-Labs information as there's not much to look at from the CI end.
+that Selenium is accessing. Typically it'll be `http://ci.jujugui.org:8888` or
+`http://ci.jujugui.org:8889` It runs in all three browsers and the console
+will log helpful debug information to let you know what browser it's starting
+to test against. The console output also provides links directly to the Sauce
+Labs test run. It is very useful to see if the page loaded, if the url was the
+correct one, or if there was an actual failure introduced. You must debug this
+from the Sauce Labs information as there's not much to look at from the CI
+end.
 
+
+Access to CI
+============
+
+Check the canoniocal wiki for `CDO/Juju/GUI/CI` to find the shared credentials
+for access to Azure and the CI instance.
 
 
 Bitrotten Instructions
