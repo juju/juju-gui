@@ -29,197 +29,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       views = Y.namespace('juju.views');
 
   /**
-    Viewlet object class. It's expected that these properties will be
-    overwritten on instantiation and so only basic defaults are defined here.
-
-    Instantiate with Object.create()
-
-    @class ViewletBase
-    @constructor
-  */
-  var ViewletBase = {
-
-    /**
-      The user defined name for the viewlet. This will be inferred from the
-      viewlets object on the ViewletManager when possible.
-
-      @property name
-      @type {String}
-      @default null
-    */
-    name: null,
-
-    /**
-      String template of the viewlet wrapper
-
-      @property templateWrapper
-      @type {string | compiled Handlebars template}
-    */
-    templateWrapper:
-        '<div class="viewlet-wrapper" style="display:none"></div>',
-
-    /**
-      Template of the viewlet, provided during configuration
-
-      @property template
-      @type {string | compiled Handlebars template}
-    */
-    template: '{{viewlet}}', // compiled handlebars template
-
-    /**
-      The rendered viewlet element
-
-      @property container
-      @type {Y.Node}
-      @default null
-    */
-    container: null,
-
-    /**
-      Optional logical slot name for this viewlet to fill.
-
-      @property slot
-      @type {String}
-      @default null
-    */
-    slot: null,
-
-    /**
-      When defined it allows the developer to specify another model to bind
-      the Viewlet to, usually one nested in the model passed to the Viewlet
-      Manager.
-
-      @property selectBindModel
-      @type {Function}
-      @default null
-    */
-    selectBindModel: null,
-
-    /**
-      Show the viewlet to the world.
-
-      @method show
-
-     */
-    show: function() {
-      this.container.show();
-    },
-
-    /**
-      Hide the viewlet from the world.
-
-      @method hide
-
-     */
-    hide: function() {
-      this.container.hide();
-    },
-
-    /**
-      User defined update method which re-renders the contents of the viewlet.
-      Called by the binding engine if a modellist is updated. This is
-      accomplished by grabbing the viewlets manager and setHTML() with the new
-      contents. Passed a reference to the modellist in question.
-
-      @method update
-      @type {function}
-      @param {Y.ModelList | Y.LazyModelList} modellist from the selectBindModel.
-      @default {noop function}
-    */
-    update: function(modellist) {},
-
-    /**
-      Render method to generate the container and insert the compiled viewlet
-      template into it. It's passed reference to the model passed to the
-      viewlet manager.
-
-      @method render
-      @type {function}
-      @param {Y.Model} model passed to the viewlet manager.
-      @param {Object} viewletManagerAttrs object of all of the viewlet manager
-        attributes.
-      @default {render function}
-    */
-    render: function(model, viewletManagerAttrs) {
-      this.container = Y.Node.create(this.templateWrapper);
-
-      if (typeof this.template === 'string') {
-        this.template = Y.Handlebars.compile(this.template);
-      }
-
-      var modelAttrs;
-      if (model && model.getAttrs) {
-        modelAttrs = model.getAttrs();
-      } else {
-        modelAttrs = model;
-      }
-
-      this.container.setHTML(this.template(modelAttrs));
-    },
-
-    /**
-      Called when there is a bind conflict in the viewlet.
-
-      @method conflict
-      @type {function}
-      @default {noop function}
-    */
-    conflict: function(node) {},
-
-    /**
-      A destroy callback called when removing a viewlet for cleanup.
-
-      @method destroy
-      @return {undefined} nothing.
-     */
-    destroy: function() {
-    },
-
-    /**
-      Called by the databinding engine when fields drop out of sync with
-      the supplied model.
-
-      @method unsyncedFields
-      @param {Array} dirtyFields an array of keys representing changed fields.
-    */
-    unsyncedFields: function(dirtyFields) {},
-
-    /**
-      Called by the databinding engine when the viewlet drops out
-      off a conflicted state
-
-      @method syncedFields
-    */
-    syncedFields: function() {}
-
-    /**
-      Used for conflict resolution. When the user changes a value on a bound
-      viewlet we store a reference of the element key here so that we know to
-      offer a conflict resolution.
-
-      @property changedValues
-      @type {Object}
-      @default empty object
-    */
-
-    /**
-     Model change events handles associated with this viewlet.
-
-     @property _eventHandles
-     @type {Array}
-     @default empty array
-     @private
-     */
-
-    /**
-      Removes the databinding events. This method is added to the viewlet
-      instance in the databinding class on binding.
-
-      @method remove
-    */
-  };
-
-  /**
     This mixin provides the databinding methods that the Viewlet Manager
     uses so that it only needs to call local methods to interact with
     the databinding engine but keep the conditionals out of the main
@@ -291,15 +100,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
     events: {},
 
     /**
-      Viewlet configuration object. Set by passing `viewlets` in during
-      instantiation.
-      ex) (see ViewletBase)
-
-      @property viewletConfig
-      @default undefined
-    */
-
-    /**
       Template of the viewlet manager. Set by passing in during instantiation.
       ex) { template: Y.juju.templates['viewlet-manager'] }
       Must include {{ viewlets }} to allow rendering of the viewlets.
@@ -336,8 +136,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       this.templateConfig = options.templateConfig || {};
 
-      if (options.views) {
-        this.views = this._generateViews(options.views); } // {String}: {View}
+      // {String}: {View}
+      this.views = this._generateViews(options.views || this.views);
 
       this.events = options.events;
       // Map from logical slot name to the CSS selector within ViewletManager's
@@ -617,64 +417,16 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // singleView can be a viewlet or an instance of Y.View
         var singleView = views[key];
 
-        if (singleView instanceof Y.View) {
-          singleView.viewletManager = this;
-          singleView.options = this.getAttrs();
-          initializedViews[key] = singleView;
-        } else {
-          // singleView is a viewlet so we need to compile it.
-          // We use Y.merge() to make a copy of viewlet configuration so
-          // that we never mutate the original configuration.
-          initializedViews[key] = this._generateViewlet(
-              Y.merge(singleView), key);
+        if(singleView instanceof Y.View === false) {
+          singleView = new singleView();
         }
 
+        singleView.viewletManager = this;
+        singleView.options = this.getAttrs();
+        initializedViews[key] = singleView;
       }, this);
 
       return initializedViews;
-    },
-
-    /**
-      Creates a new instance from the viewlet config.
-
-      @method _generateViewlet
-      @param {Object} viewlet Viewlet configuration object.
-      @param {String} key Name of the viewlet from the view list object.
-      @return {Object} An instance of the viewlet configuration object.
-    */
-    _generateViewlet: function(viewlet, key) {
-      // If no viewlet config is passed in it will generate a viewlet using
-      // only the base config which causes things to fail further down the
-      // line and is difficult to debug.
-      if (viewlet === undefined) {
-        console.warn('no viewlet config defined for viewlet', key);
-        return;
-      }
-      viewlet = this._expandViewletConfig(viewlet);
-      viewlet = Object.create(ViewletBase, viewlet);
-      viewlet.changedValues = {};
-      viewlet._eventHandles = [];
-      viewlet.options = this.getAttrs();
-      return viewlet;
-    },
-
-    /**
-      Expands the basic objects provided in the viewlet config into the
-      defineProperty format for Object.create()
-
-      @method _expandViewletConfig
-      @private
-    */
-    _expandViewletConfig: function(viewlet) {
-      Object.keys(viewlet).forEach(function(key) {
-        if (viewlet[key].value === undefined) {
-          viewlet[key] = {
-            value: viewlet[key],
-            writable: true
-          };
-        }
-      });
-      return viewlet;
     },
 
     /**
@@ -695,7 +447,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @return {undefined} nothing.
     */
     destructor: function() {
-      Y.Object.each(this.view, function(view, name) {
+      Y.Object.each(this.views, function(view, name) {
         if (!view.slot) {
           view.destroy();
         }
