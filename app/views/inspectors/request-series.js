@@ -31,17 +31,20 @@ YUI.add('request-series-inspector', function(Y) {
       requestSeries: Y.juju.viewlets.RequestSeries
     },
 
+    setupUI: function() {
+      this.views.requestSeries.setAttrs({
+        file: this.get('file'),
+        env: this.get('env'),
+        db: this.get('db')
+      });
+    },
+
     /**
       This render method is called by the inspector-base class on render.
 
       @method renderUI
     */
     renderUI: function() {
-      this.views.requestSeries.setAttrs({
-        file: this.get('file'),
-        env: this.get('env'),
-        db: this.get('db')
-      });
       this.showViewlet('requestSeries');
     }
 

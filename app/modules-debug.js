@@ -301,7 +301,7 @@ var GlobalConfig = {
         },
 
         'request-series-inspector': {
-          fullpath: '/juju-ui/views/inspector/request-series.js'
+          fullpath: '/juju-ui/views/inspectors/request-series.js'
         },
 
         // Viewlet views
