@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI().add('inspector-base', function(Y) {
+YUI.add('inspector-base', function(Y) {
   var ns = Y.namespace('juju.views'),
       viewlets = Y.namespace('juju.viewlets');
 
@@ -33,7 +33,41 @@ YUI().add('inspector-base', function(Y) {
 
     viewletContainer: '.viewlet-container',
 
-    template: '<div class="viewlet-container"></div>'
+    template: '<div class="viewlet-container"></div>',
+
+    /**
+      Inserts the container into the DOM.
+
+      All subclasses need to call this from their render methods to add the
+      wrapper into the DOM.
+
+      @method _insertContainer
+    */
+    _insertContainer: function() {
+      this.get('container').appendTo(Y.one('#content'));
+    },
+
+    /**
+      NOOP. This method is to be overwritten by any class which extends this
+      one and is called after the default render methods are called.
+
+      @method renderUI
+    */
+    renderUI: function() {},
+
+    /**
+      Default render method that calls the viewlet managers render method
+      and the user defined renderUI method.
+
+      @method render
+    */
+    render: function() {
+      this._insertContainer();
+      // Call the inspector base render method.
+      this.constructor.superclass.render.call(this);
+      this.renderUI();
+    }
+
 
   }, {
     ATTRS: {
