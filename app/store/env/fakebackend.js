@@ -220,6 +220,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
+      toMachine: The machine/container specification to which the service
+        should be deployed.
     @return {undefined} All results are passed to the callback.
     */
     deploy: function(charmId, callback, options) {
@@ -393,6 +395,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       configYAML: The charm configuration options, expressed as a YAML
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
+      toMachine: The machine/container specification to which the service
+        should be deployed.
     @return {undefined} Get the result from the callback.
     */
     _deployFromCharm: function(charm, callback, options) {
@@ -489,7 +493,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // This is the current behavior in both implementations.
         unitCount = 1;
       }
-      var response = this.addUnit(options.name, unitCount);
+      var response = this.addUnit(options.name, unitCount, options.toMachine);
       response.service = service;
       callback(response);
     },
@@ -606,7 +610,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       containing a string describing the problem, or with a "units"
       attribute containing a list of the added units.
     */
-    addUnit: function(serviceName, numUnits) {
+    addUnit: function(serviceName, numUnits, toMachine) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
@@ -629,8 +633,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }
-      var unit, machine;
-      var machines = this._getUnitMachines(numUnits);
+      var unit, machine, machines;
+      if (Y.Lang.isValue(toMachine)) {
+        // A specific machine is being targeted for the deploy.
+        var found = this._findMachine(this._getAvailableMachines(), toMachine);
+        if (found === null) {
+          return {error: 'no machine matching ' + toMachine + ' found'};
+        }
+        machines = [found];
+      } else {
+        // Any machine will do; find or create one.
+        machines = this._getUnitMachines(numUnits);
+      }
       var unitList = service.get('units');
       var units = [];
 
@@ -705,6 +719,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
       return machines;
+    },
+
+    /**
+    Find a machine matching a machine spec.
+
+    @method _findMachine
+    @param {Array} machines The candidate machines.
+    @param {String} toMachine The specification of the desired machine.
+    @return {Object} The found machine or null if none found.
+    */
+    _findMachine: function(machines, toMachine) {
+      var found = Y.Array.filter(machines, function(machine) {
+          return machine.id === toMachine;
+      });
+      if (found.length) {
+          return found[0];
+      } else {
+          return null;
+      }
     },
 
     /**
