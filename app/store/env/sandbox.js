@@ -482,8 +482,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         config: data.config,
         configYAML: data.config_raw,
         constraints: data.constraints,
-        unitCount: data.num_units,
-        toMachine: data.toMachine
+        unitCount: data.num_units
       });
     },
 
@@ -1481,7 +1480,8 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Side effects only.
     */
     handleClientAddServiceUnits: function(data, client, state) {
-      var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits);
+      var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits,
+        data.Params.ToMachineSpec);
       var units = [];
       if (!reply.error) {
         units = reply.units.map(function(u) {return u.id;});

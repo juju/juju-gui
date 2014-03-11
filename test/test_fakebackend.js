@@ -2212,8 +2212,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        // XXX Can this be removed?
-        //juju = Y.namespace('juju');
         sandbox = Y.namespace('juju.environments.sandbox');
         environments = Y.namespace('juju.environments');
         utils = Y.namespace('juju-tests.utils');
@@ -2271,5 +2269,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       conn.open();
       conn.send(Y.JSON.stringify(data));
     });
+
+    it('errors when toMachine is specified and unitCount > 1', function(done) {
+      // Add a bunch of machines that are not associated with services.
+      state.deploy('cs:precise/wordpress-15', function(response) {
+        assert.equal(response.error, 'When deploying to a specific machine, ' +
+            'the number of units requested must be 1.');
+        done();
+      }, {toMachine: '42', unitCount: 3});
+    });
+
+    it('will assign two services to the same machine', function(done) {
+        state._getUnitMachines(99);
+        state.deploy('cs:precise/wordpress-15', function() {
+          var result;
+          result = state.addUnit('wordpress', 1, '47');
+          assert.isUndefined(result.error);
+          result = state.addUnit('wordpress', 1, '47');
+          assert.isUndefined(result.error);
+          done();
+        });
+    });
+
   });
 })();

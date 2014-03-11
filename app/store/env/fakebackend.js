@@ -635,12 +635,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var unit, machine, machines;
       if (Y.Lang.isValue(toMachine)) {
+        if (numUnits > 1) {
+            return {error: 'When deploying to a specific machine, the ' +
+                'number of units requested must be 1.'};
+        }
         // A specific machine is being targeted for the deploy.
-        var found = this._findMachine(this._getAvailableMachines(), toMachine);
-        if (found === null) {
+        var targetMachine = this.db.machines.getById(toMachine)
+        if (targetMachine === null) {
           return {error: 'no machine matching ' + toMachine + ' found'};
         }
-        machines = [found];
+        machines = [targetMachine];
       } else {
         // Any machine will do; find or create one.
         machines = this._getUnitMachines(numUnits);
@@ -719,25 +723,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
       return machines;
-    },
-
-    /**
-    Find a machine matching a machine spec.
-
-    @method _findMachine
-    @param {Array} machines The candidate machines.
-    @param {String} toMachine The specification of the desired machine.
-    @return {Object} The found machine or null if none found.
-    */
-    _findMachine: function(machines, toMachine) {
-      var found = Y.Array.filter(machines, function(machine) {
-          return machine.id === toMachine;
-      });
-      if (found.length) {
-          return found[0];
-      } else {
-          return null;
-      }
     },
 
     /**
