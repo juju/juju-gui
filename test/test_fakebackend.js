@@ -2647,4 +2647,91 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   });
 
+  describe('FakeBackend\'s ServiceDeploy', function() {
+    var requires = ['node', 'juju-env-fakebackend', 'juju-tests-utils',
+      'juju-gui', 'juju-tests-factory'];
+    var Y, utils, juju, environments, factory, sandbox, state, conn, env;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        sandbox = Y.namespace('juju.environments.sandbox');
+        environments = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      state = factory.makeFakeBackend();
+      juju = new sandbox.GoJujuAPI({state: state});
+      conn = new sandbox.ClientConnection({juju: juju});
+      env = new environments.GoEnvironment({conn: conn});
+    });
+
+    afterEach(function() {
+      // We need to clear any credentials stored in sessionStorage.
+      env.setCredentials(null);
+      env.destroy();
+      conn.destroy();
+      juju.destroy();
+      state.destroy();
+    });
+
+    it('can deploy to a specified machine', function(done) {
+      conn.get('juju').set('deltaInterval', 50);
+      var data = {
+        Type: 'AllWatcher',
+        Request: 'Next',
+        Params: {},
+        RequestId: 1067
+      };
+      // Add a bunch of machines that are not associated with services.
+      state._getUnitMachines(99);
+      state.deploy('cs:precise/wordpress-15', function() {},
+          {toMachine: '42'});
+      conn.onmessage = function(received) {
+        var receivedData = Y.JSON.parse(received.data);
+        // The received data is a response to our AllWatcher request.
+        assert.equal(receivedData.RequestId, 1067);
+        assert.isNotNull(receivedData.Response.Deltas);
+        var deltas = receivedData.Response.Deltas;
+        // There were three things that happened:
+        assert.equal(deltas.length, 3);
+        // the service was created,
+        assert.equal(deltas[0][0], 'service');
+        // the machine changed state to "running",
+        assert.equal(deltas[1][0], 'machine');
+        assert.equal(deltas[1][1], 'change');
+        assert.equal(deltas[1][2].Status, 'running');
+        // and the unit was added to the machine we requested.
+        assert.equal(deltas[2][2].MachineId, '42');
+        done();
+      };
+      conn.open();
+      conn.send(Y.JSON.stringify(data));
+    });
+
+    it('errors when toMachine is specified and unitCount > 1', function(done) {
+      // Add a bunch of machines that are not associated with services.
+      state.deploy('cs:precise/wordpress-15', function(response) {
+        assert.equal(response.error, 'When deploying to a specific machine, ' +
+            'the number of units requested must be 1.');
+        done();
+      }, {toMachine: '42', unitCount: 3});
+    });
+
+    it('will assign two services to the same machine', function(done) {
+      state._getUnitMachines(99);
+      state.deploy('cs:precise/wordpress-15', function() {
+        var result;
+        result = state.addUnit('wordpress', 1, '47');
+        assert.isUndefined(result.error);
+        result = state.addUnit('wordpress', 1, '47');
+        assert.isUndefined(result.error);
+        done();
+      });
+    });
+
+  });
 })();
