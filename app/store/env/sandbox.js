@@ -1481,7 +1481,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     handleClientAddServiceUnits: function(data, client, state) {
       var reply = state.addUnit(data.Params.ServiceName, data.Params.NumUnits,
-        data.Params.ToMachineSpec);
+          data.Params.ToMachineSpec);
       var units = [];
       if (!reply.error) {
         units = reply.units.map(function(u) {return u.id;});

@@ -636,11 +636,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var unit, machine, machines;
       if (Y.Lang.isValue(toMachine)) {
         if (numUnits > 1) {
-            return {error: 'When deploying to a specific machine, the ' +
+          return {error: 'When deploying to a specific machine, the ' +
                 'number of units requested must be 1.'};
         }
         // A specific machine is being targeted for the deploy.
-        var targetMachine = this.db.machines.getById(toMachine)
+        var targetMachine = this.db.machines.getById(toMachine);
         if (targetMachine === null) {
           return {error: 'no machine matching ' + toMachine + ' found'};
         }

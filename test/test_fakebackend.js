@@ -2207,7 +2207,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('FakeBackend\'s ServiceDeploy', function() {
-    var requires = ['node', 'juju-env-fakebackend', 'juju-tests-utils', 'juju-gui', 'juju-tests-factory'];
+    var requires = ['node', 'juju-env-fakebackend', 'juju-tests-utils',
+      'juju-gui', 'juju-tests-factory'];
     var Y, utils, juju, environments, factory, sandbox, state, conn, env;
 
     before(function(done) {
@@ -2280,15 +2281,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('will assign two services to the same machine', function(done) {
-        state._getUnitMachines(99);
-        state.deploy('cs:precise/wordpress-15', function() {
-          var result;
-          result = state.addUnit('wordpress', 1, '47');
-          assert.isUndefined(result.error);
-          result = state.addUnit('wordpress', 1, '47');
-          assert.isUndefined(result.error);
-          done();
-        });
+      state._getUnitMachines(99);
+      state.deploy('cs:precise/wordpress-15', function() {
+        var result;
+        result = state.addUnit('wordpress', 1, '47');
+        assert.isUndefined(result.error);
+        result = state.addUnit('wordpress', 1, '47');
+        assert.isUndefined(result.error);
+        done();
+      });
     });
 
   });
