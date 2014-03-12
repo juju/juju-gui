@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     before(function(done) {
       var modules = ['juju-charm-models', 'local-charm-import-helpers',
-        'juju-tests-utils', 'node-event-simulate'];
+        'juju-tests-utils', 'node-event-simulate', 'request-series-view'];
       Y = YUI(GlobalConfig).use(modules, function(Y) {
         helper = Y.juju.localCharmHelpers;
         testUtils = Y['juju-tests'].utils;
@@ -77,23 +77,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             return defSeries;
           }
         };
-
-        stubs = {
-          // The order of these Y.x stubs is important, without this order the
-          // Y.one stub will return the same value as the Y.Node.create stub
-          createStub: testUtils.makeStubMethod(Y.Node, 'create', template),
-          oneStub: testUtils.makeStubMethod(Y, 'one', container),
-          templateStub: testUtils.makeStubMethod(
-              Y.namespace('juju.views.Templates'), 'service-inspector'),
-          // Viewlet manager stubs
-          ViewletManager: testUtils.makeStubMethod(
-              Y.namespace('juju.viewlets'), 'ViewletManager')
-        };
-
-        stubs.renderStub = testUtils.makeStubMethod(
-            stubs.ViewletManager.prototype, 'render');
-        stubs.showViewletStub = testUtils.makeStubMethod(
-            stubs.ViewletManager.prototype, 'showViewlet');
       });
 
       afterEach(function() {
@@ -104,15 +87,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('renders the viewletManager', function() {
+        var renderStub = testUtils.makeStubFunction();
+        var RequestStub = testUtils.makeStubMethod(
+            Y.juju.views, 'RequestSeriesInspector', { render: renderStub });
+        this._cleanups.push(RequestStub.reset);
         helper._requestSeries(fileObj, envObj, dbObj);
-
-        assert.equal(stubs.templateStub.called(), true);
-        assert.equal(stubs.oneStub.called(), true);
-        assert.equal(stubs.ViewletManager.called(), true);
-        assert.isObject(stubs.ViewletManager.lastArguments()[0]);
-        assert.equal(stubs.renderStub.called(), true);
-        assert.equal(stubs.showViewletStub.called(), true);
-        assert.equal(stubs.showViewletStub.lastArguments()[0], 'requestSeries');
+        assert.deepEqual(RequestStub.lastArguments()[0], {
+          file: fileObj,
+          env: envObj,
+          db: dbObj
+        });
+        assert.equal(RequestStub.calledOnce(), true);
+        assert.equal(renderStub.calledOnce(), true);
       });
     });
 

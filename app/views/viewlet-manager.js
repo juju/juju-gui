@@ -455,7 +455,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
         // singleView can be a viewlet or an instance of Y.View
         var singleView = views[key];
 
-        if(singleView instanceof Y.View === false) {
+        if (singleView instanceof Y.View === false) {
+          /* jshint -W055 */
           singleView = new singleView();
         }
 

@@ -31,6 +31,11 @@ YUI.add('request-series-inspector', function(Y) {
       requestSeries: Y.juju.viewlets.RequestSeries
     },
 
+    /**
+      This setup method is called by the viewlet manager base class on render.
+
+      @method setupUI
+    */
     setupUI: function() {
       this.views.requestSeries.setAttrs({
         file: this.get('file'),
@@ -40,7 +45,7 @@ YUI.add('request-series-inspector', function(Y) {
     },
 
     /**
-      This render method is called by the inspector-base class on render.
+      This render method is called by the viewlet manager base class on render.
 
       @method renderUI
     */
