@@ -42,15 +42,6 @@ YUI.add('request-series-inspector', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       });
-    },
-
-    /**
-      This render method is called by the viewlet manager base class on render.
-
-      @method renderUI
-    */
-    renderUI: function() {
-      this.showViewlet('requestSeries');
     }
 
   }, {

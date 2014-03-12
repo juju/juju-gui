@@ -76,43 +76,54 @@ YUI.add('juju-view-environment', function(Y) {
     */
     createServiceInspector: function(model, config) {
       config = config || {};
-      var type = 'service',
-          charm = this.get('db').charms.getById(model.get('charm'));
-
-      // This method is called with a charm or service depending on if it's
-      // called from the charm browser or from the environment. If it is
-      // called from the environment with a ghost it still needs access to
-      // the charm so that's what this switcheroo is doing here.
-      if (model.get('pending')) {
-        type = 'ghost';
-        model.set('packageName', charm.get('package_name'));
-        config.charmModel = charm;
-      }
-
       // If the user is trying to open the same inspector twice
-      if (this.inspector &&
-          (this.inspector.model.get('clientId') === model.get('clientId'))) {
-        return this.inspector;
+      if (this.inspector) {
+        // XXX In order to support both the inspector subclass and the old
+        // method. Fix then when the service inspector has been converted
+        // to a inspector subclass.
+        var tmpModel = this.inspector.model ||
+            this.inspector.viewletManager.get('model');
+        if (tmpModel.get('clientId') === model.get('clientId')) {
+          return this.inspector;
+        }
       }
 
-      var combinedConfig = {};
-      var configs = this._generateConfigs(model);
+      var db = this.get('db'),
+          topo = this.topo,
+          charm = db.charms.getById(model.get('charm')),
+          inspector = {};
 
-      if (type === 'ghost') {
-        combinedConfig = Y.mix(configs.configBase, configs.configGhost,
-                               true, undefined, 0, true);
-      } else if (type === 'service') {
+      // This method is called with a charm or service. If it's called with a
+      // charm then it needs to show the ghost inspector instead of the service
+      // inspector.
+      if (model.get('pending')) {
+        model.set('packageName', charm.get('package_name'));
+        // XXX In order to support the events below we need to use the same
+        // object structure. Once the Service inspector is converted to
+        // an inspector subclass the following events can be fixed.
+        inspector.viewletManager = new Y.juju.views.GhostServiceInspector({
+          db: db,
+          model: model,
+          env: this.get('env'),
+          environment: this,
+          charmModel: charm,
+          topo: topo,
+          store: topo.get('store')
+        }).render();
+      } else {
+        // Service inspector
+        var combinedConfig = {};
+        var configs = this._generateConfigs(model);
         combinedConfig = Y.mix(configs.configBase, configs.configService,
                                true, undefined, 0, true);
+        Y.mix(combinedConfig, config, true, undefined, 0, true);
+        inspector = new views.ServiceInspector(
+            model, combinedConfig);
       }
-
-      Y.mix(combinedConfig, config, true, undefined, 0, true);
-
-      var serviceInspector = new views.ServiceInspector(model, combinedConfig);
 
       // Because the inspector can trigger it's own destruction we need to
       // listen for the event and remove it from the list of open inspectors
-      serviceInspector.viewletManager.after('destroy', function(e) {
+      inspector.viewletManager.after('destroy', function(e) {
         delete this.inspector;
         // We want the service menu to hide when the inspector does.
         // For now, at least, with only one inspector, we can simply close
@@ -133,7 +144,7 @@ YUI.add('juju-view-environment', function(Y) {
       // If the inspector (via viewletManager proxy) wants to take over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-          serviceInspector.viewletManager.on(
+          inspector.viewletManager.on(
               'inspectorTakeoverStarting', function(ev) {
                 this.fire('envTakeoverStarting');
               }, this));
@@ -141,7 +152,7 @@ YUI.add('juju-view-environment', function(Y) {
       // If the inspector (via viewletManager proxy) is done taking over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-          serviceInspector.viewletManager.on(
+          inspector.viewletManager.on(
               'inspectorTakeoverEnding', function(ev) {
                 this.fire('envTakeoverEnding');
               }, this));
@@ -150,8 +161,8 @@ YUI.add('juju-view-environment', function(Y) {
         this.inspector.viewletManager.destroy();
       }
 
-      this.inspector = serviceInspector;
-      return serviceInspector;
+      this.inspector = inspector;
+      return inspector;
     },
 
     /**
@@ -203,38 +214,6 @@ YUI.add('juju-view-environment', function(Y) {
           template: Y.juju.views.Templates['service-config-wrapper'],
           // Define the context for the view manager template.
           templateConfig: {subordinate: model.get('subordinate')}
-        },
-        configGhost: {
-          // controller will show the first one in this array by default
-          viewletList: ['GhostConfig', 'InspectorHeader'],
-          // the viewlet manager template
-          template: Y.juju.views.Templates['ghost-config-wrapper'],
-          // these events are for the viewlet manager
-          events: {},
-          // these events are for the viewlets and have their callbacks
-          // bound to the controllers prototype and are then mixed with the
-          // manager's events for final binding
-          viewletEvents: {
-            // These events are for the ghost inspector but are rendered in
-            // the viewlet managers footer so the events and their methods need
-            // to be outside of the service-ghost.js class.
-            // The following are located in ghost-inspector.js
-            '.close': { click: 'resetCanvas' },
-            '.cancel': { click: 'resetCanvas' },
-            '.confirm': { click: 'deployCharm' },
-            // The following are located in inspector.js
-            '.initiate-destroy': {click: '_onInitiateDestroy'},
-            '.cancel-destroy': {click: '_onCancelDestroy'},
-            '.destroy-service-trigger span': {click: '_onDestroyClick'},
-            // Used by the config viewlet for keeping the checkbox values
-            // in sync across the slider/checkbox/text representation.
-            '.hidden-checkbox': {change: 'onCheckboxUpdate'}
-          },
-          // the configuration for the view manager template
-          templateConfig: {
-            packageName: model.get('package_name'),
-            id: model.get('id')
-          }
         }
       };
       return configs;

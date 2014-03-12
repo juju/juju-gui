@@ -300,8 +300,17 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/inspector-base.js'
         },
 
+        'service-inspector-utils-extension': {
+          fullpath:
+              '/juju-ui/views/inspectors/service-inspector-utils-extension.js'
+        },
+
         'request-series-inspector': {
           fullpath: '/juju-ui/views/inspectors/request-series.js'
+        },
+
+        'ghost-service-inspector': {
+          fullpath: '/juju-ui/views/inspectors/ghost-service-inspector.js'
         },
 
         // Viewlet views

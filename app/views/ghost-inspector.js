@@ -54,9 +54,10 @@ YUI.add('juju-ghost-inspector', function(Y) {
       // This flag is still required because it comes fully populated from the
       // browser but won't be fully populated when coming in on the delta.
       charm.loaded = true;
-      this.db.charms.add(charm);
+      var db = this.db;
+      db.charms.add(charm);
 
-      var ghostService = this.db.services.ghostService(charm);
+      var ghostService = db.services.ghostService(charm);
       if (ghostAttributes !== undefined) {
         if (ghostAttributes.coordinates !== undefined) {
           var annotations = ghostService.get('annotations');
@@ -72,162 +73,8 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-  /**
-    A collection of methods and properties which will be mixed into the
-    prototype of the viewlet manager controller to add the functionality for
-    the ghost inspector interactions
-
-    @property ghostInspector
-    @submodule juju.controller
-    @type {Object}
-  */
-  Y.namespace('juju.controller').ghostInspector = {
-    /**
-      Handles deployment of the charm.
-
-      @method handleDeploy
-    */
-    deployCharm: function() {
-      var options = this.options,
-          container = options.container,
-          model = this.model,
-          serviceName = container.one('input[name=service-name]').get('value'),
-          isSubordinate = model.get('subordinate'),
-          numUnits = (
-              isSubordinate ? 0 :
-              parseInt(
-                  container.one('input[name=number-units]').get('value'), 10)),
-          config;
-
-      if (!utils.validateServiceName(serviceName, options.db)) {
-        options.db.notifications.add(
-            new models.Notification({
-              title: 'Attempting to deploy service ' + serviceName,
-              message: 'The requested service name is invalid.',
-              level: 'error'
-            }));
-        return false;
-      }
-
-      // Check if a file has been uploaded and use that config.
-      if (this.viewletManager.configFileContent) {
-        config = null;
-      } else {
-        config = utils.getElementsValuesMapping(
-            container, '.service-config .config-field');
-        config = utils.getChangedConfigOptions(
-            config, options.charmModel.get('options'));
-      }
-
-      // Deploy needs constraints in simple key:value object.
-      var constraints = utils.getElementsValuesMapping(
-          container, '.constraint-field');
-
-      options.env.deploy(
-          model.get('charm'),
-          serviceName,
-          config,
-          this.viewletManager.configFileContent,
-          numUnits,
-          constraints,
-          null, // Always deploy units to new machines for now.
-          Y.bind(this._deployCallbackHandler,
-                 this,
-                 serviceName,
-                 config,
-                 constraints));
-    },
-    /**
-      Resets the changes that the inspector made in the canvas before
-      destroying the viewlet Manager on Cancel
-
-      @method resetCanvas
-    */
-    resetCanvas: function() {
-      // This code has a fragile dependency: the inspector-header.js render
-      // method expects these parentheses around the model displayName.  If you
-      // change this format, or this code, make sure you look at that method
-      // too.  Hopefully the associated tests will catch it as well.
-      // Also see(grep for) the updateGhostName method too.
-      this.model.set('displayName', '(' + this.model.get('packageName') + ')');
-      this.viewletManager.destroy();
-    },
-
-
-    /**
-      The callback handler from the env.deploy() of the charm.
-
-      @method _deployCallbackHandler
-      @param {String} serviceName The service name.
-      @param {Object} config The configuration object of the service.
-      @param {Y.EventFacade} e The event facade from the deploy event.
-    */
-    _deployCallbackHandler: function(serviceName, config, constraints, e) {
-      var options = this.options,
-          db = options.db,
-          ghostService = this.model,
-          environmentView = this.options.environment,
-          topo = environmentView.topo;
-
-      if (e.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error deploying ' + serviceName,
-              message: 'Could not deploy the requested service. Server ' +
-                  'responded with: ' + e.err,
-              level: 'error'
-            }));
-        return;
-      }
-
-      db.notifications.add(
-          new models.Notification({
-            title: 'Deployed ' + serviceName,
-            message: 'Successfully deployed the requested service.',
-            level: 'info'
-          }));
-
-      // Now that we are using the same model for the ghost and service views
-      // we need to close the inspector to deactivate the databinding
-      // before setting else we end up with a race condition on nodes which
-      // no longer exist.
-      this.closeInspector();
-
-      var ghostId = ghostService.get('id');
-      ghostService.setAttrs({
-        id: serviceName,
-        displayName: undefined,
-        pending: false,
-        loading: false,
-        config: config,
-        constraints: constraints
-      });
-
-      // Transition the ghost viewModel to the new
-      // service. It's alive!
-      var boxModel = topo.service_boxes[ghostId];
-      boxModel.id = serviceName;
-      boxModel.pending = false;
-      delete topo.service_boxes[ghostId];
-      topo.service_boxes[serviceName] = boxModel;
-
-      // Set to initial UI state.
-      environmentView.createServiceInspector(ghostService);
-      topo.showMenu(serviceName);
-      topo.annotateBoxPosition(boxModel);
-    },
-
-    /**
-      Destroys the inspector.
-
-      @method closeInspector
-    */
-    closeInspector: function() {
-      this.viewletManager.destroy();
-    }
-  };
-
 }, '0.1.0', {
   requires: [
+    'ghost-service-inspector'
   ]
 });
