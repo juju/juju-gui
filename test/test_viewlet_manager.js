@@ -37,13 +37,14 @@ describe('Viewlet Manager', function() {
     var UnitDetailsStub = Y.Base.create(
         'unit-details-stub', Y.View, [Y.juju.viewlets.ViewletBaseView], {
           template: Y.Handlebars.compile(
-              '<div class="viewlet" data-bind="name">{{name}}</div>')
+              '<div class="view-container" data-bind="name">{{name}}</div>')
         });
 
-    // Merging Mix.
-    var viewletConfig = Y.mix({
-      template: '<div class="viewlet" data-bind="name">{{name}}</div>'
-    }, options || {}, false, undefined, 0, true);
+    var ConstraintsStub = Y.Base.create(
+        'constraints-stub', Y.View, [Y.juju.viewlets.ViewletBaseView], {
+          template: Y.Handlebars.compile(
+              '<div class="view-container" data-bind="name">{{name}}</div>')
+        });
 
     managerOptions = Y.mix({
       databinding: {
@@ -51,9 +52,8 @@ describe('Viewlet Manager', function() {
       },
       enableDatabinding: true,
       views: {
-        serviceConfig: Y.merge(viewletConfig),
-        constraints: Y.merge(viewletConfig),
-        unitDetailsStub: new UnitDetailsStub()
+        unitDetailsStub: UnitDetailsStub,
+        constraintsStub: ConstraintsStub
       },
       template: juju.views.Templates['service-config-wrapper'],
       templateConfig: {},
@@ -106,113 +106,32 @@ describe('Viewlet Manager', function() {
     assert.equal(typeof viewletManager.events['.tab'].click, 'function');
   });
 
-  it('properly nests config properties', function() {
-    generateViewletManager(this);
-    var cfg = viewletManager.views;
-    assert.notEqual(cfg.serviceConfig.template, undefined);
-  });
-
   it('sets up a view template instance property', function() {
     generateViewletManager(this);
     assert.equal(typeof viewletManager.template, 'function');
   });
 
-  it('generates viewlet instances based on the config', function() {
-    generateViewletManager(this);
-    var vl = viewletManager.views,
-        vlKeys = ['serviceConfig', 'constraints'];
-    vlKeys.forEach(function(key) {
-      assert.equal(typeof vl[key], 'object');
-    });
-  });
-
-  it('includes the manager attrs in the viewlet instances', function() {
-    generateViewletManager(this);
-    var expected = viewletManager.getAttrs();
-    // At the time the viewlet options are set, the manager is not yet
-    // initialized.
-    expected.initialized = false;
-    assert.deepEqual(viewletManager.views.serviceConfig.options, expected);
-    assert.deepEqual(viewletManager.views.constraints.options, expected);
-  });
-
-  it('fails silently when generating invalid viewlet configs', function() {
-    // 'foo' does not have a config defined
-    generateViewletManager(this, {}, ['serviceConfig', 'foo']);
-    var vl = viewletManager.views;
-    assert.equal(typeof vl.serviceConfig, 'object');
-    assert.equal(typeof vl.foo, 'undefined');
-  });
-
   it('renders its container into the DOM', function() {
     generateViewletManager(this);
     viewletManager.render();
-    assert.notEqual(container.one('.viewlet-wrapper'), null);
+    assert.notEqual(container.one('.yui3-juju-inspector'), null);
   });
 
-  it('renders all viewlets into the DOM', function() {
+  it('passes the manager attrs to the view instances', function() {
     generateViewletManager(this);
     viewletManager.render();
-    assert.notEqual(container.one('.viewlet-wrapper'), null);
-    assert.equal(container.all('.viewlet-container').size(), 1);
-    assert.equal(container.all('.viewlet').size(), 3);
+    var unitDetails = viewletManager.views.unitDetailsStub;
+    // enableDatabinding is only passed into the viewlet manager so it's
+    // presence shows that the attrs was passed through.
+    assert.deepEqual(unitDetails.options.enableDatabinding,
+        viewletManager.get('enableDatabinding'));
   });
 
-  it('allows you to define your own render method', function() {
-    generateViewletManager(this, { render: function() {
-      return 'foo';
-    }});
-    var vlKeys = ['serviceConfig', 'constraints'];
-
-    viewletManager.render();
-    vlKeys.forEach(function(key) {
-      assert.equal(viewletManager.views[key].render(), 'foo');
-    });
-  });
-
-  it('allows you to define your own show method', function(done) {
-    generateViewletManager(this, { show: function() {
-      // Test passes by hitting done and getting called.
-      done();
-    }});
-    viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
-  });
-
-  it('provides a sane default show method', function() {
+  it('renders all views into the DOM', function() {
     generateViewletManager(this);
     viewletManager.render();
-    var managerContainer = viewletManager.get('container');
-    var wrapper = managerContainer.one('.viewlet-wrapper');
-    assert.equal(wrapper.getComputedStyle('display'), 'none');
-    viewletManager.showViewlet('serviceConfig');
-    assert.equal(wrapper.getComputedStyle('display'), 'block');
-  });
-
-  it('allows you to define your own hide method', function() {
-    generateViewletManager(this);
-    var hideStub = utils.makeStubMethod(
-        viewletManager.views.serviceConfig, 'hide');
-    this._cleanups.push(hideStub.reset);
-
-    viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
-    assert.equal(hideStub.calledOnce(), true);
-  });
-
-  it('provides a sane default hide method', function() {
-    generateViewletManager(this);
-
-    viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
-
-    var container = viewletManager.views.serviceConfig.container;
-    assert.equal(container.getComputedStyle('display'), 'block');
-
-    // Now render the constraints viewlet which runs hide on the serviceConfig
-    // viewlet.
-    viewletManager.showViewlet('constraints');
-    assert.equal(container.getComputedStyle('display'), 'none');
+    assert.notEqual(container.one('.yui3-juju-inspector'), null);
+    assert.equal(container.all('.view-container').size(), 2);
   });
 
   it('passes model and attrs to the viewlet render method', function() {
@@ -225,26 +144,24 @@ describe('Viewlet Manager', function() {
     viewletManager.render();
   });
 
-  it('allows you to define your own update method', function() {
-    generateViewletManager(this, {update: function() {
-      return 'foo';
-    }});
-    var vlKeys = ['serviceConfig', 'constraints'];
-    viewletManager.render();
-    vlKeys.forEach(function(key) {
-      assert.equal(viewletManager.views[key].update(), 'foo');
-    });
-  });
-
-  it('switches the visible viewlet on request', function() {
+  it('switches the visible view on request', function() {
     generateViewletManager(this);
-    var vlKeys = ['serviceConfig', 'constraints'];
     viewletManager.render();
-    vlKeys.forEach(function(key) {
-      viewletManager.showViewlet(key);
-      assert.equal(
-          viewletManager.views[key].container.getStyle('display'), 'block');
-    });
+    var views = viewletManager.views;
+    viewletManager.showViewlet('constraintsStub');
+    assert.equal(
+        views.constraintsStub.get('container').getStyle('display'),
+        'block');
+    assert.equal(
+        views.unitDetailsStub.get('container').getStyle('display'),
+        'none');
+    viewletManager.showViewlet('unitDetailsStub');
+    assert.equal(
+        views.unitDetailsStub.get('container').getStyle('display'),
+        'block');
+    assert.equal(
+        views.constraintsStub.get('container').getStyle('display'),
+        'none');
   });
 
   it('removes all elements from the DOM on destroy', function() {
@@ -255,19 +172,17 @@ describe('Viewlet Manager', function() {
     assert.equal(container.all('.viewlet-container').size(), 0);
   });
 
-
   it('only renders elements without a slot by default', function() {
     generateViewletManager(this);
     // Modify one viewlet to have a slot.
-    viewletManager.views.constraints.slot = 'left';
+    viewletManager.views.constraintsStub.slot = 'left';
     viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
-
+    viewletManager.showViewlet('unitDetailsStub');
+    var views = viewletManager.views;
     assert.equal(
-        viewletManager.views.serviceConfig
-                   .container.getStyle('display'), 'block');
-    // Constraints didn't render, not even its container is set.
-    assert.equal(viewletManager.views.constraints.container, undefined);
+        views.unitDetailsStub.get('container').getStyle('display'),
+        'block');
+    assert.equal(container.all('.view-container').size(), 1);
   });
 
   it('can fill a slot with a view', function() {
@@ -279,12 +194,12 @@ describe('Viewlet Manager', function() {
     // And unitDetailsStub will use that slot.
     viewletManager.views.unitDetailsStub.slot = 'left';
     viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
+    viewletManager.showViewlet('constraintsStub');
 
     // Now render the unitDetailsStub viewlet.
     viewletManager.showViewlet('unitDetailsStub');
     assert.equal(
-        container.one('.left-breakout .viewlet').get('text'), 'foo');
+        container.one('.left-breakout .view-container').get('text'), 'foo');
   });
 
   it('can replace a slot, removing old bindings and installing a new model',
@@ -297,28 +212,30 @@ describe('Viewlet Manager', function() {
        // And unitDetailsStub will use that slot.
        viewletManager.views.unitDetailsStub.slot = 'left';
        viewletManager.render();
-       viewletManager.showViewlet('serviceConfig');
+       viewletManager.showViewlet('constraintsStub');
 
-       // Now render the constraints viewlet.
+       // Now render the unit details view.
        viewletManager.showViewlet('unitDetailsStub');
        assert.equal(
-           container.one('.left-breakout .viewlet').get('text'), 'foo');
+           container.one('.left-breakout .view-container').get('text'), 'foo');
 
        var replacementModel = new Y.Model({id: 'replacement', name: 'pie'});
        viewletManager.showViewlet('unitDetailsStub', replacementModel);
        assert.equal(
-           container.one('.left-breakout .viewlet').get('text'), 'pie');
+           container.one('.left-breakout .view-container').get('text'), 'pie');
 
        // And the new databindings are working.
        replacementModel.set('name', 'ice cream');
        assert.equal(
-           container.one('.left-breakout .viewlet').get('text'), 'ice cream');
+           container.one('.left-breakout .view-container').get('text'),
+           'ice cream');
 
        // The old model (still associated with the viewletManager) isn't bound
        // though.
        viewletManager.get('model').set('name', 'broken');
        assert.equal(
-           container.one('.left-breakout .viewlet').get('text'), 'ice cream');
+           container.one('.left-breakout .view-container').get('text'),
+           'ice cream');
      });
 
   it('can be instantiated without databinding', function() {
@@ -338,7 +255,7 @@ describe('Viewlet Manager', function() {
     // And unitDetailsStub will use that slot.
     viewletManager.views.unitDetailsStub.slot = 'left-hand-panel';
     viewletManager.render();
-    viewletManager.showViewlet('serviceConfig');
+    viewletManager.showViewlet('constraintsStub');
 
     // Now render the unitDetailsStub viewlet.
     var unitDetailsStub = viewletManager.views.unitDetailsStub;
@@ -391,55 +308,6 @@ describe('Viewlet Manager', function() {
 
       assert.isNotNull(viewletManager.get('container').one('.viewie'));
     });
-
-    it('can instantiate Y.View\'s and viewlets simultaneously', function() {
-      var TestView = generateTestView();
-      generateViewletManager(this, null, {
-        enableDatabinding: false,
-        views: {
-          testView: new TestView()
-        }
-      }, true);
-
-      assert.equal(viewletManager.views.testView instanceof Y.View, true);
-      // When a viewlet is instantiated this property is added. This property
-      // cannot exist if the viewlet is not instantiated.
-      assert.equal(
-          typeof viewletManager.views.serviceConfig._eventHandles, 'object');
-    });
-
-    it('can render Y.View\'s and viewlets simultaneously', function() {
-      function getContainer() {
-        return viewletManager.get('container').one('.viewlet-container');
-      }
-      var TestView = generateTestView();
-      generateViewletManager(this, null, {
-        enableDatabinding: false,
-        views: {
-          testView: new TestView()
-        }
-      }, true);
-
-      viewletManager.render();
-      viewletManager.showViewlet('serviceConfig');
-      var container = getContainer();
-      var children = container.get('children');
-
-      // Views and viewlets are rendered in order so this order is important
-      // to test that the appropriate views are rendered.
-      assert.equal(children.item(0).getComputedStyle('display'), 'block');
-      assert.equal(children.item(1).getComputedStyle('display'), 'none');
-      assert.equal(children.item(2).getComputedStyle('display'), 'none');
-      assert.equal(children.item(3).getComputedStyle('display'), 'none');
-
-      viewletManager.showViewlet('testView');
-
-      assert.equal(children.item(0).getComputedStyle('display'), 'none');
-      assert.equal(children.item(1).getComputedStyle('display'), 'none');
-      assert.equal(children.item(2).getComputedStyle('display'), 'none');
-      assert.equal(children.item(3).getComputedStyle('display'), 'block');
-    });
-
   });
 
 });

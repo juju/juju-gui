@@ -18,45 +18,53 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('inspector-base', function(Y) {
+
+YUI.add('request-series-inspector', function(Y) {
   var ns = Y.namespace('juju.views'),
       viewlets = Y.namespace('juju.viewlets');
 
-  /**
-    Base class for any inspectors.
+  var name = 'request-series-inspector';
 
-    @class Inspector
-    @constructor
-    @extends {juju.viewlets.ViewletManager}
-  */
-  ns.Inspector = Y.Base.create('inspector-base', viewlets.ViewletManager, [], {
+  ns.RequestSeriesInspector = Y.Base.create(name, ns.Inspector, [], {
 
-    viewletContainer: '.viewlet-container',
-
-    template: '<div class="viewlet-container"></div>',
+    views: {
+      requestSeries: Y.juju.viewlets.RequestSeries
+    },
 
     /**
-      Renders the view's container into the DOM.
+      This setup method is called by the viewlet manager base class on render.
 
-      @method _insertContainer
+      @method setupUI
     */
-    _insertContainer: function() {
-      this.get('container').appendTo(Y.one('#content'));
+    setupUI: function() {
+      this.views.requestSeries.setAttrs({
+        file: this.get('file'),
+        env: this.get('env'),
+        db: this.get('db')
+      });
+    },
+
+    /**
+      This render method is called by the viewlet manager base class on render.
+
+      @method renderUI
+    */
+    renderUI: function() {
+      this.showViewlet('requestSeries');
     }
 
   }, {
     ATTRS: {
-      container: {
-        'valueFn': function() {
-          return Y.Node.create(ns.Templates['service-inspector']());
-        }
-      }
+      file: {},
+      env: {},
+      db: {}
     }
   });
 
 }, '', {
   requires: [
-    'juju-viewlet-manager',
-    'juju-templates'
+    'viewlet-view-base',
+    'inspector-base',
+    'request-series-view'
   ]
 });

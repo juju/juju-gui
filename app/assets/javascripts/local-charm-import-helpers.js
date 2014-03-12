@@ -86,27 +86,11 @@ YUI.add('local-charm-import-helpers', function(Y) {
       @param {Object} db Reference to the database.
     */
     _requestSeries: function(file, env, db) {
-      var container = Y.Node.create(
-          Y.juju.views.Templates['service-inspector']());
-
-      container.appendTo(Y.one('#content'));
-
-      var viewletManager = new Y.juju.viewlets.ViewletManager({
-        container: container,
-        viewletContainer: '.viewlet-container',
-        template: '<div class="viewlet-container"></div>',
-        // views accepts views and viewlets
-        views: {
-          requestSeries: new Y.juju.viewlets.RequestSeries({
-            file: file,
-            env: env,
-            db: db
-          })
-        }
-      });
-
-      viewletManager.render();
-      viewletManager.showViewlet('requestSeries');
+      new Y.juju.views.RequestSeriesInspector({
+        file: file,
+        env: env,
+        db: db
+      }).render();
     },
 
     /**
@@ -272,7 +256,6 @@ YUI.add('local-charm-import-helpers', function(Y) {
 }, '0.1.0', {
   requires: [
     'juju-templates',
-    'request-series-view',
-    'juju-viewlet-manager'
+    'request-series-inspector'
   ]
 });
