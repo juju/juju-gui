@@ -842,8 +842,10 @@ YUI.add('juju-gui', function(Y) {
     exportYAML: function() {
       var result = this.db.exportDeployer();
       var exportData = jsyaml.dump(result);
+      // In order to support Safari 7 the type of this blob needs
+      // to be text/plain instead of it's actual type of application/yaml.
       var exportBlob = new Blob([exportData],
-          {type: 'application/yaml;charset=utf-8'});
+          {type: 'text/plain;charset=utf-8'});
       saveAs(exportBlob, 'export.yaml');
     },
 
