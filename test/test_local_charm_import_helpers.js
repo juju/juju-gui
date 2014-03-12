@@ -66,8 +66,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       beforeEach(function() {
         // makeContainer will auto cleanup
-        var container = testUtils.makeContainer(this, 'content'),
-            template = testUtils.makeContainer(this, 'template');
+        testUtils.makeContainer(this, 'content');
+        testUtils.makeContainer(this, 'template');
         fileObj = { name: 'foo', size: '100' };
         defSeries = 'precise';
         reqAttr = 'defaultSeries';

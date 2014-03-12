@@ -124,7 +124,7 @@ describe('Viewlet Manager', function() {
     // enableDatabinding is only passed into the viewlet manager so it's
     // presence shows that the attrs was passed through.
     assert.deepEqual(unitDetails.options.enableDatabinding,
-      viewletManager.get('enableDatabinding'));
+        viewletManager.get('enableDatabinding'));
   });
 
   it('renders all views into the DOM', function() {
