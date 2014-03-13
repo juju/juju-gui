@@ -20,7 +20,14 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+# - unreleased:
+- 1.0.1:
+    - >
+      Local charms may now be upgraded by dragging another zip file with the
+      same service name onto the canvas.
+    - Allow exporting environments in Safari.
+    - Allow bundles to be recommended.
+    - (FIX) constraints in bundles are space separated.
 - 1.0.0:
     - >
       Local charm deploys are now supported. Drag-n-drop a zip file of your
