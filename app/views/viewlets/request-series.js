@@ -47,10 +47,12 @@ YUI.add('request-series-view', function(Y) {
     */
     render: function() {
       var file = this.get('file');
+      var env = this.get('env');
       this.get('container').setHTML(this.template({
         name: file.name,
         size: file.size,
-        defaultSeries: this.get('env').get('defaultSeries')
+        allSeries: env.series,
+        defaultSeries: env.get('defaultSeries')
       }));
       // So that we can call render multiple times.
       if (!this._eventsBound) {
@@ -119,7 +121,7 @@ YUI.add('request-series-view', function(Y) {
     */
     getSeriesValue: function(viewletManager) {
       return viewletManager.get('container')
-                           .one('input[defaultSeries]').get('value');
+                           .one('select#defaultSeries').get('value');
     }
 
   }, {

@@ -38,7 +38,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     beforeEach(function() {
       fileObj = { name: 'foo.zip', size: 1234 };
-      envObj = { get: function() { return 'precise'; } };
+      envObj = {
+        series: ['precise', 'saucy', 'trusty'],
+        get: function() {
+          return 'precise';
+        }
+      };
       dbObj = { db: 'db' };
       vmObj = { destroy: testUtils.makeStubFunction() };
       view = new juju.viewlets.RequestSeries({
@@ -128,13 +133,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(vmObj.destroy.calledOnce(), true);
     });
 
-    it('gets the series value from the viewlets input', function(done) {
+    it('gets the series value from the viewlet selector', function(done) {
       var viewletManager = {
         get: function(val) {
           assert.equal(val, 'container');
           return {
             one: function(val) {
-              assert.equal(val, 'input[defaultSeries]');
+              assert.equal(val, 'select#defaultSeries');
               return {
                 get: function(val) {
                   assert.equal(val, 'value');
@@ -146,6 +151,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         }
       };
       view.getSeriesValue(viewletManager);
+    });
+
+    it('shows all the supported series in the selector', function() {
+      view.render();
+      var selector = view.get('container').one('select#defaultSeries');
+      var optionValues = selector.all('option').get('value');
+      assert.deepEqual(optionValues, envObj.series);
     });
 
   });
