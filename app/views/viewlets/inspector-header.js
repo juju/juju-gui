@@ -103,12 +103,12 @@ YUI.add('inspector-header-view', function(Y) {
       // look at that method too.  Hopefully the associated tests will catch it
       // as well. Also see(grep for) the resetCanvas method too.
       var name = e.newVal,
-          db = this.options.db,
+          options = this.options,
+          db = options.db,
           serviceName = '(' + name + ')';
 
       var isValid = utils.validateServiceName(name, db);
-
-      this.model.set('displayName', serviceName);
+      options.model.set('displayName', serviceName);
       this.serviceNameInputStatus(isValid, e.currentTarget);
     },
 

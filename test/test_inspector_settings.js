@@ -217,16 +217,6 @@ describe('Inspector Settings', function() {
     assert.equal(typeof events['.cancel-destroy'].click, 'function');
   });
 
-  it('wires up UI elements to handlers for ghost inspector', function() {
-    // There are UI elements and they all have to be wired up to something.
-    inspector = setUpInspector({useGhost: true});
-    var events = inspector.viewletManager.events;
-    assert.equal(
-        typeof events['.destroy-service-trigger span'].click, 'function');
-    assert.equal(typeof events['.initiate-destroy'].click, 'function');
-    assert.equal(typeof events['.cancel-destroy'].click, 'function');
-  });
-
   it('responds to service removal failure by alerting the user', function() {
     var notificationAdded;
 
@@ -256,20 +246,6 @@ describe('Inspector Settings', function() {
 
     inspector._destroyServiceCallback(service, db, evt);
     assert.isTrue(notificationAdded);
-  });
-
-  it('can destroy using a ghost model', function(done) {
-    var inspector = setUpInspector({useGhost: true});
-    assert(inspector.viewletManager.get('model').name, 'service');
-    inspector.viewletManager.set('db', {
-      services: {
-        remove: function() {
-          // This means that it successfully went down the proper path
-          done();
-        }
-      }
-    });
-    inspector.initiateServiceDestroy();
   });
 
   /**** End service destroy UI tests. ****/

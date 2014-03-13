@@ -143,7 +143,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       this.events = options.events;
       // Map from logical slot name to the CSS selector within ViewletManager's
       // DOM to be used to hold this slot when rendered.
-      this.slots = {};
+      this.slots = this.slots || {};
       // Internal mapping from slot name to viewlet rendered into slot.
       this._slots = {};
       this._events = [];
@@ -176,7 +176,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       callback interactions (for example in a click handler).
 
       @method _render
-      @return {Object} Reference to the view container element.
     */
     _render: function() {
       var attrs = this.getAttrs(),
@@ -196,8 +195,6 @@ YUI.add('juju-viewlet-manager', function(Y) {
       Y.Object.each(this.views, function(view, name) {
         this.renderViewlet(view, name, model, viewletContainer);
       }, this);
-
-      return viewletContainer;
     },
 
     /**
@@ -233,10 +230,10 @@ YUI.add('juju-viewlet-manager', function(Y) {
     */
     render: function() {
       this.setupUI();
-      var viewletContainer = this._render();
+      this._render();
       this.renderUI();
       this._insertContainer();
-      this.recalculateHeight(viewletContainer);
+      this.recalculateHeight();
       return this;
     },
 
@@ -390,13 +387,9 @@ YUI.add('juju-viewlet-manager', function(Y) {
       the browser is resized or by being called directly.
 
       @method recalculateHeight
-      @param {Y.Node} container A reference to the container element.
     */
-    recalculateHeight: function(container) {
-      // Because this is also a callback we need to check to see
-      // if this is an event object or a real container element
-      if (container && container.type) { container = null; }
-      container = container || this.get('container');
+    recalculateHeight: function() {
+      var container = this.get('container');
       var TB_SPACING = 20;
       var winHeight = container.get('winHeight'),
           header = Y.one('.navbar'),

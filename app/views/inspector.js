@@ -214,6 +214,8 @@ YUI.add('juju-view-inspector', function(Y) {
     /**
       Display the "do you really want to destroy this service?" prompt.
 
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
+
       @method showDestroyPrompt
       @param {Y.Node} container The container of the prompt.
     */
@@ -223,6 +225,8 @@ YUI.add('juju-view-inspector', function(Y) {
 
     /**
       Hide the "do you really want to destroy this service?" prompt.
+
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
 
       @method hideDestroyPrompt
       @param {Y.Node} container The container of the prompt.
@@ -238,6 +242,8 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "destroy this
       service" icon.
 
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
+
       @method _onDestroyClick
       @param {Object} evt The event data.
       @return {undefined} Nothing.
@@ -251,6 +257,8 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the cancel button
       on the "destroy this service" prompt.
 
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
+
       @method _onCancelDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
@@ -263,6 +271,8 @@ YUI.add('juju-view-inspector', function(Y) {
     /**
       Start the process of destroying the service represented by this
       inspector.
+
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
 
       @method initiateServiceDestroy
       @return {undefined} Nothing.
@@ -283,9 +293,10 @@ YUI.add('juju-view-inspector', function(Y) {
       }
     },
 
-
     /**
       React to a service being destroyed (or not).
+
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
 
       @method _destroyServiceCallback
       @param {Object} service The service we attempted to destroy.
@@ -318,6 +329,8 @@ YUI.add('juju-view-inspector', function(Y) {
       React to the user clicking on or otherwise activating the "do it now"
       button on the "destroy this service" prompt.
 
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
+
       @method _onInitiateDestroy
       @param {Object} evt The event data.
       @return {undefined} Nothing.
@@ -330,6 +343,8 @@ YUI.add('juju-view-inspector', function(Y) {
     },
     /**
       Keep checkboxes in sync with their textual representation.
+
+      XXX REMOVE ME ONCE BOTH SERVICE INSPECTORS HAVE THEIR OWN SUBCLASSES
 
       @method onCheckboxUpdate
       @param {Y.Event} ev the event from the change triggered.
@@ -398,8 +413,7 @@ YUI.add('juju-view-inspector', function(Y) {
       // Merge the various prototype objects together.  Additionally, merge in
       // mixins that provide functionality used in the inspector's events.
       var c = Y.juju.controller;
-      [c.ghostInspector,
-        c.serviceInspector,
+      [c.serviceInspector,
         ns.exposeButtonMixin]
         .forEach(function(controller) {
             controllerPrototype = Y.mix(controllerPrototype, controller);
