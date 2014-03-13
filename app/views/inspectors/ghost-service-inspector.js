@@ -48,10 +48,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       // ServiceInspectorUtilsExtension
       '.initiate-destroy': {click: '_onInitiateDestroy'},
       '.cancel-destroy': {click: '_onCancelDestroy'},
-      '.destroy-service-trigger span': {click: '_onDestroyClick'},
-      // Used by the config viewlet for keeping the checkbox values
-      // in sync across the slider/checkbox/text representation.
-      '.hidden-checkbox': {change: 'onCheckboxUpdate'}
+      '.destroy-service-trigger span': {click: '_onDestroyClick'}
     },
 
     /**

@@ -78,17 +78,14 @@ YUI.add('juju-view-environment', function(Y) {
       config = config || {};
       // If the user is trying to open the same inspector twice
       if (this.inspector) {
-        // XXX In order to support both the inspector subclass and the old
-        // method. Fix then when the service inspector has been converted
-        // to a inspector subclass.
-        var tmpModel = this.inspector.model ||
-            this.inspector.viewletManager.get('model');
-        if (tmpModel.get('clientId') === model.get('clientId')) {
+        if (this.inspector.get('model').get('clientId') ===
+            model.get('clientId')) {
           return this.inspector;
         }
       }
 
       var db = this.get('db'),
+          env = this.get('env'),
           topo = this.topo,
           charm = db.charms.getById(model.get('charm')),
           inspector = {};
@@ -101,29 +98,29 @@ YUI.add('juju-view-environment', function(Y) {
         // XXX In order to support the events below we need to use the same
         // object structure. Once the Service inspector is converted to
         // an inspector subclass the following events can be fixed.
-        inspector.viewletManager = new Y.juju.views.GhostServiceInspector({
+        inspector = new Y.juju.views.GhostServiceInspector({
           db: db,
           model: model,
-          env: this.get('env'),
+          env: env,
           environment: this,
           charmModel: charm,
           topo: topo,
           store: topo.get('store')
         }).render();
       } else {
-        // Service inspector
-        var combinedConfig = {};
-        var configs = this._generateConfigs(model);
-        combinedConfig = Y.mix(configs.configBase, configs.configService,
-                               true, undefined, 0, true);
-        Y.mix(combinedConfig, config, true, undefined, 0, true);
-        inspector = new views.ServiceInspector(
-            model, combinedConfig);
+        inspector = new Y.juju.views.ServiceInspector({
+          db: db,
+          model: model,
+          env: env,
+          environment: this,
+          enableDatabinding: true,
+          store: topo.get('store')
+        }).render();
       }
 
       // Because the inspector can trigger it's own destruction we need to
       // listen for the event and remove it from the list of open inspectors
-      inspector.viewletManager.after('destroy', function(e) {
+      inspector.after('destroy', function(e) {
         delete this.inspector;
         // We want the service menu to hide when the inspector does.
         // For now, at least, with only one inspector, we can simply close
@@ -137,14 +134,14 @@ YUI.add('juju-view-environment', function(Y) {
       // destroy the inspector and hide the service menu.
       model.on('destroy', function(e) {
         var inspector = this.inspector;
-        if (inspector) { inspector.viewletManager.destroy(); }
+        if (inspector) { inspector.destroy(); }
         this.topo.fire('hideServiceMenu');
       }, this);
 
       // If the inspector (via viewletManager proxy) wants to take over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-          inspector.viewletManager.on(
+          inspector.on(
               'inspectorTakeoverStarting', function(ev) {
                 this.fire('envTakeoverStarting');
               }, this));
@@ -152,71 +149,15 @@ YUI.add('juju-view-environment', function(Y) {
       // If the inspector (via viewletManager proxy) is done taking over the
       // screen, trigger the request up the food chain.
       this.addEvent(
-          inspector.viewletManager.on(
+          inspector.on(
               'inspectorTakeoverEnding', function(ev) {
                 this.fire('envTakeoverEnding');
               }, this));
 
-      if (this.inspector) {
-        this.inspector.viewletManager.destroy();
-      }
+      if (this.inspector) { this.inspector.destroy(); }
 
       this.inspector = inspector;
       return inspector;
-    },
-
-    /**
-      Basic method to return a populated configuration object for all of the
-      different service inspector view types
-
-      @method _generateConfigs
-      @param {Y.Model} model of the service.
-      @return {Object} an object containing the configuration objects.
-    */
-    _generateConfigs: function(model) {
-      var configs = {
-        configBase: {
-          db: this.topo.get('db'),
-          env: this.topo.get('env'),
-          environment: this,
-          store: this.topo.get('store'),
-          events: {
-            '.close-slot': {'click': 'hideSlot'}
-          }
-        },
-        configService: {
-          events: {
-            '.close': {'click': 'destroy'},
-            '.tab': {'click': 'switchTab'}
-          },
-          viewletEvents: {
-            // Viewlet wrapper viewlet.
-            '.charm-url': {click: 'onShowCharmDetails'},
-            '.destroy-service-trigger span': {click: '_onDestroyClick'},
-            '.initiate-destroy': {click: '_onInitiateDestroy'},
-            '.cancel-destroy': {click: '_onCancelDestroy'},
-            '.rerender-config': {click: 'reloadInspector'},
-            // Overview viewlet.
-            'input.expose-toggle': { click: 'toggleExpose' },
-            // Used by the config viewlet for keeping the checkbox values
-            // in sync across the slider/checkbox/text representation.
-            '.hidden-checkbox': {change: 'onCheckboxUpdate'}
-          },
-          viewletList: [
-            'Overview', // Default viewlet first.
-            'charmDetails',
-            'Config',
-            'Constraints',
-            'UnitDetails',
-            'InspectorHeader',
-            'Relations'
-          ],
-          template: Y.juju.views.Templates['service-config-wrapper'],
-          // Define the context for the view manager template.
-          templateConfig: {subordinate: model.get('subordinate')}
-        }
-      };
-      return configs;
     },
 
     /**
@@ -319,7 +260,7 @@ YUI.add('juju-view-environment', function(Y) {
     */
     destroyInspector: function() {
       if (this.inspector) {
-        this.inspector.viewletManager.destroy();
+        this.inspector.destroy();
       }
     },
 
@@ -329,7 +270,7 @@ YUI.add('juju-view-environment', function(Y) {
       @method shrinkInspector
     */
     shrinkInspector: function() {
-      this.inspector.viewletManager.get('container')
+      this.inspector.get('container')
           .one('.viewlet-manager-wrapper')
           .setStyle('max-height', '100px');
     },
@@ -341,7 +282,7 @@ YUI.add('juju-view-environment', function(Y) {
     */
     expandInspector: function() {
       if (this.inspector) {
-        this.inspector.viewletManager.recalculateHeight();
+        this.inspector.recalculateHeight();
       }
     },
 
@@ -381,6 +322,8 @@ YUI.add('juju-view-environment', function(Y) {
     'juju-topology',
     'juju-view-inspector',
     'juju-view-utils',
+    'service-inspector',
+    'ghost-service-inspector',
     'node',
     'view'
   ]

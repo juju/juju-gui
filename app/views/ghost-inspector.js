@@ -73,8 +73,4 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-}, '0.1.0', {
-  requires: [
-    'ghost-service-inspector'
-  ]
-});
+}, '0.1.0');

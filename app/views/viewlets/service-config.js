@@ -40,7 +40,8 @@ YUI.add('service-config-view', function(Y) {
       '.settings-config button.confirm': { click: 'saveConfig'},
       '.settings-config button.cancel': { click: 'cancelConfig'},
       '.config-file .fakebutton': { click: 'handleFileClick'},
-      '.config-file input[type=file]': { change: 'handleFileChange'}
+      '.config-file input[type=file]': { change: 'handleFileChange'},
+      '.hidden-checkbox': { change: 'onCheckboxUpdate'}
     },
     bindings: {
       config: {
@@ -225,6 +226,19 @@ YUI.add('service-config-view', function(Y) {
     */
     cancelConfig: function(e) {
       this.viewletManager.bindingEngine.resetDOMToModel('config');
+    },
+
+    /**
+      Keep checkboxes in sync with their textual representation.
+
+      @method onCheckboxUpdate
+      @param {Y.Event} ev the event from the change triggered.
+
+     */
+    onCheckboxUpdate: function(ev) {
+      var checked = ev.currentTarget.get('checked');
+      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
+                                                                 checked);
     }
   });
 

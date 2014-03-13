@@ -143,19 +143,6 @@ YUI.add('service-inspector-utils-extension', function(Y) {
           level: 'important'
         });
       }
-    },
-
-    /**
-      Keep checkboxes in sync with their textual representation.
-
-      @method onCheckboxUpdate
-      @param {Y.Event} ev the event from the change triggered.
-
-     */
-    onCheckboxUpdate: function(ev) {
-      var checked = ev.currentTarget.get('checked');
-      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
-                                                                 checked);
     }
   };
 

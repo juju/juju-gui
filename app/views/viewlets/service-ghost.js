@@ -38,7 +38,8 @@ YUI.add('service-ghost-view', function(Y) {
     events: {
       '.config-file .fakebutton': { click: 'handleFileClick'},
       '.config-file input[type=file]': { change: 'handleFileChange'},
-      'input#use-default-toggle': {change: 'setDefaultSettings'}
+      'input#use-default-toggle': {change: 'setDefaultSettings'},
+      '.hidden-checkbox': { change: 'onCheckboxUpdate'}
     },
     bindings: {
       config: {
@@ -166,6 +167,19 @@ YUI.add('service-ghost-view', function(Y) {
         textareas.removeAttribute('disabled');
         inputs.removeAttribute('disabled');
       }
+    },
+
+    /**
+      Keep checkboxes in sync with their textual representation.
+
+      @method onCheckboxUpdate
+      @param {Y.Event} ev the event from the change triggered.
+
+     */
+    onCheckboxUpdate: function(ev) {
+      var checked = ev.currentTarget.get('checked');
+      ev.currentTarget.ancestor('.toggle').one('.textvalue').set('text',
+                                                                 checked);
     }
   });
 }, '0.0.1', {
