@@ -19,14 +19,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Ghost Inspector', function() {
 
-  var charmData, cleanIconHelper, conn, container, db, env, inspector, juju,
-      jujuViews, models, service, subordinateCharmData, utils, view, Y;
+  var charmData, cleanIconHelper, conn, container, content, db, env, inspector,
+      juju, jujuViews, models, service, subordinateCharmData, utils, view, Y;
 
   before(function(done) {
     var requires = [
       'juju-gui', 'juju-views', 'juju-tests-utils', 'juju-charm-store',
       'juju-charm-models', 'juju-ghost-inspector', 'event-valuechange',
-      'node-event-simulate'];
+      'ghost-service-inspector', 'juju-templates', 'node-event-simulate'];
     Y = YUI(GlobalConfig).use(requires, function(Y) {
           jujuViews = Y.namespace('juju.views');
           juju = Y.namespace('juju');
@@ -45,6 +45,9 @@ describe('Ghost Inspector', function() {
   beforeEach(function() {
     cleanIconHelper = utils.stubCharmIconPath();
     container = utils.makeContainer(this, 'container');
+    Y.one('body').append(container);
+    content = utils.makeContainer(this, 'content');
+    Y.one('body').append(content);
     conn = new utils.SocketStub();
     db = new models.Database();
     env = juju.newEnvironment({conn: conn});
@@ -55,7 +58,7 @@ describe('Ghost Inspector', function() {
     cleanIconHelper();
     if (view) {
       if (inspector) {
-        delete view.inspector;
+        inspector.destroy();
       }
       view.destroy();
     }
@@ -66,9 +69,7 @@ describe('Ghost Inspector', function() {
   });
 
   var setUpInspector = function(data) {
-    if (!data) {
-      data = charmData;
-    }
+    if (!data) { data = charmData; }
     var charm = new models.Charm(data.charm);
     db.charms.add(charm);
 
@@ -88,18 +89,30 @@ describe('Ghost Inspector', function() {
     });
 
     view.render();
-    Y.Node.create('<div id="content">').appendTo(container);
+    //Y.Node.create('<div id="content">').appendTo(container);
 
     // interval: 0 must be set to test sync data updates else there will be
     // an aprox 150ms delay
-    return view.createServiceInspector(service, {databinding: {interval: 0}});
+    //return view.createServiceInspector(service, {databinding: {interval: 0}});
+
+    inspector = new Y.juju.views.GhostServiceInspector({
+      db: db,
+      model: service,
+      env: env,
+      //environment: this,
+      charmModel: charm,
+      topo: view.topo,
+      store: fakeStore
+    });
+    inspector.render();
+    return inspector;
   };
 
   describe('charm name validity', function() {
     it('shows when a charm name is invalid initially', function() {
       db.services.add({id: 'mediawiki', charm: 'cs:precise/mediawiki'});
       inspector = setUpInspector();
-      var model = inspector.model;
+      var model = inspector.get('model');
       var serviceNameInput = Y.one('input[name=service-name]');
       assert.equal(model.get('displayName'), '(mediawiki)');
       assert.isTrue(serviceNameInput.hasClass('invalid'));
@@ -109,7 +122,7 @@ describe('Ghost Inspector', function() {
     it('shows when a charm name is valid initially', function() {
       db.services.add({id: 'mediawiki42', charm: 'cs:precise/mediawiki'});
       inspector = setUpInspector();
-      var model = inspector.model;
+      var model = inspector.get('model');
       var serviceNameInput = Y.one('input[name=service-name]');
       assert.equal(model.get('displayName'), '(mediawiki)');
       assert.isFalse(serviceNameInput.hasClass('invalid'));
@@ -122,7 +135,7 @@ describe('Ghost Inspector', function() {
       var serviceNameInput = Y.one('input[name=service-name]');
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
-      inspector.viewletManager.views.InspectorHeader.updateGhostName(
+      inspector.views.inspectorHeader.updateGhostName(
           {newVal: 'mediawiki42', currentTarget: serviceNameInput});
       assert.isTrue(serviceNameInput.hasClass('invalid'));
       assert.isFalse(serviceNameInput.hasClass('valid'));
@@ -134,7 +147,7 @@ describe('Ghost Inspector', function() {
       var serviceNameInput = Y.one('input[name=service-name]');
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
-      inspector.viewletManager.views.InspectorHeader.updateGhostName(
+      inspector.views.inspectorHeader.updateGhostName(
           {newVal: 'mediawiki42', currentTarget: serviceNameInput});
       assert.isFalse(serviceNameInput.hasClass('invalid'));
       assert.isTrue(serviceNameInput.hasClass('valid'));
@@ -148,13 +161,15 @@ describe('Ghost Inspector', function() {
       // This is usually fired by an event.  The event simulation is broken as
       // of this writing, and we can do more of a unit test this way.
       serviceNameInput.set('value', newName);
-      inspector.viewletManager.views.InspectorHeader.updateGhostName(
+      inspector.views.inspectorHeader.updateGhostName(
           {newVal: newName, currentTarget: serviceNameInput});
       assert.isTrue(serviceNameInput.hasClass('invalid'));
       assert.isFalse(serviceNameInput.hasClass('valid'));
-      inspector.options.env.deploy = function() {
+      var env = inspector.get('env');
+      env.deploy = function() {
         assert.fail('The method should exit before this function is called.');
       };
+      inspector.set('env', env);
       assert.isFalse(inspector.deployCharm());
     });
   });
@@ -163,15 +178,13 @@ describe('Ghost Inspector', function() {
       function(done) {
         // XXX (Jeff) YUI's simulate can't properly simulate focus or blur in
         // IE10 as of 3.9.1, 3.11 https://github.com/yui/yui3/issues/489
-        if (Y.UA.ie === 10) {
-          done();
-        }
+        if (Y.UA.ie === 10) { done(); }
         inspector = setUpInspector();
         var serviceIcon = Y.one('tspan.name');
         assert.equal(serviceIcon.get('textContent'), '(mediawiki)');
 
         var serviceNameInput = Y.one('input[name=service-name]'),
-            vmContainer = inspector.viewletManager.get('container');
+            vmContainer = inspector.get('container');
         // In order to properly detect the change event of the input we needed
         // to create our own event handler listening for the special Y.View
         // bubbling valuechange (note not valueChange) event.
@@ -188,7 +201,7 @@ describe('Ghost Inspector', function() {
 
   it('displays the charms icon when rendered', function() {
     inspector = setUpInspector();
-    var icon = container.one('.icon img');
+    var icon = content.one('.icon img');
 
     // The icon url is from the fakestore we manually defined.
     assert.equal(icon.getAttribute('src'), '/icon/cs:precise/mediawiki-8');
@@ -197,7 +210,7 @@ describe('Ghost Inspector', function() {
   it('deploys a service with the specified unit count & config', function() {
     inspector = setUpInspector();
     env.connect();
-    var vmContainer = inspector.viewletManager.get('container'),
+    var vmContainer = inspector.get('container'),
         numUnits = 10;
 
     vmContainer.one('input[name=number-units]').set('value', numUnits);
@@ -217,21 +230,8 @@ describe('Ghost Inspector', function() {
 
   it('does not display unit count for subordinate charms', function() {
     inspector = setUpInspector(subordinateCharmData);
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
     assert.strictEqual(vmContainer.all('input[name=number-units]').size(), 0);
-  });
-
-  it('presents the contraints to the user in python env', function() {
-    // Create our own env to make sure we know which backend we're creating it
-    // against.
-    env.destroy();
-    env = juju.newEnvironment({conn: conn}, 'python');
-    inspector = setUpInspector();
-    var constraintsNode = container.all('.service-constraints');
-    assert.equal(constraintsNode.size(), 1);
-
-    var inputNodes = container.all('.service-constraints input');
-    assert.equal(inputNodes.size(), 3);
   });
 
   it('presents the contraints to the user in go env', function() {
@@ -240,10 +240,10 @@ describe('Ghost Inspector', function() {
     env.destroy();
     env = juju.newEnvironment({conn: conn}, 'go');
     inspector = setUpInspector();
-    var constraintsNode = container.all('.service-constraints');
+    var constraintsNode = content.all('.service-constraints');
     assert.equal(constraintsNode.size(), 1);
 
-    var inputNodes = container.all('.service-constraints input');
+    var inputNodes = content.all('.service-constraints input');
     assert.equal(inputNodes.size(), 4);
   });
 
@@ -252,27 +252,12 @@ describe('Ghost Inspector', function() {
     assert.strictEqual(container.all('.service-constraints').size(), 0);
   });
 
-  it('deploys with constraints in python env', function() {
-    env.destroy();
-    env = juju.newEnvironment({conn: conn}, 'python');
-    inspector = setUpInspector();
-    env.connect();
-    var vmContainer = inspector.viewletManager.get('container');
-
-    vmContainer.one('input[name=cpu]').set('value', 2);
-    // Called the deploy button, but the css if confirm.
-    vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
-
-    var message = env.ws.last_message();
-    assert.deepEqual(message.constraints, ['cpu=2', 'mem=', 'arch=']);
-  });
-
   it('deploys with constraints in go env', function() {
     env.destroy();
     env = juju.newEnvironment({conn: conn}, 'go');
     inspector = setUpInspector();
     env.connect();
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
 
     vmContainer.one('input[name=cpu-power]').set('value', 2);
     // Called the deploy button, but the css if confirm.
@@ -285,7 +270,7 @@ describe('Ghost Inspector', function() {
   it('deploys with zero units if the charm is a subordinate', function() {
     inspector = setUpInspector(subordinateCharmData);
     env.connect();
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
     vmContainer.one('.viewlet-manager-footer button.confirm').simulate('click');
     var message = env.ws.last_message();
     assert.strictEqual(message.Params.NumUnits, 0);
@@ -312,7 +297,7 @@ describe('Ghost Inspector', function() {
           });
         }
         inspector = setUpInspector();
-        var vmContainer = inspector.viewletManager.get('container');
+        var vmContainer = inspector.get('container');
         // 'use default config' should be on set by default
         var toggle = vmContainer.one('input#use-default-toggle');
         assert.equal(toggle.hasAttribute('checked'), true,
@@ -342,9 +327,9 @@ describe('Ghost Inspector', function() {
     if (Y.UA.ie === 10) { done(); }
 
     inspector = setUpInspector();
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
     var nameInput = vmContainer.one('input[name=service-name]');
-    var model = inspector.model;
+    var model = inspector.get('model');
     var serviceIcon = Y.one('tspan.name');
 
     assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
@@ -372,9 +357,9 @@ describe('Ghost Inspector', function() {
     if (Y.UA.ie === 10) { done(); }
 
     inspector = setUpInspector();
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
     var nameInput = vmContainer.one('input[name=service-name]');
-    var model = inspector.model;
+    var model = inspector.get('model');
     var serviceIcon = Y.one('tspan.name');
 
     assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
@@ -398,8 +383,8 @@ describe('Ghost Inspector', function() {
 
   it('renders into the dom when instantiated', function() {
     inspector = setUpInspector();
-    assert.isObject(container.one('.view-content'));
-
+    assert.isObject(content.one('.view-content'));
+    container = inspector.get('container');
     // Basic sanity checks of the rendering.
     // The debug checkbox must start out disabled.
     assert(
@@ -416,6 +401,7 @@ describe('Ghost Inspector', function() {
 
   it('syncs checkbox state with the visible ui', function() {
     inspector = setUpInspector();
+    container = inspector.get('container');
     assert.isObject(container.one('.view-content'));
     // We need to enable the checkboxes before we can test them because
     // disabled checkboxes fire no events.
@@ -442,6 +428,7 @@ describe('Ghost Inspector', function() {
     // Mutate charmData before the render.
     delete charmData.charm.options;
     inspector = setUpInspector();
+    container = inspector.get('container');
     // Verify the viewlet rendered, previously it would raise.
     assert.isObject(container.one('.view-content'));
     // Restore the test global
@@ -452,9 +439,9 @@ describe('Ghost Inspector', function() {
     inspector = setUpInspector();
     var fileContents = 'yaml yaml yaml';
 
-    inspector.viewletManager.views.GhostConfig
+    inspector.views.ghostConfig
              .onFileLoaded('a.yaml', {target: {result: fileContents}});
-    inspector.viewletManager.configFileContent.should.equal(fileContents);
+    inspector.configFileContent.should.equal(fileContents);
     var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
       node.getStyle('display').should.equal('none');
@@ -463,17 +450,18 @@ describe('Ghost Inspector', function() {
 
   it('must restore file input when config is removed', function() {
     inspector = setUpInspector();
+    container = inspector.get('container');
     var fileContents = 'yaml yaml yaml';
 
-    inspector.viewletManager.views.GhostConfig
+    inspector.views.ghostConfig
              .onFileLoaded('a.yaml', {target: {result: fileContents}});
-    inspector.viewletManager.configFileContent.should.equal(fileContents);
+    inspector.configFileContent.should.equal(fileContents);
     var settings = container.all('.charm-settings, .settings-wrapper.toggle');
     settings.each(function(node) {
       node.getStyle('display').should.equal('none');
     });
     // Load the file.
-    inspector.viewletManager.views.GhostConfig
+    inspector.views.ghostConfig
              .onFileLoaded('a.yaml', {target: {result: fileContents}});
 
     // And then click to remove it.
@@ -481,7 +469,7 @@ describe('Ghost Inspector', function() {
 
     // The content should be gone now.
     assert.equal(
-        inspector.viewletManager.configFileContent,
+        inspector.configFileContent,
         undefined);
     assert.equal(
         container.one('.config-file input').get('files').size(),
@@ -498,6 +486,7 @@ describe('Ghost Inspector', function() {
         received_config_raw;
 
     inspector = setUpInspector();
+    container = inspector.get('container');
     var env = view.get('env');
     env.deploy = function(charm_url, service_name, config, config_raw) {
       received_config = config;
@@ -505,7 +494,7 @@ describe('Ghost Inspector', function() {
     };
 
     var config_raw = 'admins: \n user:pass';
-    inspector.viewletManager.views.GhostConfig
+    inspector.views.ghostConfig
              .onFileLoaded('a.yaml', {target: {result: config_raw}});
 
     container.one('.confirm').simulate('click');
@@ -518,12 +507,14 @@ describe('Ghost Inspector', function() {
   describe('Service destroy UI', function() {
     it('has a button to destroy the service', function() {
       inspector = setUpInspector();
-      assert.isObject(container.one('.destroy-service-trigger span'));
+      container = inspector.get('container');
+      assert.notEqual(container.one('.destroy-service-trigger span'), null);
     });
 
     it('shows the destroy service prompt if the trigger is clicked',
         function() {
           inspector = setUpInspector();
+          container = inspector.get('container');
           var promptBox = container.one('.destroy-service-prompt');
           assert.isTrue(promptBox.hasClass('closed'));
           container.one('.destroy-service-trigger span').simulate('click');
@@ -532,6 +523,7 @@ describe('Ghost Inspector', function() {
 
     it('hides the destroy service prompt if cancel is clicked', function() {
       inspector = setUpInspector();
+      container = inspector.get('container');
       var promptBox = container.one('.destroy-service-prompt');
       assert.isTrue(promptBox.hasClass('closed'));
       // First we have to open the prompt.
@@ -545,6 +537,7 @@ describe('Ghost Inspector', function() {
     it('initiates a destroy if the "Destroy" button is clicked',
         function(done) {
           inspector = setUpInspector();
+          container = inspector.get('container');
           var promptBox = container.one('.destroy-service-prompt');
           // First we have to open the prompt.
           container.one('.destroy-service-trigger span').simulate('click');
@@ -558,13 +551,11 @@ describe('Ghost Inspector', function() {
         });
 
     it('wires up UI elements to handlers for destroy service', function() {
-      // There are UI elements and they all have to be wired up to something.
-      inspector = setUpInspector();
-      var events = inspector.viewletManager.events;
+      var events = Y.juju.views.GhostServiceInspector.prototype.events;
       assert.equal(
-          typeof events['.destroy-service-trigger span'].click, 'function');
-      assert.equal(typeof events['.initiate-destroy'].click, 'function');
-      assert.equal(typeof events['.cancel-destroy'].click, 'function');
+          typeof events['.destroy-service-trigger span'].click, 'string');
+      assert.equal(typeof events['.initiate-destroy'].click, 'string');
+      assert.equal(typeof events['.cancel-destroy'].click, 'string');
     });
   });
 
