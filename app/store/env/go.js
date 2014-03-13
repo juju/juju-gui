@@ -142,6 +142,16 @@ YUI.add('juju-env-go', function(Y) {
     integerConstraints: ['cpu-power', 'cpu-cores', 'mem'],
 
     /**
+      A list of valid Ubuntu series.
+
+      @property series
+      @default all series since precise through current pre-release series.
+        To be updated as necessary.
+      @type {Array}
+    */
+    series: ['precise', 'quantal', 'raring', 'saucy', 'trusty'],
+
+    /**
      * Go environment constructor.
      *
      * @method initializer
