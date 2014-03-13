@@ -423,16 +423,12 @@ ci-check: check
 	JUJU_GUI_TEST_BROWSER="chrome" make test-browser
 	echo "Starting tests against IE"
 	JUJU_GUI_TEST_BROWSER="ie" make test-browser
-	echo "Starting tests against Safari"
-	JUJU_GUI_TEST_BROWSER="safari" make test-browser
 	echo "Starting unit tests against Firefox"
 	JUJU_GUI_TEST_BROWSER="firefox" make test-browser-mocha
 	echo "Starting unit tests against Chrome"
 	JUJU_GUI_TEST_BROWSER="chrome" make test-browser-mocha
 	echo "Starting unit tests against IE"
 	JUJU_GUI_TEST_BROWSER="ie" make test-browser-mocha
-	echo "Starting unit tests against Safari"
-	JUJU_GUI_TEST_BROWSER="safari" make test-browser-mocha
 
 
 test/extracted_startup_code: app/index.html
