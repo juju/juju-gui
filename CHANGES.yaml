@@ -20,7 +20,7 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-# - unreleased:
+- unreleased:
 - 1.0.1:
     - >
       Local charms may now be upgraded by dragging another zip file with the
