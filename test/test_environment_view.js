@@ -1279,7 +1279,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.on('envTakeoverStarting', function(ev) {
             done();
           });
-          view.inspector.viewletManager.fire('inspectorTakeoverStarting');
+          view.inspector.fire('inspectorTakeoverStarting');
         });
 
     it('fires an envTakeover stop event when it gets an inspector version',
@@ -1288,7 +1288,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           view.on('envTakeoverEnding', function(ev) {
             done();
           });
-          view.inspector.viewletManager.fire('inspectorTakeoverEnding');
+          view.inspector.fire('inspectorTakeoverEnding');
         });
 
   });

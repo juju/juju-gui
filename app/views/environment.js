@@ -108,14 +108,16 @@ YUI.add('juju-view-environment', function(Y) {
           store: topo.get('store')
         }).render();
       } else {
-        inspector = new Y.juju.views.ServiceInspector({
+        var inspectorConfig = Y.mix({
           db: db,
           model: model,
           env: env,
           environment: this,
           enableDatabinding: true,
+          topo: topo,
           store: topo.get('store')
-        }).render();
+        }, config, true);
+        inspector = new Y.juju.views.ServiceInspector(inspectorConfig).render();
       }
 
       // Because the inspector can trigger it's own destruction we need to
@@ -320,7 +322,6 @@ YUI.add('juju-view-environment', function(Y) {
     'juju-models',
     'juju-templates',
     'juju-topology',
-    'juju-view-inspector',
     'juju-view-utils',
     'service-inspector',
     'ghost-service-inspector',

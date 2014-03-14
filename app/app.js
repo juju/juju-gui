@@ -1613,7 +1613,7 @@ YUI.add('juju-gui', function(Y) {
     'model-controller',
     'FileSaver',
     'juju-inspector-widget',
-    'juju-ghost-inspector',
+    'ghost-deployer-extension',
     'juju-view-bundle',
     'help-dropdown',
     'local-charm-import-helpers'

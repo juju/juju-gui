@@ -139,12 +139,12 @@ describe('Inspector Overview', function() {
 
   it('is created with the proper template context', function() {
     inspector = setUpInspector();
-    assert.deepEqual(inspector.options.templateConfig, {subordinate: false});
+    assert.deepEqual(inspector.templateConfig, {});
   });
 
   it('is created with the proper template context if subordinate', function() {
     inspector = setUpInspector({subordinate: true});
-    assert.deepEqual(inspector.options.templateConfig, {subordinate: true});
+    assert.deepEqual(inspector.templateConfig, {subordinate: true});
   });
 
   it('should show the proper icon based off the charm model', function() {
@@ -281,7 +281,7 @@ describe('Inspector Overview', function() {
 
   it('generates a proper statuses object', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview;
+        overview = inspector.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -342,7 +342,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview;
+        overview = inspector.views.overview;
 
     var units = new Y.LazyModelList();
 
@@ -403,7 +403,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no update)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview;
+        overview = inspector.views.overview;
 
     // Clear the service upgrade information.
     service.set('upgrade_available', false);
@@ -467,7 +467,7 @@ describe('Inspector Overview', function() {
 
   it('can generate service update statuses (no downgrades)', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview;
+        overview = inspector.views.overview;
 
     // Clear the service upgrade information.
     service.set('charm', 'cs:precise/mysql-1');
@@ -592,7 +592,7 @@ describe('Inspector Overview', function() {
     };
 
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview;
+        overview = inspector.views.overview;
 
     Y.Object.each(outputInput, function(value, key, obj) {
       assert.equal(overview.categoryName(value), key);
@@ -601,7 +601,7 @@ describe('Inspector Overview', function() {
 
   it('generates the unit list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview,
+        overview = inspector.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -689,7 +689,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when reboot section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview,
+        overview = inspector.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -733,7 +733,7 @@ describe('Inspector Overview', function() {
 
   it('updates the Landscape link when upgrade section is revealed', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview,
+        overview = inspector.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -777,7 +777,7 @@ describe('Inspector Overview', function() {
 
   it('generates the service list data bound elements', function() {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview,
+        overview = inspector.views.overview,
         newContainer = utils.makeContainer(this);
 
     var units = new Y.LazyModelList();
@@ -854,8 +854,8 @@ describe('Inspector Overview', function() {
 
   it('attempts to upgrade on click', function(done) {
     var inspector = setUpInspector(),
-        overview = inspector.viewletManager.views.Overview,
-        newContainer = inspector.viewletManager.get('container');
+        overview = inspector.views.overview,
+        newContainer = inspector.get('container');
 
     // Ensure that get_charm is called to get the new charm.
     env.setCharm = function(serviceName, upgradeTo, force, callback) {
@@ -877,7 +877,7 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service was upgraded', function(done) {
     var inspector = setUpInspector();
-    var newContainer = inspector.viewletManager.views.InspectorHeader
+    var newContainer = inspector.views.inspectorHeader
       .get('container');
     var unitId = 'mediawiki/1';
 
@@ -893,7 +893,7 @@ describe('Inspector Overview', function() {
     assert.isTrue(service.get('charmChanged'));
     assert.isFalse(
         newContainer.one('[data-bind=charmChanged]').hasClass('hidden'));
-    inspector.viewletManager.get('environment')
+    inspector.get('environment')
       .createServiceInspector = function(model, attrs) {
           assert.isFalse(model.get('charmChanged'));
           done();
@@ -903,8 +903,8 @@ describe('Inspector Overview', function() {
 
   it('reflects that a service is dying', function() {
     var inspector = setUpInspector();
-    var views = inspector.viewletManager.views;
-    var newContainer = views.InspectorHeader.get('container');
+    var views = inspector.views;
+    var newContainer = views.inspectorHeader.get('container');
     var service = db.services.getById('mediawiki');
     // The service is considered to be alive by default.
     assert.strictEqual(service.get('life'), 'alive');
@@ -921,7 +921,7 @@ describe('Inspector Overview', function() {
     assert.isFalse(service.get('exposed'));
     assert.isFalse(exposeCalled);
     assert.isFalse(unexposeCalled);
-    var vmContainer = inspector.viewletManager.get('container');
+    var vmContainer = inspector.get('container');
     var expose = vmContainer.one('label[for=expose-toggle]');
     expose.simulate('click');
     assert.isTrue(service.get('exposed'));
@@ -951,7 +951,7 @@ describe('Inspector Overview', function() {
         }]
       ]}});
 
-      var mgrContainer = inspector.viewletManager.get('container');
+      var mgrContainer = inspector.get('container');
       var retryButton = mgrContainer.one('button.unit-action-button.resolve');
       var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
 
@@ -985,7 +985,7 @@ describe('Inspector Overview', function() {
         }]
       ]}});
 
-      var mgrContainer = inspector.viewletManager.get('container');
+      var mgrContainer = inspector.get('container');
       var retryButton = mgrContainer.one('button.unit-action-button.retry');
       var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
 
@@ -1015,7 +1015,7 @@ describe('Inspector Overview', function() {
         ['unit', 'add', {id: unitId, agent_state: 'error'}]
       ]}});
 
-      var mgrContainer = inspector.viewletManager.get('container');
+      var mgrContainer = inspector.get('container');
       var removeButton = mgrContainer.one('button.unit-action-button.remove');
       var unit = mgrContainer.one('input[type=checkbox][name=' + unitId + ']');
 
@@ -1045,7 +1045,7 @@ describe('Inspector Overview', function() {
         'running': {remove: true},
         'landscape': {landscape: true}
       };
-      var overview = inspector.viewletManager.views.Overview;
+      var overview = inspector.views.overview;
       Y.Object.each(buttons, function(results, category) {
         var buttonList = overview.generateActionButtonList(category);
         assert.deepEqual(buttonList, results);
@@ -1066,7 +1066,7 @@ describe('Inspector Overview', function() {
           }
         }
       };
-      inspector.viewletManager.set('db', {
+      inspector.set('db', {
         services: {
           getById: function() {return db.services.getById('mediawiki');}
         },
@@ -1075,7 +1075,7 @@ describe('Inspector Overview', function() {
         }
       });
 
-      inspector.viewletManager.views.Overview.showUnitDetails(fauxEvent);
+      inspector.views.overview.showUnitDetails(fauxEvent);
     });
 
     it('onShowCharmDetails fires inspectorTakeoverStarting', function() {
@@ -1089,7 +1089,7 @@ describe('Inspector Overview', function() {
           }
         }
       };
-      inspector.viewletManager.set('db', {
+      inspector.set('db', {
         charms: {
           getById: function(id) {return db.charms.getById(id);}
         }

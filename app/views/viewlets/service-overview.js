@@ -910,7 +910,7 @@ YUI.add('inspector-overview-view', function(Y) {
       var unitName = ev.currentTarget.getData('unit');
       var service = db.services.getById(unitName.split('/')[0]);
       var unit = service.get('units').getById(unitName);
-      this.viewletManager.showViewlet('UnitDetails', unit);
+      this.viewletManager.showViewlet('unitDetails', unit);
       this.viewletManager.fire('inspectorTakeoverStarting');
     },
 

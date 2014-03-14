@@ -61,6 +61,17 @@ YUI.add('service-inspector', function(Y) {
     },
 
     /**
+      UI setup method for the inspector subclass.
+
+      @method setupUI
+    */
+    setupUI: function() {
+      if (this.get('model').get('subordinate')) {
+        this.templateConfig = { subordinate: true };
+      }
+    },
+
+    /**
       Render method for the inspector subclasses.
 
       @method renderUI
@@ -217,6 +228,13 @@ YUI.add('service-inspector', function(Y) {
     'inspector-base',
     'juju-templates',
     'juju-models',
-    'service-inspector-utils-extension'
+    'service-inspector-utils-extension',
+    'inspector-overview-view',
+    'charm-details-view',
+    'service-config-view',
+    'service-constraints-view',
+    'unit-details-view',
+    'inspector-header-view',
+    'service-relations-view'
   ]
 });

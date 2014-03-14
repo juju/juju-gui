@@ -203,6 +203,8 @@ YUI.add('ghost-service-inspector', function(Y) {
     'inspector-base',
     'juju-templates',
     'juju-models',
+    'service-ghost-view',
+    'inspector-header-view',
     'service-inspector-utils-extension'
   ]
 });
