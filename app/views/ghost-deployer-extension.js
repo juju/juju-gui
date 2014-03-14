@@ -26,13 +26,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   @submodule views.ghostInspector
  */
 
-YUI.add('juju-ghost-inspector', function(Y) {
-
-  var juju = Y.juju,
-      views = juju.views,
-      Templates = views.Templates,
-      models = juju.models,
-      utils = views.utils;
+YUI.add('ghost-deployer-extension', function(Y) {
 
   /**
     JujuGUI app extension to add the ghost deployer method.
@@ -73,8 +67,4 @@ YUI.add('juju-ghost-inspector', function(Y) {
 
   Y.namespace('juju').GhostDeployer = GhostDeployer;
 
-}, '0.1.0', {
-  requires: [
-    'ghost-service-inspector'
-  ]
-});
+}, '0.1.0');

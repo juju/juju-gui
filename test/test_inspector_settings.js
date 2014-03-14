@@ -110,7 +110,7 @@ describe('Inspector Settings', function() {
 
   // Retrieve and return the config viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.views.Config;
+    return inspector.views.config;
   };
 
   // Change the value of the given key in the constraints form.
@@ -120,7 +120,7 @@ describe('Inspector Settings', function() {
     var node = viewlet.get('container').one(selector);
     node.set('value', value);
     // Trigger bindingEngine to notice change.
-    var bindingEngine = inspector.viewletManager.bindingEngine;
+    var bindingEngine = inspector.bindingEngine;
     bindingEngine._nodeChanged(node, viewlet);
     return node;
   };
@@ -210,11 +210,11 @@ describe('Inspector Settings', function() {
   it('wires up UI elements to handlers for service inspector', function() {
     // There are UI elements and they all have to be wired up to something.
     inspector = setUpInspector();
-    var events = inspector.viewletManager.events;
+    var events = inspector.constructor.prototype.events;
     assert.equal(
-        typeof events['.destroy-service-trigger span'].click, 'function');
-    assert.equal(typeof events['.initiate-destroy'].click, 'function');
-    assert.equal(typeof events['.cancel-destroy'].click, 'function');
+        typeof events['.destroy-service-trigger span'].click, 'string');
+    assert.equal(typeof events['.initiate-destroy'].click, 'string');
+    assert.equal(typeof events['.cancel-destroy'].click, 'string');
   });
 
   it('responds to service removal failure by alerting the user', function() {
@@ -253,15 +253,15 @@ describe('Inspector Settings', function() {
   it('saves changes to settings values', function() {
     inspector = setUpInspector();
     env.connect();
-    var vmContainer = inspector.viewletManager.get('container'),
+    var vmContainer = inspector.get('container'),
         input = vmContainer.one('textarea[name=admins]'),
         button = vmContainer.one('.configuration-buttons .confirm');
 
     assert.equal(db.services.item(0).get('config').admins, '');
     input.set('value', 'foo');
     // Force the databinding to notice the change in-line.
-    inspector.viewletManager.bindingEngine._nodeChanged(
-        input, inspector.viewletManager.views.Config);
+    inspector.bindingEngine._nodeChanged(
+        input, inspector.views.config);
     button.simulate('click');
     var message = env.ws.last_message();
     assert.equal('foo', message.Params.Options.admins);
@@ -279,7 +279,7 @@ describe('Inspector Settings', function() {
     var node = viewlet.get('container')
                       .one('textarea[data-bind="config.admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
-    inspector.model.set('config', {admins: 'g:s'});
+    inspector.get('model').set('config', {admins: 'g:s'});
     changeForm(viewlet, 'admins', 'k:t');
     assert.equal(
         parentNode.all('.modified').size(),
@@ -305,7 +305,7 @@ describe('Inspector Settings', function() {
     var node = viewlet.get('container').one('textarea[name="admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'admins', 'k:t');
-    inspector.model.set('config', {admins: 'g:s'});
+    inspector.get('model').set('config', {admins: 'g:s'});
     assert.equal(
         parentNode.all('[name=admins].conflict-pending').size(),
         1,
@@ -333,7 +333,7 @@ describe('Inspector Settings', function() {
     var node = viewlet.get('container').one('textarea[name="admins"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'admins', 'k:t');
-    inspector.model.set('config', {admins: 'g:s'});
+    inspector.get('model').set('config', {admins: 'g:s'});
     node.simulate('click');
     assert.equal(
         parentNode.all('[name=admins].conflict').size(),

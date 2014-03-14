@@ -62,7 +62,7 @@ YUI.add('service-constraints-view', function(Y) {
     */
     saveConstraints: function(ev) {
       var inspector = this.viewletManager;
-      var container = inspector.views.Constraints.get('container');
+      var container = inspector.views.constraints.get('container');
       var env = inspector.get('env');
       var service = inspector.get('model');
       // Retrieve constraint values.

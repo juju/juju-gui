@@ -257,10 +257,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/environment.js'
         },
 
-        'juju-view-inspector': {
-          fullpath: '/juju-ui/views/inspector.js'
-        },
-
         'juju-view-login': {
           fullpath: '/juju-ui/views/login.js'
         },
@@ -277,8 +273,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/viewlet-manager.js'
         },
 
-        'juju-ghost-inspector': {
-          fullpath: '/juju-ui/views/ghost-inspector.js'
+        'ghost-deployer-extension': {
+          fullpath: '/juju-ui/views/ghost-deployer-extension.js'
         },
 
         'juju-views': {
@@ -311,6 +307,10 @@ var GlobalConfig = {
 
         'ghost-service-inspector': {
           fullpath: '/juju-ui/views/inspectors/ghost-service-inspector.js'
+        },
+
+        'service-inspector': {
+          fullpath: '/juju-ui/views/inspectors/service-inspector.js'
         },
 
         // Viewlet views

@@ -53,7 +53,7 @@ describe('Inspector Constraints', function() {
 
   // Retrieve and return the constraints viewlet.
   var getViewlet = function(inspector) {
-    return inspector.viewletManager.views.Constraints;
+    return inspector.views.constraints;
   };
 
   // Change the value of the given key in the constraints form.
@@ -63,7 +63,7 @@ describe('Inspector Constraints', function() {
     var node = viewlet.get('container').one(selector);
     node.set('value', value);
     // Trigger bindingEngine to notice change.
-    var bindingEngine = inspector.viewletManager.bindingEngine;
+    var bindingEngine = inspector.bindingEngine;
     bindingEngine._nodeChanged(node, viewlet);
     return node;
   };
@@ -121,7 +121,7 @@ describe('Inspector Constraints', function() {
   });
 
   it('renders the values as empty strings when undefined', function() {
-    inspector.model.set('constraints', {});
+    inspector.get('model').set('constraints', {});
     Y.Array.each(env.genericConstraints, function(key) {
       var node = container.one('input[name=' + key + '].constraint-field');
       assert.strictEqual('', node.get('value'));
@@ -140,7 +140,7 @@ describe('Inspector Constraints', function() {
 
   it('renders initial service constraints', function() {
     var constraints = {arch: 'lcars', cpu: 'quantum'};
-    inspector.model.set('constraints', constraints);
+    inspector.get('model').set('constraints', constraints);
     inspector.render();
     Y.Object.each(constraints, function(value, key) {
       var node = container.one('input[name=' + key + '].constraint-field');
@@ -176,14 +176,14 @@ describe('Inspector Constraints', function() {
   it('handles error responses from the environment', function() {
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
-    env.ws.msg(makeResponse(inspector.model, true));
-    var db = inspector.viewletManager.get('db');
+    env.ws.msg(makeResponse(inspector.get('model'), true));
+    var db = inspector.get('db');
     // An error response generates a notification.
     assert.strictEqual(1, db.notifications.size());
     var msg = db.notifications.item(0);
     assert.strictEqual('error', msg.get('level'));
     assert.strictEqual('Error setting service constraints', msg.get('title'));
-    var serviceName = inspector.model.get('id');
+    var serviceName = inspector.get('model').get('id');
     assert.strictEqual('Service name: ' + serviceName, msg.get('message'));
   });
 
@@ -192,7 +192,7 @@ describe('Inspector Constraints', function() {
     changeForm(viewlet, 'arch', 'i386');
     var saveButton = container.one('button.save-constraints');
     saveButton.simulate('click');
-    env.ws.msg(makeResponse(inspector.model, false));
+    env.ws.msg(makeResponse(inspector.get('model'), false));
     var input = container.one('input[name=arch].constraint-field');
     assert.isTrue(input.hasClass('change-saved'));
   });
@@ -202,7 +202,7 @@ describe('Inspector Constraints', function() {
     assert.isFalse(saveButton.get('disabled'));
     saveButton.simulate('click');
     assert.isTrue(saveButton.get('disabled'));
-    env.ws.msg(makeResponse(inspector.model));
+    env.ws.msg(makeResponse(inspector.get('model')));
     assert.isFalse(saveButton.get('disabled'));
   });
 
@@ -213,7 +213,7 @@ describe('Inspector Constraints', function() {
     var saveButton = container.one('button.save-constraints');
     assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
-    env.ws.msg(makeResponse(inspector.model, false));
+    env.ws.msg(makeResponse(inspector.get('model'), false));
     assert.lengthOf(
         Object.keys(viewlet.changedValues),
         0,
@@ -241,14 +241,14 @@ describe('Inspector Constraints', function() {
     var saveButton = container.one('button.save-constraints');
     assert.equal(saveButton.getHTML(), 'Confirm');
     saveButton.simulate('click');
-    env.ws.msg(makeResponse(inspector.model, false));
+    env.ws.msg(makeResponse(inspector.get('model'), false));
     assert.isTrue(controls.hasClass('closed'));
   });
 
   it('handles conflicts correctly', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
-    inspector.model.set('constraints', {arch: 'lcars'});
+    inspector.get('model').set('constraints', {arch: 'lcars'});
     var node = viewlet.get('container')
                       .one('input[data-bind="constraints.arch"]');
     node.simulate('click');
@@ -260,9 +260,9 @@ describe('Inspector Constraints', function() {
   it('handles successive conflicts correctly', function() {
     var viewlet = getViewlet(inspector);
     changeForm(viewlet, 'arch', 'i386');
-    inspector.model.set('constraints', {arch: 'lcars'});
+    inspector.get('model').set('constraints', {arch: 'lcars'});
     // This is the successive change.
-    inspector.model.set('constraints', {arch: 'arm64'});
+    inspector.get('model').set('constraints', {arch: 'arm64'});
     var node = viewlet.get('container')
                       .one('input[data-bind="constraints.arch"]');
     node.simulate('click');
@@ -277,7 +277,7 @@ describe('Inspector Constraints', function() {
     var node = viewlet.get('container')
                       .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
-    inspector.model.set('constraints', {arch: 'lcars'});
+    inspector.get('model').set('constraints', {arch: 'lcars'});
     changeForm(viewlet, 'arch', 'i386');
     assert.equal(
         parentNode.all('.modified').size(),
@@ -302,7 +302,7 @@ describe('Inspector Constraints', function() {
                       .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'arch', 'i386');
-    inspector.model.set('constraints', {arch: 'lcars'});
+    inspector.get('model').set('constraints', {arch: 'lcars'});
     assert.equal(
         parentNode.all('.conflict-pending').size(),
         1,
@@ -329,7 +329,7 @@ describe('Inspector Constraints', function() {
                       .one('input[data-bind="constraints.arch"]');
     var parentNode = node.ancestor('.settings-wrapper');
     changeForm(viewlet, 'arch', 'i386');
-    inspector.model.set('constraints', {arch: 'lcars'});
+    inspector.get('model').set('constraints', {arch: 'lcars'});
     node.simulate('click');
     assert.equal(
         parentNode.all('input.conflict').size(),
