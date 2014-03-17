@@ -660,7 +660,6 @@ describe('service module events', function() {
   });
 
   it('_showUpgradeOrNewInspector: shows the inspector', function() {
-    var InspectorStub, renderStub;
     var dbObj = { db: 'db' };
     var fileObj = { name: 'foo' };
     var envObj = { env: 'env' };

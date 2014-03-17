@@ -74,15 +74,15 @@ describe('local-new-upgrade-inspector', function() {
   });
 
   it('sets services, file, env, db, attributes on the localNewUpgrade view',
-    function() {
-      // Need to call render for it to hit the setupUI cycle
-      lnui.render();
-      var lnuv = lnui.views.localNewUpgrade;
-      assert.deepEqual(lnuv.get('services'), services);
-      assert.deepEqual(lnuv.get('file'), fileObj);
-      assert.deepEqual(lnuv.get('env'), envObj);
-      assert.deepEqual(lnuv.get('db'), dbObj);
-    }
+     function() {
+       // Need to call render for it to hit the setupUI cycle
+       lnui.render();
+       var lnuv = lnui.views.localNewUpgrade;
+       assert.deepEqual(lnuv.get('services'), services);
+       assert.deepEqual(lnuv.get('file'), fileObj);
+       assert.deepEqual(lnuv.get('env'), envObj);
+       assert.deepEqual(lnuv.get('db'), dbObj);
+     }
   );
 
 });
