@@ -53,9 +53,33 @@ YUI.add('local-new-upgrade-inspector', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+        A collection of services raw attribute objects
+
+        @attribute services
+        @type {Array}
+      */
       services: {},
+      /**
+        The file object that was dropped on the canvas.
+
+        @attribute file
+        @type {Object}
+      */
       file: {},
+      /**
+        Reference to the applications env object.
+
+        @attribute env
+        @type {Object}
+      */
       env: {},
+      /**
+        Reference to the applications db object
+
+        @attribute db
+        @type {Object}
+      */
       db: {}
     }
   });

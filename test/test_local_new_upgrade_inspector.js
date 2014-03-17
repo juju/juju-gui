@@ -61,7 +61,8 @@ describe('local-new-upgrade-inspector', function() {
 
   it('shows the requestSeries and localNewUpgrade views', function() {
     lnui.render();
-    assert.notEqual(container.one('.view-content'), null);
+    assert.notEqual(container.one('#defaultSeries'), null);
+    assert.notEqual(container.one('.upgrade-services-toggle'), null);
   });
 
   it('sets file, env, db, attributes on the requestSeries view', function() {

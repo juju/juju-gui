@@ -54,7 +54,7 @@ describe('request-series-inspector', function() {
 
   it('can be rendered', function() {
     rsi.render();
-    assert.notEqual(container.one('.viewlet-container'), null);
+    assert.notEqual(container.one('#defaultSeries'), null);
   });
 
   it('shows the requestSeries view', function() {
