@@ -120,7 +120,15 @@ YUI.add('ghost-service-inspector', function(Y) {
       var constraints = utils.getElementsValuesMapping(
           container, '.constraint-field');
 
-      this.get('env').deploy(
+      var deployMethod;
+      if (window.flags.ecs) {
+        var ecs = this.get('ecs');
+        deployMethod = ecs.deploy.bind(ecs);
+      } else {
+        deployMethod = this.get('env').deploy;
+      }
+
+      deployMethod(
           model.get('charm'),
           serviceName,
           config,
