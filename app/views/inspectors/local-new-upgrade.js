@@ -19,16 +19,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-YUI.add('request-series-inspector', function(Y) {
+YUI.add('local-new-upgrade-inspector', function(Y) {
   var ns = Y.namespace('juju.views'),
       viewlets = Y.namespace('juju.viewlets');
 
-  var name = 'request-series-inspector';
+  var name = 'local-new-upgrade-inspector';
 
-  ns.RequestSeriesInspector = Y.Base.create(name, ns.Inspector, [], {
+  ns.LocalNewUpgradeInspector = Y.Base.create(name, ns.Inspector, [], {
 
     views: {
-      requestSeries: Y.juju.viewlets.RequestSeries
+      requestSeries: Y.juju.viewlets.RequestSeries,
+      localNewUpgrade: Y.juju.viewlets.LocalNewUpgradeView
     },
 
     /**
@@ -42,10 +43,23 @@ YUI.add('request-series-inspector', function(Y) {
         env: this.get('env'),
         db: this.get('db')
       });
+      this.views.localNewUpgrade.setAttrs({
+        services: this.get('services'),
+        file: this.get('file'),
+        env: this.get('env'),
+        db: this.get('db')
+      });
     }
 
   }, {
     ATTRS: {
+      /**
+        A collection of services raw attribute objects
+
+        @attribute services
+        @type {Array}
+      */
+      services: {},
       /**
         The file object that was dropped on the canvas.
 
@@ -74,6 +88,7 @@ YUI.add('request-series-inspector', function(Y) {
   requires: [
     'viewlet-view-base',
     'inspector-base',
+    'local-new-upgrade-view',
     'request-series-view'
   ]
 });

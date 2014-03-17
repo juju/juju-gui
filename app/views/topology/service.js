@@ -816,43 +816,17 @@ YUI.add('juju-topology-service', function(Y) {
       @param {Object} db A reference to the apps db.
     */
     _showUpgradeOrNewInspector: function(services, file, env, db) {
-      var container = Y.Node.create(
-          Y.juju.views.Templates['service-inspector']());
-
       services.forEach(function(service, index, source) {
         // `source` param is the services array.
         source[index] = service.getAttrs();
       });
 
-      container.appendTo(Y.one('#content'));
-
-      var viewletManager = new Y.juju.viewlets.ViewletManager({
-        container: container,
-        viewletContainer: '.viewlet-container',
-        template: '<div class="viewlet-container"></div>',
-        // views accepts views and viewlets
-        views: {
-          requestSeries: new Y.juju.viewlets.RequestSeries({
-            file: file,
-            env: env,
-            db: db
-          }),
-          localNewUpgradeView: new Y.juju.viewlets.LocalNewUpgradeView({
-            services: services,
-            file: file,
-            env: env,
-            db: db
-          })
-        }
-      });
-
-      viewletManager.render();
-      viewletManager.showViewlet('requestSeries', null, {
-        visible: true
-      });
-      viewletManager.showViewlet('localNewUpgradeView', null, {
-        visible: true
-      });
+      new Y.juju.views.LocalNewUpgradeInspector({
+        services: services,
+        file: file,
+        env: env,
+        db: db
+      }).render();
     },
 
     /**
@@ -1522,8 +1496,8 @@ YUI.add('juju-topology-service', function(Y) {
     'bundle-import-helpers',
     'local-charm-import-helpers',
     'juju-viewlet-manager',
-    'local-new-upgrade-view',
-    'request-series-view',
+    'local-new-upgrade-inspector',
+    'request-series-inspector',
     'zip-utils'
   ]
 });

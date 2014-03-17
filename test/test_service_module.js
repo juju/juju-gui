@@ -660,31 +660,24 @@ describe('service module events', function() {
   });
 
   it('_showUpgradeOrNewInspector: shows the inspector', function() {
-    var ViewletManager, renderStub, showViewletStub;
     var dbObj = { db: 'db' };
     var fileObj = { name: 'foo' };
     var envObj = { env: 'env' };
     var services = [{ getAttrs: function() {} }];
 
-    ViewletManager = utils.makeStubMethod(
-        Y.namespace('juju.viewlets'), 'ViewletManager');
-    this._cleanups.push(ViewletManager.reset);
-    renderStub = utils.makeStubMethod(ViewletManager.prototype, 'render');
-    showViewletStub = utils.makeStubMethod(
-        ViewletManager.prototype, 'showViewlet');
-
+    var renderStub = utils.makeStubFunction();
+    var InspectorStub = utils.makeStubMethod(
+        Y.juju.views, 'LocalNewUpgradeInspector', { render: renderStub });
+    this._cleanups.push(InspectorStub.reset);
     serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
-
-    assert.equal(ViewletManager.calledOnce(), true);
-    var vmArgs = ViewletManager.lastArguments();
-    assert.equal(
-        vmArgs[0].views.localNewUpgradeView instanceof
-        Y.juju.viewlets.LocalNewUpgradeView, true);
+    assert.deepEqual(InspectorStub.lastArguments()[0], {
+      services: services,
+      file: fileObj,
+      env: envObj,
+      db: dbObj
+    });
+    assert.equal(InspectorStub.calledOnce(), true);
     assert.equal(renderStub.calledOnce(), true);
-    assert.equal(showViewletStub.callCount(), 2);
-    var showArgs = showViewletStub.allArguments();
-    assert.equal(showArgs[0][0], 'requestSeries');
-    assert.equal(showArgs[1][0], 'localNewUpgradeView');
   });
 });
 
