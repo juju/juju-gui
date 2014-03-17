@@ -450,6 +450,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/websocket-logging.js'
         },
 
+        'environment-change-set': {
+          fullpath: '/juju-ui/assets/javascripts/environment-change-set.js'
+        },
+
         'juju-controllers': {
           use: [
             'juju-env',

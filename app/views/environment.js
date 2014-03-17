@@ -102,6 +102,7 @@ YUI.add('juju-view-environment', function(Y) {
           db: db,
           model: model,
           env: env,
+          ecs: this.get('ecs'),
           environment: this,
           charmModel: charm,
           topo: topo,
