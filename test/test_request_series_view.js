@@ -34,25 +34,25 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    var fileObj, envObj, dbObj, vmObj;
+    var filestub, envstub, dbstub, vmstub;
 
     beforeEach(function() {
-      fileObj = { name: 'foo.zip', size: 1234 };
-      envObj = {
+      filestub = { name: 'foo.zip', size: 1234 };
+      envstub = {
         series: ['precise', 'saucy', 'trusty'],
         get: function() {
           return 'precise';
         }
       };
-      dbObj = { db: 'db' };
-      vmObj = { destroy: testUtils.makeStubFunction() };
+      dbstub = { db: 'db' };
+      vmstub = { destroy: testUtils.makeStubFunction() };
       view = new juju.viewlets.RequestSeries({
-        file: fileObj,
-        env: envObj,
-        db: dbObj
+        file: filestub,
+        env: envstub,
+        db: dbstub
       });
       // added by the viewletManager
-      view.viewletManager = vmObj;
+      view.viewletManager = vmstub;
     });
 
     afterEach(function(done) {
@@ -98,19 +98,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       container.one('button.confirm').simulate('click');
       assert.equal(destroyVM.calledOnce(), true);
       // the argument in the 0 spot is the click event object.
-      assert.deepEqual(destroyVM.lastArguments()[1], vmObj);
+      assert.deepEqual(destroyVM.lastArguments()[1], vmstub);
       assert.equal(uploadLocal.calledOnce(), true);
       var uploadLocalArgs = uploadLocal.lastArguments();
       // the argument in the 0 spot is the click event object.
-      assert.deepEqual(uploadLocalArgs[1], vmObj);
-      assert.deepEqual(uploadLocalArgs[2], fileObj);
-      assert.deepEqual(uploadLocalArgs[3], envObj);
-      assert.deepEqual(uploadLocalArgs[4], dbObj);
+      assert.deepEqual(uploadLocalArgs[1], vmstub);
+      assert.deepEqual(uploadLocalArgs[2], filestub);
+      assert.deepEqual(uploadLocalArgs[3], envstub);
+      assert.deepEqual(uploadLocalArgs[4], dbstub);
     });
 
     it('destroyViewletManager: destroys the viewlet manager', function() {
-      view.destroyViewletManager(null, vmObj);
-      assert.equal(vmObj.destroy.calledOnce(), true);
+      view.destroyViewletManager(null, vmstub);
+      assert.equal(vmstub.destroy.calledOnce(), true);
     });
 
     it('_uploadLocalCharm: calls uploadLocalCharm', function() {
@@ -122,15 +122,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var getSeries = testUtils.makeStubMethod(
           view, 'getSeriesValue', defSeries);
       this._cleanups.push(getSeries.reset);
-      view._uploadLocalCharm(null, vmObj, fileObj, envObj, dbObj);
+      view._uploadLocalCharm(null, vmstub, filestub, envstub, dbstub);
       assert.equal(helperUpload.calledOnce(), true);
       assert.equal(getSeries.calledOnce(), true);
       var helperArgs = helperUpload.lastArguments();
       assert.equal(helperArgs[0], defSeries);
-      assert.equal(helperArgs[1], fileObj);
-      assert.equal(helperArgs[2], envObj);
-      assert.equal(helperArgs[3], dbObj);
-      assert.equal(vmObj.destroy.calledOnce(), true);
+      assert.equal(helperArgs[1], filestub);
+      assert.equal(helperArgs[2], envstub);
+      assert.equal(helperArgs[3], dbstub);
+      assert.equal(vmstub.destroy.calledOnce(), true);
     });
 
     it('gets the series value from the viewlet selector', function(done) {
@@ -157,7 +157,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.render();
       var selector = view.get('container').one('select#defaultSeries');
       var optionValues = selector.all('option').get('value');
-      assert.deepEqual(optionValues, envObj.series);
+      assert.deepEqual(optionValues, envstub.series);
     });
 
   });
