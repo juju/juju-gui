@@ -34,27 +34,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    var services, fileObj, envObj, dbObj, vmObj;
+    var services, filestub, envstub, dbstub, vmstub;
 
     beforeEach(function() {
       services = [{ getAttrs: function() {} }];
-      fileObj = { name: 'foo.zip', size: 1234 };
-      envObj = {
+      filestub = { name: 'foo.zip', size: 1234 };
+      envstub = {
         series: ['precise', 'saucy', 'trusty'],
         get: function() {
           return 'precise';
         }
       };
-      dbObj = { db: 'db' };
-      vmObj = { destroy: testUtils.makeStubFunction() };
+      dbstub = { db: 'db' };
+      vmstub = { destroy: testUtils.makeStubFunction() };
       view = new juju.viewlets.LocalNewUpgradeView({
         services: services,
-        file: fileObj,
-        env: envObj,
-        db: dbObj
+        file: filestub,
+        env: envstub,
+        db: dbstub
       });
       // added by the viewletManager
-      view.viewletManager = vmObj;
+      view.viewletManager = vmstub;
     });
 
     afterEach(function(done) {
@@ -101,18 +101,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       this._cleanups.push(selectedServices.reset);
       view._upgradeSelectedServices();
       assert.equal(helperUpgrade.calledOnce(), true);
-      assert.equal(vmObj.destroy.calledOnce(), true);
+      assert.equal(vmstub.destroy.calledOnce(), true);
     });
 
     it('returns service objects for checked services', function() {
-      dbObj.services = {
+      dbstub.services = {
         getById: function(name) {
           return { name: name };
         }
       };
       services = [{ id: 'foo' }, { id: 'bar' }];
       view.set('services', services);
-      view.set('db', dbObj);
+      view.set('db', dbstub);
       view.render();
       var wrapper = testUtils.makeContainer(this);
       var container = view.get('container');
