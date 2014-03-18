@@ -69,11 +69,12 @@ YUI.add('environment-change-set', function(Y) {
       Generates a unique key to use for new records.
 
       @method _generateUniqueKey
+      @param {String} type The type of record to create (service, unit, etc).
       @return {Integer} The unique key.
     */
-    _generateUniqueKey: function() {
+    _generateUniqueKey: function(type) {
       var key = this._generateRandomNumber();
-      while (this.changeSet[key] !== undefined) {
+      while (this.changeSet[type + '-' + key] !== undefined) {
         key = this._generateRandomNumber();
       }
       return key;
@@ -87,7 +88,7 @@ YUI.add('environment-change-set', function(Y) {
       @return {String} The newly created record key.
     */
     _createNewRecord: function(type) {
-      var key = type + '-' + this._generateUniqueKey();
+      var key = type + '-' + this._generateUniqueKey(type);
       this.changeSet[key] = {};
       return key;
     },
@@ -115,8 +116,9 @@ YUI.add('environment-change-set', function(Y) {
         command.executed = true;
         // `this` here is in context that the callback is called
         //  under. In most cases this will be `env`.
-        callback.apply(this, self._getArgs(arguments));
+        var result = callback.apply(this, self._getArgs(arguments));
         self.fire('taskComplete', command);
+        return result;
       }
       config[index] = _callbackWrapper;
       return command;
