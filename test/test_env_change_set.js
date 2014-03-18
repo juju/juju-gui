@@ -155,7 +155,51 @@ describe('Environment Change Set', function() {
         assert.equal(fireArgs[1], command[0]);
       });
     });
+  });
 
+  describe('private ENV methods', function() {
+    it('_createService: creates a new `deploy` record', function() {
+      var args = [1, 2, 'foo', 'bar'];
+      var key = ecs._createService(args);
+      var record = ecs.changeSet[key];
+      assert.isObject(record);
+      assert.isArray(record.commands);
+      assert.equal(record.commands[0].method, 'deploy');
+      assert.equal(record.commands[0].executed, false);
+      assert.deepEqual(record.commands[0].config, args);
+    });
+  });
+
+  describe('public ENV methods', function() {
+    it('can immediately deploy a charm via the env', function() {
+      var createService = testUtils.makeStubMethod(ecs, '_createService');
+      this._cleanups.push(createService.reset);
+      var callback = testUtils.makeStubFunction();
+      var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
+      ecs.deploy.apply(ecs, args);
+      assert.equal(envObj.deploy.calledOnce(), true);
+      var deployArgs = envObj.deploy.lastArguments();
+      // remove the options param off of the end and compare to that. as it
+      // should be removed before env.deploy is called.
+      assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
+      // make sure that we don't add it to the changeSet.
+      assert.equal(createService.callCount(), 0);
+    });
+
+    it('can add a `deploy` command to the changeSet', function() {
+      var createService = testUtils.makeStubMethod(ecs, '_createService');
+      this._cleanups.push(createService.reset);
+      var callback = testUtils.makeStubFunction();
+      var args = [1, 2, 3, 4, 5, 6, 7, callback];
+      ecs.deploy.apply(ecs, args);
+      var createServiceArgs = createService.lastArguments()[0];
+      // remove the options param off of the end and compare to that. as it
+      // should be removed before env.deploy is called.
+      assert.deepEqual(createServiceArgs, args);
+      assert.equal(createService.calledOnce(), true);
+      // make sure we don't call the env deploy method.
+      assert.equal(envObj.deploy.callCount(), 0);
+    });
   });
 
 });
