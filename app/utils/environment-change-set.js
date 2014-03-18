@@ -214,4 +214,9 @@ YUI.add('environment-change-set', function(Y) {
     }
   });
 
+}, '', {
+  requires: [
+    'base',
+    'base-build'
+  ]
 });
