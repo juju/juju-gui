@@ -66,13 +66,13 @@
   #bws-sidebar {
     position: absolute;
     top: 0;
-    left: 0;
     bottom: 0;
+    left: 0;
     right: 0;
   }
   #bws-sidebar {
-    background: @bws-background;
     z-index: 600;
+    background: @bws-background;
   }
   #bws-sidebar .bws-content {
     overflow-x: hidden;
@@ -149,5 +149,12 @@
   .content-visible .bws-view-data {
     -webkit-animation: sidebar-details-slide-in 0.5s;
     animation: sidebar-details-slide-in 0.5s;
+  }
+}
+
+.flag-il #subapp-browser {
+  #bws-sidebar,
+  .bws-view-data {
+    bottom: @deployer-bar-height;
   }
 }
