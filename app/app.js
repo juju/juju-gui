@@ -654,6 +654,11 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
+
+      this.ecs = new juju.EnvironmentChangeSet({
+        env: this.env,
+        db: this.db
+      });
     },
 
     /**
@@ -1331,6 +1336,7 @@ YUI.add('juju-gui', function(Y) {
         useDragDropImport: this.get('sandbox'),
         db: this.db,
         env: this.env,
+        ecs: this.ecs,
         store: this.get('store')};
 
       this.showView('environment', options, {
@@ -1616,6 +1622,7 @@ YUI.add('juju-gui', function(Y) {
     'ghost-deployer-extension',
     'juju-view-bundle',
     'help-dropdown',
-    'local-charm-import-helpers'
+    'local-charm-import-helpers',
+    'environment-change-set'
   ]
 });

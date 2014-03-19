@@ -267,6 +267,32 @@ describe('Ghost Inspector', function() {
     assert.deepEqual(message.Params.Constraints, { 'cpu-power': 2 });
   });
 
+  describe('Environment change set interactions', function() {
+    it('calls the ecs deploy method', function() {
+      window.flags.ecs = true;
+      inspector = setUpInspector();
+      var deployStub = utils.makeStubFunction();
+      inspector.set('ecs', { deploy: deployStub });
+      env.connect();
+      var vmContainer = inspector.get('container');
+      vmContainer.one('.viewlet-manager-footer button.confirm')
+                 .simulate('click');
+      assert.equal(deployStub.calledOnce(), true);
+      var deployArgs = deployStub.lastArguments();
+      // these need to be done individually because mocha doesn't like
+      // deepEquals with undefined values.
+      assert.equal(deployArgs[0], 'cs:precise/mediawiki-8');
+      assert.equal(deployArgs[1], 'mediawiki');
+      assert.deepEqual(deployArgs[2], {});
+      assert.isUndefined(deployArgs[3]);
+      assert.equal(deployArgs[4], 1);
+      assert.deepEqual(deployArgs[5],
+          { 'cpu-power': '', 'cpu-cores': '', 'mem': '', 'arch': '' });
+      assert.strictEqual(deployArgs[6], null);
+      assert.isFunction(deployArgs[7]);
+    });
+  });
+
   it('deploys with zero units if the charm is a subordinate', function() {
     inspector = setUpInspector(subordinateCharmData);
     env.connect();

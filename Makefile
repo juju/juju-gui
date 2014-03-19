@@ -390,6 +390,7 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/widgets" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
 		build-debug/juju-ui/assets/all-yui.js
+	ln -sf "$(PWD)/app/utils" build-debug/juju-ui/
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/modules-debug.js" build-debug/juju-ui/assets/modules.js
 
