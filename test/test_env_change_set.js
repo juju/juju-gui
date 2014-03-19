@@ -83,14 +83,24 @@ describe('Environment Change Set', function() {
 
     describe('_createNewRecord', function() {
       it('creates a new record of the specified type', function() {
-        var key = ecs._createNewRecord('service');
-        assert.isObject(ecs.changeSet[key]);
+        var command = { foo: 'foo' };
+        var wrapCallback = testUtils.makeStubMethod(
+            ecs, '_wrapCallback', command);
+        this._cleanups.push(wrapCallback.reset);
+        var key = ecs._createNewRecord('service', command);
+        assert.equal(wrapCallback.calledOnce(), true);
+        assert.deepEqual(wrapCallback.lastArguments()[0], command);
+        assert.deepEqual(ecs.changeSet[key], {
+          commands: [command]
+        });
       });
 
       it('always creates a unique key for new records', function() {
         var result = [];
+        var wrapCallback = testUtils.makeStubMethod(ecs, '_wrapCallback');
+        this._cleanups.push(wrapCallback.reset);
         for (var i = 0; i < 999; i += 1) {
-          result.push(ecs._createNewRecord());
+          result.push(ecs._createNewRecord('service'));
         }
         var dedupe = Y.Array.dedupe(result);
         // If there were any duplicates then these would be different.
@@ -104,13 +114,13 @@ describe('Environment Change Set', function() {
         var command = {
           method: 'deploy',
           executed: false,
-          config: [1, 2, 'foo', callback]
+          args: [1, 2, 'foo', callback]
         };
         assert.deepEqual(ecs._wrapCallback(command), command);
         // The callback should now be wrapped.
         var fire = testUtils.makeStubMethod(ecs, 'fire');
         this._cleanups.push(fire.reset);
-        var result = command.config[3]();
+        var result = command.args[3]();
         assert.equal(result, 'real cb');
         assert.equal(fire.calledOnce(), true);
         var fireArgs = fire.lastArguments();
@@ -126,7 +136,7 @@ describe('Environment Change Set', function() {
         var command = {
           method: 'deploy',
           executed: false,
-          config: [1, 2, 'foo', callback]
+          args: [1, 2, 'foo', callback]
         };
         ecs._execute(command);
         assert.equal(envObj.deploy.calledOnce(), true);
@@ -158,22 +168,22 @@ describe('Environment Change Set', function() {
   });
 
   describe('private ENV methods', function() {
-    it('_createService: creates a new `deploy` record', function() {
+    it('_lazyDeploy: creates a new `deploy` record', function() {
       var args = [1, 2, 'foo', 'bar'];
-      var key = ecs._createService(args);
+      var key = ecs._lazyDeploy(args);
       var record = ecs.changeSet[key];
       assert.isObject(record);
       assert.isArray(record.commands);
       assert.equal(record.commands[0].method, 'deploy');
       assert.equal(record.commands[0].executed, false);
-      assert.deepEqual(record.commands[0].config, args);
+      assert.deepEqual(record.commands[0].args, args);
     });
   });
 
   describe('public ENV methods', function() {
     it('can immediately deploy a charm via the env', function() {
-      var createService = testUtils.makeStubMethod(ecs, '_createService');
-      this._cleanups.push(createService.reset);
+      var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+      this._cleanups.push(lazyDeploy.reset);
       var callback = testUtils.makeStubFunction();
       var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
       ecs.deploy.apply(ecs, args);
@@ -183,20 +193,20 @@ describe('Environment Change Set', function() {
       // should be removed before env.deploy is called.
       assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
       // make sure that we don't add it to the changeSet.
-      assert.equal(createService.callCount(), 0);
+      assert.equal(lazyDeploy.callCount(), 0);
     });
 
     it('can add a `deploy` command to the changeSet', function() {
-      var createService = testUtils.makeStubMethod(ecs, '_createService');
-      this._cleanups.push(createService.reset);
+      var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+      this._cleanups.push(lazyDeploy.reset);
       var callback = testUtils.makeStubFunction();
       var args = [1, 2, 3, 4, 5, 6, 7, callback];
       ecs.deploy.apply(ecs, args);
-      var createServiceArgs = createService.lastArguments()[0];
+      var lazyDeployArgs = lazyDeploy.lastArguments()[0];
       // remove the options param off of the end and compare to that. as it
       // should be removed before env.deploy is called.
-      assert.deepEqual(createServiceArgs, args);
-      assert.equal(createService.calledOnce(), true);
+      assert.deepEqual(lazyDeployArgs, args);
+      assert.equal(lazyDeploy.calledOnce(), true);
       // make sure we don't call the env deploy method.
       assert.equal(envObj.deploy.callCount(), 0);
     });

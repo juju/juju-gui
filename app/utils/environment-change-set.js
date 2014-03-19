@@ -85,11 +85,15 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _createNewRecord
       @param {String} type The type of record to create (service, unit, etc).
+      @param {Object} command The command that's to be executed lazily.
       @return {String} The newly created record key.
     */
-    _createNewRecord: function(type) {
+    _createNewRecord: function(type, command) {
       var key = type + '-' + this._generateUniqueKey(type);
-      this.changeSet[key] = {};
+      command = this._wrapCallback(command);
+      this.changeSet[key] = {
+        commands: [command]
+      };
       return key;
     },
 
@@ -99,12 +103,12 @@ YUI.add('environment-change-set', function(Y) {
 
       @method _wrapCallback
       @param {Object} command The individual command object from the changeSet.
-      @return {Array} The config array with the wrapped callback.
+      @return {Array} The args array with the wrapped callback.
     */
     _wrapCallback: function(command) {
-      var config = command.config;
-      var index = config.length - 1;
-      var callback = config[index];
+      var args = command.args;
+      var index = args.length - 1;
+      var callback = args[index];
       /* jshint -W040 */
       // Possible strict violation.
       var self = this;
@@ -120,7 +124,7 @@ YUI.add('environment-change-set', function(Y) {
         self.fire('taskComplete', command);
         return result;
       }
-      config[index] = _callbackWrapper;
+      args[index] = _callbackWrapper;
       return command;
     },
 
@@ -132,8 +136,7 @@ YUI.add('environment-change-set', function(Y) {
     */
     _execute: function(command) {
       var env = this.get('env');
-      command = this._wrapCallback(command);
-      env[command.method].apply(env, command.config);
+      env[command.method].apply(env, command.args);
     },
 
     /**
@@ -161,19 +164,16 @@ YUI.add('environment-change-set', function(Y) {
       Receives all the parameters it's public method 'deploy' was called with
       with the exception of the ECS options oject.
 
-      @method _createService
+      @method _lazyDeploy
       @param {Array} args The arguments to deploy the charm with.
     */
-    _createService: function(args) {
-      var key = this._createNewRecord('service');
-      var record = this.changeSet[key];
-      record.commands = [];
-      record.commands.push({
+    _lazyDeploy: function(args) {
+      var command = {
         method: 'deploy',
         executed: false,
-        config: args
-      });
-      return key;
+        args: args
+      };
+      return this._createNewRecord('service', command);
     },
 
     /* End private environment methods. */
@@ -184,6 +184,8 @@ YUI.add('environment-change-set', function(Y) {
       Calls the environments deploy method or creates a new service record
       in the queue.
 
+      The parameters match the parameters for the env deploy method.
+
       @method deploy
     */
     deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
@@ -193,9 +195,8 @@ YUI.add('environment-change-set', function(Y) {
       if (options && options.immediate) {
         // Call the deploy method right away bypassing the queue.
         env.deploy.apply(env, args);
-        return;
       } else {
-        this._createService(args);
+        this._lazyDeploy(args);
       }
     }
 
