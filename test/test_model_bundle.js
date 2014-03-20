@@ -98,6 +98,18 @@ describe('The bundle model', function() {
     assert.equal(expected, instance.get('promulgated'));
   });
 
+  it('returns the proper bundle URL for non-promulgated bundles', function() {
+    data.promulgated = false;
+    instance = new models.Bundle(data);
+    assert.strictEqual(instance.get('bundleURL'), 'bundle:~benji/wiki/5/wiki');
+  });
+
+  it('returns the proper bundle URL for promulgated bundles', function() {
+    data.promulgated = true;
+    instance = new models.Bundle(data);
+    assert.strictEqual(instance.get('bundleURL'), 'bundle:wiki/5/wiki');
+  });
+
   it('must support is_approved as a proxy to promulgated', function() {
     instance = new models.Bundle({promulgated: true});
     assert.equal(instance.get('is_approved'), true);
