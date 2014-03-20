@@ -98,6 +98,15 @@ YUI.add('juju-delta-handlers', function(Y) {
   models.utils = utils; // Exported for testing purposes.
 
   /*
+    The serviceChangedHooks object maps service names to functions to be
+    executed when the next corresponding service change event arrives.
+    When a service is removed, the corresponding key is also garbage collected.
+  */
+  var serviceChangedHooks = Object.create(null);
+  // Store the hooks in the models for testing.
+  models._serviceChangedHooks = serviceChangedHooks;
+
+  /*
      Each handler is called passing the db instance, the action to be
      performed ("add", "change" or "remove"), the change coming from
      the environment, and a (optional) kind identifying what will be
@@ -201,11 +210,19 @@ YUI.add('juju-delta-handlers', function(Y) {
       db.services.process_delta(action, data);
       if (action !== 'remove') {
         var service = db.services.getById(change.Name);
+        // Set up config options.
         var serviceConfig = service.get('config') || {};
         var changeConfig = change.Config || {};
         var combined = Y.merge(serviceConfig, changeConfig);
         service.set('config', combined);
+        // Execute the registered service hooks.
+        var hooks = serviceChangedHooks[change.Name] || [];
+        hooks.forEach(function(hook) {
+          hook();
+        });
       }
+      // Delete the service hooks for this service.
+      delete serviceChangedHooks[change.Name];
     },
 
     /**
@@ -221,8 +238,9 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     relationInfo: function(db, action, change) {
-      var endpoints = change.Endpoints,
-          firstRelation = endpoints[0].Relation;
+      var endpoints = change.Endpoints;
+      var firstEndpoint = endpoints[0];
+      var firstRelation = firstEndpoint.Relation;
       var data = {
         id: change.Key,
         // The interface and scope attrs should be the same in both relations.
@@ -230,7 +248,27 @@ YUI.add('juju-delta-handlers', function(Y) {
         scope: firstRelation.Scope,
         endpoints: utils.createEndpoints(endpoints)
       };
-      db.relations.process_delta(action, data, db);
+
+      var processRelation = function() {
+        db.relations.process_delta(action, data, db);
+      };
+
+      var serviceName = firstEndpoint.ServiceName;
+      if (!db.services.getById(serviceName)) {
+        // Sometimes (e.g. when a peer relation is immediately created on
+        // service deploy) a relation delta is sent by juju-core before the
+        // corresponding service is added to the db. In this case, wait for
+        // the service delta to arrive before adding a relation.
+        console.log(
+            'relation change', change.Key,
+            'delayed, waiting for missing service',
+            serviceName);
+        var hooks = serviceChangedHooks[serviceName] || [];
+        hooks.push(processRelation);
+        serviceChangedHooks[serviceName] = hooks;
+        return;
+      }
+      processRelation();
     },
 
     /**

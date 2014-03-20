@@ -21,13 +21,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 
   describe('Juju delta handlers', function() {
-    var db, models, handlers, Y;
-    var requirements = ['juju-models', 'juju-delta-handlers'];
+    var db, models, handlers, testUtils, Y;
+    var requirements = [
+      'juju-models', 'juju-delta-handlers', 'juju-tests-utils'];
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         handlers = models.handlers;
+        testUtils = Y.namespace('juju-tests.utils');
         done();
       });
     });
@@ -348,6 +350,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.strictEqual(0, db.services.size());
       });
 
+      it('executes collected service hooks on service change', function() {
+        var hook1 = testUtils.makeStubFunction();
+        var hook2 = testUtils.makeStubFunction();
+        models._serviceChangedHooks.django = [hook1, hook2];
+        var change = {
+          Name: 'django',
+          CharmURL: 'cs:precise/django-42',
+          Exposed: true,
+          Constraints: constraints,
+          Config: config,
+          Life: 'alive'
+        };
+        serviceInfo(db, 'change', change);
+        // The two hooks have been called.
+        assert.strictEqual(hook1.calledOnce(), true);
+        assert.strictEqual(hook1.lastArguments().length, 0);
+        assert.strictEqual(hook2.calledOnce(), true);
+        assert.strictEqual(hook2.lastArguments().length, 0);
+        // The hooks have been garbage collected.
+        assert.deepEqual(models._serviceChangedHooks, {});
+      });
+
     });
 
 
@@ -360,6 +384,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       beforeEach(function() {
+        db.services.add([{id: 'haproxy'}, {id: 'wordpress'}]);
         dbEndpoints = [
           ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
           ['wordpress', {role: 'provider', name: 'website'}]
@@ -406,6 +431,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('updates a relation in the database', function() {
+        db.services.add({id: 'mysql'});
         db.relations.add({
           id: relationKey,
           'interface': 'http',
@@ -449,6 +475,37 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
         relationInfo(db, 'remove', change);
         assert.strictEqual(db.relations.size(), 0);
+      });
+
+      it('waits for the service to be available', function() {
+        db.services.reset();
+        var change = {
+          Key: 'haproxy:peer',
+          Endpoints: [{
+            Relation: {
+              Interface: 'haproxy-peer',
+              Limit: 1,
+              Name: 'peer',
+              Optional: false,
+              Role: 'peer',
+              Scope: 'global'
+            },
+            ServiceName: 'haproxy'
+          }]
+        };
+        relationInfo(db, 'change', change);
+        // The relation is not yet included in the database.
+        assert.strictEqual(db.relations.size(), 0);
+        // After processing an extraneous service change, the relation is still
+        // pending.
+        handlers.serviceInfo(db, 'change', {Name: 'mysql'});
+        assert.strictEqual(db.relations.size(), 0);
+        // After processing the corresponding service, the relation is added.
+        handlers.serviceInfo(db, 'change', {Name: 'haproxy'});
+        assert.strictEqual(db.relations.size(), 1);
+        var relation = db.relations.getById('haproxy:peer');
+        assert.isNotNull(relation);
+        assert.strictEqual(relation.get('interface'), 'haproxy-peer');
       });
 
     });
