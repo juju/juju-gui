@@ -98,6 +98,23 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Adds a new command to an existing record.
+
+      @method _addToRecrod
+      @param {String} key The key to add the command to.
+      @param {Object} command The command that's to be executed lazily.
+      @return {String} The key to which the command was added.
+    */
+    _addToRecord: function(key, command) {
+      command = this._wrapCallback(command);
+      var changeSet = this.changeSet[key];
+      var length = changeSet.commands.push(command);
+      // Add next function to execute to previous next() command.
+      changeSet.commands[length - 2].next = this._execute.bind(this, command);
+      return key;
+    },
+
+    /**
       Wraps the last function parameter so that we can be notified when it's
       called.
 
@@ -122,6 +139,10 @@ YUI.add('environment-change-set', function(Y) {
         //  under. In most cases this will be `env`.
         var result = callback.apply(this, self._getArgs(arguments));
         self.fire('taskComplete', command);
+        // Execute the next command.
+        if (command.next) {
+          command.next();
+        }
         return result;
       }
       args[index] = _callbackWrapper;
@@ -132,7 +153,7 @@ YUI.add('environment-change-set', function(Y) {
       Executes the passed in command on the environment.
 
       @method _execute
-      @param {Object} command An object of the command to execute.
+      @param {Object} command The individual command object from the changeSet.
     */
     _execute: function(command) {
       var env = this.get('env');
@@ -140,17 +161,20 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
-      Executes all of the commands stored in the changeSet.
+      Starts the processing of all of the top level
+      commands stored in the changeSet.
 
       @method commit
     */
     commit: function() {
       var changeSet = this.changeSet;
+      var commands;
+
       Object.keys(changeSet).forEach(function(key) {
-        changeSet[key].commands.forEach(function(command) {
-          this._execute(command);
-          this.fire('commit', command);
-        }, this);
+        commands = changeSet[key].commands;
+        // Trigger the series to start executing.
+        this._execute(commands[0]);
+        this.fire('commit', commands);
       }, this);
     },
 
@@ -176,6 +200,30 @@ YUI.add('environment-change-set', function(Y) {
       return this._createNewRecord('service', command);
     },
 
+    /**
+      Creates a new entry in the queue for setting a services config.
+
+      Receives all the parameters it's public method 'set_config' was called
+      with with the exception of the ECS options oject.
+
+      @method _lazySetConfig
+      @param {Array} args The arguments to set the config with.
+    */
+    _lazySetConfig: function(args) {
+      var serviceName = args[0];
+      var queued = this.changeSet[serviceName];
+      var command = {
+        method: 'set_config', // This needs to match the method name in env.
+        executed: false,
+        args: args
+      };
+      // If it's a queued service then we need to add to that service's record.
+      if (queued) {
+        return this._addToRecord(serviceName, command);
+      }
+      return this._createNewRecord('setConfig', command);
+    },
+
     /* End private environment methods. */
 
     /* Public environment methods. */
@@ -197,6 +245,31 @@ YUI.add('environment-change-set', function(Y) {
         env.deploy.apply(env, args);
       } else {
         this._lazyDeploy(args);
+      }
+    },
+
+    /**
+      Calls the environments set_config method or creates a new set_config
+      record in the queue.
+
+      THe parameters match the parameters for the env deploy method.
+
+      @method setConfig
+    */
+    setConfig: function(serviceName, config, data, serviceConfig, callback,
+                        options) {
+      var env = this.get('env'),
+          args = this._getArgs(arguments);
+      if (options && options.immediate) {
+        // Need to check that the serviceName is a real service name and not
+        // a queued service id before allowing immediate or not.
+        if (this.changeSet[serviceName]) {
+          throw 'You cannot immediately setConfig on a queued service';
+        } else {
+          env.set_config.apply(env, args);
+        }
+      } else {
+        this._lazySetConfig(args);
       }
     }
 
