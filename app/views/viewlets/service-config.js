@@ -225,6 +225,7 @@ YUI.add('service-config-view', function(Y) {
       @return {undefined} Nothing.
     */
     cancelConfig: function(e) {
+      this.onRemoveFile();
       this.viewletManager.bindingEngine.resetDOMToModel('config');
     },
 
