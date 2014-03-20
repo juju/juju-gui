@@ -24,19 +24,21 @@
                         <a href="" class="add deploy">Deploy this bundle</a>
                     </div>
                     <ul>
-                        <li>Deployed {{downloads}} {{pluralize 'time' downloads}}</li>
-                        <li>
-                            {{serviceCount}}
-                            {{pluralize 'service' serviceCount}} |
-                            {{unitCount}} {{pluralize 'unit' unitCount}}
-                        </li>
                         <li>
                             {{#if is_approved}}
                                 Recommended
                             {{else}}
                                 {{owner}}
                             {{/if}}
-                            <span class="push-left">Location: {{permanent_url}}</span>
+                            <span class="push-left">
+                                Location: {{bundleURL}}
+                            </span>
+                        </li>
+                        <li>Deployed {{downloads}} {{pluralize 'time' downloads}}</li>
+                        <li>
+                            {{serviceCount}}
+                            {{pluralize 'service' serviceCount}} |
+                            {{unitCount}} {{pluralize 'unit' unitCount}}
                         </li>
                     </ul>
                     <div class="charms">
@@ -76,7 +78,7 @@
                             <pre>sudo apt-get install juju-quickstart</pre>
                         </p>
                         <p>Step 2 - Deploy bundle
-                            <pre>juju-quickstart {{permanent_url}} [-e &lt;JUJU_ENV&gt;]</pre>
+                            <pre>juju-quickstart {{bundleURL}} [-e &lt;JUJU_ENV&gt;]</pre>
                         </p>
                         <h3>Deploy via the deployer</h3>
                         <p>The Juju deployer is a tool that the quickstart plugin (above) uses.  It can also be used standalone to give you more control.</p>

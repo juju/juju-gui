@@ -183,6 +183,23 @@ YUI.add('juju-bundle-models', function(Y) {
         value: 0
       },
 
+      bundleURL: {
+        /**
+          Return the bundle URL.
+          Use the simplified form if the bundle is promulgated.
+
+          @method getter
+        */
+        getter: function() {
+          if (this.get('promulgated')) {
+            var basket = this.get('basket_name');
+            var revision = this.get('basket_revision');
+            var name = this.get('name');
+            return 'bundle:' + basket + '/' + revision + '/' + name;
+          }
+          return this.get('permanent_url');
+        }
+      },
       relations: {
         /**
          Return the relations data as a list of objects.
