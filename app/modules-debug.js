@@ -253,6 +253,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/help-dropdown.js'
         },
 
+        'juju-deployer-bar': {
+          fullpath: '/juju-ui/widgets/deployer-bar.js'
+        },
+
         'juju-view-environment': {
           fullpath: '/juju-ui/views/environment.js'
         },
@@ -284,6 +288,7 @@ var GlobalConfig = {
             'juju-templates',
             'juju-notifications',
             'juju-help-dropdown',
+            'juju-deployer-bar',
             'juju-view-utils',
             'juju-topology',
             'juju-view-environment',

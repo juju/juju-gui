@@ -403,7 +403,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
           footerHeight = 0,
           vcHeaderHeight = 0,
           vcNavHeight = 0,
-          vcFooterHeight = 0;
+          vcFooterHeight = 0,
+          deployerBar = Y.one('#deployer-bar');
 
       if (header) { headerHeight = header.get('clientHeight'); }
       if (footer) { footerHeight = footer.get('clientHeight'); }
@@ -412,6 +413,12 @@ YUI.add('juju-viewlet-manager', function(Y) {
       if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
       var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
+
+      // XXX: When the flag is removed then this can be combined with the
+      // calculation above.
+      if (window.flags.il && deployerBar) {
+        height = height + deployerBar.get('clientHeight') - 20;
+      }
 
       // The viewlet manager has a couple different wrapper elements which
       // impact which components are shown. In this case we are grabbing an

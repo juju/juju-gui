@@ -548,6 +548,9 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
+        if (window.flags.il) {
+          this._renderDeployerBarView();
+        }
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
@@ -814,6 +817,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Handles rendering the deployer bar view on application load.
+     *
+     * @method _renderDeployerBarView
+     */
+    _renderDeployerBarView: function() {
+      this.deployerBar = new views.DeployerBarView({
+        container: Y.one('#deployer-bar')
+      }).render();
+    },
+
+    /**
      * Display a small screen message using browser data.
      *
      * @method _handleZoomMessage
@@ -897,6 +911,9 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this.helpDropdown) {
         this.helpDropdown.destroy();
+      }
+      if (this.deployerBar) {
+        this.deployerBar.destroy();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -1626,6 +1643,7 @@ YUI.add('juju-gui', function(Y) {
     'ghost-deployer-extension',
     'juju-view-bundle',
     'help-dropdown',
+    'deployer-bar',
     'local-charm-import-helpers',
     'environment-change-set'
   ]

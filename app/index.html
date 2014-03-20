@@ -126,6 +126,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <div id="onboarding"></div>
+      <div id="deployer-bar"></div>
 
       <div class="cookie-policy" style="display:none;">
         <div class="wrapper">
@@ -389,6 +390,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             window.location.href,
             window.juju_config.flags || {}
         );
+
+        // Add the current flags to the body so they can be used to flag CSS.
+        for (var flag in window.flags) {
+          if (flag) {
+            document.getElementsByTagName(
+                'body')[0].className += ' flag-' + flag;
+          }
+        }
 
         // If we are supposed to show the Get Juju button or the logout button
         var logoutTrigger = getDocument().getElementById('logout-trigger');

@@ -117,6 +117,26 @@ describe('Viewlet Manager', function() {
     assert.notEqual(container.one('.yui3-juju-inspector'), null);
   });
 
+  it('sets the height to clear the deployer bar', function() {
+    // Need to set the flag for this test to work.
+    window.flags.il = true;
+    generateViewletManager(this);
+    viewletManager.render();
+    var deployerBarHeight = 100,
+        wrapper = container.one('.viewlet-manager-wrapper'),
+        viewletMaxHeight = parseInt(wrapper.getStyle('maxHeight'), 10);
+    // Create the deployer bar.
+    var deployerBar = utils.makeContainer(this, 'deployer-bar');
+    deployerBar.setStyle('height', deployerBarHeight + 'px');
+    // Recalculate the height now that the deployer bar exists.
+    viewletManager.recalculateHeight();
+    var newMaxHeight = parseInt(wrapper.getStyle('maxHeight'), 10);
+    assert.equal(newMaxHeight, viewletMaxHeight + deployerBarHeight - 20);
+    // Clean up.
+    deployerBar.remove();
+    delete window.flags.il;
+  });
+
   it('passes the manager attrs to the view instances', function() {
     generateViewletManager(this);
     viewletManager.render();
