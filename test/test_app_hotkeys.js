@@ -64,7 +64,18 @@ describe('application hotkeys', function() {
       shiftKey: true
     });
     var help = Y.one('#shortcut-help');
-    assert.equal(help.getStyle('display'), 'block');
+    assert.equal(help.getStyle('display'), 'block',
+                 'Shortcut help not displayed');
+    // Is the "S-?" label displayed in the help?
+    var bindings = help.all('td.binding'),
+        found = false;
+    bindings.each(function(node) {
+      var text = node.getDOMNode().textContent;
+      if (text === 'S-?') {
+        found = true;
+      }
+    });
+    assert.equal(found, true, 'Shortcut label not found');
     help.hide();
   });
 
