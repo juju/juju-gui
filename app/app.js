@@ -114,6 +114,8 @@ YUI.add('juju-gui', function(Y) {
      *            keybindings.
      * callback: {Function} Taking (event, target).
      * help: {String} Help text to display in popup.
+     * label: {String} The label to display in the help text. Defaults to the
+     *        specified keybinding.
      *
      * All are optional.
      */
@@ -142,14 +144,15 @@ YUI.add('juju-gui', function(Y) {
                 // human <Alt> m
                 // <Control> <Shift> N (note caps)
                 // also 'g then i' style
-                bindings.push({key: k, help: v.help});
+                bindings.push({key: k, label: v.label || k, help: v.help});
               }
             }, this);
             target.setHTML(
                 views.Templates.shortcuts({bindings: bindings}));
           }
         },
-        help: 'Display this help'
+        help: 'Display this help',
+        label: 'S-?'
       },
       'A-e': {
         callback: function(evt) {
@@ -167,7 +170,8 @@ YUI.add('juju-gui', function(Y) {
       },
       'S-0': {
         fire: 'panToCenter',
-        help: 'Center the Environment overview'
+        help: 'Center the Environment overview',
+        label: 'S-)'
       },
       'esc': {
         fire: 'clearState',
