@@ -32,7 +32,8 @@ describe('Environment Change Set', function() {
 
   beforeEach(function() {
     envObj = {
-      deploy: testUtils.makeStubFunction()
+      deploy: testUtils.makeStubFunction(),
+      set_config: testUtils.makeStubFunction()
     };
     dbObj = {};
     ecs = new ECS({
@@ -108,13 +109,40 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('_addToRecord', function() {
+      it('adds a supplied command to an existing record', function() {
+        var args = [1, 2, 'foo', 'bar'];
+        // This assumes that the _lazyDeploy tests complete successfully.
+        var key = ecs._lazyDeploy(args);
+        var callback = testUtils.makeStubFunction();
+        var record = ecs.changeSet[key];
+        var command = {
+          method: 'set_config',
+          executed: false,
+          args: [1, 2, 'foo', callback]
+        };
+        var wrapCallback = testUtils.makeStubMethod(
+            ecs, '_wrapCallback', command);
+        this._cleanups.push(wrapCallback.reset);
+        ecs._addToRecord(key, command);
+        // It calls to wrap the callback.
+        assert.equal(wrapCallback.calledOnce(), true);
+        assert.deepEqual(wrapCallback.lastArguments()[0], command);
+        // It adds the command in the proper heirarcical order.
+        assert.equal(record.commands[1].method, 'set_config');
+        // It adds the next() method to the previous command.
+        assert.isFunction(record.commands[0].next);
+      });
+    });
+
     describe('_wrapCallback', function() {
       it('wraps the callbacks provided in the command objects', function() {
         var callback = testUtils.makeStubFunction('real cb');
         var command = {
           method: 'deploy',
           executed: false,
-          args: [1, 2, 'foo', callback]
+          args: [1, 2, 'foo', callback],
+          next: testUtils.makeStubFunction()
         };
         assert.deepEqual(ecs._wrapCallback(command), command);
         // The callback should now be wrapped.
@@ -127,6 +155,7 @@ describe('Environment Change Set', function() {
         assert.equal(fireArgs[0], 'taskComplete');
         assert.deepEqual(fireArgs[1], command);
         assert.equal(command.executed, true);
+        assert.equal(command.next.calledOnce(), true);
       });
     });
 
@@ -162,53 +191,140 @@ describe('Environment Change Set', function() {
         assert.equal(fire.callCount(), 1);
         var fireArgs = fire.lastArguments();
         assert.equal(fireArgs[0], 'commit');
-        assert.equal(fireArgs[1], command[0]);
+        assert.equal(fireArgs[1], changeSet['service-568'].commands);
       });
     });
   });
 
   describe('private ENV methods', function() {
-    it('_lazyDeploy: creates a new `deploy` record', function() {
-      var args = [1, 2, 'foo', 'bar'];
-      var key = ecs._lazyDeploy(args);
-      var record = ecs.changeSet[key];
-      assert.isObject(record);
-      assert.isArray(record.commands);
-      assert.equal(record.commands[0].method, 'deploy');
-      assert.equal(record.commands[0].executed, false);
-      assert.deepEqual(record.commands[0].args, args);
+    describe('_lazyDeploy', function() {
+      it('creates a new `deploy` record', function() {
+        var args = [1, 2, 'foo', 'bar'];
+        var key = ecs._lazyDeploy(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isArray(record.commands);
+        assert.equal(record.commands[0].method, 'deploy');
+        assert.equal(record.commands[0].executed, false);
+        assert.deepEqual(record.commands[0].args, args);
+      });
+    });
+
+    describe('_lazySetConfig', function() {
+      it('creates a new `setConfig` record for a deployed service', function() {
+        var addToRecord = testUtils.makeStubMethod(ecs, '_addToRecord');
+        this._cleanups.push(addToRecord.reset);
+        var args = [1, 2, 'foo', 'bar'];
+        var key = ecs._lazySetConfig(args);
+        var record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isArray(record.commands);
+        assert.equal(record.commands[0].method, 'set_config');
+        assert.equal(record.commands[0].executed, false);
+        assert.deepEqual(record.commands[0].args, args);
+        // Make sure we don't also add to a old record
+        assert.equal(addToRecord.callCount(), 0);
+      });
+
+      it('creates a new `setConfig` record under a queued service', function() {
+        var args = [1, 2, 'foo', 'bar'];
+        // This assumes that the _lazyDeploy tests complete successfully.
+        var key = ecs._lazyDeploy(args);
+        var record = ecs.changeSet[key];
+        assert.equal(record.commands.length, 1);
+        // Stub out after the lazyDeploy because it needs the original method.
+        var createNewRecord = testUtils.makeStubMethod(ecs, '_createNewRecord');
+        this._cleanups.push(createNewRecord.reset);
+        var setArgs = [key, 1, 2, 3];
+        ecs._lazySetConfig(setArgs);
+        assert.equal(record.commands.length, 2);
+        var command = record.commands[1];
+        assert.equal(command.method, 'set_config');
+        assert.equal(command.executed, false);
+        assert.deepEqual(command.args, setArgs);
+        // Make sure we also don't create new record
+        assert.equal(createNewRecord.callCount(), 0);
+      });
     });
   });
 
   describe('public ENV methods', function() {
-    it('can immediately deploy a charm via the env', function() {
-      var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
-      this._cleanups.push(lazyDeploy.reset);
-      var callback = testUtils.makeStubFunction();
-      var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
-      ecs.deploy.apply(ecs, args);
-      assert.equal(envObj.deploy.calledOnce(), true);
-      var deployArgs = envObj.deploy.lastArguments();
-      // remove the options param off of the end and compare to that. as it
-      // should be removed before env.deploy is called.
-      assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
-      // make sure that we don't add it to the changeSet.
-      assert.equal(lazyDeploy.callCount(), 0);
+    describe('deploy', function() {
+      it('can immediately deploy a charm via the env', function() {
+        var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+        this._cleanups.push(lazyDeploy.reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
+        ecs.deploy.apply(ecs, args);
+        assert.equal(envObj.deploy.calledOnce(), true);
+        var deployArgs = envObj.deploy.lastArguments();
+        // remove the options param off of the end and compare to that. as it
+        // should be removed before env.deploy is called.
+        assert.deepEqual(deployArgs, Array.prototype.slice.call(args, 0, -1));
+        // make sure that we don't add it to the changeSet.
+        assert.equal(lazyDeploy.callCount(), 0);
+      });
+
+      it('can add a `deploy` command to the changeSet', function() {
+        var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
+        this._cleanups.push(lazyDeploy.reset);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, 3, 4, 5, 6, 7, callback];
+        ecs.deploy.apply(ecs, args);
+        var lazyDeployArgs = lazyDeploy.lastArguments()[0];
+        // remove the options param off of the end and compare to that. as it
+        // should be removed before env.deploy is called.
+        assert.deepEqual(lazyDeployArgs, args);
+        assert.equal(lazyDeploy.calledOnce(), true);
+        // make sure we don't call the env deploy method.
+        assert.equal(envObj.deploy.callCount(), 0);
+      });
     });
 
-    it('can add a `deploy` command to the changeSet', function() {
-      var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
-      this._cleanups.push(lazyDeploy.reset);
-      var callback = testUtils.makeStubFunction();
-      var args = [1, 2, 3, 4, 5, 6, 7, callback];
-      ecs.deploy.apply(ecs, args);
-      var lazyDeployArgs = lazyDeploy.lastArguments()[0];
-      // remove the options param off of the end and compare to that. as it
-      // should be removed before env.deploy is called.
-      assert.deepEqual(lazyDeployArgs, args);
-      assert.equal(lazyDeploy.calledOnce(), true);
-      // make sure we don't call the env deploy method.
-      assert.equal(envObj.deploy.callCount(), 0);
+    describe('setConfig', function() {
+      it('can immediately set config to a deployed service', function() {
+        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, 3, 4, callback, { immediate: true}];
+        ecs.setConfig.apply(ecs, args);
+        assert.equal(envObj.set_config.calledOnce(), true);
+        var setConfigArgs = envObj.set_config.lastArguments();
+        // remove the options param off of the end and compare to that. as it
+        // should be removed before env.deploy is called.
+        assert.deepEqual(
+            setConfigArgs, Array.prototype.slice.call(args, 0, -1));
+        // make sure that we don't add it to the changeSet.
+        assert.equal(lazySetConfig.callCount(), 0);
+      });
+
+      it('throws if immediately setting config to queued service', function() {
+        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig);
+        var callback = testUtils.makeStubFunction();
+        ecs.changeSet.foo = {};
+        assert.throws(
+            // this is using bind instead of apply because of how the
+            // assert.throws assertion operates.
+            ecs.setConfig.bind(
+                ecs, 'foo', 2, 3, 4, callback, { immediate: true}),
+            'You cannot immediately setConfig on a queued service');
+        assert.equal(envObj.set_config.callCount(), 0);
+        // make sure that we don't add it to the changeSet.
+        assert.equal(lazySetConfig.callCount(), 0);
+      });
+
+      it('can add a `set_config` command to the changeSet', function() {
+        var lazySetConfig = testUtils.makeStubMethod(ecs, '_lazySetConfig');
+        this._cleanups.push(lazySetConfig);
+        var callback = testUtils.makeStubFunction();
+        var args = [1, 2, 3, 4, callback];
+        ecs.setConfig.apply(ecs, args);
+        assert.deepEqual(lazySetConfig.lastArguments()[0], args);
+        assert.equal(lazySetConfig.calledOnce(), true);
+        // Make sure we don't call the env set_config method
+        assert.equal(envObj.set_config.callCount(), 0);
+      });
     });
   });
 

@@ -147,7 +147,6 @@ YUI.add('service-config-view', function(Y) {
     */
     saveConfig: function() {
       var inspector = this.viewletManager,
-          env = inspector.get('env'),
           db = inspector.get('db'),
           service = inspector.get('model'),
           charmUrl = service.get('charm'),
@@ -167,7 +166,20 @@ YUI.add('service-config-view', function(Y) {
       }
 
       if (Y.Object.isEmpty(errors)) {
-        env.set_config(
+        var setConfigMethod;
+        if (window.flags.ecs) {
+          // When this flag is removed and the method is being called
+          // directly it doesn't need to be bound.
+          var ecs = this.get('ecs');
+          setConfigMethod = ecs.setConfig.bind(ecs);
+        } else {
+          var env = inspector.get('env');
+          setConfigMethod = env.set_config.bind(env);
+        }
+
+        setConfigMethod(
+            // When we have a ghost service model this id will have to be the
+            // changeSet id so that we know which service to modify.
             service.get('id'),
             config,
             inspector.configFileContent,

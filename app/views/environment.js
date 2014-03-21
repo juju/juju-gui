@@ -86,6 +86,7 @@ YUI.add('juju-view-environment', function(Y) {
 
       var db = this.get('db'),
           env = this.get('env'),
+          ecs = this.get('ecs'),
           topo = this.topo,
           charm = db.charms.getById(model.get('charm')),
           inspector = {};
@@ -102,7 +103,7 @@ YUI.add('juju-view-environment', function(Y) {
           db: db,
           model: model,
           env: env,
-          ecs: this.get('ecs'),
+          ecs: ecs,
           environment: this,
           charmModel: charm,
           topo: topo,
@@ -113,6 +114,7 @@ YUI.add('juju-view-environment', function(Y) {
           db: db,
           model: model,
           env: env,
+          ecs: ecs,
           environment: this,
           enableDatabinding: true,
           topo: topo,
