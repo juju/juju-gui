@@ -12,8 +12,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  # See https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1252872 for
-  # why we need to use Raring.
   config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/saucy/current/saucy-server-cloudimg-amd64-vagrant-disk1.box"
 
   # Create a private network, which allows host-only access to the machine
@@ -22,6 +20,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Provision with dependencies.
   config.vm.provision :shell, :path => "vagrant-provision.sh"
+
+  config.vm.synced_folder ENV['HOME'], "/vagrant", type: "nfs"
 
   config.vm.provider :virtualbox do |vb|
     vb.memory = 1024
