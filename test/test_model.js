@@ -1051,6 +1051,8 @@ describe('test_model.js', function() {
             }
           ]);
       var result = db.exportDeployer().envExport;
+
+      assert.strictEqual(result.relations.length, 1);
       var relation = result.relations[0];
 
       assert.equal(result.series, 'precise');
@@ -1080,6 +1082,67 @@ describe('test_model.js', function() {
 
       assert.equal(relation[0], 'mysql:db');
       assert.equal(relation[1], 'wordpress:app');
+    });
+
+    it('does not export peer relations', function() {
+      db.services.add({id: 'wordpress', charm: 'precise/wordpress-42'});
+      db.charms.add({id: 'precise/wordpress-42'});
+      db.relations.add({
+        id: 'wordpress:loadbalancer',
+        endpoints: [['wordpress', {name: 'loadbalancer', role: 'peer'}]],
+        'interface': 'reversenginx'
+      });
+      var result = db.exportDeployer().envExport;
+      // The service has been exported.
+      assert.isDefined(result.services.wordpress);
+      // But not its peer relation.
+      assert.strictEqual(result.relations.length, 0);
+    });
+
+    it('does not export the juju-gui service', function() {
+      db.services.add([
+        {id: 'juju-gui', charm: 'precise/juju-gui-42'},
+        {id: 'django', charm: 'trusty/django-47'}
+      ]);
+      db.charms.add([{id: 'precise/juju-gui-42'}, {id: 'trusty/django-47'}]);
+      var result = db.exportDeployer().envExport;
+      assert.strictEqual(Y.Object.size(result.services), 1);
+      assert.isDefined(result.services.django);
+    });
+
+    it('does not export juju-gui relations', function() {
+      db.services.add([
+        {id: 'wordpress', charm: 'precise/wordpress-42'},
+        // Someone gave the name "juju-gui" to a wordpress service.
+        {id: 'juju-gui', charm: 'precise/wordpress-42'},
+        {id: 'mysql', charm: 'trusty/mysql-47'}
+      ]);
+      db.charms.add([{id: 'precise/wordpress-42'}, {id: 'trusty/mysql-47'}]);
+      // The two wordpress instances are connected to the database.
+      db.relations.add([
+        {
+          id: 'wordpress:db mysql:db',
+          endpoints: [
+            ['mysql', {name: 'db', role: 'provider'}],
+            ['wordpress', {name: 'db', role: 'requirer'}]
+          ],
+          'interface': 'mysql'
+        },
+        {
+          id: 'juju-gui:db mysql:db',
+          endpoints: [
+            ['mysql', {name: 'db', role: 'provider'}],
+            ['juju-gui', {name: 'db', role: 'requirer'}]
+          ],
+          'interface': 'mysql'
+        }
+      ]);
+      var result = db.exportDeployer().envExport;
+      // The juju-gui service has not been exported.
+      assert.isUndefined(result.services['juju-gui']);
+      // The only exported relation is between wordpress and mysql.
+      assert.strictEqual(result.relations.length, 1);
+      assert.deepEqual(result.relations[0], ['mysql:db', 'wordpress:db']);
     });
 
     it('exports subordinate services without units', function() {

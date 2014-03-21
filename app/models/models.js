@@ -30,6 +30,11 @@ YUI.add('juju-models', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       handlers = models.handlers;
 
+  // The string representing juju-core entities' alive Life state.
+  var ALIVE = 'alive';
+  // The default Juju GUI service name.
+  var JUJU_GUI_SERVICE_NAME = 'juju-gui';
+
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
     var instanceId;
@@ -149,8 +154,6 @@ YUI.add('juju-models', function(Y) {
     }
   });
   models.Environment = Environment;
-
-  var ALIVE = 'alive';
 
   var Service = Y.Base.create('service', Y.Model, [], {
 
@@ -1323,8 +1326,16 @@ YUI.add('juju-models', function(Y) {
         var charm = self.charms.getById(service.get('charm'));
         var serviceOptions = {};
         var charmOptions = charm.get('options');
+        var serviceName = service.get('id');
 
-        if (service.get('pending') === true) {
+        // Exclude this service if it is a ghost or if it is named "juju-gui".
+        // This way we prevent the Juju GUI service to be exported when the
+        // bundle is created from a live environment. Note that this is a weak
+        // check: in theory, each deployed charm can be named "juju-gui", but
+        // we still assume this convention since there are no other (more
+        // solid) ways to exclude the Juju GUI service.
+        if (service.get('pending') === true ||
+            serviceName === JUJU_GUI_SERVICE_NAME) {
           return;
         }
 
@@ -1384,18 +1395,29 @@ YUI.add('juju-models', function(Y) {
             'gui-y': anno['gui-y']};
         }
 
-        result.envExport.services[service.get('id')] = serviceData;
+        result.envExport.services[serviceName] = serviceData;
       });
 
       relationList.each(function(relation) {
-        var relationData = [];
-        Y.each(relation.get('endpoints'), function(data, name) {
-          relationData.push(data[0] + ':' + data[1].name);
-        });
-        // Skip peer, they should add automatically.
-        if (relationData.length === 1) {
+        var endpoints = relation.get('endpoints');
+        // Skip peer relations: they should be added automatically.
+        if (endpoints.length === 1) {
           return;
         }
+        // Skip relations on the juju-gui service. The Juju GUI is not supposed
+        // to have relation established with other charms, but this can change
+        // in the future, and also this can be the case when an extraneous
+        // service is named "juju-gui".
+        var serviceNames = endpoints.map(function(endpoint) {
+          return endpoint[0];
+        });
+        if (serviceNames.indexOf(JUJU_GUI_SERVICE_NAME) !== -1) {
+          return;
+        }
+        // Export this relation.
+        var relationData = endpoints.map(function(endpoint) {
+          return endpoint[0] + ':' + endpoint[1].name;
+        });
         result.envExport.relations.push(relationData);
       });
 
