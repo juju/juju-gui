@@ -5,16 +5,14 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # Every Vagrant virtual environment requires a box to build off of.  Use a
-  # raring 64bit box; if it does not exist, vagrant up will fetch a box and
-  # name it properly.
-  config.vm.box = "raring64"
+  # Every Vagrant virtual environment requires a box image to base.  Use a 64bit
+  # box from the latest Ubuntu release; if it does not exist, vagrant up will
+  # fetch a box and name it properly.
+  config.vm.box = "saucy64"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  # See https://bugs.launchpad.net/ubuntu/+source/virtualbox/+bug/1252872 for 
-  # why we need to use Raring.
-  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/saucy/current/saucy-server-cloudimg-amd64-vagrant-disk1.box"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -22,6 +20,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Provision with dependencies.
   config.vm.provision :shell, :path => "vagrant-provision.sh"
+
+  config.vm.synced_folder ENV['HOME'], "/vagrant", type: "nfs"
 
   config.vm.provider :virtualbox do |vb|
     vb.memory = 1024

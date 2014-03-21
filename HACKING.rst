@@ -79,6 +79,19 @@ provided. This will use VirtualBox to run a development environment in an Ubuntu
 virtual machine, installing all the dependencies and setting up networking such
 that you can modify files locally but run the development server from the VM.
 
+Your home directory ($HOME) is shared from your host to the guest in vagrant.
+The sharing is done via NFS.  In order for NFS to work, on OS X you may need to:
+
+::
+
+  sudo touch /etc/exports
+
+For an Ubuntu host you will need to:
+
+::
+
+  sudo apt-get install nfs-kernel-server
+
 After getting `Vagrant <http://vagrantup.com>`_ and the latest version of
 `VirtualBox <http://virtualbox.org>`_ (at least 4.3), simply run the following
 from your working directory:
@@ -88,8 +101,10 @@ from your working directory:
   vagrant up
 
 You may see a warning about guest additions not matching the version of
-VirtualBox, but this does not affect our development environment. After the
-machine builds, boots, and provisions, you can ssh using the following:
+VirtualBox, but this does not affect our development environment.
+
+After the machine builds, boots, and provisions, you can ssh using the
+following:
 
 ::
 
@@ -101,10 +116,11 @@ If provisioning fails for any reason, you can reprovision with the following:
 
   vagrant reload --provision
 
-From the vagrant, you can run all of the make targets in ``/vagrant`` and
-access the GUI or test servers from the host using the IP address
-``192.168.33.10``. Once you are done, you can either ``vagrant suspend``,
-``vagrant halt``, or ``vagrant destroy`` the machine from your host.
+From the vagrant, you can run all of the make targets in
+``/vagrant/<path-to-project>`` and access the GUI or test servers from the host
+using the IP address ``192.168.33.10``. Once you are done, you can either
+``vagrant suspend``, ``vagrant halt``, or ``vagrant destroy`` the machine from
+your host.
 
 
 Running the GUI
