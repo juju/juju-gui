@@ -493,8 +493,10 @@ th {
     }
 }
 #relation-menu {
-    .relation-action {
+    .relation-container {
+        cursor: inherit;
         padding-left: 27px;
+        padding-right: 0;
         background-repeat: no-repeat;
         background-position: 5px 12px;
         background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
@@ -504,6 +506,19 @@ th {
         .endpoint.error {
             color: red;
         }
+        &:hover {
+            background-color: inherit;
+        }
+    }
+    .relation-remove {
+        cursor: pointer;
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background-repeat: no-repeat;
+        background-position: 11px 11px;
+        background-image: url("/juju-ui/assets/images/trash.png");
+        margin-bottom: -11px;
     }
 }
 
