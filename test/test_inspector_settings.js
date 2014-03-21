@@ -250,6 +250,68 @@ describe('Inspector Settings', function() {
 
   /**** End service destroy UI tests. ****/
 
+  describe('config file upload', function() {
+    it('hides the configuration inputs when a file is uploaded', function() {
+      inspector = setUpInspector();
+      var fileContents = 'yaml yaml yaml';
+      inspector.views.config
+               .onFileLoaded('a.yaml', {target: {result: fileContents}});
+      assert.deepEqual(inspector.configFileContent, fileContents);
+      var settings = inspector.get('container')
+                              .all('.charm-settings, .settings-wrapper.toggle');
+      settings.each(function(node) {
+        assert.equal(node.getStyle('display'), 'none');
+      });
+    });
+
+    it('restores file input when config is removed', function() {
+      inspector = setUpInspector();
+      container = inspector.get('container');
+      var fileContents = 'yaml yaml yaml';
+      inspector.views.config
+               .onFileLoaded('a.yaml', {target: {result: fileContents}});
+      assert.equal(inspector.configFileContent, fileContents);
+      var settings = container.all('.charm-settings, .settings-wrapper.toggle');
+      settings.each(function(node) {
+        assert.equal(node.getStyle('display'), 'none');
+      });
+      // Load the file.
+      inspector.views.config
+               .onFileLoaded('a.yaml', {target: {result: fileContents}});
+      // And then click to remove it.
+      container.one('.config-file .fakebutton').simulate('click');
+      // The content should be gone now.
+      assert.equal(inspector.configFileContent, undefined);
+      assert.equal(container.one('.config-file input').get('files').size(), 0);
+      assert.equal(
+          container.one('.config-file .fakebutton').getContent(),
+          'Import config file...'
+      );
+    });
+
+    it('is able to set_config with configuration from a file', function(done) {
+      inspector = setUpInspector();
+      container = inspector.views.config.get('container');
+      var env = view.get('env');
+      var config_raw = 'admins: \n user:pass';
+      var oldSetConfig = env.set_config;
+      env.set_config = function(
+          serviceName, config, data, serviceConfig, callback) {
+        assert.equal(serviceName, 'mediawiki');
+        assert.isNull(config);
+        assert.equal(data, config_raw);
+        assert.isObject(serviceConfig);
+        assert.isFunction(callback);
+        env.set_config = oldSetConfig;
+        done();
+      };
+      inspector.views.config
+               .onFileLoaded('a.yaml', {target: {result: config_raw}});
+      var confirmBtn = container.one('.confirm');
+      confirmBtn.simulate('click');
+    });
+  });
+
   it('saves changes to settings values', function() {
     inspector = setUpInspector();
     env.connect();
