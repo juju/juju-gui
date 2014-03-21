@@ -154,18 +154,23 @@ YUI.add('service-config-view', function(Y) {
           charm = db.charms.getById(charmUrl),
           schema = charm.get('options'),
           container = this.get('container'),
-          button = container.one('button.confirm');
+          button = container.one('button.confirm'),
+          errors = {},
+          config;
 
       button.set('disabled', 'disabled');
-
-      var config = utils.getElementsValuesMapping(container, '.config-field');
-      var errors = utils.validate(config, schema);
+      if (inspector.configFileContent) {
+        config = null;
+      } else {
+        config = utils.getElementsValuesMapping(container, '.config-field');
+        errors = utils.validate(config, schema);
+      }
 
       if (Y.Object.isEmpty(errors)) {
         env.set_config(
             service.get('id'),
             config,
-            null,
+            inspector.configFileContent,
             service.get('config'),
             Y.bind(this._setConfigCallback, this, container)
         );
@@ -214,6 +219,7 @@ YUI.add('service-config-view', function(Y) {
         var bindingEngine = this.viewletManager.bindingEngine;
         bindingEngine.resetDOMToModel('config');
       }
+      this.onRemoveFile();
       container.one('.controls .confirm').removeAttribute('disabled');
     },
 
@@ -225,6 +231,7 @@ YUI.add('service-config-view', function(Y) {
       @return {undefined} Nothing.
     */
     cancelConfig: function(e) {
+      this.onRemoveFile();
       this.viewletManager.bindingEngine.resetDOMToModel('config');
     },
 

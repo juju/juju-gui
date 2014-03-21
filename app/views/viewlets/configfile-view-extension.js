@@ -64,6 +64,12 @@ YUI.add('configfile-view-extension', function(Y) {
       reader.onerror = Y.bind(this.onFileError, this);
       reader.onload = Y.bind(this.onFileLoaded, this, file.name);
       reader.readAsText(file);
+      // Because this is a shared method the controls node is only there
+      // on the deployed inspector not the ghost inspector.
+      var controls = this.get('container').one('.controls');
+      if (controls) {
+        controls.removeClass('closed');
+      }
     },
 
 
