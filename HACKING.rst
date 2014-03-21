@@ -79,8 +79,8 @@ provided. This will use VirtualBox to run a development environment in an Ubuntu
 virtual machine, installing all the dependencies and setting up networking such
 that you can modify files locally but run the development server from the VM.
 
-The local directory is shared from your host to the guest in vagrant.  The
-sharing is done via NFS.  In order for NFS to work, on OS X you may need to:
+Your home directory ($HOME) is shared from your host to the guest in vagrant.
+The sharing is done via NFS.  In order for NFS to work, on OS X you may need to:
 
 ::
 
@@ -116,10 +116,11 @@ If provisioning fails for any reason, you can reprovision with the following:
 
   vagrant reload --provision
 
-From the vagrant, you can run all of the make targets in ``/vagrant`` and
-access the GUI or test servers from the host using the IP address
-``192.168.33.10``. Once you are done, you can either ``vagrant suspend``,
-``vagrant halt``, or ``vagrant destroy`` the machine from your host.
+From the vagrant, you can run all of the make targets in
+``/vagrant/<path-to-project>`` and access the GUI or test servers from the host
+using the IP address ``192.168.33.10``. Once you are done, you can either
+``vagrant suspend``, ``vagrant halt``, or ``vagrant destroy`` the machine from
+your host.
 
 
 Running the GUI
