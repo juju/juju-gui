@@ -279,6 +279,22 @@ function injectData(app, data) {
       assert.isTrue(app.db.notifications.item(0).get(
           'message').indexOf('ctrl+-') !== -1);
     });
+
+    it('renders the environment header', function(done) {
+      window.flags.mv = true;
+      container.appendChild(Y.Node.create(
+          '<div id="environment-header"></div>'));
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
+      app.after('ready', function() {
+        assert.isObject(app.environmentHeader);
+        assert.equal(container.one('#environment-header').hasClass(
+            'environment-header'), true);
+        delete window.flags.mv;
+        done();
+      });
+    });
   });
 })();
 

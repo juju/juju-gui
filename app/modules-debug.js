@@ -197,6 +197,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/view-dropdown-extension.js'
         },
 
+        'environment-header-extension': {
+          fullpath:
+              '/juju-ui/assets/javascripts/environment-header-extension.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
@@ -257,6 +262,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/deployer-bar.js'
         },
 
+        'juju-environment-header': {
+          fullpath: '/juju-ui/widgets/environment-header.js'
+        },
+
         'juju-view-environment': {
           fullpath: '/juju-ui/views/environment.js'
         },
@@ -289,6 +298,7 @@ var GlobalConfig = {
             'juju-notifications',
             'juju-help-dropdown',
             'juju-deployer-bar',
+            'juju-environment-header',
             'juju-view-utils',
             'juju-topology',
             'juju-view-environment',

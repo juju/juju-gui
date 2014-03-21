@@ -48,6 +48,8 @@ This is a general guide on how to structure your classes.
 @charm-panel-orange: #dd4814;
 @charm-panel-background-color: #eeeeee;
 @deployer-bar-height: 50px;
+@environment-header-height: 40px;
+@left-panel-width: 290px;
 @navbar-height: 60px;
 @navbar-border-dark: #191514;
 @navbar-border-light: #2d2928;
@@ -715,6 +717,9 @@ g.unit {
     right: 20px;
     top: 40px;
 }
+.flag-mv .zoom-controls {
+    top: 80px;
+}
 .yui3-slider-y .yui3-slider-rail,
 .yui3-slider-y .yui3-slider-rail-cap-top,
 .yui3-slider-y .yui3-slider-rail-cap-bottom {
@@ -899,9 +904,10 @@ g.unit {
 @import "browser/section-title.less";
 @import "browser/tabview.less";
 @import "content-panel.less";
-@import "dropdown.less";
-@import "juju-inspector.less";
 @import "deployer-bar.less";
+@import "dropdown.less";
+@import "environment-header.less";
+@import "juju-inspector.less";
 
 /** Views **/
 @import "browser/onboarding.less";
