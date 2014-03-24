@@ -195,14 +195,15 @@ YUI.add('environment-change-set', function(Y) {
         args: args
       };
       // The 6th param is the toMachine param of the env deploy call.
-      var parent = args[6];
+      var toMachine = args[6];
       if (!this.changeSet[parent]) {
         // If the toMachine isn't a record in the changeSet that means it's
-        // an existing machine and this does not need to be queued behind
-        // another command.
-        parent = null;
+        // an existing machine or that the machine does not exist and one
+        // will be created to host this unit. This means that this does not
+        // need to be queued behind another command.
+        toMachine = null;
       }
-      return this._createNewRecord('service', command, parent);
+      return this._createNewRecord('service', command, toMachine);
     },
 
     /**
@@ -216,11 +217,11 @@ YUI.add('environment-change-set', function(Y) {
     */
     _lazySetConfig: function(args) {
       var serviceName = args[0];
-      var queued;
+      var parent;
       if (this.changeSet[serviceName]) {
         // If it's a queued service then we need to add this command as a
         // reference to the deploy service command.
-        queued = [serviceName];
+        parent = [serviceName];
       }
       var command = {
         method: 'set_config', // This needs to match the method name in env.
@@ -230,7 +231,7 @@ YUI.add('environment-change-set', function(Y) {
       // command on 'commit' if there is a queued service for this command.
       // We will want to flatten multiple setConfig calls to the same service
       // on 'commit'.
-      return this._createNewRecord('setConfig', command, queued);
+      return this._createNewRecord('setConfig', command, parent);
     },
 
     /* End private environment methods. */
