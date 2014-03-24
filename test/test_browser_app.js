@@ -301,7 +301,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.isTrue(called);
       });
 
-      it('resets using initState', function() {
+      it('resets using state init', function() {
         app = new browser.Browser();
         var mockView = {
           destroy: function() {}
@@ -310,15 +310,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         app._minimized = mockView;
 
         // Setup some previous state to check for clearing.
-        app._oldState.viewmode = 'minimized';
-        app._viewState.viewmode = 'sidebar';
+        app.state.old.viewmode = 'minimized';
+        app.state.view.viewmode = 'sidebar';
 
-        app.initState();
+        // The old initState used to do both state initialization and clearing
+        // the views. Now that state is refactored into its own object, we
+        // need to call both explicitly.
+        app.state.init();
+        app._clearViews();
 
         assert.equal(app._sidebar, undefined, 'sidebar is removed');
         assert.equal(app._minimized, undefined, 'minimized is removed');
-        assert.equal(app._oldState.viewmode, null, 'old state is reset');
-        assert.equal(app._viewState.viewmode, null, 'view state is reset');
+        assert.equal(app.state.old.viewmode, null, 'old state is reset');
+        assert.equal(app.state.view.viewmode, null, 'view state is reset');
       });
 
       it('correctly strips viewmode from the charmID', function() {
@@ -413,7 +417,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // sidebar is the default viewmode and is not required on urls that have
         // a charm id in them or the root url. Leave out the viewmode in these
         // cases.
-        var url = app._getStateUrl({
+        var url = app.state.getUrl({
           viewmode: 'sidebar',
           charmID: 'precise/mysql-10',
           search: undefined,
@@ -421,7 +425,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
         assert.equal(url, 'precise/mysql-10');
 
-        url = app._getStateUrl({
+        url = app.state.getUrl({
           viewmode: 'sidebar',
           charmID: undefined,
           search: undefined,
@@ -430,7 +434,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(url, '');
 
         // The viewmode is required for search related routes though.
-        url = app._getStateUrl({
+        url = app.state.getUrl({
           viewmode: 'sidebar',
           charmID: undefined,
           search: true,
@@ -481,15 +485,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         // And we hard set that the viewmode was in _sidebar.
-        app._viewState.viewmode = 'sidebar';
+        app.state.view.viewmode = 'sidebar';
 
         var req = {
           'viewmode': 'minimized'
         };
 
         app.minimized(req, null, next);
-        assert.equal(app._viewState.viewmode, 'sidebar');
-        assert.equal(app._oldState.viewmode, 'sidebar');
+        assert.equal(app.state.view.viewmode, 'sidebar');
+        assert.equal(app.state.old.viewmode, 'sidebar');
 
       });
     });
@@ -613,12 +617,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('resets filters when navigating away from search', function() {
-        browser._viewState.search = true;
-        browser._filter.set('text', 'foo');
+        browser.state.view.search = true;
+        browser.state.filter.set('text', 'foo');
         // Set the state before changing up.
-        browser._saveState();
-        browser._getStateUrl({search: false});
-        assert.equal('', browser._filter.get('text'));
+        browser.state.save();
+        browser.state.getUrl({search: false});
+        assert.equal('', browser.state.filter.get('text'));
       });
 
       it('viewmodes are not a valid charm id', function() {
@@ -1059,32 +1063,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The view state needs to also be sync'd and updated even though
         // we're hidden so that we can detect changes in the app state across
         // requests while hidden.
-        assert.equal(browser._oldState.viewmode, 'minimized');
+        assert.equal(browser.state.old.viewmode, 'minimized');
       });
 
       it('knows when the search cache should be updated', function() {
-        browser._getStateUrl({
+        browser.state.getUrl({
           'search': true,
           'querystring': 'text=apache'
         });
         assert.isTrue(browser._searchChanged());
-        browser._saveState();
-        browser._getStateUrl({
+        browser.state.save();
+        browser.state.getUrl({
           'search': true,
           'querystring': 'text=apache'
         });
         assert.isFalse(browser._searchChanged());
-        browser._saveState();
-        browser._getStateUrl({
+        browser.state.save();
+        browser.state.getUrl({
           'search': true,
           'querystring': 'text=ceph'
         });
         assert.isTrue(browser._searchChanged());
-        browser._saveState();
+        browser.state.save();
       });
 
       it('permits a filter clear command', function() {
-        var url = browser._getStateUrl({
+        var url = browser.state.getUrl({
           'search': true,
           'filter': {
             text: 'apache'
@@ -1095,7 +1099,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(url, '/search?text=apache');
 
         // Now let's clear it and make sure it's emptied.
-        url = browser._getStateUrl({
+        url = browser.state.getUrl({
           'filter': {
             clear: true
           }
@@ -1104,7 +1108,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('permits a filter replace command', function() {
-        var url = browser._getStateUrl({
+        var url = browser.state.getUrl({
           'search': true,
           'filter': {
             text: 'apache',
@@ -1117,7 +1121,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             '/search?categories=app-servers&text=apache');
 
         // Now let's update it and force all the rest to go away.
-        url = browser._getStateUrl({
+        url = browser.state.getUrl({
           'filter': {
             replace: true,
             text: 'mysql'
@@ -1129,8 +1133,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       it('re-renders charm details with the sidebar', function() {
         // Set a charm identifier in the view state, and patch the old state
         // so that it is no different than the current one.
-        browser._viewState.charmID = 'precise/mediawiki-10';
-        browser._oldState = browser._viewState;
+        browser.state.view.charmID = 'precise/mediawiki-10';
+        browser.state.old = browser.state.view;
         // Call the sidebar method and ensure the charm detail is re-rendered.
         browser.sidebar({path: '/'}, null, function() {});
         assert.isTrue(hits.renderCharmDetails);
