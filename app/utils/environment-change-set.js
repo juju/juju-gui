@@ -83,34 +83,32 @@ YUI.add('environment-change-set', function(Y) {
     /**
       Creates a new record of the appropriate type in the changeSet.
 
+      Each record in the changeSet is an object the following format:
+
+      'parents' {Array} Keys whos commands must finish before it can be run.
+      'executed' {Boolean} Weather this command has been executed or not.
+      'command' {Object} The env method to call with arguments.
+
+      { parents: ['service-1234'],
+        executed: false,
+        command: {
+          method: 'deploy',
+          args: ['foo', 'bar'] } }
+
       @method _createNewRecord
       @param {String} type The type of record to create (service, unit, etc).
       @param {Object} command The command that's to be executed lazily.
       @return {String} The newly created record key.
     */
-    _createNewRecord: function(type, command) {
+    _createNewRecord: function(type, command, parents) {
       var key = type + '-' + this._generateUniqueKey(type);
-      command = this._wrapCallback(command);
       this.changeSet[key] = {
-        commands: [command]
+        id: key,
+        parents: parents,
+        executed: false,
+        command: command
       };
-      return key;
-    },
-
-    /**
-      Adds a new command to an existing record.
-
-      @method _addToRecrod
-      @param {String} key The key to add the command to.
-      @param {Object} command The command that's to be executed lazily.
-      @return {String} The key to which the command was added.
-    */
-    _addToRecord: function(key, command) {
-      command = this._wrapCallback(command);
-      var changeSet = this.changeSet[key];
-      var length = changeSet.commands.push(command);
-      // Add next function to execute to previous next() command.
-      changeSet.commands[length - 2].next = this._execute.bind(this, command);
+      this._wrapCallback(this.changeSet[key]);
       return key;
     },
 
@@ -119,11 +117,10 @@ YUI.add('environment-change-set', function(Y) {
       called.
 
       @method _wrapCallback
-      @param {Object} command The individual command object from the changeSet.
-      @return {Array} The args array with the wrapped callback.
+      @param {Object} record The individual record object from the changeSet.
     */
-    _wrapCallback: function(command) {
-      var args = command.args;
+    _wrapCallback: function(record) {
+      var args = record.command.args;
       var index = args.length - 1;
       var callback = args[index];
       /* jshint -W040 */
@@ -134,29 +131,28 @@ YUI.add('environment-change-set', function(Y) {
         @method _callbackWrapper
       */
       function _callbackWrapper() {
-        command.executed = true;
+        record.executed = true;
         // `this` here is in context that the callback is called
         //  under. In most cases this will be `env`.
         var result = callback.apply(this, self._getArgs(arguments));
-        self.fire('taskComplete', command);
-        // Execute the next command.
-        if (command.next) {
-          command.next();
-        }
+        self.fire('taskComplete', {
+          id: record.id,
+          record: record
+        });
         return result;
       }
       args[index] = _callbackWrapper;
-      return command;
     },
 
     /**
-      Executes the passed in command on the environment.
+      Executes the passed in record on the environment.
 
       @method _execute
-      @param {Object} command The individual command object from the changeSet.
+      @param {Object} record The individual record object from the changeSet.
     */
-    _execute: function(command) {
+    _execute: function(record) {
       var env = this.get('env');
+      var command = record.command;
       env[command.method].apply(env, command.args);
     },
 
@@ -168,13 +164,15 @@ YUI.add('environment-change-set', function(Y) {
     */
     commit: function() {
       var changeSet = this.changeSet;
-      var commands;
+      var command;
 
       Object.keys(changeSet).forEach(function(key) {
-        commands = changeSet[key].commands;
-        // Trigger the series to start executing.
-        this._execute(commands[0]);
-        this.fire('commit', commands);
+        command = changeSet[key];
+        // XXX Jeff March 24 2014 - This executes all commands from top to
+        // bottom. Instead this needs to queue up the tasks based on their
+        // hierarchical structure.
+        this._execute(command);
+        this.fire('commit', command);
       }, this);
     },
 
@@ -194,10 +192,18 @@ YUI.add('environment-change-set', function(Y) {
     _lazyDeploy: function(args) {
       var command = {
         method: 'deploy',
-        executed: false,
         args: args
       };
-      return this._createNewRecord('service', command);
+      // The 6th param is the toMachine param of the env deploy call.
+      var toMachine = args[6];
+      if (!this.changeSet[parent]) {
+        // If the toMachine isn't a record in the changeSet that means it's
+        // an existing machine or that the machine does not exist and one
+        // will be created to host this unit. This means that this does not
+        // need to be queued behind another command.
+        toMachine = null;
+      }
+      return this._createNewRecord('service', command, toMachine);
     },
 
     /**
@@ -211,17 +217,21 @@ YUI.add('environment-change-set', function(Y) {
     */
     _lazySetConfig: function(args) {
       var serviceName = args[0];
-      var queued = this.changeSet[serviceName];
+      var parent;
+      if (this.changeSet[serviceName]) {
+        // If it's a queued service then we need to add this command as a
+        // reference to the deploy service command.
+        parent = [serviceName];
+      }
       var command = {
         method: 'set_config', // This needs to match the method name in env.
-        executed: false,
         args: args
       };
-      // If it's a queued service then we need to add to that service's record.
-      if (queued) {
-        return this._addToRecord(serviceName, command);
-      }
-      return this._createNewRecord('setConfig', command);
+      // XXX Jeff - We may want to flatten this into the deploy service
+      // command on 'commit' if there is a queued service for this command.
+      // We will want to flatten multiple setConfig calls to the same service
+      // on 'commit'.
+      return this._createNewRecord('setConfig', command, parent);
     },
 
     /* End private environment methods. */
@@ -232,7 +242,8 @@ YUI.add('environment-change-set', function(Y) {
       Calls the environments deploy method or creates a new service record
       in the queue.
 
-      The parameters match the parameters for the env deploy method.
+      The parameters match the parameters for the public env deploy method in
+      go.js.
 
       @method deploy
     */
@@ -252,7 +263,8 @@ YUI.add('environment-change-set', function(Y) {
       Calls the environments set_config method or creates a new set_config
       record in the queue.
 
-      THe parameters match the parameters for the env deploy method.
+      The parameters match the parameters for the public env deploy method in
+      go.js.
 
       @method setConfig
     */

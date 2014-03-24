@@ -83,19 +83,6 @@ describe('Environment Change Set', function() {
     });
 
     describe('_createNewRecord', function() {
-      it('creates a new record of the specified type', function() {
-        var command = { foo: 'foo' };
-        var wrapCallback = testUtils.makeStubMethod(
-            ecs, '_wrapCallback', command);
-        this._cleanups.push(wrapCallback.reset);
-        var key = ecs._createNewRecord('service', command);
-        assert.equal(wrapCallback.calledOnce(), true);
-        assert.deepEqual(wrapCallback.lastArguments()[0], command);
-        assert.deepEqual(ecs.changeSet[key], {
-          commands: [command]
-        });
-      });
-
       it('always creates a unique key for new records', function() {
         var result = [];
         var wrapCallback = testUtils.makeStubMethod(ecs, '_wrapCallback');
@@ -107,67 +94,93 @@ describe('Environment Change Set', function() {
         // If there were any duplicates then these would be different.
         assert.equal(dedupe.length, result.length);
       });
-    });
 
-    describe('_addToRecord', function() {
-      it('adds a supplied command to an existing record', function() {
-        var args = [1, 2, 'foo', 'bar'];
-        // This assumes that the _lazyDeploy tests complete successfully.
-        var key = ecs._lazyDeploy(args);
-        var callback = testUtils.makeStubFunction();
-        var record = ecs.changeSet[key];
-        var command = {
-          method: 'set_config',
-          executed: false,
-          args: [1, 2, 'foo', callback]
-        };
+      it('creates a new record of the specified type', function() {
+        var command = { foo: 'foo' };
         var wrapCallback = testUtils.makeStubMethod(
             ecs, '_wrapCallback', command);
         this._cleanups.push(wrapCallback.reset);
-        ecs._addToRecord(key, command);
-        // It calls to wrap the callback.
+        var key = ecs._createNewRecord('service', command);
         assert.equal(wrapCallback.calledOnce(), true);
-        assert.deepEqual(wrapCallback.lastArguments()[0], command);
-        // It adds the command in the proper heirarcical order.
-        assert.equal(record.commands[1].method, 'set_config');
-        // It adds the next() method to the previous command.
-        assert.isFunction(record.commands[0].next);
+        assert.deepEqual(wrapCallback.lastArguments()[0], {
+          id: key,
+          parents: undefined,
+          executed: false,
+          command: command
+        });
+        assert.deepEqual(ecs.changeSet[key], {
+          id: key,
+          parents: undefined,
+          executed: false,
+          command: command
+        });
+      });
+
+      it('adds supplied parent records to the new record', function() {
+        var command = { foo: 'foo' };
+        var wrapCallback = testUtils.makeStubMethod(
+            ecs, '_wrapCallback', command);
+        this._cleanups.push(wrapCallback.reset);
+        var parent = ['service-123'];
+        var key = ecs._createNewRecord('service', command, parent);
+        assert.equal(wrapCallback.calledOnce(), true);
+        assert.deepEqual(wrapCallback.lastArguments()[0], {
+          id: key,
+          parents: parent,
+          executed: false,
+          command: command
+        });
+        assert.deepEqual(ecs.changeSet[key], {
+          id: key,
+          parents: parent,
+          executed: false,
+          command: command
+        });
       });
     });
 
     describe('_wrapCallback', function() {
-      it('wraps the callbacks provided in the command objects', function() {
+      it('wraps the callback provided in the record object', function() {
         var callback = testUtils.makeStubFunction('real cb');
-        var command = {
-          method: 'deploy',
+        var record = {
+          id: 'service-123',
+          parents: undefined,
           executed: false,
-          args: [1, 2, 'foo', callback],
-          next: testUtils.makeStubFunction()
+          command: {
+            method: 'deploy',
+            args: [1, 2, 'foo', callback]
+          }
         };
-        assert.deepEqual(ecs._wrapCallback(command), command);
+        ecs._wrapCallback(record);
         // The callback should now be wrapped.
         var fire = testUtils.makeStubMethod(ecs, 'fire');
         this._cleanups.push(fire.reset);
-        var result = command.args[3]();
+        var result = record.command.args[3]();
         assert.equal(result, 'real cb');
         assert.equal(fire.calledOnce(), true);
         var fireArgs = fire.lastArguments();
         assert.equal(fireArgs[0], 'taskComplete');
-        assert.deepEqual(fireArgs[1], command);
-        assert.equal(command.executed, true);
-        assert.equal(command.next.calledOnce(), true);
+        assert.deepEqual(fireArgs[1], {
+          id: 'service-123',
+          record: record
+        });
+        assert.equal(record.executed, true);
       });
     });
 
     describe('_execute', function() {
       it('calls to wrap the callback then executes on the env', function() {
         var callback = testUtils.makeStubFunction();
-        var command = {
-          method: 'deploy',
+        var record = {
+          id: 'service-123',
+          parents: undefined,
           executed: false,
-          args: [1, 2, 'foo', callback]
+          command: {
+            method: 'deploy',
+            args: [1, 2, 'foo', callback]
+          }
         };
-        ecs._execute(command);
+        ecs._execute(record);
         assert.equal(envObj.deploy.calledOnce(), true);
       });
     });
@@ -178,20 +191,22 @@ describe('Environment Change Set', function() {
         this._cleanups.push(execute.reset);
         var fire = testUtils.makeStubMethod(ecs, 'fire');
         this._cleanups.push(fire.reset);
-        var command = [{ executed: false, method: 'deploy' }];
         var changeSet = {
           'service-568': {
-            commands: command
+            executed: false,
+            command: {
+              method: 'deploy'
+            }
           }
         };
         ecs.changeSet = changeSet;
         ecs.commit();
         assert.equal(execute.callCount(), 1);
-        assert.deepEqual(execute.lastArguments()[0], command[0]);
+        assert.deepEqual(execute.lastArguments()[0], changeSet['service-568']);
         assert.equal(fire.callCount(), 1);
         var fireArgs = fire.lastArguments();
         assert.equal(fireArgs[0], 'commit');
-        assert.equal(fireArgs[1], changeSet['service-568'].commands);
+        assert.equal(fireArgs[1], changeSet['service-568']);
       });
     });
   });
@@ -203,10 +218,10 @@ describe('Environment Change Set', function() {
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
-        assert.isArray(record.commands);
-        assert.equal(record.commands[0].method, 'deploy');
-        assert.equal(record.commands[0].executed, false);
-        assert.deepEqual(record.commands[0].args, args);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, 'deploy');
+        assert.deepEqual(record.command.args, args);
       });
     });
 
@@ -218,32 +233,30 @@ describe('Environment Change Set', function() {
         var key = ecs._lazySetConfig(args);
         var record = ecs.changeSet[key];
         assert.isObject(record);
-        assert.isArray(record.commands);
-        assert.equal(record.commands[0].method, 'set_config');
-        assert.equal(record.commands[0].executed, false);
-        assert.deepEqual(record.commands[0].args, args);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, 'set_config');
+        assert.deepEqual(record.command.args, args);
         // Make sure we don't also add to a old record
         assert.equal(addToRecord.callCount(), 0);
       });
 
-      it('creates a new `setConfig` record under a queued service', function() {
+      it('creates a new `setConfig` record for a queued service', function() {
         var args = [1, 2, 'foo', 'bar'];
         // This assumes that the _lazyDeploy tests complete successfully.
         var key = ecs._lazyDeploy(args);
         var record = ecs.changeSet[key];
-        assert.equal(record.commands.length, 1);
-        // Stub out after the lazyDeploy because it needs the original method.
-        var createNewRecord = testUtils.makeStubMethod(ecs, '_createNewRecord');
-        this._cleanups.push(createNewRecord.reset);
+        assert.isObject(record);
         var setArgs = [key, 1, 2, 3];
-        ecs._lazySetConfig(setArgs);
-        assert.equal(record.commands.length, 2);
-        var command = record.commands[1];
+        var setKey = ecs._lazySetConfig(setArgs);
+        var setRecord = ecs.changeSet[setKey];
+        assert.equal(setRecord.executed, false);
+        assert.isObject(setRecord.command);
+        var command = setRecord.command;
         assert.equal(command.method, 'set_config');
-        assert.equal(command.executed, false);
         assert.deepEqual(command.args, setArgs);
-        // Make sure we also don't create new record
-        assert.equal(createNewRecord.callCount(), 0);
+        // It should have called to create new records
+        assert.equal(Y.Object.size(ecs.changeSet), 2);
       });
     });
   });
