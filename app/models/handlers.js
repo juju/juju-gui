@@ -284,13 +284,44 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     machineInfo: function(db, action, change) {
+      var addresses = change.Addresses || [];
       var data = {
         id: change.Id,
+        addresses: addresses.map(function(address) {
+          return {
+            name: address.NetworkName,
+            scope: address.NetworkScope,
+            type: address.Type,
+            value: address.Value
+          };
+        }),
         instance_id: change.InstanceId,
         agent_state: change.Status,
         agent_state_info: change.StatusInfo,
-        agent_state_data: change.StatusData
+        agent_state_data: change.StatusData,
+        hardware: {},
+        jobs: change.Jobs,
+        life: change.Life,
+        series: change.Series,
+        supportedContainers: null
       };
+      // The HardwareCharacteristics attribute is undefined if the machine
+      // is not yet provisioned.
+      var hardwareCharacteristics = change.HardwareCharacteristics;
+      if (hardwareCharacteristics) {
+        data.hardware = {
+          arch: hardwareCharacteristics.Arch,
+          cpuCores: hardwareCharacteristics.CpuCores,
+          cpuPower: hardwareCharacteristics.CpuPower,
+          mem: hardwareCharacteristics.Mem,
+          disk: hardwareCharacteristics.RootDisk
+        };
+      }
+      // The supported containers are only available when the machine is
+      // provisioned.
+      if (change.SupportedContainersKnown) {
+        data.supportedContainers = change.SupportedContainers;
+      }
       db.machines.process_delta(action, data);
     },
 

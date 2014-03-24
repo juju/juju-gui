@@ -691,20 +691,159 @@ YUI.add('juju-models', function(Y) {
   var Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id'
   }, {
+    // Since MachineList is a lazy model list, the attributes below are rarely
+    // used, and real object properties are created instead. That said, the
+    // comments below are useful since they also provide a description of
+    // machine lazy instances' properties.
     ATTRS: {
-      // The following attributes are automatically generated when a machine is
-      // added to the model list.
+      /**
+        The machine display name (e.g. "1" or "2/lxc/0"), automatically
+        generated when a machine is added to the model list.
+
+        @attribute displayName
+        @type {String}
+      */
       displayName: {},
+      /**
+        The parent machine name (e.g. "1" or "2/lxc/0"), automatically
+        generated when a machine is added to the model list. For top level
+        machines, this value is null.
+
+        @attribute parentId
+        @type {String}
+      */
       parentId: {},
+      /**
+        The machine container type (e.g. "lxc" or "kvm"), or null if this is a
+        top level machine. This attribute is automatically generated when a
+        machine is added to the model list.
+
+        @attribute containerType
+        @type {String}
+      */
       containerType: {},
+      /**
+        The machine or container number, automatically generated when a machine
+        is added to the model list.
+
+        @attribute number
+        @type {Int}
+      */
       number: {},
-      // The following attributes are included in the mega-watcher info.
+      /**
+        The machine id, usually provided by the pyJuju stream.
+
+        @attribute machine_id
+        @type {String}
+      */
       machine_id: {},
+      /**
+        The machine public address. This is set by the pyJuju machine stream,
+        or by the juju-core mega-watcher for units, when the unit is hosted by
+        this machine. When using juju-core, this is only set if the machine
+        hosts a unit. Also see the addresses property below.
+
+        @attribute public_address
+        @type {String}
+      */
       public_address: {},
+      /**
+        The machine addresses. Each address is an object including the
+        following string fields:
+          - name: the network name to which the address is associated;
+          - scope: "public" for exposed addresses or "local-cloud" for local
+            ones;
+          - type: the address type (e.g. "hostname" or "ipv4");
+          - value: the actual address.
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute addresses
+        @type {Array}
+      */
+      addresses: {},
+      /**
+        The machine instance id assigned by the cloud provider.
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute instance_id
+        @type {String}
+      */
       instance_id: {},
+      /**
+        The machine status (e.g. "pending", "started" or "error").
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute instance_id
+        @type {String}
+      */
       agent_state: {},
+      /**
+        Additional information for a machine status.
+        For a more detailed info use the agent_state_data property below.
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute agent_state_info
+        @type {String}
+      */
       agent_state_info: {},
-      agent_state_data: {}
+      /**
+        Additional information for a machine status.
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute agent_state_data
+        @type {Object}
+      */
+      agent_state_data: {},
+      /**
+        The machine hardware characteristics as an object including the
+        following fields:
+          - arch {String}: the hardware architecture (e.g. "amd64");
+          - cpuCores {Int}: the number of CPU cores (e.g. 1 or 4);
+          - cpuPower {Int}: the CPU power (e.g. 100);
+          - mem {Int}: the machine memory in MB (e.g. 2048);
+          - disk {Int}: the root disk storage in MB (e.g. 8192).
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute hardware
+        @type {Object}
+      */
+      hardware: {},
+      /**
+        The jobs this machine can be used for (e.g. "JobHostUnits").
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute jobs
+        @type {Array}
+      */
+      jobs: {},
+      /**
+        The machine life cycle status ("alive", "dying" or "dead").
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute life
+        @type {String}
+      */
+      life: {},
+      /**
+        The machine OS version (e.g. "precise" or "trusty").
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute series
+        @type {String}
+      */
+      series: {},
+      /**
+        The container types that can be created in this machine (e.g. "lxc").
+        This info is only available when a machine is fully provisioned. The
+        attribute is set to null until the information is known, i.e.:
+        when supportedContainers is null this machine CAN support containers;
+        when supportedContainers is [] this machine DO NOT support containers.
+        This info is included in the juju-core mega-watcher for machines.
+
+        @attribute supportedContainers
+        @type {Array}
+      */
+      supportedContainers: {}
     }
   });
   models.Machine = Machine;

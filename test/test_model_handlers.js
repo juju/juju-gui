@@ -523,15 +523,52 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Id: '1',
           InstanceId: 'my-machine-instance',
           Status: 'pending',
-          StatusInfo: 'info'
+          StatusInfo: 'info',
+          Addresses: [
+            {
+              NetworkName: '',
+              NetworkScope: 'public',
+              Type: 'hostname',
+              Value: 'example.com'
+            },
+            {
+              NetworkName: '',
+              NetworkScope: 'local-cloud',
+              Type: 'ipv4',
+              Value: '10.0.0.1'
+            }
+          ],
+          HardwareCharacteristics: {
+            Arch: 'amd64',
+            CpuCores: 1,
+            CpuPower: 100,
+            Mem: 1740,
+            RootDisk: 8192
+          },
+          Jobs: ['JobHostUnits'],
+          Life: 'alive',
+          Series: 'trusty',
+          SupportedContainers: ['lxc'],
+          SupportedContainersKnown: true
         };
-        machineInfo(db, 'add', change);
-        assert.strictEqual(1, db.machines.size());
+        machineInfo(db, 'change', change);
+        assert.strictEqual(db.machines.size(), 1);
         // Retrieve the machine from the database.
         var machine = db.machines.getById('1');
-        assert.strictEqual('my-machine-instance', machine.instance_id);
-        assert.strictEqual('pending', machine.agent_state);
-        assert.strictEqual('info', machine.agent_state_info);
+        assert.strictEqual(machine.instance_id, 'my-machine-instance');
+        assert.strictEqual(machine.agent_state, 'pending');
+        assert.strictEqual(machine.agent_state_info, 'info');
+        assert.deepEqual(machine.addresses, [
+          {name: '', scope: 'public', type: 'hostname', value: 'example.com'},
+          {name: '', scope: 'local-cloud', type: 'ipv4', value: '10.0.0.1'}
+        ]);
+        assert.deepEqual(machine.hardware, {
+          arch: 'amd64', cpuCores: 1, cpuPower: 100, mem: 1740, disk: 8192
+        });
+        assert.deepEqual(machine.jobs, ['JobHostUnits']);
+        assert.strictEqual(machine.life, 'alive');
+        assert.strictEqual(machine.series, 'trusty');
+        assert.deepEqual(machine.supportedContainers, ['lxc']);
       });
 
       it('updates a machine in the database', function() {
@@ -539,21 +576,106 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           id: '2',
           instance_id: 'instance-42',
           agent_state: 'error',
-          agent_state_info: 'there is something wrong'
+          agent_state_info: 'there is something wrong',
+          series: 'saucy',
+          life: 'alive',
+          supportedContainers: null
         });
         var change = {
           Id: '2',
           InstanceId: 'instance-47',
-          Status: 'running',
-          StatusInfo: ''
+          Status: 'started',
+          StatusInfo: '',
+          Series: 'saucy',
+          Life: 'dying',
+          SupportedContainers: ['lxc', 'kvm'],
+          SupportedContainersKnown: true
         };
         machineInfo(db, 'change', change);
-        assert.strictEqual(1, db.machines.size());
+        assert.strictEqual(db.machines.size(), 1);
         // Retrieve the machine from the database.
         var machine = db.machines.getById('2');
-        assert.strictEqual('instance-47', machine.instance_id);
-        assert.strictEqual('running', machine.agent_state);
-        assert.strictEqual('', machine.agent_state_info);
+        assert.strictEqual(machine.instance_id, 'instance-47');
+        assert.strictEqual(machine.agent_state, 'started');
+        assert.strictEqual(machine.agent_state_info, '');
+        assert.strictEqual(machine.series, 'saucy');
+        assert.strictEqual(machine.life, 'dying');
+        assert.deepEqual(machine.supportedContainers, ['lxc', 'kvm']);
+      });
+
+      it('removes a machine from the database', function() {
+        db.machines.add({
+          id: '3',
+          instance_id: 'instance-42',
+          agent_state: 'started'
+        });
+        var change = {
+          Id: '3',
+          InstanceId: 'instance-42',
+          Status: 'started'
+        };
+        machineInfo(db, 'remove', change);
+        assert.strictEqual(db.machines.size(), 0);
+      });
+
+      it('handles missing addresses', function() {
+        var change = {
+          Id: '42',
+          InstanceId: 'my-machine-instance',
+          Status: 'started'
+        };
+        machineInfo(db, 'change', change);
+        assert.strictEqual(db.machines.size(), 1);
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('42');
+        assert.deepEqual(machine.addresses, []);
+      });
+
+      it('handles missing hardware info', function() {
+        var change = {
+          Id: '42',
+          InstanceId: 'my-machine-instance',
+          Status: 'started'
+        };
+        machineInfo(db, 'change', change);
+        assert.strictEqual(db.machines.size(), 1);
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('42');
+        assert.deepEqual(machine.hardware, {});
+      });
+
+      it('handles partial hardware info', function() {
+        var change = {
+          Id: '42',
+          InstanceId: 'my-machine-instance',
+          Status: 'started',
+          HardwareCharacteristics: {Arch: 'amd64'}
+        };
+        machineInfo(db, 'change', change);
+        assert.strictEqual(db.machines.size(), 1);
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('42');
+        var hardware = machine.hardware;
+        assert.strictEqual(hardware.arch, 'amd64');
+        assert.isUndefined(hardware.cpuCores);
+        assert.isUndefined(hardware.cpuPower);
+        assert.isUndefined(hardware.mem);
+        assert.isUndefined(hardware.disk);
+      });
+
+      it('handles supported containers not known', function() {
+        var change = {
+          Id: '42',
+          InstanceId: 'my-machine-instance',
+          Status: 'started',
+          SupportedContainers: [],
+          SupportedContainersKnown: false
+        };
+        machineInfo(db, 'change', change);
+        assert.strictEqual(db.machines.size(), 1);
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('42');
+        assert.isNull(machine.supportedContainers);
       });
 
     });
