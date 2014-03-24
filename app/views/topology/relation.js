@@ -58,8 +58,8 @@ YUI.add('juju-topology-relation', function(Y) {
           click: 'relationClick',
           mousemove: 'mousemove'
         },
-        '.relation-action': {
-          click: {callback: 'relationActionClick' }
+        '.relation-remove': {
+          click: {callback: 'relationRemoveClick' }
         },
         '.dragline': {
           /**
@@ -1045,14 +1045,15 @@ YUI.add('juju-topology-relation', function(Y) {
     /**
      * Event handler for when a relation in the relation menu is clicked.
      *
-     * @method relationActionClick
+     * @method relationRemoveClick
      * @param {undefined} _ Artifact of the d3-component event binding.
      * @param {object} self The relation module.
      */
-    relationActionClick: function(_, self) {
+    relationRemoveClick: function(_, self) {
       var topo = self.get('component');
       var db = topo.get('db');
-      var relation = db.relations.getById(Y.one(this).getData('relationid'));
+      var relationId = Y.one(this).get('parentNode').getData('relationid');
+      var relation = db.relations.getById(relationId);
       relation = self.decorateRelations([relation])[0];
       if (relation.isSubordinate) {
         topo.fire('clearState');
