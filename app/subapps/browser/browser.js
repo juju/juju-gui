@@ -825,9 +825,29 @@ YUI.add('subapp-browser', function(Y) {
       @param {Object} model The ghost service model.
     */
     createGhostInspector: function(model) {
-      // Hide the charm list
+      var db = this.get('db');
+      // topo is passed in to the charmbrowser after
+      // the environment view is rendered.
+      var topo = this.get('topo');
+      var editorial = this._editorial;
+      var search = this._search;
+      // Clear out whatever charm list is in the inspector
+      if (editorial) { editorial.destroy(); }
+      if (search) { search.destroy(); }
       // Render the ghost inspector
-      // Attach event listener for the 'navigate' event
+      var inspector = new Y.juju.views.GhostServiceInspector({
+        db: db,
+        model: model,
+        env: this.get('env'),
+        ecs: this.get('ecs'),
+        charmModel: db.charms.getById(model.get('charm')),
+        topo: topo,
+        store: topo.get('store')
+      }).render();
+      // Add charmbrowser as bubble target for the inspector
+      // for the service inspector navigate event.
+      inspector.addTarget(this);
+      return inspector;
     },
 
     /**

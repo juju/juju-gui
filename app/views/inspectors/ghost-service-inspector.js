@@ -205,8 +205,9 @@ YUI.add('ghost-service-inspector', function(Y) {
       // Set to initial UI state.
       if (window.flags.isb) {
         this.fire(
-            'navigate',
-            '/inspector/' + ghostService.get('displayName') + '/');
+            'viewNavigate', {
+              url: '/inspector/' + ghostService.get('displayName') + '/'
+            });
       } else {
         environmentView.createServiceInspector(ghostService);
       }
