@@ -108,7 +108,6 @@
       .stickable {
           height: 53px;
       }
-
       .sticky {
         z-index: 602;
         position: fixed;
@@ -120,7 +119,6 @@
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
       }
-
       #bws-search {
         .sticky {
           top: 213px;
@@ -151,10 +149,14 @@
     animation: sidebar-details-slide-in 0.5s;
   }
 }
-
 .flag-il #subapp-browser {
   #bws-sidebar,
   .bws-view-data {
     bottom: @deployer-bar-height;
+  }
+}
+.flag-mv #subapp-browser {
+  .bws-view-data {
+      top: @environment-header-height;
   }
 }

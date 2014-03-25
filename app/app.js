@@ -52,6 +52,7 @@ YUI.add('juju-gui', function(Y) {
                                                   Y.juju.NSRouter,
                                                   Y.juju.Cookies,
                                                   Y.juju.GhostDeployer,
+                                                  Y.juju.EnvironmentHeader,
                                                   Y.Event.EventTracker], {
 
     /*
@@ -551,6 +552,9 @@ YUI.add('juju-gui', function(Y) {
         if (window.flags.il) {
           this._renderDeployerBarView();
         }
+        if (window.flags.mv) {
+          this._renderEnvironmentHeaderView();
+        }
       }, this);
 
       this.zoomMessageHandler = Y.one(Y.config.win).on('resize', function(e) {
@@ -914,6 +918,9 @@ YUI.add('juju-gui', function(Y) {
       }
       if (this.deployerBar) {
         this.deployerBar.destroy();
+      }
+      if (this.environmentHeader) {
+        this.destroyEnvironmentHeader();
       }
       if (this._keybindings) {
         this._keybindings.detach();
@@ -1324,6 +1331,14 @@ YUI.add('juju-gui', function(Y) {
           this.renderEnvironment = true;
         }
         charmbrowser.updateVisible();
+        if (window.flags.mv) {
+          if (url.match('/minimized/')) {
+            this.environmentHeader.setWidthFull();
+          }
+          else {
+            this.environmentHeader.removeWidthFull();
+          }
+        }
       }
       next();
     },
@@ -1644,6 +1659,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-view-bundle',
     'help-dropdown',
     'deployer-bar',
+    'environment-header-extension',
     'local-charm-import-helpers',
     'environment-change-set'
   ]
