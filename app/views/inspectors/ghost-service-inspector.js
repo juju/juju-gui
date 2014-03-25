@@ -203,10 +203,10 @@ YUI.add('ghost-service-inspector', function(Y) {
       topo.service_boxes[serviceName] = boxModel;
 
       // Set to initial UI state.
-      if (window.flags.isb) {
-        this.fire(
-            'navigate',
-            '/inspector/' + ghostService.get('displayName') + '/');
+      if (window.flags.il) {
+        /* jshint -W035 */ // Empty if block warning
+        // Fire a viewNavigate event with a change object so that the
+        // routing in the browser.js can build a correct url.
       } else {
         environmentView.createServiceInspector(ghostService);
       }

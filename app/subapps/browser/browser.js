@@ -720,17 +720,6 @@ YUI.add('subapp-browser', function(Y) {
         this._sidebar.addTarget(this);
       }
 
-      // If this is to show the inspector then don't continue
-      // rendering any of the normal sidebar bits.
-      if (req.params.viewmode === 'inspector') {
-        this._saveState();
-        var detailsNode = Y.one('.bws-view-data');
-        if (detailsNode) {
-          detailsNode.hide();
-        }
-        return;
-      }
-
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
       if (this._sidebar) {
@@ -809,7 +798,7 @@ YUI.add('subapp-browser', function(Y) {
     /**
       Renders the inspector into the sidebar container
 
-      @method renderInspector
+      @method inspector
       @param {String} service The service to show the inspector for.
     */
     inspector: function(req, res, next) {
@@ -825,9 +814,31 @@ YUI.add('subapp-browser', function(Y) {
       @param {Object} model The ghost service model.
     */
     createGhostInspector: function(model) {
-      // Hide the charm list
+      var db = this.get('db');
+      // topo is passed in to the charmbrowser after
+      // the environment view is rendered.
+      var topo = this.get('topo');
+      var editorial = this._editorial;
+      var search = this._search;
+      // Clear out whatever charm list is in the inspector
+      // XXX This clean up will be handled by the state
+      // system once that's implemented.
+      if (editorial) { editorial.destroy(); }
+      if (search) { search.destroy(); }
       // Render the ghost inspector
-      // Attach event listener for the 'navigate' event
+      var inspector = new Y.juju.views.GhostServiceInspector({
+        db: db,
+        model: model,
+        env: this.get('env'),
+        ecs: this.get('ecs'),
+        charmModel: db.charms.getById(model.get('charm')),
+        topo: topo,
+        store: topo.get('store')
+      }).render();
+      // Add charmbrowser as bubble target for the inspector
+      // for the service inspector navigate event.
+      inspector.addTarget(this);
+      return inspector;
     },
 
     /**
