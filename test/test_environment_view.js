@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   describe('juju environment view', function() {
     var view, views, models, Y, container, service, db, conn,
-        juju, env, testUtils, fakeStore, charmConfig;
+        juju, charm, env, testUtils, fakeStore, charmConfig;
 
     var environment_delta = {
       'result': [
@@ -38,7 +38,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'exposed': false
         }],
         ['service', 'add', {
-          'charm': 'cs:precise/mysql-6',
+          'charm': 'cs:precise/mysql-26',
           'id': 'mysql'
         }],
         ['service', 'add', {
@@ -159,6 +159,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      var charmData = testUtils.loadFixture('data/mysql-api-response.json',
+                                            true);
+      charm = new models.Charm(charmData.charm);
+      db.charms.add(charm);
       view = new views.environment({
         container: container,
         db: db,
@@ -176,6 +180,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     afterEach(function(done) {
       db.destroy();
+      charm.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
       if (!view.get('destroyed')) {
@@ -401,7 +406,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'id': 'puppet2'
           }],
           ['service', 'add', {
-            'charm': 'cs:precise/mysql-6',
+            'charm': 'cs:precise/mysql-26',
             'id': 'mysql2'
           }],
           ['unit', 'add', {
@@ -569,7 +574,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
                 'id': 'puppet2'
               }],
               ['service', 'add', {
-                'charm': 'cs:precise/mysql-6',
+                'charm': 'cs:precise/mysql-26',
                 'id': 'mysql2'
               }],
               ['unit', 'add', {
@@ -1070,6 +1075,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(menu.all('.endpoint.error').size(), 1);
       assert.equal(menu.all('.relation-container.error').size(), 1);
       assert.equal(menu.all('.relation-container.running').size(), 1);
+    });
+
+    it('allows clicking on a relation to inspect it', function() {
+      db.onDelta({data: additionalRelations});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        store: fakeStore
+      }).render();
+
+      // Single relation.
+      var relation = container.one(
+          '#' + views.utils.generateSafeDOMId('relation-0000000001',
+          getParentId(view)) +
+          ' .rel-indicator'),
+          dialog_btn,
+          panel,
+          menu;
+
+      relation.simulate('click');
+      menu = Y.one('#relation-menu .menu');
+      panel = Y.one('#rmrelation-modal-panel');
+
+      // Click the first endpoint.
+      var endpoints = menu.all('.inspect-relation'),
+          endpoint = endpoints.item(0),
+          endpointName = endpoint.get('text').split(':')[0].trim();
+      endpoint.simulate('click');
+
+      // The inspector should be displayed for the service
+      // clicked on
+      var inspector = Y.one('.juju-inspector'),
+          serviceName = inspector.one('.service-name').get('text'),
+          activePane = inspector.one('.tab.active').getData('viewlet');
+      assert.equal(endpointName, serviceName,
+                   'Name in inspector does not match the clicked endpoint');
+      // The active pane should be relations
+      assert.equal('relations', activePane,
+                   'The relations pane is not active');
     });
 
     it('allows deletion of relations within collections', function() {

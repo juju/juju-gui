@@ -61,6 +61,9 @@ YUI.add('juju-topology-relation', function(Y) {
         '.relation-remove': {
           click: {callback: 'relationRemoveClick' }
         },
+        '.inspect-relation': {
+          click: {callback: 'inspectRelationClick' }
+        },
         '.dragline': {
           /**
            * The user clicked while the dragline was active.
@@ -1043,7 +1046,7 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /**
-     * Event handler for when a relation in the relation menu is clicked.
+     * Event handler for when the remove icon in the relation menu is clicked.
      *
      * @method relationRemoveClick
      * @param {undefined} _ Artifact of the d3-component event binding.
@@ -1061,6 +1064,20 @@ YUI.add('juju-topology-relation', function(Y) {
       } else {
         self.removeRelationConfirm(relation.relations[0], self);
       }
+    },
+
+    /**
+     * Event handler for when a relation in the relation menu is clicked.
+     *
+     * @method inspectRelationClick
+     * @param {undefined} _ Artifact of the d3-component event binding.
+     * @param {object} self The relation module.
+     */
+    inspectRelationClick: function(_, self) {
+      var topo = self.get('component');
+      var endpoint = Y.one(this).get('text');
+      var serviceId = endpoint.split(':')[0].trim();
+      topo.fire('inspectRelation', serviceId);
     }
 
   }, {

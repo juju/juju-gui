@@ -191,4 +191,14 @@ describe('topology relation module', function() {
         requestedSelector, '#' + views.utils.generateSafeDOMId(relationId));
   });
 
+  it('fires "inspectRelation" topo event for clicking a relation endpoint',
+      function() {
+        var topo = {
+          fire: utils.makeStubFunction()
+        };
+        view.set('component', topo);
+        view.inspectRelationClick.call(container, undefined, view);
+        assert.equal(topo.fire.lastArguments()[0], 'inspectRelation');
+      });
+
 });

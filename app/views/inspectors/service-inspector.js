@@ -48,7 +48,7 @@ YUI.add('service-inspector', function(Y) {
 
     events: {
       '.close': {'click': 'destroy'},
-      '.tab': {'click': 'switchTab'},
+      '.tab': {'click': 'onActivateTab'},
       '.close-slot': {'click': 'hideSlot'},
       '.charm-url': {click: 'onShowCharmDetails'},
       '.rerender-config': {click: 'reloadInspector'},
@@ -116,6 +116,20 @@ YUI.add('service-inspector', function(Y) {
       var charm = db.charms.getById(charmId);
       this.showViewlet('charmDetails', charm);
       this.fire('inspectorTakeoverStarting');
+    },
+
+    /**
+     Makes the clicked tab active.
+
+     @method onActivateTab
+     @param {Event} ev the click event from the tab.
+
+     */
+    onActivateTab: function(ev) {
+      ev.halt();
+      var target = ev.currentTarget,
+          viewName = target.getData('viewlet');
+      this.switchTab(viewName);
     },
 
     /**
