@@ -42,7 +42,7 @@ YUI.add('subapp-browser', function(Y) {
     // Even though fullscreen is no longer a valid mode we need it in the list
     // so that the routing code still knows how to redirect fullscreen
     // requests to the sidebar views.
-    viewmodes: ['minimized', 'sidebar', 'fullscreen'],
+    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector'],
 
     /**
      * Make sure we destroy views no long used.
@@ -720,6 +720,17 @@ YUI.add('subapp-browser', function(Y) {
         this._sidebar.addTarget(this);
       }
 
+      // If this is to show the inspector then don't continue
+      // rendering any of the normal sidebar bits.
+      if (req.params.viewmode === 'inspector') {
+        this._saveState();
+        var detailsNode = Y.one('.bws-view-data');
+        if (detailsNode) {
+          detailsNode.hide();
+        }
+        return;
+      }
+
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
       if (this._sidebar) {
@@ -793,6 +804,60 @@ YUI.add('subapp-browser', function(Y) {
       // Sync that the state has changed.
       this._saveState();
       next();
+    },
+
+    /**
+      Renders the inspector into the sidebar container
+
+      @method renderInspector
+      @param {String} service The service to show the inspector for.
+    */
+    inspector: function(req, res, next) {
+      // We need the sidebar rendered so that we can show the inspector in it.
+      this.sidebar(req);
+      this.createServiceInspector(req.service);
+    },
+
+    /**
+      Creates the ghost inspector.
+
+      @method createGhostInspector
+      @param {Object} model The ghost service model.
+    */
+    createGhostInspector: function(model) {
+      var db = this.get('db');
+      // topo is passed in to the charmbrowser after
+      // the environment view is rendered.
+      var topo = this.get('topo');
+      var editorial = this._editorial;
+      var search = this._search;
+      // Clear out whatever charm list is in the inspector
+      if (editorial) { editorial.destroy(); }
+      if (search) { search.destroy(); }
+      // Render the ghost inspector
+      var inspector = new Y.juju.views.GhostServiceInspector({
+        db: db,
+        model: model,
+        env: this.get('env'),
+        ecs: this.get('ecs'),
+        charmModel: db.charms.getById(model.get('charm')),
+        topo: topo,
+        store: topo.get('store')
+      }).render();
+      // Add charmbrowser as bubble target for the inspector
+      // for the service inspector navigate event.
+      inspector.addTarget(this);
+      return inspector;
+    },
+
+    /**
+      Creates a service inspector.
+
+      @method createServiceInspector
+      @param {String} serviceName The service name of the inspector to show.
+    */
+    createServiceInspector: function(serviceName) {
+
     },
 
     /**

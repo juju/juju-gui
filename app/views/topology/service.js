@@ -399,7 +399,7 @@ YUI.add('juju-topology-service', function(Y) {
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
       // Set a default
-      this.set('currentServiceClickAction', 'showServiceMenu');
+      this.set('currentServiceClickAction', 'showServiceDetails');
     },
 
     /**
@@ -1403,6 +1403,17 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
+      Shows the inspector and popup service menu.
+
+      @method showServiceDetails
+      @param {object} box The presentation state for the service.
+    */
+    showServiceDetails: function(box) {
+      this.show_service(box.model);
+      this.showServiceMenu(box);
+    },
+
+    /**
      * Show the service menu.
      *
      * @method showServiceMenu
@@ -1414,8 +1425,6 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var service = box.model;
       var triangle = serviceMenu.one('.triangle');
-
-      this.show_service(service);
 
       if (service.get('pending')) {
         return true;

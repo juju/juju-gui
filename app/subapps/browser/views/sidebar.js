@@ -82,7 +82,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl);
 
-      this._renderSearchWidget(tplNode);
+      if (!window.flags.isb) {
+        // The search widget has no home yet so when the inspector is moved
+        // to the left we will just not render it.
+        this._renderSearchWidget(tplNode);
+      }
 
       if (typeof container !== 'object') {
         container = this.get('container');
