@@ -389,6 +389,81 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
   });
 
+  describe('FakeBackend._getHardwareCharacteristics', function() {
+    var factory, fakebackend, Y;
+    var requirements = ['juju-tests-factory'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        factory = Y.namespace('juju-tests.factory');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = factory.makeFakeBackend();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('returns hardware for containers', function() {
+      var hardware = fakebackend._getHardwareCharacteristics(true);
+      assert.deepEqual(hardware, {arch: 'amd64'});
+    });
+
+    it('returns hardware for containers with the given arch', function() {
+      var hardware = fakebackend._getHardwareCharacteristics(
+          true, {arch: 'i386', mem: 8000});
+      assert.deepEqual(hardware, {arch: 'i386'});
+    });
+
+    it('returns default hardware if no constraints are provided', function() {
+      var hardware = fakebackend._getHardwareCharacteristics(false);
+      assert.deepEqual(hardware, {
+        arch: 'amd64',
+        cpuCores: 1,
+        cpuPower: 100,
+        mem: 1740,
+        disk: 8192
+      });
+    });
+
+    it('returns hardware corresponding to the given constraints', function() {
+      var hardware = fakebackend._getHardwareCharacteristics(false, {
+        arch: 'i386',
+        'cpu-cores': 8,
+        'cpu-power': 2000,
+        mem: 4200,
+        disk: 4700
+      });
+      assert.deepEqual(hardware, {
+        arch: 'i386',
+        cpuCores: 8,
+        cpuPower: 2000,
+        mem: 4200,
+        disk: 4700
+      });
+    });
+
+    it('falls back to defaults if some constraints are missing', function() {
+      var hardware = fakebackend._getHardwareCharacteristics(false, {
+        arch: 'i386',
+        'cpu-power': 2000
+      });
+      assert.deepEqual(hardware, {
+        arch: 'i386',
+        cpuCores: 1,
+        cpuPower: 2000,
+        mem: 1740,
+        disk: 8192
+      });
+    });
+
+  });
+
   describe('FakeBackend._getNextMachineName', function() {
     var factory, fakebackend, machines, Y;
     var requirements = ['juju-tests-factory'];
@@ -458,6 +533,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   describe('FakeBackend.addMachines', function() {
     var factory, fakebackend, machines, machinesCount, Y;
     var requirements = ['juju-tests-factory'];
+    var defaultHardware = {
+      arch: 'amd64',
+      cpuCores: 1,
+      cpuPower: 100,
+      mem: 1740,
+      disk: 8192
+    };
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -532,6 +614,74 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // The machine has been added.
       assert.strictEqual(machines.size(), machinesCount + 1);
       assert.isNotNull(machines.getById('2'));
+    });
+
+    it('sets up new machine properties', function() {
+      var response = fakebackend.addMachines([{
+        constraints: {'cpu-cores': 4, 'cpu-power': 4242, mem: 2000},
+        jobs: ['JobHostUnits', 'JobManageEnviron'],
+        series: 'trusty'
+      }]);
+      assert.isUndefined(response.error);
+      // Retrieve the new machine.
+      var machine = machines.getById('2');
+      assert.isNotNull(machine);
+      // Check the machine properties.
+      assert.strictEqual(machine.agent_state, 'started');
+      assert.deepEqual(machine.addresses, []);
+      assert.strictEqual(machine.instance_id, 'fake-instance');
+      assert.deepEqual(machine.hardware, {
+        arch: defaultHardware.arch,
+        cpuCores: 4,
+        cpuPower: 4242,
+        mem: 2000,
+        disk: defaultHardware.disk
+      });
+      assert.deepEqual(machine.jobs, ['JobHostUnits', 'JobManageEnviron']);
+      assert.strictEqual(machine.life, 'alive');
+      assert.strictEqual(machine.series, 'trusty');
+      assert.deepEqual(machine.supportedContainers, ['lxc', 'kvm']);
+    });
+
+    it('sets up relevant default properties', function() {
+      var response = fakebackend.addMachines([{}]);
+      assert.isUndefined(response.error);
+      // Retrieve the new machine.
+      var machine = machines.getById('2');
+      assert.isNotNull(machine);
+      // Check the machine properties.
+      assert.strictEqual(machine.agent_state, 'started');
+      assert.deepEqual(machine.addresses, []);
+      assert.strictEqual(machine.instance_id, 'fake-instance');
+      assert.deepEqual(machine.hardware, defaultHardware);
+      assert.strictEqual(machine.life, 'alive');
+      assert.strictEqual(machine.series, 'precise');
+    });
+
+    it('sets up properties for containers hosted by new machines', function() {
+      var response = fakebackend.addMachines([
+        {containerType: 'lxc', series: 'saucy'}]);
+      assert.isUndefined(response.error);
+      // Retrieve the new machine and the new container.
+      var machine = machines.getById('2');
+      assert.isNotNull(machine);
+      var container = machines.getById('2/lxc/0');
+      assert.isNotNull(container);
+      // Check the machine properties.
+      assert.strictEqual(machine.agent_state, 'started');
+      assert.deepEqual(machine.addresses, []);
+      assert.strictEqual(machine.instance_id, 'fake-instance');
+      assert.deepEqual(machine.hardware, defaultHardware);
+      assert.deepEqual(machine.jobs, ['JobHostUnits']);
+      assert.strictEqual(machine.life, 'alive');
+      assert.strictEqual(machine.series, 'saucy');
+      // Check the container properties.
+      assert.strictEqual(container.agent_state, 'started');
+      assert.deepEqual(container.addresses, []);
+      assert.strictEqual(container.instance_id, 'fake-instance');
+      assert.deepEqual(container.hardware, {arch: 'amd64'});
+      assert.strictEqual(container.life, 'alive');
+      assert.strictEqual(container.series, 'saucy');
     });
 
     it('adds a container to a new machine', function() {
@@ -1696,12 +1846,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // these are simple objects, not models.
       assert.lengthOf(result.machines, 1);
       assert.equal(
-          result.machines[0].machine_id, result.units[0].machine);
-      assert.isString(result.machines[0].machine_id);
-      assert.isString(result.machines[0].public_address);
-      assert.match(
-          result.machines[0].public_address, /^[^.]+\.example\.com$/);
-      assert.equal(result.machines[0].agent_state, 'running');
+          result.machines[0].id, result.units[0].machine);
+      assert.isString(result.machines[0].id);
+      assert.equal(result.machines[0].agent_state, 'started');
     });
 
     it('deploys subordinates without adding units', function() {
@@ -1891,7 +2038,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(
             changes.units['wordpress/1'], [result.units[0], true]);
         assert.deepEqual(
-            changes.machines[result.machines[0].machine_id],
+            changes.machines[result.machines[0].id],
             [result.machines[0], true]);
       });
 
@@ -1907,7 +2054,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             changes.units['wordpress/0'], [deployResult.units[0], true]);
         assert.lengthOf(Y.Object.keys(changes.machines), 1);
         assert.deepEqual(
-            changes.machines[deployResult.machines[0].machine_id],
+            changes.machines[deployResult.machines[0].id],
             [deployResult.machines[0], true]);
         assert.lengthOf(Y.Object.keys(changes.relations), 0);
       });
@@ -2687,25 +2834,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         RequestId: 1067
       };
       // Add a bunch of machines that are not associated with services.
-      state._getUnitMachines(99);
-      state.deploy('cs:precise/wordpress-15', function() {},
-          {toMachine: '42'});
+      state._getUnitMachines(10);
+      state.deploy('cs:precise/wordpress-15', function() {}, {toMachine: '7'});
       conn.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         // The received data is a response to our AllWatcher request.
         assert.equal(receivedData.RequestId, 1067);
         assert.isNotNull(receivedData.Response.Deltas);
         var deltas = receivedData.Response.Deltas;
-        // There were three things that happened:
-        assert.equal(deltas.length, 3);
+        // There were several things that happened:
+        assert.equal(deltas.length, 12);
         // the service was created,
         assert.equal(deltas[0][0], 'service');
-        // the machine changed state to "running",
-        assert.equal(deltas[1][0], 'machine');
-        assert.equal(deltas[1][1], 'change');
-        assert.equal(deltas[1][2].Status, 'running');
+        // the seventh machine is "started",
+        assert.equal(deltas[7][0], 'machine');
+        assert.equal(deltas[7][1], 'change');
+        assert.equal(deltas[7][2].Status, 'started');
         // and the unit was added to the machine we requested.
-        assert.equal(deltas[2][2].MachineId, '42');
+        assert.equal(deltas[11][2].MachineId, '7');
         done();
       };
       conn.open();

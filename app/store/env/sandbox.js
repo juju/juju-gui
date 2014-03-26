@@ -882,10 +882,29 @@ YUI.add('juju-env-sandbox', function(Y) {
         Config: 'config'
       },
       machine: {
-        Id: 'machine_d',
+        Id: 'id',
+        Addresses: 'addresses',
         InstanceId: 'instance_id',
         Status: 'agent_state',
-        StateInfo: 'agent_status_info'
+        StateInfo: 'agent_status_info',
+        StatusData: 'agent_state_data',
+        'HardwareCharacteristics': function(attrs) {
+          var hardware = attrs.hardware || {};
+          return {
+            Arch: hardware.arch,
+            CpuCores: hardware.cpuCores,
+            CpuPower: hardware.cpuPower,
+            Mem: hardware.mem,
+            RootDisk: hardware.disk
+          };
+        },
+        Jobs: 'jobs',
+        Life: 'life',
+        Series: 'series',
+        SupportedContainers: 'supportedContainers',
+        'SupportedContainersKnown': function() {
+          return true;
+        }
       },
       unit: {
         Name: 'id',
@@ -1179,7 +1198,7 @@ YUI.add('juju-env-sandbox', function(Y) {
           series: machineParam.Series,
           parentId: machineParam.ParentId,
           containerType: machineParam.ContainerType,
-          constrains: machineParam.Constraints
+          constraints: machineParam.Constraints
         };
       });
       var response = state.addMachines(params);

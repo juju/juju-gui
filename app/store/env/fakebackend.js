@@ -506,7 +506,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         to be added. Each item in the list must be an object containing the
         following keys (all optional):
           - constraints {Object}: the machine constraints;
-          - jobs {Array}: to juju-core jobs to associate with the new machine
+          - jobs {Array}: the juju-core jobs to associate with the new machine
             (defaults to env.machineJobs.HOST_UNITS, which enables unit hosting
             capabilities to new machines);
           - series {String}: the machine series (the juju-core default series
@@ -528,14 +528,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATED_ERROR;
       }
-      // XXX frankban 2014-03-06: a global error is only returned if an
-      // internal juju-core problem occurs. The fake backend actually never
-      // set the value. Moreover, constraints, jobs and series are ignored
-      // for now: in the future, when we extend the machine models, we might
-      // want to include those values too.
+      // A global error is only returned if an internal juju problem occurs.
+      // The fake backend actually never set the value.
       return {
         machines: params.map(function(param) {
-          return this._addMachine(param.parentId, param.containerType);
+
+          return this._addMachine(
+              param.parentId, param.containerType, param.series || 'precise',
+              param.constraints, param.jobs);
         }, this)
       };
     },
@@ -547,13 +547,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method _addMachine
       @param {String} parentId The name of the parent machine (optional).
-      @param {String} containerType the container type of the new machine
+      @param {String} containerType The container type of the new machine
         (e.g. "lxc", optional).
+      @param {String} series The machine OS version.
+      @param {Object} constraints The machine constraints.
+      @param {Array} jobs The juju-core jobs to associate with the new machine.
       @return {Object} Returns an object either with an "error" attribute
         containing a string describing the problem, or with a "name"
         attribute representing the newly created machine name.
     */
-    _addMachine: function(parentId, containerType) {
+    _addMachine: function(parentId, containerType, series, constraints, jobs) {
       var machines = this.db.machines;
       var parent;
       if (parentId) {
@@ -580,13 +583,78 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // host the requested container.
         if (!parent) {
           parentId = this._getNextMachineName();
-          machines.add({id: parentId, agent_state: 'started'});
+          parent = machines.add({
+            id: parentId,
+            agent_state: 'started',
+            // In the fake backend machines have no addresses.
+            addresses: [],
+            instance_id: 'fake-instance',
+            // Give to the parent machine the default hardware characteristics.
+            hardware: this._getHardwareCharacteristics(false),
+            jobs: ['JobHostUnits'],
+            life: 'alive',
+            series: series,
+            // For the fake backend purposes, each machine supports LXC and KVM
+            // containers.
+            supportedContainers: ['lxc', 'kvm']
+          });
+          this.changes.machines[parentId] = [parent, true];
         }
       }
       // Create the new machine/container.
       var name = this._getNextMachineName(parentId, containerType);
-      machines.add({id: name, agent_state: 'started'});
+      var machine = machines.add({
+        id: name,
+        agent_state: 'started',
+        // In the fake backend machines have no addresses.
+        addresses: [],
+        instance_id: 'fake-instance',
+        hardware: this._getHardwareCharacteristics(!!parentId, constraints),
+        jobs: jobs,
+        life: 'alive',
+        series: series,
+        // For the fake backend purposes, each machine supports LXC and KVM
+        // containers.
+        supportedContainers: ['lxc', 'kvm']
+      });
+      this.changes.machines[name] = [machine, true];
       return {name: name};
+    },
+
+    /**
+      Return hardware characteristics suitable for the given constraints.
+
+      @method _getHardwareCharacteristics
+      @param {Bool} isContainer Whether to return hardware characteristics for
+        a container or a top level machine.
+      @param {Object} constraints The machine constraints (optional).
+      @return {Object} The hardware characteristics represented by an object
+        with the following fields: arch, cpuCores, cpuPower, mem and disk.
+    */
+    _getHardwareCharacteristics: function(isContainer, constraints) {
+      var defaults = {
+        arch: 'amd64',
+        cpuCores: 1,
+        cpuPower: 100,
+        mem: 1740,
+        disk: 8192
+      };
+      constraints = constraints || {};
+      if (isContainer) {
+        // Containers' hardware characteristics only include the architecture.
+        return {arch: constraints.arch || defaults.arch};
+      }
+      if (Y.Object.isEmpty(constraints)) {
+        // Return the default hardware characteristics.
+        return defaults;
+      }
+      return {
+        arch: constraints.arch || defaults.arch,
+        cpuCores: constraints['cpu-cores'] || defaults.cpuCores,
+        cpuPower: constraints['cpu-power'] || defaults.cpuPower,
+        mem: constraints.mem || defaults.mem,
+        disk: constraints.disk || defaults.disk
+      };
     },
 
     /**
@@ -714,6 +782,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
         // Remove all descendants from the database.
         machines.remove(descendants);
+        descendants.forEach(function(descendant) {
+          this.changes.machines[descendant.id] = [descendant, false];
+        }, this);
       }
       // Check if the machine has assigned units.
       var units = machineUnitsMap[name];
@@ -729,10 +800,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
         units.forEach(function(unit) {
           var service = services.getById(unit.service);
           service.get('units').remove(unit);
-        });
+          this.changes.units[unit.id] = [unit, false];
+        }, this);
       }
       // Everything went well for this machine, remove it from the database.
       machines.remove(machine);
+      this.changes.machines[machine.id] = [machine, false];
       return null;
     },
 
@@ -885,6 +958,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         machines = [targetMachine];
       } else {
         // Any machine will do; find or create one.
+        // Required machine changes are added by _getUnitMachines.
         machines = this._getUnitMachines(numUnits);
       }
       var unitList = service.get('units');
@@ -895,7 +969,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         machine = machines[i];
         unit = unitList.add({
           'id': serviceName + '/' + unitId,
-          'machine': machine.machine_id,
+          'machine': machine.id,
           // The models use underlines, not hyphens (see
           // app/models/models.js in _process_delta.)
           'agent_state': 'started'
@@ -903,7 +977,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
         units.push(unit);
         service.unitSequence += 1;
         this.changes.units[unit.id] = [unit, true];
-        this.changes.machines[machine.machine_id] = [machine, true];
       }
       return {units: units, machines: machines};
     },
@@ -926,7 +999,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         });
       });
       this.db.machines.each(function(machine) {
-        if (!usedMachineIds[machine.machine_id]) {
+        if (!usedMachineIds[machine.id]) {
           machines.push(machine);
         }
       });
@@ -943,21 +1016,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
     _getUnitMachines: function(count) {
       var machines = [];
       var availableMachines = this._getAvailableMachines();
-      var machineId;
       if (!Y.Lang.isValue(this.db.machines.sequence)) {
         this.db.machines.sequence = 0;
       }
       for (var i = 0; i < count; i += 1) {
         if (i < availableMachines.length) {
+          // Reuse existing clean machines when possible.
           machines.push(availableMachines[i]);
         } else {
-          machineId = this.db.machines.sequence += 1;
-          machines.push(
-              this.db.machines.add({
-                'machine_id': machineId.toString(),
-                'public_address':
-                    'addr-' + machineId.toString() + '.example.com',
-                'agent_state': 'running'}));
+          // Create new machines for the units.
+          var result = this._addMachine(
+              null, null, 'precise', null, ['JobHostUnits']);
+          machines.push(this.db.machines.getById(result.name));
         }
       }
       return machines;

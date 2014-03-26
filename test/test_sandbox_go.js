@@ -296,8 +296,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       client.onmessage = function(received) {
         var receivedData = Y.JSON.parse(received.data);
         var deltas = receivedData.Response.Deltas;
-        assert.deepEqual(deltas, [
-          ['service', 'change', {
+        assert.equal(deltas.length, 3);
+        var serviceChange = deltas[0];
+        var machineChange = deltas[1];
+        var unitChange = deltas[2];
+        assert.deepEqual(serviceChange, [
+          'service', 'change', {
             'Name': 'wordpress',
             'Exposed': false,
             'CharmURL': 'cs:precise/wordpress-15',
@@ -309,17 +313,38 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'wp-content': ''
             },
             'Constraints': {}
-          }],
-          ['machine', 'change', {'Status': 'running'}],
-          ['unit', 'change', {
+          }], 'serviceChange'
+        );
+        assert.deepEqual(machineChange, [
+          'machine', 'change', {
+            Id: '0',
+            Addresses: [],
+            InstanceId: 'fake-instance',
+            Status: 'started',
+            Jobs: ['JobHostUnits'],
+            Life: 'alive',
+            Series: 'precise',
+            HardwareCharacteristics: {
+              Arch: 'amd64',
+              CpuCores: 1,
+              CpuPower: 100,
+              Mem: 1740,
+              RootDisk: 8192
+            },
+            SupportedContainers: ['lxc', 'kvm'],
+            SupportedContainersKnown: true
+          }], 'machineChange'
+        );
+        assert.deepEqual(unitChange, [
+          'unit', 'change', {
             'Name': 'wordpress/0',
             'Service': 'wordpress',
             'Series': 'precise',
             'CharmURL': 'cs:precise/wordpress-15',
-            'MachineId': '1',
+            'MachineId': '0',
             'Status': 'started'
-          }]
-        ]);
+          }], 'unitChange'
+        );
         done();
       };
       client.open();

@@ -805,9 +805,7 @@ YUI.add('juju-env-go', function(Y) {
         to be added. Each item in the list must be an object containing the
         following keys (all optional):
           - constraints {Object}: the machine constraints;
-          - jobs {Array}: to juju-core jobs to associate with the new machine
-            (defaults to env.machineJobs.HOST_UNITS, which enables unit hosting
-            capabilities to new machines);
+          - jobs {Array}: the juju-core jobs to associate with the new machine.
           - series {String}: the machine series (the juju-core default series
             is used if none is specified);
           - parentId {String}: when adding a new container, this parameter can
