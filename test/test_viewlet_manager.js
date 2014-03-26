@@ -30,7 +30,11 @@ describe('Viewlet Manager', function() {
     container = utils.makeContainer(context);
     container.setHTML([
       '<div class="yui3-juju-inspector">',
-      '<div class="panel juju-inspector"></div>',
+      '<div class="panel juju-inspector">',
+      '<ul class="viewlet-manager-navigation">',
+      '<li><a href class="tab" data-viewlet="overview"></a></li>',
+      '</ul>',
+      '</div>',
       '<div class="left-breakout"></div>',
       '</div>'].join(''));
 
@@ -291,6 +295,20 @@ describe('Viewlet Manager', function() {
         viewletManager.get('container')
                       .one('.left-breakout').getStyle('display'),
         'none');
+  });
+
+  it('switches to the specified tab', function() {
+    generateViewletManager(this);
+    var requestedTab = 'overview',
+        showViewlet = utils.makeStubMethod(viewletManager, 'showViewlet');
+    this._cleanups.push(showViewlet.reset);
+    viewletManager.switchTab(requestedTab);
+    // show the tab
+    assert.equal(showViewlet.calledOnce(), true, 'Tab was not shown');
+    // the tab must be active
+    var activeTab = container.one('.tab.active'),
+        viewName = activeTab.getData('viewlet');
+    assert.equal(viewName, requestedTab, 'Tab is not active');
   });
 
   describe('View Support', function() {
