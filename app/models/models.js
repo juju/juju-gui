@@ -1204,7 +1204,10 @@ YUI.add('juju-models', function(Y) {
         });
 
         var serviceData = {charm: charm.get('id')};
-        if (!charm.get('is_subordinate')) {
+        if (charm.get('is_subordinate')) {
+          // Subordinate services can not have any units.
+          serviceData.num_units = 0;
+        } else {
           // Test models or ghosts might not have a units LazyModelList.
           serviceData.num_units = units && units.size() || 1;
         }

@@ -881,12 +881,12 @@ describe('test_model.js', function() {
       assert.equal(relation[1], 'wordpress:app');
     });
 
-    it('exports subordinate services without units', function() {
+    it('exports subordinate services with num_units set to 0', function() {
       // Add a subordinate.
       db.services.add({id: 'puppet', charm: 'precise/puppet-4'});
       db.charms.add([{id: 'precise/puppet-4', is_subordinate: true}]);
       var result = db.exportDeployer().envExport;
-      assert.isUndefined(result.services.puppet.num_units);
+      assert.equal(result.services.puppet.num_units, 0);
     });
 
     it('exports options preserving their types', function() {
