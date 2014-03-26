@@ -975,6 +975,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           '#summary');
     });
 
+    it('should open header links in a new tab', function() {
+      var data = utils.loadFixture('data/browsercharm.json', true);
+      // We don't want any files so we don't have to mock/load them.
+      data.charm.files = [];
+      view = new CharmView({
+        entity: new models.Charm(data.charm),
+        container: utils.makeContainer(this)
+      });
+      view.render();
+      var links = view.get('container').all('.header .details li a');
+      // Check that we've found the links, otherwise the assert in .each will
+      // succeed when there are no links.
+      assert.equal(links.size() > 0, true);
+      links.each(function(link) {
+        assert.equal(link.getAttribute('target'), '_blank');
+      });
+    });
+
   });
 
 })();
