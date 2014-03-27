@@ -403,8 +403,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
           footerHeight = 0,
           vcHeaderHeight = 0,
           vcNavHeight = 0,
-          vcFooterHeight = 0,
-          deployerBar = Y.one('#deployer-bar');
+          vcFooterHeight = 0;
 
       if (header) { headerHeight = header.get('clientHeight'); }
       if (footer) { footerHeight = footer.get('clientHeight'); }
@@ -416,8 +415,8 @@ YUI.add('juju-viewlet-manager', function(Y) {
 
       // XXX: When the flag is removed then this can be combined with the
       // calculation above.
-      if (window.flags.il && deployerBar) {
-        height = height + deployerBar.get('clientHeight') - 20;
+      if (window.flags.il) {
+        height += (TB_SPACING * 3) - 2;
       }
 
       // The viewlet manager has a couple different wrapper elements which
@@ -425,7 +424,13 @@ YUI.add('juju-viewlet-manager', function(Y) {
       // internal wrapper to resize without causing the elements to reflow.
       var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
       if (wrapper) {
+        if (window.flags.il) {
+          height -= 49;
+        }
         wrapper.setStyle('maxHeight', height + 'px');
+        if (window.flags.il) {
+          height += 10;
+        }
       }
 
       // subtract the height of the header and footer of the viewlet manager.
