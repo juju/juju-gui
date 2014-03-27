@@ -307,7 +307,7 @@ describe('service module events', function() {
       // After the translation and calculations the above x and y coords should
       // place the element at 320, 392
       assert.deepEqual(ghostAttributes, {
-        coordinates: [320, 392],
+        coordinates: [-245, -18],
         icon: src
       });
       // Make sure that the drag and drop was properly prevented.
