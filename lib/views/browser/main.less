@@ -150,25 +150,33 @@
   }
 }
 
-.flag-il #subapp-browser {
-  .bws-header {
-    padding: 0;
-    border-bottom: none;
+.flag-il {
+  .yui3-juju-inspector {
+    top: auto;
+    right: auto;
+    position: inherit;
   }
-  #bws-sidebar {
-    .bws-content {
-      top: 0;
-      border-top: none;
-      .sticky {
-        top: 60px;
+  #subapp-browser {
+    .bws-header {
+      padding: 0;
+      border-bottom: none;
+    }
+    #bws-sidebar {
+      .bws-content {
+        top: 0;
+        border-top: none;
+        .sticky {
+          top: 60px;
+        }
       }
     }
-  }
-  #bws-sidebar,
-  .bws-view-data {
-    bottom: @deployer-bar-height;
+    #bws-sidebar,
+    .bws-view-data {
+      bottom: @deployer-bar-height;
+    }
   }
 }
+
 .flag-mv #subapp-browser {
   .bws-view-data {
       top: @environment-header-height;

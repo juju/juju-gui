@@ -205,7 +205,7 @@ YUI.add('ghost-service-inspector', function(Y) {
       // Set to initial UI state.
       if (window.flags.il) {
         /* jshint -W035 */ // Empty if block warning
-        // Fire a viewNavigate event with a change object so that the
+        // XXX Fire a viewNavigate event with a change object so that the
         // routing in the browser.js can build a correct url.
       } else {
         environmentView.createServiceInspector(ghostService);

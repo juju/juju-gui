@@ -42,6 +42,7 @@ YUI.add('subapp-browser', function(Y) {
     // Even though fullscreen is no longer a valid mode we need it in the list
     // so that the routing code still knows how to redirect fullscreen
     // requests to the sidebar views.
+    // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
     viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector'],
 
     /**
@@ -848,7 +849,7 @@ YUI.add('subapp-browser', function(Y) {
       @param {String} serviceName The service name of the inspector to show.
     */
     createServiceInspector: function(serviceName) {
-
+      // XXX Placeholder for after the state system can render inspectors
     },
 
     /**
