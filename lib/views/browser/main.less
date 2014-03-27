@@ -149,12 +149,34 @@
     animation: sidebar-details-slide-in 0.5s;
   }
 }
-.flag-il #subapp-browser {
-  #bws-sidebar,
-  .bws-view-data {
-    bottom: @deployer-bar-height;
+
+.flag-il {
+  .yui3-juju-inspector {
+    top: auto;
+    right: auto;
+    position: inherit;
+  }
+  #subapp-browser {
+    .bws-header {
+      padding: 0;
+      border-bottom: none;
+    }
+    #bws-sidebar {
+      .bws-content {
+        top: 0;
+        border-top: none;
+        .sticky {
+          top: 60px;
+        }
+      }
+    }
+    #bws-sidebar,
+    .bws-view-data {
+      bottom: @deployer-bar-height;
+    }
   }
 }
+
 .flag-mv #subapp-browser {
   .bws-view-data {
       top: @environment-header-height;

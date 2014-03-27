@@ -645,9 +645,16 @@ YUI.add('juju-gui', function(Y) {
           ['add', 'remove', '*:change'],
           this.on_database_changed, this);
 
+      this.ecs = new juju.EnvironmentChangeSet({
+        env: this.env,
+        db: this.db
+      });
+
       // Share the store instance with subapps.
       cfg.store = this.get('store');
       cfg.envSeries = this.env.get('defaultSeries');
+      cfg.env = this.env;
+      cfg.ecs = this.ecs;
       this.addSubApplications(cfg);
 
       // When someone wants a charm to be deployed they fire an event and we
@@ -665,11 +672,6 @@ YUI.add('juju-gui', function(Y) {
       // XXX (Jeff 19-02-2014) When the inspector mask code is moved into
       // the inspector shortly this can be removed.
       this.on('*:destroyServiceInspector', this.hideDragNotifications, this);
-
-      this.ecs = new juju.EnvironmentChangeSet({
-        env: this.env,
-        db: this.db
-      });
     },
 
     /**
@@ -1382,7 +1384,9 @@ YUI.add('juju-gui', function(Y) {
          * @method show_environment.callback
          */
         callback: function() {
-          this.views.environment.instance.rendered();
+          var envView = this.views.environment.instance;
+          envView.rendered();
+          this.get('subApps').charmbrowser.set('topo', envView.topo);
           // We only want to register this event handler once, but this method
           // is called multiple times.
           if (!this._envTakeoverEndingRegistered) {
