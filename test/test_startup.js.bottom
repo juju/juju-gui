@@ -30,6 +30,10 @@
       assert.isTrue(isBrowserSupported('Firefox'));
     });
 
+    it('knows that Safari is supported', function() {
+      assert.equal(isBrowserSupported('Safari'), true);
+    });
+
     it('knows that IE 10 is supported', function() {
       assert.isTrue(isBrowserSupported('MSIE 10.0'));
     });
