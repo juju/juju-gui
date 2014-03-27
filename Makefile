@@ -35,6 +35,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/zip.js$$' \
 		-e '^app/assets/javascripts/inflate.js$$' \
 		-e '^app/assets/javascripts/deflate.js$$' \
+		-e '^app/assets/javascripts/unscaled-pack.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 LINT_IGNORE='app/assets/javascripts/prettify.js, app/assets/javascripts/FileSaver.js, app/assets/javascripts/spinner.js, app/assets/javascripts/Object.observe.poly.js'
@@ -43,7 +44,7 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
     node_modules/less node_modules/minimatch node_modules/mocha \
     node_modules/node-markdown node_modules/node-minify \
-    node_modules/node-spritesheet node_modules/recess \
+    node_modules/smash node_modules/node-spritesheet node_modules/recess \
     node_modules/rimraf node_modules/should node_modules/uglify-js \
     node_modules/yui node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
@@ -245,10 +246,30 @@ $(NODE_TARGETS): package.json
 	echo $$FOUND_TARGETS; \
 	fi
 
-$(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
+$(JAVASCRIPT_LIBRARIES): | node_modules/yui custom-d3
 	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/yui
-	ln -sf "$(PWD)/node_modules/d3/d3.js" app/assets/javascripts/d3.js
-	ln -sf "$(PWD)/node_modules/d3/d3.min.js" \
+
+D3MODULES=$(shell node_modules/.bin/smash --list \
+	  node_modules/d3/src/start.js \
+	  node_modules/d3/src/compat/index.js \
+	  node_modules/d3/src/selection/* \
+	  node_modules/d3/src/behavior/* \
+	  node_modules/d3/src/geom/hull.js \
+	  node_modules/d3/src/geom/polygon.js \
+	  node_modules/d3/src/scale/linear.js \
+	  node_modules/d3/src/scale/log.js \
+	  node_modules/d3/src/transition/* \
+	  node_modules/d3/src/svg/line.js \
+	  node_modules/d3/src/svg/arc.js \
+	  node_modules/d3/src/event/touches.js \
+	  node_modules/d3/src/event/mouse.js \
+	  node_modules/d3/src/event/drag.js \
+	  app/assets/javascripts/unscaled-pack.js \
+	  node_modules/d3/src/end.js)
+
+custom-d3: node_modules/smash node_modules/d3
+	node_modules/.bin/smash $(D3MODULES) > app/assets/javascripts/d3.js
+	node_modules/.bin/uglifyjs app/assets/javascripts/d3.js -c -m -o \
 		app/assets/javascripts/d3.min.js
 
 gjslint: virtualenv/bin/gjslint
@@ -681,9 +702,9 @@ endif
 
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: beautify build build-files build-devel ci-check clean clean-all \
-	clean-deps clean-docs code-doc debug devel docs dist gjslint help \
-	install-npm-packages jshint lint lint-yuidoc main-doc npm-cache \
-	npm-cache-file prep prod recess server spritegen test \
+	clean-deps clean-docs code-doc custom-d3 debug devel docs dist \
+	gjslint help install-npm-packages jshint lint lint-yuidoc main-doc \
+	npm-cache npm-cache-file prep prod recess server spritegen test \
 	test-debug test-misc test-prep test-prod undocumented view-code-doc \
 	view-docs view-main-doc
 

@@ -491,7 +491,6 @@ YUI.add('juju-view-bundle', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-topology',
-    'juju-view-utils',
-    'unscaled-pack-layout'
+    'juju-view-utils'
   ]
 });

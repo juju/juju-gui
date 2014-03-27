@@ -1503,7 +1503,6 @@ YUI.add('juju-topology-service', function(Y) {
     'juju-templates',
     'juju-models',
     'juju-env',
-    'unscaled-pack-layout',
     'bundle-import-helpers',
     'local-charm-import-helpers',
     'juju-viewlet-manager',

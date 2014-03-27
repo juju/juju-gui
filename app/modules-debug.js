@@ -206,10 +206,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
 
-        'unscaled-pack-layout': {
-          fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
-        },
-
         'zip-utils': {
           fullpath: '/juju-ui/assets/javascripts/zip-utils.js'
         },
