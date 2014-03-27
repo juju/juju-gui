@@ -202,6 +202,11 @@ var GlobalConfig = {
               '/juju-ui/assets/javascripts/environment-header-extension.js'
         },
 
+        'machine-view-panel-extension': {
+          fullpath:
+              '/juju-ui/assets/javascripts/machine-view-panel-extension.js'
+        },
+
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
@@ -266,6 +271,14 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/environment-header.js'
         },
 
+        'juju-machine-view-panel': {
+          fullpath: '/juju-ui/widgets/machine-view-panel.js'
+        },
+
+        'juju-machine-view-panel-header': {
+          fullpath: '/juju-ui/widgets/machine-view-panel-header.js'
+        },
+
         'juju-view-environment': {
           fullpath: '/juju-ui/views/environment.js'
         },
@@ -299,6 +312,8 @@ var GlobalConfig = {
             'juju-help-dropdown',
             'juju-deployer-bar',
             'juju-environment-header',
+            'juju-machine-view-panel',
+            'juju-machine-view-panel-header',
             'juju-view-utils',
             'juju-topology',
             'juju-view-environment',

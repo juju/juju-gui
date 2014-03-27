@@ -14,10 +14,8 @@
         margin-left: 0;
     }
     ul {
+        .display-flex;
         .transition(margin-left 0.5s ease-out);
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
         height: @environment-header-height - 1;
         margin: 0 0 0 @left-panel-width + 1px;
         list-style: none;
@@ -40,10 +38,7 @@
 .environment-header-li(@spacer) {
     // The following styles are in a mixin so the styles can be munipulated
     // by parent classes.
-
-    -webkit-flex-basis: auto;
-    -ms-flex-basis: auto;
-    flex-basis: auto;
+    .flex-basis(auto);
     padding: 0 @spacer;
     border-right: 1px solid #d9d9d9;
     line-height: @environment-header-height;
@@ -58,9 +53,7 @@
         }
     }
     &.search {
-      -webkit-box-flex: 1;
-      -ms-flex: 1;
-      flex: 1;
+      .flex(1);
       position: relative;
       padding: 0;
 

@@ -108,3 +108,18 @@
         display: none;
     }
 }
+.display-flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.flex-basis(@width) {
+    -webkit-flex-basis: @width;
+    -ms-flex-basis: @width;
+    flex-basis: @width;
+}
+.flex (@grow) {
+    -webkit-box-flex: @grow;
+    -ms-flex: @grow;
+    flex: @grow;
+}
