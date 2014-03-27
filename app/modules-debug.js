@@ -492,6 +492,11 @@ var GlobalConfig = {
           requires: ['subapp-browser-charmview']
         },
 
+        'juju-app-state': {
+          fullpath: '/juju-ui/views/state.js',
+          requires: []
+        },
+
         // Browser Views
         'subapp-browser-entitybaseview': {
           fullpath: '/juju-ui/subapps/browser/views/entity-base.js'

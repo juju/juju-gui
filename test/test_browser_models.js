@@ -62,14 +62,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('browser filter model', function() {
-    var browser, Filter, models, Y;
+    var Filter, models, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-models', 'juju-browser-models'], function(Y) {
+        'juju-models', 'juju-browser-models', 'juju-app-state'], function(Y) {
         models = Y.namespace('juju.models');
-        browser = models.browser;
-        Filter = browser.Filter;
+        Filter = models.Filter;
         done();
       });
     });
