@@ -135,7 +135,7 @@ describe('Viewlet Manager', function() {
     // Recalculate the height now that the deployer bar exists.
     viewletManager.recalculateHeight();
     var newMaxHeight = parseInt(wrapper.getStyle('maxHeight'), 10);
-    assert.equal(newMaxHeight, viewletMaxHeight + deployerBarHeight - 20);
+    assert.equal(newMaxHeight, viewletMaxHeight + deployerBarHeight - 100);
     // Clean up.
     deployerBar.remove();
     delete window.flags.il;
