@@ -1,3 +1,15 @@
+/**
+* Unscaled pack layout.
+*
+* This code is mostly taken from D3, which explains some of the non-standard
+* coding practices used within.  The pack layout as used by D3 always scales
+* the layout to fit within the viewport, which is not what we want, as this
+* causes overlap with service nodes when there are a large number of them
+* on the canvas.  This removes the scaling factor (by setting it to always
+* be 1).  This is an interim fix until we come up with our own auto-layout
+* not based on circle packing.  For now, this remains a patch.
+*/
+
 import "../../../node_modules/d3/src/layout/layout";
 import "../../../node_modules/d3/src/layout/hierarchy";
 import "../../../node_modules/d3/src/layout/tree";

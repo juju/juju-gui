@@ -249,6 +249,14 @@ $(NODE_TARGETS): package.json
 $(JAVASCRIPT_LIBRARIES): | node_modules/yui custom-d3
 	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/yui
 
+# This list of files includes the D3 modules that are used directly by the GUI.
+# Smash will select dependencies based on import statements within those files
+# and include the whole dependency tree only once.  This list must start with
+# start.js and end with end.js, but the order in the middle does not matter. If
+# new features are added to the GUI that require additional models, the D3 code
+# will error in the console; simply add the appropriate module here and the
+# dependency tree will be updated.
+# More info on Smash here: https://github.com/mbostock/smash/wiki
 D3MODULES=$(shell node_modules/.bin/smash --list \
 	  node_modules/d3/src/start.js \
 	  node_modules/d3/src/compat/index.js \
@@ -267,6 +275,8 @@ D3MODULES=$(shell node_modules/.bin/smash --list \
 	  app/assets/javascripts/unscaled-pack.js \
 	  node_modules/d3/src/end.js)
 
+# Taken from D3's Makefile. More info on building D3 here:
+# https://github.com/mbostock/d3/blob/master/Makefile
 custom-d3: node_modules/smash node_modules/d3
 	node_modules/.bin/smash $(D3MODULES) > app/assets/javascripts/d3.js
 	node_modules/.bin/uglifyjs app/assets/javascripts/d3.js -c -m -o \
