@@ -310,8 +310,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         app._minimized = mockView;
 
         // Setup some previous state to check for clearing.
-        app.state.old.viewmode = 'minimized';
-        app.state.view.viewmode = 'sidebar';
+        app.state._setPrevious('viewmode', 'minimized');
+        app.state._setCurrent('viewmode', 'sidebar');
 
         // The old initState used to do both state initialization and clearing
         // the views. Now that state is refactored into its own object, we
@@ -321,8 +321,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         assert.equal(app._sidebar, undefined, 'sidebar is removed');
         assert.equal(app._minimized, undefined, 'minimized is removed');
-        assert.equal(app.state.old.viewmode, null, 'old state is reset');
-        assert.equal(app.state.view.viewmode, null, 'view state is reset');
+        assert.equal(app.state.getPrevious('viewmode'), null,
+                     'old state is reset');
+        assert.equal(app.state.getCurrent('viewmode'), null,
+                     'view state is reset');
       });
 
       it('correctly strips viewmode from the charmID', function() {
@@ -411,38 +413,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.equal(req.params.id, '~foo/precise/mysql-10');
       });
 
-      it('does not add sidebar to urls that do not require it', function() {
-        app = new browser.Browser();
-
-        // sidebar is the default viewmode and is not required on urls that have
-        // a charm id in them or the root url. Leave out the viewmode in these
-        // cases.
-        var url = app.state.getUrl({
-          viewmode: 'sidebar',
-          charmID: 'precise/mysql-10',
-          search: undefined,
-          filter: undefined
-        });
-        assert.equal(url, 'precise/mysql-10');
-
-        url = app.state.getUrl({
-          viewmode: 'sidebar',
-          charmID: undefined,
-          search: undefined,
-          filter: undefined
-        });
-        assert.equal(url, '');
-
-        // The viewmode is required for search related routes though.
-        url = app.state.getUrl({
-          viewmode: 'sidebar',
-          charmID: undefined,
-          search: true,
-          filter: undefined
-        });
-        assert.equal(url, 'sidebar/search');
-      });
-
       it('/charm/id router ignores other urls', function() {
         app = new browser.Browser({
           store: new CharmworldAPI({
@@ -485,15 +455,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         };
 
         // And we hard set that the viewmode was in _sidebar.
-        app.state.view.viewmode = 'sidebar';
+        app.state._setCurrent('viewmode', 'sidebar');
 
         var req = {
           'viewmode': 'minimized'
         };
 
         app.minimized(req, null, next);
-        assert.equal(app.state.view.viewmode, 'sidebar');
-        assert.equal(app.state.old.viewmode, 'sidebar');
+        assert.equal(app.state.getCurrent('viewmode'), 'sidebar');
+        assert.equal(app.state.getCurrent('viewmode'), 'sidebar');
 
       });
     });
@@ -614,15 +584,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         browser.routeView(req, undefined, function() {});
         assert.deepEqual(hits, expected);
-      });
-
-      it('resets filters when navigating away from search', function() {
-        browser.state.view.search = true;
-        browser.state.filter.set('text', 'foo');
-        // Set the state before changing up.
-        browser.state.save();
-        browser.state.getUrl({search: false});
-        assert.equal('', browser.state.filter.get('text'));
       });
 
       it('viewmodes are not a valid charm id', function() {
@@ -1063,7 +1024,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         // The view state needs to also be sync'd and updated even though
         // we're hidden so that we can detect changes in the app state across
         // requests while hidden.
-        assert.equal(browser.state.old.viewmode, 'minimized');
+        assert.equal(browser.state.getPrevious('viewmode'), 'minimized');
       });
 
       it('knows when the search cache should be updated', function() {
@@ -1087,54 +1048,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         browser.state.save();
       });
 
-      it('permits a filter clear command', function() {
-        var url = browser.state.getUrl({
-          'search': true,
-          'filter': {
-            text: 'apache'
-          }
-        });
-
-        // We have a good valid search.
-        assert.equal(url, '/search?text=apache');
-
-        // Now let's clear it and make sure it's emptied.
-        url = browser.state.getUrl({
-          'filter': {
-            clear: true
-          }
-        });
-        assert.equal(url, '/search');
-      });
-
-      it('permits a filter replace command', function() {
-        var url = browser.state.getUrl({
-          'search': true,
-          'filter': {
-            text: 'apache',
-            categories: ['app-servers']
-          }
-        });
-        // We have a good valid search.
-        assert.equal(
-            url,
-            '/search?categories=app-servers&text=apache');
-
-        // Now let's update it and force all the rest to go away.
-        url = browser.state.getUrl({
-          'filter': {
-            replace: true,
-            text: 'mysql'
-          }
-        });
-        assert.equal(url, '/search?text=mysql');
-      });
-
       it('re-renders charm details with the sidebar', function() {
         // Set a charm identifier in the view state, and patch the old state
         // so that it is no different than the current one.
-        browser.state.view.charmID = 'precise/mediawiki-10';
-        browser.state.old = browser.state.view;
+        browser.state._setCurrent('charmID', 'precise/mediawiki-10');
+        browser.state._previous = browser.state._current;
         // Call the sidebar method and ensure the charm detail is re-rendered.
         browser.sidebar({path: '/'}, null, function() {});
         assert.isTrue(hits.renderCharmDetails);

@@ -49,18 +49,17 @@ YUI.add('subapp-browser', function(Y) {
      * Make sure we destroy views no long used.
      *
      * @method _cleanOldViews
-     * @param {String} newViewMode the new viewmode we're using.
      *
      */
-    _cleanOldViews: function(newViewMode) {
-      // XXX newViewMode is unused.
-      if (this.state.hasChanged('viewmode') && this.state.old.viewmode) {
-        var viewAttr = '_' + this.state.old.viewmode;
+    _cleanOldViews: function() {
+      var oldViewmode = this.state.getPrevious('viewmode');
+      if (this.state.hasChanged('viewmode') && oldViewmode) {
+        var viewAttr = '_' + oldViewmode;
         if (this[viewAttr]) {
           this[viewAttr].destroy();
           delete this[viewAttr];
         }
-        if (this.state.old.viewmode === 'sidebar' && this._details) {
+        if (oldViewmode === 'sidebar' && this._details) {
           this._details.destroy();
           delete this._details;
         }
@@ -159,7 +158,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     _shouldShowCharm: function() {
       return (
-          this.state.view.charmID && (
+          this.state.getCurrent('charmID') && (
               !this._details ||
               this.state.hasChanged('charmID') ||
               this.state.hasChanged('viewmode')
@@ -177,7 +176,7 @@ YUI.add('subapp-browser', function(Y) {
     _shouldShowEditorial: function() {
       var should = false;
       // If the viewmode has changed, and seach is not enabled then yes
-      if (!this.state.view.search &&
+      if (!this.state.getCurrent('search') &&
           this.state.hasChanged('viewmode')
       ) {
         should = true;
@@ -185,7 +184,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Even if viewmode hasn't changed, but search has changed and is false
       // then yes
-      if (!this.state.view.search &&
+      if (!this.state.getCurrent('search') &&
           this.state.hasChanged('search')
       ) {
         should = true;
@@ -203,12 +202,13 @@ YUI.add('subapp-browser', function(Y) {
      */
     _shouldShowSearch: function() {
       if (
-          this.state.view.search &&
+          this.state.getCurrent('search') &&
           (
            this.state.hasChanged('search') ||
            this.state.hasChanged('querystring') ||
            this.state.hasChanged('viewmode') ||
-           (this.state.hasChanged('charmID') && !this.state.view.charmID)
+           (this.state.hasChanged('charmID') &&
+            !this.state.getCurrent('charmID'))
           )
       ) {
         return true;
@@ -224,7 +224,7 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true If search changed.
      */
     _searchChanged: function() {
-      if (this.state.view.search && (
+      if (this.state.getCurrent('search') && (
           this.state.hasChanged('search') ||
           this.state.hasChanged('querystring'))) {
         return true;
@@ -367,10 +367,10 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderEntityDetails: function(req, res, next) {
-      var entityId = this.state.view.charmID;
+      var entityId = this.state.getCurrent('charmID');
 
       var extraCfg = {
-        activeTab: this.state.view.hash,
+        activeTab: this.state.getCurrent('hash'),
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
         deployBundle: this.get('deployBundle'),
@@ -425,8 +425,8 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (this.state.view.charmID) {
-        extraCfg.activeID = this.state.view.charmID;
+      if (this.state.getCurrent('charmID')) {
+        extraCfg.activeID = this.state.getCurrent('charmID');
       }
 
       this._editorial = new views.EditorialView(
@@ -483,8 +483,8 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (this.state.view.charmID) {
-        extraCfg.activeID = this.state.view.charmID;
+      if (this.state.getCurrent('charmID')) {
+        extraCfg.activeID = this.state.getCurrent('charmID');
       }
 
       this._search = new views.BrowserSearchView(
@@ -522,9 +522,8 @@ YUI.add('subapp-browser', function(Y) {
         this._minimized.addTarget(this);
       }
 
-      this._minimized.set(
-          'oldViewMode',
-          this.state.old.viewmode ? this.state.old.viewmode : 'sidebar');
+      var oldViewMode = this.state.getPrevious('viewmode') || 'sidebar';
+      this._minimized.set('oldViewMode', oldViewMode);
 
       this.state.save();
       next();
@@ -560,7 +559,7 @@ YUI.add('subapp-browser', function(Y) {
       // Even if we've got an existing View, check if Home should be displayed
       // or not based on the current view state.
       if (this._sidebar) {
-        if (this.state.view.search) {
+        if (this.state.getCurrent('search')) {
           this._sidebar.set('withHome', true);
         } else {
           this._sidebar.set('withHome', false);
@@ -594,7 +593,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there are no details in the route then hide the div for
       // viewing the charm details.
-      if (!this.state.view.charmID) {
+      if (!this.state.getCurrent('charmID')) {
         this._detailsVisible(false);
         var detailsNode = Y.one('.bws-view-data');
         if (detailsNode) {
@@ -622,7 +621,8 @@ YUI.add('subapp-browser', function(Y) {
       localStorage.setItem('force-onboarding', '');
 
       if (!this._onboarding || force) {
-        if (!this.state.view.search && !this.state.view.charmID) {
+        if (!this.state.getCurrent('search') &&
+            !this.state.getCurrent('charmID')) {
           this.renderOnboarding(force);
         }
       }
@@ -714,7 +714,7 @@ YUI.add('subapp-browser', function(Y) {
       };
 
       // Update the state for the rest of things to figure out what to do.
-      this.state.update(req);
+      this.state.loadRequest(req);
       this._cleanOldViews(req.params.viewmode);
 
       // Once the state is updated determine visibility of our Nodes.
@@ -786,7 +786,7 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       // Update the state for the rest of things to figure out what to do.
-      this.state.update(req);
+      this.state.loadRequest(req);
       this._cleanOldViews(req.params.viewmode);
 
       // Don't bother routing if we're hidden.
@@ -835,7 +835,7 @@ YUI.add('subapp-browser', function(Y) {
       req.params.id = id;
 
       // Update the state for the rest of things to figure out what to do.
-      this.state.update(req);
+      this.state.loadRequest(req);
       this._cleanOldViews(req.params.viewmode);
 
       // Once the state is updated determine visibility of our Nodes.
@@ -896,7 +896,7 @@ YUI.add('subapp-browser', function(Y) {
         minview.hide();
         this._clearViews();
       } else {
-        if (this.state.view.viewmode === 'minimized') {
+        if (this.state.getCurrent('viewmode') === 'minimized') {
           minview.show();
           browser.hide();
         } else {
@@ -914,7 +914,7 @@ YUI.add('subapp-browser', function(Y) {
     */
     getViewMode: function() {
       // If no view mode is set, "sidebar" is the default.
-      return this.state.view.viewmode || 'sidebar';
+      return this.state.getCurrent('viewmode') || 'sidebar';
     }
   }, {
     ATTRS: {
