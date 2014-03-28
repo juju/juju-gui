@@ -28,6 +28,7 @@
     "uglify-js": "2.2.x",
     "grunt": "0.3.17",
     "node-spritesheet": "0.4.0",
-    "node-minify": "0.7.x"
+    "node-minify": "0.7.x",
+    "smash": "0.0.12"
   }
 }
