@@ -233,21 +233,18 @@ describe('charm/bundle token', function() {
     token.render(token_container);
 
     var charmIcons = token.get('charmIcons');
-    var expected = [{
-      id: 'precise/haproxy-18',
-      name: 'haproxy'
-    }, {
-      id: 'precise/mediawiki-10',
-      name: 'mediawiki'
-    }, {
-      id: 'precise/memcached-7',
-      name: 'memcached'
-    }, {
-      id: 'precise/mysql-27',
-      name: 'mysql'
-    }];
-    assert.deepEqual(charmIcons, expected);
-    assert.equal(token_container.one('span.charms').all('img').size(), 4);
+    var expected = [
+      'haproxy',
+      'mediawiki',
+      'memcached',
+      'mysql'
+    ];
+    var images = token_container.one('span.charms').all('img');
+    var names = images.getDOMNodes().map(function(image) {
+      return Y.one(image).getAttribute('alt');
+    });
+    assert.deepEqual(names, expected);
+    assert.equal(images.size(), 4);
   });
 
   it('renders the deployer button when asked to', function() {

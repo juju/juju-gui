@@ -1453,12 +1453,13 @@ describe('utilities', function() {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
+          ['browser-token',
           'juju-view-utils',
-          'juju-tests-utils',
-          'io', function(Y) {
+          'juju-tests-utils'], function(Y) {
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             done();
+            Y.Handlebars.helpers.charmIconPath = function() {return ''};
           });
     });
 
@@ -1474,19 +1475,12 @@ describe('utilities', function() {
       bundleData.charm_metadata.foo = extra;
 
       var parsed = utils.charmIconParser(bundleData.charm_metadata);
-      var expected = [{
-        id: 'precise/haproxy-21',
-        name: 'haproxy'
-      }, {
-        id: 'precise/mediawiki-10',
-        name: 'mediawiki'
-      }, {
-        id: 'precise/memcached-7',
-        name: 'memcached'
-      }, {
-        id: 'precise/mysql-29',
-        name: 'mysql'
-      }];
+      var expected = [
+        '<img src="" alt="haproxy"/>',
+        '<img src="" alt="mediawiki"/>',
+        '<img src="" alt="memcached"/>',
+        '<img src="" alt="mysql"/>'
+      ];
       assert.deepEqual(parsed, expected);
     });
   });
