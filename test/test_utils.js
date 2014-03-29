@@ -1454,12 +1454,12 @@ describe('utilities', function() {
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           ['browser-token',
-          'juju-view-utils',
-          'juju-tests-utils'], function(Y) {
+           'juju-view-utils',
+           'juju-tests-utils'], function(Y) {
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             done();
-            Y.Handlebars.helpers.charmIconPath = function() {return ''};
+            Y.Handlebars.helpers.charmIconPath = function() { return ''; };
           });
     });
 

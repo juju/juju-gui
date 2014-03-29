@@ -232,7 +232,6 @@ describe('charm/bundle token', function() {
     // The token needs to be rendered for the attributes to be set???
     token.render(token_container);
 
-    var charmIcons = token.get('charmIcons');
     var expected = [
       'haproxy',
       'mediawiki',

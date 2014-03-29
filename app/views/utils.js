@@ -1965,8 +1965,8 @@ YUI.add('juju-view-utils', function(Y) {
       // We only show icons for the approved charms.
       if (data[key].is_approved) {
         var iconData = '<img src="' +
-          Y.Template.Handlebars.helpers.charmIconPath(data[key].id) +
-          '" alt="' + data[key].name + '"/>';
+            Y.Template.Handlebars.helpers.charmIconPath(data[key].id) +
+            '" alt="' + data[key].name + '"/>';
         charmIcons.push(iconData);
       }
     });
