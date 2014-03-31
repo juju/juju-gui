@@ -497,10 +497,11 @@ th {
 #relation-menu {
     .relation-container {
         cursor: inherit;
-        padding-left: 27px;
+        padding-left: 30px;
         padding-right: 0;
+        line-height: 30px;
         background-repeat: no-repeat;
-        background-position: 5px 12px;
+        background-position: 10px 11px;
         background-image: url("/juju-ui/assets/images/inspector-charm-running.png");
         &.error {
             background-image: url("/juju-ui/assets/images/inspector-charm-error.png");
@@ -512,15 +513,19 @@ th {
             background-color: inherit;
         }
     }
+    .triangle {
+        bottom: -3px;
+        border-width: 3px 5px 0 5px;
+    }
     .relation-remove {
         cursor: pointer;
         display: inline-block;
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         background-repeat: no-repeat;
-        background-position: 11px 11px;
+        background-position: 10px 10px;
         background-image: url("/juju-ui/assets/images/trash.png");
-        margin-bottom: -11px;
+        margin-bottom: -10px;
     }
     .inspect-relation {
         cursor: pointer;
