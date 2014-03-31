@@ -1,0 +1,44 @@
+.machine-view-panel {
+    @border-colour: #d9d9d9;
+    .display-flex;
+    .transition(padding-left 0.5s ease-out);
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 600;
+    top: @navbar-height + @environment-header-height;
+    bottom: 0;
+    left:0;
+    right: 0;
+    padding: 10px 0 0 @left-panel-width + 1px;
+    background-color: #fff;
+
+    &.full {
+        .transition(padding-left 0s ease-out);
+        padding-left: 0;
+    }
+    .column {
+        .flex(1);
+        border-right: 1px solid @border-colour;
+
+        .machine-view-panel-header {
+            padding: 20px;
+            border-bottom: 1px solid @border-colour;
+
+            h3 {
+                .type3;
+                display: block;
+                height: 27px;
+            }
+            a {
+                float: right;
+            }
+            span {
+                display: block;
+                height: 20px;
+            }
+        }
+    }
+}
+.flag-il .machine-view-panel {
+    bottom: @deployer-bar-height;
+}
