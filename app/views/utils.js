@@ -1971,8 +1971,8 @@ YUI.add('juju-view-utils', function(Y) {
       }
     });
 
-    if (charmIcons.length > 10) {
-      charmIcons = charmIcons.slice(0, 10);
+    if (charmIcons.length > 9) {
+      charmIcons = charmIcons.slice(0, 9);
       charmIcons.push('&hellip;');
     }
     return charmIcons;
