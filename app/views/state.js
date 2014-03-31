@@ -157,6 +157,10 @@ YUI.add('juju-app-state', function(Y) {
 
       this._current = Y.merge(this._current, change);
 
+      if (change.inspector) {
+        urlParts.push('/inspector/' + change.inspector + '/');
+      }
+
       if (this.getCurrent('viewmode') !== 'sidebar' ||
           this.getCurrent('search')) {
         // There's no need to add the default view if we
@@ -217,10 +221,12 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       // Check for a charm id in the request.
-      if (params.id && params.id !== 'search') {
-        this._setCurrent('charmID', params.id);
-      } else {
-        this._setCurrent('charmID', null);
+      if (params.viewmode !== 'inspector') {
+        if (params.id && params.id !== 'search') {
+          this._setCurrent('charmID', params.id);
+        } else {
+          this._setCurrent('charmID', null);
+        }
       }
 
       // Check for search in the request.
