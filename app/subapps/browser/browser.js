@@ -629,7 +629,10 @@ YUI.add('subapp-browser', function(Y) {
 
       // Sync that the state has changed.
       this.state.save();
-      next();
+      // This can be called as a route callback or as a utility method.
+      if (typeof next === 'function') {
+        next();
+      }
     },
 
     /**
@@ -640,8 +643,22 @@ YUI.add('subapp-browser', function(Y) {
     */
     inspector: function(req, res, next) {
       // We need the sidebar rendered so that we can show the inspector in it.
-      this.sidebar(req);
-      this.createServiceInspector(req.service);
+      this.sidebar(req, null, function() {});
+      var clientId = req.params.id,
+          model;
+      this.get('db').services.some(function(service) {
+        if (service.get('clientId') === clientId) {
+          model = service;
+          return true;
+        }
+      });
+      // If there is no config set then it's a ghost service model and not
+      // a deployed service yet.
+      if (!model.get('config')) {
+        this.createGhostInspector(model);
+      } else {
+        this.createServiceInspector(model);
+      }
     },
 
     /**
@@ -682,9 +699,9 @@ YUI.add('subapp-browser', function(Y) {
       Creates a service inspector.
 
       @method createServiceInspector
-      @param {String} serviceName The service name of the inspector to show.
+      @param {String} model The service model.
     */
-    createServiceInspector: function(serviceName) {
+    createServiceInspector: function(model) {
       // XXX Placeholder for after the state system can render inspectors
     },
 
@@ -763,7 +780,7 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (idBits.length > 1) {
+      if (idBits.length > 1 && idBits[0] !== 'inspector') {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
