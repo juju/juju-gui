@@ -1,22 +1,28 @@
 <span>Scale up with these constraints?</span>
 <span class="constraint-details hide-on-edit">
   {{#srvConstraints}}
-    {{#if cpu}}
-      {{cpu}}Ghz
+    {{#if cpu-power}}
+      {{cpu-power}}Ghz
     {{else}}
-      Default CPU
+      default CPU power
+    {{/if}}
+    ,&nbsp;
+    {{#if cpu-cores}}
+      {{cpu-cores}} {{pluralize 'core' cpu-cores}}
+    {{else}}
+      default CPU cores
     {{/if}}
     ,&nbsp;
     {{#if mem}}
-      {{mem}}GB
+      {{mem}}MB
     {{else}}
-      default Mem
+      default memory
     {{/if}}
     ,&nbsp;
     {{#if arch}}
       {{arch}}
     {{else}}
-      default Arch
+      default arch
     {{/if}}
   {{/srvConstraints}}
   &nbsp;

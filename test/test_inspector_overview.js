@@ -137,6 +137,16 @@ describe('Inspector Overview', function() {
     return inspector;
   };
 
+  // Simulate the click to scale up/down the service units.
+  // The value argument is the number of units to set.
+  // Return the units control node.
+  var scaleUnits = function(value) {
+    var control = container.one('.num-units-control');
+    control.set('value', value);
+    control.simulate('keydown', {keyCode: ENTER});
+    return control;
+  };
+
   it('is created with the proper template context', function() {
     inspector = setUpInspector();
     assert.deepEqual(inspector.templateConfig, {});
@@ -165,9 +175,7 @@ describe('Inspector Overview', function() {
   it('should remove multiple units when the text input changes',
      function() {
        inspector = setUpInspector();
-       var control = container.one('.num-units-control');
-       control.set('value', 1);
-       control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
+       scaleUnits(1);
        var message = conn.last_message();
        assert.equal('DestroyServiceUnits', message.Request);
        assert.deepEqual(
@@ -177,9 +185,7 @@ describe('Inspector Overview', function() {
   it('should not do anything if requested is < 1',
      function() {
        setUpInspector();
-       var control = container.one('.num-units-control');
-       control.set('value', 0);
-       control.simulate('keydown', { keyCode: ENTER });
+       var control = scaleUnits(0);
        assert.isUndefined(conn.last_message());
        control.get('value').should.equal('3');
      });
@@ -187,9 +193,7 @@ describe('Inspector Overview', function() {
   it('should add the correct number of units when entered via text field',
      function() {
        setUpInspector();
-       var control = container.one('.num-units-control');
-       control.set('value', 7);
-       control.simulate('keydown', { keyCode: ENTER });
+       scaleUnits(7);
        // confirm the 'please confirm constraints' dialogue
        container.one('.confirm-num-units').simulate('click');
        assert.equal(container.one('.unit-constraints-confirm')
@@ -203,9 +207,7 @@ describe('Inspector Overview', function() {
 
   it('disables unit control while adding units, then reenables', function() {
     setUpInspector();
-    var control = container.one('.num-units-control');
-    control.set('value', 7);
-    control.simulate('keydown', { keyCode: ENTER });
+    var control = scaleUnits(10);
     // Confirm the 'please confirm constraints' dialogue.
     container.one('.confirm-num-units').simulate('click');
     // During scaling the control is disabled.
@@ -242,13 +244,46 @@ describe('Inspector Overview', function() {
     assert.isFalse(control.get('disabled'), 'enabled after scaling down');
   });
 
+  it('shows default constraint values when upscaling', function() {
+    setUpInspector();
+    scaleUnits(10);
+    var details = container.one('.constraint-details').getContent();
+    assert.include(details, 'default CPU power');
+    assert.include(details, 'default CPU cores');
+    assert.include(details, 'default memory');
+    assert.include(details, 'default arch');
+  });
+
+  it('shows customized constraint values when upscaling', function() {
+    var constraints = {
+      'cpu-power': 42,
+      'cpu-cores': 1,
+      mem: 1024,
+      arch: 'i386'
+    };
+    setUpInspector({constraints: constraints});
+    scaleUnits(10);
+    var details = container.one('.constraint-details').getContent();
+    assert.include(details, '42Ghz');
+    assert.include(details, '1 core');
+    assert.include(details, '1024MB');
+    assert.include(details, 'i386');
+  });
+
+  it('pluralizes the number of cores when upscaling', function() {
+    setUpInspector({constraints: {'cpu-cores': 4}});
+    scaleUnits(10);
+    var details = container.one('.constraint-details').getContent();
+    assert.include(details, 'default CPU power');
+    assert.include(details, '4 cores');
+    assert.include(details, 'default memory');
+    assert.include(details, 'default arch');
+  });
 
   it('should set the constraints before deploying any more units',
      function() {
        setUpInspector();
-       var control = container.one('.num-units-control');
-       control.set('value', 7);
-       control.simulate('keydown', { keyCode: ENTER });
+       scaleUnits(7);
        var editConstraintsButton = container.one('.edit-constraints');
        editConstraintsButton.simulate('click');
        // It should be hidden after being clicked to display the constraints
