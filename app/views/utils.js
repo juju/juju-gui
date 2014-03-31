@@ -1964,16 +1964,16 @@ YUI.add('juju-view-utils', function(Y) {
     Object.keys(data).forEach(function(key) {
       // We only show icons for the approved charms.
       if (data[key].is_approved) {
-        var iconData = {
-          id: data[key].id,
-          name: data[key].name
-        };
+        var iconData = '<img src="' +
+            Y.Template.Handlebars.helpers.charmIconPath(data[key].id) +
+            '" alt="' + data[key].name + '"/>';
         charmIcons.push(iconData);
       }
     });
 
-    if (charmIcons.length > 10) {
-      charmIcons = charmIcons.slice(10);
+    if (charmIcons.length > 9) {
+      charmIcons = charmIcons.slice(0, 9);
+      charmIcons.push('&hellip;');
     }
     return charmIcons;
   };

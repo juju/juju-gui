@@ -1449,17 +1449,22 @@ describe('utilities', function() {
   });
 
   describe('utils.charmIconParser', function() {
-    var testUtils, utils, Y;
+    var cleanIconHelper, testUtils, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          'juju-view-utils',
-          'juju-tests-utils',
-          'io', function(Y) {
+          ['browser-token',
+           'juju-view-utils',
+           'juju-tests-utils'], function(Y) {
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
             done();
+            cleanIconHelper = testUtils.stubCharmIconPath();
           });
+    });
+
+    after(function() {
+      cleanIconHelper();
     });
 
     it('Parses and sorts charm data into the required icon format', function() {
@@ -1474,20 +1479,26 @@ describe('utilities', function() {
       bundleData.charm_metadata.foo = extra;
 
       var parsed = utils.charmIconParser(bundleData.charm_metadata);
-      var expected = [{
-        id: 'precise/haproxy-21',
-        name: 'haproxy'
-      }, {
-        id: 'precise/mediawiki-10',
-        name: 'mediawiki'
-      }, {
-        id: 'precise/memcached-7',
-        name: 'memcached'
-      }, {
-        id: 'precise/mysql-29',
-        name: 'mysql'
-      }];
+      var expected = [
+        '<img src="/path/to/charm/undefined" alt="haproxy"/>',
+        '<img src="/path/to/charm/undefined" alt="mediawiki"/>',
+        '<img src="/path/to/charm/undefined" alt="memcached"/>',
+        '<img src="/path/to/charm/undefined" alt="mysql"/>'
+      ];
       assert.deepEqual(parsed, expected);
+    });
+
+    it('limits icons to 9 and an ellipsis for bundles.', function() {
+      var bundleData = testUtils.loadFixture('data/browserbundle.json', true);
+      var charms = bundleData.charm_metadata;
+      Y.Object.each(bundleData.charm_metadata, function(charm, key) {
+        charms[key + '1'] = charm;
+        charms[key + '2'] = charm;
+      });
+
+      var parsed = utils.charmIconParser(charms);
+      assert.equal(parsed.length, 10);
+      assert.equal(parsed[9], '&hellip;');
     });
   });
 
