@@ -54,7 +54,7 @@ YUI.add('environment-header', function(Y) {
          * @param {Event} ev the click event created.
          */
         clickTab: function(e) {
-          e.preventDefault();
+          e.halt();
           this.switchTab(e.currentTarget);
         },
 
@@ -74,7 +74,7 @@ YUI.add('environment-header', function(Y) {
           link.ancestor('li').addClass('active');
 
           // Fire the change event.
-          this.fire('changeEnvironment', {environment: environment});
+          this.fire('changeEnvironmentView', {environment: environment});
         },
 
         /**

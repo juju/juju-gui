@@ -43,7 +43,7 @@ YUI.add('subapp-browser', function(Y) {
     // so that the routing code still knows how to redirect fullscreen
     // requests to the sidebar views.
     // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
-    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector'],
+    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector', 'machine'],
 
     /**
      * Make sure we destroy views no long used.
@@ -636,10 +636,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Renders the inspector into the sidebar container
+      Renders the inspector into the sidebar container.
+      Route callback.
 
       @method inspector
-      @param {String} service The service to show the inspector for.
     */
     inspector: function(req, res, next) {
       // We need the sidebar rendered so that we can show the inspector in it.
@@ -660,6 +660,14 @@ YUI.add('subapp-browser', function(Y) {
         this.createServiceInspector(model);
       }
     },
+
+    /**
+      Renders the machine view over the canvas.
+      Route callback.
+
+      @method machine
+    */
+    machine: function(req, res, next) { },
 
     /**
       Creates the ghost inspector.
@@ -780,7 +788,8 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (idBits.length > 1 && idBits[0] !== 'inspector') {
+      if (idBits.length > 1 &&
+         ((idBits[0] !== 'inspector') || (idBits[0] !== 'machine'))) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {

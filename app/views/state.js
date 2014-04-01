@@ -156,17 +156,30 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       this._current = Y.merge(this._current, change);
-
+      var skipViewmode = false;
       if (change.inspector) {
         urlParts.push('/inspector/' + change.inspector + '/');
+        skipViewmode = true;
       }
 
-      if (this.getCurrent('viewmode') !== 'sidebar' ||
-          this.getCurrent('search')) {
-        // There's no need to add the default view if we
-        // don't need it. However it's currently required for search views to
-        // match our current routes.
-        urlParts.push(this.getCurrent('viewmode'));
+      if (change.machine) {
+        urlParts.push('/machine/');
+        skipViewmode = true;
+      }
+
+      if (change.topology) {
+        urlParts.push('/');
+        skipViewmode = true;
+      }
+
+      if (!skipViewmode) {
+        if (this.getCurrent('viewmode') !== 'sidebar' ||
+            this.getCurrent('search')) {
+          // There's no need to add the default view if we
+          // don't need it. However it's currently required for search views to
+          // match our current routes.
+          urlParts.push(this.getCurrent('viewmode'));
+        }
       }
 
       if (this.getCurrent('search')) {
