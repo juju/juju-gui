@@ -100,6 +100,17 @@ YUI.add('machine-view-panel', function(Y) {
           container.addClass('machine-view-panel');
           this._renderHeaders();
           return this;
+        },
+
+        /**
+          Empties the views container and removes attached classes
+
+          @method destructor
+        */
+        destructor: function() {
+          var container = this.get('container');
+          container.setHTML('');
+          container.removeClass('machine-view-panel');
         }
       });
 

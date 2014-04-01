@@ -51,7 +51,9 @@ YUI.add('environment-header-extension', function(Y) {
       var header = new views.EnvironmentHeaderView({
         container: Y.one('#environment-header')
       }).render();
-      header.on('changeEnvironmentView', this._onChangeEnvironmentView, this);
+      this.addEvent(
+          header.on(
+              'changeEnvironmentView', this._onChangeEnvironmentView, this));
       this.environmentHeader = header;
     },
 

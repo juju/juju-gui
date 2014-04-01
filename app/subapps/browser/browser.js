@@ -36,7 +36,8 @@ YUI.add('subapp-browser', function(Y) {
      @extends {juju.SubApp}
 
    */
-  ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
+  var extensions = [Y.juju.MachineViewPanel];
+  ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, extensions, {
     // Mark the entire subapp has hidden.
     hidden: false,
     // Even though fullscreen is no longer a valid mode we need it in the list
@@ -324,6 +325,9 @@ YUI.add('subapp-browser', function(Y) {
       if (this._onboarding) {
         this._onboarding.destroy();
       }
+      if (this.machineViewPanel) {
+        this.destroyMachineViewPanel();
+      }
     },
 
     /**
@@ -566,6 +570,10 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
+      if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+      }
+
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
@@ -667,7 +675,12 @@ YUI.add('subapp-browser', function(Y) {
 
       @method machine
     */
-    machine: function(req, res, next) { },
+    machine: function(req, res, next) {
+      if (window.flags.mv) {
+        this._renderMachineViewPanelView();
+      }
+      this.machineViewPanel.setWidthFull();
+    },
 
     /**
       Creates the ghost inspector.
@@ -1051,6 +1064,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-jujucharms',
     'subapp-browser-minimized',
     'subapp-browser-searchview',
-    'subapp-browser-sidebar'
+    'subapp-browser-sidebar',
+    'machine-view-panel-extension'
   ]
 });
