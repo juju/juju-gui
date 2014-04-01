@@ -48,9 +48,25 @@ YUI.add('environment-header-extension', function(Y) {
      */
     _renderEnvironmentHeaderView: function() {
       var views = Y.namespace('juju.views');
-      this.environmentHeader = new views.EnvironmentHeaderView({
+      var header = new views.EnvironmentHeaderView({
         container: Y.one('#environment-header')
       }).render();
+      header.on('changeEnvironmentView', this._onChangeEnvironmentView, this);
+      this.environmentHeader = header;
+    },
+
+    /**
+      Callback for the user changing the enironment view toggle.
+
+      @method _onChangeEnvironmentView
+      @param {Object} e Event object.
+    */
+    _onChangeEnvironmentView: function(e) {
+      var change = {},
+          environment = e.environment;
+      if (environment === 'serviceView') { change = { topology: true }; }
+      else if (environment === 'machineView') { change = { machine: true }; }
+      this.get('subApps').charmbrowser.fire('viewNavigate', { change: change });
     }
   };
 
