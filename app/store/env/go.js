@@ -553,23 +553,27 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     Gather the status of all changes, the callback will be triggered
-     with LastChanges in the response which will be an Array of
-     {DeploymentId: ...,
-      Status: 'status string',
-      Time: timestamp,
-      Error: 'optional error',
-      Queue: optional depth in queue
-     }
+      Retrieve the current status of all the bundle deployments.
 
-     @method deployerStatus
-     @param {Function} callback to trigger.
+      @method deployerStatus
+      @param {Function} callback A callable that must be called once the
+        operation is performed. The callback is called passing an object
+        including either an "err" property if an error occurred, or a "changes"
+        list of bundle deployment statuses.
+        A deployment status object looks like the following:
+          {
+            deploymentId: <the deployment id as a positive integer>,
+            status: 'scheduled' || 'started' || 'completed' || 'cancelled',
+            time: <the number of seconds since the epoch as an integer>,
+            queue: <the position of the bundle deployment in the queue>,
+            err: 'only defined if an error occurred'
+          }
     */
     deployerStatus: function(callback) {
       var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleDeployerStatus,
-                                      this, callback);
+        intermediateCallback = Y.bind(
+            this._handleDeployerStatus, this, callback);
       }
       this._send_rpc({
         Type: 'Deployer',
@@ -580,14 +584,23 @@ YUI.add('juju-env-go', function(Y) {
     /**
      Callback to map data from deployerStatus back to caller.
 
-     @method handleDeployerStatus
+     @method _handleDeployerStatus
      @param {Function} userCallback to trigger.
      @param {Object} data from backend to transform.
     */
-    handleDeployerStatus: function(userCallback, data) {
+    _handleDeployerStatus: function(userCallback, data) {
+      var lastChanges = data.Response.LastChanges || [];
       var transformedData = {
         err: data.Error,
-        DeploymentId: data.Response.LastChanges
+        changes: lastChanges.map(function(change) {
+          return {
+            deploymentId: change.DeploymentId,
+            status: change.Status,
+            time: change.Time,
+            queue: change.Queue,
+            err: change.Error
+          };
+        })
       };
       userCallback(transformedData);
     },

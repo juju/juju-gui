@@ -21,6 +21,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI.add('bundle-import-helpers', function(Y) {
   var ns = Y.namespace('juju');
 
+  // Maps bundle deployment statuses to notification messages.
+  var STATUS_MESSAGES = {
+    scheduled: 'The deployment has been scheduled and is now pending',
+    started: 'The deployment is currently in progress',
+    completed: 'The deployment has been successfully completed',
+    cancelled: 'The deployment has been cancelled'
+  };
+
   ns.BundleHelpers = {
     /**
       Calls the deployer import method with the bundle data
@@ -84,10 +92,11 @@ YUI.add('bundle-import-helpers', function(Y) {
       @method deployBundleFiles
       @param {Array | Object} fileSources A list of files or file from the
         bundle import control.
-      @param {Environment} env Environment with access to the bundle back end.
-      calls.
-      @param {Database} db The app Database with access to the NotificationList.
-     */
+      @param {Environment} env Environment with access to the bundle back end
+        calls.
+      @param {Database} db The app Database with access to the
+        NotificationList.
+    */
     deployBundleFiles: function(fileSources, env, db) {
       var notifications = db.notifications;
       if (!Y.Lang.isFunction(env.deployerImport)) {
@@ -154,30 +163,93 @@ YUI.add('bundle-import-helpers', function(Y) {
     },
 
     /**
+      Start watching scheduled/started bundle deployments.
+      Notify recently occurred deployment errors.
+
+      @method watchAll
+      @param {Environment} env The environment object exposing the Juju API.
+      @param {Database} db The db which contains the NotificationList used
+        for adding notifications to the system.
+    */
+    watchAll: function(env, db) {
+      env.deployerStatus(function(response) {
+        if (response.err) {
+          db.notifications.add({
+            title: 'Unable to retrieve bundle deployment statuses',
+            message: 'Failure retrieving bundles status: ' + response.err,
+            level: 'error'
+          });
+          return;
+        }
+        var timestamp = (Date.now() / 1000) - (60 * 60); // One hour ago.
+        response.changes.forEach(function(change) {
+          var status = change.status;
+          // Start watching scheduled/in progress bundle deployments.
+          if (status === 'scheduled' || status === 'started') {
+            ns.BundleHelpers._watchDeployment(change.deploymentId, env, db);
+            return;
+          }
+          // Notify bundle deployment errors occurred in the last hour.
+          if (change.err && change.time >= timestamp) {
+            ns.BundleHelpers._notifyDeploymentChange(
+                db, change.deploymentId, status, change.err);
+          }
+          // If none of the previous blocks detect any changes then ignore
+          // successfully completed/old/canceled deployments.
+        });
+      });
+    },
+
+    /**
+      Notify a deployment change.
+      Add a record to the notifications database.
+
+      @method _notifyDeploymentChange
+      @param {Database} db The db which contains the NotificationList used
+        for adding notifications to the system.
+      @param {Integer} deploymentId The bundle deployment identifier.
+      @param {String} status The bundle deployment status
+        ('scheduled', 'started', 'completed' or 'cancelled').
+      @param {String} error The error message
+        (only defined if an error occurred while deploying the bundle).
+    */
+    _notifyDeploymentChange: function(db, deploymentId, status, error) {
+      var title = 'Updated status for deployment id: ' + deploymentId;
+      if (error) {
+        db.notifications.add({
+          title: title,
+          message: 'An error occurred while deploying the bundle: ' + error,
+          level: 'error'
+        });
+      } else {
+        db.notifications.add({
+          title: title,
+          message: STATUS_MESSAGES[status],
+          level: 'important'
+        });
+      }
+    },
+
+    /**
       Watch a deployment for changes and notify the user of updates.
 
-      @method watchDeployment
+      @method _watchDeployment
       @param {Integer} deploymentId The ID returned from the deployment call.
-      @param {Environment} env The environment so that we can call the back
-      end.
+      @param {Environment} env The environment so that we can call the backend.
       @param {Database} db The db which contains the NotificationList used
-      for adding notifications to the system.
-     */
+        for adding notifications to the system.
+    */
     _watchDeployment: function(deploymentId, env, db) {
-      var notifications = db.notifications;
-
       // First generate a watch.
       env.deployerWatch(deploymentId, function(data) {
         if (data.err) {
-          notifications.add({
+          db.notifications.add({
             title: 'Unable to watch status of import.',
-            message: 'Attempting to watch the deployment failed: ' +
-                data.err,
+            message: 'Attempting to watch the deployment failed: ' + data.err,
             level: 'error'
           });
         } else {
-          ns.BundleHelpers._watchDeploymentUpdates(
-              data.WatchId, env, db);
+          ns.BundleHelpers._watchDeploymentUpdates(data.WatchId, env, db);
         }
       });
     },
@@ -201,43 +273,22 @@ YUI.add('bundle-import-helpers', function(Y) {
       for adding notifications to the system.
      */
     _watchDeploymentUpdates: function(watchId, env, db) {
-      var notifications = db.notifications;
 
       var processUpdate = function(data) {
         if (data.err) {
-          notifications.add({
+          db.notifications.add({
             title: 'Error watching deployment',
-            message: 'The watch of the deployment errored:' +
-                data.err,
+            message: 'The watch of the deployment errored:' + data.err,
             level: 'error'
           });
-
           // Break the loop of calling for the next update from the server.
           return;
-
         } else {
-          // Just grab the latest change and notify the user of the
-          // status.
-          var newChange = data.Changes[0];
-          // The change could be the result of an error.
-          if (newChange.Error !== undefined) {
-            notifications.add({
-              title: 'Updated status for deployment id: ' +
-                  newChange.DeploymentId,
-              message: 'The deployment errored: ' +
-                  newChange.Error,
-              level: 'error'
-            });
-          } else {
-            notifications.add({
-              title: 'Updated status for deployment id: ' +
-                  newChange.DeploymentId,
-              message: 'The deployment is currently: ' +
-                  newChange.Status,
-              level: 'important'
-            });
-          }
-
+          // Just grab the latest change and notify the user of the status.
+          var newChange = data.Changes[data.Changes.length - 1];
+          // Notify the new deployment change.
+          ns.BundleHelpers._notifyDeploymentChange(
+              db, newChange.DeploymentId, newChange.Status, newChange.Error);
           // If the status is 'completed' then we're done watching this.
           if (newChange.Status === 'completed') {
             // There's nothing else to see here.
@@ -247,7 +298,6 @@ YUI.add('bundle-import-helpers', function(Y) {
           }
         }
       };
-
       // Make the first call to the env and the processUpdate callback will
       // handle re-calling on each update.
       env.deployerNext(watchId, processUpdate);

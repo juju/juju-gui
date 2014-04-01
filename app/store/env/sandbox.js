@@ -1421,7 +1421,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handle DeployerStatus messages
+    Handle DeployerStatus messages.
 
     @method handleDeployerStatus
     @param {Object} data The contents of the API arguments.
@@ -1434,13 +1434,11 @@ YUI.add('juju-env-sandbox', function(Y) {
       var callback = function(reply) {
         var response = {
           RequestId: request.RequestId,
+          Error: reply.Error,
           Response: {
             LastChanges: reply.LastChanges
           }
         };
-        if (reply.Error) {
-          response.Error = reply.Error;
-        }
         client.receive(response);
       };
       state.statusDeployer(Y.bind(callback, this));
