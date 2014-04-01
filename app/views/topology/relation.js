@@ -1039,7 +1039,7 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.setStyle('top', locateAt[1]);
       // Shift the arrow to the left by half the menu's width minus half the
       // width of the arrow itself (10px).
-      menu.one('.triangle').setStyle('left', menu.get('clientWidth') / 2 - 10);
+      menu.one('.triangle').setStyle('left', menu.get('clientWidth') / 2 - 5);
 
       // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
