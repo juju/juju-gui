@@ -44,6 +44,7 @@ YUI.add('subapp-browser', function(Y) {
     // so that the routing code still knows how to redirect fullscreen
     // requests to the sidebar views.
     // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
+    // XXX viewmodes need to go away they are only here as a hack for now.
     viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector', 'machine'],
 
     /**
@@ -802,7 +803,7 @@ YUI.add('subapp-browser', function(Y) {
           id = null;
 
       if (idBits.length > 1 &&
-         ((idBits[0] !== 'inspector') || (idBits[0] !== 'machine'))) {
+          ((idBits[0] !== 'inspector') || (idBits[0] !== 'machine'))) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {

@@ -156,6 +156,7 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       this._current = Y.merge(this._current, change);
+      // XXX This is a hack to get around the viewmode which will be removed.
       var skipViewmode = false;
       if (change.inspector) {
         urlParts.push('/inspector/' + change.inspector + '/');

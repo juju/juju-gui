@@ -43,8 +43,8 @@ describe('machine view panel view', function() {
   });
 
   afterEach(function() {
-    container.remove(true);
     view.destroy();
+    container.remove(true);
   });
 
   it('should apply the wrapping class to the container', function() {
