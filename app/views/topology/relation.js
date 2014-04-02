@@ -356,8 +356,8 @@ YUI.add('juju-topology-relation', function(Y) {
       g.selectAll('image')
         .filter(function(d) {
             var currStatus = d3.select(this)
-            .attr('xlink:href')
-            .split('-')
+            .attr('xlink:href') || "";
+            currStatus = currStatus.split('-')
             .reverse()[0]
             .split('.')[0];
             return currStatus !== d.aggregatedStatus;
