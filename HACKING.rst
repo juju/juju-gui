@@ -328,7 +328,7 @@ push your code to Github, you can add any of those targets to either the
 
   #!/bin/sh
 
-  if ($NO_VERIFY) ; then
+  if test ! $NO_VERIFY ; then
       make lint
   fi
 
