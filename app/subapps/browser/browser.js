@@ -36,14 +36,16 @@ YUI.add('subapp-browser', function(Y) {
      @extends {juju.SubApp}
 
    */
-  ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
+  var extensions = [Y.juju.MachineViewPanel];
+  ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, extensions, {
     // Mark the entire subapp has hidden.
     hidden: false,
     // Even though fullscreen is no longer a valid mode we need it in the list
     // so that the routing code still knows how to redirect fullscreen
     // requests to the sidebar views.
     // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
-    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector'],
+    // XXX viewmodes need to go away they are only here as a hack for now.
+    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector', 'machine'],
 
     /**
      * Make sure we destroy views no long used.
@@ -324,6 +326,9 @@ YUI.add('subapp-browser', function(Y) {
       if (this._onboarding) {
         this._onboarding.destroy();
       }
+      if (this.machineViewPanel) {
+        this.destroyMachineViewPanel();
+      }
     },
 
     /**
@@ -566,6 +571,10 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
+      if (this.machineViewPanel) {
+        this.machineViewPanel.destroy();
+      }
+
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
@@ -629,19 +638,49 @@ YUI.add('subapp-browser', function(Y) {
 
       // Sync that the state has changed.
       this.state.save();
-      next();
+      // This can be called as a route callback or as a utility method.
+      if (typeof next === 'function') {
+        next();
+      }
     },
 
     /**
-      Renders the inspector into the sidebar container
+      Renders the inspector into the sidebar container.
+      Route callback.
 
       @method inspector
-      @param {String} service The service to show the inspector for.
     */
     inspector: function(req, res, next) {
       // We need the sidebar rendered so that we can show the inspector in it.
-      this.sidebar(req);
-      this.createServiceInspector(req.service);
+      this.sidebar(req, null, function() {});
+      var clientId = req.params.id,
+          model;
+      this.get('db').services.some(function(service) {
+        if (service.get('clientId') === clientId) {
+          model = service;
+          return true;
+        }
+      });
+      // If there is no config set then it's a ghost service model and not
+      // a deployed service yet.
+      if (!model.get('config')) {
+        this.createGhostInspector(model);
+      } else {
+        this.createServiceInspector(model);
+      }
+    },
+
+    /**
+      Renders the machine view over the canvas.
+      Route callback.
+
+      @method machine
+    */
+    machine: function(req, res, next) {
+      if (window.flags.mv) {
+        this._renderMachineViewPanelView();
+      }
+      this.machineViewPanel.setWidthFull();
     },
 
     /**
@@ -682,9 +721,9 @@ YUI.add('subapp-browser', function(Y) {
       Creates a service inspector.
 
       @method createServiceInspector
-      @param {String} serviceName The service name of the inspector to show.
+      @param {String} model The service model.
     */
-    createServiceInspector: function(serviceName) {
+    createServiceInspector: function(model) {
       // XXX Placeholder for after the state system can render inspectors
     },
 
@@ -763,7 +802,8 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
           id = null;
 
-      if (idBits.length > 1) {
+      if (idBits.length > 1 &&
+          ((idBits[0] !== 'inspector') || (idBits[0] !== 'machine'))) {
         id = this._stripViewMode(req.path);
       }
       if (!id) {
@@ -1025,6 +1065,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-jujucharms',
     'subapp-browser-minimized',
     'subapp-browser-searchview',
-    'subapp-browser-sidebar'
+    'subapp-browser-sidebar',
+    'machine-view-panel-extension'
   ]
 });

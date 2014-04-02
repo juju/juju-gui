@@ -58,7 +58,7 @@ describe('environment header view', function() {
   });
 
   it('fires an event on tab change', function(done) {
-    view.on('changeEnvironment', function(e) {
+    view.on('changeEnvironmentView', function(e) {
       assert.equal(e.environment, 'serviceView');
       done();
     });

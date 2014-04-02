@@ -156,13 +156,31 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       this._current = Y.merge(this._current, change);
+      // XXX This is a hack to get around the viewmode which will be removed.
+      var skipViewmode = false;
+      if (change.inspector) {
+        urlParts.push('/inspector/' + change.inspector + '/');
+        skipViewmode = true;
+      }
 
-      if (this.getCurrent('viewmode') !== 'sidebar' ||
-          this.getCurrent('search')) {
-        // There's no need to add the default view if we
-        // don't need it. However it's currently required for search views to
-        // match our current routes.
-        urlParts.push(this.getCurrent('viewmode'));
+      if (change.machine) {
+        urlParts.push('/machine/');
+        skipViewmode = true;
+      }
+
+      if (change.topology) {
+        urlParts.push('/');
+        skipViewmode = true;
+      }
+
+      if (!skipViewmode) {
+        if (this.getCurrent('viewmode') !== 'sidebar' ||
+            this.getCurrent('search')) {
+          // There's no need to add the default view if we
+          // don't need it. However it's currently required for search views to
+          // match our current routes.
+          urlParts.push(this.getCurrent('viewmode'));
+        }
       }
 
       if (this.getCurrent('search')) {
@@ -217,10 +235,12 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       // Check for a charm id in the request.
-      if (params.id && params.id !== 'search') {
-        this._setCurrent('charmID', params.id);
-      } else {
-        this._setCurrent('charmID', null);
+      if (params.viewmode !== 'inspector') {
+        if (params.id && params.id !== 'search') {
+          this._setCurrent('charmID', params.id);
+        } else {
+          this._setCurrent('charmID', null);
+        }
       }
 
       // Check for search in the request.
