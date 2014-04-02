@@ -40,33 +40,6 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, extensions, {
     // Mark the entire subapp has hidden.
     hidden: false,
-    // Even though fullscreen is no longer a valid mode we need it in the list
-    // so that the routing code still knows how to redirect fullscreen
-    // requests to the sidebar views.
-    // XXX Removing 'fullscreen' stops the fullscreen redirects from working.
-    // XXX viewmodes need to go away they are only here as a hack for now.
-    viewmodes: ['minimized', 'sidebar', 'fullscreen', 'inspector', 'machine'],
-
-    /**
-     * Make sure we destroy views no long used.
-     *
-     * @method _cleanOldViews
-     *
-     */
-    _cleanOldViews: function() {
-      var oldViewmode = this.state.getPrevious('viewmode');
-      if (this.state.hasChanged('viewmode') && oldViewmode) {
-        var viewAttr = '_' + oldViewmode;
-        if (this[viewAttr]) {
-          this[viewAttr].destroy();
-          delete this[viewAttr];
-        }
-        if (oldViewmode === 'sidebar' && this._details) {
-          this._details.destroy();
-          delete this._details;
-        }
-      }
-    },
 
     /**
      * Destroy and remove any lingering views.
@@ -162,8 +135,7 @@ YUI.add('subapp-browser', function(Y) {
       return (
           this.state.getCurrent('charmID') && (
               !this._details ||
-              this.state.hasChanged('charmID') ||
-              this.state.hasChanged('viewmode')
+              this.state.hasChanged('charmID')
           )
       );
     },
@@ -177,15 +149,12 @@ YUI.add('subapp-browser', function(Y) {
      */
     _shouldShowEditorial: function() {
       var should = false;
-      // If the viewmode has changed, and seach is not enabled then yes
-      if (!this.state.getCurrent('search') &&
-          this.state.hasChanged('viewmode')
-      ) {
+      // If the seach is not enabled then yes
+      if (!this.state.getCurrent('search')) {
         should = true;
       }
 
-      // Even if viewmode hasn't changed, but search has changed and is false
-      // then yes
+      // If search has changed and is false then yes
       if (!this.state.getCurrent('search') &&
           this.state.hasChanged('search')
       ) {
@@ -208,7 +177,6 @@ YUI.add('subapp-browser', function(Y) {
           (
            this.state.hasChanged('search') ||
            this.state.hasChanged('querystring') ||
-           this.state.hasChanged('viewmode') ||
            (this.state.hasChanged('charmID') &&
             !this.state.getCurrent('charmID'))
           )
@@ -236,37 +204,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Strip the viewmode from the charmid when processing to check for proper
-       routing.
-
-       @method _stripViewMode
-       @param {String} id the req.param.id found.
-     */
-    _stripViewMode: function(id) {
-      // Clear out any parts of /sidebar/search, /sidebar, or /search from the
-      // id. See if we still really have an id.
-      var match =
-          /^\/?(sidebar|minimized|search|test\/index\.html)\/?(search)?\/?/;
-
-      if (id && id.match(match)) {
-        // Strip it out.
-        id = id.replace(match, '');
-        // if the id is now empty, set it to null.
-        if (id === '') {
-          id = null;
-        }
-      }
-
-      if (id) {
-        // Strip any extra slashes off the start/end of the id.
-        id = id.replace(/^\//, '');
-        id = id.replace(/\/$/, '');
-      }
-
-      return id;
-    },
-
-    /**
       Does our app instance have a valid store? If not, then we should ignore
       a lot of work since we can't do it anyway. Sanity check our
       information. During test running, for instance, we don't have a valid
@@ -288,10 +225,6 @@ YUI.add('subapp-browser', function(Y) {
     views: {
       sidebar: {
         type: 'juju.browser.views.Sidebar',
-        preserve: false
-      },
-      jujucharms: {
-        type: 'juju.browser.views.JujucharmsLandingView',
         preserve: false
       }
     },
@@ -385,8 +318,7 @@ YUI.add('subapp-browser', function(Y) {
       // If the only thing that changed was the hash, then don't redraw. It's
       // just someone clicking a tab in the UI.
       if (this._details && this.state.hasChanged('hash') &&
-          !(this.state.hasChanged('charmID') ||
-            this.state.hasChanged('viewmode'))) {
+          !(this.state.hasChanged('charmID'))) {
         return;
       }
 
@@ -527,9 +459,6 @@ YUI.add('subapp-browser', function(Y) {
         this._minimized.addTarget(this);
       }
 
-      var oldViewMode = this.state.getPrevious('viewmode') || 'sidebar';
-      this._minimized.set('oldViewMode', oldViewMode);
-
       this.state.save();
       next();
     },
@@ -543,14 +472,8 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
-      // If we've gone from no _sidebar to having one, then force editorial to
-      // render.
-      var forceSidebar = false;
+      // If there is no sidebar, we need to render it.
       if (!this._sidebar) {
-        forceSidebar = true;
-      }
-      // If we've switched to viewmode sidebar, we need to render it.
-      if (this.state.hasChanged('viewmode') || forceSidebar) {
         this._sidebar = new views.Sidebar(
             this._getViewCfg({
               container: this.get('container'),
@@ -575,7 +498,7 @@ YUI.add('subapp-browser', function(Y) {
         this.machineViewPanel.destroy();
       }
 
-      // Render search results if search is in the url and the viewmode or the
+      // Render search results if search is in the url and the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
         // Showing search implies that other sidebar content is destroyed.
@@ -584,7 +507,7 @@ YUI.add('subapp-browser', function(Y) {
         }
 
         this.renderSearchResults(req, res, next);
-      } else if (this._shouldShowEditorial() || forceSidebar) {
+      } else if (this._shouldShowEditorial() || !this._sidebar) {
         // Showing editorial implies that other sidebar content is destroyed.
         if (this._search) {
           this._search.destroy();
@@ -593,7 +516,7 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
-      // If we've changed the charmID or the viewmode has changed and we have
+      // If we've changed the charmID and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
         this._detailsVisible(true);
@@ -728,8 +651,7 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      When there's no charm or viewmode default to the default viewmode for all
-      pages.
+      When the url is the root path.
 
       @method routeDefault
       @param {Request} req current request object.
@@ -738,34 +660,21 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDefault: function(req, res, next) {
-      // Check if there's any path. If there is, someone else will handle
-      // routing it. Just carry on.
-      var viewmode = 'sidebar';
+      // If the url isn't the root path then continue on.
       if (req.path.replace(/\//, '') !== '') {
         next();
         return;
       }
 
-      // For the * request there will be no req.params. Update it forcing
-      // the default viewmode.
-      req.params = {
-        viewmode: viewmode
-      };
-
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-      this._cleanOldViews(req.params.viewmode);
 
       // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
+      this.updateVisible(req);
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        if (this.get('isJujucharms')) {
-          this.jujucharms(req, res, next);
-        } else {
-          this[viewmode](req, res, next);
-        }
+        this.sidebar(req, res, next);
       } else {
         // Update the app state even though we're not showing anything.
         this.state.save();
@@ -775,8 +684,7 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      A url direct to a charm id works, however it needs to default the
-      viewmode to sidebar in that case.
+      A url direct to a charm id works.
 
       Almost any url with a component to it matches this route. We need to
       check if there are exactly *two* parts and if so, check if they're a
@@ -789,63 +697,47 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDirectCharmId: function(req, res, next) {
-      var viewmode = 'sidebar';
-
       // If we don't have a valid store we can't do any work here.
       if (!this._hasValidStore()) {
         return;
       }
-
-      // Check if we have exactly two url parts in our path.
-      // The best way to count the parts is to strip the start/end slash and
-      // then split on the rest. We only care if there are exactly two parts.
-      var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/'),
-          id = null;
-
-      if (idBits.length > 1 &&
-          ((idBits[0] !== 'inspector') || (idBits[0] !== 'machine'))) {
-        id = this._stripViewMode(req.path);
-      }
-      if (!id) {
+      // Split the id portion of the url into it's bits so that we can easily
+      // parse the type of url that it is.
+      var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/');
+      // If it doesn't have 2 parts then it's not a charm Id and if it' doesn't
+      // start with bundle then it's not a bundle id.
+      if (idBits.length !== 2 && idBits[0] !== 'bundle') {
         next();
         return;
       } else {
-
-        // We only want to handle urls without a viwemode calling a specific
-        // id for a charm such as /precise/mysql and not
-        // /sidebar/precise/mysql.
-        if (this.viewmodes.indexOf(idBits[0]) !== -1) {
-          next();
-          return;
-        }
-
+        // Strip any extra slashes off the start/end of the id.
+        var id = req.path.replace(/^\//, '');
+        id = id.replace(/\/$/, '');
         req.params = {
-          id: id,
-          viewmode: viewmode
+          id: id
         };
       }
 
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-      this._cleanOldViews(req.params.viewmode);
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this[viewmode](req, res, next);
+        this.sidebar(req, res, next);
         // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible();
+        this.updateVisible(req);
       } else {
         // Update the app state even though we're not showing anything.
         this.state.save();
         // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible();
+        this.updateVisible(req);
         // Let the next route go on.
         next();
       }
     },
 
     /**
-       Dispatch to the correct viewmode based on the route that was hit.
+       Dispatch to the correct views based on the route that was hit.
 
        @method routeView
        @param {Request} req current request object.
@@ -853,33 +745,15 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
-      // If there is no viewmode, assume it's sidebar.
       if (!req.params) {
         req.params = {};
       }
 
-      if (!req.params.viewmode) {
-        req.params.viewmode = 'sidebar';
-      }
-
-      // If the viewmode isn't found, it's not one of our urls. Carry on.
-      if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
-        next();
-        return;
-      }
-
-      // for the route /sidebar|minimized| it picks up the *id route
-      // as well. Catch that here and make sure we set that to viewmode and no
-      // id in the params.
-      var id = this._stripViewMode(req.params.id);
-      req.params.id = id;
-
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-      this._cleanOldViews(req.params.viewmode);
 
       // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible();
+      this.updateVisible(req);
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
@@ -887,7 +761,7 @@ YUI.add('subapp-browser', function(Y) {
         // sidebar equivelent. It gets done here because we are relying
         // on the current routing code to switch from fullscreen to sidebar
         // to take advantage of its double dispatch mitigation code.
-        if (req.params.viewmode === 'fullscreen') {
+        if (req.path.indexOf('fullscreen') > -1) {
           var self = this;
           // This setTimeout is required because the double dispatch events
           // happen in an unpredictable order so we simply let them complete
@@ -902,7 +776,12 @@ YUI.add('subapp-browser', function(Y) {
           }, 0);
           return;
         } else {
-          this[req.params.viewmode](req, res, next);
+          if (req.path.indexOf('minimized') > -1) {
+            this.minimized(req, res, next);
+            this.updateVisible(req);
+          } else {
+            this.sidebar(req, res, next);
+          }
         }
       } else {
         // Update the app state even though we're not showing anything.
@@ -913,13 +792,13 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Based on the viewmode and the hidden check what divs we should be
+      Based on the url and the hidden check what divs we should be
       showing or hiding.
 
       @method updateVisible
       @return {undefined} Nothing.
     */
-    updateVisible: function() {
+    updateVisible: function(req) {
       var minview = this.get('minNode'),
           browser = this.get('container');
 
@@ -936,7 +815,7 @@ YUI.add('subapp-browser', function(Y) {
         minview.hide();
         this._clearViews();
       } else {
-        if (this.state.getCurrent('viewmode') === 'minimized') {
+        if (req && req.path.indexOf('minimized') > -1) {
           minview.show();
           browser.hide();
         } else {
@@ -944,17 +823,6 @@ YUI.add('subapp-browser', function(Y) {
           browser.show();
         }
       }
-    },
-
-    /**
-      Return the current viewmode.
-
-      @method getViewMode
-      @return {undefined} Nothing.
-    */
-    getViewMode: function() {
-      // If no view mode is set, "sidebar" is the default.
-      return this.state.getCurrent('viewmode') || 'sidebar';
     }
   }, {
     ATTRS: {
@@ -993,10 +861,9 @@ YUI.add('subapp-browser', function(Y) {
           // Show the sidebar on all places if its not manually shut off
           { path: '*', callbacks: 'routeDefault'},
           { path: '/*id/', callbacks: 'routeDirectCharmId'},
-          { path: '/:viewmode/', callbacks: 'routeView' },
-          { path: '/:viewmode/search/', callbacks: 'routeView' },
-          { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
-          { path: '/:viewmode/*id/', callbacks: 'routeView' }
+          { path: '/search/', callbacks: 'routeView' },
+          { path: '/search/*id/', callbacks: 'routeView' },
+          { path: '/minimized/*', callbacks: 'routeView' }
         ]
       },
 
