@@ -20,24 +20,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 describe('machine view panel extension', function() {
-  var Y, container, utils, view, View;
+  var Y, container, utils, models, view, View;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['machine-view-panel-extension',
                                'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
+                               'juju-models',
                                'juju-views',
                                'node'], function(Y) {
 
       utils = Y.namespace('juju-tests.utils');
+      models = Y.namespace('juju.models');
       View = Y.Base.create('machine-view-panel', Y.View, [
         Y.juju.MachineViewPanel
       ], {
         template: '<div id="machine-view-panel"></div>',
         render: function() {
           this.get('container').setHTML(this.template);
-          this._renderMachineViewPanelView();
+          this._renderMachineViewPanelView({
+            machines: new models.MachineList()
+          });
           return this;
         }
       });
