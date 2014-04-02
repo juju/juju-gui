@@ -820,7 +820,7 @@ describe('File drag over notification system', function() {
         Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
         return '/foo/bar';
       };
-      var app = makeApp(false);
+      var app = makeApp(true);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
@@ -848,7 +848,7 @@ describe('File drag over notification system', function() {
         Y.juju.App.prototype.popLoginRedirectPath = oldPopRedirectMethod;
         return '/foo/bar#baz';
       };
-      var app = makeApp(false);
+      var app = makeApp(true);
       stubit(app, 'hideMask');
       stubit(app, 'navigate');
       stubit(app, 'dispatch');
@@ -858,6 +858,18 @@ describe('File drag over notification system', function() {
         '/foo/bar#baz',
         { overrideAllNamespaces: true }]);
       assert.equal(app.dispatch.calledOnce(), true);
+    });
+
+    it('retrieves the bundle deployments status on login', function() {
+      var app = makeApp(true);
+      app.onLogin({data: {result: true}});
+      var expectedMessage = {
+        RequestId: 2, // The first request is the login one.
+        Type: 'Deployer',
+        Request: 'Status',
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
     it('creates a notification if logged in with a token', function(done) {

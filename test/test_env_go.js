@@ -465,14 +465,61 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('sends proper messages on deployer status', function() {
         env.deployerStatus();
-        var last_message = conn.last_message();
-        var expected = {
+        var expectedMessage = {
           Type: 'Deployer',
           Request: 'Status',
           Params: {},
           RequestId: 1
         };
-        assert.deepEqual(expected, last_message);
+        assert.deepEqual(conn.last_message(), expectedMessage);
+      });
+
+      it('handles successful status responses', function() {
+        var response;
+        env.deployerStatus(function(data) {
+          response = data;
+        });
+        // Mimic the server Status response.
+        conn.msg({
+          RequestId: 1,
+          Response: {
+            LastChanges: [
+              {DeploymentId: 1, Status: 'completed', Time: 42, Error: 'fail'},
+              {DeploymentId: 2, Status: 'completed', Time: 43},
+              {DeploymentId: 3, Status: 'started', Time: 44, Queue: 0},
+              {DeploymentId: 4, Status: 'cancelled', Time: 45},
+              {DeploymentId: 5, Status: 'scheduled', Time: 46, Queue: 1}
+            ]
+          }
+        });
+        assert.isUndefined(response.err);
+        var expectedChanges = [
+          {deploymentId: 1, status: 'completed', time: 42,
+            queue: undefined, err: 'fail'},
+          {deploymentId: 2, status: 'completed', time: 43,
+            queue: undefined, err: undefined},
+          {deploymentId: 3, status: 'started', time: 44,
+            queue: 0, err: undefined},
+          {deploymentId: 4, status: 'cancelled', time: 45,
+            queue: undefined, err: undefined},
+          {deploymentId: 5, status: 'scheduled', time: 46,
+            queue: 1, err: undefined}
+        ];
+        assert.deepEqual(response.changes, expectedChanges);
+      });
+
+      it('handles status server failures', function() {
+        var response;
+        env.deployerStatus(function(data) {
+          response = data;
+        });
+        // Mimic the server Status response.
+        conn.msg({
+          RequestId: 1,
+          Error: 'bad wolf',
+          Response: {}
+        });
+        assert.strictEqual(response.err, 'bad wolf');
       });
 
       it('builds a proper watch request', function() {

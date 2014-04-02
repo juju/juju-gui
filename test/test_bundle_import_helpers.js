@@ -126,13 +126,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // scheduled, then with a second call that it's complete which stops
       // the look in the watch.
       db.notifications.add = function(info) {
+        assert.strictEqual('Updated status for deployment id: 42', info.title);
+        assert.strictEqual(info.level, 'important');
         if (callNumber === 0) {
-          assert.equal('Updated status for deployment id: 42', info.title);
-          assert.equal(info.level, 'important');
-          assert.isTrue(info.message.indexOf('scheduled') !== -1, info.message);
+          assert.include(info.message, 'scheduled');
         } else {
-          assert.equal(info.level, 'important');
-          assert.isTrue(info.message.indexOf('completed') !== -1, info.message);
+          assert.include(info.message, 'completed');
           done();
         }
         callNumber = callNumber + 1;
@@ -145,13 +144,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback({
             err: undefined,
             Changes: [
-              // Copied right from the docs of the charm.
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
-                'Queue': 2},
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                'Queue': 1},
-              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                'Queue': 0}
+              {DeploymentId: 42, Status: 'scheduled', Time: 47, Queue: 1}
             ]
           });
         } else {
@@ -159,36 +152,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback({
             err: undefined,
             Changes: [
-              // Copied right from the docs of the charm.
-              {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-                'Queue': 2},
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                'Queue': 1},
-              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                'Queue': 0}
+              {DeploymentId: 42, Status: 'scheduled', Time: 47, Queue: 1},
+              {DeploymentId: 42, Status: 'started', Time: 48, Queue: 0},
+              {DeploymentId: 42, Status: 'completed', Time: 49}
             ]
           });
         }
       };
 
-      // Testing  private method is evil, but it does a decent amount of
+      // Testing private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleHelpers._watchDeploymentUpdates(
-          watchId,
-          env,
-          db
-      );
+      ns.BundleHelpers._watchDeploymentUpdates(watchId, env, db);
     });
 
     it('provides a error when the deploy watch says so', function(done) {
       var watchId = 1;
-
       // This will get called twice. First with an update that it was
       // scheduled, then with a second call that it's complete which stops
       // the look in the watch.
       db.notifications.add = function(info) {
-        assert.equal(info.level, 'error');
-        assert.isTrue(info.message.indexOf('boom') !== -1, info.message);
+        assert.strictEqual(info.level, 'error');
+        assert.include(info.message, 'boom!');
         done();
       };
 
@@ -196,26 +180,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         callback({
           err: undefined,
           Changes: [
-            // Copied right from the docs of the charm.
-            {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-              'Queue': 2, 'Error': 'Deploy go boom!'},
-            {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-              'Queue': 1},
-            {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-              'Queue': 0}
+            {DeploymentId: 42, Status: 'started', Time: 47, Queue: 0},
+            {DeploymentId: 42, Status: 'completed', Time: 48,
+              Error: 'Deploy go boom!'}
           ]
         });
       };
 
-      // Testing  private method is evil, but it does a decent amount of
+      // Testing private method is evil, but it does a decent amount of
       // work and we want the aid in debugging issues.
-      ns.BundleHelpers._watchDeploymentUpdates(
-          watchId,
-          env,
-          db
-      );
+      ns.BundleHelpers._watchDeploymentUpdates(watchId, env, db);
     });
-
 
     it('the stack of deploy to watch integrate', function(done) {
       // By stubbing only the env calls to behave properly, we should be able to
@@ -245,28 +220,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           callback({
             err: undefined,
             Changes: [
-              // Copied right from the docs of the charm.
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080066,
-                'Queue': 2},
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                'Queue': 1},
-              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                'Queue': 0}
+              {DeploymentId: 42, Status: 'scheduled', Time: 47, Queue: 1},
+              {DeploymentId: 42, Status: 'started', Time: 48, Queue: 0}
             ]
           });
         } else {
           // Make that this is done now.
           callback({
             err: undefined,
-            Changes: [
-              // Copied right from the docs of the charm.
-              {'DeploymentId': 42, 'Status': 'completed', 'Time': 1377080066,
-                'Queue': 2},
-              {'DeploymentId': 42, 'Status': 'scheduled', 'Time': 1377080062,
-                'Queue': 1},
-              {'DeploymentId': 42, 'Status': 'started', 'Time': 1377080000,
-                'Queue': 0}
-            ]
+            Changes: [{DeploymentId: 42, Status: 'completed', Time: 49}]
           });
         }
       };
@@ -274,22 +236,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // We'll be called several times.
       // 1. Deployment Requested.
       // 2. Watching will pass without a notification.
-      // 3. The status will first be scheduled.
+      // 3. The status will be started.
       // 4. The status will be completed.
       var called = 0;
       db.notifications.add = function(info) {
         switch (called) {
           case 0:
-            assert.notEqual(
-                info.title.indexOf('requested'), -1, 'not requested');
+            assert.include(info.title, 'requested');
             break;
           case 1:
-            assert.notEqual(
-                info.message.indexOf('scheduled'), -1, 'not scheduled');
+            assert.include(info.message, 'in progress');
             break;
           case 2:
-            assert.notEqual(
-                info.message.indexOf('completed'), -1, 'not completed');
+            assert.include(info.message, 'completed');
             done();
             break;
         }
@@ -298,8 +257,237 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       // Start the process by deploying the bundle.
       ns.BundleHelpers.deployBundle('test bundle', undefined, env, db);
-
     });
 
   });
+
+  describe('bundle helpers watchAll', function() {
+    var bundleHelpers, conn, db, env, juju, testUtils, Y;
+    var requirements = [
+      'bundle-import-helpers', 'juju-env', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        juju = Y.namespace('juju');
+        bundleHelpers = juju.BundleHelpers;
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      conn = new testUtils.SocketStub();
+      env = juju.newEnvironment({
+        conn: conn, user: 'user', password: 'password'
+      }, 'go');
+      env.connect();
+      db = {notifications: {add: testUtils.makeStubFunction()}};
+      bundleHelpers._watchDeployment = testUtils.makeStubFunction();
+    });
+
+    afterEach(function()  {
+      env.destroy();
+    });
+
+    it('sends a deployer status message', function() {
+      bundleHelpers.watchAll(env, db);
+      var expectedMessage = {
+        RequestId: 1,
+        Type: 'Deployer',
+        Request: 'Status',
+        Params: {}
+      };
+      assert.deepEqual(conn.last_message(), expectedMessage);
+    });
+
+    it('handles status errors', function() {
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {},
+        Error: 'bad wolf'
+      });
+      // No bundles are being watched.
+      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      // An error notification has been added.
+      assert.strictEqual(db.notifications.add.calledOnce(), true);
+      var args = db.notifications.add.lastArguments();
+      assert.lengthOf(args, 1);
+      var expectedNotification = {
+        title: 'Unable to retrieve bundle deployment statuses',
+        message: 'Failure retrieving bundles status: bad wolf',
+        level: 'error'
+      };
+      assert.deepEqual(args[0], expectedNotification);
+    });
+
+    it('starts watching started/pending deployments', function() {
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          LastChanges: [
+            {DeploymentId: 3, Status: 'started', Time: 42, Queue: 0},
+            {DeploymentId: 5, Status: 'scheduled', Time: 47, Queue: 1}
+          ]
+        }
+      });
+      // We started observing the two bundles.
+      assert.strictEqual(bundleHelpers._watchDeployment.callCount(), 2);
+      var allArgs = bundleHelpers._watchDeployment.allArguments();
+      assert.deepEqual([3, env, db], allArgs[0], 'first bundle');
+      assert.deepEqual([5, env, db], allArgs[1], 'second bundle');
+      // No notifications have been added.
+      assert.strictEqual(db.notifications.add.called(), false);
+    });
+
+    it('notifies deployment errors occurred in the last hour', function() {
+      var time = Date.now() / 1000; // Surely less than one hour ago.
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          LastChanges: [{
+            DeploymentId: 7, Status: 'completed', Time: time, Error: 'bad wolf'
+          }]
+        }
+      });
+      // No bundles are being watched.
+      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      // An error notification has been added.
+      assert.strictEqual(db.notifications.add.calledOnce(), true);
+      var args = db.notifications.add.lastArguments();
+      assert.lengthOf(args, 1);
+      var expectedNotification = {
+        title: 'Updated status for deployment id: 7',
+        message: 'An error occurred while deploying the bundle: bad wolf',
+        level: 'error'
+      };
+      assert.deepEqual(args[0], expectedNotification);
+    });
+
+    it('ignores completed deployments', function() {
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          LastChanges: [{DeploymentId: 3, Status: 'completed', Time: 42}]
+        }
+      });
+      // No bundles are being watched.
+      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      // No notifications have been added.
+      assert.strictEqual(db.notifications.add.called(), false);
+    });
+
+    it('ignores old failures', function() {
+      var time = (Date.now() / 1000) - (60 * 61); // More than one hour ago.
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          LastChanges: [{
+            DeploymentId: 7, Status: 'completed', Time: time, Error: 'bad wolf'
+          }]
+        }
+      });
+      // No bundles are being watched.
+      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      // No notifications have been added.
+      assert.strictEqual(db.notifications.add.called(), false);
+    });
+
+    it('ignores cancelled deployments', function() {
+      bundleHelpers.watchAll(env, db);
+      // Simulate a response from the server.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          LastChanges: [{DeploymentId: 42, Status: 'cancelled', Time: 47}]
+        }
+      });
+      // No bundles are being watched.
+      assert.strictEqual(bundleHelpers._watchDeployment.called(), false);
+      // No notifications have been added.
+      assert.strictEqual(db.notifications.add.called(), false);
+    });
+
+  });
+
+  describe('bundle helpers _notifyDeploymentChange', function() {
+    var bundleHelpers, db, testUtils, Y;
+    var requirements = ['bundle-import-helpers', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        bundleHelpers = Y.namespace('juju').BundleHelpers;
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      db = {notifications: {add: testUtils.makeStubFunction()}};
+    });
+
+    // Ensure the expected notification has been added to the database.
+    var assertNotification = function(expectedNotification) {
+      assert.strictEqual(db.notifications.add.calledOnce(), true);
+      var args = db.notifications.add.lastArguments();
+      assert.lengthOf(args, 1);
+      assert.deepEqual(args[0], expectedNotification);
+    };
+
+    it('notifies an error', function() {
+      bundleHelpers._notifyDeploymentChange(db, 42, 'completed', 'bad wolf');
+      assertNotification({
+        title: 'Updated status for deployment id: 42',
+        message: 'An error occurred while deploying the bundle: bad wolf',
+        level: 'error'
+      });
+    });
+
+    it('notifies that a bundle deployment is pending', function() {
+      bundleHelpers._notifyDeploymentChange(db, 1, 'scheduled');
+      assertNotification({
+        title: 'Updated status for deployment id: 1',
+        message: 'The deployment has been scheduled and is now pending',
+        level: 'important'
+      });
+    });
+
+    it('notifies that a bundle deployment is started', function() {
+      bundleHelpers._notifyDeploymentChange(db, 2, 'started');
+      assertNotification({
+        title: 'Updated status for deployment id: 2',
+        message: 'The deployment is currently in progress',
+        level: 'important'
+      });
+    });
+
+    it('notifies that a bundle deployment is completed', function() {
+      bundleHelpers._notifyDeploymentChange(db, 3, 'completed');
+      assertNotification({
+        title: 'Updated status for deployment id: 3',
+        message: 'The deployment has been successfully completed',
+        level: 'important'
+      });
+    });
+
+    it('notifies that a bundle deployment has been cancelled', function() {
+      bundleHelpers._notifyDeploymentChange(db, 4, 'cancelled');
+      assertNotification({
+        title: 'Updated status for deployment id: 4',
+        message: 'The deployment has been cancelled',
+        level: 'important'
+      });
+    });
+
+  });
+
 })();

@@ -1205,6 +1205,8 @@ YUI.add('juju-gui', function(Y) {
         if (redirectPath.indexOf('#') > -1) {
           this.dispatch();
         }
+        // Start observing bundle deployments.
+        importHelpers.watchAll(this.env, this.db);
       } else {
         this.showLogin();
       }

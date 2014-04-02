@@ -1874,7 +1874,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var deployStatus = {
         DeploymentId: self._deploymentId,
         Status: 'started',
-        Timestamp: Date.now()
+        Timestamp: Math.round(Date.now() / 1000)
       };
       self._importChanges.push(deployStatus);
       // Keep the list limited to the last 5
