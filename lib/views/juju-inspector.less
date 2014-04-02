@@ -86,7 +86,6 @@
             }
         }
     }
-
     .juju-inspector {
         .create-border-radius(@border-radius);
         position: relative;
@@ -100,7 +99,6 @@
         margin: 0;
         font-size: 14px;
         font-weight: 400;
-
 
         ::-webkit-scrollbar-track {
             background-color: #1c1815;
@@ -1075,5 +1073,34 @@
     .create-border-radius(0);
     top: auto;
     right: auto;
-    position: inherit;
+    position: static;
+
+    .juju-inspector {
+        position: static;
+
+        .viewlet-manager-wrapper {
+            .display-flex;
+            .flex-direction(column);
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: @inspector-background-color;
+
+            .header-slot,
+            .viewlet-manager-navigation,
+            .viewlet-manager-footer {
+                .flex-basis(auto);
+            }
+            .viewlet-container {
+                .flex(1);
+                max-height: none;
+            }
+        }
+        .settings-constraints,
+        settings-config {
+            margin-bottom: 0;
+        }
+    }
 }

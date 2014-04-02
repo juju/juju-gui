@@ -389,58 +389,49 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method recalculateHeight
     */
     recalculateHeight: function() {
-      var container = this.get('container');
-      var TB_SPACING = 20;
-      var winHeight = container.get('winHeight'),
-          header = Y.one('.navbar'),
-          footer = Y.one('.bottom-navbar'),
-          // Depending on the render cycle these may or may not be in the DOM
-          // which is why we pull their heights separately
-          vcHeader = container.one('.header-slot'),
-          vcNavigation = container.one('.viewlet-manager-navigation'),
-          vcFooter = container.one('.viewlet-manager-footer'),
-          headerHeight = 0,
-          footerHeight = 0,
-          vcHeaderHeight = 0,
-          vcNavHeight = 0,
-          vcFooterHeight = 0;
+      if (!window.flags.il) {
+        var container = this.get('container');
+        var TB_SPACING = 20;
+        var winHeight = container.get('winHeight'),
+            header = Y.one('.navbar'),
+            footer = Y.one('.bottom-navbar'),
+            // Depending on the render cycle these may or may not be in the DOM
+            // which is why we pull their heights separately
+            vcHeader = container.one('.header-slot'),
+            vcNavigation = container.one('.viewlet-manager-navigation'),
+            vcFooter = container.one('.viewlet-manager-footer'),
+            headerHeight = 0,
+            footerHeight = 0,
+            vcHeaderHeight = 0,
+            vcNavHeight = 0,
+            vcFooterHeight = 0;
 
-      if (header) { headerHeight = header.get('clientHeight'); }
-      if (footer) { footerHeight = footer.get('clientHeight'); }
-      if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
-      if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
-      if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
+        if (header) { headerHeight = header.get('clientHeight'); }
+        if (footer) { footerHeight = footer.get('clientHeight'); }
+        if (vcHeader) { vcHeaderHeight = vcHeader.get('clientHeight'); }
+        if (vcNavigation) { vcNavHeight = vcNavigation.get('clientHeight'); }
+        if (vcFooter) { vcFooterHeight = vcFooter.get('clientHeight'); }
 
-      var height = winHeight - headerHeight - footerHeight - (TB_SPACING * 3);
+        var height = winHeight - headerHeight - footerHeight - (
+            TB_SPACING * 3);
 
-      // XXX: When the flag is removed then this can be combined with the
-      // calculation above.
-      if (window.flags.il) {
-        height += (TB_SPACING * 3) - 2;
-      }
-
-      // The viewlet manager has a couple different wrapper elements which
-      // impact which components are shown. In this case we are grabbing an
-      // internal wrapper to resize without causing the elements to reflow.
-      var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
-      if (wrapper) {
-        if (window.flags.il) {
-          height -= 49;
+        // The viewlet manager has a couple different wrapper elements which
+        // impact which components are shown. In this case we are grabbing an
+        // internal wrapper to resize without causing the elements to reflow.
+        var wrapper = container.one('.viewlet-manager-wrapper:not(.ghost)');
+        if (wrapper) {
+          wrapper.setStyle('maxHeight', height + 'px');
         }
-        wrapper.setStyle('maxHeight', height + 'px');
-        if (window.flags.il) {
-          height += 10;
-        }
+
+        // subtract the height of the header and footer of the viewlet manager.
+        height = height - vcHeaderHeight - vcFooterHeight - (TB_SPACING * 3);
+
+        // This needs to pull from the 'real' container not what was passed in.
+        // This is because this method can be called to recalculate the height
+        // on another wrapper element, not necessarily the real container.
+        this.get('container')
+            .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
       }
-
-      // subtract the height of the header and footer of the viewlet manager.
-      height = height - vcHeaderHeight - vcFooterHeight - (TB_SPACING * 3);
-
-      // This needs to pull from the 'real' container not what was passed in.
-      // This is because this method can be called to recalculate the height
-      // on another wrapper element, not necessarily the real container.
-      this.get('container')
-          .one(this.viewletContainer).setStyle('maxHeight', height + 'px');
     },
 
     /**
