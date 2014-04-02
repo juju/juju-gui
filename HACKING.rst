@@ -316,6 +316,37 @@ documentation to make working with the Juju Gui easier.
   # Rebase develop (trunk) into the current feature branch.
   sync-trunk = rebase develop
 
+Hooks
+-----
+
+Our test/lint targets are run by CI, but it can be hard to remember to run that
+before proposing your branch.  If you would like to have those run before you
+push your code to Github, you can add any of those targets to either the
+`pre-commit` or `pre-push` (git 1.8.2+) hook, like:
+
+::
+
+  #!/bin/sh
+
+  if ($NO_VERIFY) ; then
+      make lint
+  fi
+
+Add the above to the file `.git/hooks/pre-commit` or `.git/hooks/pre-push` then
+run `chmod a+x .git/hooks/<the chosen hook>`.  `lint` is the simplest target
+and will allow you to commit broken code so long as it passes lint.  `check` is
+the most stringent option that requires passing tests in debug and prod as
+well.  You can then use the command `NO_VERIFY=1 git commit` to commit or
+`NO_VERIFY=1 git push origin <branch name>` to push a branch that will not pass
+lint.  Running the command without the variable will cause lint to prevent the
+command from succeeding if your branch does not lint.
+
+Read more about hooks and how to install them `here
+<http://www.git-scm.com/book/en/Customizing-Git-Git-Hooks>`_. Please note that
+this will only work in environments where the app can build and run.  Since the
+application will not run in OS X, you will have to run your push or commit from
+vagrant instead.
+
 Working with a Real Juju
 ========================
 
