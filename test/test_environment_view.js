@@ -1096,6 +1096,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
         '/juju-ui/assets/svgs/relation-icon-healthy.svg'
       ]);
+
+      // Ensure the image href does not change for the subordinate relation
+      // by prefixing the path with something that will be disregarded by
+      // the filter used to pull 'subordinate' out of the url.
+      view.topo.vis.select('.rel-group image')
+        .attr('href', function() {
+            return 'iRemainUnchanged' + d3.select(this).attr('href');
+          });
       var unit = db.services.getById('mysql').get('units').item(0);
       unit.agent_state = 'error';
       unit.agent_state_data = {
@@ -1104,7 +1112,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       view.update();
       assert.deepEqual(reduceData(), ['subordinate', 'error']);
       assert.deepEqual(reduceImages(), [
-        '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        'iRemainUnchanged/juju-ui/assets/svgs/relation-icon-subordinate.svg',
         '/juju-ui/assets/svgs/relation-icon-error.svg'
       ]);
     });

@@ -343,7 +343,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Now, on create and update, modify the attributes of all of the rel
       // group items to match the current state of the model.
       g.select('.rel-indicator')
-              .attr('transform', function(d) {
+          .attr('transform', function(d) {
             var connectors = d.source.getConnectorPair(d.target);
             var s = connectors[0];
             var t = connectors[1];
