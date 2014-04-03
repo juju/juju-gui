@@ -230,13 +230,14 @@ YUI.add('juju-app-state', function(Y) {
         this._setCurrent('hash', hash.replace('/', ''));
         window.location.hash = this.getCurrent('hash');
       }
-
-      if (params.id && params.id !== 'search') {
-        this._setCurrent('charmID', params.id);
-      } else {
-        this._setCurrent('charmID', null);
+      if (params.id) {
+        params.id = params.id.replace('inspector/', '');
+        if (params.id !== 'sidebar/search') {
+          this._setCurrent('charmID', params.id);
+        } else {
+          this._setCurrent('charmID', null);
+        }
       }
-
       // Check for search in the request.
       if (path.indexOf('search') !== -1) {
         this._setCurrent('search', true);

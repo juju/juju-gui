@@ -38,9 +38,6 @@ YUI.add('subapp-browser', function(Y) {
    */
   var extensions = [Y.juju.MachineViewPanel];
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, extensions, {
-    // Mark the entire subapp has hidden.
-    hidden: false,
-
     /**
      * Destroy and remove any lingering views.
      *
@@ -54,10 +51,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._sidebar) {
         this._sidebar.destroy();
         delete this._sidebar;
-      }
-      if (this._minimized) {
-        this._minimized.destroy();
-        delete this._minimized;
       }
       if (this._onboarding) {
         this._onboarding.destroy();
@@ -131,8 +124,12 @@ YUI.add('subapp-browser', function(Y) {
        @method _shouldShowCharm
        @return {Boolean} true if should show.
      */
-    _shouldShowCharm: function() {
+    _shouldShowCharm: function(req) {
+      // XXX Only here until state is set up.
+      if (req.path.indexOf('inspector') > -1) { return false; }
+      if (req.path.indexOf('machine') > -1) { return false; }
       return (
+
           this.state.getCurrent('charmID') && (
               !this._details ||
               this.state.hasChanged('charmID')
@@ -249,9 +246,6 @@ YUI.add('subapp-browser', function(Y) {
       // If we've got any views hanging around wipe them.
       if (this._sidebar) {
         this._sidebar.destroy();
-      }
-      if (this._minimized) {
-        this._minimized.destroy();
       }
       if (this._details) {
         this._details.destroy();
@@ -441,29 +435,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Minimized state shows the button to open back up, but that's it. It's
-       purely a viewmode change and we keep all the old content/state in the
-       old div.
-
-       @method minimized
-       @param {Request} req current request object.
-       @param {Response} res current response object.
-       @param {function} next callable for the next route in the chain.
-
-     */
-    minimized: function(req, res, next) {
-      // We only need to run the view once.
-      if (!this._minimized) {
-        this._minimized = new views.MinimizedView();
-        this._minimized.render();
-        this._minimized.addTarget(this);
-      }
-
-      this.state.save();
-      next();
-    },
-
-    /**
        Handle the route for the sidebar view.
 
        @method sidebar
@@ -518,7 +489,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If we've changed the charmID and we have
       // a charmID, render charmDetails.
-      if (this._shouldShowCharm()) {
+      if (this._shouldShowCharm(req)) {
         this._detailsVisible(true);
         this.renderEntityDetails(req, res, next);
       }
@@ -576,7 +547,7 @@ YUI.add('subapp-browser', function(Y) {
     inspector: function(req, res, next) {
       // We need the sidebar rendered so that we can show the inspector in it.
       this.sidebar(req, null, function() {});
-      var clientId = req.params.id,
+      var clientId = req.params.id.replace('/', ''),
           model;
       this.get('db').services.some(function(service) {
         if (service.get('clientId') === clientId) {
@@ -665,22 +636,9 @@ YUI.add('subapp-browser', function(Y) {
         next();
         return;
       }
-
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible(req);
-
-      // Don't bother routing if we're hidden.
-      if (!this.hidden) {
-        this.sidebar(req, res, next);
-      } else {
-        // Update the app state even though we're not showing anything.
-        this.state.save();
-        // Let the next route go on.
-        next();
-      }
+      this.sidebar(req, res, next);
     },
 
     /**
@@ -720,20 +678,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-
-      // Don't bother routing if we're hidden.
-      if (!this.hidden) {
-        this.sidebar(req, res, next);
-        // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible(req);
-      } else {
-        // Update the app state even though we're not showing anything.
-        this.state.save();
-        // Once the state is updated determine visibility of our Nodes.
-        this.updateVisible(req);
-        // Let the next route go on.
-        next();
-      }
+      this.sidebar(req, res, next);
     },
 
     /**
@@ -748,80 +693,28 @@ YUI.add('subapp-browser', function(Y) {
       if (!req.params) {
         req.params = {};
       }
-
       // Update the state for the rest of things to figure out what to do.
       this.state.loadRequest(req);
-
-      // Once the state is updated determine visibility of our Nodes.
-      this.updateVisible(req);
-
-      // Don't bother routing if we're hidden.
-      if (!this.hidden) {
-        // This redirects any requests coming in to fullscreen to their
-        // sidebar equivelent. It gets done here because we are relying
-        // on the current routing code to switch from fullscreen to sidebar
-        // to take advantage of its double dispatch mitigation code.
-        if (req.path.indexOf('fullscreen') > -1) {
-          var self = this;
-          // This setTimeout is required because the double dispatch events
-          // happen in an unpredictable order so we simply let them complete
-          // then navigate away to avoid issues where we are trying to render
-          // while other views are in the middle of being torn down.
-          setTimeout(function() {
-            self.fire('viewNavigate', {
-              change: {
-                viewmode: 'sidebar'
-              }
-            });
-          }, 0);
-          return;
-        } else {
-          if (req.path.indexOf('minimized') > -1) {
-            this.minimized(req, res, next);
-            this.updateVisible(req);
-          } else {
-            this.sidebar(req, res, next);
-          }
-        }
-      } else {
-        // Update the app state even though we're not showing anything.
-        this.state.save();
-        // Let the next route go on.
-        next();
-      }
-    },
-
-    /**
-      Based on the url and the hidden check what divs we should be
-      showing or hiding.
-
-      @method updateVisible
-      @return {undefined} Nothing.
-    */
-    updateVisible: function(req) {
-      var minview = this.get('minNode'),
-          browser = this.get('container');
-
-      // In app tests these divs don't exist so ignore them if both aren't
-      // there carry on. The container is created through the subapp, but not
-      // the minview.
-      if (!minview) {
-        console.log('No browser subapp min div available.');
+      // This redirects any requests coming in to fullscreen to their
+      // sidebar equivelent. It gets done here because we are relying
+      // on the current routing code to switch from fullscreen to sidebar
+      // to take advantage of its double dispatch mitigation code.
+      if (req.path.indexOf('fullscreen') > -1) {
+        var self = this;
+        // This setTimeout is required because the double dispatch events
+        // happen in an unpredictable order so we simply let them complete
+        // then navigate away to avoid issues where we are trying to render
+        // while other views are in the middle of being torn down.
+        setTimeout(function() {
+          self.fire('viewNavigate', {
+            change: {
+              viewmode: 'sidebar'
+            }
+          });
+        }, 0);
         return;
-      }
-
-      if (this.hidden) {
-        browser.hide();
-        minview.hide();
-        this._clearViews();
       } else {
-        if (req && req.path.indexOf('minimized') > -1) {
-          minview.show();
-          browser.hide();
-        } else {
-          minview.hide();
-          browser.show();
-        }
+        this.sidebar(req, res, next);
       }
     }
   }, {
@@ -863,7 +756,13 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/*id/', callbacks: 'routeDirectCharmId'},
           { path: '/search/', callbacks: 'routeView' },
           { path: '/search/*id/', callbacks: 'routeView' },
-          { path: '/minimized/*', callbacks: 'routeView' }
+          { path: '/inspector/*id', callbacks: 'inspector' },
+          { path: '/machine/*id', callbacks: 'machine' },
+          // Leave these routes here so that if people visit a url with
+          // minimized or fullscreen in it they still get the sidebar rendered.
+          // But all params after minimized will be ignored.
+          { path: '/minimized/*', callbacks: 'routeView' },
+          { path: '/fullscreen/*', callbacks: 'routeView' }
         ]
       },
 
@@ -892,26 +791,7 @@ YUI.add('subapp-browser', function(Y) {
        * @type {Function}
        *
        */
-      deployBundle: {},
-
-      /**
-         @attribute minNode
-         @default Node
-         @type {Node}
-
-       */
-      minNode: {
-        /**
-          Find the minNode and cache it for later use.
-
-          @attribute minNode
-          @readOnly
-        */
-        valueFn: function() {
-          return Y.one('#subapp-browser-min');
-        }
-      }
-
+      deployBundle: {}
     }
   });
 
@@ -930,7 +810,6 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmresults',
     'subapp-browser-editorial',
     'subapp-browser-jujucharms',
-    'subapp-browser-minimized',
     'subapp-browser-searchview',
     'subapp-browser-sidebar',
     'machine-view-panel-extension'

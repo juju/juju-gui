@@ -25,7 +25,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       '<div id="browser-nav">',
       '<div class="sidebar"></div>',
       '</div>',
-      '<div id="subapp-browser-min"></div>',
       '<div id="subapp-browser"></div>',
       '</div>'
     ].join('')).appendTo(container);
@@ -41,7 +40,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-models',
             'juju-views',
             'juju-tests-utils',
-            'subapp-browser-minimized',
             function(Y) {
               utils = Y.namespace('juju-tests.utils');
               views = Y.namespace('juju.browser.views');
@@ -1013,10 +1011,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         assert.deepEqual(hits, expected);
 
         // And both nodes are hidden.
-        var minNode = Y.one('#subapp-browser-min');
         var browserNode = Y.one('#subapp-browser');
 
-        minNode.getComputedStyle('display').should.eql('none');
         browserNode.getComputedStyle('display').should.eql('none');
 
         assert.equal(hitCount, 2);

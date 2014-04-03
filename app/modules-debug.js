@@ -529,10 +529,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/view.js'
         },
 
-        'subapp-browser-minimized': {
-          fullpath: '/juju-ui/subapps/browser/views/minimized.js'
-        },
-
         'subapp-browser-searchview': {
           fullpath: '/juju-ui/subapps/browser/views/search.js'
         },
