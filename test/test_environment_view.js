@@ -1077,6 +1077,46 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(menu.all('.relation-container.running').size(), 1);
     });
 
+    it('shows relation status with an indicator', function() {
+      view.render();
+      var reduceData = function() {
+        return view.topo.vis.selectAll('.rel-indicator image')
+          .data().map(function(datum) {
+              return datum.aggregatedStatus;
+            });
+      };
+      var reduceImages = function() {
+        return view.topo.vis.selectAll('.rel-indicator image')[0]
+          .map(function(image) {
+              return d3.select(image).attr('href');
+            });
+      };
+      assert.deepEqual(reduceData(), ['subordinate', 'healthy']);
+      assert.deepEqual(reduceImages(), [
+        '/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        '/juju-ui/assets/svgs/relation-icon-healthy.svg'
+      ]);
+
+      // Ensure the image href does not change for the subordinate relation
+      // by prefixing the path with something that will be disregarded by
+      // the filter used to pull 'subordinate' out of the url.
+      view.topo.vis.select('.rel-group image')
+        .attr('href', function() {
+            return 'iRemainUnchanged' + d3.select(this).attr('href');
+          });
+      var unit = db.services.getById('mysql').get('units').item(0);
+      unit.agent_state = 'error';
+      unit.agent_state_data = {
+        hook: 'db-relation'
+      };
+      view.update();
+      assert.deepEqual(reduceData(), ['subordinate', 'error']);
+      assert.deepEqual(reduceImages(), [
+        'iRemainUnchanged/juju-ui/assets/svgs/relation-icon-subordinate.svg',
+        '/juju-ui/assets/svgs/relation-icon-error.svg'
+      ]);
+    });
+
     it('allows clicking on a relation to inspect it', function() {
       db.onDelta({data: additionalRelations});
       view = new views.environment({

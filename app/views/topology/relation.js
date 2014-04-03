@@ -305,55 +305,68 @@ YUI.add('juju-topology-relation', function(Y) {
       var topo = this.get('component');
       var vis = topo.vis;
       var parentId = topo._yuid;
+      var imageSize = 20;
       var g = vis.selectAll('g.rel-group')
         .data(self.relations,
           function(r) {
             return r.compositeId;
           });
 
-      var enter = g.enter();
-
-      enter.insert('g', 'g.service')
+      // If this is the initial creation of the relation group, add all of the
+      // elements involved.
+      var enter = g.enter()
+        .insert('g', 'g.service')
               .attr('id', function(d) {
             return utils.generateSafeDOMId(d.id, parentId);
           })
-              .attr('class', 'rel-group')
-              .append('svg:line', 'g.service')
+        .classed('rel-group', true);
+      enter.append('svg:line', 'g.service')
               .attr('class', function(d) {
-                // Style relation lines differently depending on status.
-                return 'relation ' + d.aggregatedStatus;
-              });
+            // Style relation lines differently depending on status.
+            return 'relation ' + d.aggregatedStatus;
+          });
+      enter.append('g')
+        .classed('rel-indicator', true)
+        .append('image')
+        .attr({
+            'width': imageSize,
+            'height': imageSize,
+            'x': imageSize / -2,
+            'y': imageSize / -2,
+            'rx': imageSize / 2,
+            'ry': imageSize / 2
+          });
+      enter.append('text')
+        .append('tspan')
+        .text(function(d) {return d.display_name; });
 
-      g.selectAll('.rel-indicator').remove();
-      var label = g.append('g')
-              .attr('class', 'rel-indicator')
-              .attr('transform', function(d) {
-                // XXX: This has to happen on update, not enter
-                var connectors = d.source.getConnectorPair(d.target);
-                var s = connectors[0];
-                var t = connectors[1];
-                return 'translate(' +
-                    [Math.max(s[0], t[0]) -
+      // Now, on create and update, modify the attributes of all of the rel
+      // group items to match the current state of the model.
+      g.select('.rel-indicator')
+          .attr('transform', function(d) {
+            var connectors = d.source.getConnectorPair(d.target);
+            var s = connectors[0];
+            var t = connectors[1];
+            return 'translate(' +
+                [Math.max(s[0], t[0]) -
                      Math.abs((s[0] - t[0]) / 2),
                      Math.max(s[1], t[1]) -
                      Math.abs((s[1] - t[1]) / 2)] + ')';
-              });
-      label.append('text')
-        .append('tspan')
-        .text(function(d) {return d.display_name; });
-      var rect = label.append('image')
+          });
+      g.selectAll('image')
+        .filter(function(d) {
+            var currStatus = d3.select(this)
+            .attr('xlink:href') || '';
+            currStatus = currStatus.split('-')
+            .reverse()[0]
+            .split('.')[0];
+            return currStatus !== d.aggregatedStatus;
+          })
         .attr('xlink:href', function(d) {
             return (
                 '/juju-ui/assets/svgs/relation-icon-' +
                 d.aggregatedStatus + '.svg');
           });
-      var imageSize = 20;
-      rect.attr('width', imageSize)
-        .attr('height', imageSize)
-        .attr('x', imageSize / -2)
-        .attr('y', imageSize / -2)
-        .attr('rx', imageSize / 2)
-        .attr('ry', imageSize / 2);
       return g;
     },
 
