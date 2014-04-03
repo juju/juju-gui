@@ -118,6 +118,12 @@
     -ms-flex-basis: @width;
     flex-basis: @width;
 }
+.flex-direction(@direction) {
+    -webkit-flex-direction: @direction;
+    -webkit-box-orient: vertical;
+    -ms-flex-direction: @direction;
+    flex-direction: @direction;
+}
 .flex (@grow) {
     -webkit-box-flex: @grow;
     -ms-flex: @grow;
