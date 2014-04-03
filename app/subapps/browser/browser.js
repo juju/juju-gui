@@ -664,7 +664,8 @@ YUI.add('subapp-browser', function(Y) {
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/');
       // If it doesn't have 2 parts then it's not a charm Id and if it' doesn't
       // start with bundle then it's not a bundle id.
-      if (idBits.length !== 2 && idBits[0] !== 'bundle') {
+      if (idBits[0][0] !== '~' &&
+          idBits.length !== 2 && idBits[0] !== 'bundle') {
         next();
         return;
       } else {
