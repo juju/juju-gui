@@ -1352,8 +1352,6 @@ YUI.add('juju-gui', function(Y) {
           var envView = this.views.environment.instance;
           envView.rendered();
           this.get('subApps').charmbrowser.set('topo', envView.topo);
-          // We only want to register this event handler once, but this method
-          // is called multiple times.
         },
         render: true
       });

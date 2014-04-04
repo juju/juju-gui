@@ -146,12 +146,9 @@ YUI.add('subapp-browser', function(Y) {
      */
     _shouldShowEditorial: function() {
       var should = false;
-      // If the seach is not enabled then yes
       if (!this.state.getCurrent('search')) {
         should = true;
       }
-
-      // If search has changed and is false then yes
       if (!this.state.getCurrent('search') &&
           this.state.hasChanged('search')
       ) {
@@ -469,8 +466,8 @@ YUI.add('subapp-browser', function(Y) {
         this.machineViewPanel.destroy();
       }
 
-      // Render search results if search is in the url and the
-      // search has been changed in the state.
+      // Render search results if search is in the url and the search has been
+      // changed in the state.
       if (this._shouldShowSearch()) {
         // Showing search implies that other sidebar content is destroyed.
         if (this._editorial) {
@@ -487,8 +484,8 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
-      // If we've changed the charmID and we have
-      // a charmID, render charmDetails.
+      // If we've changed the charmID and we have a charmID, render
+      // charmDetails.
       if (this._shouldShowCharm(req)) {
         this._detailsVisible(true);
         this.renderEntityDetails(req, res, next);
@@ -662,7 +659,7 @@ YUI.add('subapp-browser', function(Y) {
       // Split the id portion of the url into it's bits so that we can easily
       // parse the type of url that it is.
       var idBits = req.path.replace(/^\//, '').replace(/\/$/, '').split('/');
-      // If it doesn't have 2 parts then it's not a charm Id and if it' doesn't
+      // If it doesn't have 2 parts then it's not a charm Id and if it doesn't
       // start with bundle then it's not a bundle id.
       if (idBits[0][0] !== '~' &&
           idBits.length !== 2 && idBits[0] !== 'bundle') {
@@ -700,7 +697,8 @@ YUI.add('subapp-browser', function(Y) {
       // sidebar equivelent. It gets done here because we are relying
       // on the current routing code to switch from fullscreen to sidebar
       // to take advantage of its double dispatch mitigation code.
-      if (req.path.indexOf('fullscreen') > -1) {
+      if ((req.path.indexOf('fullscreen') > -1) ||
+          (req.path.indexOf('minimized') > -1)) {
         var self = this;
         // This setTimeout is required because the double dispatch events
         // happen in an unpredictable order so we simply let them complete

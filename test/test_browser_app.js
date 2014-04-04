@@ -762,7 +762,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('onboarding is not called with a search', function() {
         var req = {
-          path: '/sidebar/search'
+          path: '/search'
         };
         var expected = Y.merge(hits, {
           sidebar: true,
