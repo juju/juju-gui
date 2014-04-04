@@ -678,7 +678,7 @@ YUI.add('subapp-browser', function(Y) {
     */
     machine: function(req, res, next) {
       if (window.flags.mv) {
-        this._renderMachineViewPanelView();
+        this._renderMachineViewPanelView(this.get('db'));
       }
       this.machineViewPanel.setWidthFull();
     },

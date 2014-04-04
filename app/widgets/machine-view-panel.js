@@ -45,6 +45,18 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Handle initial view setup.
+         *
+         * @method initializer
+         */
+        initializer: function() {
+          var machines = this.get('machines');
+          machines.after('*:change', this.render, this);
+          machines.after('add', this.render, this);
+          machines.after('remove', this.render, this);
+        },
+
+        /**
          * Set the panel to be the full width of the screen.
          *
          * @method setWidthFull
@@ -68,7 +80,8 @@ YUI.add('machine-view-panel', function(Y) {
          * @method _renderHeaders
          */
         _renderHeaders: function(label) {
-          var columns = this.get('container').all('.column');
+          var columns = this.get('container').all('.column'),
+              machines = this.get('machines');
 
           columns.each(function(column) {
             var attrs = {container: column.one('.head')};
@@ -78,8 +91,9 @@ YUI.add('machine-view-panel', function(Y) {
             }
             else if (column.hasClass('machines')) {
               attrs.title = 'Environment';
-              attrs.label = '1 machine';
+              attrs.label = 'machine';
               attrs.action = 'New machine';
+              attrs.count = machines.size();
             }
             else if (column.hasClass('containers')) {
               attrs.label = '0 containers, 1 unit';
@@ -95,8 +109,14 @@ YUI.add('machine-view-panel', function(Y) {
          * @method render
          */
         render: function() {
-          var container = this.get('container');
-          container.setHTML(this.template());
+          var container = this.get('container'),
+              machines, html;
+          // look only at top level machines; the rest are containers
+          machines = this.get('machines').filterByParent(null);
+          html = this.template({
+            machines: machines
+          });
+          container.setHTML(html);
           container.addClass('machine-view-panel');
           this._renderHeaders();
           return this;
@@ -111,6 +131,24 @@ YUI.add('machine-view-panel', function(Y) {
           var container = this.get('container');
           container.setHTML('');
           container.removeClass('machine-view-panel');
+        },
+
+        ATTRS: {
+          /**
+           * The container element for the view.
+           *
+           * @attribute container
+           * @type {Object}
+           */
+          container: {},
+
+          /**
+           * The machines to display in this view.
+           *
+           * @attribute machines
+           * @type {Object}
+           */
+          machines: {}
         }
       });
 

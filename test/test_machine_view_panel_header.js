@@ -58,14 +58,14 @@ describe('machine view panel header view', function() {
 
   it('should have the correct attributes set', function() {
     assert.equal(container.one('.title').get('text'), 'test title');
-    assert.equal(container.one('.label').get('text'), 'test label');
+    assert.equal(container.one('.label').get('text').trim(), 'test label');
     assert.equal(container.one('.action').get('text'), 'test action');
   });
 
   it('can set the label', function() {
-    assert.equal(container.one('.label').get('text'), 'test label');
+    assert.equal(container.one('.label').get('text').trim(), 'test label');
     view.setLabel('new label');
-    assert.equal(container.one('.label').get('text'), 'new label');
+    assert.equal(container.one('.label').get('text').trim(), 'new label');
   });
 
   it('fires an event on tab change', function(done) {
