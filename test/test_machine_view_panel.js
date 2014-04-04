@@ -101,12 +101,13 @@ describe('machine view panel view', function() {
     var selector = '.machines .content li',
         list = container.all(selector);
     assert.equal(list.size(), machines.size(),
-                'initial displayed list is out of sync with machines');
+                 'initial displayed list is out of sync with machines');
     machines.remove(0);
     list = container.all(selector);
     assert.equal(list.size(), machines.size(),
                  'final displayed list is out of sync with machines');
-    var deletedItem = container.one(selector + '[data-id="' + machine.get('id') + '"]');
+    var deletedSelector = selector + '[data-id="' + machine.get('id') + '"]';
+    var deletedItem = container.one(deletedSelector);
     assert.equal(deletedItem, null,
                  'found the deleted machine still in the list');
   });
