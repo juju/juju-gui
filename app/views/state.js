@@ -259,7 +259,161 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       this.filter.update(query);
+    },
 
+    /**
+      Takes the url request object from the Y.Router and parses it into the
+      appropriate state object.
+
+      @method parseRequest
+      @param {Object} req Y.Router request object.
+      @param {string} hash The hash from window.location.hash.
+      @return {Object} The state object which outlines what the application
+        should render.
+    */
+    parseRequest: function(req, hash) {
+      var url = req.path,
+          query = req.query,
+          state = {};
+      // Strip the leading and trailing slashes off the url if it has them.
+      url = url.replace(/^\//, '').replace(/\/$/, '');
+      // Strip any viewmodes which may be in the url from previous bookmarks.
+      url = this._stripViewmode(url);
+      // Strip the search param out of the url. It is an old path which is no
+      // longer used. In stead any text=foo query param is treated as a
+      // search query.
+      url = url.replace(/^search\/?/, '');
+      // Split the url into it's sections for the state object.
+      url = this._splitSections(url);
+      // Add the search query value into the state object.
+      if (query && query.text) {
+        state.search = query.text;
+      }
+      // Loop through each part and dispatch each part to the appropriate url
+      // parse method.
+      url.forEach(function(part) {
+        // We check if it's at 0 index in case someone has a service/machine
+        // called 'inspector' or 'machine' etc.
+        if (part.indexOf('inspector') === 0) {
+          state.inspector = this._parseInspectorUrl(part);
+        } else if (part.indexOf('machine') === 0) {
+          state.machine = this._parseMachineUrl(part);
+        } else if (part.length > 0) {
+          // If it's not an inspector or machine and it's more than 0 characters
+          // then it's a charm url.
+          // We only support hashes for the charm urls.
+          state.charm = this._parseCharmUrl(part, hash);
+        }
+      }, this);
+      return state;
+    },
+
+    /**
+      Parse the inspector url into a state object.
+
+      @method _parseInspectorUrl
+      @param {String} url Inspector url to be parsed.
+      @return {Object} State object to be added to the inspector state.
+    */
+    _parseInspectorUrl: function(url) {
+      url = url.replace(/^inspector\/?/, '');
+      var parts = url.split('/'),
+          state = {};
+      // The first index is always the service id.
+      state.id = parts[0];
+      if (parts[1]) {
+        state[parts[1]] = parts[2] || true;
+      }
+      return state;
+    },
+
+    /**
+      Parse the machine url into a state object.
+
+      @method _parseMachineUrl
+      @param {String} url Machine url to be parsed.
+      @return {Object} State object to be added to the machine state.
+    */
+    _parseMachineUrl: function(url) {
+      url = url.replace(/^machine\/?/, '');
+      var parts = url.split('/'),
+          state = {};
+      // If the url is 'machine' then there is no extra state.
+      if (parts[0] !== '') {
+        state.id = parts[0];
+        if (parts[1]) {
+          state.container = parts[1];
+        }
+      }
+      return state;
+    },
+
+    /**
+      Parse the charm url into a state object.
+
+      @method _parseCharmUrl
+      @param {String} url charm url to be parsed.
+      @param {string} hash The hash from window.location.hash.
+      @return {Object} State object to be added to the charm state.
+    */
+    _parseCharmUrl: function(url, hash) {
+      var state = {};
+      state.id = url;
+      if (hash) {
+        state.hash = hash;
+      }
+      return state;
+    },
+
+    /**
+      Splits the url up into the various sections supported by the application.
+
+      @method _splitSections
+      @param {String} url The req.path from the Y.router request object.
+      @return {Array} The url split into it's sections.
+    */
+    _splitSections: function(url) {
+      var sections = ['machine', 'inspector'],
+          parts = [],
+          indexes = [];
+      sections.forEach(function(section) {
+        var idx = url.indexOf(section);
+        if (idx >= 0) {
+          indexes.push(idx);
+        }
+      });
+      indexes.sort();
+      // If the first part of the url isn't part of a section then store it.
+      if (indexes[0] !== 0) {
+        parts.push(url.substr(0, indexes[0]));
+      }
+      // Split out and store the sections .
+      indexes.forEach(function(index, arIndex) {
+        var end = indexes[arIndex + 1] || url.length;
+        var chars = end - index;
+        parts.push(url.substr(index, chars));
+      });
+      // Strip any leading and trailing slashes off the sections.
+      parts.forEach(function(part, idx) {
+        parts[idx] = part.replace(/^\//, '').replace(/\/$/, '');
+      });
+      return parts;
+    },
+
+    /**
+      Old urls which users may still have bookmarked may have a viewmode prefix.
+      If it does we need to strip that viewmode from the path.
+
+      The urls that are passed to this method should already have its leading
+      and trailing slashes removed.
+
+      @method _stripViewmode
+      @param {String} path The path value from the Y.Router request object.
+      @return {String} the path without a viewmode.
+    */
+    _stripViewmode: function(path) {
+      // Remove the viewmode and any trailing slash if there is one
+      return path.replace(/^fullscreen\/?|sidebar\/?|minimized\/?/, '');
     }
 
   }, {

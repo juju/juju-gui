@@ -25,8 +25,10 @@ describe('State object', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'juju-app-state',
+        'querystring',
         function(Y) {
           ns = Y.namespace('juju.models');
+
           done();
         });
   });
@@ -185,6 +187,394 @@ describe('State object', function() {
         }
       });
       assert.equal(url, '/search?text=mysql');
+    });
+  });
+
+  describe('_stripViewmode', function() {
+    var paths = {
+      'sidebar': '',
+      'fullscreen': '',
+      'minimized': '',
+      'fullscreen/precise/mysql-38': 'precise/mysql-38',
+      'sidebar/precise/mysql-38': 'precise/mysql-38',
+      'minimized/precise/mysql-38': 'precise/mysql-38'
+    };
+    it('strips the viewmode from requested urls', function() {
+      Object.keys(paths).forEach(function(key) {
+        assert.equal(
+            state._stripViewmode(key),
+            paths[key],
+            key + ' did not have it\'s viewmode properly stripped');
+      });
+    });
+  });
+
+  describe('_splitSections', function() {
+    var urls = {
+      'inspector/service123/charm': ['inspector/service123/charm'],
+      'machine/3/lxc-0/inspector/apache2': [
+        'machine/3/lxc-0', 'inspector/apache2'],
+      'inspector/apache2/machine/3/lxc-0': [
+        'inspector/apache2', 'machine/3/lxc-0'],
+      'bundle/hadoop/3/demo': ['bundle/hadoop/3/demo'],
+      'precise/apache2-13': ['precise/apache2-13'],
+      'precise/apache2-13/machine/3/lxc-0': [
+        'precise/apache2-13', 'machine/3/lxc-0'],
+      'precise/apache2-13/machine/3/lxc-0/inspector/service123/charm': [
+        'precise/apache2-13', 'machine/3/lxc-0', 'inspector/service123/charm']
+    };
+    it('splits the url into the required sections', function() {
+      Object.keys(urls).forEach(function(key) {
+        assert.deepEqual(
+            state._splitSections(key),
+            urls[key],
+            key + ' did not split correctly');
+      });
+    });
+  });
+
+  describe('url part parsing', function() {
+    describe('_parseInspectorUrl', function() {
+      var parts = {
+        'inspector/service123': {
+          id: 'service123' },
+        'inspector/service123/charm': {
+          id: 'service123',
+          charm: true },
+        'inspector/service123/unit/13': {
+          id: 'service123',
+          unit: '13' }
+      };
+      it('can parse the inspector url parts', function() {
+        Object.keys(parts).forEach(function(key) {
+          assert.deepEqual(
+              state._parseInspectorUrl(key),
+              parts[key],
+              key + ' did not parse correctly');
+        });
+      });
+    });
+    describe('_parseMachineUrl', function() {
+      var parts = {
+        'machine': { },
+        'machine/3': {
+          id: '3' },
+        'machine/3/lxc-0': {
+          id: '3',
+          container: 'lxc-0' }
+      };
+      it('can parse the machine url parts', function() {
+        Object.keys(parts).forEach(function(key) {
+          assert.deepEqual(
+              state._parseMachineUrl(key),
+              parts[key],
+              key + ' did not parse correctly');
+        });
+      });
+    });
+    describe('_parseCharmUrl', function() {
+      var parts = {
+        'precise/mysql-38': {
+          id: 'precise/mysql-38' },
+        'bundle/~charmers/mediawiki/6/single': {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      };
+      it('can parse the charm url parts', function() {
+        Object.keys(parts).forEach(function(key) {
+          assert.deepEqual(
+              state._parseCharmUrl(key),
+              parts[key],
+              key + ' did not parse correctly');
+        });
+      });
+      it('adds the hash to the state if provided', function() {
+        assert.deepEqual(
+            state._parseCharmUrl('precise/mysql-38', 'foo'),
+            {
+              id: 'precise/mysql-38',
+              hash: 'foo' });
+      });
+    });
+  });
+
+  describe('parseRequest', function() {
+    var urls = {
+      // Old viewmode urls.
+      '/sidebar/': {},
+      '/fullscreen/': {},
+      '/minimized/': {},
+      // Bundle urls.
+      '/bundle/~charmers/mediawiki/6/single/': {
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/bundle/mediawiki/6/single/': {
+        charm: {
+          id: 'bundle/mediawiki/6/single' }
+      },
+      '/bundle/mediawiki/single/': {
+        charm: {
+          id: 'bundle/mediawiki/single' }
+      },
+      '/bundle/~jorge/mediawiki/6/single': {
+        charm: {
+          id: 'bundle/~jorge/mediawiki/6/single' }
+      },
+      '/bundle/~jorge/mediawiki/single': {
+        charm: {
+          id: 'bundle/~jorge/mediawiki/single' }
+      },
+      '/fullscreen/bundle/~charmers/mediawiki/6/single/': {
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/sidebar/bundle/~charmers/mediawiki/6/single/': {
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/minimized/bundle/~charmers/mediawiki/6/single/': {
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      // Charm urls.
+      '/precise/mysql-38/': {
+        charm: {
+          id: 'precise/mysql-38' }
+      },
+      '/precise/mysql': {
+        charm: {
+          id: 'precise/mysql' }
+      },
+      '/fullscreen/precise/mysql-38/': {
+        charm: {
+          id: 'precise/mysql-38' }
+      },
+      '/sidebar/precise/mysql-38/': {
+        charm: {
+          id: 'precise/mysql-38' }
+      },
+      '/minimized/precise/mysql-38/': {
+        charm: {
+          id: 'precise/mysql-38' }
+      },
+      // Non promoted charm urls.
+      '/~prismakov/trusty/cf-dea-1/': {
+        charm: {
+          id: '~prismakov/trusty/cf-dea-1' }
+      },
+      '/~prismakov/trusty/cf-dea/': {
+        charm: {
+          id: '~prismakov/trusty/cf-dea' }
+      },
+      '/fullscreen/~prismakov/trusty/cf-dea-1/': {
+        charm: {
+          id: '~prismakov/trusty/cf-dea-1' }
+      },
+      '/sidebar/~prismakov/trusty/cf-dea-1/': {
+        charm: {
+          id: '~prismakov/trusty/cf-dea-1' }
+      },
+      '/minimized/~prismakov/trusty/cf-dea-1/': {
+        charm: {
+          id: '~prismakov/trusty/cf-dea-1' }
+      },
+      // Search urls.
+      // search is an old route path so ignore it if there isn't a query param.
+      '/search/': {},
+      '/search/?text=apache': {
+        search: 'apache'
+      },
+      // Charm search urls.
+      '/search/precise/cassandra-1/': {
+        charm: {
+          id: 'precise/cassandra-1' }
+      },
+      '/search/precise/apache2-19/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-19' }
+      },
+      '/fullscreen/search/precise/apache2-19/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-19' }
+      },
+      '/sidebar/search/precise/apache2-19/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-19' }
+      },
+      '/minimized/search/precise/apache2-19/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-19' }
+      },
+      // Bundle search urls.
+      '/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/fullscreen/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/sidebar/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      '/minimized/search/bundle/~charmers/mediawiki/6/single/?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'bundle/~charmers/mediawiki/6/single' }
+      },
+      // New search url syntax.
+      '/precise/apache2-13?text=apache': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-13' }
+      },
+      '/precise/apache2-13?text=apache#readme': {
+        search: 'apache',
+        charm: {
+          id: 'precise/apache2-13',
+          hash: 'readme'
+        }
+      },
+      '/bundle/hadoop/3/demo?text=hadoop': {
+        search: 'hadoop',
+        charm: {
+          id: 'bundle/hadoop/3/demo' }
+      },
+      '/bundle/hadoop/3/demo?text=hadoop#readme': {
+        search: 'hadoop',
+        charm: {
+          id: 'bundle/hadoop/3/demo',
+          hash: 'readme' }
+      },
+      // Inspector urls.
+      '/inspector/service123': {
+        inspector: {
+          id: 'service123' }
+      },
+      '/inspector/service123/charm': {
+        inspector: {
+          id: 'service123',
+          charm: true }
+      },
+      '/inspector/service123/unit/13': {
+        inspector: {
+          id: 'service123',
+          unit: '13' }
+      },
+      // Machine view urls.
+      '/machine/': {
+        machine: {}
+      },
+      '/machine/3/': {
+        machine: {
+          id: '3' }
+      },
+      '/machine/3/lxc-0/': {
+        machine: {
+          id: '3',
+          container: 'lxc-0' }
+      },
+      '/machine/3/?text=hadoop': {
+        search: 'hadoop',
+        machine: {
+          id: '3' }
+      },
+      // Multi section urls.
+      '/inspector/apache2/machine/3/lxc-0': {
+        inspector: {
+          id: 'apache2' },
+        machine: {
+          id: '3',
+          container: 'lxc-0' }
+      },
+      '/machine/3/lxc-0/inspector/apache2': {
+        inspector: {
+          id: 'apache2' },
+        machine: {
+          id: '3',
+          container: 'lxc-0' }
+      }
+    };
+
+    // parseRequest expects a Y.Router request object. Instead of hacking an
+    // instance of Y.Router which would rely on private methods that could
+    // change on a whim this function simply splits the url up into the
+    // two required components. It is tested below separately.
+    function buildRequest(url) {
+      var queryIndex = url.indexOf('?'),
+          hashIndex = url.indexOf('#'),
+          length = url.length;
+      var queryTo, hashTo, req = {};
+      if (hashIndex > -1) {
+        queryTo = hashIndex - queryIndex - 1;
+        req.hash = url.substr(hashIndex + 1, length);
+      } else {
+        queryTo = length;
+      }
+      if (queryIndex > -1) {
+        hashTo = queryIndex;
+        req.query = Y.QueryString.parse(
+            url.substr(queryIndex + 1, queryTo || length));
+      } else if (hashIndex > -1) {
+        hashTo = hashIndex;
+      }
+      req.path = url.substr(0, hashTo || length);
+      return req;
+    }
+
+    it('can build a simulated Y.Router request object', function() {
+      var urls = {
+        '/bundle/hadoop/3/demo?text=hadoop#readme': {
+          hash: 'readme',
+          path: '/bundle/hadoop/3/demo',
+          query: { text: 'hadoop' }
+        },
+        '/machine/3/?text=hadoop': {
+          path: '/machine/3/',
+          query: { text: 'hadoop' }
+        },
+        '/machine/3/?text=hadoop&foo=bar': {
+          path: '/machine/3/',
+          query: { foo: 'bar', text: 'hadoop' }
+        },
+        '/inspector/service123/charm#relations': {
+          hash: 'relations',
+          path: '/inspector/service123/charm'
+        },
+        '/machine/3/lxc-0/inspector/apache2': {
+          path: '/machine/3/lxc-0/inspector/apache2'
+        }
+      };
+      Object.keys(urls).forEach(function(key) {
+        assert.deepEqual(
+            buildRequest(key),
+            urls[key],
+            key + ' did not parse into a req object correctly');
+      });
+    });
+
+    it('parses all of the urls properly', function() {
+      Object.keys(urls).forEach(function(key) {
+        var req = buildRequest(key),
+            hash, oldHash;
+        if (req.hash) {
+          hash = req.hash;
+          delete req.hash;
+        }
+        assert.deepEqual(
+            state.parseRequest(req, hash),
+            urls[key],
+            key + ' did not parse correctly');
+        window.location.hash = oldHash;
+      });
     });
 
   });
