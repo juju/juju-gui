@@ -215,13 +215,10 @@ YUI.add('juju-app-state', function(Y) {
      * @param {Object} req the request payload.
      */
     loadRequest: function(req) {
-      // Update the viewmode. Every request has a viewmode.
       var path = req.path,
           params = req.params,
           query = req.query,
           hash = window.location.hash;
-
-      this._setCurrent('viewmode', params.viewmode);
 
       if (hash) {
         // If the hash starts with bws- then reset it to provide backwards
@@ -233,16 +230,14 @@ YUI.add('juju-app-state', function(Y) {
         this._setCurrent('hash', hash.replace('/', ''));
         window.location.hash = this.getCurrent('hash');
       }
-
-      // Check for a charm id in the request.
-      if (params.viewmode !== 'inspector') {
-        if (params.id && params.id !== 'search') {
+      if (params.id) {
+        params.id = params.id.replace('inspector/', '');
+        if (params.id !== 'sidebar/search') {
           this._setCurrent('charmID', params.id);
         } else {
           this._setCurrent('charmID', null);
         }
       }
-
       // Check for search in the request.
       if (path.indexOf('search') !== -1) {
         this._setCurrent('search', true);
@@ -259,7 +254,6 @@ YUI.add('juju-app-state', function(Y) {
       }
 
       this.filter.update(query);
-
     }
 
   }, {

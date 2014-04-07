@@ -70,13 +70,6 @@ describe('State object', function() {
     assert.deepEqual(state._previous, expected);
   });
 
-  it('parses viewmode out of the request properly', function() {
-    var viewmode = 'foo';
-    request.params.viewmode = viewmode;
-    state.loadRequest(request);
-    assert.equal(state.getCurrent('viewmode'), viewmode);
-  });
-
   it('parses hash out of the request properly', function() {
     var hash = 'foo';
     window.location.hash = hash;

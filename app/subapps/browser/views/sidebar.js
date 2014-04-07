@@ -40,28 +40,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
     template: views.Templates.sidebar,
-
-    events: {
-      'a.bws-icon': { 'click': '_showMinimizedView' }
-    },
-
-    /**
-      When the user clicks the appropriate link this fires a navigate
-      event which the browser.js is listening to and navigates to show
-      the minimized view.
-
-      @method _showMinimizedView
-      @param {Y.Event} e EventFacade object.
-    */
-    _showMinimizedView: function(e) {
-      e.halt();
-      this.fire('viewNavigate', {
-        change: {
-          viewmode: 'minimized'
-        }
-      });
-    },
-
     /**
      * Remove the HTML contents for the sidebar.
      *
