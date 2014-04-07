@@ -345,7 +345,13 @@ YUI.add('subapp-browser', function(Y) {
         search: null,
         interesting: null
       };
-      this.state = new models.State();
+
+      if (window.flags && window.flags.state) {
+        this.state = new models.UIState();
+      } else {
+        this.state = new models.State();
+      }
+
       this._clearViews();
 
       this._registerSubappHelpers();
