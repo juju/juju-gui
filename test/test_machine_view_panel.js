@@ -41,7 +41,15 @@ describe('machine view panel view', function() {
 
   beforeEach(function() {
     container = utils.makeContainer(this, 'machine-view-panel');
-    machine = new models.Machine({id: 0});
+    machine = new models.Machine({
+      id: 0,
+      hardware: {
+        disk: 1024,
+        mem: 1024,
+        cpuPower: 1024,
+        cpuCores: 1
+      }
+    });
     machines = new models.MachineList();
     machines.add([machine]);
     // displayName is set on the machine object in the list; we also need to
@@ -77,7 +85,7 @@ describe('machine view panel view', function() {
                  'models are out of sync with displayed list');
     list.each(function(item, index) {
       var m = machines.item(index);
-      assert.equal(item.get('text'), m.displayName,
+      assert.equal(item.one('.title').get('text'), m.displayName,
                    'displayed item does not match model');
     });
   });
@@ -88,7 +96,16 @@ describe('machine view panel view', function() {
         id = 1;
     assert.equal(list.size(), machines.size(),
                  'initial displayed list is out of sync with machines');
-    machines.add([new models.Machine({id: id, parentId: null})]);
+    machines.add([new models.Machine({
+      id: id,
+      parentId: null,
+      hardware: {
+        disk: 1024,
+        mem: 1024,
+        cpuPower: 1024,
+        cpuCores: 1
+      }
+    })]);
     list = container.all(selector);
     assert.equal(list.size(), machines.size(),
                  'final displayed list is out of sync with machines');
@@ -118,12 +135,12 @@ describe('machine view panel view', function() {
         selector = '.machines .content li',
         item = container.one(selector + '[data-id="' + m.get('id') + '"]');
     assert.notEqual(item, null, 'machine was not initially displayed');
-    assert.equal(item.get('text'), machine.get('displayName'),
+    assert.equal(item.one('.title').get('text'), machine.get('displayName'),
                  'initial machine names do not match');
     m.set('id', id);
     item = container.one(selector + '[data-id="' + id + '"]');
     assert.notEqual(item, null, 'machine was not displayed post-update');
-    assert.equal(item.get('text'), machine.get('displayName'),
+    assert.equal(item.one('.title').get('text'), machine.get('displayName'),
                  'machine names do not match post-update');
   });
 });
