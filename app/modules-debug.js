@@ -267,6 +267,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/environment-header.js'
         },
 
+        'juju-machine-token': {
+          fullpath: '/juju-ui/widgets/machine-token.js'
+        },
+
         'juju-machine-view-panel': {
           fullpath: '/juju-ui/widgets/machine-view-panel.js'
         },
@@ -308,6 +312,7 @@ var GlobalConfig = {
             'juju-help-dropdown',
             'juju-deployer-bar',
             'juju-environment-header',
+            'juju-machine-token',
             'juju-machine-view-panel',
             'juju-machine-view-panel-header',
             'juju-view-utils',

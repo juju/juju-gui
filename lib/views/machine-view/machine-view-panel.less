@@ -1,5 +1,4 @@
 .machine-view-panel {
-    @border-colour: #d9d9d9;
     .display-flex;
     .transition(padding-left 0.5s ease-out);
     box-sizing: border-box;
@@ -18,11 +17,11 @@
     }
     .column {
         .flex(1);
-        border-right: 1px solid @border-colour;
+        border-right: 1px solid @machine-view-border-colour;
 
         .machine-view-panel-header {
             padding: 20px;
-            border-bottom: 1px solid @border-colour;
+            border-bottom: 1px solid @machine-view-border-colour;
 
             h3 {
                 .type3;
@@ -37,16 +36,13 @@
                 height: 20px;
             }
         }
-
         .content ul {
           margin: 0;
           list-style: none;
         }
-
         .content li {
           padding: 10px;
-          border-bottom: 1px solid @border-colour;
-          list-style: none;
+          border-bottom: 1px solid @machine-view-border-colour;
         }
     }
 }

@@ -104,21 +104,40 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Render the machine token widgets.
+         *
+         * @method _renderMachineTokens
+         */
+        _renderMachineTokens: function(label) {
+          var container = this.get('container'),
+              machineList = container.one('.machines .content ul'),
+              machines = this.get('machines').filterByParent(null);
+
+          if (machines.length > 0) {
+            Y.Object.each(machines, function(machine) {
+              var node = Y.Node.create('<li></li>');
+              new views.MachineToken({
+                container: node,
+                title: machine.displayName,
+                id: machine.id,
+                hardware: machine.hardware
+              }).render();
+              machineList.append(node);
+            });
+          }
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
          */
         render: function() {
-          var container = this.get('container'),
-              machines, html;
-          // look only at top level machines; the rest are containers
-          machines = this.get('machines').filterByParent(null);
-          html = this.template({
-            machines: machines
-          });
-          container.setHTML(html);
+          var container = this.get('container');
+          container.setHTML(this.template());
           container.addClass('machine-view-panel');
           this._renderHeaders();
+          this._renderMachineTokens();
           return this;
         },
 
@@ -162,6 +181,7 @@ YUI.add('machine-view-panel', function(Y) {
     'node',
     'handlebars',
     'juju-templates',
+    'machine-token',
     'machine-view-panel-header'
   ]
 });
