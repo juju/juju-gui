@@ -159,6 +159,8 @@ YUI.add('ghost-service-inspector', function(Y) {
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
           topo = this.get('topo');
+      // Only create a service inspector for visible ghost inspectors.
+      var createServiceInspector = !this.get('destroyed');
 
       if (e.err) {
         db.notifications.add(
@@ -179,9 +181,9 @@ YUI.add('ghost-service-inspector', function(Y) {
           }));
 
       // Now that we are using the same model for the ghost and service views
-      // we need to close the inspector to deactivate the databinding
-      // before setting else we end up with a race condition on nodes which
-      // no longer exist.
+      // we need to close the inspector to deactivate the databinding before
+      // setting else we end up with a race condition on nodes which no longer
+      // exist. Note that this is idempotent and safe to call multiple times.
       this.destroy();
 
       var ghostId = ghostService.get('id');
@@ -208,7 +210,9 @@ YUI.add('ghost-service-inspector', function(Y) {
         // XXX Fire a viewNavigate event with a change object so that the
         // routing in the browser.js can build a correct url.
       } else {
-        environmentView.createServiceInspector(ghostService);
+        if (createServiceInspector) {
+          environmentView.createServiceInspector(ghostService);
+        }
       }
       topo.showMenu(serviceName);
       topo.annotateBoxPosition(boxModel);
