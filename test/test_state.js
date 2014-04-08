@@ -25,8 +25,10 @@ describe('State object', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'juju-app-state',
+        'querystring',
         function(Y) {
           ns = Y.namespace('juju.models');
+
           done();
         });
   });
@@ -75,13 +77,6 @@ describe('State object', function() {
     request.params.viewmode = viewmode;
     state.loadRequest(request);
     assert.equal(state.getCurrent('viewmode'), viewmode);
-  });
-
-  it('parses hash out of the request properly', function() {
-    var hash = 'foo';
-    window.location.hash = hash;
-    state.loadRequest(request);
-    assert.equal(state.getCurrent('hash'), '#' + hash);
   });
 
   it('does not add sidebar to urls that do not require it', function() {
@@ -186,6 +181,5 @@ describe('State object', function() {
       });
       assert.equal(url, '/search?text=mysql');
     });
-
   });
 });
