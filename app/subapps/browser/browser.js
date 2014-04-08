@@ -346,6 +346,7 @@ YUI.add('subapp-browser', function(Y) {
         interesting: null
       };
 
+      // XXX this should be moved to the mv flag soon.
       if (window.flags && window.flags.state) {
         this.state = new models.UIState();
       } else {

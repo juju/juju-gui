@@ -250,70 +250,89 @@ YUI.add('juju-app-state', function(Y) {
       @return {Object} The section delimited state object.
     */
     _buildSections: function(paths, query, hash) {
-      var inspectorState, machineState, charmState,
-          state = { sectionA: {}, sectionB: {} };
+      var state = { sectionA: {}, sectionB: {} };
       // Loop through each part and dispatch each part to the appropriate url
       // parse method.
       paths.forEach(function(part) {
         // We check if it's at 0 index in case someone has a service/machine
         // called 'inspector' or 'machine' etc.
         if (part.indexOf('inspector') === 0) {
-          inspectorState = this._parseInspectorUrl(part);
+          state.sectionA = this._addToSection({
+            component: 'inspector',
+            metadata: this._parseInspectorUrl(part)
+          });
         } else if (part.indexOf('machine') === 0) {
-          machineState = this._parseMachineUrl(part);
+          state.sectionB = this._addToSection({
+            component: 'machine',
+            metadata: this._parseMachineUrl(part)
+          });
         } else if (part.length > 0) {
           // If it's not an inspector or machine and it's more than 0 characters
           // then it's a charm url.
           // The window.location.hash property is '#undefined' if no hash is
-          // let in phantomjs so this is a hack to workaround that bug.
+          // set in phantomjs so this is a hack to workaround that bug.
           hash = hash || window.location.hash;
           if (hash === '#undefined') { hash = undefined; }
           // We only support hashes for the charm urls.
-          charmState = this._parseCharmUrl(part, hash);
+          state.sectionA = this._addToSection({
+            component: 'charmbrowser',
+            metadata: this._parseCharmUrl(part, hash)
+          });
         }
       }, this);
-      // `sectionA` houses the charmbrowser and the inspector. If more
-      // components get added to `sectionA` add them to this list.
-      var componentsA = {
-        inspector: inspectorState,
-        charmbrowser: charmState || query };
-      Object.keys(componentsA).forEach(function(key) {
-        // The first component with a defined value is the one which wins and
-        // will be rendered into sectionA.
-        if (componentsA[key]) {
-          state.sectionA.component = key;
-          var metadata = {};
-          if (key === 'charmbrowser') {
-            // `charmbrowser` is a special case because it handles the charm
-            // details, browser search, and browser default.
-            if (charmState) {
-              metadata.id = charmState.id;
-              if (charmState.hash) { metadata.hash = charmState.hash; }
-            }
-            if (query) { metadata.search = query; }
-          } else {
-            metadata = componentsA[key];
-          }
-          if (Y.Object.size(metadata) > 0) {
-            state.sectionA.metadata = metadata;
-          }
-        }
-      });
-      // `sectionB` houses the machine view. If more components get added to
-      // `sectionB` add them to this list.
-      var componentsB = {
-        machine: machineState };
-      Object.keys(componentsB).forEach(function(key) {
-        // The first component with a defined value is the one which wins and
-        // will be rendered into sectionB.
-        if (componentsB[key]) {
-          state.sectionB.component = key;
-          if (componentsB[key] && Y.Object.size(componentsB[key]) > 0) {
-            state.sectionB.metadata = componentsB[key];
-          }
-        }
-      });
+      if (query) {
+        // `state` is passed in by reference and modified in place.
+        this._addQueryState(state, query);
+      }
       return state;
+    },
+    /**
+      Adds the query params to their appropriate sections in the state object.
+
+      Because you can provide query params without specifying a base component
+      we need to add the query param data into the state after the rest of the
+      state has been parsed.
+
+      @method _addQueryState
+      @param {Object} state The built state object.
+      @param {String} query The text of the search query value.
+    */
+    _addQueryState: function(state, query) {
+      // Right now we only support a single query param 'text' and it's for
+      // search. When more are added this method is where we can add the
+      // additional complexity.
+      Y.namespace.call(state, 'sectionA.metadata.search');
+      Y.namespace.call(state, 'sectionA.component');
+      state.sectionA.component = 'charmbrowser';
+      state.sectionA.metadata.search = query;
+    },
+
+    /**
+      Adds the supplied configuration parameters into the section defined.
+
+      @method _addToSection
+      @param {Object} config The config to generate the section parameters.
+        ex) {
+          component: 'charmbrowser',
+          metadata: this._parseCharmUrl(part, hash);
+        }
+    */
+    _addToSection: function(config) {
+      var sectionState = {};
+      var metadata = config.metadata;
+      sectionState.component = config.component;
+      if (metadata && Y.Object.size(metadata) > 0) {
+        sectionState.metadata = metadata;
+      }
+
+      // if (component === 'charmbrowser') {
+
+      // } else {
+      //   if (Y.Object.size(metadata) > 0) {
+      //     sectionState.metadata = metadata;
+      //   }
+      // }
+      return sectionState;
     },
 
     /**
@@ -369,7 +388,7 @@ YUI.add('juju-app-state', function(Y) {
     */
     _parseCharmUrl: function(url, hash) {
       var state = {};
-      state.id = url;
+      if (url) { state.id = url; }
       if (hash) {
         // There are legacy hashes which have a 'bws_' prefix. This strips the
         // bws to allow it to fall through to it's real value
