@@ -348,7 +348,19 @@ YUI.add('subapp-browser', function(Y) {
 
       // XXX this should be moved to the mv flag soon.
       if (window.flags && window.flags.state) {
-        this.state = new models.UIState();
+        this.state = new models.UIState({
+          dispatchers: {
+            sectionA: {
+              charmbrowser: this.charmbrowser.bind(this),
+              inspector: this.inspector.bind(this),
+              empty: this.emptySectionA.bind(this)
+            },
+            sectionB: {
+              machine: this.machine.bind(this),
+              empty: this.emptySectionB.bind(this)
+            }
+          }
+        });
       } else {
         this.state = new models.State();
       }
@@ -367,8 +379,30 @@ YUI.add('subapp-browser', function(Y) {
         }
         this.navigate(url);
       });
-
     },
+
+    /**
+      Handles rendering and/or updating the charmbrowser UI component.
+
+      @method charmbrowser
+      @param {Object|String} metadata The metadata to pass to the charmbrowser
+        view.
+    */
+    charmbrowser: function(metadata) {},
+
+    /**
+      Empties out the sectionA UI making sure to properly clean up.
+
+      @method emptySectionA
+    */
+    emptySectionA: function() {},
+
+    /**
+      Empties out the sectionB UI making sure to properly clean up.
+
+      @method emptySectionB
+    */
+    emptySectionB: function() {},
 
     /**
        Render the charm details view
