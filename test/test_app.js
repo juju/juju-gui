@@ -71,7 +71,8 @@ function injectData(app, data) {
           .set('id', 'test-container')
           .addClass('container')
           .append(Y.Node.create('<span/>')
-            .set('id', 'environment-name'))
+            .set('id', 'environment-name')
+            .addClass('environment-name'))
           .append(Y.Node.create('<span/>')
             .addClass('provider-type'))
           .hide();
@@ -191,6 +192,23 @@ function injectData(app, data) {
          container.one('#environment-name').get('text'),
          'Environment');
        });
+
+    it('should show a the environment name if one is configured', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
+      });
+      var name = 'Sandbox';
+      assert.equal(
+          'Environment',
+          container.one('.environment-name').get('text'));
+      app.env.set('environmentName', name);
+      assert.equal(container.one('.environment-name').get('text'), 'Sandbox');
+    });
 
     it('should show the provider type, when available', function() {
       constructAppInstance({
