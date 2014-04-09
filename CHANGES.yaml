@@ -20,7 +20,35 @@
 
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
-- unreleased:
+- 1.0.2:
+    - >
+      Safari is now a first class browser. You can use it without any notice
+      about it being unsupported and it's built into our current CI testing.
+    - >
+      The GUI will now start to provide notifications of bundle deployments
+      that were already in progress before you opened the GUI. This means that
+      if you deply a bundle via quickstart, after you log into the GUI, you'll
+      still get notifications of the bundles success or failure.
+    - >
+      The GUI will no longer export itself. This is to prevent issues in
+      reusing your bundle file that is generated with juju-quickstart or
+      getting the bundle into the charm store. If you do want to have a
+      specific GUI instance in your bundle, make sure the service name is not
+      "juju-gui".
+    - Bundle deployment urls are now simplified and the deploy tab is updated.
+    - (FIX) Allow local charms deployed to show their icon on service blocks.
+    - (FIX) Update the header to show the environment name correctly.
+    - (FIX) Only load the relation icons once.
+    - (Fix) Improve d3 loading loading times by using a custom build of it.
+    - Update Vagrant development image for easier hacking on the GUI.
+    - >
+      Add flag for "mv" for current machine view implementation work. This
+      includes a new panel and tokens to represent machines and units of
+      services to place on specific machines.
+    - >
+      Add flag "il" for moving the inspector into the left sidebar. This also
+      brings in work for a deployer bar to allow users to build a collection
+      of changes to deploy at one time.
 - 1.0.1:
     - >
       Local charms may now be upgraded by dragging another zip file with the
