@@ -34,47 +34,11 @@ YUI.add('juju-app-state', function(Y) {
   // back to State.
   ns.UIState = Y.Base.create('state', Y.Base, [], {
     /**
-     * Set the value for the current state. Protected because clients should
-     * provide new values for the state via the
-     * {{#crossLink "loadRequest:method"}} method.
-     *
-     * @method _setCurrent
-     * @protected
-     * @param {String} field the part of the state to set.
-     * @param {String} value the new value.
-     */
-    _setCurrent: function(field, value) {
-      this._current[field] = value;
-    },
-
-    /**
-     * Set the value for the previous state. Protected because clients should
-     * provide new values for the state via the
-     * {{#crossLink "loadRequest:method"}} method.
-     *
-     * @method _setPrevious
-     * @protected
-     * @param {String} field the part of the state to set.
-     * @param {String} value the new value.
-     */
-    _setPrevious: function(field, value) {
-      this._previous[field] = value;
-    },
-
-    /**
      * Create an initial state for later url generation.
      *
      * @method initializer
      */
     initializer: function() {
-      this._previous = {
-        charmID: null,
-        querystring: null,
-        hash: null,
-        search: null,
-        viewmode: null
-      };
-      this._current = Y.merge(this._previous, {});
       this.filter = new ns.Filter();
     },
 
@@ -84,7 +48,6 @@ YUI.add('juju-app-state', function(Y) {
      * @method destructor
      */
     destructor: function() {
-      delete this._current;
       this.filter.destroy();
     },
 
@@ -92,42 +55,114 @@ YUI.add('juju-app-state', function(Y) {
      * Verify that a particular part of the state has changed.
      *
      * @method hasChanged
+     * @param {String} section the section that the field is in.
      * @param {String} field the part of the state to check.
      */
-    hasChanged: function(field) {
-      return this.getPrevious(field) !== this.getCurrent(field);
+    hasChanged: function(section, field) {
+      var previous = this.getState('previous', section, field);
+      var current = this.getState('current', section, field);
+      return previous !== current;
     },
 
     /**
-     * Get the value for the current state.
-     *
-     * @method getCurrent
-     * @param {String} field the part of the state to get.
-     */
-    getCurrent: function(field) {
-      return this._current[field];
+      Get the value for the supplied state.
+
+      @method getState
+      @param {String} state 'current' or 'previous' state value.
+      @param {String} section The section that the field is in.
+      @param {String} field The part of the state to get.
+    */
+    getState: function(state, section, field) {
+      var stateObj = this.get(state),
+          sectionObj = stateObj[section],
+          value;
+      if (sectionObj) { value = sectionObj[field]; }
+      return value;
     },
 
     /**
-     * Get the value for the previous state.
-     *
-     * @method getPrevious
-     * @param {String} field the part of the state to get.
-     */
-    getPrevious: function(field) {
-      return this._previous[field];
+      This takes a full state object which was parsed in the `loadRequest`
+      method and saves it in `_current` moving the `_current` value into
+      `_previous`. Then dispatching the new state object to the UI section
+      dispatchers.
+
+      @method saveState
+      @param {Object} state The state object from loadRequest
+    */
+    saveState: function(state) {
+      this.set('previous', Y.merge(this.get('current'))); // clones the object.
+      this.set('current', state);
+      this.dispatch(state);
+      return state;
     },
 
     /**
-     * Update the previous state with the view state now that we're done
-     * processing the request.
-     *
-     * @method save
-     */
-    save: function() {
-      this._previous = Y.merge(
-          this._previous,
-          this._current);
+      Checks to see if the sections components have changed and then empties
+      them out and then dispatches for the appropriate section.
+
+      This method can be called from anywhere as long as it's passed a valid
+      complete state object.
+
+      @method dispatch
+      @param {Object} state The current state object.
+    */
+    dispatch: function(state) {
+      var sections = ['sectionA', 'sectionB'];
+      // If the component of a section has changed then clean out that section.
+      sections.forEach(function(section) {
+        if (this.hasChanged(section, 'component')) {
+          this._emptySection(section);
+        }
+        this._dispatchSection(section, state[section]);
+      }, this);
+    },
+
+    /**
+      Calls the appropriate dispatch method for the section.
+
+      @method _dispatchSection
+      @param {String} section The section to dispatch.
+      @param {Object} state The current state object for the section.
+    */
+    _dispatchSection: function(section, state) {
+      var sections = {
+        sectionA: 'SectionA',
+        sectionB: 'SectionB'
+      };
+      // calls _dispatchSectionA or _dispatchSectionB
+      this['_dispatch' + sections[section]](state);
+    },
+
+    /**
+      Calls the dispatcher subscribed on instantiation for the sectionA
+      component.
+
+      @method _dispatchSectionA
+      @param {Object} state SectionA's state object.
+    */
+    _dispatchSectionA: function(state) {
+      this.get('dispatchers').sectionA[state.component](state.metadata);
+    },
+
+    /**
+      Calls the dispatcher subscribed on instantiation for the sectionB
+      component.
+
+      @method _dispatchSectionB
+      @param {Object} state SectionB's state object.
+    */
+    _dispatchSectionB: function(state) {
+      this.get('dispatchers').sectionB[state.component](state.metadata);
+    },
+
+    /**
+      Calls the subscribed empty method for the passed in section.
+
+      @method _emptySection
+      @param {String} section The section to call the empty listener on.
+    */
+    _emptySection: function(section) {
+      this.get('dispatchers')[section].empty();
     },
 
     /**
@@ -236,6 +271,7 @@ YUI.add('juju-app-state', function(Y) {
       var paths = this._splitIntoComponents(url);
       // Organize the paths into their sections.
       state = this._buildSections(paths, query && query.text, hash);
+      this.saveState(state);
       return state;
     },
 
@@ -324,14 +360,6 @@ YUI.add('juju-app-state', function(Y) {
       if (metadata && Y.Object.size(metadata) > 0) {
         sectionState.metadata = metadata;
       }
-
-      // if (component === 'charmbrowser') {
-
-      // } else {
-      //   if (Y.Object.size(metadata) > 0) {
-      //     sectionState.metadata = metadata;
-      //   }
-      // }
       return sectionState;
     },
 
@@ -449,7 +477,40 @@ YUI.add('juju-app-state', function(Y) {
       return path.replace(/^fullscreen\/?|sidebar\/?|minimized\/?/, '');
     }
 
-  }, { ATTRS: { } });
+  }, {
+    ATTRS: {
+      /**
+        The current state value
+
+        @attribute current
+        @type {Object}
+        @default {}
+      */
+      current: {
+        value: {}
+      },
+      /**
+        The previous state value
+
+        @attribute previous
+        @type {Object}
+        @default {}
+      */
+      previous: {
+        value: {}
+      },
+      /**
+        Supplied methods for section ui dispatching
+
+        @attribute dispatchers
+        @type {Object}
+        @default {}
+      */
+      dispatchers: {
+        value: {}
+      }
+    }
+  });
 
 
 

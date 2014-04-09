@@ -20,15 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 describe('UI State object', function() {
-  var Y, ns, state, request;
+  var Y, ns, state, request, testUtils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
+        'juju-tests-utils',
         'juju-app-state',
         'querystring',
         function(Y) {
           ns = Y.namespace('juju.models');
-
+          testUtils = Y['juju-tests'].utils;
           done();
         });
   });
@@ -46,60 +47,6 @@ describe('UI State object', function() {
   afterEach(function(done) {
     state.after('destroy', function() { done(); });
     state.destroy();
-  });
-
-  it('detects changed fields appropriately', function() {
-    state._setPrevious('charmID', 'bar');
-    state._setCurrent('charmID', 'foo');
-    assert.equal(state.hasChanged('charmID'), true,
-                 'Did not detect changed field');
-    state._setPrevious('querystring', 'foo');
-    state._setCurrent('querystring', 'foo');
-    assert.equal(state.hasChanged('querystring'), false,
-                 'False positive on an unchanged field');
-  });
-
-  it('saves the current state back to the old state', function() {
-    var expected = {
-      charmID: 'scooby',
-      querystring: 'shaggy',
-      hash: 'velma',
-      search: 'daphne',
-      viewmode: 'fred'
-    };
-    state._current = expected;
-    state.save();
-    assert.deepEqual(state._previous, expected);
-  });
-
-  it('does not add sidebar to urls that do not require it', function() {
-    // sidebar is the default viewmode and is not required on urls that have
-    // a charm id in them or the root url. Leave out the viewmode in these
-    // cases.
-    var url = state.getUrl({
-      viewmode: 'sidebar',
-      charmID: 'precise/mysql-10',
-      search: undefined,
-      filter: undefined
-    });
-    assert.equal(url, 'precise/mysql-10');
-
-    url = state.getUrl({
-      viewmode: 'sidebar',
-      charmID: undefined,
-      search: undefined,
-      filter: undefined
-    });
-    assert.equal(url, '');
-
-    // The viewmode is required for search related routes though.
-    url = state.getUrl({
-      viewmode: 'sidebar',
-      charmID: undefined,
-      search: true,
-      filter: undefined
-    });
-    assert.equal(url, 'sidebar/search');
   });
 
   describe('Filter for State object', function() {
@@ -216,6 +163,111 @@ describe('UI State object', function() {
             urls[key],
             key + ' did not split correctly');
       });
+    });
+  });
+
+  describe('saveState', function() {
+    it('moves the current state to the previous state', function() {
+      var newState = { sectionA: {}, sectionB: {} };
+      assert.deepEqual(state.get('previous'), {});
+      assert.deepEqual(state.get('current'), {});
+      var dispatchStub = testUtils.makeStubMethod(state, 'dispatch');
+      this._cleanups.push(dispatchStub.reset);
+      state.saveState(newState);
+      assert.deepEqual(state.get('previous'), {});
+      assert.deepEqual(state.get('current'), newState);
+      assert.equal(dispatchStub.calledOnce(), true);
+      assert.deepEqual(dispatchStub.lastArguments()[0], newState);
+    });
+  });
+
+  describe('dispatching', function() {
+    describe('dispatch', function() {
+      it('empties sections when components change', function() {
+        var newState = {
+          sectionA: {
+            component: 'charmbrowser'
+          }, sectionB: {}
+        };
+        // Make sure that the defaults are set properly.
+        assert.deepEqual(state.get('previous'), {});
+        assert.deepEqual(state.get('current'), {});
+        // Fake out that the current state changed.
+        state.set('current', newState);
+        var emptyStub = testUtils.makeStubMethod(state, '_emptySection');
+        this._cleanups.push(emptyStub.reset);
+        var dispatchSectionStub = testUtils.makeStubMethod(
+            state, '_dispatchSection');
+        this._cleanups.push(dispatchSectionStub.reset);
+        // Also calls hasChanged() internally but not stubbing to make it a
+        // bit of an integration test.
+        state.dispatch(newState);
+        assert.equal(emptyStub.callCount(), 1);
+        assert.equal(dispatchSectionStub.callCount(), 2);
+      });
+      it('leaves sections when components don\'t change', function() {
+        var newState = { sectionA: {}, sectionB: {} };
+        // Make sure that the defaults are set properly.
+        assert.deepEqual(state.get('previous'), {});
+        assert.deepEqual(state.get('current'), {});
+        var emptyStub = testUtils.makeStubMethod(state, '_emptySection');
+        this._cleanups.push(emptyStub.reset);
+        var dispatchSectionStub = testUtils.makeStubMethod(
+            state, '_dispatchSection');
+        this._cleanups.push(dispatchSectionStub.reset);
+        // Also calls hasChanged() internally but not stubbing to make it a
+        // bit of an integration test.
+        state.dispatch(newState);
+        assert.equal(emptyStub.callCount(), 0);
+        assert.equal(dispatchSectionStub.callCount(), 2);
+      });
+    });
+    describe('dispatchers', function() {
+      var dispatchers;
+
+      beforeEach(function() {
+        dispatchers = {
+          sectionA: {
+            charmbrowser: testUtils.makeStubFunction(),
+            empty: testUtils.makeStubFunction()
+          },
+          sectionB: {
+            machine: testUtils.makeStubFunction(),
+            empty: testUtils.makeStubFunction()
+          }
+        };
+        state.set('dispatchers', dispatchers);
+      });
+
+      it('_dispatchSection: calls registered sectionA dispatcher', function() {
+        var newState = {
+          component: 'charmbrowser',
+          metadata: 'foo'
+        };
+        state._dispatchSection('sectionA', newState);
+        var charmbrowser = dispatchers.sectionA.charmbrowser;
+        assert.equal(charmbrowser.calledOnce(), true);
+        assert.equal(charmbrowser.lastArguments()[0], newState.metadata);
+      });
+
+      it('_dispatchSection: calls registered sectionB dispatcher', function() {
+        var newState = {
+          component: 'machine',
+          metadata: 'foo'
+        };
+        state._dispatchSection('sectionB', newState);
+        var machine = dispatchers.sectionB.machine;
+        assert.equal(machine.calledOnce(), true);
+        assert.equal(machine.lastArguments()[0], newState.metadata);
+      });
+
+      it('_emptySection: calls registered empty dispatcher', function() {
+        state._emptySection('sectionA');
+        assert.equal(dispatchers.sectionA.empty.calledOnce(), true);
+        state._emptySection('sectionB');
+        assert.equal(dispatchers.sectionB.empty.calledOnce(), true);
+      });
+
     });
   });
 
@@ -695,6 +747,9 @@ describe('UI State object', function() {
     });
 
     it('parses all of the urls properly', function() {
+      var loopcount = 0;
+      var saveStub = testUtils.makeStubMethod(state, 'saveState');
+      this._cleanups.push(saveStub.reset);
       Object.keys(urls).forEach(function(key) {
         var req = buildRequest(key),
             hash, oldHash;
@@ -702,12 +757,17 @@ describe('UI State object', function() {
           hash = req.hash;
           delete req.hash;
         }
+        loopcount += 1;
         assert.deepEqual(
             state.loadRequest(req, hash),
             urls[key],
             key + ' did not parse correctly');
+        assert.equal(
+            saveStub.callCount(),
+            loopcount,
+            'saveState was not called on every request');
+
       });
     });
-
   });
 });
