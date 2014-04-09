@@ -99,7 +99,7 @@ describe('Ghost Inspector', function() {
       db: db,
       model: service,
       env: env,
-      //environment: this,
+      environment: view,
       charmModel: charm,
       topo: view.topo,
       store: fakeStore
@@ -226,6 +226,17 @@ describe('Ghost Inspector', function() {
     assert.equal('mediawiki', params.ServiceName);
     assert.equal(numUnits, params.NumUnits);
     assert.deepEqual(config, params.Config);
+  });
+
+  it('opens a service inspector in place of the ghost inspector', function() {
+    inspector = setUpInspector();
+    // Create a second inspector.  Our stub beneath should only be called once,
+    // and only on the above insepctor.
+    setUpInspector(subordinateCharmData);
+    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
+    inspector._deployCallbackHandler('mediawiki', {}, {}, {});
+    assert.isTrue(stubCreate.calledOnce());
+    stubCreate.reset();
   });
 
   it('does not display unit count for subordinate charms', function() {
