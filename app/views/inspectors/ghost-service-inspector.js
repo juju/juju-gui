@@ -158,9 +158,8 @@ YUI.add('ghost-service-inspector', function(Y) {
       var db = this.get('db'),
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
-          topo = this.get('topo');
-      // Only create a service inspector for visible ghost inspectors.
-      var createServiceInspector = !this.get('destroyed');
+          topo = this.get('topo'),
+          createServiceInspector = false;
 
       if (e.err) {
         db.notifications.add(
@@ -180,13 +179,11 @@ YUI.add('ghost-service-inspector', function(Y) {
             level: 'info'
           }));
 
-      // Now that we are using the same model for the ghost and service views
-      // we need to close the inspector to deactivate the databinding before
-      // setting else we end up with a race condition on nodes which no longer
-      // exist. Note that this is idempotent and safe to call multiple times.
-      this.destroy();
-
       var ghostId = ghostService.get('id');
+      if (environmentView.inspector) {
+        createServiceInspector =
+            environmentView.inspector.get('model').get('id') === ghostId;
+      }
       ghostService.setAttrs({
         id: serviceName,
         displayName: undefined,
@@ -195,6 +192,12 @@ YUI.add('ghost-service-inspector', function(Y) {
         config: config,
         constraints: constraints
       });
+
+      // Now that we are using the same model for the ghost and service views
+      // we need to close the inspector to deactivate the databinding before
+      // setting else we end up with a race condition on nodes which no longer
+      // exist.
+      this.destroy();
 
       // Transition the ghost viewModel to the new
       // service. It's alive!
@@ -211,6 +214,10 @@ YUI.add('ghost-service-inspector', function(Y) {
         // routing in the browser.js can build a correct url.
       } else {
         if (createServiceInspector) {
+          // Clean up any new instances of the inspector.
+          if (environmentView.inspector) {
+            environmentView.inspector.destroy();
+          }
           environmentView.createServiceInspector(ghostService);
         }
       }

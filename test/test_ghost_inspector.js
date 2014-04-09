@@ -234,9 +234,10 @@ describe('Ghost Inspector', function() {
     // and only on the above insepctor.
     setUpInspector(subordinateCharmData);
     var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
+    this._cleanups.push(stubCreate.reset);
+    inspector.get('environment').inspector = inspector;
     inspector._deployCallbackHandler('mediawiki', {}, {}, {});
     assert.isTrue(stubCreate.calledOnce());
-    stubCreate.reset();
   });
 
   it('does not display unit count for subordinate charms', function() {
