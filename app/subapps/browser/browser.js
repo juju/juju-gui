@@ -351,12 +351,12 @@ YUI.add('subapp-browser', function(Y) {
         this.state = new models.UIState({
           dispatchers: {
             sectionA: {
-              charmbrowser: this.charmbrowser.bind(this),
-              inspector: this.inspector.bind(this),
+              charmbrowser: this._charmbrowser.bind(this),
+              inspector: this._inspector.bind(this),
               empty: this.emptySectionA.bind(this)
             },
             sectionB: {
-              machine: this.machine.bind(this),
+              machine: this._machine.bind(this),
               empty: this.emptySectionB.bind(this)
             }
           }
@@ -384,11 +384,29 @@ YUI.add('subapp-browser', function(Y) {
     /**
       Handles rendering and/or updating the charmbrowser UI component.
 
-      @method charmbrowser
+      @method _charmbrowser
       @param {Object|String} metadata The metadata to pass to the charmbrowser
         view.
     */
-    charmbrowser: function(metadata) {},
+    _charmbrowser: function(metadata) {},
+
+    /**
+      Handles rendering and/or updating the inspector UI component.
+
+      @method _inspector
+      @param {Object|String} metadata The metadata to pass to the inspector
+        view.
+    */
+    _inspector: function(metadata) {},
+
+    /**
+      Handles rendering and/or updating the machine UI component.
+
+      @method _machine
+      @param {Object|String} metadata The metadata to pass to the machine
+        view.
+    */
+    _machine: function(metadata) {},
 
     /**
       Empties out the sectionA UI making sure to properly clean up.

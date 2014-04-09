@@ -39,8 +39,6 @@ YUI.add('juju-app-state', function(Y) {
      * @method initializer
      */
     initializer: function() {
-      this._current = {};
-      this._previous = {};
       this.filter = new ns.Filter();
     },
 
@@ -61,32 +59,25 @@ YUI.add('juju-app-state', function(Y) {
      * @param {String} field the part of the state to check.
      */
     hasChanged: function(section, field) {
-      return this.getPrevious(section, field) !==
-          this.getCurrent(section, field);
+      var previous = this.getState('previous', section, field);
+      var current = this.getState('current', section, field);
+      return previous !== current;
     },
 
     /**
-     * Get the value for the current state.
-     *
-     * @method getCurrent
-     * @param {String} section the section that the field is in.
-     * @param {String} field the part of the state to get.
-     */
-    getCurrent: function(section, field) {
-      var current = this.get('current');
-      return current[section][field];
-    },
+      Get the value for the supplied state.
 
-    /**
-     * Get the value for the previous state.
-     *
-     * @method getPrevious
-     * @param {String} section the section that the field is in.
-     * @param {String} field the part of the state to get.
-     */
-    getPrevious: function(section, field) {
-      var previous = this.get('previous');
-      return previous[section][field];
+      @method getState
+      @param {String} state 'current' or 'previous' state value.
+      @param {String} section The section that the field is in.
+      @param {String} field The part of the state to get.
+    */
+    getState: function(state, section, field) {
+      var stateObj = this.get(state),
+          sectionObj = stateObj[section],
+          value;
+      if (sectionObj) { value = sectionObj[field]; }
+      return value;
     },
 
     /**
@@ -122,10 +113,24 @@ YUI.add('juju-app-state', function(Y) {
         if (this.hasChanged(section, 'component')) {
           this._emptySection(section);
         }
+        this._dispatchSection(section, state[section]);
       }, this);
-      // Dispatch the state in the sections
-      this._dispatchSectionA(state.sectionA);
-      this._dispatchSectionB(state.sectionB);
+    },
+
+    /**
+      Calls the appropriate dispatch method for the section.
+
+      @method _dispatchSection
+      @param {String} section The section to dispatch.
+      @param {Object} state The current state object for the section.
+    */
+    _dispatchSection: function(section, state) {
+      var sections = {
+        sectionA: 'SectionA',
+        sectionB: 'SectionB'
+      };
+      // calls _dispatchSectionA or _dispatchSectionB
+      this['_dispatch' + sections[section]](state);
     },
 
     /**
@@ -136,7 +141,7 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state SectionA's state object.
     */
     _dispatchSectionA: function(state) {
-      this.dispatchers.sectionA[state.component](state.metadata);
+      this.get('dispatchers').sectionA[state.component](state.metadata);
     },
 
     /**
@@ -147,7 +152,7 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state SectionB's state object.
     */
     _dispatchSectionB: function(state) {
-      this.dispatchers.sectionB[state.component](state.metadata);
+      this.get('dispatchers').sectionB[state.component](state.metadata);
     },
 
     /**
@@ -157,7 +162,7 @@ YUI.add('juju-app-state', function(Y) {
       @param {String} section The section to call the empty listener on.
     */
     _emptySection: function(section) {
-      this.dispatchers[section].empty();
+      this.get('dispatchers')[section].empty();
     },
 
     /**
@@ -266,7 +271,8 @@ YUI.add('juju-app-state', function(Y) {
       var paths = this._splitIntoComponents(url);
       // Organize the paths into their sections.
       state = this._buildSections(paths, query && query.text, hash);
-      return this.saveState();
+      this.saveState(state);
+      return state;
     },
 
     /**
@@ -491,6 +497,16 @@ YUI.add('juju-app-state', function(Y) {
         @default {}
       */
       previous: {
+        value: {}
+      },
+      /**
+        Supplied methods for section ui dispatching
+
+        @attribute dispatchers
+        @type {Object}
+        @default {}
+      */
+      dispatchers: {
         value: {}
       }
     }
