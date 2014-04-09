@@ -811,6 +811,52 @@ describe('utilities', function() {
 })();
 
 (function() {
+  describe('utils.getCharmIconUrl', function() {
+    var env, store, testUtils, utils, Y;
+    var requirements = ['juju-tests-utils', 'juju-views'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      env = {getLocalCharmFileUrl: testUtils.makeStubFunction('env-icon')};
+      store = {iconpath: testUtils.makeStubFunction('store-icon')};
+    });
+
+    it('uses the env to retrieve local charm icons', function() {
+      var url = utils.getCharmIconUrl('local:trusty/django-42', store, env);
+      assert.strictEqual(url, 'env-icon');
+      // The icon has been retrieved by calling the env method.
+      assert.strictEqual(env.getLocalCharmFileUrl.callCount(), 1);
+      var lastArguments = env.getLocalCharmFileUrl.lastArguments();
+      assert.lengthOf(lastArguments, 2);
+      assert.strictEqual('local:trusty/django-42', lastArguments[0]);
+      assert.strictEqual('icon.svg', lastArguments[1]);
+      // The store has not been used.
+      assert.strictEqual(store.iconpath.called(), false);
+    });
+
+    it('uses the store to retrieve charm store charm icons', function() {
+      var url = utils.getCharmIconUrl('cs:trusty/django-42', store, env);
+      assert.strictEqual(url, 'store-icon');
+      // The icon has been retrieved by calling the store method.
+      assert.strictEqual(store.iconpath.callCount(), 1);
+      var lastArguments = store.iconpath.lastArguments();
+      assert.lengthOf(lastArguments, 1);
+      assert.strictEqual('cs:trusty/django-42', lastArguments[0]);
+      // The env has not been used.
+      assert.strictEqual(env.getLocalCharmFileUrl.called(), false);
+    });
+
+  });
+})();
+
+(function() {
   describe('utils.extractServiceSettings', function() {
     var utils, Y;
 

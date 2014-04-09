@@ -47,9 +47,11 @@ YUI.add('juju-topology-service', function(Y) {
     var vis = topo.vis;
     var db = topo.get('db');
     var store = topo.get('store');
+    var env = topo.get('env');
 
     var visibleServices = db.services.visible();
-    views.toBoundingBoxes(this, visibleServices, topo.service_boxes, store);
+    views.toBoundingBoxes(
+        this, visibleServices, topo.service_boxes, store, env);
     // Break a reference cycle that results in uncollectable objects leaking.
     visibleServices.reset();
 

@@ -757,6 +757,25 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /**
+    Return the URL to the charm icon, handling both charms present in the
+    store and local charms.
+
+    @method getCharmIconUrl
+    @param {String} charmUrl The charm URL.
+    @param {Object} store The charm store.
+    @param {Object} env The Juju environment.
+    @return {String} The URL to the icon.svg file.
+  */
+  utils.getCharmIconUrl = function(charmUrl, store, env) {
+    if (charmUrl.indexOf('local:') === 0) {
+      // Retrieve the icon from the Juju HTTP API.
+      return env.getLocalCharmFileUrl(charmUrl, 'icon.svg');
+    }
+    // Retrieve the icon from the charm store.
+    return store.iconpath(charmUrl);
+  };
+
+  /**
    Return a template-friendly array of settings.
 
    Used for service-configuration.partial adding isBool, isNumeric metadata.
@@ -1183,7 +1202,7 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {Object} store The charm store.
    * @return {Object} id:box mapping.
    */
-  views.toBoundingBoxes = function(module, services, existing, store) {
+  views.toBoundingBoxes = function(module, services, existing, store, env) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
       if (!Y.Lang.isValue(services.getById(key))) {
@@ -1201,13 +1220,14 @@ YUI.add('juju-view-utils', function(Y) {
           if (!service.get('icon') && service.get('charm')) {
             var icon;
             var charmID = service.get('charm');
-            icon = this.store.iconpath(charmID);
+            icon = utils.getCharmIconUrl(charmID, this.store, this.env);
             service.set('icon', icon);
           }
           result[id].icon = service.get('icon');
         },
-        // Pass 'store' into the closure through the context variable 'this'.
-        {store: store}
+        // Pass 'env' and 'store' into the closure through the context variable
+        // 'this'.
+        {env: env, store: store}
     );
     return result;
   };

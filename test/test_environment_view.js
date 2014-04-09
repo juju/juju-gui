@@ -1535,10 +1535,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(boxes.haproxy, undefined);
     });
 
-    it('sets the default icon for local charms without an icon', function() {
+    it('retrieves local charms icons from the Juju env', function() {
       var iconFakeStore = new Y.juju.charmworld.APIv3({
         apiHost: 'http://localhost'
       });
+      var fakeEnv = {
+        getLocalCharmFileUrl: function(charmUrl, filename) {
+          assert.strictEqual(charmUrl, 'local:ceph-1');
+          assert.strictEqual(filename, 'icon.svg');
+          return 'https://example.com/icon.svg';
+        }
+      };
       var services = new models.ServiceList();
       services.add([
         {
@@ -1562,12 +1569,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       };
 
       var boxes = views.toBoundingBoxes(
-          module, services, existing, iconFakeStore);
+          module, services, existing, iconFakeStore, fakeEnv);
 
       // the ceph charm should have the default icon path.
       assert.equal(
           boxes['local:ceph-1'].icon,
-          'http://localhost/static/img/charm_160.svg'
+          'https://example.com/icon.svg'
       );
 
       // The mysql charm has an icon from on the server.
