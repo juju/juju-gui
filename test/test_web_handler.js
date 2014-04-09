@@ -127,6 +127,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(header, 'Basic bXl1c2VyOm15cGFzc3dk');
     });
 
+    it('returns a complete URL based on the given credentials', function() {
+      var url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
+      var expectedUrl = 'http://myuser:mypassword@' +
+          window.location.host + '/my/path';
+      assert.strictEqual(url, expectedUrl);
+    });
+
   });
 
 })();

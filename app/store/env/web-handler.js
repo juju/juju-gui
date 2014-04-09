@@ -101,6 +101,23 @@ YUI.add('juju-env-web-handler', function(Y) {
     },
 
     /**
+      Given a path and credentials, return a URL including the user:password
+      fragment. The current host is used.
+
+      @method getUrl
+      @param {String} path The target path.
+      @param {String} username The user name for basic HTTP authentication.
+      @param {String} password The password for basic HTTP authentication.
+      @return {String} The resulting URL.
+    */
+    getUrl: function(path, username, password) {
+      var location = window.location;
+      return location.protocol + '//' +
+          username + ':' + password + '@' +
+          location.host + path;
+    },
+
+    /**
       The callback from the xhr progress and load events.
 
       @method _xhrEventHandler

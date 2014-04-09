@@ -459,7 +459,7 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      Handles uploading a local charm to Juju
+      Handles uploading a local charm to Juju.
 
       @method uploadLocalCharm
       @param {Object} file The file object from the fileSources event object.
@@ -490,6 +490,24 @@ YUI.add('juju-env-go', function(Y) {
       webHandler.post(
           url, headers, file, credentials.user, credentials.password,
           progress, callback);
+    },
+
+    /**
+      Return the full URL to the Juju HTTPS API serving a local charm file.
+
+      @method getLocalCharmFileUrl
+      @param {String} charmUrl The local charm URL,
+        e.g. "local:strusty/django-42".
+      @param {String} filename The file name/path.
+        e.g. "icon.svg" or "hooks/install".
+      @return {String} The full URL to the file contents, including auth
+        credentials.
+    */
+    getLocalCharmFileUrl: function(charmUrl, filename) {
+      var credentials = this.getCredentials();
+      var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
+      var webHandler = this.get('webHandler');
+      return webHandler.getUrl(path, credentials.user, credentials.password);
     },
 
     /*

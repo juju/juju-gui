@@ -409,6 +409,7 @@ YUI.add('juju-charm-store', function(Y) {
       // XXX: #1202703 - this is a short term fix for the bug. Need longer
       // term solution.
       if (charmID.indexOf('local:') === 0) {
+        // XXX frankban: this place should become unreachable soon.
         return this.get('apiHost') +
             'static/img/charm_160.svg';
 

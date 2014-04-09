@@ -602,6 +602,29 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('getLocalCharmFileUrl', function() {
+
+      it('uses the stored webHandler to retrieve the file URL', function() {
+        var mockWebHandler = {getUrl: utils.makeStubFunction('myurl')};
+        env.set('webHandler', mockWebHandler);
+        var url = env.getLocalCharmFileUrl(
+            'local:trusty/django-42', 'icon.svg');
+        assert.strictEqual(url, 'myurl');
+        // Ensure the web handler's getUrl method has been called with the
+        // expected arguments.
+        assert.strictEqual(mockWebHandler.getUrl.callCount(), 1);
+        var lastArguments = mockWebHandler.getUrl.lastArguments();
+        assert.lengthOf(lastArguments, 3);
+        assert.strictEqual(
+            lastArguments[0],
+            '/juju-core/charms?url=local:trusty/django-42&file=icon.svg');
+        assert.strictEqual(lastArguments[1], 'user'); // User name.
+        assert.strictEqual(lastArguments[2], 'password'); // Password.
+      });
+
+    });
+
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();

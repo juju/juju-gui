@@ -28,6 +28,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-env-web-sandbox', function(Y) {
 
+  var DEFAULT_CHARM_ICON_PATH = 'static/img/charm_160.svg';
+
   var module = Y.namespace('juju.environments.web');
   var localCharmExpression = /\/juju-core\/charms\?series=(\w+)/;
 
@@ -83,6 +85,28 @@ YUI.add('juju-env-web-sandbox', function(Y) {
       }
       // This is in theory unreachable.
       console.error('unexpected POST request to ' + url);
+    },
+
+    /**
+      Given a path and credentials, return a URL including the user:password
+      fragment.
+
+      @method getUrl
+      @param {String} path The target path.
+      @param {String} username The user name for basic HTTP authentication.
+      @param {String} password The password for basic HTTP authentication.
+      @return {String} The resulting URL.
+    */
+    getUrl: function(path, username, password) {
+      if (path.indexOf('/juju-core/charms') === 0 &&
+          path.indexOf('file=icon.svg') !== -1) {
+        // This is a request for a local charm's icon.
+        // Just return the charmworld's fallback icon.
+        var store = this.get('state').get('store');
+        return store.get('apiHost') + DEFAULT_CHARM_ICON_PATH;
+      }
+      // This is in theory unreachable.
+      console.error('unexpected getUrl request to ' + path);
     }
 
   });
