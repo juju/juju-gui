@@ -49,7 +49,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     authenticated: {value: false},
     store: {required: true},
     defaultSeries: {value: 'precise'},
-    providerType: {value: 'demonstration'}
+    providerType: {value: 'demonstration'},
+    name: {value: 'Environment'}
   };
 
   Y.extend(FakeBackend, Y.Base, {
