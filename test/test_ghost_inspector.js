@@ -99,7 +99,7 @@ describe('Ghost Inspector', function() {
       db: db,
       model: service,
       env: env,
-      //environment: this,
+      environment: view,
       charmModel: charm,
       topo: view.topo,
       store: fakeStore
@@ -226,6 +226,35 @@ describe('Ghost Inspector', function() {
     assert.equal('mediawiki', params.ServiceName);
     assert.equal(numUnits, params.NumUnits);
     assert.deepEqual(config, params.Config);
+  });
+
+  it('opens a service inspector in place of the ghost inspector', function() {
+    inspector = setUpInspector();
+    // Create a second inspector.  Our stub beneath should only be called once,
+    // and only on the above insepctor.
+    setUpInspector(subordinateCharmData);
+    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
+    this._cleanups.push(stubCreate.reset);
+    inspector.get('environment').inspector = inspector;
+    inspector._deployCallbackHandler('mediawiki', {}, {}, {});
+    assert.isTrue(stubCreate.calledOnce());
+  });
+
+  it('destroys existing ghost inspector on deploy', function() {
+    inspector = setUpInspector();
+    var secondInspector = setUpInspector();
+    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
+    this._cleanups.push(stubCreate.reset);
+    var secondDestroy = utils.makeStubMethod(secondInspector, 'destroy');
+    this._cleanups.push(secondDestroy.reset);
+    secondInspector.get('environment').inspector = secondInspector;
+    inspector.set('environment', secondInspector.get('environment'));
+    inspector._deployCallbackHandler('mediawiki', {}, {}, {});
+    // Assert that the service inspector is only created once.
+    assert.isTrue(stubCreate.calledOnce(), 'Create called once.');
+    // Despite the callback being called from the first inspector, the second
+    // inspector is destroyed as well.
+    assert.isTrue(secondDestroy.called(), '2nd destroy called');
   });
 
   it('does not display unit count for subordinate charms', function() {

@@ -158,7 +158,9 @@ YUI.add('ghost-service-inspector', function(Y) {
       var db = this.get('db'),
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
-          topo = this.get('topo');
+          topo = this.get('topo'),
+          inspector = environmentView.inspector,
+          createServiceInspector = false;
 
       if (e.err) {
         db.notifications.add(
@@ -178,13 +180,15 @@ YUI.add('ghost-service-inspector', function(Y) {
             level: 'info'
           }));
 
-      // Now that we are using the same model for the ghost and service views
-      // we need to close the inspector to deactivate the databinding
-      // before setting else we end up with a race condition on nodes which
-      // no longer exist.
-      this.destroy();
-
       var ghostId = ghostService.get('id');
+      if (inspector) {
+        // If there is a ghost inspector currently open for this service, then
+        // we know we need to create a service inspector for it.  However,
+        // since the user may have closed/destroyed the original one, we need
+        // to check based on the ID of the model involved, rather than simple
+        // equality.
+        createServiceInspector = inspector.get('model').get('id') === ghostId;
+      }
       ghostService.setAttrs({
         id: serviceName,
         displayName: undefined,
@@ -193,6 +197,12 @@ YUI.add('ghost-service-inspector', function(Y) {
         config: config,
         constraints: constraints
       });
+
+      // Now that we are using the same model for the ghost and service views
+      // we need to close the inspector to deactivate the databinding before
+      // setting else we end up with a race condition on nodes which no longer
+      // exist.
+      this.destroy();
 
       // Transition the ghost viewModel to the new
       // service. It's alive!
@@ -208,7 +218,14 @@ YUI.add('ghost-service-inspector', function(Y) {
         // XXX Fire a viewNavigate event with a change object so that the
         // routing in the browser.js can build a correct url.
       } else {
-        environmentView.createServiceInspector(ghostService);
+        if (createServiceInspector) {
+          // Clean up any existing instances of the inspector so that
+          // databinding won't encounter race conditions.
+          if (inspector) {
+            inspector.destroy();
+          }
+          environmentView.createServiceInspector(ghostService);
+        }
       }
       topo.showMenu(serviceName);
       topo.annotateBoxPosition(boxModel);
