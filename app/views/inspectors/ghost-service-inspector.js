@@ -159,6 +159,7 @@ YUI.add('ghost-service-inspector', function(Y) {
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
           topo = this.get('topo'),
+          inspector = environmentView.inspector,
           createServiceInspector = false;
 
       if (e.err) {
@@ -180,9 +181,13 @@ YUI.add('ghost-service-inspector', function(Y) {
           }));
 
       var ghostId = ghostService.get('id');
-      if (environmentView.inspector) {
-        createServiceInspector =
-            environmentView.inspector.get('model').get('id') === ghostId;
+      if (inspector) {
+        // If there is a ghost inspector currently open for this service, then
+        // we know we need to create a service inspector for it.  However,
+        // since the user may have closed/destroyed the original one, we need
+        // to check based on the ID of the model involved, rather than simple
+        // equality.
+        createServiceInspector = inspector.get('model').get('id') === ghostId;
       }
       ghostService.setAttrs({
         id: serviceName,
@@ -214,9 +219,10 @@ YUI.add('ghost-service-inspector', function(Y) {
         // routing in the browser.js can build a correct url.
       } else {
         if (createServiceInspector) {
-          // Clean up any new instances of the inspector.
-          if (environmentView.inspector) {
-            environmentView.inspector.destroy();
+          // Clean up any existing instances of the inspector so that
+          // databinding won't encounter race conditions.
+          if (inspector) {
+            inspector.destroy();
           }
           environmentView.createServiceInspector(ghostService);
         }

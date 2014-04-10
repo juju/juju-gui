@@ -240,6 +240,23 @@ describe('Ghost Inspector', function() {
     assert.isTrue(stubCreate.calledOnce());
   });
 
+  it('destroys existing ghost inspector on deploy', function() {
+    inspector = setUpInspector();
+    var secondInspector = setUpInspector();
+    var stubCreate = utils.makeStubMethod(view, 'createServiceInspector');
+    this._cleanups.push(stubCreate.reset);
+    var secondDestroy = utils.makeStubMethod(secondInspector, 'destroy');
+    this._cleanups.push(secondDestroy.reset);
+    secondInspector.get('environment').inspector = secondInspector;
+    inspector.set('environment', secondInspector.get('environment'));
+    inspector._deployCallbackHandler('mediawiki', {}, {}, {});
+    // Assert that the service inspector is only created once.
+    assert.isTrue(stubCreate.calledOnce(), 'Create called once.');
+    // Despite the callback being called from the first inspector, the second
+    // inspector is destroyed as well.
+    assert.isTrue(secondDestroy.called(), '2nd destroy called');
+  });
+
   it('does not display unit count for subordinate charms', function() {
     inspector = setUpInspector(subordinateCharmData);
     var vmContainer = inspector.get('container');
