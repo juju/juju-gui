@@ -90,7 +90,7 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state The state object from loadRequest
     */
     saveState: function(state) {
-      this.set('previous', Y.merge(this.get('current'))); // clones the object.
+      this.set('previous', Y.clone(this.get('current'))); // clones the object.
       this.set('current', state);
       this.dispatch(state);
       return state;
@@ -166,82 +166,73 @@ YUI.add('juju-app-state', function(Y) {
     },
 
     /**
-     * Given the current subapp state, generate a url to pass up to the
-     * routing code to route to.
-     *
-     * @method getUrl
-     * @param {Object} change the values to change in the current state.
-     */
-    getUrl: function(change) {
-      var urlParts = [];
+      Given a valud state change object, generate a url which the application
+      can route to.
 
-      // If there are changes to the filters, we need to update our filter
-      // object first, and then generate a new query string for the state to
-      // track.
-      if (change.filter && change.filter.clear) {
-        // If the filter is set to anything else, update it.
-        this.filter.clear();
-        // We manually force this so that there's not even an empty query
-        // string generated to be visible to the user in the url.
-        change.querystring = undefined;
-      } else if (change.filter && change.filter.replace) {
-        this.filter.clear();
-        this.filter.update(change.filter);
-        change.querystring = this.filter.genQueryString();
-      } else if (change.filter) {
-        this.filter.update(change.filter);
-        change.querystring = this.filter.genQueryString();
-      }
-
-      this._current = Y.merge(this._current, change);
-      // XXX This is a hack to get around the viewmode which will be removed.
-      var skipViewmode = false;
-      if (change.inspector) {
-        urlParts.push('/inspector/' + change.inspector + '/');
-        skipViewmode = true;
-      }
-
-      if (change.machine) {
-        urlParts.push('/machine/');
-        skipViewmode = true;
-      }
-
-      if (change.topology) {
-        urlParts.push('/');
-        skipViewmode = true;
-      }
-
-      if (!skipViewmode) {
-        if (this.getCurrent('viewmode') !== 'sidebar' ||
-            this.getCurrent('search')) {
-          // There's no need to add the default view if we
-          // don't need it. However it's currently required for search views to
-          // match our current routes.
-          urlParts.push(this.getCurrent('viewmode'));
+      @method generateUrl
+      @param {Object} change A valid change object
+        ex) {
+          sectionA: {
+            component: 'inspector',
+            metadata: {}
+          }
         }
-      }
+    */
+    generateUrl: function(change) {
+      // Generate the new state temporarily.
+      var newState = Y.mix(this.get('current'), change, true);
+      var component, metadata, sectionState, searchQuery, id,
+          genUrl = '',
+          query = {},
+          hash = '',
+          urlParts = [];
+      // Loop through each section in the state to generate the urls.
+      Object.keys(newState).forEach(function(section) {
+        sectionState = newState[section];
+        component = sectionState.component;
+        metadata = sectionState.metadata || {};
+        id = metadata.id;
+        // Compress the id to remove default values.
+        if (id) { id = id.replace(/\/?~charmers/, ''); }
+        // All pushes to the urlParts array needs to be in a truthy conditional
+        // because no state parameters are required.
+        if (component === 'charmbrowser') {
+          // If the query params get more complex than just 'search' then
+          // the query parsing should be split out into it's own method.
+          searchQuery = metadata.search;
+          if (searchQuery) { query.text = searchQuery; }
+          hash = metadata.hash || '';
+          if (id) { urlParts.push(id); }
+        } else {
+          if (component) { urlParts.push(component); }
+          if (component === 'inspector') {
+            if (id) { urlParts.push(id); }
+            if (metadata.unit) { urlParts.push('unit/' + metadata.unit); }
+            if (metadata.charm) { urlParts.push('charm'); }
+          }
+          if (component === 'machine') {
+            // With machine view the id is optional.
+            if (id) { urlParts.push(id); }
+            if (metadata.container) { urlParts.push(metadata.container); }
+          }
+        }
+      }, this);
 
-      if (this.getCurrent('search')) {
-        urlParts.push('search');
-      } else if (this.getPrevious('search')) {
-        // We had a search, but are moving away; clear the previous search.
-        this.filter.clear();
+      var url;
+      // There will be no parts if all of the section state objects are empty.
+      // So set the navigate url to root.
+      if (urlParts.length === 0) {
+        url = '/';
+      } else {
+        url = '/' + urlParts.join('/') + '/';
       }
-
-      if (this.getCurrent('charmID')) {
-        urlParts.push(this.getCurrent('charmID'));
+      // Add the query string to the end of the url.
+      if (Y.Object.size(query) > 0) {
+        url = url.replace(/\/$/, '');
+        url += '?' + Y.QueryString.stringify(query);
       }
-
-      var url = urlParts.join('/');
-      if (this.getCurrent('querystring')) {
-        url = Y.Lang.sub('{ url }?{ qs }', {
-          url: url,
-          qs: this.getCurrent('querystring')
-        });
-      }
-      if (this.getCurrent('hash')) {
-        url = url + this.getCurrent('hash');
-      }
+      // Add the hash to the end of the url.
+      if (hash.length > 0) { url += '#' + hash; }
       return url;
     },
 
