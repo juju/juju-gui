@@ -28,10 +28,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI.add('juju-env-web-sandbox', function(Y) {
 
-  var DEFAULT_CHARM_ICON_PATH = 'static/img/charm_160.svg';
-
   var module = Y.namespace('juju.environments.web');
   var localCharmExpression = /\/juju-core\/charms\?series=(\w+)/;
+  // The expression below is not perfect but good enough for sandbox mode
+  // needs, in which we can safely assume the "url: query to always precede
+  // the "file" query.
+  var localCharmFilesExpression =
+      /\/juju-core\/charms(?:\/)?\?(?:url=([\w-/:]+))(?:&file=([\w-/.]+))?/;
 
   /**
    * Sandbox Web requests handler.
@@ -63,8 +66,8 @@ YUI.add('juju-env-web-sandbox', function(Y) {
     /**
       Simulate an asynchronous POST request to the given URL.
 
-      @method post
-      @param {String} url The target URL.
+      @method sendPostRequest
+      @param {String} path The remote target path/URL.
       @param {Object} headers Additional request headers as key/value pairs.
       @param {Object} data The data to send as a file object, a string or in
         general as an ArrayBufferView/Blob object.
@@ -75,16 +78,44 @@ YUI.add('juju-env-web-sandbox', function(Y) {
       @param {Function} progressCallback The progress event callback.
       @param {Function} completedCallback The load event callback.
     */
-    post: function(url, headers, data, username, password,
-                   progressCallback, completedCallback) {
-      var match = localCharmExpression.exec(url);
+    sendPostRequest: function(path, headers, data, username, password,
+                              progressCallback, completedCallback) {
+      var match = localCharmExpression.exec(path);
       if (match) {
         // This is a request to upload a local charm to juju-core.
         var state = this.get('state');
         return state.handleUploadLocalCharm(data, match[1], completedCallback);
       }
       // This is in theory unreachable.
-      console.error('unexpected POST request to ' + url);
+      console.error('unexpected POST request to ' + path);
+    },
+
+    /**
+      Simulate an asynchronous GET request to the given URL.
+
+      @method sendGetRequest
+      @param {String} path The remote target path/URL.
+      @param {Object} headers Additional request headers as key/value pairs.
+      @param {String} username The user name for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {String} password The password for basic HTTP authentication
+        (or null if no authentication is required).
+      @param {Function} progressCallback The progress event callback.
+      @param {Function} completedCallback The load event callback.
+    */
+    sendGetRequest: function(path, headers, username, password,
+                             progressCallback, completedCallback) {
+      var match = localCharmFilesExpression.exec(path);
+      if (match) {
+        // This is a request to list or retrieve local charm files.
+        var charmUrl = match[1];
+        var filename = match[2];
+        var state = this.get('state');
+        return state.handleLocalCharmFileRequest(
+            charmUrl, filename, completedCallback);
+      }
+      // This is in theory unreachable.
+      console.error('unexpected GET request to ' + path);
     },
 
     /**
@@ -98,12 +129,13 @@ YUI.add('juju-env-web-sandbox', function(Y) {
       @return {String} The resulting URL.
     */
     getUrl: function(path, username, password) {
-      if (path.indexOf('/juju-core/charms') === 0 &&
-          path.indexOf('file=icon.svg') !== -1) {
-        // This is a request for a local charm's icon.
-        // Just return the charmworld's fallback icon.
-        var store = this.get('state').get('store');
-        return store.get('apiHost') + DEFAULT_CHARM_ICON_PATH;
+      var match = localCharmFilesExpression.exec(path);
+      if (match) {
+        // This is a request for a local charm's file (usually the icon).
+        var charmUrl = match[1];
+        var filename = match[2];
+        var state = this.get('state');
+        return state.getLocalCharmFileUrl(charmUrl, filename);
       }
       // This is in theory unreachable.
       console.error('unexpected getUrl request to ' + path);

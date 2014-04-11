@@ -29,8 +29,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
   var ziputils = Y.namespace('juju.ziputils');
-  var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
+
+  var DEFAULT_CHARM_ICON_PATH = 'static/img/charm_160.svg';
   var VALUE_ERROR = {error: 'Unparsable environment data.'};
+  var UNAUTHENTICATED_ERROR = {error: 'Please log in.'};
 
   /**
   An in-memory fake Juju backend.
@@ -1989,11 +1991,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method _createErrorEvent
       @param {String} message The error message.
+      @param {String} type The response type
+        (defaulting to "error" if null/undefined is provided).
+      @param {Int} status The response status
+        (defaulting to 400 if null/undefined is provided).
+      @return {Obejct} The resulting response.
     */
-    _createErrorEvent: function(message) {
+    _createErrorEvent: function(message, type, status) {
       return {
-        type: 'error',
-        target: {responseText: {Error: message}}
+        type: type || 'error',
+        target: {responseText: {Error: message}, status: status || 400}
       };
     },
 
@@ -2113,6 +2120,64 @@ YUI.add('juju-env-fakebackend', function(Y) {
         );
       };
       ziputils.getEntries(file, callback, errback);
+    },
+
+    /**
+      Simulate retrieving the list of files included in a local charm, or
+      a specific file content.
+
+      @method handleLocalCharmFileRequest
+      @param {String} charmUrl The local charm URL,
+        e.g. "local:strusty/django-42".
+      @param {String} filename The file name/path or null/undefined if the list
+        of charm files must be returned.
+      @param {Function} completedCallback The load event callback.
+    */
+    handleLocalCharmFileRequest: function(charmUrl, filename,
+                                          completedCallback) {
+      var evt;
+      var charm = this.db.charms.getById(charmUrl);
+      if (!charm) {
+        // The local charm has not been uploaded, return a 400 bad request.
+        evt = this._createErrorEvent(
+            'unable to retrieve and save the charm: ' +
+            'charm not found in the provider storage',
+            'load', 400);
+        completedCallback(evt);
+        return;
+      }
+      // XXX frankban 2014-04-11: handle real local charm file
+      // listing/retrieval in sandbox mode.
+      if (filename) {
+        // This is a request for a specific file content: for now just return
+        // a 404 not found response.
+        evt = this._createErrorEvent('page not found', 'load', 404);
+        completedCallback(evt);
+        return;
+      }
+      // This is a request for the file list: for now just return an empty
+      // list.
+      var files = [];
+      evt = this._createSuccessEvent(JSON.stringify({Files: files}));
+      completedCallback(evt);
+    },
+
+    /**
+      Return the URL to a local charm file.
+
+      @method getLocalCharmFileUrl
+      @return {String} The full URL to the charm file.
+    */
+    getLocalCharmFileUrl: function(charmUrl, filename) {
+      if (filename === 'icon.svg') {
+        // This is a request for a local charm icon URL. Just return the
+        // fallback icon hosted by charmworld.
+        var store = this.get('store');
+        return store.get('apiHost') + DEFAULT_CHARM_ICON_PATH;
+      }
+      // This is in theory unreachable: with the exception of the icon, other
+      // file URLs are not currently requested.
+      console.error('unexpected getLocalCharmFileUrl request for ' + filename);
     }
 
   });

@@ -2521,19 +2521,32 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       fakebackend.destroy();
     });
 
-    it('has the ability to create an error event', function() {
-      var evt = fakebackend._createErrorEvent('bad wolf');
-      var expectedEvt = {
-        type: 'error',
-        target: {responseText: {Error: 'bad wolf'}}
-      };
-      assert.deepEqual(evt, expectedEvt);
-    });
+    describe('FakeBackend events handling', function() {
 
-    it('has the ability to create a successful event', function() {
-      var evt = fakebackend._createSuccessEvent('yay');
-      var expectedEvt = {target: {responseText: 'yay', status: 200}};
-      assert.deepEqual(evt, expectedEvt);
+      it('has the ability to create an error event', function() {
+        var evt = fakebackend._createErrorEvent('bad wolf');
+        var expectedEvt = {
+          type: 'error',
+          target: {responseText: {Error: 'bad wolf'}, status: 400}
+        };
+        assert.deepEqual(evt, expectedEvt);
+      });
+
+      it('has the ability to create an customized error event', function() {
+        var evt = fakebackend._createErrorEvent('bad wolf', 'load', 401);
+        var expectedEvt = {
+          type: 'load',
+          target: {responseText: {Error: 'bad wolf'}, status: 401}
+        };
+        assert.deepEqual(evt, expectedEvt);
+      });
+
+      it('has the ability to create a successful event', function() {
+        var evt = fakebackend._createSuccessEvent('yay');
+        var expectedEvt = {target: {responseText: 'yay', status: 200}};
+        assert.deepEqual(evt, expectedEvt);
+      });
+
     });
 
   });
@@ -2790,6 +2803,143 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(callbackArgs[0], expectedEvt);
       // The errback has not been called.
       assert.strictEqual(errback.callCount(), 0);
+    });
+
+  });
+
+  describe('FakeBackend.handleLocalCharmFileRequest', function() {
+    var callback, environmentsModule, fakebackend, testUtils, Y;
+    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend();
+      // Set up the callback mock.
+      callback = testUtils.makeStubFunction();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('sends an error response if the local charm is not found', function() {
+      fakebackend.handleLocalCharmFileRequest(
+          'local:trusty/rails-42', null, callback);
+      // The callback has been called.
+      assert.strictEqual(callback.callCount(), 1);
+      var lastArguments = callback.lastArguments();
+      assert.lengthOf(lastArguments, 1);
+      // An error event has been sent.
+      var evt = lastArguments[0];
+      var expectedEvt = {
+        type: 'load',
+        target: {
+          responseText: {Error: 'unable to retrieve and save the charm: ' +
+                'charm not found in the provider storage'},
+          status: 400
+        }
+      };
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+    it('sends an 404 response if a file content is requested', function() {
+      // XXX frankban 2014-04-11: this test must be changed when local charm
+      // contents handling in sandbox mode is improved.
+      fakebackend.db.charms.add({id: 'local:trusty/rails-42'});
+      fakebackend.handleLocalCharmFileRequest(
+          'local:trusty/rails-42', 'hooks/install', callback);
+      // The callback has been called.
+      assert.strictEqual(callback.callCount(), 1);
+      var lastArguments = callback.lastArguments();
+      assert.lengthOf(lastArguments, 1);
+      // An error event has been sent.
+      var evt = lastArguments[0];
+      var expectedEvt = {
+        type: 'load',
+        target: {responseText: {Error: 'page not found'}, status: 404}
+      };
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+    it('sends the list of files included in the local charm', function() {
+      // XXX frankban 2014-04-11: this test must be changed when local charm
+      // contents handling in sandbox mode is improved.
+      fakebackend.db.charms.add({id: 'local:trusty/rails-42'});
+      fakebackend.handleLocalCharmFileRequest(
+          'local:trusty/rails-42', null, callback);
+      // The callback has been called.
+      assert.strictEqual(callback.callCount(), 1);
+      var lastArguments = callback.lastArguments();
+      assert.lengthOf(lastArguments, 1);
+      // An empty list has been sent.
+      var evt = lastArguments[0];
+      console.log(evt.target);
+      var expectedEvt = {
+        target: {responseText: '{"Files":[]}', status: 200}
+      };
+      assert.deepEqual(evt, expectedEvt);
+    });
+
+  });
+
+  describe('FakeBackend.getLocalCharmFileUrl', function() {
+    var environmentsModule, fakebackend, testUtils, Y;
+    var requirements = ['juju-env-fakebackend', 'juju-tests-utils'];
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        testUtils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      // Instantiate a fake backend.
+      fakebackend = new environmentsModule.FakeBackend({
+        // Create a mock store object.
+        store: {
+          get: function(attr) {
+            if (attr === 'apiHost') {
+              return 'https://charmworld.example.com';
+            }
+          }
+        }
+      });
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('returns the default icon path', function() {
+      var url = fakebackend.getLocalCharmFileUrl(
+          'local:trusty/django-42', 'icon.svg');
+      assert.strictEqual(
+          url, 'https://charmworld.example.comstatic/img/charm_160.svg');
+    });
+
+    it('prints a console error if other files are requested', function() {
+      // Patch the console.error method.
+      var mockError = testUtils.makeStubMethod(console, 'error');
+      // Make a POST request to an unexpected URL.
+      fakebackend.getLocalCharmFileUrl('local:trusty/django-42', 'readme');
+      mockError.reset();
+      // An error has been printed to the console.
+      assert.strictEqual(mockError.callCount(), 1);
+      var lastArguments = mockError.lastArguments();
+      assert.lengthOf(lastArguments, 1);
+      assert.strictEqual(
+          'unexpected getLocalCharmFileUrl request for readme',
+          lastArguments[0]);
     });
 
   });
