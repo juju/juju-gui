@@ -143,4 +143,30 @@ describe('machine view panel view', function() {
     assert.equal(item.one('.title').get('text'), machine.get('displayName'),
                  'machine names do not match post-update');
   });
+
+  it('should render a list of containers', function(done) {
+    var machineToken = container.one('.machines li .token');
+    machines.add([
+      new models.Machine({id: '0/lxc/1'}),
+      new models.Machine({id: '0/lxc/2'})
+    ]);
+    machineToken.on('click', function(e) {
+      // Need to explicitly fire the click handler as we are catching
+      // the click event before it can be fired.
+      view.handleTokenSelect(e);
+      var containers = machines.filterByParent('0'),
+          list = container.all('.containers .content li');
+      assert.equal(containers.length > 0, true,
+          'There are no initial containers');
+      assert.equal(list.size(), containers.length,
+          'models are out of sync with displayed list');
+      list.each(function(item, index) {
+        var m = containers[index];
+        assert.equal(item.one('.title').get('text'), m.displayName,
+            'displayed item does not match model');
+      });
+      done();
+    });
+    machineToken.simulate('click');
+  });
 });

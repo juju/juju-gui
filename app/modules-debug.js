@@ -259,6 +259,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/help-dropdown.js'
         },
 
+        'juju-container-token': {
+          fullpath: '/juju-ui/widgets/container-token.js'
+        },
+
         'juju-deployer-bar': {
           fullpath: '/juju-ui/widgets/deployer-bar.js'
         },
@@ -307,6 +311,7 @@ var GlobalConfig = {
           use: [
             'handlebars',
             'd3-components',
+            'juju-container-token',
             'juju-templates',
             'juju-notifications',
             'juju-help-dropdown',

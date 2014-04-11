@@ -19,11 +19,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 
-describe('machine token view', function() {
+describe('container token view', function() {
   var Y, container, machine, models, utils, views, view, View;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['machine-token',
+    Y = YUI(GlobalConfig).use(['container-token',
                                'juju-models',
                                'juju-views',
                                'juju-tests-utils',
@@ -34,24 +34,18 @@ describe('machine token view', function() {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
-      View = views.MachineToken;
+      View = views.ContainerToken;
       done();
     });
   });
 
   beforeEach(function() {
-    container = utils.makeContainer(this, 'machine-token');
+    container = utils.makeContainer(this, 'container-token');
     machine = {
-      id: 0,
-      hardware: {
-        disk: 1024,
-        mem: 1024,
-        cpuPower: 1024,
-        cpuCores: 1
-      }
+      title: 'test title'
     };
     view = new View({
-      container: container,
+      containerParent: container,
       machine: machine
     }).render();
   });
@@ -62,11 +56,7 @@ describe('machine token view', function() {
   });
 
   it('should apply the wrapping class to the container', function() {
-    assert.equal(container.hasClass('machine-token'), true);
-  });
-
-  it('should set the id on the container', function() {
-    assert.equal(container.getData('id'), '0');
+    assert.equal(container.one('> div').hasClass('container-token'), true);
   });
 
   it('fires the delete event', function(done) {
@@ -75,13 +65,5 @@ describe('machine token view', function() {
       done();
     });
     container.one('.delete').simulate('click');
-  });
-
-  it('fires the select event', function(done) {
-    view.on('selectToken', function(e) {
-      assert.isObject(e);
-      done();
-    });
-    container.one('.token').simulate('click');
   });
 });
