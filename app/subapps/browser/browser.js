@@ -399,19 +399,19 @@ YUI.add('subapp-browser', function(Y) {
         view.
     */
     _charmbrowser: function(metadata) {
-      // If there is no provided metadata show the defaults.
       var detailsNode = Y.one('.bws-view-data');
       // XXX window.flags.state the details node is shown by default. When we
       // switch to the new state object it should be hidden by default in the
       // template.
       if (detailsNode) { detailsNode.hide(); }
+      // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
         this.renderEditorial();
       }
-      if (metadata.search) {
+      if (metadata && metadata.search) {
         this.renderSearchResults();
       }
-      if (metadata.id) {
+      if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
@@ -463,11 +463,11 @@ YUI.add('subapp-browser', function(Y) {
       var entityId, hash;
       if (window.flags && window.flags.state) {
         entityId = this.state.getState('current', 'sectionA', 'metadata').id;
+        hash = this.state.getState('current', 'sectionA', 'metadata').hash;
       } else {
         entityId = this.state.getCurrent('charmID');
+        hash = this.state.getCurrent('hash');
       }
-
-      hash = this.state.getState('current', 'sectionA', 'metadata').hash;
 
       var extraCfg = {
         activeTab: hash,
@@ -525,7 +525,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (!window.flags && !window.flags.status) {
+      if (!window.flags && !window.flags.state) {
         if (this.state.getCurrent('charmID')) {
           extraCfg.activeID = this.state.getCurrent('charmID');
         }
@@ -861,7 +861,8 @@ YUI.add('subapp-browser', function(Y) {
       // The new state object takes the request, parses it and then dispatches
       // so this method only needs these lines once switched over.
       if (window.flags && window.flags.state) {
-        // We need to render the sidebar view as default
+        // We need to render the sidebar view as default. This is the new design
+        // in the near future we will likely just render it in the initializer.
         this.sidebar();
         this.state.loadRequest(req);
         return;

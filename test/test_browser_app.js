@@ -273,6 +273,70 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         window.juju_config = undefined;
       });
 
+      describe('state dispatchers', function() {
+        var editorialStub, searchStub, entityStub;
+        beforeEach(function() {
+          app = new browser.Browser();
+        });
+        afterEach(function() {
+          if (app) { app.destroy(); }
+        });
+
+        function stubRenderers(context) {
+          editorialStub = utils.makeStubMethod(app, 'renderEditorial');
+          context._cleanups.push(editorialStub.reset);
+          searchStub = utils.makeStubMethod(app, 'renderSearchResults');
+          context._cleanups.push(searchStub.reset);
+          entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
+          context._cleanups.push(entityStub.reset);
+        }
+
+        function assertions(editorialCount, searchCount, entityCount) {
+          assert.equal(editorialStub.callCount(), editorialCount);
+          assert.equal(searchStub.callCount(), searchCount);
+          assert.equal(entityStub.callCount(), entityCount);
+        }
+
+        describe('_charmbrowser', function() {
+          it('renders the editorial when no metadata is provided', function() {
+            stubRenderers(this);
+            app._charmbrowser(undefined);
+            assertions(1, 0, 0);
+          });
+
+          it('renders the editorial when no search is provided', function() {
+            stubRenderers(this);
+            app._charmbrowser({});
+            assertions(1, 0, 0);
+          });
+
+          it('renders search results when search is provided', function() {
+            stubRenderers(this);
+            app._charmbrowser({
+              search: 'foo'
+            });
+            assertions(0, 1, 0);
+          });
+
+          it('renders & editorial charm details with id provided', function() {
+            stubRenderers(this);
+            app._charmbrowser({
+              id: 'foo'
+            });
+            assertions(1, 0, 1);
+          });
+
+          it('renders search and charm details', function() {
+            stubRenderers(this);
+            app._charmbrowser({
+              search: 'foo',
+              id: 'foo'
+            });
+            assertions(0, 1, 1);
+          });
+        });
+      });
+
       it('verify that route callables exist', function() {
         app = new browser.Browser();
         Y.each(app.get('routes'), function(route) {
