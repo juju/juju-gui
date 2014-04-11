@@ -158,7 +158,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
           if (cachedResults) {
             this._renderSearchResults(cachedResults);
           } else {
-            this.get('store').search(this.get('filters'), {
+            var filters;
+            if (window.flags && window.flags.state) {
+              filters = { text: this.get('query')};
+            } else {
+              filters = this.get('filters');
+            }
+            this.get('store').search(filters, {
               'success': function(data) {
                 var results = this.get('store').transformResults(
                     data.result);

@@ -226,12 +226,22 @@ YUI.add('subapp-browser', function(Y) {
        @return {Boolean} true If search changed.
      */
     _searchChanged: function() {
-      if (this.state.getCurrent('search') && (
-          this.state.hasChanged('search') ||
-          this.state.hasChanged('querystring'))) {
-        return true;
+      if (window.flags && window.flags.state) {
+        var state = this.state;
+        if (state.getState('current', 'sectionA', 'search') &&
+            state.hasChanged('sectionA', 'search')) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        if (this.state.getCurrent('search') && (
+            this.state.hasChanged('search') ||
+            this.state.hasChanged('querystring'))) {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
 
@@ -388,7 +398,26 @@ YUI.add('subapp-browser', function(Y) {
       @param {Object|String} metadata The metadata to pass to the charmbrowser
         view.
     */
-    _charmbrowser: function(metadata) {},
+    _charmbrowser: function(metadata) {
+      // If there is no provided metadata show the defaults.
+      var detailsNode = Y.one('.bws-view-data');
+      // XXX window.flags.state the details node is shown by default. When we
+      // switch to the new state object it should be hidden by default in the
+      // template.
+      if (detailsNode) { detailsNode.hide(); }
+      if (!metadata || !metadata.search) {
+        this.renderEditorial();
+      }
+      if (metadata.search) {
+        this.renderSearchResults();
+      }
+      if (metadata.id) {
+        // The entity rendering views need to handle the new state format
+        // before this can be hooked up.
+        if (detailsNode) { detailsNode.show(); }
+        this.renderEntityDetails();
+      }
+    },
 
     /**
       Handles rendering and/or updating the inspector UI component.
@@ -431,10 +460,17 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     renderEntityDetails: function(req, res, next) {
-      var entityId = this.state.getCurrent('charmID');
+      var entityId, hash;
+      if (window.flags && window.flags.state) {
+        entityId = this.state.getState('current', 'sectionA', 'metadata').id;
+      } else {
+        entityId = this.state.getCurrent('charmID');
+      }
+
+      hash = this.state.getState('current', 'sectionA', 'metadata').hash;
 
       var extraCfg = {
-        activeTab: this.state.getCurrent('hash'),
+        activeTab: hash,
         entityId: entityId,
         container: Y.Node.create('<div class="charmview"/>'),
         deployBundle: this.get('deployBundle'),
@@ -489,8 +525,11 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (this.state.getCurrent('charmID')) {
-        extraCfg.activeID = this.state.getCurrent('charmID');
+      if (!window.flags && !window.flags.status) {
+        if (this.state.getCurrent('charmID')) {
+          extraCfg.activeID = this.state.getCurrent('charmID');
+        }
+        this._sidebar.set('withHome', false);
       }
 
       this._editorial = new views.EditorialView(
@@ -547,8 +586,15 @@ YUI.add('subapp-browser', function(Y) {
 
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
-      if (this.state.getCurrent('charmID')) {
-        extraCfg.activeID = this.state.getCurrent('charmID');
+      if (window.flags && window.flags.state) {
+        extraCfg.activeID = this.state.getState('current', 'sectionA', 'id');
+        var metadata = this.state.getState('current', 'sectionA', 'metadata');
+        extraCfg.query = metadata.search;
+        this._sidebar.set('withHome', true);
+      } else {
+        if (this.state.getCurrent('charmID')) {
+          extraCfg.activeID = this.state.getCurrent('charmID');
+        }
       }
 
       this._search = new views.BrowserSearchView(
@@ -602,6 +648,21 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
+      if (window.flags && window.flags.state) {
+        if (!this._sidebar) {
+          this._sidebar = new views.Sidebar(
+              this._getViewCfg({
+                container: this.get('container'),
+                deployService: this.get('deployService'),
+                deployBundle: this.get('deployBundle')
+              }));
+          this._sidebar.render();
+          this._sidebar.addTarget(this);
+        }
+        // We don't continue or next() because we only need the sidebar view
+        // rendered here the rest is done in the state dispatcher.
+        return;
+      }
       // If we've gone from no _sidebar to having one, then force editorial to
       // render.
       var forceSidebar = false;
@@ -797,6 +858,14 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     routeDefault: function(req, res, next) {
+      // The new state object takes the request, parses it and then dispatches
+      // so this method only needs these lines once switched over.
+      if (window.flags && window.flags.state) {
+        // We need to render the sidebar view as default
+        this.sidebar();
+        this.state.loadRequest(req);
+        return;
+      }
       // Check if there's any path. If there is, someone else will handle
       // routing it. Just carry on.
       var viewmode = 'sidebar';
@@ -979,6 +1048,10 @@ YUI.add('subapp-browser', function(Y) {
       @return {undefined} Nothing.
     */
     updateVisible: function() {
+      if (window.flags && window.flags.state) {
+        // This method will be deleted when we switch to the new state class.
+        return;
+      }
       var minview = this.get('minNode'),
           browser = this.get('container');
 
