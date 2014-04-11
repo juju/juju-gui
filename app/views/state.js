@@ -141,7 +141,10 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state SectionA's state object.
     */
     _dispatchSectionA: function(state) {
-      this.get('dispatchers').sectionA[state.component](state.metadata);
+      var component = state.component;
+      // The default component is the charmbrowser.
+      if (!component) { component = 'charmbrowser'; }
+      this.get('dispatchers').sectionA[component](state.metadata);
     },
 
     /**
@@ -152,6 +155,10 @@ YUI.add('juju-app-state', function(Y) {
       @param {Object} state SectionB's state object.
     */
     _dispatchSectionB: function(state) {
+      var component = state.component;
+      // The default for this pane is to see through to the canvas so don't
+      // dispatch if there is no component provided.
+      if (!component) { return; }
       this.get('dispatchers').sectionB[state.component](state.metadata);
     },
 
