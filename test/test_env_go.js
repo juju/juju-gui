@@ -576,19 +576,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       it('uses the stored webHandler to perform requests', function() {
         env.userIsAuthenticated = true;
-        var mockWebHandler = {post: utils.makeStubFunction()};
+        var mockWebHandler = {sendPostRequest: utils.makeStubFunction()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
             'a zip file', 'trusty',
             function() {return 'progress';},
             function() {return 'completed';});
-        // Ensure the web handler's post method has been called with the
-        // expected arguments.
-        assert.strictEqual(mockWebHandler.post.callCount(), 1);
-        var lastArguments = mockWebHandler.post.lastArguments();
+        // Ensure the web handler's sendPostRequest method has been called with
+        // the expected arguments.
+        assert.strictEqual(mockWebHandler.sendPostRequest.callCount(), 1);
+        var lastArguments = mockWebHandler.sendPostRequest.lastArguments();
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
-            lastArguments[0], '/juju-core/charms?series=trusty'); // URL.
+            lastArguments[0], '/juju-core/charms?series=trusty'); // Path.
         assert.deepEqual(
             lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
@@ -624,6 +624,60 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     });
 
+    describe('listLocalCharmFiles', function() {
+
+      it('uses the stored webHandler to retrieve the file list', function() {
+        var mockWebHandler = {sendGetRequest: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.listLocalCharmFiles(
+            'local:trusty/django-42',
+            function() {return 'progress';},
+            function() {return 'completed';});
+        // Ensure the web handler's sendGetRequest method has been called with
+        // the expected arguments.
+        assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
+        var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
+        assert.lengthOf(lastArguments, 6);
+        assert.strictEqual(
+            lastArguments[0], '/juju-core/charms?url=local:trusty/django-42');
+        assert.deepEqual(lastArguments[1], {}); // Headers.
+        assert.strictEqual(lastArguments[2], 'user'); // User name.
+        assert.strictEqual(lastArguments[3], 'password'); // Password.
+        assert.strictEqual(
+            lastArguments[4](), 'progress'); // Progress callback.
+        assert.strictEqual(
+            lastArguments[5](), 'completed'); // Completed callback.
+      });
+
+    });
+
+    describe('getLocalCharmFileContents', function() {
+
+      it('uses the stored webHandler to retrieve the contents', function() {
+        var mockWebHandler = {sendGetRequest: utils.makeStubFunction()};
+        env.set('webHandler', mockWebHandler);
+        env.getLocalCharmFileContents(
+            'local:trusty/django-42', 'hooks/install',
+            function() {return 'progress';},
+            function() {return 'completed';});
+        // Ensure the web handler's sendGetRequest method has been called with
+        // the expected arguments.
+        assert.strictEqual(mockWebHandler.sendGetRequest.callCount(), 1);
+        var lastArguments = mockWebHandler.sendGetRequest.lastArguments();
+        assert.lengthOf(lastArguments, 6);
+        assert.strictEqual(
+            lastArguments[0],
+            '/juju-core/charms?url=local:trusty/django-42&file=hooks/install');
+        assert.deepEqual(lastArguments[1], {}); // Headers.
+        assert.strictEqual(lastArguments[2], 'user'); // User name.
+        assert.strictEqual(lastArguments[3], 'password'); // Password.
+        assert.strictEqual(
+            lastArguments[4](), 'progress'); // Progress callback.
+        assert.strictEqual(
+            lastArguments[5](), 'completed'); // Completed callback.
+      });
+
+    });
 
     it('sends the correct expose message', function() {
       env.expose('apache');

@@ -464,7 +464,7 @@ YUI.add('juju-env-go', function(Y) {
       @method uploadLocalCharm
       @param {Object} file The file object from the fileSources event object.
       @param {String} series The series to deploy this local charm into.
-      @param {Function} progress The callback to handle xhr progress events.
+      @param {Function} progress The callback to handle progress events.
       @param {Function} callback The callback to call after the upload returns
         success or failure.
     */
@@ -476,7 +476,7 @@ YUI.add('juju-env-go', function(Y) {
         return;
       }
       var credentials = this.getCredentials();
-      var url = '/juju-core/charms?series=' + series;
+      var path = '/juju-core/charms?series=' + series;
       var headers = {'Content-Type': 'application/zip'};
       // Use a web handler to communicate to the Juju HTTPS API. The web
       // handler takes care of setting up asynchronous requests with basic
@@ -487,8 +487,8 @@ YUI.add('juju-env-go', function(Y) {
       // sandbox mode, a fake handler is used, in which no HTTP requests are
       // involved: see app/store/web-sandbox.js:WebSandbox.
       var webHandler = this.get('webHandler');
-      webHandler.post(
-          url, headers, file, credentials.user, credentials.password,
+      webHandler.sendPostRequest(
+          path, headers, file, credentials.user, credentials.password,
           progress, callback);
     },
 
@@ -508,6 +508,57 @@ YUI.add('juju-env-go', function(Y) {
       var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
       var webHandler = this.get('webHandler');
       return webHandler.getUrl(path, credentials.user, credentials.password);
+    },
+
+    /**
+      Make a GET request to the Juju HTTPS API.
+
+      @method _jujuHttpGet
+      @param {String} path The remote path.
+      @param {Function} progress The callback to handle progress events.
+      @param {Function} callback The callback to call after the Juju API
+        response is returned.
+    */
+    _jujuHttpGet: function(path, progress, callback) {
+      var credentials = this.getCredentials();
+      var webHandler = this.get('webHandler');
+      var headers = Object.create(null);
+      webHandler.sendGetRequest(
+          path, headers, credentials.user, credentials.password,
+          progress, callback);
+    },
+
+    /**
+      Handle retrieving the list of local charm files.
+
+      @method listLocalCharmFiles
+      @param {String} charmUrl The local charm URL,
+        e.g. "local:strusty/django-42".
+      @param {Function} progress The callback to handle progress events.
+      @param {Function} callback The callback to call after the list has been
+        retrieved.
+    */
+    listLocalCharmFiles: function(charmUrl, progress, callback) {
+      var path = '/juju-core/charms?url=' + charmUrl;
+      this._jujuHttpGet(path, progress, callback);
+    },
+
+    /**
+      Handle retrieving the contents of a local charm file.
+
+      @method getLocalCharmFileContents
+      @param {String} charmUrl The local charm URL,
+        e.g. "local:strusty/django-42".
+      @param {String} filename The file name/path.
+        e.g. "readme.md" or "hooks/install".
+      @param {Function} progress The callback to handle progress events.
+      @param {Function} callback The callback to call after the file contents
+        have been retrieved.
+    */
+    getLocalCharmFileContents: function(charmUrl, filename,
+                                        progress, callback) {
+      var path = '/juju-core/charms?url=' + charmUrl + '&file=' + filename;
+      this._jujuHttpGet(path, progress, callback);
     },
 
     /*

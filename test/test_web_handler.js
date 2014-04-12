@@ -55,71 +55,140 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
     });
 
-    it('opens and sends an XHR request with the proper data', function() {
-      var url = '/juju-core/charms?series=trusty';
-      var headers = {'Content-Type': 'application/zip'};
-      var data = 'a zip file object';
-      // Make a POST request.
-      webHandler.post(
-          url, headers, data, 'user', 'passwd',
-          function() {return 'progress';}, function() {return 'completed';});
-      // Ensure the xhr instance has been used properly.
-      assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
-      // Two events listeners are added, one for request's progress and one for
-      // request's completion. The same event handler is used for both, and
-      // then stored in the webHandler instance so that subscribers can be
-      // removed later, when the request/response process completes.
+    // Ensure the progress event is correctly handled.
+    var assertProgressHandled = function(progressCallback) {
+      // Retrieve the registered progress handler.
       var args = mockXhr.addEventListener.allArguments();
-      var eventHandler = webHandler.get('xhrEventHandler');
-      assert.deepEqual(args[0], ['progress', eventHandler, false]);
-      assert.deepEqual(args[1], ['load', eventHandler, false]);
-      // The xhr is then asynchronously opened.
-      assert.strictEqual(mockXhr.open.callCount(), 1);
-      assert.deepEqual(mockXhr.open.lastArguments(), ['POST', url, true]);
-      // Headers are properly set up.
-      assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
-      args = mockXhr.setRequestHeader.allArguments();
-      assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
-      assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
-      // The zip file is then correctly sent.
-      assert.strictEqual(mockXhr.send.callCount(), 1);
-      assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
-      // The event listeners are only removed when the completed callback is
-      // called.
-      assert.strictEqual(mockXhr.removeEventListener.called(), false);
-    });
-
-    it('handles request progress', function() {
-      var progressCallback = utils.makeStubFunction();
-      // Make a POST request.
-      webHandler.post('/url/', {}, 'data', 'user', 'passwd', progressCallback);
-      var eventHandler = webHandler.get('xhrEventHandler');
-      // Set up a progress event.
+      var progressHandler = args[0][1];
+      // Set up a progress event and call the progress handler.
       var evt = {type: 'progress'};
-      eventHandler(evt);
+      progressHandler(evt);
       // The progress callback has been correctly called.
       assert.strictEqual(progressCallback.callCount(), 1);
       assert.deepEqual(progressCallback.lastArguments(), [evt]);
-    });
+      // The event listeners are only removed when the completed callback is
+      // called.
+      assert.strictEqual(mockXhr.removeEventListener.called(), false);
+    };
 
-    it('handles request completion', function() {
-      var completedCallback = utils.makeStubFunction();
-      // Make a POST request.
-      webHandler.post(
-          '/url/', {}, 'data', 'user', 'passwd',
-          function() {}, completedCallback);
-      var eventHandler = webHandler.get('xhrEventHandler');
-      // Set up a progress event.
+    // Ensure the completed event is correctly handled.
+    var assertCompletedHandled = function(completedCallback) {
+      // Retrieve the registered handlers.
+      var args = mockXhr.addEventListener.allArguments();
+      var progressHandler = args[0][1];
+      var completedHandler = args[1][1];
+      // Set up a load event and call the completed handler.
       var evt = {type: 'load'};
-      eventHandler(evt);
+      completedHandler(evt);
       // The completion callback has been correctly called.
       assert.strictEqual(completedCallback.callCount(), 1);
       assert.deepEqual(completedCallback.lastArguments(), [evt]);
       // The event listeners have been removed.
       assert.strictEqual(mockXhr.removeEventListener.callCount(), 2);
-      var args = mockXhr.removeEventListener.allArguments();
-      assert.deepEqual(args[0], ['progress', eventHandler]);
-      assert.deepEqual(args[1], ['load', eventHandler]);
+      args = mockXhr.removeEventListener.allArguments();
+      assert.deepEqual(args[0], ['progress', progressHandler]);
+      assert.deepEqual(args[1], ['load', completedHandler]);
+    };
+
+    describe('sendPostRequest', function() {
+
+      it('opens and sends an XHR request with the proper data', function() {
+        var path = '/juju-core/charms?series=trusty';
+        var headers = {'Content-Type': 'application/zip'};
+        var data = 'a zip file object';
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            path, headers, data, 'user', 'passwd',
+            function() {return 'progress';}, function() {return 'completed';});
+        // Ensure the xhr instance has been used properly.
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        // Two events listeners are added, one for request's progress and one
+        // for request's completion.
+        var args = mockXhr.addEventListener.allArguments();
+        assert.strictEqual(args[0][0], 'progress');
+        assert.strictEqual(args[1][0], 'load');
+        // The xhr is then asynchronously opened.
+        assert.strictEqual(mockXhr.open.callCount(), 1);
+        assert.deepEqual(mockXhr.open.lastArguments(), ['POST', path, true]);
+        // Headers are properly set up.
+        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 2);
+        args = mockXhr.setRequestHeader.allArguments();
+        assert.deepEqual(args[0], ['Content-Type', 'application/zip']);
+        assert.deepEqual(args[1], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
+        // The zip file is then correctly sent.
+        assert.strictEqual(mockXhr.send.callCount(), 1);
+        assert.deepEqual(mockXhr.send.lastArguments(), ['a zip file object']);
+        // The event listeners are only removed when the completed callback is
+        // called.
+        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+      });
+
+      it('handles request progress', function() {
+        var progressCallback = utils.makeStubFunction();
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            '/path/', {}, 'data', 'user', 'passwd', progressCallback);
+        assertProgressHandled(progressCallback);
+      });
+
+      it('handles request completion', function() {
+        var completedCallback = utils.makeStubFunction();
+        // Make a POST request.
+        webHandler.sendPostRequest(
+            '/path/', {}, 'data', 'user', 'passwd',
+            function() {}, completedCallback);
+        assertCompletedHandled(completedCallback);
+      });
+
+    });
+
+    describe('sendGetRequest', function() {
+
+      it('opens and sends an XHR request with the proper data', function() {
+        var path = '/juju-core/charms?url=local:trusty/django-42';
+        // Make a POST request.
+        webHandler.sendGetRequest(
+            path, null, 'user', 'passwd',
+            function() {return 'progress';}, function() {return 'completed';});
+        // Ensure the xhr instance has been used properly.
+        assert.strictEqual(mockXhr.addEventListener.callCount(), 2);
+        // Two events listeners are added, one for request's progress and one
+        // for request's completion.
+        var args = mockXhr.addEventListener.allArguments();
+        assert.strictEqual(args[0][0], 'progress');
+        assert.strictEqual(args[1][0], 'load');
+        // The xhr is then asynchronously opened.
+        assert.strictEqual(mockXhr.open.callCount(), 1);
+        assert.deepEqual(mockXhr.open.lastArguments(), ['GET', path, true]);
+        // Headers are properly set up.
+        assert.strictEqual(mockXhr.setRequestHeader.callCount(), 1);
+        args = mockXhr.setRequestHeader.allArguments();
+        assert.deepEqual(args[0], ['Authorization', 'Basic dXNlcjpwYXNzd2Q=']);
+        // The zip file is then correctly sent.
+        assert.strictEqual(mockXhr.send.callCount(), 1);
+        assert.lengthOf(mockXhr.send.lastArguments(), 0);
+        // The event listeners are only removed when the completed callback is
+        // called.
+        assert.strictEqual(mockXhr.removeEventListener.called(), false);
+      });
+
+      it('handles request progress', function() {
+        var progressCallback = utils.makeStubFunction();
+        // Make a GET request.
+        webHandler.sendGetRequest(
+            '/path/', {}, 'user', 'passwd', progressCallback);
+        assertProgressHandled(progressCallback);
+      });
+
+      it('handles request completion', function() {
+        var completedCallback = utils.makeStubFunction();
+        // Make a GET request.
+        webHandler.sendGetRequest(
+            '/path/', {}, 'user', 'passwd',
+            function() {}, completedCallback);
+        assertCompletedHandled(completedCallback);
+      });
+
     });
 
     it('defines a function which helps creating auth headers', function() {
@@ -127,11 +196,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.strictEqual(header, 'Basic bXl1c2VyOm15cGFzc3dk');
     });
 
-    it('returns a complete URL based on the given credentials', function() {
-      var url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
-      var expectedUrl = 'http://myuser:mypassword@' +
-          window.location.host + '/my/path';
-      assert.strictEqual(url, expectedUrl);
+    describe('getUrl', function() {
+      it('returns a complete URL based on the given credentials', function() {
+        var url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
+        var expectedUrl = 'http://myuser:mypassword@' +
+            window.location.host + '/my/path';
+        assert.strictEqual(url, expectedUrl);
+      });
     });
 
   });
