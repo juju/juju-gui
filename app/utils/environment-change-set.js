@@ -157,22 +157,99 @@ YUI.add('environment-change-set', function(Y) {
     },
 
     /**
+      Build a hierarchy of commits so that actions that depend on others can be
+      executed first.
+
+      @method _buildHierarchy
+      @param {Object} changeSet A cloned changeSet.  Make sure to clone, as it
+        will be mutated in the process of building the hierarchy.
+      @return {Array} An array of arrays of commands to commit, separated by
+        level.
+    */
+    _buildHierarchy: function(changeSet) {
+      var hierarchy = [[]],
+          command, alreadyPlacedParents,
+          keyToLevel = {},
+          currLevel = 1;
+
+      // Take care of top-level objects quickly.
+      Object.keys(changeSet).forEach(function(key) {
+        command = changeSet[key];
+        command.key = key;
+        if (!command.parents || command.parents.length === 0) {
+          hierarchy[0].push(Y.clone(command));
+          keyToLevel[key] = 0;
+          delete changeSet[key];
+        } else {
+          // Default everything else to the first level.
+          keyToLevel[key] = 1;
+        }
+      });
+
+      // Now build the other levels of the hierarchy as long as there are still
+      // commands in the change set. Functions defined outside of loop for
+      // runtime efficiency (jshint W083).
+      function checkForParents(parent) {
+        if (keyToLevel[parent] >= currLevel) {
+          alreadyPlacedParents = false;
+        }
+      }
+
+      function placeIfNeeded(value, key) {
+        command = changeSet[key];
+
+        // Since we are deleting keys from the changeSet as we iterate over
+        // the original list, return if command is undefined.
+        if (!command) {
+          return;
+        }
+
+        // Check and see if all of the parents have already been placed.
+        alreadyPlacedParents = true;
+        command.parents.forEach(checkForParents);
+
+        // If so, then the command belongs in the current level, so push it
+        // there and delete it from the changeSet.
+        if (alreadyPlacedParents) {
+          hierarchy[currLevel].push(Y.clone(command));
+          keyToLevel[key] = currLevel;
+          delete changeSet[key];
+        }
+      }
+
+      while (Object.keys(changeSet).length > 0) {
+        hierarchy.push([]);
+        Y.Object.each(keyToLevel, placeIfNeeded);
+        currLevel += 1;
+      }
+      return hierarchy;
+    },
+
+    /**
       Starts the processing of all of the top level
       commands stored in the changeSet.
 
       @method commit
     */
     commit: function() {
+      // XXX Matthew - This needs to be cloned because _buildHierarchy modifies
+      // the changeset it is given for efficiency.  In the future, however, we
+      // will need this.changeset in its current form, rather than maintaining
+      // the hierarchical form because RPC callbacks should remove commands as
+      // they return.  Clarify this comment at that time. 2014-04-14
       var changeSet = this.changeSet;
+      var hierarchy = this._buildHierarchy(Y.clone(changeSet));
       var command;
 
-      Object.keys(changeSet).forEach(function(key) {
-        command = changeSet[key];
-        // XXX Jeff March 24 2014 - This executes all commands from top to
-        // bottom. Instead this needs to queue up the tasks based on their
-        // hierarchical structure.
-        this._execute(command);
-        this.fire('commit', command);
+      hierarchy.forEach(function(level) {
+        level.forEach(function(record) {
+          // XXX Matthew - this fires commands in the right order, but does not
+          // wait until levels have completed before firing.  Card on board.
+          // 2014-04-14
+          command = changeSet[record.key];
+          this._execute(command);
+          this.fire('commit', command);
+        }, this);
       }, this);
     },
 
