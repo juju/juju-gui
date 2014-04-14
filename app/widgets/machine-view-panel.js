@@ -175,13 +175,14 @@ YUI.add('machine-view-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'view',
-    'juju-view-utils',
     'event-tracker',
-    'node',
     'handlebars',
+    'juju-serviceunit',
     'juju-templates',
+    'juju-view-utils',
     'machine-token',
-    'machine-view-panel-header'
+    'machine-view-panel-header',
+    'node',
+    'view'
   ]
 });

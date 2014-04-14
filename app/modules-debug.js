@@ -323,8 +323,7 @@ var GlobalConfig = {
             'juju-topology',
             'juju-view-environment',
             'juju-view-login',
-            'juju-landscape',
-            'juju-serviceunit'
+            'juju-landscape'
           ]
         },
 

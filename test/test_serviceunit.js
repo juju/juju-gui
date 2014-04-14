@@ -23,7 +23,7 @@ describe('Service unit view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-views', 'juju-tests-utils', 'node-event-simulate'],
+        ['juju-serviceunit', 'juju-tests-utils', 'node-event-simulate'],
         function(Y) {
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
