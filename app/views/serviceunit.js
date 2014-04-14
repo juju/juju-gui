@@ -89,7 +89,7 @@ YUI.add('juju-serviceunit', function(Y) {
      * @param {Y.Event} e EventFacade object.
      */
     _startMoveHandler: function(e) {
-      e.preventDefault();
+      e.halt();
       var target = e.target,
           unit = target.ancestor('.unit');
       unit.all('.name, .icons').hide();
@@ -103,7 +103,7 @@ YUI.add('juju-serviceunit', function(Y) {
      * @param {Y.Event} e EventFacade object.
      */
     _finishMoveHandler: function(e) {
-      e.preventDefault();
+      e.halt();
       var target = e.target,
           unit = target.ancestor('.unit');
       // XXX Not sure if this is the right approach or if instead we should
@@ -120,7 +120,7 @@ YUI.add('juju-serviceunit', function(Y) {
      * @param {Y.Event} e EventFacade object.
      */
     _machineSelectionHandler: function(e) {
-      e.preventDefault();
+      e.halt();
       var target = e.target,
           unit = target.ancestor('.unit');
       // ensure valid selection
