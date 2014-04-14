@@ -15,7 +15,6 @@ General Public License for more details.
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 'use strict';
 
 
@@ -31,14 +30,19 @@ YUI.add('juju-serviceunit', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates;
 
-  views.ServiceUnitView = Y.Base.create('ServiceUnitView', Y.View,
-                                        [Y.Event.EventTracker], {
+  views.ServiceUnitView = Y.Base.create('ServiceUnitView', Y.View, [], {
     template: Templates['machine-view-serviceunit'],
 
     events: {
-      '.unit .icons .move': { 'click': '_startMoveHandler' },
-      '.unit .machines select': { 'change': '_machineSelectionHandler' },
-      '.unit .actions .move': { 'click': '_finishMoveHandler' }
+      '.unit .icons .move': {
+        'click': '_startMoveHandler'
+      },
+      '.unit .machines select': {
+        'change': '_machineSelectionHandler'
+      },
+      '.unit .actions .move': {
+        'click': '_finishMoveHandler'
+      }
     },
 
     /**
@@ -47,8 +51,7 @@ YUI.add('juju-serviceunit', function(Y) {
      * @method initializer
      * @param {Object} config The widget configuration options.
      */
-    initializer: function(cfg) {
-    },
+    initializer: function(cfg) {},
 
     /**
      * Empties the views container and removes attached classes
@@ -116,20 +119,20 @@ YUI.add('juju-serviceunit', function(Y) {
      * @method _machineSelectionHandler
      * @param {Y.Event} e EventFacade object.
      */
-     _machineSelectionHandler: function(e) {
-       e.preventDefault();
-       var target = e.target,
-           unit = target.ancestor('.unit');
-       // ensure valid selection
-       if (target.get('value') === 'new') {
-         unit.one('.containers').hide();
-         unit.one('.actions').hide();
-       } else {
-         unit.one('.containers').show();
-         unit.one('.actions').show();
-       }
-     }
- }, {
+    _machineSelectionHandler: function(e) {
+      e.preventDefault();
+      var target = e.target,
+          unit = target.ancestor('.unit');
+      // ensure valid selection
+      if (target.get('value') === 'new') {
+        unit.one('.containers').hide();
+        unit.one('.actions').hide();
+      } else {
+        unit.one('.containers').show();
+        unit.one('.actions').show();
+      }
+    }
+  }, {
     ATTRS: {
       /**
        * The container element for the view.
@@ -137,7 +140,7 @@ YUI.add('juju-serviceunit', function(Y) {
        * @attribute container
        * @type {Object}
        */
-      container: {},
+      container: {}
     }
   });
 }, '0.1.0', {

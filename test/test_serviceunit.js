@@ -94,8 +94,8 @@ describe('Service unit view', function() {
     // test the final click on the move button
     actions.one('.move').simulate('click');
     assert.notEqual(name.getStyle('display'), 'none',
-                 'name was not displayed in final state');
+                    'name was not displayed in final state');
     assert.notEqual(icons.getStyle('display'), 'none',
-                 'icons were not displayed in final state');
+                    'icons were not displayed in final state');
   });
 });
