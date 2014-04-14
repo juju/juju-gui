@@ -128,6 +128,45 @@ YUI.add('machine-view-panel', function(Y) {
         },
 
         /**
+         * Render the deployed service unit token widgets.
+         *
+         * @method _renderDeployedUnitTokens
+         */
+        _renderDeployedUnitTokens: function(label) {
+          var container = this.get('container'),
+              unitList = container.one('.machines .content ul'),
+              units = this.get('serviceUnits');
+          if (units.length > 0) {
+            Y.Object.each(units, function(unit) {
+              var node = Y.Node.create('<li></li>');
+              new views.ServiceUnitToken({
+              }).render();
+              unitList.append(node);
+            });
+          }
+        },
+
+
+        /**
+         * Render the undeployed service unit tokens.
+         *
+         * @method _renderUndeployedUnitTokens
+         */
+        _renderUndeployedUnitTokens: function(label) {
+          var container = this.get('container'),
+              unitList = container.one('.machines .content ul'),
+              units = this.get('serviceUnits');
+          if (units.length > 0) {
+            Y.Object.each(units, function(unit) {
+              var node = Y.Node.create('<li></li>');
+              new views.ServiceUnitToken({
+              }).render();
+              unitList.append(node);
+            });
+          }
+        },
+
+        /**
          * Sets up the DOM nodes and renders them to the DOM.
          *
          * @method render
@@ -138,6 +177,8 @@ YUI.add('machine-view-panel', function(Y) {
           container.addClass('machine-view-panel');
           this._renderHeaders();
           this._renderMachineTokens();
+          this._renderDeloyedUnitTokens();
+          this._renderUndeployedUnitTokens();
           return this;
         },
 
@@ -175,13 +216,14 @@ YUI.add('machine-view-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'view',
-    'juju-view-utils',
     'event-tracker',
-    'node',
     'handlebars',
+    'juju-serviceunit',
     'juju-templates',
+    'juju-view-utils',
     'machine-token',
-    'machine-view-panel-header'
+    'machine-view-panel-header',
+    'node',
+    'view'
   ]
 });

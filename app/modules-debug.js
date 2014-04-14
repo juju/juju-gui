@@ -255,6 +255,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/notifications.js'
         },
 
+        'juju-serviceunit': {
+          fullpath: '/juju-ui/views/serviceunit.js'
+        },
+
         'juju-help-dropdown': {
           fullpath: '/juju-ui/views/help-dropdown.js'
         },
