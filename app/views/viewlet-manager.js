@@ -389,7 +389,7 @@ YUI.add('juju-viewlet-manager', function(Y) {
       @method recalculateHeight
     */
     recalculateHeight: function() {
-      if (!window.flags.il) {
+      if (!window.flags.state) {
         var container = this.get('container');
         var TB_SPACING = 20;
         var winHeight = container.get('winHeight'),

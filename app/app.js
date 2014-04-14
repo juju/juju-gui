@@ -549,10 +549,8 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
         this._renderHelpDropdownView();
-        if (window.flags.il) {
-          this._renderDeployerBarView();
-        }
         if (window.flags.mv) {
+          this._renderDeployerBarView();
           this._renderEnvironmentHeaderView();
         }
       }, this);

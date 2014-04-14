@@ -448,7 +448,11 @@ YUI.add('subapp-browser', function(Y) {
 
       @method emptySectionA
     */
-    emptySectionA: function() {},
+    emptySectionA: function() {
+      if (this._editorial) { this._editorial.destroy(); }
+      if (this._search) { this._search.destroy(); }
+      if (this._details) { this._details.destroy(); }
+    },
 
     /**
       Empties out the sectionB UI making sure to properly clean up.
