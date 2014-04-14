@@ -187,7 +187,8 @@ YUI.add('juju-app-state', function(Y) {
     */
     generateUrl: function(change) {
       // Generate the new state temporarily.
-      var newState = Y.mix(this.get('current'), change, true);
+      var newState = Y.mix(
+          Y.clone(this.get('current')), change, true, null, 0, true);
       var component, metadata, sectionState, searchQuery, id,
           genUrl = '',
           query = {},

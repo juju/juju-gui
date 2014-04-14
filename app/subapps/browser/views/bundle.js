@@ -87,7 +87,15 @@ YUI.add('subapp-browser-bundleview', function(Y) {
     _deployBundle: function(e) {
       e.halt();
       var bundle = this.get('entity');
-      this.fire('viewNavigate', {change: {charmID: null}});
+      if (window.flags && window.flags.state) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { id: null }
+          }});
+      } else {
+        this.fire('viewNavigate', {change: {charmID: null}});
+      }
       this.get('deployBundle')(bundle.get('data'), bundle.get('id'));
     },
 

@@ -389,6 +389,12 @@ YUI.add('subapp-browser', function(Y) {
         }
         this.navigate(url);
       });
+
+      this.on('*:changeState', function(e) {
+        var state = e.details[0];
+        var url = this.state.generateUrl(state);
+        this.navigate(url);
+      });
     },
 
     /**

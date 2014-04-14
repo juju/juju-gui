@@ -28,6 +28,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y = YUI(GlobalConfig).use(
           'node-event-simulate',
           'juju-tests-utils',
+          'subapp-browser-charmresults',
           'subapp-browser-editorial',
           function(Y) {
             utils = Y.namespace('juju-tests.utils');

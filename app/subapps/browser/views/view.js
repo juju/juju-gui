@@ -146,15 +146,19 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _goHome: function(ev) {
-      var change = {
-        charmID: undefined,
-        hash: undefined,
-        search: false,
-        filter: {
-          clear: true
-        }
-      };
-      this.fire('viewNavigate', {change: change});
+      if (window.flags && window.flags.state) {
+        this.fire('changeState', { sectionA: {} });
+      } else {
+        var change = {
+          charmID: undefined,
+          hash: undefined,
+          search: false,
+          filter: {
+            clear: true
+          }
+        };
+        this.fire('viewNavigate', {change: change});
+      }
     },
 
     /**
@@ -207,8 +211,16 @@ YUI.add('subapp-browser-mainview', function(Y) {
       if (ev.change) {
         change = Y.merge(change, ev.change);
       }
+      if (window.flags && window.flags.state) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { search: ev.newVal }
+          }});
+      } else {
+        this.fire('viewNavigate', {change: change});
+      }
 
-      this.fire('viewNavigate', {change: change});
     },
 
     /**
