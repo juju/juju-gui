@@ -59,10 +59,12 @@ describe('Browser bundle detail view', function() {
     view._setupLocalFakebackend = function() {
       this.fakebackend = factory.makeFakeBackend();
     };
+    window.flags = {};
     cleanUp = utils.stubCharmIconPath();
   });
 
   afterEach(function() {
+    window.flags = {};
     view.destroy();
     cleanUp();
   });
@@ -174,10 +176,22 @@ describe('Browser bundle detail view', function() {
 
   it('deploys a bundle when \'add\' and confirmation button is clicked',
       function(done) {
+        window.flags.state = true;
+        var changeStateFired = false;
+        var handler = view.on('changeState', function(state) {
+          changeStateFired = true;
+          assert.deepEqual(state.details[0], {
+            sectionA: {
+              component: 'charmbrowser',
+              metadata: { id: null }
+            }});
+        });
+        this._cleanups.push(function() { handler.detach(); });
         // app.js sets this to its deploy bundle method so
         // as long as it's called it's successful.
         view.set('deployBundle', function(data) {
           assert.isObject(data);
+          assert.equal(changeStateFired, true);
           done();
         });
         view.set('entity', new models.Bundle(data));

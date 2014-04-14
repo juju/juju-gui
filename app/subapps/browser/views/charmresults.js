@@ -99,7 +99,15 @@ YUI.add('subapp-browser-charmresults', function(Y) {
         hash: undefined
       };
 
-      this.fire('viewNavigate', {change: change});
+      if (window.flags && window.flags.state) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { id: charmID }
+          }});
+      } else {
+        this.fire('viewNavigate', {change: change});
+      }
     },
 
     /**

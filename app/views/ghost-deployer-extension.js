@@ -61,11 +61,20 @@ YUI.add('ghost-deployer-extension', function(Y) {
         ghostService.set('icon', ghostAttributes.icon);
       }
       if (window.flags.il) {
-        this.get('subApps').charmbrowser.fire('viewNavigate', {
-          change: {
-            inspector: ghostService.get('clientId')
-          }
-        });
+        if (window.flags && window.flags.state) {
+          this.get('subApps').charmbrowser.fire('changeState', {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: ghostService.get('clientId')}}});
+        } else {
+          this.get('subApps').charmbrowser.fire('viewNavigate', {
+            change: {
+              inspector: ghostService.get('clientId')
+            }
+          });
+        }
+
       } else {
         var environment = this.views.environment.instance;
         environment.createServiceInspector(ghostService);

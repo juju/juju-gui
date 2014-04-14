@@ -233,12 +233,15 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
      */
     _handleBack: function(ev) {
       ev.halt();
-      this.fire('viewNavigate', {
-        change: {
-          charmID: null,
-          hash: null
-        }
-      });
+      if (window.flags && window.flags.state) {
+        this.fire('changeState', {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { id: null }
+          }});
+      } else {
+        this.fire('viewNavigate', { change: { charmID: null, hash: null }});
+      }
     },
 
     /**

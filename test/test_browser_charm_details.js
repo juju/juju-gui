@@ -47,6 +47,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     beforeEach(function() {
+      window.flags = {};
       container = utils.makeContainer(this, 'container');
       var testcontent = [
         '<div id=testcontent><div class="bws-view-data">',
@@ -63,6 +64,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     afterEach(function() {
+      window.flags = {};
       if (view) {
         view.destroy();
       }
@@ -342,6 +344,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     it('_addCharmEnvironment displays the config panel', function(done) {
+      window.flags.state = true;
       var fakeStore = new Y.juju.charmworld.APIv3({});
       fakeStore.iconpath = function() {
         return 'charm icon url';
@@ -361,9 +364,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         container: utils.makeContainer(this),
         store: fakeStore
       });
+      var changeStateFired = false;
+      var handler = view.on('changeState', function(state) {
+        changeStateFired = true;
+        assert.deepEqual(state.details[0], {
+          sectionA: {
+            component: 'charmbrowser',
+            metadata: { id: null }
+          }});
+      });
+      this._cleanups.push(function() { handler.detach(); });
       view.set('deployService', function(charm, serviceAttrs) {
         var serviceCharm = view.get('entity');
         assert.deepEqual(charm, serviceCharm);
+        assert.equal(changeStateFired, true);
         assert.equal(charm.get('id'), 'cs:precise/ceph-9');
         assert.equal(serviceAttrs.icon, 'charm icon url');
         done();

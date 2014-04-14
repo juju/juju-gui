@@ -337,6 +337,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         });
       });
 
+      it('listens to changeState events', function() {
+        app = new browser.Browser();
+        var generateUrlStub = utils.makeStubMethod(
+            app.state, 'generateUrl', 'genUrl');
+        var navigateStub = utils.makeStubMethod(app, 'navigate');
+        app.fire('changeState', {foo: 'bar'});
+        assert.equal(generateUrlStub.calledOnce(), true);
+        assert.deepEqual(generateUrlStub.lastArguments()[0], {foo: 'bar'});
+        assert.equal(navigateStub.calledOnce(), true);
+        assert.equal(navigateStub.lastArguments()[0], 'genUrl');
+      });
+
       it('verify that route callables exist', function() {
         app = new browser.Browser();
         Y.each(app.get('routes'), function(route) {

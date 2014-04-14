@@ -929,5 +929,25 @@ describe('UI State object', function() {
         });
       });
     });
+
+    it('can generate proper urls from non default state objects', function() {
+      var defaultState = {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: {
+            id: 'precise/apache2',
+            search: 'apache2' }
+        }, sectionB: {}};
+      var changeState = {
+        sectionA: {
+          metadata: {
+            id: 'foo' }}};
+      state.set('current', Y.clone(defaultState));
+      assert.equal(
+          state.generateUrl(changeState),
+          '/foo?text=apache2',
+          'The object ' + JSON.stringify(changeState) +
+              ' did not generate the proper url');
+    });
   });
 });
