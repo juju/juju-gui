@@ -1,0 +1,28 @@
+<div class="unit" data-id="{{ id }}">
+  <div class="icon">
+    <img src="">
+  </div>
+  <div class="name">
+    {{ displayName }}
+  </div>
+  <div class="icons">
+    <a href class="move"><!--<img src="">-->Move</a>
+  </div>
+  <div class="machines" style="display: none;">
+    <select placeholder="Move to&#8230;">
+      <option value="new">New machine</option>
+      <option value="0">0</option>
+    </select>
+  </div>
+  <div class="containers" style="display: none;">
+    <select placeholder="Choose location">
+      <option value="0/bar metal">0/bare metal</option>
+      <option value="new lxc">new lxc</option>
+      <option value="new kvm">new kvm</option>
+    </select>
+  </div>
+  <div class="actions" style="display: none;">
+    <a href class="cancel secondary-action">Cancel</a>
+    <a href class="move primary-action">Move</a>
+  </div>
+</div>
