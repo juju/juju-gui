@@ -159,7 +159,6 @@ YUI.add('ghost-service-inspector', function(Y) {
           ghostService = this.get('model'),
           environmentView = this.get('environment'),
           topo = this.get('topo'),
-          inspector = environmentView.inspector,
           createServiceInspector = false;
 
       if (e.err) {
@@ -181,13 +180,17 @@ YUI.add('ghost-service-inspector', function(Y) {
           }));
 
       var ghostId = ghostService.get('id');
-      if (inspector) {
-        // If there is a ghost inspector currently open for this service, then
-        // we know we need to create a service inspector for it.  However,
-        // since the user may have closed/destroyed the original one, we need
-        // to check based on the ID of the model involved, rather than simple
-        // equality.
-        createServiceInspector = inspector.get('model').get('id') === ghostId;
+      var inspector;
+      if (!window.flags || !window.flags.state) {
+        inspector = environmentView.inspector;
+        if (inspector) {
+          // If there is a ghost inspector currently open for this service, then
+          // we know we need to create a service inspector for it.  However,
+          // since the user may have closed/destroyed the original one, we need
+          // to check based on the ID of the model involved, rather than simple
+          // equality.
+          createServiceInspector = inspector.get('model').get('id') === ghostId;
+        }
       }
       ghostService.setAttrs({
         id: serviceName,
@@ -213,10 +216,14 @@ YUI.add('ghost-service-inspector', function(Y) {
       topo.service_boxes[serviceName] = boxModel;
 
       // Set to initial UI state.
-      if (window.flags.state) {
-        /* jshint -W035 */ // Empty if block warning
-        // XXX Fire a viewNavigate event with a change object so that the
-        // routing in the browser.js can build a correct url.
+      if (window.flags && window.flags.state) {
+        // In order to display the proper inspector for queued up services
+        // Whatever listens for this event will need to check against the
+        // currently open inspector.
+        this.fire('serviceDeployed', {
+          serviceName: serviceName,
+          clientId: ghostService.get('clientId')
+        });
       } else {
         if (createServiceInspector) {
           // Clean up any existing instances of the inspector so that

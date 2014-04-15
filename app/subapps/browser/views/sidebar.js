@@ -72,11 +72,23 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       this.get('container').setHTML('');
     },
 
+    /**
+      Shows the sidebar search widget and removes the class on the sidebar
+      container.
+
+      @method showSearch
+    */
     showSearch: function() {
       this.search.show();
       this.get('container').removeClass('no-search');
     },
 
+    /**
+      Hides the sidebar search widget and adds the class on the sidebar
+      container.
+
+      @method hideSearch
+    */
     hideSearch: function() {
       this.search.hide();
       // addClass() is idempotent.

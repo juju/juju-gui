@@ -306,6 +306,13 @@ YUI.add('juju-view-environment', function(Y) {
       inspector.switchTab('relations');
     },
 
+    /**
+      Whenever anything in the topology wants to change the state object
+      this callback is called.
+
+      @method onChangeState
+      @param {Object} e THe change state event object.
+    */
     onChangeState: function(e) {
       this.fire('changeState', e.details[0]);
     },

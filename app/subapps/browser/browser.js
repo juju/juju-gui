@@ -395,6 +395,20 @@ YUI.add('subapp-browser', function(Y) {
         var url = this.state.generateUrl(state);
         this.navigate(url);
       });
+
+      this.on('*:serviceDeployed', function(e) {
+        var activeClientId = this._activeInspector.get('model').get('clientId');
+        // Because multiple services can be deployed at once we only want to
+        // switch to a deployed inspector if there is currently one open.
+        // And we only want to switch to that specific inspector.
+        if (activeClientId === e.clientId) {
+          this.fire('changeState', {
+            sectionA: {
+              component: 'inspector',
+              metadata: { id: e.serviceName }
+            }});
+        }
+      }, this);
     },
 
     /**
@@ -437,7 +451,9 @@ YUI.add('subapp-browser', function(Y) {
       var clientId = metadata.id,
           model;
       this.get('db').services.some(function(service) {
-        if (service.get('clientId') === clientId) {
+        if ((service.get('clientId') === clientId) ||
+            // In this case clientId is actually the real service id.
+            (service.get('id') === clientId)) {
           model = service;
           return true;
         }
@@ -445,9 +461,9 @@ YUI.add('subapp-browser', function(Y) {
       // If there is no config set then it's a ghost service model and not
       // a deployed service yet.
       if (!model.get('config')) {
-        this.createGhostInspector(model);
+        this._activeInspector = this.createGhostInspector(model);
       } else {
-        this.createServiceInspector(model);
+        this._activeInspector = this.createServiceInspector(model);
       }
     },
 
@@ -842,13 +858,15 @@ YUI.add('subapp-browser', function(Y) {
       // topo is passed in to the charmbrowser after
       // the environment view is rendered.
       var topo = this.get('topo');
-      var editorial = this._editorial;
-      var search = this._search;
-      // Clear out whatever charm list is in the inspector
-      // XXX This clean up will be handled by the state
-      // system once that's implemented.
-      if (editorial) { editorial.destroy(); }
-      if (search) { search.destroy(); }
+      if (!window.flags || !window.flags.state) {
+        var editorial = this._editorial;
+        var search = this._search;
+        // Clear out whatever charm list is in the inspector
+        // XXX This clean up will be handled by the state
+        // system once that's implemented.
+        if (editorial) { editorial.destroy(); }
+        if (search) { search.destroy(); }
+      }
       // Render the ghost inspector
       var inspector = new Y.juju.views.GhostServiceInspector({
         db: db,
@@ -859,8 +877,7 @@ YUI.add('subapp-browser', function(Y) {
         topo: topo,
         store: topo.get('store')
       }).render();
-      // Add charmbrowser as bubble target for the inspector
-      // for the service inspector navigate event.
+
       inspector.addTarget(this);
       return inspector;
     },
@@ -872,7 +889,21 @@ YUI.add('subapp-browser', function(Y) {
       @param {String} model The service model.
     */
     createServiceInspector: function(model) {
-      // XXX Placeholder for after the state system can render inspectors
+      var db = this.get('db'),
+          topo = this.get('topo');
+
+      var inspector = new Y.juju.views.ServiceInspector({
+        db: db,
+        model: model,
+        env: this.get('env'),
+        ecs: this.get('ecs'),
+        enableDatabinding: true,
+        topo: topo,
+        store: topo.get('store')
+      }).render();
+
+      inspector.addTarget(this);
+      return inspector;
     },
 
     /**
