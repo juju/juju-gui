@@ -61,6 +61,12 @@ YUI.add('juju-app-state', function(Y) {
     hasChanged: function(section, field) {
       var previous = this.getState('previous', section, field);
       var current = this.getState('current', section, field);
+      // If a new state event is fired which causes the defaults to be set
+      // to the same value as the default then don't trigger a change.
+      if (section === 'sectionA') {
+        if (previous === undefined) { previous = 'charmbrowser'; }
+        if (current === undefined) { current = 'charmbrowser'; }
+      }
       return previous !== current;
     },
 

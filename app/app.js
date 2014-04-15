@@ -655,6 +655,10 @@ YUI.add('juju-gui', function(Y) {
       cfg.ecs = this.ecs;
       this.addSubApplications(cfg);
 
+      this.on('*:changeState', function(e) {
+        this.get('subApps').charmbrowser.fire('changeState', e.details[0]);
+      });
+
       // When someone wants a charm to be deployed they fire an event and we
       // show the charm panel to configure/deploy the service.
       Y.on('initiateDeploy', function(charm, ghostAttributes) {

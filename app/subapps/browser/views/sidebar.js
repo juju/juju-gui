@@ -72,6 +72,17 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       this.get('container').setHTML('');
     },
 
+    showSearch: function() {
+      this.search.show();
+      this.get('container').removeClass('no-search');
+    },
+
+    hideSearch: function() {
+      this.search.hide();
+      // addClass() is idempotent.
+      this.get('container').addClass('no-search', true);
+    },
+
     /**
      * Render out the view to the DOM.
      *
@@ -82,11 +93,15 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl);
 
-      if (!window.flags.il) {
-        // The search widget has no home yet so when the inspector is moved
-        // to the left we will just not render it.
+      if (window.flags && window.flags.state) {
+        // Render then immediately hide the search widget too allow the state
+        // to control the show/hide of the search widger.
+        this._renderSearchWidget(tplNode);
+        this.search.hide();
+      } else {
         this._renderSearchWidget(tplNode);
       }
+
 
       if (typeof container !== 'object') {
         container = this.get('container');

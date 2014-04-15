@@ -531,7 +531,7 @@ YUI.add('juju-topology-service', function(Y) {
       //   <action>
       // with the service, the SVG node, and the view
       // as arguments.
-      self[curr_click_action](box);
+      self[curr_click_action](box, topo);
     },
 
     serviceDblClick: function(box, self) {
@@ -1409,12 +1409,21 @@ YUI.add('juju-topology-service', function(Y) {
 
       @method showServiceDetails
       @param {object} box The presentation state for the service.
+      @param {Object} topo The reference to the topology object.
     */
-    showServiceDetails: function(box) {
+    showServiceDetails: function(box, topo) {
       // XXX Jeff March 26 2013 - show_service can be removed once
       // we finish moving the inspector into the browser.
-      this.show_service(box.model);
-      this.showServiceMenu(box);
+      if (window.flags && window.flags.state) {
+        topo.fire('changeState', {
+          sectionA: {
+            component: 'inspector',
+            metadata: { id: box.id }
+          }});
+      } else {
+        this.show_service(box.model);
+        this.showServiceMenu(box);
+      }
     },
 
     /**

@@ -306,6 +306,10 @@ YUI.add('juju-view-environment', function(Y) {
       inspector.switchTab('relations');
     },
 
+    onChangeState: function(e) {
+      this.fire('changeState', e.details[0]);
+    },
+
     /**
       Attaches events after the topology has been created.
 
@@ -320,6 +324,8 @@ YUI.add('juju-view-environment', function(Y) {
           '*:addRelationEnd', this.expandInspector, this);
       this.topo.on(
           '*:inspectRelation', this.onInspectRelation, this);
+      this.topo.on(
+          '*:changeState', this.onChangeState, this);
     }
   }, {
     ATTRS: {

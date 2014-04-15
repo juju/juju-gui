@@ -412,6 +412,7 @@ YUI.add('subapp-browser', function(Y) {
       if (detailsNode) { detailsNode.hide(); }
       // If there is no provided metadata show the defaults.
       if (!metadata || !metadata.search) {
+        this._sidebar.showSearch();
         this.renderEditorial();
       }
       if (metadata && metadata.search) {
@@ -432,7 +433,23 @@ YUI.add('subapp-browser', function(Y) {
       @param {Object|String} metadata The metadata to pass to the inspector
         view.
     */
-    _inspector: function(metadata) {},
+    _inspector: function(metadata) {
+      var clientId = metadata.id,
+          model;
+      this.get('db').services.some(function(service) {
+        if (service.get('clientId') === clientId) {
+          model = service;
+          return true;
+        }
+      });
+      // If there is no config set then it's a ghost service model and not
+      // a deployed service yet.
+      if (!model.get('config')) {
+        this.createGhostInspector(model);
+      } else {
+        this.createServiceInspector(model);
+      }
+    },
 
     /**
       Handles rendering and/or updating the machine UI component.
@@ -451,6 +468,7 @@ YUI.add('subapp-browser', function(Y) {
     emptySectionA: function() {
       if (this._editorial) { this._editorial.destroy(); }
       if (this._search) { this._search.destroy(); }
+      if (this._sidebar.search) { this._sidebar.hideSearch(); }
       if (this._details) { this._details.destroy(); }
     },
 
