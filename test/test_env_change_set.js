@@ -185,6 +185,61 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('_buildHierarchy', function() {
+      it('acts sane with "flat" hierarchies', function() {
+        var data = {
+          a: { parents: [] },
+          b: { parents: [] },
+          c: { parents: [] },
+          d: { parents: [] },
+          e: { parents: [] },
+          f: { } // Can handle missing parents attribute.
+        };
+
+        var result = ecs._buildHierarchy(data);
+        assert.deepEqual(result, [
+          [
+            { key: 'a', parents: [] },
+            { key: 'b', parents: [] },
+            { key: 'c', parents: [] },
+            { key: 'd', parents: [] },
+            { key: 'e', parents: [] },
+            { key: 'f' }
+          ]
+        ]);
+      });
+
+      it('splits commands into dependency levels', function() {
+        var data = {
+          a: { parents: [] },
+          b: { parents: [] },
+          c: { parents: ['a', 'b'] },
+          d: { parents: ['a'] },
+          e: { parents: ['a', 'c'] },
+          f: { parents: ['e'] }
+        };
+
+        var result = ecs._buildHierarchy(data);
+        assert.deepEqual(result, [
+          // Top-level.
+          [
+            { key: 'a', parents: [] },
+            { key: 'b', parents: [] }
+          ],
+          [
+            { key: 'c', parents: ['a', 'b'] },
+            { key: 'd', parents: ['a'] }
+          ],
+          [
+            { key: 'e', parents: ['a', 'c'] }
+          ],
+          [
+            { key: 'f', parents: ['e'] }
+          ]
+        ]);
+      });
+    });
+
     describe('commit', function() {
       it('loops through the changeSet calling execute on them', function() {
         var execute = testUtils.makeStubMethod(ecs, '_execute');
