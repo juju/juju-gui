@@ -168,8 +168,8 @@ YUI.add('environment-change-set', function(Y) {
     */
     _buildHierarchy: function(changeSet) {
       var hierarchy = [[]],
-          command, alreadyPlacedParents,
-          keyToLevel = {},
+          command,
+          keyToLevelMap = {},
           currLevel = 1;
 
       // Take care of top-level objects quickly.
@@ -178,52 +178,66 @@ YUI.add('environment-change-set', function(Y) {
         command.key = key;
         if (!command.parents || command.parents.length === 0) {
           hierarchy[0].push(Y.clone(command));
-          keyToLevel[key] = 0;
+          keyToLevelMap[key] = 0;
           delete changeSet[key];
         } else {
           // Default everything else to the first level.
-          keyToLevel[key] = 1;
+          keyToLevelMap[key] = 1;
         }
       });
 
       // Now build the other levels of the hierarchy as long as there are still
       // commands in the change set. Functions defined outside of loop for
       // runtime efficiency (jshint W083).
-      function checkForParents(parent) {
-        if (keyToLevel[parent] >= currLevel) {
-          alreadyPlacedParents = false;
-        }
-      }
-
-      function placeIfNeeded(value, key) {
-        command = changeSet[key];
-
-        // Since we are deleting keys from the changeSet as we iterate over
-        // the original list, return if command is undefined.
-        if (!command) {
-          return;
-        }
-
-        // Check and see if all of the parents have already been placed.
-        alreadyPlacedParents = true;
-        command.parents.forEach(checkForParents);
-
-        // If so, then the command belongs in the current level, so push it
-        // there and delete it from the changeSet.
-        if (alreadyPlacedParents) {
-          hierarchy[currLevel].push(Y.clone(command));
-          keyToLevel[key] = currLevel;
-          delete changeSet[key];
-        }
-      }
-
       while (Object.keys(changeSet).length > 0) {
         hierarchy.push([]);
-        Y.Object.each(keyToLevel, placeIfNeeded);
+        Y.Object.each(keyToLevelMap, Y.bind(this._placeIfNeeded, this,
+            currLevel, keyToLevelMap, changeSet, hierarchy));
         currLevel += 1;
       }
       return hierarchy;
     },
+
+    /**
+      Assign a level to a change in the change set if all of its parents have
+      already been placed.
+
+      @method _placeIfNeeded
+      @param {Number} currLevel The current level of the hierarchy.
+      @param {Object} keyToLevelMap A mapping of all keys and which levels
+        they are in.
+      @param {Object} changeSet The as-yet unplaced commands.
+      @param {Array} hierarchy An array of arrays of placed commands.
+      @param {Number} value The current level value.
+      @param {String} key The current level key.
+    */
+    _placeIfNeeded: function(currLevel, keyToLevelMap, changeSet, hierarchy,
+        value, key) {
+      var command = changeSet[key];
+
+      // Since we are deleting keys from the changeSet as we iterate over
+      // the original list, return if command is undefined.
+      if (!command) {
+        return;
+      }
+
+      // Check and see if all of the parents have already been placed.
+      var alreadyPlacedParents = true;
+      for (var i = 0; i < command.parents.length; i += 1) {
+        if (keyToLevelMap[command.parents[i]] >= currLevel) {
+          alreadyPlacedParents = false;
+        }
+      }
+
+      // If so, then the command belongs in the current level, so push it
+      // there and delete it from the changeSet.
+      if (alreadyPlacedParents) {
+        hierarchy[currLevel].push(Y.clone(command));
+        keyToLevelMap[key] = currLevel;
+        delete changeSet[key];
+      }
+    },
+
 
     /**
       Starts the processing of all of the top level
