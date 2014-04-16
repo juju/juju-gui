@@ -407,11 +407,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           it('emptySectionA', function() {
             stubMethods(app);
+            var bwsdata = utils.makeContainer(this);
+            bwsdata.addClass('bws-view-data');
             app.emptySectionA();
             assert.equal(app._editorial.destroy.callCount(), 1);
             assert.equal(app._search.destroy.callCount(), 1);
             assert.equal(app._sidebar.hideSearch.callCount(), 1);
             assert.equal(app._details.destroy.callCount(), 1);
+            assert.equal(bwsdata.getStyle('display'), 'none');
           });
         });
       });

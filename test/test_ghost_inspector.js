@@ -420,6 +420,9 @@ describe('Ghost Inspector', function() {
     assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon before');
     assert.equal(model.get('displayName'), '(mediawiki)', 'model before');
 
+    var fireStub = utils.makeStubMethod(inspector, 'fire');
+    this._cleanups.push(fireStub.reset);
+
     var handler = vmContainer.delegate('valuechange', function() {
       assert.equal(model.get('displayName'), '(foo)', 'model callback');
       view.update(); // Simulating a db.fire('update') call
@@ -429,6 +432,13 @@ describe('Ghost Inspector', function() {
       view.update(); // Simulating a db.fire('update') call
       assert.equal(serviceIcon.get('textContent'), '(mediawiki)', 'icon after');
       handler.detach();
+      assert.equal(fireStub.callCount(), 1);
+      var fireArgs = fireStub.lastArguments();
+      assert.equal(fireArgs[0], 'changeState');
+      assert.deepEqual(fireArgs[1], {
+        sectionA: {
+          component: 'charmbrowser',
+          metadata: { id: null }}});
       done();
     }, 'input[name=service-name]');
 

@@ -466,7 +466,6 @@ describe('UI State object', function() {
       '/search/': { sectionA: {}, sectionB: {} },
       '/search/?text=apache': {
         sectionA: {
-          component: 'charmbrowser',
           metadata: { search: 'apache' }
         }, sectionB: {}
       },
@@ -636,7 +635,6 @@ describe('UI State object', function() {
       },
       '/machine/3/?text=hadoop': {
         sectionA: {
-          component: 'charmbrowser',
           metadata: {
             search: 'hadoop'
           }
@@ -682,7 +680,7 @@ describe('UI State object', function() {
       // Invalid urls with overriding components
       '/inspector?text=hadoop': {
         sectionA: {
-          component: 'charmbrowser',
+          component: 'inspector',
           metadata: {
             search: 'hadoop'
           }
