@@ -106,8 +106,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           tplNode = Y.Node.create(tpl);
 
       if (window.flags && window.flags.state) {
-        // Render then immediately hide the search widget too allow the state
-        // to control the show/hide of the search widger.
+        // Render then immediately hide the search widget to allow the state
+        // to control the show/hide of the search widget.
         this._renderSearchWidget(tplNode);
         this.search.hide();
       } else {

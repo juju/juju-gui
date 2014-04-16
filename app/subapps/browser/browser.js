@@ -430,12 +430,14 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial();
       }
       if (metadata && metadata.search) {
+        this._sidebar.showSearch();
         this.renderSearchResults();
       }
       if (metadata && metadata.id) {
         // The entity rendering views need to handle the new state format
         // before this can be hooked up.
         if (detailsNode) { detailsNode.show(); }
+        this._sidebar.showSearch();
         this.renderEntityDetails();
       }
     },

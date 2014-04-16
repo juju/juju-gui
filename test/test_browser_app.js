@@ -274,40 +274,47 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       describe('state dispatchers', function() {
-        var editorialStub, searchStub, entityStub;
+        var editorialStub, searchStub, entityStub, showSearchStub;
         beforeEach(function() {
           app = new browser.Browser();
+          app._sidebar = {
+            destroy: utils.makeStubFunction()
+          };
         });
         afterEach(function() {
           if (app) { app.destroy(); }
         });
 
-        function stubRenderers(context) {
-          editorialStub = utils.makeStubMethod(app, 'renderEditorial');
-          context._cleanups.push(editorialStub.reset);
-          searchStub = utils.makeStubMethod(app, 'renderSearchResults');
-          context._cleanups.push(searchStub.reset);
-          entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
-          context._cleanups.push(entityStub.reset);
-        }
-
-        function assertions(editorialCount, searchCount, entityCount) {
-          assert.equal(editorialStub.callCount(), editorialCount);
-          assert.equal(searchStub.callCount(), searchCount);
-          assert.equal(entityStub.callCount(), entityCount);
-        }
-
         describe('_charmbrowser', function() {
+          function stubRenderers(context) {
+            editorialStub = utils.makeStubMethod(app, 'renderEditorial');
+            context._cleanups.push(editorialStub.reset);
+            searchStub = utils.makeStubMethod(app, 'renderSearchResults');
+            context._cleanups.push(searchStub.reset);
+            entityStub = utils.makeStubMethod(app, 'renderEntityDetails');
+            context._cleanups.push(entityStub.reset);
+            showSearchStub = utils.makeStubMethod(app._sidebar, 'showSearch');
+            context._cleanups.push(showSearchStub.reset);
+          }
+
+          function assertions(
+              editorialCount, searchCount, entityCount, showSearchCount) {
+            assert.equal(editorialStub.callCount(), editorialCount);
+            assert.equal(searchStub.callCount(), searchCount);
+            assert.equal(entityStub.callCount(), entityCount);
+            assert.equal(showSearchStub.callCount(), showSearchCount);
+          }
+
           it('renders the editorial when no metadata is provided', function() {
             stubRenderers(this);
             app._charmbrowser(undefined);
-            assertions(1, 0, 0);
+            assertions(1, 0, 0, 1);
           });
 
           it('renders the editorial when no search is provided', function() {
             stubRenderers(this);
             app._charmbrowser({});
-            assertions(1, 0, 0);
+            assertions(1, 0, 0, 1);
           });
 
           it('renders search results when search is provided', function() {
@@ -315,7 +322,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._charmbrowser({
               search: 'foo'
             });
-            assertions(0, 1, 0);
+            assertions(0, 1, 0, 1);
           });
 
           it('renders & editorial charm details with id provided', function() {
@@ -323,7 +330,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             app._charmbrowser({
               id: 'foo'
             });
-            assertions(1, 0, 1);
+            assertions(1, 0, 1, 2);
           });
 
           it('renders search and charm details', function() {
@@ -332,8 +339,107 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               search: 'foo',
               id: 'foo'
             });
-            assertions(0, 1, 1);
+            assertions(0, 1, 1, 2);
           });
+        });
+
+        describe('_inspector', function() {
+          var clientId, ghostStub, serviceStub;
+
+          function stubMethods(context) {
+            ghostStub = utils.makeStubMethod(app, 'createGhostInspector');
+            context._cleanups.push(ghostStub.reset);
+            serviceStub = utils.makeStubMethod(app, 'createServiceInspector');
+            context._cleanups.push(serviceStub.reset);
+          }
+
+          function stubDb(app, ghost) {
+            clientId = 'foo';
+            var db = {
+              services: {
+                some: function(callback) {
+                  callback({
+                    get: function(val) {
+                      if (val === 'config') {
+                        if (ghost) {
+                          return false;
+                        } else {
+                          return true;
+                        }
+                      } else {
+                        return clientId;
+                      }
+                    }
+                  });
+                }
+              }
+            };
+            app.set('db', db);
+          }
+
+          it('renders a ghost inspector', function() {
+            stubMethods(this);
+            stubDb(app, true);
+            app._inspector({ id: clientId });
+            assert.equal(ghostStub.callCount(), 1);
+            assert.equal(serviceStub.callCount(), 0);
+          });
+
+          it('renders a service inspector', function() {
+            stubMethods(this);
+            stubDb(app, false);
+            app._inspector({ id: clientId });
+            assert.equal(ghostStub.callCount(), 0);
+            assert.equal(serviceStub.callCount(), 1);
+          });
+        });
+
+        describe('emptySections', function() {
+          function stubMethods(app) {
+            app._editorial = { destroy: utils.makeStubFunction() };
+            app._search = { destroy: utils.makeStubFunction() };
+            app._sidebar = {
+              search: {},
+              destroy: function() {},
+              hideSearch: utils.makeStubFunction() };
+            app._details = { destroy: utils.makeStubFunction() };
+          }
+
+          it('emptySectionA', function() {
+            stubMethods(app);
+            app.emptySectionA();
+            assert.equal(app._editorial.destroy.callCount(), 1);
+            assert.equal(app._search.destroy.callCount(), 1);
+            assert.equal(app._sidebar.hideSearch.callCount(), 1);
+            assert.equal(app._details.destroy.callCount(), 1);
+          });
+        });
+      });
+
+      it('listens to serviceDeployed events', function(done) {
+        app = new browser.Browser();
+        var generateStub = utils.makeStubMethod(app.state, 'generateUrl');
+        this._cleanups.push(generateStub.reset);
+        var navigateStub = utils.makeStubMethod(app, 'navigate');
+        this._cleanups.push(navigateStub.reset);
+        app._activeInspector = {
+          get: function() {
+            return {
+              get: function() {
+                return 'foo'; }};
+          }};
+        app.on('changeState', function(e) {
+          e.halt(); // stop any futher propogation of this event.
+          assert.deepEqual(e.details[0], {
+            sectionA: {
+              component: 'inspector',
+              metadata: {
+                id: 'bar' }}});
+          done();
+        });
+        app.fire('serviceDeployed', {
+          clientId: 'foo',
+          serviceName: 'bar'
         });
       });
 

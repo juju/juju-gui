@@ -529,7 +529,6 @@ YUI.add('browser-search-widget', function(Y) {
       if (this.ac) {
         this.ac.destroy();
       }
-      this.get('boundingBox').remove().destroy();
     },
 
     /**
